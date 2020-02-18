@@ -163,7 +163,12 @@ export default {
 
 	methods: {
 		async joinConversation() {
-			await this.getFileConversation()
+			try {
+				await this.getFileConversation()
+			} catch (error) {
+				console.debug('Could not get file conversation. Is it a file and shared?')
+				return
+			}
 
 			await joinConversation(this.token)
 
@@ -231,7 +236,7 @@ export default {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				} else {
-					console.debug(exception)
+					throw exception
 				}
 			}
 		},
@@ -294,7 +299,11 @@ export default {
 				// FileInfo it is necessary to query the server.
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
-				this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+				try {
+					this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+				} catch (error) {
+					this.isTalkSidebarSupportedForFile = false
+				}
 
 				return
 			}
@@ -318,7 +327,11 @@ export default {
 				// FileInfo it is necessary to query the server.
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
-				this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+				try {
+					this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+				} catch (error) {
+					this.isTalkSidebarSupportedForFile = false
+				}
 
 				return
 			}

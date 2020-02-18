@@ -29,10 +29,14 @@ const isEnabled = function(fileInfo) {
 		return true
 	}
 
+	const token = OCA.Talk.store.getters.getToken()
+
 	// If the Talk tab can not be displayed then the current conversation is
 	// left; this must be done here because "setFileInfo" will not get
 	// called with the new file if the tab can not be displayed.
-	leaveConversation(OCA.Talk.store.getters.getToken())
+	if (token) {
+		leaveConversation(token)
+	}
 
 	OCA.Talk.store.dispatch('updateTokenAndFileIdForToken', {
 		newToken: null,
