@@ -31,12 +31,8 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @returns {String} the conversation token
  */
 const getFileConversation = async function({ fileId }, options) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `file/${fileId}`)
-		return response
-	} catch (error) {
-		console.debug('Error while getting the token: ', error)
-	}
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `file/${fileId}`)
+	return response
 }
 
 /**
