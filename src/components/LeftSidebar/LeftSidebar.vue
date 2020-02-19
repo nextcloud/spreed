@@ -72,11 +72,21 @@
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 		</ul>
+
+		<AppNavigationSettings>
+			<label>{{ t('spreed', 'Default location for attachments') }}</label>
+			<input
+				type="text"
+				:value="attachmentFolder"
+				:disabled="attachmentFolderLoading"
+				@click="selectAttachmentFolder">
+		</AppNavigationSettings>
 	</AppNavigation>
 </template>
 
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
+import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
 import Caption from '../Caption'
 import ConversationsList from './ConversationsList/ConversationsList'
 import ConversationsOptionsList from '../ConversationsOptionsList'
@@ -88,9 +98,20 @@ import {
 	createGroupConversation, createOneToOneConversation,
 	searchPossibleConversations,
 } from '../../services/conversationsService'
+import { setAttachmentFolder } from '../../services/settingsService'
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
+
+const picker = getFilePickerBuilder(t('spreed', 'Select default location for attachments'))
+	.setMultiSelect(false)
+	.setModal(true)
+	.setType(1)
+	.addMimeTypeFilter(['httpd/unix-directory'])
+	.allowDirectories()
+	.startAt(loadState('talk', 'attachment_folder'))
+	.build()
 
 export default {
 
@@ -98,6 +119,7 @@ export default {
 
 	components: {
 		AppNavigation,
+		AppNavigationSettings,
 		Caption,
 		ConversationsList,
 		ConversationsOptionsList,
@@ -115,6 +137,8 @@ export default {
 			searchResultsCircles: [],
 			contactsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
+			attachmentFolder: loadState('talk', 'attachment_folder'),
+			attachmentFolderLoading: false,
 		}
 	},
 
@@ -219,6 +243,25 @@ export default {
 		// Reset the search text, therefore end the search operation.
 		handleClickConversation() {
 			this.searchText = ''
+		},
+
+		selectAttachmentFolder() {
+			picker.pick()
+				.then(async(path) => {
+					console.debug(`Path '${path}' selected for talk attachments`)
+					if (path !== '' && !path.startsWith('/')) {
+						throw new Error(t('spreed', 'Invalid path selected'))
+					}
+
+					this.attachmentFolderLoading = true
+					this.attachmentFolder = path
+					try {
+						await setAttachmentFolder(path)
+					} catch (exception) {
+						OCP.Toast.error(t('spreed', 'Error while setting attachment folder'))
+					}
+					this.attachmentFolderLoading = false
+				})
 		},
 	},
 }

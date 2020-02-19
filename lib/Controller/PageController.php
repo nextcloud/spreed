@@ -211,6 +211,11 @@ class PageController extends Controller {
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
 
+		$this->initialStateService->provideInitialState(
+			'talk', 'attachment_folder',
+			$this->config->getAttachmentFolder($user->getUID())
+		);
+
 		$params = [
 			'token' => $token,
 			'signaling-settings' => $this->config->getSettings($this->userId),
