@@ -74,6 +74,7 @@ import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
+import escapeHtml from 'escape-html'
 import debounce from 'debounce'
 
 /**
@@ -221,7 +222,8 @@ export default {
 		onPaste(e) {
 			e.preventDefault()
 			const text = e.clipboardData.getData('text/plain')
-			document.execCommand('insertText', false, text)
+			const div = document.createElement('div').innerText = escapeHtml(text)
+			document.execCommand('insertHtml', false, div)
 		},
 
 		/**
