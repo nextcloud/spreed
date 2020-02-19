@@ -96,6 +96,9 @@ class CapabilitiesTest extends TestCase {
 					'circles-support',
 				],
 				'config' => [
+					'attachments' => [
+						'allowed' => false,
+					],
 					'chat' => [
 						'max-length' => 1000,
 					],
@@ -120,6 +123,11 @@ class CapabilitiesTest extends TestCase {
 			->method('isDisabledForUser')
 			->with($user)
 			->willReturn(false);
+
+		$this->talkConfig->expects($this->once())
+			->method('getAttachmentFolder')
+			->with($user)
+			->willReturn('/Talk');
 
 		$this->serverConfig->expects($this->once())
 			->method('getSystemValueString')
@@ -154,6 +162,10 @@ class CapabilitiesTest extends TestCase {
 					'circles-support',
 				],
 				'config' => [
+					'attachments' => [
+						'allowed' => true,
+						'folder' => '/Talk',
+					],
 					'chat' => [
 						'max-length' => 32000,
 					],

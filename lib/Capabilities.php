@@ -58,6 +58,13 @@ class Capabilities implements IPublicCapability {
 			$maxChatLength = ChatManager::MAX_CHAT_LENGTH;
 		}
 
+		$attachments = [
+			'allowed' => $user instanceof IUser,
+		];
+		if ($user instanceof IUser) {
+			$attachments['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
+		}
+
 		return [
 			'spreed' => [
 				'features' => [
@@ -85,6 +92,7 @@ class Capabilities implements IPublicCapability {
 					'circles-support',
 				],
 				'config' => [
+					'attachments' => $attachments,
 					'chat' => [
 						'max-length' => $maxChatLength,
 					],
