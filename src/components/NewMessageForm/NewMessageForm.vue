@@ -213,17 +213,6 @@ export default {
 			return 'temp-' + date.getTime()
 		},
 
-		async handleFileShare() {
-			picker.pick()
-				.then(async(path) => {
-					console.debug(`path ${path} selected for sharing`)
-					if (!path.startsWith('/')) {
-						throw new Error(t('files', 'Invalid path selected'))
-					}
-					this.sendFile(path)
-				})
-		},
-
 		/**
 		 * Sends the new message
 		 */
@@ -253,30 +242,12 @@ export default {
 
 			}
 		},
-		// Clicks the hidden file input when clicking the correspondent ActionButton, thus
-		// opening the file-picker
-		clickImportInput() {
-			this.$refs['file-upload-input'].click()
-		},
-		// Uploads the files to the root files directory
-		async processFiles(event) {
-			// Get the files array
-			const files = Object.values(event.target.files)
-			// Copy each file into the remote path
-			for (let i = 0; i < files.length; i++) {
-				const userId = this.$store.getters.getUserId()
-				const path = `/files/${userId}/` + files[i].name
-				try {
-					await client.putFileContents(path, files[i])
-					this.sendFile('/' + files[i].name)
-				} catch (exception) {
-					console.debug('Error while uploading file:' + exception)
-					showError(t('spreed', 'Error while uploading file'))
-				}
-			}
-		},
 
-		// Appends a file as a message to the messagelist
+		/**
+		 * Appends a file as a message to the messagelist.
+		 * @param {string} path The file path from the user's root directory
+		 * e.g. `/myfile.txt`
+		 */
 		async sendFile(path) {
 			try {
 				await shareFileToRoom(path, this.token)
@@ -291,6 +262,48 @@ export default {
 				} else {
 					console.error(`Error while sharing file: Unknown error`)
 					OCP.Toast.error(t('files', 'Error while sharing file'))
+				}
+			}
+		},
+
+		async handleFileShare() {
+			picker.pick()
+				.then(async(path) => {
+					console.debug(`path ${path} selected for sharing`)
+					if (!path.startsWith('/')) {
+						throw new Error(t('files', 'Invalid path selected'))
+					}
+					this.sendFile(path)
+				})
+		},
+
+		/**
+		 * Clicks the hidden file input when clicking the correspondent ActionButton,
+		 * thus opening the file-picker
+		 */
+		clickImportInput() {
+			this.$refs['file-upload-input'].click()
+		},
+
+		/**
+		 * Uploads the files to the root files directory
+		 * @param {object} event the file input event object
+		 */
+		async processFiles(event) {
+			// The selected files array
+			const files = Object.values(event.target.files)
+			// process each file in the array
+			for (let i = 0; i < files.length; i++) {
+				const userId = this.$store.getters.getUserId()
+				const path = `/files/${userId}/` + files[i].name
+				try {
+					// Upload the file
+					await client.putFileContents(path, files[i])
+					// Share the file to the talk room
+					this.sendFile('/' + files[i].name)
+				} catch (exception) {
+					console.debug('Error while uploading file:' + exception)
+					showError(t('spreed', 'Error while uploading file'))
 				}
 			}
 		},

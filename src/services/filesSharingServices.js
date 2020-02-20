@@ -22,7 +22,14 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-export const shareFileToRoom = (path, token) => {
+/**
+ * Appends a file as a message to the messagelist.
+ * @param {string} path The file path from the user's root directory
+ * e.g. `/myfile.txt`
+ * @param {string} token The conversation's token
+ * @returns {object} the response object
+ */
+const shareFileToRoom = (path, token) => {
 	const response = axios.post(
 		generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
 		{
@@ -31,4 +38,8 @@ export const shareFileToRoom = (path, token) => {
 			shareWith: token,
 		})
 	return response
+}
+
+export {
+	shareFileToRoom
 }
