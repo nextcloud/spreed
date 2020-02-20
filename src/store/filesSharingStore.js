@@ -19,39 +19,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 import Vue from 'vue'
-import Vuex, { Store } from 'vuex'
-import actorStore from './actorStore'
-import conversationsStore from './conversationsStore'
-import guestNameStore from './guestNameStore'
-import messagesStore from './messagesStore'
-import participantsStore from './participantsStore'
-import quoteReplyStore from './quoteReplyStore'
-import sidebarStore from './sidebarStore'
-import tokenStore from './tokenStore'
-import windowVisibilityStore from './windowVisibilityStore'
-import filesSharingStore from './filesSharingStore'
 
-Vue.use(Vuex)
-
-const mutations = {}
-
-export default new Store({
-	modules: {
-		actorStore,
-		conversationsStore,
-		guestNameStore,
-		messagesStore,
-		participantsStore,
-		quoteReplyStore,
-		sidebarStore,
-		tokenStore,
-		windowVisibilityStore,
-		filesSharingStore,
+const state = {
+	conversations: {
 	},
+}
 
-	mutations,
+const getters = {
+	conversations: state => state.conversations,
+	conversationsList: state => Object.values(state.conversations),
+}
 
-	strict: process.env.NODE_ENV !== 'production',
-})
+const mutations = {
+	/**
+	 * Adds a conversation to the store.
+	 *
+	 * @param {object} state current store state;
+	 * @param {object} conversation the conversation;
+	 */
+	addConversation(state, conversation) {
+		Vue.set(state.conversations, conversation.token, conversation)
+	},
+}
+
+const actions = {
+	async markConversationRead({ commit, getters }, token) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		conversation.unreadMessages = 0
+		conversation.unreadMention = false
+
+		commit('addConversation', conversation)
+	},
+}
+
+export default { state, mutations, getters, actions }

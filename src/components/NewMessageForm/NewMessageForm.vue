@@ -248,7 +248,7 @@ export default {
 		 * @param {string} path The file path from the user's root directory
 		 * e.g. `/myfile.txt`
 		 */
-		async sendFile(path) {
+		async shareFile(path) {
 			try {
 				await shareFileToRoom(path, this.token)
 			} catch (error) {
@@ -273,7 +273,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					this.sendFile(path)
+					this.shareFile(path)
 				})
 		},
 
@@ -300,7 +300,7 @@ export default {
 					// Upload the file
 					await client.putFileContents(path, files[i])
 					// Share the file to the talk room
-					this.sendFile('/' + files[i].name)
+					this.shareFile('/' + files[i].name)
 				} catch (exception) {
 					console.debug('Error while uploading file:' + exception)
 					showError(t('spreed', 'Error while uploading file'))
