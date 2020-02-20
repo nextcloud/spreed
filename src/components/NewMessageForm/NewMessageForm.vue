@@ -77,7 +77,7 @@
 <script>
 import axios from '@nextcloud/axios'
 import AdvancedInput from './AdvancedInput/AdvancedInput'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
@@ -292,7 +292,8 @@ export default {
 				try {
 					await client.putFileContents(`/files/${userId}/` + files[i].name, files[i])
 				} catch (exception) {
-					console.debug('Error while uploading file' + exception)
+					console.debug('Error while uploading file:' + exception)
+					showError(t('spreed', 'Error while uploading file'))
 				}
 			}
 		},
