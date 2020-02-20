@@ -25,7 +25,6 @@
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="file-upload-input"
-			directory
 			multiple
 			type="file"
 			class="hidden-visually"
@@ -87,7 +86,7 @@ import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
-import client, { remotePath } from '../../services/DavClient'
+import client from '../../services/DavClient'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -289,22 +288,17 @@ export default {
 		},
 		// Uploads the files to the root files directory
 		async processFiles(event) {
-			try {
-				console.log(event)
-				// Get the files array
-				const files = Object.values(event.target.files)
-				console.log(files)
-				// Copy each file into the remote path
-				for (let i = 0; i < files.length; i++) {
-					console.log('file object:' + files[i])
-					await client.putFileContents(files[i].name, remotePath)
+			// Get the files array
+			const files = Object.values(event.target.files)
+			// Copy each file into the remote path
+			for (let i = 0; i < files.length; i++) {
+				const userId = this.$store.getters.getUserId()
+				try {
+					await client.putFileContents(`/files/${userId}/` + files[i].name, files[i], { overwrite: false })
+				} catch (exception) {
+					console.debug('Error while uploading file' + exception)
 				}
-				console.log('success')
-			} catch (exception) {
-				console.log('error while uploading files' + exception)
 			}
-			console.log(client)
-			console.log(event.target.files)
 		},
 	},
 }
