@@ -38,21 +38,19 @@
 					<Actions
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button">
-						<ActionText>Add a file</ActionText>
-
 						<ActionButton
 							v-if="!currentUserIsGuest"
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
-							Upload from device
+							{{t('spreed', 'Upload new files')}}
 						</ActionButton>
 						<ActionButton
 							v-if="!currentUserIsGuest"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
-							Add from Nextcloud
+							{{t('spreed', 'Share from Files')}}
 						</ActionButton>
 					</Actions>
 				</div>
@@ -85,7 +83,6 @@ import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import client from '../../services/DavClient'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
@@ -102,7 +99,6 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
-		ActionText,
 	},
 	data: function() {
 		return {
@@ -294,7 +290,7 @@ export default {
 			for (let i = 0; i < files.length; i++) {
 				const userId = this.$store.getters.getUserId()
 				try {
-					await client.putFileContents(`/files/${userId}/` + files[i].name, files[i], { overwrite: false })
+					await client.putFileContents(`/files/${userId}/` + files[i].name, files[i])
 				} catch (exception) {
 					console.debug('Error while uploading file' + exception)
 				}
