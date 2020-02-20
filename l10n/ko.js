@@ -46,6 +46,7 @@ OC.L10N.register(
     "Disable video" : "비디오 비활성화",
     "Enable video" : "비디오 활성화",
     "Favorite" : "즐겨찾기",
+    "Off" : "꺼짐",
     "Leave conversation" : "대화 나가기",
     "Delete conversation" : "대화 삭제",
     "Remove from favorites" : "즐겨찾기에서 제거",
