@@ -34,6 +34,9 @@ class TalkSession {
 		$this->session = $session;
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getAllActiveSessions(): array {
 		$sessions = $this->getValues('spreed-session');
 		return array_values($sessions);
