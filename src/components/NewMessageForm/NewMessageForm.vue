@@ -43,14 +43,14 @@
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
-							{{t('spreed', 'Upload new files')}}
+							{{ t('spreed', 'Upload new files') }}
 						</ActionButton>
 						<ActionButton
 							v-if="!currentUserIsGuest"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
-							{{t('spreed', 'Share from Files')}}
+							{{ t('spreed', 'Share from Files') }}
 						</ActionButton>
 					</Actions>
 				</div>
@@ -75,15 +75,14 @@
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
-import { generateOcsUrl } from '@nextcloud/router'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import client from '../../services/DavClient'
+import { shareFileToRoom } from '../../services/filesSharingServices'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -221,30 +220,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-
-					try {
-						// FIXME move to service
-						await axios.post(
-							generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
-							{
-								shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
-								path: path,
-								shareWith: this.token,
-							}
-						)
-					} catch (error) {
-						if (error.response
-							&& error.response.data
-							&& error.response.data.ocs
-							&& error.response.data.ocs.meta
-							&& error.response.data.ocs.meta.message) {
-							console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
-							OCP.Toast.error(error.response.data.ocs.meta.message)
-						} else {
-							console.error(`Error while sharing file: Unknown error`)
-							OCP.Toast.error(t('files', 'Error while sharing file'))
-						}
-					}
+					this.sendFile(path)
 				})
 		},
 
@@ -289,11 +265,32 @@ export default {
 			// Copy each file into the remote path
 			for (let i = 0; i < files.length; i++) {
 				const userId = this.$store.getters.getUserId()
+				const path = `/files/${userId}/` + files[i].name
 				try {
-					await client.putFileContents(`/files/${userId}/` + files[i].name, files[i])
+					await client.putFileContents(path, files[i])
+					this.sendFile('/' + files[i].name)
 				} catch (exception) {
 					console.debug('Error while uploading file:' + exception)
 					showError(t('spreed', 'Error while uploading file'))
+				}
+			}
+		},
+
+		// Appends a file as a message to the messagelist
+		async sendFile(path) {
+			try {
+				await shareFileToRoom(path, this.token)
+			} catch (error) {
+				if (error.response
+					&& error.response.data
+					&& error.response.data.ocs
+					&& error.response.data.ocs.meta
+					&& error.response.data.ocs.meta.message) {
+					console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
+					OCP.Toast.error(error.response.data.ocs.meta.message)
+				} else {
+					console.error(`Error while sharing file: Unknown error`)
+					OCP.Toast.error(t('files', 'Error while sharing file'))
 				}
 			}
 		},
