@@ -21,10 +21,12 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 
 /**
  * Appends a file as a message to the messagelist.
  * @param {string} path The file path from the user's root directory
+ * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
  */
 const shareFile = async function(path, token) {
@@ -44,10 +46,10 @@ const shareFile = async function(path, token) {
                 && error.response.data.ocs.meta
                 && error.response.data.ocs.meta.message) {
 			console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
-			OCP.Toast.error(error.response.data.ocs.meta.message)
+			showError(error.response.data.ocs.meta.message)
 		} else {
 			console.error(`Error while sharing file: Unknown error`)
-			OCP.Toast.error(t('files', 'Error while sharing file'))
+			showError(t('spreed', 'Error while sharing file'))
 		}
 	}
 }

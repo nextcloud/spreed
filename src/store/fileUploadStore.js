@@ -21,6 +21,8 @@
  */
 
 import Vue from 'vue'
+import client from '../services/DavClient'
+import { showError } from '@nextcloud/dialogs'
 
 const state = {
 	files: {
@@ -28,6 +30,24 @@ const state = {
 }
 
 const getters = {
+	// Returns all the files that have been marked for upload in a given conversation,
+	// regardless of their upload state
+	getFiles: (state) => (token) => {
+		return state.files[token]
+	},
+	// Returns all the files that have been successfully uploaded
+	getShareableFiles: (state) => (token) => {
+		if (state.files[token]) {
+			const shareableFiles = []
+			for (const index in state.files[token]) {
+				const currentFile = state.files[token][index]
+				if (currentFile[1] === 'successUpload') {
+					shareableFiles.push(currentFile[0])
+				}
+			}
+			return shareableFiles
+		} return undefined
+	},
 }
 
 const mutations = {
@@ -38,10 +58,20 @@ const mutations = {
      * @param {*} token the conversation's token
      */
 	addFileToBeUploaded(state, { token, index, file }) {
-		if (state[token] === undefined) {
+		if (!state.files[token]) {
 			Vue.set(state.files, token, {})
 		}
 		Vue.set(state.files[token], index, [file, 'toBeUploaded'])
+	},
+
+	// Marks a given file as failed uplosd
+	markFileAsFailedUpload(state, { token, index }) {
+		state.files[token][index][1] = 'failedUpload'
+	},
+
+	// Marks a given file as uploaded
+	markFileAsSuccessUpload(state, { token, index }) {
+		state.files[token][index][1] = 'successUpload'
 	},
 }
 
@@ -58,11 +88,33 @@ const actions = {
 			context.commit('addFileToBeUploaded', { token, index, file: files[index] })
 		}
 	},
-	markFileAsFailedUpload(context, { token, file }) {
-		context.commit('markFileAsFailedUpload', token, file)
-	},
-	markFileAsSuccessUpload(context, { token, file }) {
-		context.commit('markFileAsFailedUpload', token, file)
+
+	/**
+	 * Uploads the files to the root directory of the user
+	 * @param {object} param0 Commit, state and getters
+	 * @param {*} token The conversation's token
+	 */
+	async uploadFiles({ commit, state, getters }, token) {
+		// Iterate through the previously indexed files for a given conversation (token)
+		for (const index in state.files[token]) {
+			// Get the current user id
+			const userId = getters.getUserId()
+			// currentFile to be uploaded
+			const currentFile = state.files[token][index][0]
+			// Destination path on the server
+			const path = `/files/${userId}/` + currentFile.name
+			try {
+				// Upload the file
+				await client.putFileContents(path, currentFile)
+				// Mark the file as uploaded in the store
+				commit('markFileAsSuccessUpload', { token, index })
+			} catch (exception) {
+				console.debug('Error while uploading file:' + exception)
+				showError(t('spreed', 'Error while uploading file'))
+				// Mark the upload as failed in the store
+				commit('markFileAsFailedUpload', { token, index })
+			}
+		}
 	},
 }
 

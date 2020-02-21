@@ -76,12 +76,11 @@
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import client from '../../services/DavClient'
 import { shareFile } from '../../services/filesSharingServices'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
@@ -263,27 +262,23 @@ export default {
 		},
 
 		/**
-		 * Uploads the files to the root files directory
+		 * Uploads and shares the selected files
 		 * @param {object} event the file input event object
 		 */
 		async processFiles(event) {
-			// The selected files array
+			// The selected files array coming from the input
 			const files = Object.values(event.target.files)
-			this.$store.dispatch('addFilesToBeUploaded', { token: this.token, files })
-			// process each file in the array
-			for (let i = 0; i < files.length; i++) {
-				
-				const userId = this.$store.getters.getUserId()
-				const path = `/files/${userId}/` + files[i].name
-				try {
-					// Upload the file
-					await client.putFileContents(path, files[i])
-					// Share the file to the talk room
-					shareFile('/' + files[i].name, this.token)
-				} catch (exception) {
-					console.debug('Error while uploading file:' + exception)
-					showError(t('spreed', 'Error while uploading file'))
-				}
+			// Process these files in the store
+			await this.$store.dispatch('addFilesToBeUploaded', { token: this.token, files })
+			// Dispatch the upload action (see uploadStore)
+			await this.$store.dispatch('uploadFiles', this.token)
+			// Get the files that have successfully been uploaded from the store
+			const shareableFiles = this.$store.getters.getShareableFiles(this.token)
+			// Share each of those files in the conversation
+			for (const index in shareableFiles) {
+				// The pat of the file to share to the conversation
+				const path = '/' + shareableFiles[index].name
+				shareFile(path, this.token)
 			}
 		},
 	},
