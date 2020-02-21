@@ -19,42 +19,52 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 import Vue from 'vue'
 
 const state = {
-	conversations: {
+	filesToBeShared: {
 	},
 }
 
 const getters = {
-	conversations: state => state.conversations,
-	conversationsList: state => Object.values(state.conversations),
+	filesToBeShared: state => token => state[token],
 }
 
 const mutations = {
 	/**
-	 * Adds a conversation to the store.
-	 *
-	 * @param {object} state current store state;
-	 * @param {object} conversation the conversation;
-	 */
-	addConversation(state, conversation) {
-		Vue.set(state.conversations, conversation.token, conversation)
+     * Adds a "file to be shared to the store"
+     * @param {*} state the state object
+     * @param {*} file the file to be added to the store
+     * @param {*} token the conversation's token
+     */
+	addFileToBeUploaded(state, file, token) {
+        if (!state.token) {
+            Vue.set(state.filesToBeShared, token, [])   
+        }
+        state.token.push([file, {'status': 'toBeUploaded'}])
 	},
 }
 
 const actions = {
-	async markConversationRead({ commit, getters }, token) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
-			return
+
+	/**
+     *
+     * @param {object} context The context object
+     * @param {string} token The conversation's token
+     * @param {array} files The files to be processed and added to the store
+     */
+	addFilesToBeShared(context, { token, files }) {
+		for (const file of files) {
+			context.commit('addFileToUpload', token, file)
 		}
-
-		conversation.unreadMessages = 0
-		conversation.unreadMention = false
-
-		commit('addConversation', conversation)
-	},
+    },
+    markFileAsFailedUpload(context, { token, file}) {
+        context.commit('markFileAsFailedUpload', token, file)
+    },
+    markFileAsSuccessUpload(context, { token, file}) {
+        context.commit('markFileAsFailedUpload', token, file)
+    }
 }
 
 export default { state, mutations, getters, actions }

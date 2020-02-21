@@ -82,7 +82,7 @@ import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import client from '../../services/DavClient'
-import { shareFileToRoom } from '../../services/filesSharingServices'
+import { shareFile } from '../../services/filesSharingServices'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -243,29 +243,6 @@ export default {
 			}
 		},
 
-		/**
-		 * Appends a file as a message to the messagelist.
-		 * @param {string} path The file path from the user's root directory
-		 * e.g. `/myfile.txt`
-		 */
-		async shareFile(path) {
-			try {
-				await shareFileToRoom(path, this.token)
-			} catch (error) {
-				if (error.response
-					&& error.response.data
-					&& error.response.data.ocs
-					&& error.response.data.ocs.meta
-					&& error.response.data.ocs.meta.message) {
-					console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
-					OCP.Toast.error(error.response.data.ocs.meta.message)
-				} else {
-					console.error(`Error while sharing file: Unknown error`)
-					OCP.Toast.error(t('files', 'Error while sharing file'))
-				}
-			}
-		},
-
 		async handleFileShare() {
 			picker.pick()
 				.then(async(path) => {
@@ -273,7 +250,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					this.shareFile(path)
+					shareFile(path, this.token)
 				})
 		},
 
@@ -294,13 +271,14 @@ export default {
 			const files = Object.values(event.target.files)
 			// process each file in the array
 			for (let i = 0; i < files.length; i++) {
+				console.log(files[i])
 				const userId = this.$store.getters.getUserId()
 				const path = `/files/${userId}/` + files[i].name
 				try {
 					// Upload the file
 					await client.putFileContents(path, files[i])
 					// Share the file to the talk room
-					this.shareFile('/' + files[i].name)
+					shareFile('/' + files[i].name, this.token)
 				} catch (exception) {
 					console.debug('Error while uploading file:' + exception)
 					showError(t('spreed', 'Error while uploading file'))
