@@ -119,6 +119,10 @@ export default {
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
 		},
+
+		attachmentFolder() {
+			return this.$store.getters.getAttachmentFolder()
+		},
 	},
 	methods: {
 		contentEditableToParsed(contentEditable) {
@@ -280,7 +284,7 @@ export default {
 			// Share each of those files in the conversation
 			for (const index in shareableFiles) {
 				// The pat of the file to share to the conversation
-				const path = '/' + shareableFiles[index].name
+				const path = this.$store.getters.getAttachmentFolder() + '/' + shareableFiles[index].name
 				shareFile(path, token)
 			}
 		},
