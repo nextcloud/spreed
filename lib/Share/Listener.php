@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
+use OCA\Talk\Config;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\Share\IShare;
@@ -31,11 +32,30 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener('OCP\Share::preShare', [self::class, 'overwriteShareTarget'], 1000);
-		$dispatcher->addListener(VerifyMountPointEvent::class, [self::class, 'overwriteMountPoint'], 1000);
+		$dispatcher->addListener('OCP\Share::preShare', [self::class, 'listenPreShare'], 1000);
+		$dispatcher->addListener(VerifyMountPointEvent::class, [self::class, 'listenVerifyMountPointEvent'], 1000);
 	}
 
-	public static function overwriteShareTarget(GenericEvent $event): void {
+	public static function listenPreShare(GenericEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->query(self::class);
+		$listener->overwriteShareTarget($event);
+	}
+
+	public static function listenVerifyMountPointEvent(VerifyMountPointEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->query(self::class);
+		$listener->overwriteMountPoint($event);
+	}
+
+	/** @var Config */
+	protected $config;
+
+	public function __construct(Config $config) {
+		$this->config = $config;
+	}
+
+	public function overwriteShareTarget(GenericEvent $event): void {
 		/** @var IShare $share */
 		$share = $event->getSubject();
 
@@ -49,8 +69,9 @@ class Listener {
 		$share->setTarget($target);
 	}
 
-	public static function overwriteMountPoint(VerifyMountPointEvent $event): void {
+	public function overwriteMountPoint(VerifyMountPointEvent $event): void {
 		$share = $event->getShare();
+		$view = $event->getView();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM
 			&& $share->getShareType() !== RoomShareProvider::SHARE_TYPE_USERROOM) {
@@ -58,7 +79,7 @@ class Listener {
 		}
 
 		if ($event->getParent() === RoomShareProvider::TALK_FOLDER_PLACEHOLDER) {
-			$parent = RoomShareProvider::TALK_FOLDER; // FIXME user preference
+			$parent = $this->config->getAttachmentFolder($view->getOwner('/'));
 			$event->setParent($parent);
 			if (!$event->getView()->is_dir($parent)) {
 				$event->getView()->mkdir($parent);
