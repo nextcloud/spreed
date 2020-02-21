@@ -23,12 +23,11 @@
 import Vue from 'vue'
 
 const state = {
-	filesToBeShared: {
+	files: {
 	},
 }
 
 const getters = {
-	filesToBeShared: state => token => state[token],
 }
 
 const mutations = {
@@ -38,11 +37,11 @@ const mutations = {
      * @param {*} file the file to be added to the store
      * @param {*} token the conversation's token
      */
-	addFileToBeUploaded(state, file, token) {
-        if (!state.token) {
-            Vue.set(state.filesToBeShared, token, [])   
-        }
-        state.token.push([file, {'status': 'toBeUploaded'}])
+	addFileToBeUploaded(state, { token, index, file }) {
+		if (state[token] === undefined) {
+			Vue.set(state.files, token, {})
+		}
+		Vue.set(state.files[token], index, [file, 'toBeUploaded'])
 	},
 }
 
@@ -54,17 +53,17 @@ const actions = {
      * @param {string} token The conversation's token
      * @param {array} files The files to be processed and added to the store
      */
-	addFilesToBeShared(context, { token, files }) {
-		for (const file of files) {
-			context.commit('addFileToUpload', token, file)
+	addFilesToBeUploaded(context, { token, files }) {
+		for (let index = 0; index < files.length; index++) {
+			context.commit('addFileToBeUploaded', { token, index, file: files[index] })
 		}
-    },
-    markFileAsFailedUpload(context, { token, file}) {
-        context.commit('markFileAsFailedUpload', token, file)
-    },
-    markFileAsSuccessUpload(context, { token, file}) {
-        context.commit('markFileAsFailedUpload', token, file)
-    }
+	},
+	markFileAsFailedUpload(context, { token, file }) {
+		context.commit('markFileAsFailedUpload', token, file)
+	},
+	markFileAsSuccessUpload(context, { token, file }) {
+		context.commit('markFileAsFailedUpload', token, file)
+	},
 }
 
 export default { state, mutations, getters, actions }

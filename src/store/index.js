@@ -31,7 +31,7 @@ import quoteReplyStore from './quoteReplyStore'
 import sidebarStore from './sidebarStore'
 import tokenStore from './tokenStore'
 import windowVisibilityStore from './windowVisibilityStore'
-import filesSharingStore from './filesSharingStore'
+import fileUploadStore from './fileUploadStore'
 
 Vue.use(Vuex)
 
@@ -48,7 +48,7 @@ export default new Store({
 		sidebarStore,
 		tokenStore,
 		windowVisibilityStore,
-		filesSharingStore,
+		fileUploadStore,
 	},
 
 	mutations,

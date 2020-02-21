@@ -269,9 +269,10 @@ export default {
 		async processFiles(event) {
 			// The selected files array
 			const files = Object.values(event.target.files)
+			this.$store.dispatch('addFilesToBeUploaded', { token: this.token, files })
 			// process each file in the array
 			for (let i = 0; i < files.length; i++) {
-				console.log(files[i])
+				
 				const userId = this.$store.getters.getUserId()
 				const path = `/files/${userId}/` + files[i].name
 				try {
