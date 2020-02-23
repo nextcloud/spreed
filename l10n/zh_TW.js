@@ -19,6 +19,7 @@ OC.L10N.register(
     "Mute audio (m)" : "靜音 (m)",
     "Disable video" : "停用視訊",
     "Favorite" : "我的最愛",
+    "Off" : "關閉",
     "Leave conversation" : "離開對話",
     "Delete conversation" : "刪除對話",
     "Remove from favorites" : "取消我的最愛",
