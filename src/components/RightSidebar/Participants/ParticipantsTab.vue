@@ -92,7 +92,8 @@ import { loadState } from '@nextcloud/initial-state'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../../../utils/cancelableRequest'
-import Axios from "@nextcloud/axios"
+import Axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'ParticipantsTab',
@@ -287,7 +288,7 @@ export default {
 				this.contactsLoading = false
 			} catch (exception) {
 				console.error(exception)
-				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+				showError(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -341,7 +342,7 @@ export default {
 			} catch (exception) {
 				if (!Axios.isCancel(exception)) {
 					console.error(exception)
-					OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
+					showError(t('spreed', 'An error occurred while fetching the participants'))
 				}
 			}
 		},
