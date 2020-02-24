@@ -84,7 +84,7 @@ class Notifier {
 	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$mentionedUserIds = $this->getMentionedUserIds($comment);
 		if (empty($mentionedUserIds)) {
-			return [];
+			return $alreadyNotifiedUsers;
 		}
 
 		$mentionedAll = array_search('all', $mentionedUserIds, true);
