@@ -165,11 +165,17 @@ class Config {
 		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
-		if (is_array($servers) && !empty($servers)) {
-			return $servers;
+		if (!is_array($servers) || empty($servers)) {
+			$servers = ['stun.nextcloud.com:443'];
 		}
 
-		return ['stun.nextcloud.com:443'];
+		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
+			$servers = array_filter($servers, static function($server) {
+				return $server !== 'stun.nextcloud.com:443';
+			});
+		}
+
+		return $servers;
 	}
 
 	/**
@@ -177,6 +183,11 @@ class Config {
 	 */
 	public function getStunServer(): string {
 		$servers = $this->getStunServers();
+
+		if (empty($servers)) {
+			return '';
+		}
+
 		// For now we use a random server from the list
 		try {
 			return $servers[random_int(0, count($servers) - 1)];
