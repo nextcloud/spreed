@@ -49,9 +49,62 @@ class ConfigTest extends TestCase {
 			->method('getAppValue')
 			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode($servers));
+		$config
+			->expects($this->once())
+			->method('getSystemValueBool')
+			->with('has_internet_connection', true)
+			->willReturn(true);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
 		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
+	}
+
+	public function testGetDefaultStunServer() {
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		$config
+			->expects($this->once())
+			->method('getAppValue')
+			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->willReturn(json_encode([]));
+		$config
+			->expects($this->once())
+			->method('getSystemValueBool')
+			->with('has_internet_connection', true)
+			->willReturn(true);
+
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$this->assertSame('stun.nextcloud.com:443', $helper->getStunServer());
+	}
+
+	public function testGetDefaultStunServerNoInternet() {
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		$config
+			->expects($this->once())
+			->method('getAppValue')
+			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->willReturn(json_encode([]));
+		$config
+			->expects($this->once())
+			->method('getSystemValueBool')
+			->with('has_internet_connection', true)
+			->willReturn(false);
+
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$this->assertSame('', $helper->getStunServer());
 	}
 
 	public function testGenerateTurnSettings() {
