@@ -41,8 +41,8 @@ const getters = {
 			const shareableFiles = []
 			for (const index in state.files[token]) {
 				const currentFile = state.files[token][index]
-				if (currentFile[1] === 'successUpload') {
-					shareableFiles.push(currentFile[0])
+				if (currentFile.status === 'successUpload') {
+					shareableFiles.push(currentFile.file)
 				}
 			}
 			return shareableFiles
@@ -61,17 +61,22 @@ const mutations = {
 		if (!state.files[token]) {
 			Vue.set(state.files, token, {})
 		}
-		Vue.set(state.files[token], Object.keys(state.files[token]).length, [file, 'toBeUploaded'])
+		Vue.set(state.files[token], Object.keys(state.files[token]).length, { file, status: 'toBeUploaded' })
 	},
 
 	// Marks a given file as failed uplosd
 	markFileAsFailedUpload(state, { token, index }) {
-		state.files[token][index][1] = 'failedUpload'
+		state.files[token][index].status = 'failedUpload'
 	},
 
 	// Marks a given file as uploaded
 	markFileAsSuccessUpload(state, { token, index }) {
-		state.files[token][index][1] = 'successUpload'
+		state.files[token][index].status = 'successUpload'
+	},
+
+	// Marks a given file as uploading
+	markFileAsUploading(state, { token, index }) {
+		state.files[token][index].status = 'uploading'
 	},
 }
 
@@ -97,10 +102,16 @@ const actions = {
 	async uploadFiles({ commit, state, getters }, token) {
 		// Iterate through the previously indexed files for a given conversation (token)
 		for (const index in state.files[token]) {
+			if (state.files[token][index].status !== 'toBeUploaded') {
+				continue
+			}
+			// Mark file as uploading to prevent a second function call to start a
+			// second upload for the same file
+			commit('markFileAsUploading', { token, index })
 			// Get the current user id
 			const userId = getters.getUserId()
 			// currentFile to be uploaded
-			const currentFile = state.files[token][index][0]
+			const currentFile = state.files[token][index].file
 			// Destination path on the server
 			const path = `/files/${userId}/` + currentFile.name
 			try {

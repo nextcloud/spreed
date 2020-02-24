@@ -31,14 +31,13 @@ import { showError } from '@nextcloud/dialogs'
  */
 const shareFile = async function(path, token) {
 	try {
-		const response = axios.post(
+		return axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
 			{
 				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
 				path: path,
 				shareWith: token,
 			})
-		return response
 	} catch (error) {
 		if (error.response
                 && error.response.data

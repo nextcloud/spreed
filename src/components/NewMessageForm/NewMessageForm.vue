@@ -266,19 +266,22 @@ export default {
 		 * @param {object} event the file input event object
 		 */
 		async processFiles(event) {
+			// Store the token in a variable to prevent changes when changing conversation
+			// when the upload is still running
+			const token = this.token
 			// The selected files array coming from the input
 			const files = Object.values(event.target.files)
 			// Process these files in the store
-			await this.$store.dispatch('addFilesToBeUploaded', { token: this.token, files })
+			await this.$store.dispatch('addFilesToBeUploaded', { token, files })
 			// Dispatch the upload action (see uploadStore)
-			await this.$store.dispatch('uploadFiles', this.token)
+			await this.$store.dispatch('uploadFiles', token)
 			// Get the files that have successfully been uploaded from the store
-			const shareableFiles = this.$store.getters.getShareableFiles(this.token)
+			const shareableFiles = this.$store.getters.getShareableFiles(token)
 			// Share each of those files in the conversation
 			for (const index in shareableFiles) {
 				// The pat of the file to share to the conversation
 				const path = '/' + shareableFiles[index].name
-				shareFile(path, this.token)
+				shareFile(path, token)
 			}
 		},
 	},
