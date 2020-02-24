@@ -57,11 +57,11 @@ const mutations = {
      * @param {*} file the file to be added to the store
      * @param {*} token the conversation's token
      */
-	addFileToBeUploaded(state, { token, index, file }) {
+	addFileToBeUploaded(state, { token, file }) {
 		if (!state.files[token]) {
 			Vue.set(state.files, token, {})
 		}
-		Vue.set(state.files[token], index, [file, 'toBeUploaded'])
+		Vue.set(state.files[token], Object.keys(state.files[token]).length, [file, 'toBeUploaded'])
 	},
 
 	// Marks a given file as failed uplosd
@@ -84,9 +84,9 @@ const actions = {
      * @param {array} files The files to be processed and added to the store
      */
 	addFilesToBeUploaded(context, { token, files }) {
-		for (let index = 0; index < files.length; index++) {
-			context.commit('addFileToBeUploaded', { token, index, file: files[index] })
-		}
+		files.forEach(file => {
+			context.commit('addFileToBeUploaded', { token, file })
+		})
 	},
 
 	/**
