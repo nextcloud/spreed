@@ -22,6 +22,7 @@
 <template>
 	<a :href="link"
 		class="container"
+		:class="{ 'is-viewer-available': isViewerAvailable }"
 		target="_blank"
 		rel="noopener noreferrer"
 		@click="showPreview">
@@ -182,6 +183,12 @@ export default {
 		/* As the file preview is an inline block the name is set as a block to
 		force it to be on its own line below the preview. */
 		display: block;
+	}
+
+	&:not(.is-viewer-available) {
+		strong:after {
+			content: " ↗";
+		}
 	}
 }
 
