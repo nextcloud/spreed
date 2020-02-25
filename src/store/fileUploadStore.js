@@ -25,6 +25,7 @@ import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
 
 const state = {
+	attachmentFolder: '/Talk',
 	files: {
 	},
 }
@@ -48,15 +49,19 @@ const getters = {
 			return shareableFiles
 		} return undefined
 	},
+
+	getAttachmentFolder: (state) => () => {
+		return state.attachmentFolder
+	},
 }
 
 const mutations = {
 	/**
-     * Adds a "file to be shared to the store"
-     * @param {*} state the state object
-     * @param {*} file the file to be added to the store
-     * @param {*} token the conversation's token
-     */
+	 * Adds a "file to be shared to the store"
+	 * @param {*} state the state object
+	 * @param {*} file the file to be added to the store
+	 * @param {*} token the conversation's token
+	 */
 	addFileToBeUploaded(state, { token, file }) {
 		if (!state.files[token]) {
 			Vue.set(state.files, token, {})
@@ -78,16 +83,26 @@ const mutations = {
 	markFileAsUploading(state, { token, index }) {
 		state.files[token][index].status = 'uploading'
 	},
+
+	/**
+	 * Set the attachmentFolder
+	 *
+	 * @param {object} state current store state;
+	 * @param {string} attachmentFolder The new target location for attachments
+	 */
+	setAttachmentFolder(state, attachmentFolder) {
+		state.attachmentFolder = attachmentFolder
+	},
 }
 
 const actions = {
 
 	/**
-     *
-     * @param {object} context The context object
-     * @param {string} token The conversation's token
-     * @param {array} files The files to be processed and added to the store
-     */
+	 *
+	 * @param {object} context The context object
+	 * @param {string} token The conversation's token
+	 * @param {array} files The files to be processed and added to the store
+	 */
 	addFilesToBeUploaded(context, { token, files }) {
 		files.forEach(file => {
 			context.commit('addFileToBeUploaded', { token, file })
@@ -113,7 +128,7 @@ const actions = {
 			// currentFile to be uploaded
 			const currentFile = state.files[token][index].file
 			// Destination path on the server
-			const path = `/files/${userId}/` + currentFile.name
+			const path = '/files/' + userId + getters.getAttachmentFolder() + '/' + currentFile.name
 			try {
 				// Upload the file
 				await client.putFileContents(path, currentFile)
@@ -126,6 +141,16 @@ const actions = {
 				commit('markFileAsFailedUpload', { token, index })
 			}
 		}
+	},
+
+	/**
+	 * Set the folder to store new attachments in
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} attachmentFolder Folder to store new attachments in
+	 */
+	setAttachmentFolder(context, attachmentFolder) {
+		context.commit('setAttachmentFolder', attachmentFolder)
 	},
 }
 

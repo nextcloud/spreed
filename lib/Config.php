@@ -68,6 +68,10 @@ class Config {
 		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
+	public function getAttachmentFolder(string $userId): string {
+		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
+	}
+
 	public function getSettings(?string $userId): array {
 		$stun = [];
 		$stunServer = $this->getStunServer();

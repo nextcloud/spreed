@@ -42,3 +42,8 @@ title: Capabilities
 ## 8.0
 * `chat-replies` - Normal chat messages can now be replied to. Check the `isReplyable` parameter on the message object.
 * `circles-support` - Conversations can be created for circles and all circle members can be added to existing conversations
+
+
+## 9.0
+* `config => attachments => allowed` - Whether the user can upload files into a chat
+* `config => attachments => folder` - User defined folder where items should be uploaded to

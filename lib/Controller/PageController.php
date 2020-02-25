@@ -40,6 +40,8 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
 use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -69,6 +71,8 @@ class PageController extends Controller {
 	private $appManager;
 	/** @var IInitialStateService */
 	private $initialStateService;
+	/** @var IRootFolder */
+	private $rootFolder;
 	/** @var Config */
 	private $config;
 
@@ -84,6 +88,7 @@ class PageController extends Controller {
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
 								IInitialStateService $initialStateService,
+								IRootFolder $rootFolder,
 								Config $config) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
@@ -96,6 +101,7 @@ class PageController extends Controller {
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
 		$this->initialStateService = $initialStateService;
+		$this->rootFolder = $rootFolder;
 		$this->config = $config;
 	}
 
@@ -210,6 +216,22 @@ class PageController extends Controller {
 			'talk', 'circles_enabled',
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
+
+		$attachmentFolder = $this->config->getAttachmentFolder($user->getUID());
+		$this->initialStateService->provideInitialState(
+			'talk', 'attachment_folder',
+			$this->config->getAttachmentFolder($user->getUID())
+		);
+
+		if ($attachmentFolder) {
+			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
+			if (!$userFolder->nodeExists($attachmentFolder)) {
+				try {
+					$userFolder->newFolder($attachmentFolder);
+				} catch (NotPermittedException $e) {
+				}
+			}
+		}
 
 		$params = [
 			'token' => $token,

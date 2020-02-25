@@ -397,6 +397,18 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+
+		/**
+		 * UserSettings
+		 */
+		[
+			'name' => 'Settings#setUserSetting',
+			'url' => '/api/{apiVersion}/settings/user',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
 
