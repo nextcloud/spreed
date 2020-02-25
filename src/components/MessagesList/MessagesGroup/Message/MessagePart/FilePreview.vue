@@ -156,6 +156,22 @@ export default {
 	image. */
 	display: inline-block;
 
+	/* Show a hover colour around the preview when navigating with the
+	 * keyboard through the file links (or hovering them with the mouse). */
+	&:hover,
+	&:focus,
+	&:active {
+		.preview {
+			background-color: var(--color-background-hover);
+
+			/* Trick to keep the same position while adding a padding to show
+			 * the background. */
+			box-sizing: content-box !important;
+			padding: 10px;
+			margin: -10px;
+		}
+	}
+
 	.preview {
 		display: block;
 		width: 128px;
