@@ -23,7 +23,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Collaboration\Collaborators;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -40,6 +43,10 @@ class Listener {
 	protected $config;
 	/** @var string[] */
 	protected $allowedGroupIds = [];
+	/** @var string */
+	protected $roomToken;
+	/** @var Room */
+	protected $room;
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,
@@ -59,11 +66,15 @@ class Listener {
 				return;
 			}
 
-			$event->setResults($listener->filterAutoCompletionResults($event->getResults()));
+			$event->setResults($listener->filterUsersAndGroupsWithoutTalk($event->getResults()));
+
+			if ($event->getItemId() !== 'new') {
+				$event->setResults($listener->filterExistingParticipants($event->getItemId(), $event->getResults()));
+			}
 		});
 	}
 
-	public function filterAutoCompletionResults(array $results): array {
+	protected function filterUsersAndGroupsWithoutTalk(array $results): array {
 		$this->allowedGroupIds = $this->config->getAllowedGroupIds();
 		if (empty($this->allowedGroupIds)) {
 			return $results;
@@ -86,12 +97,40 @@ class Listener {
 		return $results;
 	}
 
-	public function filterUserResult(array $result): bool {
+	protected function filterUserResult(array $result): bool {
 		$user = $this->userManager->get($result['value']['shareWith']);
 		return $user instanceof IUser && !$this->config->isDisabledForUser($user);
 	}
 
-	public function filterGroupResult(array $result): bool {
+	protected function filterGroupResult(array $result): bool {
 		return \in_array($result['value']['shareWith'], $this->allowedGroupIds, true);
+	}
+
+	protected function filterExistingParticipants(string $token, array $results): array {
+		try {
+			$this->room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			return $results;
+		}
+
+		if (!empty($results['users'])) {
+			$results['users'] = array_filter($results['users'], [$this, 'filterParticipantResult']);
+		}
+		if (!empty($results['exact']['users'])) {
+			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterParticipantResult']);
+		}
+
+		return $results;
+	}
+
+	protected function filterParticipantResult(array $result): bool {
+		$userId = $result['value']['shareWith'];
+
+		try {
+			$this->room->getParticipant($userId);
+			return false;
+		} catch (ParticipantNotFoundException $e) {
+			return true;
+		}
 	}
 }
