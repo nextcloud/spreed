@@ -115,6 +115,9 @@ class CapabilitiesTest extends TestCase {
 		);
 
 		$user = $this->createMock(IUser::class);
+		$user->expects($this->once())
+			->method('getUID')
+			->willReturn('uid');
 		$this->userSession->expects($this->once())
 			->method('getUser')
 			->willReturn($user);
@@ -126,7 +129,7 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->expects($this->once())
 			->method('getAttachmentFolder')
-			->with($user)
+			->with('uid')
 			->willReturn('/Talk');
 
 		$this->serverConfig->expects($this->once())
