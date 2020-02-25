@@ -29,6 +29,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Command\Listener as CommandListener;
 use OCA\Talk\Chat\Parser\Listener as ParserListener;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
+use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
@@ -99,6 +100,7 @@ class Application extends App {
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);
+		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
 		Operation::register($dispatcher);
