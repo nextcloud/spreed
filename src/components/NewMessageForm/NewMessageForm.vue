@@ -285,7 +285,18 @@ export default {
 			for (const index in shareableFiles) {
 				// The pat of the file to share to the conversation
 				const path = this.$store.getters.getAttachmentFolder() + '/' + shareableFiles[index].name
-				shareFile(path, token)
+				try {
+					// Mark current file as sharing
+					this.$store.dispatch('markFileAsSharing', { token, index })
+				} catch {
+					continue
+				}
+				try {
+					await shareFile(path, token)
+					this.$store.dispatch('markFileAsShared', { token, index })
+				} catch (exception) {
+					console.debug('An error happened when triying to share your file: ', exception)
+				}
 			}
 		},
 	},
