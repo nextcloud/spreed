@@ -21,25 +21,38 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 
 /**
  * Appends a file as a message to the messagelist.
  * @param {string} path The file path from the user's root directory
- * e.g. `/myfile.txt`
  * @param {string} token The conversation's token
- * @returns {object} the response object
+ * e.g. `/myfile.txt`
  */
-const shareFileToRoom = (path, token) => {
-	const response = axios.post(
-		generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
-		{
-			shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
-			path: path,
-			shareWith: token,
-		})
-	return response
+const shareFile = async function(path, token) {
+	try {
+		return axios.post(
+			generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
+			{
+				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
+				path: path,
+				shareWith: token,
+			})
+	} catch (error) {
+		if (error.response
+                && error.response.data
+                && error.response.data.ocs
+                && error.response.data.ocs.meta
+                && error.response.data.ocs.meta.message) {
+			console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
+			showError(error.response.data.ocs.meta.message)
+		} else {
+			console.error(`Error while sharing file: Unknown error`)
+			showError(t('spreed', 'Error while sharing file'))
+		}
+	}
 }
 
 export {
-	shareFileToRoom
+	shareFile,
 }

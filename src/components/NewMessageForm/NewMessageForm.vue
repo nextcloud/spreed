@@ -76,13 +76,12 @@
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import client from '../../services/DavClient'
-import { shareFileToRoom } from '../../services/filesSharingServices'
+import { shareFile } from '../../services/filesSharingServices'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -243,29 +242,6 @@ export default {
 			}
 		},
 
-		/**
-		 * Appends a file as a message to the messagelist.
-		 * @param {string} path The file path from the user's root directory
-		 * e.g. `/myfile.txt`
-		 */
-		async sendFile(path) {
-			try {
-				await shareFileToRoom(path, this.token)
-			} catch (error) {
-				if (error.response
-					&& error.response.data
-					&& error.response.data.ocs
-					&& error.response.data.ocs.meta
-					&& error.response.data.ocs.meta.message) {
-					console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
-					OCP.Toast.error(error.response.data.ocs.meta.message)
-				} else {
-					console.error(`Error while sharing file: Unknown error`)
-					OCP.Toast.error(t('files', 'Error while sharing file'))
-				}
-			}
-		},
-
 		async handleFileShare() {
 			picker.pick()
 				.then(async(path) => {
@@ -273,7 +249,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					this.sendFile(path)
+					shareFile(path, this.token)
 				})
 		},
 
@@ -286,25 +262,26 @@ export default {
 		},
 
 		/**
-		 * Uploads the files to the root files directory
+		 * Uploads and shares the selected files
 		 * @param {object} event the file input event object
 		 */
 		async processFiles(event) {
-			// The selected files array
+			// Store the token in a variable to prevent changes when changing conversation
+			// when the upload is still running
+			const token = this.token
+			// The selected files array coming from the input
 			const files = Object.values(event.target.files)
-			// process each file in the array
-			for (let i = 0; i < files.length; i++) {
-				const userId = this.$store.getters.getUserId()
-				const path = `/files/${userId}/` + files[i].name
-				try {
-					// Upload the file
-					await client.putFileContents(path, files[i])
-					// Share the file to the talk room
-					this.sendFile('/' + files[i].name)
-				} catch (exception) {
-					console.debug('Error while uploading file:' + exception)
-					showError(t('spreed', 'Error while uploading file'))
-				}
+			// Process these files in the store
+			await this.$store.dispatch('addFilesToBeUploaded', { token, files })
+			// Dispatch the upload action (see uploadStore)
+			await this.$store.dispatch('uploadFiles', token)
+			// Get the files that have successfully been uploaded from the store
+			const shareableFiles = this.$store.getters.getShareableFiles(token)
+			// Share each of those files in the conversation
+			for (const index in shareableFiles) {
+				// The pat of the file to share to the conversation
+				const path = '/' + shareableFiles[index].name
+				shareFile(path, token)
 			}
 		},
 	},
