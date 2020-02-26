@@ -26,8 +26,6 @@
  *
  */
 
-/* global $ */
-
 /* eslint-disable no-console */
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
@@ -625,29 +623,29 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	function checkPeerMedia(peer, track, mediaType) {
-		const defer = $.Deferred()
-		peer.pc.getStats(track).then(function(stats) {
-			let result = false
-			stats.forEach(function(statsReport) {
-				if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
-					return
-				}
+		return new Promise((resolve, reject) => {
+			peer.pc.getStats(track).then(function(stats) {
+				let result = false
+				stats.forEach(function(statsReport) {
+					if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
+						return
+					}
 
-				if (statsReport.bytesReceived > 0) {
-					webrtc.emit('unmute', {
-						id: peer.id,
-						name: mediaType,
-					})
-					result = true
+					if (statsReport.bytesReceived > 0) {
+						webrtc.emit('unmute', {
+							id: peer.id,
+							name: mediaType,
+						})
+						result = true
+					}
+				})
+				if (result) {
+					resolve()
+				} else {
+					reject(new Error())
 				}
 			})
-			if (result) {
-				defer.resolve()
-			} else {
-				defer.reject()
-			}
 		})
-		return defer
 	}
 
 	function stopPeerCheckMedia(peer) {
@@ -669,7 +667,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, video, 'video').then(function() {
 					clearInterval(peer.check_video_interval)
 					peer.check_video_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 		peer.check_audio_interval = setInterval(function() {
@@ -677,7 +675,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, audio, 'audio').then(function() {
 					clearInterval(peer.check_audio_interval)
 					peer.check_audio_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 	}
