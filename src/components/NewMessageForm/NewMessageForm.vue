@@ -39,14 +39,14 @@
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button">
 						<ActionButton
-							v-if="!currentUserIsGuest"
+							v-if="canShareAndUploadFiles"
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
 							{{ t('spreed', 'Upload new files') }}
 						</ActionButton>
 						<ActionButton
-							v-if="!currentUserIsGuest"
+							v-if="canShareAndUploadFiles"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
@@ -82,6 +82,7 @@ import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { shareFile } from '../../services/filesSharingServices'
+import { CONVERSATION } from '../../constants'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -113,11 +114,19 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+		conversation() {
+			return this.$store.getters.conversations[this.token] || {
+				readOnly: CONVERSATION.STATE.READ_WRITE,
+			}
+		},
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
+		},
+		canShareAndUploadFiles() {
+			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 		},
 
 		attachmentFolder() {
