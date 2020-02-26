@@ -43,7 +43,7 @@
 		</div>
 		<div class="mediaIndicator">
 			<button v-show="!connectionStateFailedNoRestart"
-				class="muteIndicator forced-white icon-audio-off"
+				class="muteIndicator forced-white"
 				:class="audioButtonClass"
 				disabled="true" />
 			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
@@ -155,8 +155,8 @@ export default {
 
 		audioButtonClass() {
 			return {
-				'audio-on': this.model.attributes.audioAvailable,
-				'audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
+				'icon-audio': this.model.attributes.audioAvailable,
+				'icon-audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
 			}
 		},
 
@@ -286,14 +286,14 @@ export default {
 	}
 }
 
-.muteIndicator.audio-on,
-.muteIndicator:not(.audio-on):not(.audio-off),
+.muteIndicator.icon-audio,
+.muteIndicator:not(.icon-audio):not(.icon-audio-off),
 .screensharingIndicator.screen-off,
 .iceFailedIndicator.not-failed {
 	display: none;
 }
 
-.muteIndicator.audio-off,
+.muteIndicator.icon-audio-off,
 .hideRemoteVideo.icon-video-off {
 	opacity: .7;
 }
