@@ -98,11 +98,7 @@ Signaling.Base.prototype.on = function(ev, handler) {
 	case 'turnservers':
 		servers = this.settings[ev] || []
 		if (servers.length) {
-			// The caller expects the handler to be called when the data
-			// is available, so defer to simulate a delayed response.
-			// FIXME is defer needed? _.defer(function() {
 			handler(servers)
-			// FIXME is defer needed? })
 		}
 		break
 	}
@@ -941,7 +937,7 @@ Signaling.Standalone.prototype._doLeaveRoom = function(token) {
 		console.log('Left', data)
 		this.signalingRoomJoined = null
 		// Any users we previously had in the room also "left" for us.
-		const leftUsers = _.keys(this.joinedUsers)
+		const leftUsers = Object.keys(this.joinedUsers)
 		if (leftUsers.length) {
 			this._trigger('usersLeft', [leftUsers])
 		}
@@ -980,13 +976,13 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 				this.reconnected = false
 				// The browser reconnected, some of the previous sessions
 				// may now no longer exist.
-				leftUsers = _.extend({}, this.joinedUsers)
+				leftUsers = Object.assign({}, this.joinedUsers)
 			}
 			for (i = 0; i < joinedUsers.length; i++) {
 				this.joinedUsers[joinedUsers[i].sessionid] = true
 				delete leftUsers[joinedUsers[i].sessionid]
 			}
-			leftUsers = _.keys(leftUsers)
+			leftUsers = Object.keys(leftUsers)
 			if (leftUsers.length) {
 				this._trigger('usersLeft', [leftUsers])
 			}
