@@ -43,9 +43,11 @@
 		</div>
 		<div class="mediaIndicator">
 			<button v-show="!connectionStateFailedNoRestart"
+				v-tooltip="audioButtonTooltip"
 				class="muteIndicator forced-white"
 				:class="audioButtonClass"
-				disabled="true" />
+				:disabled="!model.attributes.audioAvailable"
+				@click="forceMute" />
 			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 				v-tooltip="videoButtonTooltip"
 				class="hideRemoteVideo forced-white"
@@ -160,6 +162,14 @@ export default {
 			}
 		},
 
+		audioButtonTooltip() {
+			if (this.model.attributes.audioAvailable) {
+				return t('spreed', 'Mute')
+			}
+
+			return null
+		},
+
 		videoButtonClass() {
 			return {
 				'icon-video': this.sharedData.videoEnabled,
@@ -231,6 +241,10 @@ export default {
 			}
 		},
 
+		forceMute() {
+			this.model.forceMute()
+		},
+
 		toggleVideo() {
 			this.sharedData.videoEnabled = !this.sharedData.videoEnabled
 		},
@@ -286,7 +300,6 @@ export default {
 	}
 }
 
-.muteIndicator.icon-audio,
 .muteIndicator:not(.icon-audio):not(.icon-audio-off),
 .screensharingIndicator.screen-off,
 .iceFailedIndicator.not-failed {
