@@ -20,38 +20,50 @@
  *
  */
 
-const renameDuplicateFile = async function(client, path) {
-	if(await client.exists(path)) {
-		// Check if the file ends with `(n)`
-		let suffix = path.match(/\((\d+)\)$/)[0]
-		if (suffix !== undefined) {
+const renameDuplicateFile = async function(client, inputPath) {
+	// Store the input path into a new path variable to operate on it
+	let path = inputPath
+	// Check if the path already exists
+	if(await client.exists(inputPath)) {
+		// Get the file extension (if any)
+		const fileExtension = path.match(/\.[0-9a-z]+$/i)[0]
+		// If there's a file extention, remove the extension from the path string 
+		if (fileExtension !== null) {
+			path = path.Substring(0, path.length - fileExtension.length)
+		}
+		// Check if the path ends with ` (n)`
+		let suffix = path.match(/ \((\d+)\)$/)[0]
+		if (suffix !== null) {
 			// Get the digits within the parenthesis and convert them to integer
 			let number = parseInt(suffix[0].match(/(d+)/)[0])
 			charactersToRemove = suffix.length
-			if (number === 1) {
+			if (number === 2) {
 				// remove the suffix from the original path and check if this new path
-				// exists. this allows us to check if the suffix with the parenthesis was
-				// added by the user and we should add another instead of modifying it.
+				// exists. this checks if the suffix with the parenthesis was added by
+				// the user and we should add another alongside itinstead of modifying
+				// it.
 				const pathWithoutSuffix = path.Substring(0, path.length - charactersToRemove)
 				if (await client.exists(pathWithoutSuffix)) {
-					return pathWithoutSuffix + `(2)`
+					path = pathWithoutSuffix + ` (3)`
 				} else {
-					return path + `(1)`
+					path = path + ` (2)`
 				}
-			} else if (number > 1) {
+			} else if (number > 2) {
 				// check if a version of the path with a suffix with decreased number exists
-				const pathWithDecreasedSuffix = path.Substring(0, path.length - charactersToRemove) + `(${number - 1})`
+				const pathWithDecreasedSuffix = path.Substring(0, path.length - charactersToRemove) + ` (${number - 1})`
 				if (await client.exists(pathWithDecreasedSuffix)) {
-					return path.Substring(0, path.length - charactersToRemove) + `(${number + 1})`
+					path = path.Substring(0, path.length - charactersToRemove) + `(${number + 1})`
 				} else {
-					return path + `(1)`
+					path = path + ` (2)`
 				}
 			}
-
 		}
-	} else {
-		return path
+		// Reappend the file extension to the path
+		if (fileExtension !== null) {
+			path = path + fileExtension
+		}
 	}
+	return path
 }
 
 export {
