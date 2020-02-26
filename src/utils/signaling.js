@@ -26,8 +26,6 @@
  *
  */
 
-/* global $ */
-
 /* eslint-disable no-console */
 
 import {
@@ -212,30 +210,6 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 			}.bind(this))
 			.catch(function(result) {
 				reject(result)
-
-				if (result.status === 403) {
-					// This should not happen anymore since we ask for the password before
-					// even trying to join the call, but let's keep it for now.
-					OC.dialogs.prompt(
-						t('spreed', 'Please enter the password for this call'),
-						t('spreed', 'Password required'),
-						function(result, password) {
-							if (result && password !== '') {
-								this.joinRoom(token, password)
-							}
-						}.bind(this),
-						true,
-						t('spreed', 'Password'),
-						true
-					).then(function() {
-						const $dialog = $('.oc-dialog:visible')
-						$dialog.find('.ui-icon').remove()
-
-						const $buttons = $dialog.find('button')
-						$buttons.eq(0).text(t('core', 'Cancel'))
-						$buttons.eq(1).text(t('core', 'Submit'))
-					})
-				}
 			}.bind(this))
 	})
 }
