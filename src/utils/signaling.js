@@ -450,7 +450,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	request(this.currentRoomToken)
 		.then(function(result) {
 			this.pullMessagesFails = 0
-			$.each(result.data.ocs.data, function(id, message) {
+			result.data.ocs.data.forEach(message => {
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
 				case 'usersInRoom':
@@ -468,7 +468,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					break
 				}
 				this._trigger('onAfterReceiveMessage', [message])
-			}.bind(this))
+			})
 			this._startPullingMessages()
 		}.bind(this))
 		.catch(function(jqXHR, textStatus/*, errorThrown */) {
