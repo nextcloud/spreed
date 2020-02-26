@@ -169,6 +169,7 @@ const actions = {
 	 * Mark a file as shared
 	 * @param {object} context default store context;
 	 * @param {object} param1 conversation token and original file index
+	 * @throws {Error} when the item is already being shared by another async call
 	 */
 	markFileAsSharing({ commit, state }, { token, index }) {
 		if (state.files[token][index].status !== 'successUpload') {
