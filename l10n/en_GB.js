@@ -93,6 +93,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Exit fullscreen (f)",
     "Fullscreen (f)" : "Fullscreen (f)",
     "Limit to groups" : "Limit to groups",
+    "Limit app usage to groups." : "Limit app usage to groups.",
     "Save changes" : "Save changes",
     "Saved!" : "Saved!",
     "Beta" : "Beta",
