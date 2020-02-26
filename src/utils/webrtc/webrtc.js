@@ -667,7 +667,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, video, 'video').then(function() {
 					clearInterval(peer.check_video_interval)
 					peer.check_video_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 		peer.check_audio_interval = setInterval(function() {
@@ -675,7 +675,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, audio, 'audio').then(function() {
 					clearInterval(peer.check_audio_interval)
 					peer.check_audio_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 	}
