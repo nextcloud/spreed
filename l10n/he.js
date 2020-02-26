@@ -99,6 +99,7 @@ OC.L10N.register(
     "Limit to groups" : "הגבלה לקבוצות",
     "Limit app usage to groups." : "להגביל את השימוש ביישומון לקבוצות.",
     "Save changes" : "שמירת שינויים",
+    "Saving …" : "מתבצעת שמירה…",
     "Saved!" : "נשמר!",
     "Name" : "שם",
     "General settings" : "הגדרות כלליות",
