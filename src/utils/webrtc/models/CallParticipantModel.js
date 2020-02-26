@@ -132,6 +132,14 @@ CallParticipantModel.prototype = {
 		}
 	},
 
+	forceMute: function() {
+		if (!this._peer) {
+			return
+		}
+
+		this._peer.send('forceMute')
+	},
+
 	_handleUnmute: function(data) {
 		if (!this._peer || this._peer.id !== data.id) {
 			return

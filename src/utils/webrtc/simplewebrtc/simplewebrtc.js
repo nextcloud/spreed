@@ -114,6 +114,8 @@ function SimpleWebRTC(opts) {
 				self.emit('createdPeer', peer)
 			}
 			peer.handleMessage(message)
+		} else if (message.type === 'forceMute') {
+			self.mute()
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
 				if (message.sid) {
