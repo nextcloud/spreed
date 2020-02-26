@@ -62,6 +62,7 @@
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			class="new-message-form__advancedinput"
+			data-lt-active="false"
 			@keydown.enter="handleKeydown"
 			@paste="onPaste" />
 	</At>
