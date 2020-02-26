@@ -80,6 +80,15 @@
 		@include icon-color('video', 'actions', 'E9322D', 1, true);
 	}
 
+	.icon-start-call,
+	.icon-incoming-call {
+		@include icon-color('video', 'actions', $color-primary-text, 1, true);
+	}
+
+	.icon-leave-call {
+		@include icon-color('video-off', 'actions', $color-primary-text, 1, true);
+	}
+
 	.icon-delete-critical {
 		@include icon-color('delete', 'actions', $color-error, 1, true);
 		&:hover,
