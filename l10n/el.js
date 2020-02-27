@@ -280,7 +280,6 @@ OC.L10N.register(
     "Display name: " : "Εμφανιζόμενο όνομα:",
     "Edit" : "Επεξεργασία",
     "Leave call" : "Αποχώρηση από την κλήση",
-    "Joining call" : "Συμμετοχή σε κλήση",
     "Start call" : "Έναρξη κλήσης",
     "Exit fullscreen (f)" : "Έξοδος πλήρους οθόνης (f)",
     "Fullscreen (f)" : "Πλήρης οθόνη (f)",

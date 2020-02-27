@@ -279,7 +279,6 @@ OC.L10N.register(
     "Display name: " : "Visningsnamn:",
     "Edit" : "Ändra",
     "Leave call" : "Lämna samtalet",
-    "Joining call" : "Gå med i samtalet",
     "Start call" : "Starta samtal",
     "Exit fullscreen (f)" : "Avsluta fullskärmsläge (f)",
     "Fullscreen (f)" : "Fullskärm (f)",

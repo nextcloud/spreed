@@ -228,7 +228,6 @@ OC.L10N.register(
     "Projects" : "Пројекти",
     "Edit" : "Измени",
     "Leave call" : "Напусти разговор",
-    "Joining call" : "Придружујем се разговору",
     "Start call" : "Почни позив",
     "Exit fullscreen (f)" : "Напусти цео екран (f)",
     "Fullscreen (f)" : "Цео екран (f)",

@@ -269,7 +269,6 @@ OC.L10N.register(
     "Display name: " : "Weergavenaam:",
     "Edit" : "Bewerk",
     "Leave call" : "Verlaat gesprek",
-    "Joining call" : "Deelnemend aan gesprek",
     "Start call" : "Begin gesprek",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
     "Fullscreen (f)" : "Volledig scherm (f)",
