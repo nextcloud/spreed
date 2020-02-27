@@ -290,6 +290,10 @@ class Room {
 		$properties = [
 			'name' => $this->getDisplayName($userId),
 			'type' => $this->getType(),
+			'lobby-state' => $this->getLobbyState(),
+			'lobby-timer' => $this->getLobbyTimer(),
+			'read-only' => $this->getReadOnly(),
+			'active-since' => $this->getActiveSince(),
 		];
 
 		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
