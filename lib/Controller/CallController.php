@@ -102,7 +102,6 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * @return DataResponse
 	 */
