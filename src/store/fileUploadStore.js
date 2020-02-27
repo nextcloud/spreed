@@ -39,15 +39,17 @@ const getters = {
 	// Returns all the files that have been successfully uploaded
 	getShareableFiles: (state) => (token) => {
 		if (state.files[token]) {
-			const shareableFiles = []
+			const shareableFiles = {}
 			for (const index in state.files[token]) {
 				const currentFile = state.files[token][index]
 				if (currentFile.status === 'successUpload') {
-					shareableFiles.push(currentFile.file)
+					shareableFiles[index] = (currentFile.file)
 				}
 			}
 			return shareableFiles
-		} return undefined
+		} else {
+			return {}
+		}
 	},
 
 	getAttachmentFolder: (state) => () => {
@@ -82,6 +84,16 @@ const mutations = {
 	// Marks a given file as uploading
 	markFileAsUploading(state, { token, index }) {
 		state.files[token][index].status = 'uploading'
+	},
+
+	// Marks a given file as sharing
+	markFileAsSharing(state, { token, index }) {
+		state.files[token][index].status = 'sharing'
+	},
+
+	// Marks a given file as shared
+	markFileAsShared(state, { token, index }) {
+		state.files[token][index].status = 'shared'
 	},
 
 	/**
@@ -152,6 +164,29 @@ const actions = {
 	setAttachmentFolder(context, attachmentFolder) {
 		context.commit('setAttachmentFolder', attachmentFolder)
 	},
+
+	/**
+	 * Mark a file as shared
+	 * @param {object} context default store context;
+	 * @param {object} param1 conversation token and original file index
+	 * @throws {Error} when the item is already being shared by another async call
+	 */
+	markFileAsSharing({ commit, state }, { token, index }) {
+		if (state.files[token][index].status !== 'successUpload') {
+			throw new Error('Item is already being shared')
+		}
+		commit('markFileAsSharing', { token, index })
+	},
+
+	/**
+	 * Mark a file as shared
+	 * @param {object} context default store context;
+	 * @param {object} param1 conversation token and original file index
+	 */
+	markFileAsShared(context, { token, index }) {
+		context.commit('markFileAsShared', { token, index })
+	},
+
 }
 
 export default { state, mutations, getters, actions }
