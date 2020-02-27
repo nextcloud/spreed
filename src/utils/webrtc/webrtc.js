@@ -29,6 +29,7 @@
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
+import { showError } from '@nextcloud/dialogs'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -747,7 +748,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		localStreamRequestedTimeout = null
 
 		if (localStreamRequestedTimeoutNotification) {
-			OC.Notification.hide(localStreamRequestedTimeoutNotification)
+			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
 		}
 	}
@@ -763,7 +764,9 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		localStreamRequestedTimeout = setTimeout(function() {
 			// FIXME emit an event and handle it as needed instead of
 			// calling UI code from here.
-			localStreamRequestedTimeoutNotification = OC.Notification.show(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), { type: 'error' })
+			localStreamRequestedTimeoutNotification = showError(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
+				timeout: 10,
+			})
 		}, 10000)
 	})
 
@@ -807,8 +810,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			console.error('Error while accessing microphone & camera: ', error.message || error.name)
 		}
 
-		OC.Notification.show(message, {
-			type: 'error',
+		showError(message, {
 			timeout: 15,
 		})
 	})

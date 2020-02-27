@@ -34,6 +34,7 @@ import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 
 const Signaling = {
 	Base: {},
@@ -365,8 +366,7 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		}.bind(this))
 		.catch(function(err) {
 			console.error(err)
-			OC.Notification.show('Sending signaling message with callback has failed.', {
-				type: 'error',
+			showError(t('spreed', 'Sending signaling message has failed.'), {
 				timeout: 15,
 			})
 		})
