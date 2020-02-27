@@ -280,7 +280,6 @@ OC.L10N.register(
     "Display name: " : "Nome visualizzato:",
     "Edit" : "Modifica",
     "Leave call" : "Lascia la chiamata",
-    "Joining call" : "Ingresso nella chiamata",
     "Start call" : "Inizia chiamata",
     "Exit fullscreen (f)" : "Esci da schermo intero (t)",
     "Fullscreen (f)" : "Schermo intero (t)",
