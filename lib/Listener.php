@@ -65,17 +65,6 @@ class Listener {
 		});
 
 		Util::connectHook('OC_User', 'logout', self::class, 'logoutUserStatic');
-
-		$dispatcher->addListener(IManager::class . '::filterResults', static function(AutoCompleteEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
-
-			if ($event->getItemType() !== 'call') {
-				return;
-			}
-
-			$event->setResults($listener->filterAutoCompletionResults($event->getResults()));
-		});
 	}
 
 	/**
@@ -113,37 +102,5 @@ class Listener {
 			}
 			$room->leaveRoom($user->getUID(), $sessionId);
 		}
-	}
-
-	public function filterAutoCompletionResults(array $results): array {
-		$this->allowedGroupIds = $this->config->getAllowedGroupIds();
-		if (empty($this->allowedGroupIds)) {
-			return $results;
-		}
-
-		if (!empty($results['groups'])) {
-			$results['groups'] = array_filter($results['groups'], [$this, 'filterGroupResult']);
-		}
-		if (!empty($results['exact']['groups'])) {
-			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterGroupResult']);
-		}
-
-		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterUserResult']);
-		}
-		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterUserResult']);
-		}
-
-		return $results;
-	}
-
-	public function filterUserResult(array $result): bool {
-		$user = $this->userManager->get($result['value']['shareWith']);
-		return $user instanceof IUser && !$this->config->isDisabledForUser($user);
-	}
-
-	public function filterGroupResult(array $result): bool {
-		return \in_array($result['value']['shareWith'], $this->allowedGroupIds, true);
 	}
 }
