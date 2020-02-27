@@ -20,52 +20,46 @@
  *
  */
 
-const renameDuplicateFile = async function(client, inputPath) {
+/**
+  * Checks the existence of a path in a folder and if a match is found, returns
+  * a unique path for that folder.
+  * @param {object} client The webdav client object
+  * @param {string} inputPath The path whose existence in the destination is to
+  * be checked
+  * @returns {string} The unique path
+  */
+
+const findUniquePath = async function(client, inputPath) {
+	// Return the input path if it doesn't exist in the destination folder
+	if (await client.exists(inputPath) === false) {
+		return inputPath
+	}
 	// Store the input path into a new path variable to operate on it
 	let path = inputPath
-	// Check if the path already exists
-	if(await client.exists(inputPath)) {
-		// Get the file extension (if any)
-		const fileExtension = path.match(/\.[0-9a-z]+$/i)[0]
-		// If there's a file extention, remove the extension from the path string 
-		if (fileExtension !== null) {
-			path = path.Substring(0, path.length - fileExtension.length)
-		}
-		// Check if the path ends with ` (n)`
-		let suffix = path.match(/ \((\d+)\)$/)[0]
-		if (suffix !== null) {
-			// Get the digits within the parenthesis and convert them to integer
-			let number = parseInt(suffix[0].match(/(d+)/)[0])
-			charactersToRemove = suffix.length
-			if (number === 2) {
-				// remove the suffix from the original path and check if this new path
-				// exists. this checks if the suffix with the parenthesis was added by
-				// the user and we should add another alongside itinstead of modifying
-				// it.
-				const pathWithoutSuffix = path.Substring(0, path.length - charactersToRemove)
-				if (await client.exists(pathWithoutSuffix)) {
-					path = pathWithoutSuffix + ` (3)`
-				} else {
-					path = path + ` (2)`
-				}
-			} else if (number > 2) {
-				// check if a version of the path with a suffix with decreased number exists
-				const pathWithDecreasedSuffix = path.Substring(0, path.length - charactersToRemove) + ` (${number - 1})`
-				if (await client.exists(pathWithDecreasedSuffix)) {
-					path = path.Substring(0, path.length - charactersToRemove) + `(${number + 1})`
-				} else {
-					path = path + ` (2)`
-				}
-			}
-		}
-		// Reappend the file extension to the path
-		if (fileExtension !== null) {
-			path = path + fileExtension
-		}
+	// Get the file extension (if any)
+	const fileExtension = path.match(/\.[0-9a-z]+$/i)[0]
+	// If there's a file extention, remove it from the path string
+	if (fileExtension !== null) {
+		path = path.Substring(0, path.length - fileExtension.length)
 	}
-	return path
+	// Check if the path ends with ` (n)`
+	const suffix = path.match(/ \((\d+)\)$/)[0]
+	// Initialise a pathwithout suffix variable
+	let pathWithoutSuffix = path
+	if (suffix !== null) {
+		// remove the suffix if any
+		pathWithoutSuffix = path.Substring(0, path.length - suffix.length)
+	}
+	// Loop untile a unique path is found
+	for (const number = 2; true; number++) {
+		const uniquePath = pathWithoutSuffix + ` (${number})` + fileExtension ? fileExtension : ''
+		if (await client.exists(path) === false) {
+			return uniquePath
+		}
+
+	}
 }
 
 export {
-    renameDuplicateFile,
+	findUniquePath,
 }
