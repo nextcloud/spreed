@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-console */
-
 import {
 	fetchSignalingSettings,
 	pullSignalingMessages,
@@ -195,7 +193,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 			password: password,
 		})
 			.then(function(result) {
-				console.log('Joined', result)
+				console.debug('Joined', result)
 				this.currentRoomToken = token
 				this._trigger('joinRoom', [token])
 				resolve()
@@ -343,7 +341,7 @@ Signaling.Internal.prototype.on = function(ev/*, handler */) {
 
 Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
 	if (newSession) {
-		console.log('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used')
+		console.warn('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used')
 	}
 
 	if (flags !== undefined) {
@@ -390,9 +388,9 @@ Signaling.Internal.prototype._doLeaveRoom = function(token) {
 
 Signaling.Internal.prototype.sendCallMessage = function(data) {
 	if (data.type === 'answer') {
-		console.log('ANSWER', data)
+		console.debug('ANSWER', data)
 	} else if (data.type === 'offer') {
-		console.log('OFFER', data)
+		console.debug('OFFER', data)
 	}
 	this.spreedArrayConnection.push({
 		ev: 'message',
@@ -434,7 +432,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					this._trigger('message', [message.data])
 					break
 				default:
-					console.log('Unknown Signaling Message')
+					console.error('Unknown Signaling Message', message)
 					break
 				}
 				this._trigger('onAfterReceiveMessage', [message])
@@ -480,7 +478,7 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 		this.spreedArrayConnection.splice(0, pendingMessagesLength)
 		this.isSendingMessages = false
 	}.bind(this)).catch(function(/* xhr, textStatus, errorThrown */) {
-		console.log('Sending pending signaling messages has failed.')
+		console.error('Sending pending signaling messages has failed.')
 		this.isSendingMessages = false
 	}.bind(this))
 }
@@ -524,7 +522,7 @@ Signaling.Standalone.prototype.reconnect = function() {
 	// Wiggle interval a little bit to prevent all clients from connecting
 	// simultaneously in case the server connection is interrupted.
 	const interval = this.reconnectIntervalMs - (this.reconnectIntervalMs / 2) + (this.reconnectIntervalMs * Math.random())
-	console.log('Reconnect in', interval)
+	console.info('Reconnect in', interval)
 	this.reconnected = true
 	this.reconnectTimer = window.setTimeout(function() {
 		this.reconnectTimer = null
@@ -541,7 +539,7 @@ Signaling.Standalone.prototype.reconnect = function() {
 }
 
 Signaling.Standalone.prototype.connect = function() {
-	console.log('Connecting to', this.url)
+	console.debug('Connecting to', this.url)
 	this.callbacks = {}
 	this.id = 1
 	this.pendingMessages = []
@@ -550,16 +548,16 @@ Signaling.Standalone.prototype.connect = function() {
 	this.socket = new WebSocket(this.url)
 	window.signalingSocket = this.socket
 	this.socket.onopen = function(event) {
-		console.log('Connected', event)
+		console.debug('Connected', event)
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		this.sendHello()
 	}.bind(this)
 	this.socket.onerror = function(event) {
-		console.log('Error', event)
+		console.error('Error', event)
 		this.reconnect()
 	}.bind(this)
 	this.socket.onclose = function(event) {
-		console.log('Close', event)
+		console.debug('Close', event)
 		this.reconnect()
 	}.bind(this)
 	this.socket.onmessage = function(event) {
@@ -567,7 +565,7 @@ Signaling.Standalone.prototype.connect = function() {
 		if (typeof (data) === 'string') {
 			data = JSON.parse(data)
 		}
-		console.log('Received', data)
+		console.debug('Received', data)
 		const id = data.id
 		if (id && this.callbacks.hasOwnProperty(id)) {
 			const cb = this.callbacks[id]
@@ -601,7 +599,7 @@ Signaling.Standalone.prototype.connect = function() {
 			break
 		default:
 			if (!id) {
-				console.log('Ignore unknown event', data)
+				console.error('Ignore unknown event', data)
 			}
 			break
 		}
@@ -703,14 +701,14 @@ Signaling.Standalone.prototype.doSend = function(msg, callback) {
 		this.callbacks[id] = callback
 		msg['id'] = '' + id
 	}
-	console.log('Sending', msg)
+	console.debug('Sending', msg)
 	this.socket.send(JSON.stringify(msg))
 }
 
 Signaling.Standalone.prototype.sendHello = function() {
 	let msg
 	if (this.resumeId) {
-		console.log('Trying to resume session', this.sessionId)
+		console.debug('Trying to resume session', this.sessionId)
 		msg = {
 			'type': 'hello',
 			'hello': {
@@ -740,7 +738,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 }
 
 Signaling.Standalone.prototype.helloResponseReceived = function(data) {
-	console.log('Hello response received', data)
+	console.debug('Hello response received', data)
 	if (data.type !== 'hello') {
 		if (this.resumeId) {
 			// Resuming the session failed, reconnect as new session.
@@ -758,7 +756,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	const resumedSession = !!this.resumeId
 	this.connected = true
 	if (this._forceReconnect && resumedSession) {
-		console.log('Perform pending forced reconnect')
+		console.info('Perform pending forced reconnect')
 		this.forceReconnect(true)
 		return
 	}
@@ -813,7 +811,7 @@ Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
 		// If we would join without a connection to the signaling server here,
 		// the room would be re-joined again in the "helloResponseReceived"
 		// callback, leading to two entries for anonymous participants.
-		console.log('Not connected to signaling server yet, defer joining room', token)
+		console.info('Not connected to signaling server yet, defer joining room', token)
 		this.currentRoomToken = token
 		return this._pendingJoinRoomPromise
 	}
@@ -839,11 +837,11 @@ Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
 
 Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
 	if (!this.sessionId) {
-		console.log('No hello response received yet, not joining room', token)
+		console.error('No hello response received yet, not joining room', token)
 		return
 	}
 
-	console.log('Join room', token)
+	console.debug('Join room', token)
 	this.doSend({
 		'type': 'room',
 		'room': {
@@ -860,7 +858,7 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 
 Signaling.Standalone.prototype.joinCall = function(token, flags) {
 	if (this.signalingRoomJoined !== token) {
-		console.log('Not joined room yet, not joining call', token)
+		console.debug('Not joined room yet, not joining call', token)
 		this.pendingJoinCall = {
 			token: token,
 			flags: flags,
@@ -882,7 +880,7 @@ Signaling.Standalone.prototype._leaveCallSuccess = function(/* token */) {
 }
 
 Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
-	console.log('Joined', data, token)
+	console.debug('Joined', data, token)
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
 		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags)
@@ -901,14 +899,14 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 }
 
 Signaling.Standalone.prototype._doLeaveRoom = function(token) {
-	console.log('Leave room', token)
+	console.debug('Leave room', token)
 	this.doSend({
 		'type': 'room',
 		'room': {
 			'roomid': '',
 		},
 	}, function(data) {
-		console.log('Left', data)
+		console.debug('Left', data)
 		this.signalingRoomJoined = null
 		// Any users we previously had in the room also "left" for us.
 		const leftUsers = Object.keys(this.joinedUsers)
@@ -931,7 +929,7 @@ Signaling.Standalone.prototype.processEvent = function(data) {
 		this.processRoomParticipantsEvent(data)
 		break
 	default:
-		console.log('Unsupported event target', data)
+		console.error('Unsupported event target', data)
 		break
 	}
 }
@@ -944,7 +942,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	case 'join':
 		joinedUsers = data.event.join || []
 		if (joinedUsers.length) {
-			console.log('Users joined', joinedUsers)
+			console.debug('Users joined', joinedUsers)
 			let leftUsers = {}
 			if (this.reconnected) {
 				this.reconnected = false
@@ -967,7 +965,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	case 'leave':
 		leftSessionIds = data.event.leave || []
 		if (leftSessionIds.length) {
-			console.log('Users left', leftSessionIds)
+			console.debug('Users left', leftSessionIds)
 			for (i = 0; i < leftSessionIds.length; i++) {
 				delete this.joinedUsers[leftSessionIds[i]]
 			}
@@ -979,7 +977,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 		this.processRoomMessageEvent(data.event.message.data)
 		break
 	default:
-		console.log('Unknown room event', data)
+		console.error('Unknown room event', data)
 		break
 	}
 }
@@ -991,12 +989,12 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 		EventBus.$emit('shouldRefreshChatMessages')
 		break
 	default:
-		console.log('Unknown room message event', data)
+		console.error('Unknown room message event', data)
 	}
 }
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
-	console.log('Room list event', data)
+	console.debug('Room list event', data)
 	EventBus.$emit('shouldRefreshConversations')
 }
 
@@ -1008,7 +1006,7 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 		EventBus.$emit('shouldRefreshConversations')
 		break
 	default:
-		console.log('Unknown room participant event', data)
+		console.error('Unknown room participant event', data)
 		break
 	}
 }
@@ -1023,7 +1021,7 @@ Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType) {
 		// Got a user object.
 		sessionid = sessionid.sessionId || sessionid.sessionid
 	}
-	console.log('Request offer from', sessionid)
+	console.debug('Request offer from', sessionid)
 	this.doSend({
 		'type': 'message',
 		'message': {
@@ -1052,7 +1050,7 @@ Signaling.Standalone.prototype.sendOffer = function(sessionid, roomType) {
 		// Got a user object.
 		sessionid = sessionid.sessionId || sessionid.sessionid
 	}
-	console.log('Send offer to', sessionid)
+	console.debug('Send offer to', sessionid)
 	this.doSend({
 		'type': 'message',
 		'message': {
