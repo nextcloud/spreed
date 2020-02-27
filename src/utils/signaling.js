@@ -208,7 +208,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 			}.bind(this))
 			.catch(function(result) {
 				reject(result)
-			}.bind(this))
+			})
 	})
 }
 
