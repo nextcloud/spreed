@@ -155,6 +155,9 @@ export default {
 	},
 
 	beforeDestroy() {
+		if (!getCurrentUser()) {
+			EventBus.$off('shouldRefreshConversations', this.refreshCurrentConversation)
+		}
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 
@@ -163,6 +166,7 @@ export default {
 			EventBus.$once('joinedConversation', () => {
 				this.fixmeDelayedSetupOfGuestUsers()
 			})
+			EventBus.$on('shouldRefreshConversations', this.refreshCurrentConversation)
 		}
 
 		if (this.$route.name === 'conversation') {
@@ -199,7 +203,7 @@ export default {
 				&& !this.$store.getters.conversations[this.token]) {
 				if (!params.singleConversation) {
 					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
-					this.fetchSingleConversation(this.token)
+					this.refreshCurrentConversation()
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 					this.$router.push('/apps/spreed/not-found')
@@ -278,11 +282,15 @@ export default {
 		fixmeDelayedSetupOfGuestUsers() {
 			// FIXME Refresh the data now that the user joined the conversation
 			// The join request returns this data already, but it's lost in the signaling code
-			this.fetchSingleConversation(this.token)
+			this.refreshCurrentConversation()
 
 			window.setInterval(() => {
-				this.fetchSingleConversation(this.token)
+				this.refreshCurrentConversation()
 			}, 30000)
+		},
+
+		refreshCurrentConversation() {
+			this.fetchSingleConversation(this.token)
 		},
 
 		changeWindowVisibility() {
