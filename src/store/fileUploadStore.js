@@ -23,6 +23,7 @@
 import Vue from 'vue'
 import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
+import { findUniquePath } from '../utils/fileUpload'
 
 const state = {
 	attachmentFolder: '/Talk',
@@ -130,6 +131,7 @@ const actions = {
 		// Iterate through the previously indexed files for a given conversation (token)
 		for (const index in state.files[token]) {
 			if (state.files[token][index].status !== 'toBeUploaded') {
+				console.log('continue')
 				continue
 			}
 			// Mark file as uploading to prevent a second function call to start a
@@ -141,9 +143,10 @@ const actions = {
 			const currentFile = state.files[token][index].file
 			// Destination path on the server
 			const path = '/files/' + userId + getters.getAttachmentFolder() + '/' + currentFile.name
+			const uniquePath = await findUniquePath(client, path)
 			try {
 				// Upload the file
-				await client.putFileContents(path, currentFile)
+				await client.putFileContents(uniquePath, currentFile)
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { token, index })
 			} catch (exception) {
