@@ -24,12 +24,18 @@
 		:disabled="startCallButtonDisabled || loading"
 		class="top-bar__button primary"
 		@click="joinCall">
+		<span
+			class="icon"
+			:class="startCallIcon" />
 		{{ startCallLabel }}
 	</button>
 	<button v-else-if="showLeaveCallButton"
 		class="top-bar__button primary"
 		:disabled="loading"
 		@click="leaveCall">
+		<span
+			class="icon"
+			:class="leaveCallIcon" />
 		{{ leaveCallLabel }}
 	</button>
 </template>
@@ -90,23 +96,35 @@ export default {
 		},
 
 		leaveCallLabel() {
-			if (this.loading) {
-				return t('spreed', 'Leaving call')
-			}
-
 			return t('spreed', 'Leave call')
 		},
 
-		startCallLabel() {
+		leaveCallIcon() {
 			if (this.loading) {
-				return t('spreed', 'Joining call')
+				return 'icon-loading-small'
 			}
 
+			return 'icon-leave-call'
+		},
+
+		startCallLabel() {
 			if (this.conversation.hasCall && !this.isBlockedByLobby) {
 				return t('spreed', 'Join call')
 			}
 
 			return t('spreed', 'Start call')
+		},
+
+		startCallIcon() {
+			if (this.loading) {
+				return 'icon-loading-small'
+			}
+
+			if (this.conversation.hasCall && !this.isBlockedByLobby) {
+				return 'icon-incoming-call'
+			}
+
+			return 'icon-start-call'
 		},
 
 		showStartCallButton() {
@@ -150,5 +168,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.top-bar__button .icon {
+	opacity: 1;
 
+	&.icon-incoming-call {
+		animation: pulse 2s infinite;
+	}
+}
+
+@keyframes pulse {
+	0% {
+		opacity: .5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: .5;
+	}
+}
 </style>
