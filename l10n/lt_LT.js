@@ -216,6 +216,7 @@ OC.L10N.register(
     "Create conversation" : "Sukurti pokalbį",
     "Close" : "Užverti",
     "Search participants" : "Ieškoti dalyvių",
+    "Loading contacts" : "Įkeliami adresatai",
     "An error occurred while performing the search" : "Atliekant paiešką, įvyko klaida",
     "Conversation name" : "Pokalbio pavadinimas",
     "Allow guests to join via link " : "Leisti svečiams prisijungti per nuorodą",

@@ -261,7 +261,6 @@ OC.L10N.register(
     "Projects" : "Projekti",
     "Edit" : "Uredi",
     "Leave call" : "Napusti poziv",
-    "Joining call" : "Pridruživanje pozivu",
     "Start call" : "Uputi poziv",
     "Exit fullscreen (f)" : "Zatvori prikaz preko cijelog zaslona (f)",
     "Fullscreen (f)" : "Cijeli zaslon (f)",

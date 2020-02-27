@@ -278,7 +278,6 @@ OC.L10N.register(
     "Display name: " : "Görüntülenecek ad:",
     "Edit" : "Düzenle",
     "Leave call" : "Görüşmeden ayrıl",
-    "Joining call" : "Görüşmeye katılınıyor",
     "Start call" : "Görüşmeyi başlat",
     "Exit fullscreen (f)" : "Tam ekrandan çık (f)",
     "Fullscreen (f)" : "Tam ekran (f)",
