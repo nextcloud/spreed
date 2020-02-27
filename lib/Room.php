@@ -620,6 +620,17 @@ class Room {
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
 
+		if ($newState === Webinary::LOBBY_NON_MODERATORS) {
+			$participants = $this->getParticipantsInCall();
+			foreach ($participants as $participant) {
+				if ($participant->hasModeratorPermissions()) {
+					continue;
+				}
+
+				$this->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
+
 		return true;
 	}
 
@@ -972,6 +983,27 @@ class Room {
 		if ($lastPing > 0) {
 			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
 		}
+
+		$result = $query->execute();
+
+		$participants = [];
+		while ($row = $result->fetch()) {
+			$participants[] = $this->manager->createParticipantObject($this, $row);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @return Participant[]
+	 */
+	public function getParticipantsInCall(): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
 
 		$result = $query->execute();
 
