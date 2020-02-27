@@ -776,7 +776,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 	})
 
-	webrtc.on('localMediaStarted', function(configuration) {
+	webrtc.on('localMediaStarted', function(/* configuration */) {
 		console.info('localMediaStarted')
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
@@ -867,7 +867,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	// Local screen added.
-	webrtc.on('localScreenAdded', function(video) {
+	webrtc.on('localScreenAdded', function(/* video */) {
 		const currentSessionId = signaling.getSessionId()
 		for (const sessionId in usersInCallMapping) {
 			if (!usersInCallMapping.hasOwnProperty(sessionId)) {
