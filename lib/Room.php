@@ -668,6 +668,11 @@ class Room {
 			->set('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())));
+
+		if ($participant->getUser() === '') {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
+		}
+
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
