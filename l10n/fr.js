@@ -213,6 +213,7 @@ OC.L10N.register(
     "Other sources" : "Autres sources",
     "Select default location for attachments" : "Sélectionnez l'emplacement par défaut des pièces jointes",
     "Invalid path selected" : "Chemin sélectionné non valide",
+    "Error while setting attachment folder" : "Erreur lors de la définition du dossier pour la pièce jointe",
     "Creating your conversation" : "Création de la conversation en cours",
     "All set" : "Tout ensemble",
     "Copy conversation link" : "Copier le lien de la conversation",
