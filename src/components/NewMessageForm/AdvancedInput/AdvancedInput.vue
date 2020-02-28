@@ -55,7 +55,12 @@
 				     strange times in which no item is selected and thus there
 				     is no data, so do not use the Mention component in those
 				     cases. -->
-				<Mention v-if="scope.current.id" :data="getDataForMentionComponent(scope.current)" :data-mention-id="scope.current.id" />
+				<Mention
+					v-if="scope.current.id"
+					:id="scope.current.id"
+					:type="getTypeForMentionComponent(scope.current)"
+					:name="scope.current.label"
+					:data-mention-id="scope.current.id" />
 			</span>
 		</template>
 		<div ref="contentEditable"
@@ -326,19 +331,14 @@ export default {
 			return customName.charAt(0)
 		},
 
-		getDataForMentionComponent(candidate) {
-			let type = 'user'
+		getTypeForMentionComponent(candidate) {
 			if (this.isMentionToAll(candidate.id)) {
-				type = 'call'
+				return 'call'
 			} else if (this.isMentionToGuest(candidate.id)) {
-				type = 'guest'
+				return 'guest'
 			}
 
-			return {
-				id: candidate.id,
-				name: candidate.label,
-				type: type,
-			}
+			return 'user'
 		},
 	},
 }
