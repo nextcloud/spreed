@@ -30,7 +30,6 @@
   */
 
 const findUniquePath = async function(client, inputPath) {
-	console.log('inputpath:' + inputPath)
 	// Return the input path if it doesn't exist in the destination folder
 	if (await client.exists(inputPath) === false) {
 		return inputPath
@@ -39,27 +38,22 @@ const findUniquePath = async function(client, inputPath) {
 	let path = inputPath
 	// Get the file extension (if any)
 	const fileExtension = path.match(/\.[0-9a-z]+$/i) ? path.match(/\.[0-9a-z]+$/i)[0] : ''
-	console.log('fileExtension: ' + fileExtension)
 	// If there's a file extention, remove it from the path string
 	if (fileExtension !== '') {
 		path = path.substring(0, path.length - fileExtension.length)
-		console.log('pathWithoutExtension: ' + path)
 	}
 	// Check if the path ends with ` (n)`
 	const suffix = path.match(/ \((\d+)\)$/) ? path.match(/ \((\d+)\)$/) : ''
-	console.log('suffix: ' + suffix)
 	// Initialise a pathwithout suffix variable
 	let pathWithoutSuffix = path
 	if (suffix !== '') {
 		// remove the suffix if any
 		pathWithoutSuffix = path.substring(0, path.length - suffix.length)
 	}
-	console.log('pathwithoutsuffix: ' + pathWithoutSuffix)
 	// Loop untile a unique path is found
 	for (let number = 2; true; number++) {
 		const uniquePath = pathWithoutSuffix + ` (${number})` + (fileExtension)
 		if (await client.exists(uniquePath) === false) {
-			console.log('uniquepath: ' + uniquePath)
 			return uniquePath
 		}
 

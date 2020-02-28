@@ -27,24 +27,20 @@ import { findUniquePath } from '../utils/fileUpload'
 
 const state = {
 	attachmentFolder: '/Talk',
-	files: {
+	uploads: {
 	},
 }
 
 const getters = {
-	// Returns all the files that have been marked for upload in a given conversation,
-	// regardless of their upload state
-	getFiles: (state) => (token) => {
-		return state.files[token]
-	},
-	// Returns all the files that have been successfully uploaded
-	getShareableFiles: (state) => (token) => {
-		if (state.files[token]) {
+	// Returns all the files that have been successfully uploaded provided an
+	// upload id
+	getShareableFiles: (state) => (uploadId) => {
+		if (state.uploads[uploadId]) {
 			const shareableFiles = {}
-			for (const index in state.files[token]) {
-				const currentFile = state.files[token][index]
+			for (const index in state.uploads[uploadId].files) {
+				const currentFile = state.uploads[uploadId].files[index]
 				if (currentFile.status === 'successUpload') {
-					shareableFiles[index] = (currentFile.file)
+					shareableFiles[index] = (currentFile)
 				}
 			}
 			return shareableFiles
@@ -53,6 +49,7 @@ const getters = {
 		}
 	},
 
+	// gets the current attachment folder
 	getAttachmentFolder: (state) => () => {
 		return state.attachmentFolder
 	},
@@ -61,40 +58,46 @@ const getters = {
 const mutations = {
 	/**
 	 * Adds a "file to be shared to the store"
-	 * @param {*} state the state object
-	 * @param {*} file the file to be added to the store
-	 * @param {*} token the conversation's token
+	 * @param {object} state the state object
+	 * @param {object} file the file to be added to the store
+	 * @param {number} uploadId The unique identifier of the upload operation
+	 * @param {string} token the conversation's token
 	 */
-	addFileToBeUploaded(state, { token, file }) {
-		if (!state.files[token]) {
-			Vue.set(state.files, token, {})
+	addFileToBeUploaded(state, { uploadId, token, file }) {
+		// Create upload id if not present
+		if (!state.uploads[uploadId]) {
+			Vue.set(state.uploads, uploadId, {
+				token,
+				files: {},
+			})
 		}
-		Vue.set(state.files[token], Object.keys(state.files[token]).length, { file, status: 'toBeUploaded' })
+		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded' })
 	},
 
 	// Marks a given file as failed uplosd
-	markFileAsFailedUpload(state, { token, index }) {
-		state.files[token][index].status = 'failedUpload'
+	markFileAsFailedUpload(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'failedUpload'
 	},
 
 	// Marks a given file as uploaded
-	markFileAsSuccessUpload(state, { token, index }) {
-		state.files[token][index].status = 'successUpload'
+	markFileAsSuccessUpload(state, { uploadId, index, sharePath }) {
+		state.uploads[uploadId].files[index].status = 'successUpload'
+		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
 	// Marks a given file as uploading
-	markFileAsUploading(state, { token, index }) {
-		state.files[token][index].status = 'uploading'
+	markFileAsUploading(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'uploading'
 	},
 
 	// Marks a given file as sharing
-	markFileAsSharing(state, { token, index }) {
-		state.files[token][index].status = 'sharing'
+	markFileAsSharing(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'sharing'
 	},
 
 	// Marks a given file as shared
-	markFileAsShared(state, { token, index }) {
-		state.files[token][index].status = 'shared'
+	markFileAsShared(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'shared'
 	},
 
 	/**
@@ -109,46 +112,36 @@ const mutations = {
 }
 
 const actions = {
-
-	/**
-	 *
-	 * @param {object} context The context object
-	 * @param {string} token The conversation's token
-	 * @param {array} files The files to be processed and added to the store
-	 */
-	addFilesToBeUploaded(context, { token, files }) {
-		files.forEach(file => {
-			context.commit('addFileToBeUploaded', { token, file })
-		})
-	},
-
 	/**
 	 * Uploads the files to the root directory of the user
 	 * @param {object} param0 Commit, state and getters
-	 * @param {*} token The conversation's token
+	 * @param {object} param1 The unique uploadId, the conversation token and the
+	 * files array
 	 */
-	async uploadFiles({ commit, state, getters }, token) {
+	async uploadFiles({ commit, state, getters }, { uploadId, token, files }) {
+		files.forEach(file => {
+			commit('addFileToBeUploaded', { uploadId, token, file })
+		})
 		// Iterate through the previously indexed files for a given conversation (token)
-		for (const index in state.files[token]) {
-			if (state.files[token][index].status !== 'toBeUploaded') {
-				console.log('continue')
-				continue
-			}
+		for (const index in state.uploads[uploadId].files) {
 			// Mark file as uploading to prevent a second function call to start a
 			// second upload for the same file
-			commit('markFileAsUploading', { token, index })
+			commit('markFileAsUploading', { uploadId, index })
 			// Get the current user id
 			const userId = getters.getUserId()
 			// currentFile to be uploaded
-			const currentFile = state.files[token][index].file
+			const currentFile = state.uploads[uploadId].files[index].file
 			// Destination path on the server
 			const path = '/files/' + userId + getters.getAttachmentFolder() + '/' + currentFile.name
 			const uniquePath = await findUniquePath(client, path)
 			try {
 				// Upload the file
 				await client.putFileContents(uniquePath, currentFile)
+				// Compute the sharePath by removing the first part of the upload path
+				const partOfPathToRemove = '/files/' + userId
+				const sharePath = uniquePath.substring(partOfPathToRemove.length, uniquePath.length)
 				// Mark the file as uploaded in the store
-				commit('markFileAsSuccessUpload', { token, index })
+				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
 			} catch (exception) {
 				console.debug('Error while uploading file:' + exception)
 				showError(t('spreed', 'Error while uploading file'))
@@ -171,23 +164,23 @@ const actions = {
 	/**
 	 * Mark a file as shared
 	 * @param {object} context default store context;
-	 * @param {object} param1 conversation token and original file index
+	 * @param {object} param1 The unique upload id original file index
 	 * @throws {Error} when the item is already being shared by another async call
 	 */
-	markFileAsSharing({ commit, state }, { token, index }) {
-		if (state.files[token][index].status !== 'successUpload') {
+	markFileAsSharing({ commit, state }, { uploadId, index }) {
+		if (state.uploads[uploadId].files[index].status !== 'successUpload') {
 			throw new Error('Item is already being shared')
 		}
-		commit('markFileAsSharing', { token, index })
+		commit('markFileAsSharing', { uploadId, index })
 	},
 
 	/**
 	 * Mark a file as shared
 	 * @param {object} context default store context;
-	 * @param {object} param1 conversation token and original file index
+	 * @param {object} param1 The unique upload id original file index
 	 */
-	markFileAsShared(context, { token, index }) {
-		context.commit('markFileAsShared', { token, index })
+	markFileAsShared(context, { uploadId, index }) {
+		context.commit('markFileAsShared', { uploadId, index })
 	},
 
 }
