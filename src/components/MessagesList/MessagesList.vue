@@ -341,7 +341,7 @@ export default {
 
 			// Once the history is loaded, scroll to bottom
 			this.scrollToBottom()
-			// Once the history is received, startslooking for new messages.
+			// Once the history is received, starts looking for new messages.
 			this.$nextTick(() => {
 				if (this._isBeingDestroyed || this._isDestroyed) {
 					console.debug('Prevent getting new messages on a destroyed MessagesList')
@@ -366,10 +366,13 @@ export default {
 			const { request, cancel } = CancelableRequest(fetchMessages)
 			// Assign the new cancel function to our data value
 			this.cancelFetchMessages = cancel
+
+			const token = this.token
+			const lastKnownMessageId = this.$store.getters.getFirstKnownMessageId(token)
+			let newestKnownMessageId = 0
+
 			// Make the request
 			try {
-				const token = this.token
-				const lastKnownMessageId = this.$store.getters.getFirstKnownMessageId(token)
 				const messages = await request({ token, lastKnownMessageId, includeLastKnown: includeLastKnown ? '1' : '0' })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
@@ -377,12 +380,24 @@ export default {
 						this.$store.dispatch('setGuestNameIfEmpty', message)
 					}
 					this.$store.dispatch('processMessage', message)
+					newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 				})
 
 				if (messages.headers['x-chat-last-given']) {
 					this.$store.dispatch('setFirstKnownMessageId', {
 						token: token,
-						id: messages.headers['x-chat-last-given'],
+						id: parseInt(messages.headers['x-chat-last-given'], 10),
+					})
+				}
+
+				// For guests we also need to set the last known message id
+				// after the first grab of the history, otherwise they start loading
+				// the full history with getNewMessages().
+				if (includeLastKnown && newestKnownMessageId
+					&& !this.$store.getters.getLastKnownMessageId(token)) {
+					this.$store.dispatch('setLastKnownMessageId', {
+						token: token,
+						id: newestKnownMessageId,
 					})
 				}
 			} catch (exception) {
@@ -419,7 +434,7 @@ export default {
 
 				this.$store.dispatch('setLastKnownMessageId', {
 					token: token,
-					id: messages.headers['x-chat-last-given'],
+					id: parseInt(messages.headers['x-chat-last-given'], 10),
 				})
 
 				// Scroll to the last message if sticky
