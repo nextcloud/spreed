@@ -28,6 +28,7 @@ namespace OCA\Talk\Settings\Admin;
 
 use OCA\Talk\Config;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
@@ -35,12 +36,16 @@ class StunServer implements ISettings {
 
 	/** @var Config */
 	private $config;
+	/** @var IConfig */
+	private $serverConfig;
 	/** @var IInitialStateService */
 	private $initialStateService;
 
 	public function __construct(Config $config,
+								IConfig $serverConfig,
 								IInitialStateService $initialStateService) {
 		$this->config = $config;
+		$this->serverConfig = $serverConfig;
 		$this->initialStateService = $initialStateService;
 	}
 
@@ -49,6 +54,7 @@ class StunServer implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$this->initialStateService->provideInitialState('talk', 'stun_servers', $this->config->getStunServers());
+		$this->initialStateService->provideInitialState('talk', 'has_internet_connection', $this->serverConfig->getSystemValueBool('has_internet_connection', true));
 		return new TemplateResponse('spreed', 'settings/admin/stun-server', [], '');
 	}
 
