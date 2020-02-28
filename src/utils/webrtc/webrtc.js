@@ -26,13 +26,10 @@
  *
  */
 
-/* global $ */
-
-/* eslint-disable no-console */
-
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
+import { showError } from '@nextcloud/dialogs'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -214,7 +211,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				signaling.requestOffer(user, 'video')
 
 				delayedConnectionToPeer[user.sessionId] = setInterval(function() {
-					console.log('No offer received for new peer, request offer again')
+					console.debug('No offer received for new peer, request offer again')
 
 					signaling.requestOffer(user, 'video')
 				}, 10000)
@@ -222,7 +219,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				// To avoid overloading the user joining a room (who previously called
 				// all the other participants), we decide who calls who by comparing
 				// the session ids of the users: "larger" ids call "smaller" ones.
-				console.log('Starting call with', user)
+				console.debug('Starting call with', user)
 				createPeer()
 			} else if (userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
 				// If the remote peer is not aware that it was disconnected
@@ -240,7 +237,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 						peer.end()
 					})
 
-					console.log('No offer nor answer received, sending offer again')
+					console.debug('No offer nor answer received, sending offer again')
 					createPeer()
 				}, 10000)
 			}
@@ -253,7 +250,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	})
 
 	disconnectedSessionIds.forEach(function(sessionId) {
-		console.log('XXX Remove peer', sessionId)
+		console.debug('Remove disconnected peer', sessionId)
 		webrtc.removePeers(sessionId)
 		callParticipantCollection.remove(sessionId)
 		if (delayedConnectionToPeer[sessionId]) {
@@ -375,7 +372,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 
 		if (!selfInCall) {
-			console.log('Offer received when not in the call, ignore')
+			console.debug('Offer received when not in the call, ignore')
 
 			message.type = 'offer-to-ignore'
 		}
@@ -513,7 +510,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 					if (peer.pc.localDescription.type === 'offer'
 							&& peer.pc.signalingState === 'stable') {
 						spreedPeerConnectionTable[peer.id]++
-						console.log('ICE restart.', peer)
+						console.debug('ICE restart after disconnect.', peer)
 						peer.icerestart()
 					}
 				}
@@ -527,23 +524,23 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				if (peer.pc.localDescription.type === 'offer'
 						&& peer.pc.signalingState === 'stable') {
 					spreedPeerConnectionTable[peer.id]++
-					console.log('ICE restart.', peer)
+					console.debug('ICE restart after failure.', peer)
 					peer.icerestart()
 				}
 			} else {
-				console.log('ICE failed after 5 tries.', peer)
+				console.error('ICE failed after 5 tries.', peer)
 
 				peer.emit('extendedIceConnectionStateChange', 'failed-no-restart')
 			}
 		} else {
 			// This handles ICE failures of a receiver peer; ICE failures of
 			// the sender peer are handled in the "iceFailed" event.
-			console.log('Request offer again', peer)
+			console.debug('Request offer again', peer)
 
 			signaling.requestOffer(peer.id, 'video')
 
 			delayedConnectionToPeer[peer.id] = setInterval(function() {
-				console.log('No offer received, request offer again', peer)
+				console.debug('No offer received, request offer again', peer)
 
 				signaling.requestOffer(peer.id, 'video')
 			}, 10000)
@@ -559,27 +556,27 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 
 			switch (peer.pc.iceConnectionState) {
 			case 'checking':
-				console.log('Connecting to peer...', peer)
+				console.debug('Connecting to peer...', peer)
 
 				break
 			case 'connected':
 			case 'completed': // on caller side
-				console.log('Connection established.', peer)
+				console.debug('Connection established.', peer)
 
 				handleIceConnectionStateConnected(peer)
 				break
 			case 'disconnected':
-				console.log('Disconnected.', peer)
+				console.debug('Disconnected.', peer)
 
 				handleIceConnectionStateDisconnected(peer)
 				break
 			case 'failed':
-				console.log('Connection failed.', peer)
+				console.debug('Connection failed.', peer)
 
 				handleIceConnectionStateFailed(peer)
 				break
 			case 'closed':
-				console.log('Connection closed.', peer)
+				console.debug('Connection closed.', peer)
 
 				break
 			}
@@ -587,7 +584,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	}
 
 	webrtc.on('createdPeer', function(peer) {
-		console.log('PEER CREATED', peer)
+		console.debug('Peer created', peer)
 
 		if (peer.id !== signaling.getSessionId() && !peer.sharemyscreen) {
 			// In some strange cases a Peer can be added before its
@@ -609,7 +606,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 
 		if (peer.type === 'video') {
 			if (peer.id === signaling.getSessionId()) {
-				console.log('Not adding ICE connection state handler for own peer', peer)
+				console.debug('Not adding ICE connection state handler for own peer', peer)
 
 				startSendingNick(peer)
 			} else {
@@ -625,29 +622,29 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	function checkPeerMedia(peer, track, mediaType) {
-		const defer = $.Deferred()
-		peer.pc.getStats(track).then(function(stats) {
-			let result = false
-			stats.forEach(function(statsReport) {
-				if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
-					return
-				}
+		return new Promise((resolve, reject) => {
+			peer.pc.getStats(track).then(function(stats) {
+				let result = false
+				stats.forEach(function(statsReport) {
+					if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
+						return
+					}
 
-				if (statsReport.bytesReceived > 0) {
-					webrtc.emit('unmute', {
-						id: peer.id,
-						name: mediaType,
-					})
-					result = true
+					if (statsReport.bytesReceived > 0) {
+						webrtc.emit('unmute', {
+							id: peer.id,
+							name: mediaType,
+						})
+						result = true
+					}
+				})
+				if (result) {
+					resolve()
+				} else {
+					reject(new Error())
 				}
 			})
-			if (result) {
-				defer.resolve()
-			} else {
-				defer.reject()
-			}
 		})
-		return defer
 	}
 
 	function stopPeerCheckMedia(peer) {
@@ -669,7 +666,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, video, 'video').then(function() {
 					clearInterval(peer.check_video_interval)
 					peer.check_video_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 		peer.check_audio_interval = setInterval(function() {
@@ -677,7 +674,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				checkPeerMedia(peer, audio, 'audio').then(function() {
 					clearInterval(peer.check_audio_interval)
 					peer.check_audio_interval = null
-				})
+				}).catch()
 			})
 		}, 1000)
 	}
@@ -751,7 +748,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		localStreamRequestedTimeout = null
 
 		if (localStreamRequestedTimeoutNotification) {
-			OC.Notification.hide(localStreamRequestedTimeoutNotification)
+			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
 		}
 	}
@@ -767,7 +764,9 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		localStreamRequestedTimeout = setTimeout(function() {
 			// FIXME emit an event and handle it as needed instead of
 			// calling UI code from here.
-			localStreamRequestedTimeoutNotification = OC.Notification.show(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), { type: 'error' })
+			localStreamRequestedTimeoutNotification = showError(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
+				timeout: 10,
+			})
 		}, 10000)
 	})
 
@@ -777,8 +776,8 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 	})
 
-	webrtc.on('localMediaStarted', function(configuration) {
-		console.log('localMediaStarted')
+	webrtc.on('localMediaStarted', function(/* configuration */) {
+		console.info('localMediaStarted')
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
@@ -788,7 +787,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	webrtc.on('localMediaError', function(error) {
-		console.log('Access to microphone & camera failed', error)
+		console.warn('Access to microphone & camera failed', error)
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
@@ -802,23 +801,22 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		} else if (error.name === 'NotAllowedError') {
 			message = t('spreed', 'Access to microphone & camera was denied')
 		} else if (!webrtc.capabilities.support) {
-			console.log('WebRTC not supported')
+			console.error('WebRTC not supported')
 
 			message = t('spreed', 'WebRTC is not supported in your browser')
 			message += ': ' + t('spreed', 'Please use a different browser like Firefox or Chrome')
 		} else {
 			message = t('spreed', 'Error while accessing microphone & camera')
-			console.log('Error while accessing microphone & camera: ', error.message || error.name)
+			console.error('Error while accessing microphone & camera: ', error.message || error.name)
 		}
 
-		OC.Notification.show(message, {
-			type: 'error',
+		showError(message, {
 			timeout: 15,
 		})
 	})
 
 	webrtc.on('channelOpen', function(channel) {
-		console.log('%s datachannel is open', channel.label)
+		console.debug('%s datachannel is open', channel.label)
 	})
 
 	webrtc.on('channelMessage', function(peer, label, data) {
@@ -842,7 +840,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		} else if (label === 'hark') {
 			// Ignore messages from hark datachannel
 		} else {
-			console.log('Uknown message from %s datachannel', label, data)
+			console.debug('Uknown message from %s datachannel', label, data)
 		}
 	})
 
@@ -869,7 +867,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	// Local screen added.
-	webrtc.on('localScreenAdded', function(video) {
+	webrtc.on('localScreenAdded', function(/* video */) {
 		const currentSessionId = signaling.getSessionId()
 		for (const sessionId in usersInCallMapping) {
 			if (!usersInCallMapping.hasOwnProperty(sessionId)) {
