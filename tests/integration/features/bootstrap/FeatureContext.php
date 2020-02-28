@@ -1129,7 +1129,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
-			$options['body'] = $fd;
+			$options['form_params'] = $fd;
 		} else if (is_array($body)) {
 			$options['form_params'] = $body;
 		}
