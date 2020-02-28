@@ -308,8 +308,9 @@ export default {
 		},
 
 		displaySearchBox() {
-			return this.conversation.type === CONVERSATION.TYPE.GROUP
-				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
+			return this.canFullModerate
+				&& (this.conversation.type === CONVERSATION.TYPE.GROUP
+					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
 		},
 		isSearching() {
 			return this.searchText !== ''
