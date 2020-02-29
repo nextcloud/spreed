@@ -20,12 +20,12 @@ OC.L10N.register(
     "Edit" : "සකසන්න",
     "Name" : "නම",
     "Password" : "මුර පදය",
-    "Cancel" : "අවලංගු කරන්න",
     "Copied!" : "පිටපත් කරා",
     "Not supported!" : "සහාය දක්වන්නේ නැත.",
     "Press ⌘-C to copy." : "පිටපත් කිරීම සදහා Ctrl + C ඔබන්න.",
     "Press Ctrl-C to copy." : "පිටපත් කිරීම සදහා Ctrl + C ඔබන්න.",
     "Share" : "බෙදා හදා ගන්න",
+    "Cancel" : "අවලංගු කරන්න",
     "Change password" : "මුරපදය වෙනස් කිරීම",
     "Rename" : "නැවත නම් කරන්න",
     ", " : ", "

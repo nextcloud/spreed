@@ -21,8 +21,8 @@ OC.L10N.register(
     "Edit" : "தொகுக்க",
     "Name" : "பெயர்",
     "Password" : "கடவுச்சொல்",
-    "Cancel" : "இரத்து செய்க",
     "Share" : "பகிர்வு",
+    "Cancel" : "இரத்து செய்க",
     "Change password" : "கடவுச்சொல்லை மாற்றுக",
     "Rename" : "பெயர்மாற்றம்",
     "Error while sharing" : "பகிரும் போதான வழு"
