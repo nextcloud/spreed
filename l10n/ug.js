@@ -20,8 +20,8 @@ OC.L10N.register(
     "Edit" : "تەھرىر",
     "Name" : "ئاتى",
     "Password" : "ئىم",
-    "Cancel" : "ۋاز كەچ",
     "Share" : "ھەمبەھىر",
+    "Cancel" : "ۋاز كەچ",
     "Change password" : "ئىم ئۆزگەرت",
     "Rename" : "ئات ئۆزگەرت",
     "Send" : "يوللا"

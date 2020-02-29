@@ -26,9 +26,9 @@ OC.L10N.register(
     "Name" : "Enw",
     "Saved" : "Wedi'u cadw",
     "Password" : "Cyfrinair",
-    "Cancel" : "Diddymu",
     "Copy" : "Copïo",
     "Share" : "Rhannu",
+    "Cancel" : "Diddymu",
     "Rename" : "Ailenwi",
     "Send" : "Anfon",
     "Error while sharing" : "Gwall wrth rannu"
