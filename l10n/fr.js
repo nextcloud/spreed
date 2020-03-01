@@ -243,6 +243,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Write message, @ to mention someone …" : "Écrivez un message, utilisez @ pour mentionner quelqu'un …",
     "Upload new files" : "Envoyer de nouveaux fichiers",
+    "Share from Files" : "Partager vos Fichiers déjà stockés",
     "File to share" : "Fichier à partager",
     "moderator" : "modérateur",
     "guest" : "invité",
