@@ -24,6 +24,7 @@ namespace OCA\Talk\Tests\php\Settings\Admin;
 
 use OCA\Talk\Config;
 use OCA\Talk\Settings\Admin\StunServer;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -31,6 +32,8 @@ class StunServerTest extends \Test\TestCase {
 
 	/** @var Config|MockObject */
 	protected $config;
+	/** @var IConfig|MockObject */
+	protected $serverConfig;
 	/** @var IInitialStateService|MockObject */
 	protected $initialState;
 	/** @var StunServer */
@@ -40,9 +43,14 @@ class StunServerTest extends \Test\TestCase {
 		parent::setUp();
 
 		$this->config = $this->createMock(Config::class);
+		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->initialState = $this->createMock(IInitialStateService::class);
 
-		$this->admin = new StunServer($this->config, $this->initialState);
+		$this->admin = new StunServer(
+			$this->config,
+			$this->serverConfig,
+			$this->initialState
+		);
 	}
 
 	public function testGetSection(): void {
@@ -57,10 +65,17 @@ class StunServerTest extends \Test\TestCase {
 		$this->config->expects($this->once())
 			->method('getStunServers')
 			->willReturn(['getStunServers']);
+		$this->serverConfig->expects($this->once())
+			->method('getSystemValueBool')
+			->with('has_internet_connection', true)
+			->willReturn(true);
 
-		$this->initialState->expects($this->once())
+		$this->initialState->expects($this->exactly(2))
 			->method('provideInitialState')
-			->with('talk', 'stun_servers', ['getStunServers']);
+			->withConsecutive(
+				['talk', 'stun_servers', ['getStunServers']],
+				['talk', 'has_internet_connection', true]
+			);
 
 		$form = $this->admin->getForm();
 		$this->assertSame('settings/admin/stun-server', $form->getTemplateName());

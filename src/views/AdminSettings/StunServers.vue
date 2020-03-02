@@ -57,6 +57,7 @@
 import StunServer from '../../components/AdminSettings/StunServer'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import debounce from 'debounce'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'StunServers',
@@ -72,13 +73,15 @@ export default {
 	data() {
 		return {
 			servers: [],
+			hasInternetConnection: true,
 			loading: false,
 			saved: false,
 		}
 	},
 
 	beforeMount() {
-		this.servers = OCP.InitialState.loadState('talk', 'stun_servers')
+		this.servers = loadState('talk', 'stun_servers')
+		this.hasInternetConnection = loadState('talk', 'has_internet_connection')
 	},
 
 	methods: {
@@ -95,7 +98,9 @@ export default {
 		},
 
 		addDefaultServer() {
-			this.servers.push('stun.nextcloud.com:443')
+			if (this.hasInternetConnection) {
+				this.servers.push('stun.nextcloud.com:443')
+			}
 		},
 
 		debounceUpdateServers: debounce(function() {
