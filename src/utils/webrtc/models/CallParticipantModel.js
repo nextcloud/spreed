@@ -87,6 +87,7 @@ CallParticipantModel.prototype = {
 		if (this._peer === peer) {
 			this.set('stream', this._peer.stream || null)
 			this.set('audioElement', attachMediaStream(this.get('stream'), null, { audio: true }))
+			this.get('audioElement').muted = !this.get('audioAvailable')
 
 			// "peer.nick" is set only for users and when the MCU is not used.
 			if (this._peer.nick !== undefined) {
@@ -127,6 +128,9 @@ CallParticipantModel.prototype = {
 		if (data.name === 'video') {
 			this.set('videoAvailable', false)
 		} else {
+			if (this.get('audioElement')) {
+				this.get('audioElement').muted = true
+			}
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 		}
@@ -148,6 +152,9 @@ CallParticipantModel.prototype = {
 		if (data.name === 'video') {
 			this.set('videoAvailable', true)
 		} else {
+			if (this.get('audioElement')) {
+				this.get('audioElement').muted = false
+			}
 			this.set('audioAvailable', true)
 		}
 	},
