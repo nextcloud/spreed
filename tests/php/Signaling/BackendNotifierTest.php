@@ -204,6 +204,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -237,6 +241,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -258,6 +266,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -279,6 +291,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -300,6 +316,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -321,6 +341,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_ONLY,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -342,6 +366,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NON_MODERATORS,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -495,6 +523,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$bodies = array_map(function($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
+
 		$this->assertContains([
 			'type' => 'update',
 			'update' => [
@@ -503,6 +532,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 					'foo' => 'bar',
 					'room' => $room->getToken(),
 				],
