@@ -127,19 +127,19 @@ const actions = {
 			// Mark file as uploading to prevent a second function call to start a
 			// second upload for the same file
 			commit('markFileAsUploading', { uploadId, index })
-			// Get the current user id
-			const userId = getters.getUserId()
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
-			// Destination path on the server
-			const path = '/files/' + userId + getters.getAttachmentFolder() + '/' + currentFile.name
-			const uniquePath = await findUniquePath(client, path)
+			// userRoot path
+			const userRoot = '/files/' + getters.getUserId()
+			// Candidate rest of the path
+			const path = getters.getAttachmentFolder() + '/' + currentFile.name
+			// Get a unique relative path based on the previous path variable
+			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
 				// Upload the file
-				await client.putFileContents(uniquePath, currentFile)
-				// Compute the sharePath by removing the first part of the upload path
-				const partOfPathToRemove = '/files/' + userId
-				const sharePath = uniquePath.substring(partOfPathToRemove.length, uniquePath.length)
+				await client.putFileContents(userRoot + uniquePath, currentFile)
+				// Path for the sharing request
+				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
 			} catch (exception) {

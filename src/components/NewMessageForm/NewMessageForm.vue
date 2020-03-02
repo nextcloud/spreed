@@ -24,7 +24,7 @@
 		class="wrapper">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
-			ref="file-upload-input"
+			ref="fileUploadInput"
 			multiple
 			type="file"
 			class="hidden-visually"
@@ -262,7 +262,7 @@ export default {
 		 * thus opening the file-picker
 		 */
 		clickImportInput() {
-			this.$refs['file-upload-input'].click()
+			this.$refs.fileUploadInput.click()
 		},
 
 		/**
@@ -277,6 +277,8 @@ export default {
 			const uploadId = new Date().getTime()
 			// The selected files array coming from the input
 			const files = Object.values(event.target.files)
+			// Clear the input for the next uploads
+			this.$refs.fileUploadInput.value = ''
 			// Process these files in the store
 			await this.$store.dispatch('uploadFiles', { uploadId, token, files })
 			// Get the files that have successfully been uploaded from the store

@@ -29,13 +29,11 @@
   * @returns {string} The unique path
   */
 
-const findUniquePath = async function(client, inputPath) {
+const findUniquePath = async function(client, userRoot, path) {
 	// Return the input path if it doesn't exist in the destination folder
-	if (await client.exists(inputPath) === false) {
-		return inputPath
+	if (await client.exists(userRoot + path) === false) {
+		return path
 	}
-	// Store the input path into a new path variable to operate on it
-	let path = inputPath
 	// Get the file extension (if any)
 	const fileExtension = path.match(/\.[0-9a-z]+$/i) ? path.match(/\.[0-9a-z]+$/i)[0] : ''
 	// If there's a file extention, remove it from the path string
@@ -53,7 +51,7 @@ const findUniquePath = async function(client, inputPath) {
 	// Loop untile a unique path is found
 	for (let number = 2; true; number++) {
 		const uniquePath = pathWithoutSuffix + ` (${number})` + (fileExtension)
-		if (await client.exists(uniquePath) === false) {
+		if (await client.exists(userRoot + uniquePath) === false) {
 			return uniquePath
 		}
 
