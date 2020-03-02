@@ -1,11 +1,41 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.5 – 2020-03-03
+### Added
+- Add a link to the file in the conversation info for file conversations
+  [#2974](https://github.com/nextcloud/spreed/pull/2974)
+
+### Fixed
+- Fix copy and paste behaviour with WebKit based browsers
+  [#2982](https://github.com/nextcloud/spreed/pull/2982)
+- Improve chat loading for guests to be fast again
+  [#3026](https://github.com/nextcloud/spreed/pull/3026)
+- Improve reaction time to conversation status changes for guests
+  [#3038](https://github.com/nextcloud/spreed/pull/3038)
+- Fix collision on (empty) tab id with systemtags app in the sidebar
+  [#2964](https://github.com/nextcloud/spreed/pull/2964)
+- Focus the chat input in the sidebar when opening the chat tab
+  [#2975](https://github.com/nextcloud/spreed/pull/2975)
+- Also end call state of conversation when the last user leaves, has a timeout or logs out directly
+  [#2952](https://github.com/nextcloud/spreed/pull/2952)
+  [#2984](https://github.com/nextcloud/spreed/pull/2984)
+- Await response of "Leave call" before leaving the conversation
+  [#2951](https://github.com/nextcloud/spreed/pull/2951)
+- Don't provide a default stun when the server has no internet connection
+  [#2982](https://github.com/nextcloud/spreed/pull/2982)
+  [#3028](https://github.com/nextcloud/spreed/pull/3028)
+- Fix call notifications stating "You missed a call" with a lot of participants
+  [#2945](https://github.com/nextcloud/spreed/pull/2945)
+- Only try to join and leave real conversations when opening the files sidebar
+  [#2977](https://github.com/nextcloud/spreed/pull/2977)
+
+
 ## 8.0.4 – 2020-02-11
 ### Added
 - Readd fullscreen option for the interface with f as a shortcut
   [#2937](https://github.com/nextcloud/spreed/pull/2937)
-  
+
 ### Fixed
 - Fix Files sidebar integration, public share page and video verification
   [#2935](https://github.com/nextcloud/spreed/pull/2935)
