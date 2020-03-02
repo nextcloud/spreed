@@ -115,7 +115,11 @@ function SimpleWebRTC(opts) {
 			}
 			peer.handleMessage(message)
 		} else if (message.type === 'forceMute') {
-			self.mute()
+			if (message.payload.peerId === self.connection.getSessionId()) {
+				self.mute()
+			} else {
+				self.emit('mute', { id: message.payload.peerId })
+			}
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
 				if (message.sid) {

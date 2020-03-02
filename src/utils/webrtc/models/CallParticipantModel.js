@@ -141,7 +141,11 @@ CallParticipantModel.prototype = {
 			return
 		}
 
-		this._peer.send('forceMute')
+		this._webRtc.sendToAll('forceMute', { peerId: this._peer.id })
+
+		// Mute locally too, as even when sending to all the sender will not
+		// receive the message.
+		this._handleMute({ id: this._peer.id })
 	},
 
 	_handleUnmute: function(data) {
