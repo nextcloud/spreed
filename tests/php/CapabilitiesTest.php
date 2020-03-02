@@ -94,6 +94,7 @@ class CapabilitiesTest extends TestCase {
 					'start-call-flag',
 					'chat-replies',
 					'circles-support',
+					'force-mute',
 				],
 				'config' => [
 					'attachments' => [
@@ -163,6 +164,7 @@ class CapabilitiesTest extends TestCase {
 					'start-call-flag',
 					'chat-replies',
 					'circles-support',
+					'force-mute',
 				],
 				'config' => [
 					'attachments' => [

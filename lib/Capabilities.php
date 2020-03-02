@@ -90,6 +90,7 @@ class Capabilities implements IPublicCapability {
 					'start-call-flag',
 					'chat-replies',
 					'circles-support',
+					'force-mute',
 				],
 				'config' => [
 					'attachments' => $attachments,
