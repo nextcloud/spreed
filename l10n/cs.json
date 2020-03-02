@@ -335,6 +335,7 @@
     "Link to a conversation" : "Odkaz na konverzaci",
     "Error while sharing file" : "Chyba při sdílení souboru",
     "Error while uploading file" : "Chyba při nahrávání souboru",
+    "Sending signaling message has failed." : "Odeslání signálové zprávy se nezdařilo.",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Zdá se, že mluvíte a přitom máte ztlumeno – zrušte ztlumení, aby vás ostatní slyšeli",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Toto trvá déle než by mělo. Udělili už jste oprávnění pro přístup k médiím (nebo snad zamítli)? Pokud jsou oprávnění udělena, restartujte webový prohlížeč, protože zvuk a video se nedaří",
     "Access to microphone & camera is only possible with HTTPS" : "Přístup k mikrofonu a kameře je možný pouze přes HTTPS",
