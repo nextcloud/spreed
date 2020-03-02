@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Signaling;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
+use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -42,6 +43,7 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomBackendNotifier extends BackendNotifier {
 
@@ -92,6 +94,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	protected $app;
 	/** @var BackendNotifier */
 	protected $originalBackendNotifier;
+	/** @var IEventDispatcher */
+	private $dispatcher;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -125,7 +129,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		});
 
 		$dbConnection = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->manager = new Manager(
 			$dbConnection,
 			$config,
@@ -133,7 +137,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
 			$this->createMock(TalkSession::class),
-			$dispatcher,
+			$this->dispatcher,
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class)
@@ -200,6 +204,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -233,6 +241,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -254,6 +266,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -275,6 +291,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -296,6 +316,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -317,6 +341,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_ONLY,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -338,6 +366,10 @@ class BackendNotifierTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NON_MODERATORS,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
 				],
 			],
 		], $bodies);
@@ -469,6 +501,43 @@ class BackendNotifierTest extends \Test\TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
 					],
+				],
+			],
+		], $bodies);
+	}
+
+	public function testRoomPropertiesEvent(): void {
+		$listener = static function(SignalingRoomPropertiesEvent $event) {
+			$room = $event->getRoom();
+			$event->setProperty('foo', 'bar');
+			$event->setProperty('room', $room->getToken());
+		};
+
+		$this->dispatcher->addListener(Room::EVENT_BEFORE_SIGNALING_PROPERTIES, $listener);
+
+		$room = $this->manager->createPublicRoom();
+		$this->controller->clearRequests();
+		$room->setName('Test room');
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
+					'foo' => 'bar',
+					'room' => $room->getToken(),
 				],
 			],
 		], $bodies);

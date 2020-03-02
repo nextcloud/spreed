@@ -78,10 +78,16 @@ class Listener {
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function(ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
+
+			if ($event->getParticipant()->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+				// This happens in case the user was kicked/lobbied
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
-			$listener->sendSystemMessage($room, 'call_left');
+			$listener->sendSystemMessage($room, 'call_left', [], $event->getParticipant());
 		});
 
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, static function(RoomEvent $event) {
@@ -239,15 +245,22 @@ class Listener {
 		$dispatcher->addListener(RoomShareProvider::class . '::' . 'share_file_again', $listener);
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = []): void {
-		$user = $this->userSession->getUser();
-		if (!$user instanceof IUser) {
-			$actorType = 'guests';
-			$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
-			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null): void {
+		if ($participant instanceof Participant) {
+			$actorType = $participant->isGuest() ? 'guests' : 'users';
+			$sessionId = $participant->getSessionId();
+			$sessionHash = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+			$actorId = $participant->isGuest() ? $sessionHash : $participant->getUser();
 		} else {
-			$actorType = 'users';
-			$actorId = $user->getUID();
+			$user = $this->userSession->getUser();
+			if (!$user instanceof IUser) {
+				$actorType = 'guests';
+				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+			} else {
+				$actorType = 'users';
+				$actorId = $user->getUID();
+			}
 		}
 
 		$this->chatManager->addSystemMessage(

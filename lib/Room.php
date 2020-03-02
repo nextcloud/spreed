@@ -36,6 +36,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -100,6 +101,7 @@ class Room {
 	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
+	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 
 	/** @var Manager */
 	private $manager;
@@ -276,6 +278,27 @@ class Room {
 	public function setParticipant(?string $userId, Participant $participant): void {
 		$this->currentUser = $userId;
 		$this->participant = $participant;
+	}
+
+	/**
+	 * Return the room properties to send to the signaling server.
+	 *
+	 * @param string $userId
+	 * @return array
+	 */
+	public function getPropertiesForSignaling(string $userId): array {
+		$properties = [
+			'name' => $this->getDisplayName($userId),
+			'type' => $this->getType(),
+			'lobby-state' => $this->getLobbyState(),
+			'lobby-timer' => $this->getLobbyTimer(),
+			'read-only' => $this->getReadOnly(),
+			'active-since' => $this->getActiveSince(),
+		];
+
+		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIGNALING_PROPERTIES, $event);
+		return $event->getProperties();
 	}
 
 	/**
@@ -596,6 +619,17 @@ class Room {
 		$this->lobbyState = $newState;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
+
+		if ($newState === Webinary::LOBBY_NON_MODERATORS) {
+			$participants = $this->getParticipantsInCall();
+			foreach ($participants as $participant) {
+				if ($participant->hasModeratorPermissions()) {
+					continue;
+				}
+
+				$this->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
 
 		return true;
 	}
@@ -949,6 +983,27 @@ class Room {
 		if ($lastPing > 0) {
 			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
 		}
+
+		$result = $query->execute();
+
+		$participants = [];
+		while ($row = $result->fetch()) {
+			$participants[] = $this->manager->createParticipantObject($this, $row);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @return Participant[]
+	 */
+	public function getParticipantsInCall(): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
 
 		$result = $query->execute();
 
