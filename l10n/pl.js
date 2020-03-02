@@ -337,6 +337,7 @@ OC.L10N.register(
     "Link to a conversation" : "Link do rozmowy",
     "Error while sharing file" : "Błąd podczas udostępniania pliku",
     "Error while uploading file" : "Błąd podczas wysyłania pliku",
+    "Sending signaling message has failed." : "Wysłanie wiadomości sygnalizacyjnej nie powiodło się.",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Wygląda na to, że rozmawiasz, gdy jesteś wyciszony. Wyłącz wyciszenie, aby inni mogli cię usłyszeć",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Trwa to dłużej niż oczekiwano. Czy uprawnienia do mediów zostały już przyznane (lub odrzucone)? Jeśli tak, to uruchom ponownie przeglądarkę, ponieważ audio i wideo nie działa poprawnie",
     "Access to microphone & camera is only possible with HTTPS" : "Dostęp do mikrofonu i kamery jest możliwy tylko przy użyciu protokołu HTTPS",
