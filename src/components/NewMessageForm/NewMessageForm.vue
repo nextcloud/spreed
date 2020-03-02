@@ -29,7 +29,7 @@
 				<div
 					class="new-message-form__button">
 					<button
-						v-if="!currentUserIsGuest"
+						v-if="canShareAndUploadFiles"
 						class="new-message-form__button icon-clip-add-file"
 						@click.prevent="handleFileShare" />
 				</div>
@@ -60,6 +60,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
+import { CONVERSATION } from '../../constants'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -89,11 +90,19 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+		conversation() {
+			return this.$store.getters.conversations[this.token] || {
+				readOnly: CONVERSATION.STATE.READ_WRITE,
+			}
+		},
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
+		},
+		canShareAndUploadFiles() {
+			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 		},
 	},
 	methods: {
