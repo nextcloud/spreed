@@ -29,6 +29,10 @@
 			class="app-navigation-search__input"
 			type="text"
 			:placeHolder="placeholderText">
+		<button
+			v-if="isSearching"
+			class="abort-search icon-close"
+			@click.prevent="abortSearch" />
 	</form>
 </template>
 
@@ -53,6 +57,13 @@ export default {
 			type: String,
 			required: true,
 		},
+		/**
+		 * If true, this component displays an 'x' button to abort the search
+		 */
+		isSearching: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data: function() {
 		return {
@@ -69,20 +80,24 @@ export default {
 		},
 	},
 	mounted() {
-		this.focusInput()
+		this.focusInputIfRoot()
 		/**
-		 * Listen to routeChange global events and focus on the
+		 * Listen to routeChange global events and focus on the input
 		 */
-		EventBus.$on('routeChange', this.focusInput)
+		EventBus.$on('routeChange', this.focusInputIfRoot)
 	},
 	beforeDestroy() {
-		EventBus.$off('routeChange', this.focusInput)
+		EventBus.$off('routeChange', this.focusInputIfRoot)
 	},
 	methods: {
-		// Focus the input field of the current component.
+		// Focus the input field of the searchbox component.
 		focusInput() {
+			this.$refs.searchConversations.focus()
+		},
+		// Focuses the input if the current route is root.
+		focusInputIfRoot() {
 			if (this.$route.name === 'root') {
-				this.$refs.searchConversations.focus()
+				this.focusInput()
 			}
 		},
 		/**
@@ -91,6 +106,13 @@ export default {
 		 */
 		handleSubmit() {
 			this.$emit('submit')
+		},
+		/**
+		 * Emits the abort-search event and re-focuses the input
+		 */
+		abortSearch() {
+			this.$emit('abort-search')
+			this.focusInput()
 		},
 	},
 }
@@ -113,4 +135,12 @@ export default {
 		margin: 0px;
 	}
 }
+
+.abort-search {
+	margin-left: -28px;
+    z-index: 1;
+    border: none;
+    background-color: transparent
+}
+
 </style>

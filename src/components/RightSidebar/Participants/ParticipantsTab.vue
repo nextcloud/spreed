@@ -25,7 +25,9 @@
 			v-if="displaySearchBox"
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
-			@input="handleInput" />
+			@input="handleInput"
+			@abort-search="abortSearch"
+			:is-searching="isSearching" />
 		<Caption v-if="isSearching"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
@@ -332,6 +334,10 @@ export default {
 				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
 			}
 		},
+		// Ends the search operation
+		abortSearch() {
+			this.searchText = ''
+		}
 	},
 }
 </script>

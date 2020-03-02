@@ -24,11 +24,9 @@
 		<div class="new-conversation">
 			<SearchBox
 				v-model="searchText"
-				@input="debounceFetchSearchResults" />
-			<button
-				v-if="isSearching"
-				class="abort-search icon-close"
-				@click="abortSearch" />
+				:is-searching="isSearching"
+				@input="debounceFetchSearchResults"
+				@abort-search="abortSearch" />
 			<NewGroupConversation />
 		</div>
 		<ul class="left-sidebar__list">
@@ -266,12 +264,5 @@ export default {
 	position: sticky;
 	bottom: 0;
 	border-top: 1px solid var(--color-border-dark);
-}
-
-.abort-search {
-	margin-left: -28px;
-    z-index: 1;
-    border: none;
-    background-color: transparent
 }
 </style>
