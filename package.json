@@ -33,7 +33,7 @@
 		"mockconsole": "0.0.1",
 		"nextcloud-vue-collections": "^0.7.2",
 		"url-parse": "^1.4.7",
-		"util": "^0.12.1",
+		"util": "^0.12.2",
 		"vue": "^2.6.11",
 		"vue-at": "^2.5.0-beta.2",
 		"vue-clipboard2": "^0.3.1",
