@@ -25,12 +25,14 @@
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
 				<Video
 					:key="callParticipantModel.attributes.peerId"
+					:token="token"
 					:model="callParticipantModel"
 					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 					:use-constrained-layout="useConstrainedLayout"
 					@switchScreenToId="_switchScreenToId" />
 				<Video
 					:key="'placeholder' + callParticipantModel.attributes.peerId"
+					:token="token"
 					:placeholder-for-promoted="true"
 					:model="callParticipantModel"
 					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
