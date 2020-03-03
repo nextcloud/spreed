@@ -335,6 +335,7 @@
     "Link to a conversation" : "Link para uma conversa",
     "Error while sharing file" : "Erro ao compartilhar arquivo",
     "Error while uploading file" : "Erro ao enviar arquivos",
+    "Sending signaling message has failed." : "Erro no envio da mensagem de sinalização.",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Parece que você está falando no \"mudo\". Ligue o microfone para outros ouvirem",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Isso está demorando mais que o esperado. As permissões de mídia já foram concedidas (ou rejeitadas)? Se sim, reinicie o seu navegador, pois o áudio e vídeo estão falhando",
     "Access to microphone & camera is only possible with HTTPS" : "O acesso ao microfone e à câmera só é possível com HTTPS",
