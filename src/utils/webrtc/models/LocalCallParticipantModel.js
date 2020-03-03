@@ -28,6 +28,8 @@ export default function LocalCallParticipantModel() {
 
 	this._handlers = []
 
+	this._handleForcedMuteBound = this._handleForcedMute.bind(this)
+
 }
 
 LocalCallParticipantModel.prototype = {
@@ -71,10 +73,16 @@ LocalCallParticipantModel.prototype = {
 	},
 
 	setWebRtc: function(webRtc) {
+		if (this._webRtc) {
+			this._webRtc.off('forcedMute', this._handleForcedMuteBound)
+		}
+
 		this._webRtc = webRtc
 
 		this.set('peerId', this._webRtc.connection.getSessionId())
 		this.set('guestName', null)
+
+		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
 	},
 
 	setGuestName: function(guestName) {
@@ -85,6 +93,10 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', guestName)
 
 		this._webRtc.sendDirectlyToAll('status', 'nickChanged', guestName)
+	},
+
+	_handleForcedMute: function() {
+		this._trigger('forcedMute')
 	},
 
 }

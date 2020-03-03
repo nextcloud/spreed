@@ -117,6 +117,7 @@ function SimpleWebRTC(opts) {
 		} else if (message.type === 'forceMute') {
 			if (message.payload.peerId === self.connection.getSessionId()) {
 				self.mute()
+				self.emit('forcedMute')
 			} else {
 				self.emit('mute', { id: message.payload.peerId })
 			}
