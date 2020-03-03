@@ -23,7 +23,6 @@
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass">
-		<audio v-if="!placeholderForPromoted" ref="audio" class="hidden" />
 		<video v-if="!placeholderForPromoted" v-show="model.attributes.videoAvailable && sharedData.videoEnabled" ref="video" />
 		<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 			<Avatar v-if="model.attributes.userId"
@@ -213,11 +212,12 @@ export default {
 				return
 			}
 
-			// If there is a video track Chromium does not play audio in a video
+			// The audio is played using an audio element in the model to be
+			// able to hear it even if there is no view for it. Moreover, if
+			// there is a video track Chromium does not play audio in a video
 			// element until the video track starts to play; an audio element is
 			// thus needed to play audio when the remote peer starts with the
 			// camera available but disabled.
-			attachMediaStream(stream, this.$refs.audio, { audio: true })
 			attachMediaStream(stream, this.$refs.video)
 
 			this.$refs.video.muted = true
