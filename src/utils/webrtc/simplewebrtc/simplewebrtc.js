@@ -263,35 +263,35 @@ SimpleWebRTC.prototype.disconnect = function() {
 SimpleWebRTC.prototype.handlePeerStreamAdded = function(peer) {
 	const self = this
 	const container = this.getRemoteVideoContainer()
-	// If there is a video track Chromium does not play audio in a video element
-	// until the video track starts to play; an audio element is thus needed to
-	// play audio when the remote peer starts with the camera available but
-	// disabled.
-	const audio = attachMediaStream(peer.stream, null, { audio: true })
-	const video = attachMediaStream(peer.stream)
-
-	video.muted = true
-
-	// At least Firefox, Opera and Edge move the video to a wrong position
-	// instead of keeping it unchanged when "transform: scaleX(1)" is used
-	// ("transform: scaleX(-1)" is fine); as it should have no effect the
-	// transform is removed.
-	if (video.style.transform === 'scaleX(1)') {
-		video.style.transform = ''
-	}
-
-	// store video element as part of peer for easy removal
-	peer.audioEl = audio
-	peer.videoEl = video
-	audio.id = this.getDomId(peer) + '-audio'
-	video.id = this.getDomId(peer)
-
 	if (container) {
+		// If there is a video track Chromium does not play audio in a video element
+		// until the video track starts to play; an audio element is thus needed to
+		// play audio when the remote peer starts with the camera available but
+		// disabled.
+		const audio = attachMediaStream(peer.stream, null, { audio: true })
+		const video = attachMediaStream(peer.stream)
+
+		video.muted = true
+
+		// At least Firefox, Opera and Edge move the video to a wrong position
+		// instead of keeping it unchanged when "transform: scaleX(1)" is used
+		// ("transform: scaleX(-1)" is fine); as it should have no effect the
+		// transform is removed.
+		if (video.style.transform === 'scaleX(1)') {
+			video.style.transform = ''
+		}
+
+		// store video element as part of peer for easy removal
+		peer.audioEl = audio
+		peer.videoEl = video
+		audio.id = this.getDomId(peer) + '-audio'
+		video.id = this.getDomId(peer)
+
 		container.appendChild(audio)
 		container.appendChild(video)
-	}
 
-	this.emit('videoAdded', video, audio, peer)
+		this.emit('videoAdded', video, audio, peer)
+	}
 
 	// send our mute status to new peer if we're muted
 	// currently called with a small delay because it arrives before
