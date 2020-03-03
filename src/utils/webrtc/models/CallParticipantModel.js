@@ -19,6 +19,8 @@
  *
  */
 
+import attachMediaStream from 'attachmediastream'
+
 export const ConnectionState = {
 	NEW: 'new',
 	CHECKING: 'checking',
@@ -41,6 +43,9 @@ export default function CallParticipantModel(options) {
 		name: undefined,
 		connectionState: ConnectionState.NEW,
 		stream: null,
+		// The audio element is part of the model to ensure that it can be
+		// played if needed even if there is no view for it.
+		audioElement: null,
 		audioAvailable: undefined,
 		speaking: undefined,
 		videoAvailable: undefined,
@@ -81,6 +86,7 @@ CallParticipantModel.prototype = {
 	_handlePeerStreamAdded: function(peer) {
 		if (this._peer === peer) {
 			this.set('stream', this._peer.stream || null)
+			this.set('audioElement', attachMediaStream(this.get('stream'), null, { audio: true }))
 
 			// "peer.nick" is set only for users and when the MCU is not used.
 			if (this._peer.nick !== undefined) {
@@ -93,6 +99,8 @@ CallParticipantModel.prototype = {
 
 	_handlePeerStreamRemoved: function(peer) {
 		if (this._peer === peer) {
+			this.get('audioElement').srcObject = null
+			this.set('audioElement', null)
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
