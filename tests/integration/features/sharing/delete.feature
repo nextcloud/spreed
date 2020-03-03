@@ -128,18 +128,18 @@ Feature: delete
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | one-to-one room not invited to |
       | share_with_displayname | participant3-displayname |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | one-to-one room not invited to |
       | share_with_displayname | participant2-displayname |
 
@@ -161,18 +161,18 @@ Feature: delete
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room not invited to |
       | share_with_displayname | Group room not invited to |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room not invited to |
       | share_with_displayname | Group room not invited to |
 
@@ -194,7 +194,7 @@ Feature: delete
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
       | token                  | A_TOKEN |
@@ -202,11 +202,11 @@ Feature: delete
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
       | token                  | A_TOKEN |
@@ -230,11 +230,11 @@ Feature: delete
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -254,11 +254,11 @@ Feature: delete
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
@@ -286,18 +286,18 @@ Feature: delete
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -326,18 +326,18 @@ Feature: delete
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets all received shares
@@ -345,11 +345,11 @@ Feature: delete
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |

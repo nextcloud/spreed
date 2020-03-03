@@ -22,7 +22,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -37,11 +37,11 @@ Feature: get
     Then share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -75,18 +75,18 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | New room name |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | New room name |
 
@@ -107,7 +107,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | expiration             | -3 days |
@@ -135,7 +135,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | expiration             | -3 days |
@@ -201,7 +201,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -222,7 +222,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 3 is returned with
@@ -288,7 +288,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 2 is returned with
@@ -309,7 +309,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 4 is returned with
@@ -439,7 +439,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -449,7 +449,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 
@@ -528,7 +528,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 2 is returned with
@@ -538,7 +538,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 3 is returned with
@@ -841,7 +841,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -851,7 +851,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 2 is returned with
@@ -958,11 +958,11 @@ Feature: get
     And share 0 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -979,11 +979,11 @@ Feature: get
     And share 2 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 3 is returned with
@@ -1023,21 +1023,21 @@ Feature: get
     And share 0 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 

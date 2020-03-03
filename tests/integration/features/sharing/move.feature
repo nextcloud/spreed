@@ -24,29 +24,29 @@ Feature: move
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -73,7 +73,7 @@ Feature: move
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/test |
-#      | file_target            | /welcome.txt |
+#      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
 #      | share_with             | group room |
 #      | share_with_displayname | Group room |
 #    And user "participant2" gets last share
@@ -82,7 +82,7 @@ Feature: move
 #      | displayname_owner      | participant1-displayname |
 #      | uid_file_owner         | participant3 |
 #      | displayname_file_owner | participant3-displayname |
-#      | path                   | /welcome (2).txt |
+#      | path                   | /Talk/welcome.txt |
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/welcome (2).txt |
@@ -124,7 +124,7 @@ Feature: move
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/test |
-#      | file_target            | /welcome.txt |
+#      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
 #      | share_with             | group room |
 #      | share_with_displayname | Group room |
 #    And user "participant2" gets last share
@@ -133,7 +133,7 @@ Feature: move
 #      | displayname_owner      | participant1-displayname |
 #      | uid_file_owner         | participant4 |
 #      | displayname_file_owner | participant4-displayname |
-#      | path                   | /welcome (2).txt |
+#      | path                   | /Talk/welcome.txt |
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/welcome (2).txt |
@@ -146,7 +146,7 @@ Feature: move
 #      | displayname_owner      | participant1-displayname |
 #      | uid_file_owner         | participant4 |
 #      | displayname_file_owner | participant4-displayname |
-#      | path                   | /welcome (2).txt |
+#      | path                   | /Talk/welcome.txt |
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/welcome (2).txt |
@@ -175,7 +175,7 @@ Feature: move
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/test |
-#      | file_target            | /welcome.txt |
+#      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
 #      | share_with             | group room |
 #      | share_with_displayname | Group room |
 #    And user "participant2" gets last share
@@ -184,7 +184,7 @@ Feature: move
 #      | displayname_owner      | participant1-displayname |
 #      | uid_file_owner         | participant3 |
 #      | displayname_file_owner | participant3-displayname |
-#      | path                   | /welcome (2).txt |
+#      | path                   | /Talk/welcome.txt |
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | shared::/welcome (2).txt |
@@ -201,7 +201,7 @@ Feature: move
 #      | item_type              | file |
 #      | mimetype               | text/plain |
 #      | storage_id             | home::participant3 |
-#      | file_target            | /welcome.txt |
+#      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
 #      | share_with             | group room |
 #      | share_with_displayname | Group room |
 #    And user "participant4" gets last share
@@ -226,7 +226,7 @@ Feature: move
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -244,11 +244,11 @@ Feature: move
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
