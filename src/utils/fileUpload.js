@@ -1,0 +1,63 @@
+/**
+ * @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
+ *
+ * @author Marco Ambrosini <marcoambrosini@pm.me>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+  * Checks the existence of a path in a folder and if a match is found, returns
+  * a unique path for that folder.
+  * @param {object} client The webdav client object
+  * @param {string} inputPath The path whose existence in the destination is to
+  * be checked
+  * @returns {string} The unique path
+  */
+
+const findUniquePath = async function(client, userRoot, path) {
+	// Return the input path if it doesn't exist in the destination folder
+	if (await client.exists(userRoot + path) === false) {
+		return path
+	}
+	// Get the file extension (if any)
+	const fileExtension = path.match(/\.[0-9a-z]+$/i) ? path.match(/\.[0-9a-z]+$/i)[0] : ''
+	// If there's a file extention, remove it from the path string
+	if (fileExtension !== '') {
+		path = path.substring(0, path.length - fileExtension.length)
+	}
+	// Check if the path ends with ` (n)`
+	const suffix = path.match(/ \((\d+)\)$/) ? path.match(/ \((\d+)\)$/) : ''
+	// Initialise a pathwithout suffix variable
+	let pathWithoutSuffix = path
+	if (suffix !== '') {
+		// remove the suffix if any
+		pathWithoutSuffix = path.substring(0, path.length - suffix.length)
+	}
+	// Loop untile a unique path is found
+	for (let number = 2; true; number++) {
+		const uniquePath = pathWithoutSuffix + ` (${number})` + (fileExtension)
+		if (await client.exists(userRoot + uniquePath) === false) {
+			return uniquePath
+		}
+
+	}
+}
+
+export {
+	findUniquePath,
+}

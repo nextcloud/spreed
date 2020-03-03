@@ -24,11 +24,11 @@
 		class="wrapper">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
-			ref="file-upload-input"
+			ref="fileUploadInput"
 			multiple
 			type="file"
 			class="hidden-visually"
-			@input="processFiles">
+			@change="processFiles">
 		<div
 			class="new-message">
 			<form
@@ -271,7 +271,7 @@ export default {
 		 * thus opening the file-picker
 		 */
 		clickImportInput() {
-			this.$refs['file-upload-input'].click()
+			this.$refs.fileUploadInput.click()
 		},
 
 		/**
@@ -282,27 +282,23 @@ export default {
 			// Store the token in a variable to prevent changes when changing conversation
 			// when the upload is still running
 			const token = this.token
+			// Create a unique id for the upload operation
+			const uploadId = new Date().getTime()
 			// The selected files array coming from the input
 			const files = Object.values(event.target.files)
+			// Clear the input for the next uploads
+			this.$refs.fileUploadInput.value = ''
 			// Process these files in the store
-			await this.$store.dispatch('addFilesToBeUploaded', { token, files })
-			// Dispatch the upload action (see uploadStore)
-			await this.$store.dispatch('uploadFiles', token)
+			await this.$store.dispatch('uploadFiles', { uploadId, token, files })
 			// Get the files that have successfully been uploaded from the store
-			const shareableFiles = this.$store.getters.getShareableFiles(token)
+			const shareableFiles = this.$store.getters.getShareableFiles(uploadId)
 			// Share each of those files in the conversation
 			for (const index in shareableFiles) {
-				// The pat of the file to share to the conversation
-				const path = this.$store.getters.getAttachmentFolder() + '/' + shareableFiles[index].name
+				const path = shareableFiles[index].sharePath
 				try {
-					// Mark current file as sharing
-					this.$store.dispatch('markFileAsSharing', { token, index })
-				} catch {
-					continue
-				}
-				try {
+					this.$store.dispatch('markFileAsSharing', { uploadId, index })
 					await shareFile(path, token)
-					this.$store.dispatch('markFileAsShared', { token, index })
+					this.$store.dispatch('markFileAsShared', { uploadId, index })
 				} catch (exception) {
 					console.debug('An error happened when triying to share your file: ', exception)
 				}
