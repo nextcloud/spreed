@@ -1091,7 +1091,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->response = $client->post(
 			$loginUrl,
 			[
-				'body' => [
+				'form_params' => [
 					'user' => $user,
 					'password' => $password,
 					'requesttoken' => $requestToken,
