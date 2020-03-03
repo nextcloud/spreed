@@ -332,11 +332,11 @@ Feature: create
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -349,7 +349,7 @@ Feature: create
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
@@ -358,11 +358,11 @@ Feature: create
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /Talk/welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/Talk/welcome (2).txt |
+      | file_target            | /Talk/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -380,11 +380,11 @@ Feature: create
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -397,7 +397,7 @@ Feature: create
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
     And user "participant3" gets last share
@@ -406,11 +406,11 @@ Feature: create
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /Talk/welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/Talk/welcome (2).txt |
+      | file_target            | /Talk/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -641,7 +641,7 @@ Feature: create
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    When user "participant2" shares "welcome (2).txt" with room "group room"
+    When user "participant2" shares "Talk/welcome.txt" with room "group room"
     Then the OCS status code should be "403"
     And the HTTP status code should be "401"
     And user "participant1" gets all shares
@@ -734,7 +734,7 @@ Feature: create
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
+      | file_target            | /welcome.txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
@@ -787,21 +787,21 @@ Feature: create
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
     And share 1 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
