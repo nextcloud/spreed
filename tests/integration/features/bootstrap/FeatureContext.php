@@ -1055,7 +1055,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function addingUserToGroup($user, $group) {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
-		$this->response = $this->sendRequest('POST', "ocs/v2.php/cloud/users/$user/groups", [
+		$this->response = $this->sendRequest('POST', "/cloud/users/$user/groups", [
 			'groupid' => $group,
 		]);
 		$this->setCurrentUser($currentUser);
