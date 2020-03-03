@@ -55,39 +55,29 @@ appstore:
 	rm -rf $(build_dir)
 	mkdir -p $(sign_dir)
 	rsync -a \
-	--exclude=bower.json \
-	--exclude=.bowerrc \
 	--exclude=/build \
 	--exclude=check-vuejs-builds.sh \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
-	--exclude=.eslintrc.yml \
 	--exclude=.eslintrc.js \
 	--exclude=.git \
 	--exclude=.gitattributes \
 	--exclude=.github \
 	--exclude=.gitignore \
-	--exclude=.jscsrc \
-	--exclude=.jshintignore \
 	--exclude=js/**.js.map \
-	--exclude=l10n/no-php \
 	--exclude=.l10nignore \
 	--exclude=mkdocs.yml \
 	--exclude=Makefile \
 	--exclude=node_modules \
 	--exclude=package.json \
 	--exclude=package-lock.json \
-	--exclude=phpunit*xml \
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
-	--exclude=.scrutinizer.yml \
 	--exclude=src \
-	--exclude=.stylelintrc \
 	--exclude=.stylelintignore \
+	--exclude=.stylelintrc \
 	--exclude=tests \
-	--exclude=.travis.yml \
-	--exclude=.tx \
 	--exclude=webpack.*.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
