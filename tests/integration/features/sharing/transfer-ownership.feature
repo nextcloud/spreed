@@ -116,7 +116,7 @@ Feature: transfer-ownership
       | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome.txt |
+      | storage_id             | shared::/Talk/welcome.txt |
       | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |

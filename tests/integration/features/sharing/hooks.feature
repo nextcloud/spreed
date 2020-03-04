@@ -174,7 +174,7 @@ Feature: hooks
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
-      | file_target            | /test |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | permissions            | 31 |
@@ -187,7 +187,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" removes "participant2" from room "group room" with 200
     Then user "participant1" gets last share
@@ -216,11 +216,11 @@ Feature: hooks
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -408,7 +408,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" removes "participant2" from room "group room" with 200
     Then user "participant1" gets last share
@@ -435,11 +435,11 @@ Feature: hooks
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -493,7 +493,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200
     When user "participant1" adds "participant2" to room "group room" with 200
@@ -523,11 +523,11 @@ Feature: hooks
       | displayname_owner      | participant1-displayname |
       | uid_file_owner         | participant2 |
       | displayname_file_owner | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -679,7 +679,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200
     When user "participant1" adds "participant2" to room "group room" with 200
@@ -707,7 +707,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -717,11 +717,11 @@ Feature: hooks
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -788,7 +788,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" deletes room "group room" with 200
     Then user "participant1" gets all shares
@@ -804,11 +804,11 @@ Feature: hooks
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
@@ -995,7 +995,7 @@ Feature: hooks
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" adds "participant3" to room "group room invited to" with 200
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant4" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant4" with OCS 100
     And user "participant4" accepts last share
     When user "participant2" is deleted
     Then user "participant1" gets last share
@@ -1034,7 +1034,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant4 |
       | share_with_displayname | participant4-displayname |
       | share_type             | 0 |
@@ -1056,11 +1056,11 @@ Feature: hooks
       | displayname_owner      | participant2 |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant4 |
       | share_with_displayname | participant4-displayname |
       | share_type             | 0 |

@@ -254,11 +254,11 @@ Feature: delete
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
@@ -345,11 +345,11 @@ Feature: delete
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |

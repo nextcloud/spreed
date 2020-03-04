@@ -749,9 +749,8 @@ Feature: create
       | mimetype               | text/plain |
       | storage_id             | shared::/Talk/welcome.txt |
       | file_target            | /Talk/welcome.txt |
-      | share_with             | participant2 |
-      | share_with_displayname | participant2-displayname |
-      | share_type             | 0 |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
     And share 1 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
@@ -760,8 +759,9 @@ Feature: create
       | mimetype               | text/plain |
       | storage_id             | shared::/Talk/welcome.txt |
       | file_target            | /Talk/welcome.txt |
-      | share_with             | group room |
-      | share_with_displayname | Group room |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
 
   Scenario: create share with a room including a user who already received that share directly
     Given user "participant1" creates room "group room"
