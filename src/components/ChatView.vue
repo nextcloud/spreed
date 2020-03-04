@@ -23,7 +23,7 @@
 		class="chatView"
 		@dragover.prevent="isDraggingOver = true"
 		@dragleave.prevent="isDraggingOver = false"
-		@drop.prevent="processFiles">
+		@drop.prevent="handleDropFiles">
 		<transition name="slide" mode="out-in">
 			<div
 				v-show="isDraggingOver"
@@ -50,7 +50,7 @@
 <script>
 import MessagesList from './MessagesList/MessagesList'
 import NewMessageForm from './NewMessageForm/NewMessageForm'
-import { shareFile } from '../services/filesSharingServices'
+import { processFiles } from '../utils/fileUpload'
 
 export default {
 
@@ -75,35 +75,15 @@ export default {
 	},
 
 	methods: {
-		/**
-		 * Uploads and shares the selected files
-		 * @param {object} event the file input event object
-		 */
-		async processFiles(event) {
+		handleDropFiles(event) {
 			// restore non dragover state
 			this.isDraggingOver = false
-			// Store the token in a variable to prevent changes when changing conversation
-			// when the upload is still running
-			const token = this.token
+			// Get the files from the event
+			const files = Object.values(event.dataTransfer.files)
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
-			// The selected files array coming from the input
-			const files = Object.values(event.dataTransfer.files)
-			// Process these files in the store
-			await this.$store.dispatch('uploadFiles', { uploadId, token, files })
-			// Get the files that have successfully been uploaded from the store
-			const shareableFiles = this.$store.getters.getShareableFiles(uploadId)
-			// Share each of those files in the conversation
-			for (const index in shareableFiles) {
-				const path = shareableFiles[index].sharePath
-				try {
-					this.$store.dispatch('markFileAsSharing', { uploadId, index })
-					await shareFile(path, token)
-					this.$store.dispatch('markFileAsShared', { uploadId, index })
-				} catch (exception) {
-					console.debug('An error happened when triying to share your file: ', exception)
-				}
-			}
+			// Uploads and shares the files
+			processFiles(files, this.token, uploadId)
 		},
 	},
 
