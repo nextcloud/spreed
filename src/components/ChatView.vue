@@ -91,8 +91,12 @@ export default {
 
 	methods: {
 		handleDropFiles(event) {
-			// restore non dragover state
+			// Restore non dragover state
 			this.isDraggingOver = false
+			// Stop the executin if the user is a guest
+			if (this.isGuest) {
+				return
+			}
 			// Get the files from the event
 			const files = Object.values(event.dataTransfer.files)
 			// Create a unique id for the upload operation
