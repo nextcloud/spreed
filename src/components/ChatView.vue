@@ -24,22 +24,26 @@
 		@dragover.prevent="isDraggingOver = true"
 		@dragleave.prevent="isDraggingOver = false"
 		@drop.prevent="processFiles">
-		<transition name="fade" mode="out-in">
+		<transition name="slide" mode="out-in">
 			<div
 				v-show="isDraggingOver"
 				class="dragover">
 				<div class="drop-hint">
+					<div class="icon-upload drop-hint__icon" />
 					<h3
 						class="drop-hint__text">
-						{{ t('spreed', 'Drop your files here to upload') }}
+						{{ t('spreed', 'Drop your files to upload') }}
 					</h3>
-					<div class="icon-upload drop-hint__icon" />
 				</div>
 			</div>
 		</transition>
-		<MessagesList
-			:token="token" />
-		<NewMessageForm />
+		<transition name="fade" mode="out-in">
+			<MessagesList
+				:token="token" />
+		</transition>
+		<transition name="fade" mode="out-in">
+			<NewMessageForm v-show="!isDraggingOver" />
+		</transition>
 	</div>
 </template>
 
@@ -109,7 +113,6 @@ export default {
 <style lang="scss" scoped>
 .chatView {
 	height: 100%;
-
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -119,11 +122,35 @@ export default {
 	width: 100%;
 	height: 100%;
 	background: var(--color-primary-light);
-	z-index: 10;
+	z-index: 11;
+	display: flex;
 }
 
 .drop-hint {
 	margin: auto;
+}
+
+.slide {
+	&-enter {
+		transform: translateY(-50%);
+		opacity: 0;
+	}
+	&-enter-to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	&-leave {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	&-leave-to {
+		transform: translateY(-50%);
+		opacity: 0;
+	}
+	&-enter-active,
+	&-leave-active {
+		transition: all 150ms ease-in-out;
+	}
 }
 
 .fade {
@@ -141,7 +168,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: all 200ms ease-in-out;
+		transition: all 150ms ease-in-out;
 	}
 }
 </style>
