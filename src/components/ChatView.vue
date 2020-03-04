@@ -29,10 +29,12 @@
 				v-show="isDraggingOver"
 				class="dragover">
 				<div class="drop-hint">
-					<div class="icon-upload drop-hint__icon" />
+					<div
+						class="drop-hint__icon"
+						:class="{'icon-upload' : !isGuest, 'icon-error' : isGuest}" />
 					<h3
 						class="drop-hint__text">
-						{{ t('spreed', 'Drop your files to upload') }}
+						{{ dropHintText }}
 					</h3>
 				</div>
 			</div>
@@ -72,6 +74,19 @@ export default {
 		return {
 			isDraggingOver: false,
 		}
+	},
+
+	computed: {
+		isGuest() {
+			return this.$store.getters.getActorType() === 'guests'
+		},
+		dropHintText() {
+			if (this.isGuest) {
+				return t('spreed', 'You need to be logged in to upload files')
+			} else {
+				return t('spreed', 'Drop your files to upload')
+			}
+		},
 	},
 
 	methods: {
