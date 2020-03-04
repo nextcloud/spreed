@@ -102,6 +102,27 @@ const actions = {
 		if (!currentUser.uid) {
 			currentUser = getCurrentUser()
 		}
+
+		if (!currentUser || !currentUser.uid) {
+			// Guests can not fetch the full participant list, but at least the
+			// participants store can be populated with the user ID, session ID,
+			// participant type and call status of the users from the
+			// conversation data.
+			context.dispatch('purgeParticipantsStore', conversation.token)
+
+			for (const participantId in conversation.participants) {
+				context.dispatch('addParticipant', {
+					token: conversation.token,
+					participant: {
+						inCall: conversation.participants[participantId].call,
+						sessionId: conversation.participants[participantId].sessionId,
+						participantType: conversation.participants[participantId].type,
+						userId: participantId,
+					},
+				})
+			}
+		}
+
 		context.dispatch('addParticipantOnce', {
 			token: conversation.token,
 			participant: {
