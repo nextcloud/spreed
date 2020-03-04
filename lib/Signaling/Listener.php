@@ -137,7 +137,27 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, $listener);
+		// TODO remove handler with "roomModified" in favour of handler with
+		// "participantsModified" once the clients no longer expect a
+		// "roomModified" message for participant type changes.
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function(ModifyParticipantEvent $event) {
+			if (self::isUsingInternalSignaling()) {
+				return;
+			}
+
+			/** @var BackendNotifier $notifier */
+			$notifier = \OC::$server->query(BackendNotifier::class);
+
+			$sessionIds = [];
+			// If the participant is not active in the room the "participants"
+			// request will be sent anyway, although with an empty "changed"
+			// property.
+			if ($event->getParticipant()->getSessionId()) {
+				$sessionIds[] = $event->getParticipant()->getSessionId();
+			}
+			$notifier->participantsModified($event->getRoom(), $sessionIds);
+		});
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function(RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;

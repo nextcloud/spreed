@@ -543,4 +543,123 @@ class BackendNotifierTest extends \Test\TestCase {
 		], $bodies);
 	}
 
+	public function testParticipantsTypeChanged() {
+		$room = $this->manager->createPublicRoom();
+		$userSession = 'user-session';
+		$room->addUsers([
+			'userId' => $this->userId,
+			'sessionId' => $userSession,
+		]);
+		$participant = $room->getParticipantBySession($userSession);
+		$room->setParticipantType($participant, Participant::MODERATOR);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'participants',
+			'participants' => [
+				'changed' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $this->userId,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $this->userId,
+					],
+				],
+			],
+		], $bodies);
+
+		$this->controller->clearRequests();
+		$guestSession = $room->joinRoomGuest('');
+		$guestParticipant = $room->getParticipantBySession($guestSession);
+		$room->setParticipantType($guestParticipant, Participant::GUEST_MODERATOR);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'participants',
+			'participants' => [
+				'changed' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST_MODERATOR,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $this->userId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST_MODERATOR,
+					],
+				],
+			],
+		], $bodies);
+
+		$this->controller->clearRequests();
+		$notJoinedUserId = 'not-joined-user-id';
+		$room->addUsers([
+			'userId' => $notJoinedUserId,
+		]);
+		$participant = $room->getParticipant($notJoinedUserId);
+		$room->setParticipantType($participant, Participant::MODERATOR);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'participants',
+			'participants' => [
+				'changed' => [
+				],
+				'users' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $this->userId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => 0,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $notJoinedUserId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST_MODERATOR,
+					],
+				],
+			],
+		], $bodies);
+	}
+
 }
