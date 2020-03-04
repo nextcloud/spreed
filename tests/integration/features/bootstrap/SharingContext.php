@@ -25,7 +25,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class SharingContext implements Context {
 
@@ -511,7 +511,7 @@ class SharingContext implements Context {
 
 		// Clean opcode cache
 		$client = new GuzzleHttp\Client();
-		$client->send($client->createRequest('GET', $this->baseUrl . '/apps/testing/clean_opcode_cache.php'));
+		$client->request('GET', $this->baseUrl . '/apps/testing/clean_opcode_cache.php');
 
 		\PHPUnit\Framework\Assert::assertEquals(0, $lastCode);
 	}

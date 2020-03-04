@@ -974,11 +974,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$deleted = false;
 
 		$this->deleteUser($user);
-		try {
-			$this->userExists($user);
-		} catch (ClientException $ex) {
-			$deleted = true;
-		}
+
+		$response = $this->userExists($user);
+		$deleted = $response->getStatusCode() === 404;
 
 		if (!$deleted) {
 			Assert::fail("User $user exists");
