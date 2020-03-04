@@ -25,7 +25,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class SharingContext implements Context {
 
@@ -426,7 +426,7 @@ class SharingContext implements Context {
 
 		$this->sendingTo('GET', $url);
 
-		PHPUnit_Framework_Assert::assertEquals(200, $this->response->getStatusCode());
+		\PHPUnit\Framework\Assert::assertEquals(200, $this->response->getStatusCode());
 	}
 
 	/**
@@ -511,9 +511,9 @@ class SharingContext implements Context {
 
 		// Clean opcode cache
 		$client = new GuzzleHttp\Client();
-		$client->send($client->createRequest('GET', $this->baseUrl . '/apps/testing/clean_opcode_cache.php'));
+		$client->request('GET', $this->baseUrl . '/apps/testing/clean_opcode_cache.php');
 
-		PHPUnit_Framework_Assert::assertEquals(0, $lastCode);
+		\PHPUnit\Framework\Assert::assertEquals(0, $lastCode);
 	}
 
 	/**
@@ -524,7 +524,7 @@ class SharingContext implements Context {
 	public function theOCSStatusCodeShouldBe(int $statusCode) {
 		$meta = $this->getXmlResponse()->meta[0];
 
-		PHPUnit_Framework_Assert::assertEquals($statusCode, (int)$meta->statuscode, 'Response message: ' . (string)$meta->message);
+		\PHPUnit\Framework\Assert::assertEquals($statusCode, (int)$meta->statuscode, 'Response message: ' . (string)$meta->message);
 	}
 
 	/**
@@ -533,7 +533,7 @@ class SharingContext implements Context {
 	 * @param int $statusCode
 	 */
 	public function theHTTPStatusCodeShouldBe(int $statusCode) {
-		PHPUnit_Framework_Assert::assertEquals($statusCode, $this->response->getStatusCode());
+		\PHPUnit\Framework\Assert::assertEquals($statusCode, $this->response->getStatusCode());
 	}
 
 	/**
@@ -545,7 +545,7 @@ class SharingContext implements Context {
 
 		$returnedShares = $this->getXmlResponse()->data[0];
 
-		PHPUnit_Framework_Assert::assertEquals($count, count($returnedShares->element));
+		\PHPUnit\Framework\Assert::assertEquals($count, count($returnedShares->element));
 	}
 
 	/**
@@ -639,10 +639,10 @@ class SharingContext implements Context {
 				$sharees[] = $expectedSharee;
 			}
 			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
-			PHPUnit_Framework_Assert::assertEquals($sharees, $respondedArray);
+			\PHPUnit\Framework\Assert::assertEquals($sharees, $respondedArray);
 		} else {
 			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
-			PHPUnit_Framework_Assert::assertEmpty($respondedArray);
+			\PHPUnit\Framework\Assert::assertEmpty($respondedArray);
 		}
 	}
 
@@ -668,7 +668,7 @@ class SharingContext implements Context {
 			}
 		}
 
-		PHPUnit_Framework_Assert::assertEquals($expectedHrefs, $hrefs);
+		\PHPUnit\Framework\Assert::assertEquals($expectedHrefs, $hrefs);
 	}
 
 	/**
@@ -692,7 +692,7 @@ class SharingContext implements Context {
 			}
 		}
 
-		PHPUnit_Framework_Assert::assertEquals($expectedShareTypes, $shareTypes);
+		\PHPUnit\Framework\Assert::assertEquals($expectedShareTypes, $shareTypes);
 	}
 
 	/**
@@ -710,7 +710,7 @@ class SharingContext implements Context {
 		});
 
 		if (empty($fileForPath)) {
-			PHPUnit_Framework_Assert::fail("$path not found in the response");
+			\PHPUnit\Framework\Assert::fail("$path not found in the response");
 		}
 
 		$fileForPath = array_shift($fileForPath);
@@ -729,7 +729,7 @@ class SharingContext implements Context {
 			}
 		}
 
-		PHPUnit_Framework_Assert::assertEquals($expectedShareTypes, $shareTypes);
+		\PHPUnit\Framework\Assert::assertEquals($expectedShareTypes, $shareTypes);
 	}
 
 	/**
@@ -787,11 +787,11 @@ class SharingContext implements Context {
 			if (array_key_exists('expireDate', $fd)){
 				$fd['expireDate'] = date('Y-m-d', strtotime($fd['expireDate']));
 			}
-			$options['body'] = $fd;
+			$options['form_params'] = $fd;
 		}
 
 		try {
-			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
+			$this->response = $client->request($verb, $fullUrl, $options);
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
@@ -823,7 +823,7 @@ class SharingContext implements Context {
 		}
 
 		try {
-			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
+			$this->response = $client->request($verb, $fullUrl, $options);
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
@@ -840,7 +840,7 @@ class SharingContext implements Context {
 
 		$client = new Client();
 		try {
-			$this->response = $client->send($client->createRequest(
+			$this->response = $client->request(
 				$verb,
 				$fullUrl,
 				[
@@ -849,7 +849,7 @@ class SharingContext implements Context {
 						'requesttoken' => $requestToken
 					]
 				]
-			));
+			);
 		} catch (GuzzleHttp\Exception\ClientException $e) {
 			$this->response = $e->getResponse();
 		}
@@ -887,7 +887,7 @@ class SharingContext implements Context {
 		$response = $client->post(
 			$loginUrl,
 			[
-				'body' => [
+				'form_params' => [
 					'user' => $user,
 					'password' => $password,
 					'requesttoken' => $requestToken,
@@ -932,7 +932,7 @@ class SharingContext implements Context {
 		}
 
 		if (!array_key_exists($field, $returnedShare)) {
-			PHPUnit_Framework_Assert::fail("$field was not found in response");
+			\PHPUnit\Framework\Assert::fail("$field was not found in response");
 		}
 
 		if ($field === 'expiration' && !empty($contentExpected)){
@@ -940,15 +940,15 @@ class SharingContext implements Context {
 		}
 
 		if ($contentExpected === 'A_NUMBER') {
-			PHPUnit_Framework_Assert::assertTrue(is_numeric((string)$returnedShare->$field), "Field '$field' is not a number: " . $returnedShare->$field);
+			\PHPUnit\Framework\Assert::assertTrue(is_numeric((string)$returnedShare->$field), "Field '$field' is not a number: " . $returnedShare->$field);
 		} else if ($contentExpected === 'A_TOKEN') {
 			// A token is composed by 15 characters from
 			// ISecureRandom::CHAR_HUMAN_READABLE.
-			PHPUnit_Framework_Assert::assertRegExp('/^[abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789]{15}$/', (string)$returnedShare->$field, "Field '$field' is not a token");
+			\PHPUnit\Framework\Assert::assertRegExp('/^[abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789]{15}$/', (string)$returnedShare->$field, "Field '$field' is not a token");
 		} else if (strpos($contentExpected, 'REGEXP ') === 0) {
-			PHPUnit_Framework_Assert::assertRegExp(substr($contentExpected, strlen('REGEXP ')), (string)$returnedShare->$field, "Field '$field' does not match");
+			\PHPUnit\Framework\Assert::assertRegExp(substr($contentExpected, strlen('REGEXP ')), (string)$returnedShare->$field, "Field '$field' does not match");
 		} else {
-			PHPUnit_Framework_Assert::assertEquals($contentExpected, (string)$returnedShare->$field, "Field '$field' does not match");
+			\PHPUnit\Framework\Assert::assertEquals($contentExpected, (string)$returnedShare->$field, "Field '$field' does not match");
 		}
 	}
 
