@@ -114,12 +114,14 @@ function SimpleWebRTC(opts) {
 				self.emit('createdPeer', peer)
 			}
 			peer.handleMessage(message)
-		} else if (message.type === 'forceMute') {
-			if (message.payload.peerId === self.connection.getSessionId()) {
-				self.mute()
-				self.emit('forcedMute')
-			} else {
-				self.emit('mute', { id: message.payload.peerId })
+		} else if (message.type === 'control') {
+			if (message.payload.action === 'forceMute') {
+				if (message.payload.peerId === self.connection.getSessionId()) {
+					self.mute()
+					self.emit('forcedMute')
+				} else {
+					self.emit('mute', { id: message.payload.peerId })
+				}
 			}
 		} else if (peers.length) {
 			peers.forEach(function(peer) {

@@ -341,32 +341,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		webrtc.leaveCall()
 	})
 
-	function isMessageFromModerator(message) {
-		const callParticipantModel = callParticipantCollection.get(message.from)
-		if (!callParticipantModel) {
-			return false
-		}
-
-		const userId = callParticipantModel.get('userId')
-		if (!userId) {
-			return false
-		}
-
-		const participantIndex = store.getters.getParticipantIndex(webrtc.roomName, { participant: userId })
-		const participant = store.getters.getParticipant(webrtc.roomName, participantIndex)
-
-		return participant
-			&& (participant.participantType === PARTICIPANT.TYPE.OWNER
-				|| participant.participantType === PARTICIPANT.TYPE.MODERATOR)
-	}
-
 	signaling.on('message', function(message) {
-		if (message.type === 'forceMute' && !isMessageFromModerator(message)) {
-			message.type = 'forceMute-to-ignore'
-
-			return
-		}
-
 		if (message.type === 'answer' && message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
 			clearInterval(delayedConnectionToPeer[message.from])
 			delete delayedConnectionToPeer[message.from]
