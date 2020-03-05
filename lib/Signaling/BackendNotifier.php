@@ -229,6 +229,11 @@ class BackendNotifier {
 			$participant['userId'] = $userId;
 			$users[] = $participant;
 			if (\in_array($participant['sessionId'], $sessionIds, true)) {
+				$participant['permissions'] = ['publish-media', 'publish-screen'];
+				if ($participant['participantType'] === Participant::OWNER ||
+						$participant['participantType'] === Participant::MODERATOR) {
+					$participant['permissions'][] = 'control';
+				}
 				$changed[] = $participant;
 			}
 		}
@@ -238,6 +243,7 @@ class BackendNotifier {
 			}
 			$users[] = $participant;
 			if (\in_array($participant['sessionId'], $sessionIds, true)) {
+				$participant['permissions'] = ['publish-media', 'publish-screen'];
 				$changed[] = $participant;
 			}
 		}

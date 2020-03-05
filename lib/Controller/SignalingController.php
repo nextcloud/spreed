@@ -428,6 +428,11 @@ class SignalingController extends OCSController {
 			}
 		}
 
+		$permissions = ['publish-media', 'publish-screen'];
+		if ($participant instanceof Participant && $participant->hasModeratorPermissions(false)) {
+			$permissions[] = 'control';
+		}
+
 		$event = new SignalingEvent($room, $participant, $action);
 		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $event);
 
@@ -437,6 +442,7 @@ class SignalingController extends OCSController {
 				'version' => '1.0',
 				'roomid' => $room->getToken(),
 				'properties' => $room->getPropertiesForSignaling((string) $userId),
+				'permissions' => $permissions,
 			],
 		];
 		if ($event->getSession()) {

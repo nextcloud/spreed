@@ -398,6 +398,115 @@ class SignalingControllerTest extends \Test\TestCase {
 					'name' => $roomName,
 					'type' => Room::ONE_TO_ONE_CALL,
 				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
+				],
+			],
+		], $result->getData());
+	}
+
+	public function testBackendRoomUserPublic() {
+		$roomToken = 'the-room';
+		$roomName = 'the-room-name';
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with($roomToken)
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with($this->userId)
+			->willReturn($participant);
+		$room->expects($this->once())
+			->method('getToken')
+			->willReturn($roomToken);
+		$room->expects($this->once())
+			->method('getPropertiesForSignaling')
+			->with($this->userId)
+			->willReturn([
+				'name' => $roomName,
+				'type' => Room::PUBLIC_CALL,
+			]);
+
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $roomToken,
+				'userid' => $this->userId,
+				'sessionid' => '',
+			],
+		]);
+		$this->assertSame([
+			'type' => 'room',
+			'room' => [
+				'version' => '1.0',
+				'roomid' => $roomToken,
+				'properties' => [
+					'name' => $roomName,
+					'type' => Room::PUBLIC_CALL,
+				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
+				],
+			],
+		], $result->getData());
+	}
+
+	public function testBackendRoomModeratorPublic() {
+		$roomToken = 'the-room';
+		$roomName = 'the-room-name';
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with($roomToken)
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('hasModeratorPermissions')
+			->with(false)
+			->willReturn(true);
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with($this->userId)
+			->willReturn($participant);
+		$room->expects($this->once())
+			->method('getToken')
+			->willReturn($roomToken);
+		$room->expects($this->once())
+			->method('getPropertiesForSignaling')
+			->with($this->userId)
+			->willReturn([
+				'name' => $roomName,
+				'type' => Room::PUBLIC_CALL,
+			]);
+
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $roomToken,
+				'userid' => $this->userId,
+				'sessionid' => '',
+			],
+		]);
+		$this->assertSame([
+			'type' => 'room',
+			'room' => [
+				'version' => '1.0',
+				'roomid' => $roomToken,
+				'properties' => [
+					'name' => $roomName,
+					'type' => Room::PUBLIC_CALL,
+				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
+					'control',
+				],
 			],
 		], $result->getData());
 	}
@@ -444,6 +553,10 @@ class SignalingControllerTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $roomName,
 					'type' => Room::PUBLIC_CALL,
+				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
 				],
 			],
 		], $result->getData());
@@ -495,6 +608,10 @@ class SignalingControllerTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $roomName,
 					'type' => Room::PUBLIC_CALL,
+				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
 				],
 			],
 		], $result->getData());
@@ -580,6 +697,10 @@ class SignalingControllerTest extends \Test\TestCase {
 				'properties' => [
 					'name' => $roomName,
 					'type' => Room::ONE_TO_ONE_CALL,
+				],
+				'permissions' => [
+					'publish-media',
+					'publish-screen',
 				],
 				'session' => [
 					'foo' => 'bar',
