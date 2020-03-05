@@ -31,7 +31,10 @@
 				<div class="drop-hint">
 					<div
 						class="drop-hint__icon"
-						:class="{'icon-upload' : !isGuest, 'icon-user' : isGuest}" />
+						:class="{
+							'icon-upload' : !isGuest && !isReadOnly,
+							'icon-user' : isGuest,
+							'icon-error' : isReadOnly}" />
 					<h2
 						class="drop-hint__text">
 						{{ dropHintText }}
@@ -53,6 +56,7 @@
 import MessagesList from './MessagesList/MessagesList'
 import NewMessageForm from './NewMessageForm/NewMessageForm'
 import { processFiles } from '../utils/fileUpload'
+import { CONVERSATION } from '../constants'
 
 export default {
 
@@ -83,18 +87,28 @@ export default {
 		dropHintText() {
 			if (this.isGuest) {
 				return t('spreed', 'You need to be logged in to upload files')
+			} else if (this.isReadOnly) {
+				return t('spreed', 'This conversation is read only')
 			} else {
 				return t('spreed', 'Drop your files to upload')
+			}
+		},
+		isReadOnly() {
+			if (this.$store.getters.conversation(this.token)) {
+				return this.$store.getters.conversation(this.token).readOnly === CONVERSATION.STATE.READ_ONLY
+			} else {
+				return undefined
 			}
 		},
 	},
 
 	methods: {
+
 		handleDropFiles(event) {
 			// Restore non dragover state
 			this.isDraggingOver = false
 			// Stop the executin if the user is a guest
-			if (this.isGuest) {
+			if (this.isGuest || this.isReadOnly) {
 				return
 			}
 			// Get the files from the event
