@@ -133,6 +133,15 @@ class SignalingController extends OCSController {
 					}
 					$decodedMessage['from'] = $message['sessionId'];
 
+					if ($decodedMessage['type'] === 'control') {
+						$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
+						$participant = $room->getParticipantBySession($message['sessionId']);
+
+						if (!$participant->hasModeratorPermissions(false)) {
+							break;
+						}
+					}
+
 					$this->messages->addMessage($message['sessionId'], $decodedMessage['to'], json_encode($decodedMessage));
 
 					break;
