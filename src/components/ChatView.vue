@@ -31,11 +31,11 @@
 				<div class="drop-hint">
 					<div
 						class="drop-hint__icon"
-						:class="{'icon-upload' : !isGuest, 'icon-error' : isGuest}" />
-					<h3
+						:class="{'icon-upload' : !isGuest, 'icon-user' : isGuest}" />
+					<h2
 						class="drop-hint__text">
 						{{ dropHintText }}
-					</h3>
+					</h2>
 				</div>
 			</div>
 		</transition>
@@ -127,6 +127,11 @@ export default {
 
 .drop-hint {
 	margin: auto;
+	&__icon {
+		background-size: 48px;
+		height: 48px;
+		margin-bottom: 16px;
+	}
 }
 
 .slide {
