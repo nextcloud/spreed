@@ -23,10 +23,11 @@
 <template>
 	<AppSidebar
 		v-if="opened"
-		:title="conversation.displayName"
+		:title="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
 		@update:starred="onFavoriteChange"
+		@update:title="handleUpdateTitle"
 		@submit-title="handleSubmitTitle"
 		@dismiss-editing="isRenamingConversation = false"
 		@close="handleClose">
@@ -351,6 +352,17 @@ export default {
 				return ''
 			}
 		},
+		/**
+		 * The conversation title value passed into the AppSidebar component.
+		 * @returns {string} The conversation's title.
+		 */
+		title() {
+			if (this.isRenamingConversation) {
+				return this.conversationName
+			} else {
+				return this.conversation.displayName
+			}
+		},
 	},
 
 	methods: {
@@ -449,6 +461,16 @@ export default {
 		handleRenameConversation() {
 			this.isRenamingConversation = true
 		},
+
+		/**
+		 * Updates the conversationName value while editing the conversation's title.
+		 * @param {string} title the conversation title emitted by the AppSidevar vue
+		 * component.
+		 */
+		handleUpdateTitle(title) {
+			this.conversationName = title
+		},
+
 		async handleSubmitTitle(event) {
 			const name = event.target[0].value.trim()
 			try {
