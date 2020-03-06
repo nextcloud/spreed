@@ -42,13 +42,9 @@
 				</div>
 			</div>
 		</transition>
-		<transition name="fade" mode="out-in">
-			<MessagesList
-				:token="token" />
-		</transition>
-		<transition name="fade" mode="out-in">
-			<NewMessageForm v-show="!isDraggingOver" />
-		</transition>
+		<MessagesList
+			:token="token" />
+		<NewMessageForm />
 	</div>
 </template>
 
@@ -132,11 +128,17 @@ export default {
 }
 
 .dragover {
-	width: 100%;
-	height: 100%;
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
 	background: var(--color-primary-light);
 	z-index: 11;
 	display: flex;
+	box-shadow: 0px 0px 36px var(--color-box-shadow);
+	border-radius: var(--border-radius);
+	opacity: 90%;
 }
 
 .drop-hint {
