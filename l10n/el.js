@@ -337,6 +337,7 @@ OC.L10N.register(
     "Link to a conversation" : "Σύνδεσμος συνομιλίας",
     "Error while sharing file" : "Σφάλμα κατά τον διαμοιρασμό αρχείου",
     "Error while uploading file" : "Σφάλμα κατά την μεταφόρτωση αρχείου",
+    "Sending signaling message has failed." : "Η αποστολή μηνύματος σηματοδοσίας απέτυχε.",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Φαίνεται ότι μιλάτε ενώ είστε σε σίγαση, παρακαλώ ενεργοποιήστε τον ήχο σας για να ακουστείτε",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Διαρκεί περισσότερο από το αναμενόμενο. Τα δικαιώματα των μέσων επικοινωνίας έχουν χορηγηθεί (ή απορριφθεί); Εάν ναι, κάντε επανεκκίνηση του προγράμματος περιήγησής σας, λόγω αποτυχιας του ήχου και του βίντεο",
     "Access to microphone & camera is only possible with HTTPS" : "Η πρόσβαση στο μικρόφωνο και στην κάμερα είναι εφικτή μόνο μέσω HTTPS",
