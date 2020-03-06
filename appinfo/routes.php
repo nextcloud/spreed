@@ -28,6 +28,11 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
+		[
+			'name' => 'Page#notFound',
+			'url' => '/not-found',
+			'verb' => 'GET',
+		],
 	],
 	'ocs' => [
 		/**
