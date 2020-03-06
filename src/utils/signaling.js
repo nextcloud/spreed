@@ -297,8 +297,10 @@ Signaling.Base.prototype.joinCall = function(token, flags) {
 			}.bind(this))
 			.catch(function() {
 				reject(new Error())
-				// Room not found or maintenance mode
-				OC.redirect(OC.generateUrl('apps/spreed'))
+				// Server maintenance, lobby kicked in, or room not found.
+				// We first redirect to the conversation again and that
+				// will then show the proper error message to the user.
+				OC.redirect(OC.generateUrl('call/' + token))
 			})
 	})
 }
