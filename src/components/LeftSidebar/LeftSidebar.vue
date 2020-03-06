@@ -34,8 +34,7 @@
 				:title="t('spreed', 'Conversations')" />
 			<li>
 				<ConversationsList
-					:search-text="searchText"
-					@click-conversation="abortSearch" />
+					:search-text="searchText" />
 			</li>
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
