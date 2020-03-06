@@ -22,7 +22,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -37,11 +37,11 @@ Feature: get
     Then share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -75,18 +75,18 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | New room name |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | New room name |
 
@@ -107,7 +107,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | expiration             | -3 days |
@@ -135,7 +135,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | expiration             | -3 days |
@@ -186,7 +186,7 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" creates folder "/deleted"
@@ -201,7 +201,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -211,7 +211,7 @@ Feature: get
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
-      | file_target            | /test |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
       | permissions            | 31 |
@@ -222,7 +222,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 3 is returned with
@@ -232,7 +232,7 @@ Feature: get
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
-      | file_target            | /test |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
       | share_with             | own one-to-one room |
       | share_with_displayname | participant3-displayname |
       | permissions            | 31 |
@@ -258,17 +258,59 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" creates folder "/deleted"
     And user "participant1" shares "deleted" with room "group room invited to" with OCS 100
-    And user "participant2" shares "deleted" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/deleted" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" deletes file "deleted"
     When user "participant1" gets all shares and reshares
     Then the list of returned shares has 6 shares
     And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
+      | share_with             | own group room |
+      | share_with_displayname | Own group room |
+    And share 1 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /test |
+      | item_type              | folder |
+      | mimetype               | httpd/unix-directory |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+      | permissions            | 31 |
+    And share 2 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And share 3 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /test |
+      | item_type              | folder |
+      | mimetype               | httpd/unix-directory |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
+      | share_with             | own one-to-one room |
+      | share_with_displayname | participant3-displayname |
+      | permissions            | 31 |
+    And share 4 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
@@ -281,48 +323,6 @@ Feature: get
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
-    And share 1 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome.txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
-      | share_with             | own group room |
-      | share_with_displayname | Own group room |
-    And share 2 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /test |
-      | item_type              | folder |
-      | mimetype               | httpd/unix-directory |
-      | storage_id             | home::participant1 |
-      | file_target            | /test |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
-      | permissions            | 31 |
-    And share 3 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome.txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
-    And share 4 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /test |
-      | item_type              | folder |
-      | mimetype               | httpd/unix-directory |
-      | storage_id             | home::participant1 |
-      | file_target            | /test |
-      | share_with             | own one-to-one room |
-      | share_with_displayname | participant3-displayname |
-      | permissions            | 31 |
     And share 5 is returned with
       | uid_owner              | participant3 |
       | displayname_owner      | participant3-displayname |
@@ -332,7 +332,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -367,7 +367,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -402,7 +402,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -427,7 +427,7 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares for "/welcome.txt"
@@ -439,7 +439,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
@@ -449,7 +449,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 
@@ -474,7 +474,7 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "welcome.txt"
@@ -503,12 +503,32 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 4 shares
     And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
+      | share_with             | own group room |
+      | share_with_displayname | Own group room |
+    And share 1 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And share 2 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
@@ -521,26 +541,6 @@ Feature: get
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
-    And share 1 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome.txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
-      | share_with             | own group room |
-      | share_with_displayname | Own group room |
-    And share 2 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome.txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
     And share 3 is returned with
       | uid_owner              | participant3 |
       | displayname_owner      | participant3-displayname |
@@ -550,7 +550,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -585,7 +585,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -620,7 +620,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -656,7 +656,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
@@ -692,7 +692,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
       | token                  | A_TOKEN |
@@ -730,7 +730,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
       | token                  | A_TOKEN |
@@ -768,7 +768,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | public room self-joined to |
       | share_with_displayname | Public room self-joined to |
       | token                  | A_TOKEN |
@@ -794,7 +794,7 @@ Feature: get
     And user "participant1" shares "test" with room "group room invited to" with OCS 100
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "welcome.txt"
@@ -828,7 +828,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test2" with room "own one-to-one room" with OCS 100
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
-    And user "participant2" shares "subfolder" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/subfolder" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "subfolder" with room "one-to-one room not invited to" with OCS 100
     # Only direct children are taken into account
@@ -841,20 +841,31 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /test/subfolder |
+      | item_type              | folder |
+      | mimetype               | httpd/unix-directory |
+      | storage_id             | home::participant1 |
+      | file_target            | /{TALK_PLACEHOLDER}/subfolder |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+      | permissions            | 31 |
+    And share 2 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
       | path                   | /test/renamed.txt |
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-    And share 2 is returned with
+    And share 3 is returned with
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
       | uid_owner              | participant2 |
@@ -868,17 +879,6 @@ Feature: get
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
       | permissions            | 31 |
-    And share 3 is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /test/subfolder |
-      | item_type              | folder |
-      | mimetype               | httpd/unix-directory |
-      | storage_id             | home::participant1 |
-      | file_target            | /subfolder |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
-      | permissions            | 31 |
     And share 4 is returned with
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
@@ -889,7 +889,7 @@ Feature: get
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
-      | file_target            | /subfolder |
+      | file_target            | /{TALK_PLACEHOLDER}/subfolder |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
       | permissions            | 31 |
@@ -920,7 +920,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test2" with room "own one-to-one room" with OCS 100
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
-    And user "participant2" shares "subfolder" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/subfolder" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "subfolder" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "test"
@@ -958,42 +958,42 @@ Feature: get
     And share 0 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
       | uid_owner              | participant3 |
       | displayname_owner      | participant3-displayname |
-      | path                   | /test |
+      | path                   | /Talk/test |
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
-      | storage_id             | shared::/test |
-      | file_target            | /test |
+      | storage_id             | shared::/Talk/test |
+      | file_target            | /Talk/test |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
       | permissions            | 31 |
     And share 2 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 3 is returned with
       | uid_owner              | participant3 |
       | displayname_owner      | participant3-displayname |
-      | path                   | /test |
+      | path                   | /Talk/test |
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
-      | storage_id             | shared::/test |
-      | file_target            | /test |
+      | storage_id             | shared::/Talk/test |
+      | file_target            | /Talk/test |
       | share_with             | own one-to-one room |
       | share_with_displayname | participant3-displayname |
       | permissions            | 31 |
@@ -1018,26 +1018,26 @@ Feature: get
     And user "participant3" shares "test" with room "group room invited to" with OCS 100
     And user "participant2" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant3" shares "test" with room "own one-to-one room" with OCS 100
-    When user "participant1" gets all received shares for "/welcome (2).txt"
+    When user "participant1" gets all received shares for "/Talk/welcome.txt"
     Then the list of returned shares has 2 shares
     And share 0 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
     And share 1 is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 
@@ -1099,7 +1099,7 @@ Feature: get
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | permissions            | 0 |
@@ -1161,7 +1161,7 @@ Feature: get
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" gets the share-type DAV property for "/welcome.txt"
     Then the response contains a share-types DAV property with
@@ -1191,9 +1191,9 @@ Feature: get
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
-    When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
+    When user "participant2" gets the share-type DAV property for "/Talk/welcome.txt"
     Then the response contains a share-types DAV property with
       | 0 |
 
@@ -1300,6 +1300,7 @@ Feature: get
     When user "participant2" gets the DAV properties for "/"
     Then the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
     And user "participant1" gets the DAV properties for "/"
     And the list of returned files for "participant1" is

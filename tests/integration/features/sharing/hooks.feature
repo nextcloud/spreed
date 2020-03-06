@@ -19,11 +19,11 @@ Feature: hooks
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -38,11 +38,11 @@ Feature: hooks
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -85,11 +85,11 @@ Feature: hooks
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -100,7 +100,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -116,11 +116,11 @@ Feature: hooks
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -132,7 +132,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -174,7 +174,7 @@ Feature: hooks
       | item_type              | folder |
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
-      | file_target            | /test |
+      | file_target            | /{TALK_PLACEHOLDER}/test |
       | share_with             | group room |
       | share_with_displayname | Group room |
       | permissions            | 31 |
@@ -187,7 +187,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" removes "participant2" from room "group room" with 200
     Then user "participant1" gets last share
@@ -243,7 +243,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -266,7 +266,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -288,7 +288,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -311,7 +311,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -333,7 +333,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -357,7 +357,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -383,7 +383,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -408,7 +408,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" removes "participant2" from room "group room" with 200
     Then user "participant1" gets last share
@@ -493,7 +493,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200
     When user "participant1" adds "participant2" to room "group room" with 200
@@ -548,11 +548,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -571,11 +571,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -593,11 +593,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -616,11 +616,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -638,11 +638,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -662,11 +662,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
       | token                  | A_TOKEN |
@@ -679,7 +679,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200
     When user "participant1" adds "participant2" to room "group room" with 200
@@ -703,10 +703,10 @@ Feature: hooks
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
       | file_target            | /welcome (2).txt |
       | share_with             | participant3 |
       | share_with_displayname | participant3-displayname |
@@ -788,7 +788,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" deletes room "group room" with 200
     Then user "participant1" gets all shares
@@ -874,7 +874,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | another group room |
       | share_with_displayname | Another group room |
     And share 1 is returned with
@@ -884,7 +884,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | yet another group room |
       | share_with_displayname | Yet another group room |
     And user "participant2" gets all received shares
@@ -892,21 +892,21 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | another group room |
       | share_with_displayname | Another group room |
     And share 1 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | yet another group room |
       | share_with_displayname | Yet another group room |
 
@@ -939,18 +939,18 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 
@@ -972,18 +972,18 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
 
@@ -995,7 +995,7 @@ Feature: hooks
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" adds "participant3" to room "group room invited to" with 200
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
-    And user "participant2" shares "welcome (2).txt" with user "participant4" with OCS 100
+    And user "participant2" shares "Talk/welcome.txt" with user "participant4" with OCS 100
     And user "participant4" accepts last share
     When user "participant2" is deleted
     Then user "participant1" gets last share
@@ -1021,7 +1021,7 @@ Feature: hooks
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And user "participant3" gets last share
@@ -1030,10 +1030,10 @@ Feature: hooks
       | displayname_owner      | participant2 |
       | uid_file_owner         | participant1 |
       | displayname_file_owner | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
       | file_target            | /welcome (2).txt |
       | share_with             | participant4 |
       | share_with_displayname | participant4-displayname |
@@ -1043,11 +1043,11 @@ Feature: hooks
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And user "participant4" gets last share

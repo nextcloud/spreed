@@ -18,11 +18,11 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome.txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome.txt |
-      | file_target            | /welcome.txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -33,18 +33,18 @@ Feature: transfer-ownership
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -78,11 +78,11 @@ Feature: transfer-ownership
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant3 |
       | displayname_file_owner | participant3-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome (2).txt |
+      | file_target            | /Talk/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
@@ -95,7 +95,7 @@ Feature: transfer-ownership
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant3 |
-      | file_target            | /welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -113,11 +113,11 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome.txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome.txt |
-      | file_target            | /welcome.txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -128,17 +128,17 @@ Feature: transfer-ownership
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /welcome (2).txt |
+      | path                   | /Talk/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
+      | storage_id             | shared::/Talk/welcome.txt |
+      | file_target            | /Talk/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
