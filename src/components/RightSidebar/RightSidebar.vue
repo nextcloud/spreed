@@ -459,6 +459,8 @@ export default {
 		},
 
 		handleRenameConversation() {
+			// Copy the current conversation's title into the renaming title
+			this.conversationName = this.title
 			this.isRenamingConversation = true
 		},
 
