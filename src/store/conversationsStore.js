@@ -45,6 +45,13 @@ const state = {
 const getters = {
 	conversations: state => state.conversations,
 	conversationsList: state => Object.values(state.conversations),
+	/**
+	 * Get a conversation providing it's token
+	 * @param {object} state state object
+	 * @returns {function} The callback function
+	 * @returns {object} The conversation object
+	 */
+	conversation: state => token => state.conversations[token],
 }
 
 const mutations = {

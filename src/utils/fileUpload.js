@@ -29,6 +29,9 @@
   * @returns {string} The unique path
   */
 
+import { shareFile } from '../services/filesSharingServices'
+import store from '../store/index'
+
 const findUniquePath = async function(client, userRoot, path) {
 	// Return the input path if it doesn't exist in the destination folder
 	if (await client.exists(userRoot + path) === false) {
@@ -58,6 +61,31 @@ const findUniquePath = async function(client, userRoot, path) {
 	}
 }
 
+/**
+ * Uploads and shares files to a conversation
+ * @param {object} files the files to be processed
+ * @param {string} token the conversation's token where to share the files
+ * @param {number} uploadId a unique id for the upload operation indexing
+ */
+const processFiles = async function(files, token, uploadId) {
+	// Process these files in the store
+	await store.dispatch('uploadFiles', { uploadId, token, files })
+	// Get the files that have successfully been uploaded from the store
+	const shareableFiles = store.getters.getShareableFiles(uploadId)
+	// Share each of those files in the conversation
+	for (const index in shareableFiles) {
+		const path = shareableFiles[index].sharePath
+		try {
+			store.dispatch('markFileAsSharing', { uploadId, index })
+			await shareFile(path, token)
+			store.dispatch('markFileAsShared', { uploadId, index })
+		} catch (exception) {
+			console.debug('An error happened when triying to share your file: ', exception)
+		}
+	}
+}
+
 export {
 	findUniquePath,
+	processFiles,
 }

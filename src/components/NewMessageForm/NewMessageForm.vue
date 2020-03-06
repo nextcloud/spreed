@@ -28,7 +28,7 @@
 			multiple
 			type="file"
 			class="hidden-visually"
-			@change="processFiles">
+			@change="handleFileInput">
 		<div
 			class="new-message">
 			<form
@@ -82,6 +82,8 @@ import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { shareFile } from '../../services/filesSharingServices'
+import { processFiles } from '../../utils/fileUpload'
+
 import { CONVERSATION } from '../../constants'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
@@ -274,35 +276,12 @@ export default {
 			this.$refs.fileUploadInput.click()
 		},
 
-		/**
-		 * Uploads and shares the selected files
-		 * @param {object} event the file input event object
-		 */
-		async processFiles(event) {
-			// Store the token in a variable to prevent changes when changing conversation
-			// when the upload is still running
-			const token = this.token
+		handleFileInput(event) {
+			const files = Object.values(event.target.files)
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
-			// The selected files array coming from the input
-			const files = Object.values(event.target.files)
-			// Clear the input for the next uploads
-			this.$refs.fileUploadInput.value = ''
-			// Process these files in the store
-			await this.$store.dispatch('uploadFiles', { uploadId, token, files })
-			// Get the files that have successfully been uploaded from the store
-			const shareableFiles = this.$store.getters.getShareableFiles(uploadId)
-			// Share each of those files in the conversation
-			for (const index in shareableFiles) {
-				const path = shareableFiles[index].sharePath
-				try {
-					this.$store.dispatch('markFileAsSharing', { uploadId, index })
-					await shareFile(path, token)
-					this.$store.dispatch('markFileAsShared', { uploadId, index })
-				} catch (exception) {
-					console.debug('An error happened when triying to share your file: ', exception)
-				}
-			}
+			// Uploads and shares the files
+			processFiles(files, this.token, uploadId)
 		},
 	},
 }
