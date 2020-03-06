@@ -27,6 +27,7 @@ OC.L10N.register(
     "Password" : "Senhal",
     "Android app" : "Aplicacion Android",
     "iOS app" : "Aplicacion iOS",
+    "Copy" : "Copiar",
     "Share" : "Partejar",
     "Cancel" : "Anullar",
     "Change password" : "Cambiar de senhal",
