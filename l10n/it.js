@@ -10,7 +10,7 @@ OC.L10N.register(
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Hai partecipato a una chiamata con {user1}, {user2}, {user3} e {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Hai partecipato a una chiamata con {user1}, {user2}, {user3}, {user4} e {user5}",
     "_%n other_::_%n others_" : ["%n altro","%n altri"],
-    "{actor} invited you to {call}" : "{actor} ti ha invitato alla {call}",
+    "{actor} invited you to {call}" : "{actor} ti ha invitato a {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Sei stato invitato a una <strong>conversazione</strong> o hai ricevuto una <strong>chiamata</strong>",
     "Talk" : "Parla",
     "Guest" : "Ospite",
@@ -458,7 +458,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Si è verificato un errore durante la modifica dello stato dell'anticamera",
     "Invalid start time format" : "Formato dell'ora iniziale non valido",
     "Error occurred while setting the lobby start time" : "Si è verificato un errore durante l'impostazione dell'orario di inizio dell'ingresso.",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Le conversazioni orano possono avere un ingresso. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Le conversazioni ora possono avere un ingresso. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
     "{email} tried to requested the password to access {file}" : "{email} ha provato a richiedere la password per accedere a {file}",
     "Someone tried to requested the password to access {file}" : "Qualcuno ha provato a richiedere la password per accedere a {file}"
 },
