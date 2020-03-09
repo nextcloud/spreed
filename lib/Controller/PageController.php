@@ -131,6 +131,16 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
+	 *
+	 * @return Response
+	 */
+	public function notFound(): Response {
+		return new RedirectResponse($this->url->linkToRouteAbsolute('spreed.Page.index'));
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
 	 * @UseSession
 	 *
 	 * @param string $token
