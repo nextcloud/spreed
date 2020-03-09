@@ -573,6 +573,7 @@ Signaling.Standalone.prototype.connect = function() {
 			cb(data)
 		}
 		this._trigger('onBeforeReceiveMessage', [data])
+		const message = {}
 		switch (data.type) {
 		case 'hello':
 			if (!id) {
@@ -596,6 +597,12 @@ Signaling.Standalone.prototype.connect = function() {
 		case 'message':
 			data.message.data.from = data.message.sender.sessionid
 			this._trigger('message', [data.message.data])
+			break
+		case 'control':
+			message.type = 'control'
+			message.payload = data.control.data
+			message.from = data.control.sender.sessionid
+			this._trigger('message', [message])
 			break
 		default:
 			if (!id) {
@@ -659,6 +666,21 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 }
 
 Signaling.Standalone.prototype.sendCallMessage = function(data) {
+	if (data.type === 'control') {
+		this.doSend({
+			'type': 'control',
+			'control': {
+				'recipient': {
+					'type': 'session',
+					'sessionid': data.to,
+				},
+				'data': data.payload,
+			},
+		})
+
+		return
+	}
+
 	this.doSend({
 		'type': 'message',
 		'message': {

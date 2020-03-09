@@ -47,3 +47,4 @@ title: Capabilities
 ## 9.0
 * `config => attachments => allowed` - Whether the user can upload files into a chat
 * `config => attachments => folder` - User defined folder where items should be uploaded to
+* `force-mute` - "forceMute" signaling messages can be sent to mute other participants.

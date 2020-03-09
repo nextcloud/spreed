@@ -43,9 +43,11 @@
 		</div>
 		<div class="mediaIndicator">
 			<button v-show="!connectionStateFailedNoRestart"
-				class="muteIndicator forced-white icon-audio-off"
+				v-tooltip="audioButtonTooltip"
+				class="muteIndicator forced-white"
 				:class="audioButtonClass"
-				disabled="true" />
+				:disabled="!model.attributes.audioAvailable || !selfIsModerator"
+				@click="forceMute" />
 			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 				v-tooltip="videoButtonTooltip"
 				class="hideRemoteVideo forced-white"
@@ -69,6 +71,7 @@ import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel'
+import { PARTICIPANT } from '../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 
@@ -85,6 +88,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		placeholderForPromoted: {
 			type: Boolean,
 			default: false,
@@ -149,15 +156,35 @@ export default {
 			return participantName
 		},
 
+		currentParticipant() {
+			return this.$store.getters.conversations[this.token] || {
+				sessionId: '0',
+				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+			}
+		},
+
+		selfIsModerator() {
+			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
 		connectionStateFailedNoRestart() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
 		},
 
 		audioButtonClass() {
 			return {
-				'audio-on': this.model.attributes.audioAvailable,
-				'audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
+				'icon-audio': this.model.attributes.audioAvailable && this.selfIsModerator,
+				'icon-audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
 			}
+		},
+
+		audioButtonTooltip() {
+			if (this.model.attributes.audioAvailable) {
+				return t('spreed', 'Mute')
+			}
+
+			return null
 		},
 
 		videoButtonClass() {
@@ -231,6 +258,10 @@ export default {
 			}
 		},
 
+		forceMute() {
+			this.model.forceMute()
+		},
+
 		toggleVideo() {
 			this.sharedData.videoEnabled = !this.sharedData.videoEnabled
 		},
@@ -286,14 +317,13 @@ export default {
 	}
 }
 
-.muteIndicator.audio-on,
-.muteIndicator:not(.audio-on):not(.audio-off),
+.muteIndicator:not(.icon-audio):not(.icon-audio-off),
 .screensharingIndicator.screen-off,
 .iceFailedIndicator.not-failed {
 	display: none;
 }
 
-.muteIndicator.audio-off,
+.muteIndicator.icon-audio-off,
 .hideRemoteVideo.icon-video-off {
 	opacity: .7;
 }

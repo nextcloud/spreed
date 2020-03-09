@@ -562,6 +562,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
+						'permissions' => ['publish-media', 'publish-screen', 'control'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
@@ -595,6 +596,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
+						'permissions' => ['publish-media', 'publish-screen'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
@@ -624,8 +626,8 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->addUsers([
 			'userId' => $notJoinedUserId,
 		]);
-		$participant = $room->getParticipant($notJoinedUserId);
-		$room->setParticipantType($participant, Participant::MODERATOR);
+		$notJoinedParticipant = $room->getParticipant($notJoinedUserId);
+		$room->setParticipantType($notJoinedParticipant, Participant::MODERATOR);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -656,6 +658,95 @@ class BackendNotifierTest extends \Test\TestCase {
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST_MODERATOR,
+					],
+				],
+			],
+		], $bodies);
+
+		$this->controller->clearRequests();
+		$room->setParticipantType($participant, Participant::USER);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'participants',
+			'participants' => [
+				'changed' => [
+					[
+						'permissions' => ['publish-media', 'publish-screen'],
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => 0,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $notJoinedUserId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST_MODERATOR,
+					],
+				],
+			],
+		], $bodies);
+
+		$this->controller->clearRequests();
+		$room->setParticipantType($guestParticipant, Participant::GUEST);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'participants',
+			'participants' => [
+				'changed' => [
+					[
+						'permissions' => ['publish-media', 'publish-screen'],
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => 0,
+						'participantType' => Participant::MODERATOR,
+						'userId' => $notJoinedUserId,
+					],
+					[
+						'inCall' => 0,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST,
 					],
 				],
 			],

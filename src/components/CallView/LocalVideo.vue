@@ -48,6 +48,7 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
+import { showInfo } from '@nextcloud/dialogs'
 
 export default {
 
@@ -111,6 +112,20 @@ export default {
 
 	watch: {
 
+		localCallParticipantModel: {
+			immediate: true,
+
+			handler: function(localCallParticipantModel, oldLocalCallParticipantModel) {
+				if (oldLocalCallParticipantModel) {
+					oldLocalCallParticipantModel.off('forcedMute', this._handleForcedMute)
+				}
+
+				if (localCallParticipantModel) {
+					localCallParticipantModel.on('forcedMute', this._handleForcedMute)
+				}
+			},
+		},
+
 		'localMediaModel.attributes.localStream': function(localStream) {
 			this._setLocalStream(localStream)
 		},
@@ -122,7 +137,21 @@ export default {
 		this._setLocalStream(this.localMediaModel.attributes.localStream)
 	},
 
+	destroyed() {
+		if (this.localCallParticipantModel) {
+			this.localCallParticipantModel.off('forcedMute', this._handleForcedMute)
+		}
+	},
+
 	methods: {
+
+		_handleForcedMute() {
+			// The default toast selector is "body-user", but as this toast can
+			// be shown to guests too a generic selector valid both for logged
+			// in users and guests needs to be used instead (undefined selects
+			// the body element).
+			showInfo(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
+		},
 
 		_setLocalStream(localStream) {
 			if (!localStream) {
