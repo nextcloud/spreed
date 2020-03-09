@@ -48,18 +48,6 @@ export default {
 	},
 	*/
 
-	watch: {
-		isInLobby: function(isInLobby) {
-			// User is now blocked by the lobby
-			if (isInLobby && this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
-				this.$store.dispatch('leaveCall', {
-					token: this.token,
-					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				})
-			}
-		},
-	},
-
 	computed: {
 		conversation() {
 			return this.$store.getters.conversations[this.token]
@@ -84,6 +72,18 @@ export default {
 
 		showChatInSidebar() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+	},
+
+	watch: {
+		isInLobby: function(isInLobby) {
+			// User is now blocked by the lobby
+			if (isInLobby && this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				this.$store.dispatch('leaveCall', {
+					token: this.token,
+					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				})
+			}
 		},
 	},
 
