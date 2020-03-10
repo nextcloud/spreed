@@ -27,7 +27,7 @@
 			<ParticipantsList
 
 				:items="addableUsers"
-				@click="addParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
@@ -35,7 +35,7 @@
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				:items="addableGroups"
-				@click="addParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
@@ -43,7 +43,7 @@
 				:title="t('spreed', 'Add emails')" />
 			<ParticipantsList
 				:items="addableEmails"
-				@click="addParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
@@ -51,7 +51,7 @@
 				:title="t('spreed', 'Add circles')" />
 			<ParticipantsList
 				:items="addableCircles"
-				@click="addParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<Caption v-if="sourcesWithoutResults"
@@ -78,6 +78,10 @@ export default {
 	props: {
 		searchResults: {
 			type: Array,
+			required: true,
+		},
+		contactsLoading: {
+			type: Boolean,
 			required: true,
 		},
 	},
@@ -154,6 +158,12 @@ export default {
 				return this.searchResults.filter((item) => item.source === 'circles')
 			}
 			return []
+		},
+	},
+
+	methods: {
+		handleClickParticipant(participant) {
+			this.$emit('click', participant)
 		},
 	},
 }

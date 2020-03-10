@@ -33,53 +33,17 @@
 		<CurrentParticipants
 			:search-text="searchText"
 			:participants-initialised="participantsInitialised" />
-		<template v-if="isSearching">
-			<template v-if="addableUsers.length !== 0">
-				<Caption
-					:title="t('spreed', 'Add contacts')" />
-				<ParticipantsList
-
-					:items="addableUsers"
-					@click="addParticipants" />
-			</template>
-
-			<template v-if="addableGroups.length !== 0">
-				<Caption
-					:title="t('spreed', 'Add groups')" />
-				<ParticipantsList
-					:items="addableGroups"
-					@click="addParticipants" />
-			</template>
-
-			<template v-if="addableEmails.length !== 0">
-				<Caption
-					:title="t('spreed', 'Add emails')" />
-				<ParticipantsList
-					:items="addableEmails"
-					@click="addParticipants" />
-			</template>
-
-			<template v-if="addableCircles.length !== 0">
-				<Caption
-					:title="t('spreed', 'Add circles')" />
-				<ParticipantsList
-					:items="addableCircles"
-					@click="addParticipants" />
-			</template>
-
-			<Caption v-if="sourcesWithoutResults"
-				:title="sourcesWithoutResultsList" />
-			<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
-		</template>
+		<ParticipantsSearchResults
+			v-if="isSearching"
+			:search-results="searchResults"
+			:contacts-loading="contactsLoading"
+			@click="addParticipants" />
 	</div>
 </template>
 
 <script>
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
-import Hint from '../../Hint'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
@@ -96,15 +60,15 @@ import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
+import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
-		ParticipantsList,
 		SearchBox,
 		Caption,
-		Hint,
+		ParticipantsSearchResults,
 	},
 
 	mixins: [
@@ -156,79 +120,6 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
-		},
-
-		sourcesWithoutResults() {
-			return !this.addableUsers.length
-				|| !this.addableGroups.length
-				|| (this.isCirclesEnabled && !this.addableCircles.length)
-		},
-
-		sourcesWithoutResultsList() {
-			if (!this.addableUsers.length) {
-				if (!this.addableGroups.length) {
-					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add contacts, groups or circles')
-					} else {
-						return t('spreed', 'Add contacts or groups')
-					}
-				} else {
-					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add contacts or circles')
-					} else {
-						return t('spreed', 'Add contacts')
-					}
-				}
-			} else {
-				if (!this.addableGroups.length) {
-					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add groups or circles')
-					} else {
-						return t('spreed', 'Add groups')
-					}
-				} else {
-					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add circles')
-					}
-				}
-			}
-			return t('spreed', 'Add other sources')
-		},
-
-		addableUsers() {
-			if (this.searchResults !== []) {
-				const searchResultUsers = this.searchResults.filter(item => item.source === 'users')
-				const participants = this.$store.getters.participantsList(this.token)
-				return searchResultUsers.filter(user => {
-					let addable = true
-					for (const participant of participants) {
-						if (user.id === participant.userId) {
-							addable = false
-							break
-						}
-					}
-					return addable
-				})
-			}
-			return []
-		},
-		addableGroups() {
-			if (this.searchResults !== []) {
-				return this.searchResults.filter((item) => item.source === 'groups')
-			}
-			return []
-		},
-		addableEmails() {
-			if (this.searchResults !== []) {
-				return this.searchResults.filter((item) => item.source === 'emails')
-			}
-			return []
-		},
-		addableCircles() {
-			if (this.searchResults !== []) {
-				return this.searchResults.filter((item) => item.source === 'circles')
-			}
-			return []
 		},
 	},
 
