@@ -820,7 +820,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	webrtc.on('channelMessage', function(peer, label, data) {
-		if (label === 'status') {
+		if (label === 'status' || label === 'JanusDataChannel') {
 			if (data.type === 'audioOn') {
 				webrtc.emit('unmute', { id: peer.id, name: 'audio' })
 			} else if (data.type === 'audioOff') {
