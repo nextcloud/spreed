@@ -28,7 +28,6 @@
 			<Caption
 				:title="t('spreed', 'Add contacts')" />
 			<ParticipantsList
-
 				:items="addableUsers"
 				@click="handleClickParticipant" />
 		</template>
@@ -61,6 +60,39 @@
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-else :hint="t('spreed', 'No search results')" />
+		<template v-if="noResults">
+			<div class="icon-category-search participants-list__icon" />
+			<p class="participants-list__warning">
+				{{ t('spreed', 'No results') }}
+			</p>
+		</template>
+		<template v-if="loading">
+			<template>
+				<LoadingParticipant
+					v-for="n in dummyParticipants"
+					:key="n" />
+			</template>
+			<template>
+				<div class="icon-loading participants-list__icon" />
+				<p class="participants-list__warning">
+					{{ t('spreed', 'Contacts loading') }}
+				</p>
+			</template>
+		</template>
+		<!-- 'search for more' empty content to display at the end of the
+			participants list, this is useful in case the participants list is used
+			to display the results of a search. Upon clicking on it, an event is
+			emitted to the parent component in order to be able to focus on it's
+			input field -->
+		<div
+			v-if="displaySearchHint"
+			class="participants-list__hint"
+			@click="handleClickHint">
+			<div class="icon-contacts-dark set-contacts__icon" />
+			<p>
+				{{ t('spreed', 'Search for more contacts') }}
+			</p>
+		</div>
 	</div>
 </template>
 
@@ -68,6 +100,7 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import Caption from '../../../Caption'
 import Hint from '../../../Hint'
+import Vue from 'vue'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -88,6 +121,16 @@ export default {
 			required: true,
 		},
 		/**
+		 * If true, clicking the participant will add it to to the current conversation.
+		 * This behavior is used in the right sidebar for already existing conversations.
+		 * If false, clicking on the participant will add the participant to the
+		 * `selectedParticipants` array in the data.
+		 */
+		addOnClick: {
+			type: Boolean,
+			default: true,
+		},
+		/**
 		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
 		 * the ul and make it scrollable.
 		 */
@@ -95,6 +138,33 @@ export default {
 			type: String,
 			default: 'auto',
 		},
+		/**
+		 * Display no-results state instead of list.
+		 */
+		noResults: {
+			type: Boolean,
+			default: false,
+		},
+		/**
+		 * Display 'search for more' empty content at the end of the list.
+		 */
+		displaySearchHint: {
+			type: Boolean,
+			default: false,
+		},
+		/**
+		 * Display loading state instead of list.
+		 */
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
+	data() {
+		return {
+			selectedParticipants: [],
+		}
 	},
 
 	computed: {
@@ -173,11 +243,57 @@ export default {
 		scrollable() {
 			return this.height !== 'auto'
 		},
+		/**
+		 * Creates a new array that combines the items (participants received as a prop)
+		 * with the current selectedParticipants so that each participant in the returned
+		 * array has a new 'selected' boolean key.
+		 * @returns {array} An array of 'participant' objects
+		 */
+		participants() {
+			/**
+			 * Compute this only in the new group conversation form.
+			 */
+			if (this.addOnClick === false) {
+				if (this.items !== []) {
+					const participants = this.items.slice()
+					participants.forEach(item => {
+						if (this.selectedParticipants.indexOf(item) !== -1) {
+							Vue.set(item, 'selected', true)
+						} else {
+							Vue.set(item, 'selected', false)
+						}
+					})
+					return participants
+				} else {
+					return []
+				}
+			} else {
+				return this.items
+			}
+		},
 	},
 
 	methods: {
 		handleClickParticipant(participant) {
 			this.$emit('click', participant)
+			/**
+			 * Remove the clicked participant from the selected participants list
+			 */
+			if (this.selectedParticipants.indexOf(participant) !== -1) {
+				this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) => {
+					return selectedParticipant.id !== participant.id
+				})
+				this.$emit('updateSelectedParticipants', this.selectedParticipants)
+			} else {
+				/**
+				 * Add the clicked participant from the selected participants list
+				 */
+				this.selectedParticipants = [...this.selectedParticipants, participant]
+				this.$emit('updateSelectedParticipants', this.selectedParticipants)
+			}
+		},
+		handleClickHint() {
+			this.$emit('clickSearchHint')
 		},
 	},
 }

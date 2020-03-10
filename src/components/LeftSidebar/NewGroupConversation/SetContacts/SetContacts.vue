@@ -37,11 +37,12 @@
 		<!-- List of possilbe participants -->
 		<Caption v-if="!contactsLoading"
 			:title="t('spreed', 'Select participants')" />
-		<ParticipantsList
+		<ParticipantSearchResults
 			:add-on-click="false"
-			:loading="contactsLoading"
+			height="200px"
+			:search-results="searchResults"
+			:contacts-loading="contactsLoading"
 			:no-results="noResults"
-			:items="searchResults"
 			:display-search-hint="!contactsLoading"
 			@updateSelectedParticipants="handleUpdateSelectedParticipants"
 			@clickSearchHint="focusInput" />
@@ -50,15 +51,15 @@
 
 <script>
 import Caption from '../../../Caption'
-import ParticipantsList from '../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
+import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
 
 export default {
 	name: 'SetContacts',
 	components: {
 		Caption,
-		ParticipantsList,
+		ParticipantSearchResults,
 	},
 
 	props: {
