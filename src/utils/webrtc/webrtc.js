@@ -836,11 +836,13 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				} else {
 					webrtc.emit('nick', { id: peer.id, name: payload.name, userid: payload.userid })
 				}
+			} else {
+				console.debug('Unknown message type %s from %s datachannel', label, data.type, data)
 			}
 		} else if (label === 'hark') {
 			// Ignore messages from hark datachannel
 		} else {
-			console.debug('Uknown message from %s datachannel', label, data)
+			console.debug('Unknown message from %s datachannel', label, data)
 		}
 	})
 
