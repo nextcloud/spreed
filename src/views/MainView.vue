@@ -39,15 +39,6 @@ export default {
 		},
 	},
 
-	// FIXME reactivate once Signaling is done correctly per conversation again.
-	/*
-	data() {
-		return {
-			signaling: null,
-		}
-	},
-	*/
-
 	computed: {
 		conversation() {
 			return this.$store.getters.conversations[this.token]
