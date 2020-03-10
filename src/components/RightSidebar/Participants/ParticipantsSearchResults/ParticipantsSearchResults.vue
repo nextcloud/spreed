@@ -20,7 +20,10 @@
 -->
 
 <template>
-	<div>
+	<div
+		class="participants-search-results"
+		:class="{'scrollable': scrollable }"
+		:style="{ 'height': height }">
 		<template v-if="addableUsers.length !== 0">
 			<Caption
 				:title="t('spreed', 'Add contacts')" />
@@ -83,6 +86,14 @@ export default {
 		contactsLoading: {
 			type: Boolean,
 			required: true,
+		},
+		/**
+		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
+		 * the ul and make it scrollable.
+		 */
+		height: {
+			type: String,
+			default: 'auto',
 		},
 	},
 
@@ -159,6 +170,9 @@ export default {
 			}
 			return []
 		},
+		scrollable() {
+			return this.height !== 'auto'
+		},
 	},
 
 	methods: {
@@ -170,5 +184,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.scrollable {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
 </style>

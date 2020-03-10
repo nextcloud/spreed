@@ -39,7 +39,6 @@
 			:title="t('spreed', 'Select participants')" />
 		<ParticipantsList
 			:add-on-click="false"
-			height="200px"
 			:loading="contactsLoading"
 			:no-results="noResults"
 			:items="searchResults"

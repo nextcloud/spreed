@@ -21,9 +21,7 @@
 
 <template>
 	<div>
-		<ul v-if="(!loading || addOnClick) && !noResults"
-			:style="{'height': height}"
-			:class="{'scrollable': scrollable }">
+		<ul v-if="(!loading || addOnClick) && !noResults">
 			<Participant
 				v-for="participant in participants"
 				:key="participant.userId + participant.sessionId"
@@ -99,14 +97,6 @@ export default {
 			default: true,
 		},
 		/**
-		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
-		 * the ul and make it scrollable.
-		 */
-		height: {
-			type: String,
-			default: 'auto',
-		},
-		/**
 		 * Display loading state instead of list.
 		 */
 		loading: {
@@ -173,9 +163,6 @@ export default {
 				return this.items
 			}
 		},
-		scrollable() {
-			return this.height !== 'auto'
-		},
 	},
 
 	methods: {
@@ -210,10 +197,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scrollable {
-	overflow-y: auto;
-	overflow-x: hidden;
-}
 
 .participants-list {
 	&__icon {
