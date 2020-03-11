@@ -196,6 +196,7 @@ OC.L10N.register(
     "Webinar" : "Webinar",
     "Chat" : "Pogovor",
     "Projects" : "Projekti",
+    "Display name: " : "Prikazano ime:",
     "Edit" : "Uredi",
     "Leave call" : "Zapusti klic",
     "Start call" : "Začni klic",
