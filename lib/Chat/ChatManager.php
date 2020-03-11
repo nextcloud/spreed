@@ -145,11 +145,12 @@ class ChatManager {
 	 * @param string $actorType
 	 * @param string $actorId
 	 * @param string $message
-	 * @param IComment|null $replyTo
 	 * @param \DateTime $creationDateTime
+	 * @param IComment|null $replyTo
+	 * @param string $referenceId
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo): IComment {
+	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
@@ -159,6 +160,11 @@ class ChatManager {
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
+		}
+
+		$referenceId = trim(substr($referenceId, 0, 40));
+		if ($referenceId !== '') {
+			$comment->setReferenceId($referenceId);
 		}
 
 		$event = new ChatParticipantEvent($chat, $comment, $participant);

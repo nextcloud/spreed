@@ -179,6 +179,7 @@ class ChatControllerTest extends TestCase {
 				'systemMessage' => '',
 				'messageType' => 'comment',
 				'isReplyable' => true,
+				'referenceId' => '',
 			]);
 
 		$this->messageParser->expects($this->once())
@@ -205,6 +206,78 @@ class ChatControllerTest extends TestCase {
 			'systemMessage' => '',
 			'messageType' => 'comment',
 			'isReplyable' => true,
+			'referenceId' => '',
+		], Http::STATUS_CREATED);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testSendMessageByUserWithReferenceId() {
+		$participant = $this->createMock(Participant::class);
+
+		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
+		$this->chatManager->expects($this->once())
+			->method('sendMessage')
+			->with($this->room,
+				$participant,
+				'users',
+				$this->userId,
+				'testMessage',
+				$this->newMessageDateTimeConstraint
+			)
+			->willReturn($comment);
+
+		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->once())
+			->method('getVisibility')
+			->willReturn(true);
+		$chatMessage->expects($this->once())
+			->method('toArray')
+			->willReturn([
+				'id' => 42,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId,
+				'actorDisplayName' => 'displayName',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage',
+				'messageParameters' => ['arg' => 'uments'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+				'referenceId' => sha1('ref'),
+			]);
+
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($this->room, $participant, $comment, $this->l)
+			->willReturn($chatMessage);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($chatMessage);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', sha1('ref'));
+		$expected = new DataResponse([
+			'id' => 42,
+			'token' => 'testToken',
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+			'actorDisplayName' => 'displayName',
+			'timestamp' => $date->getTimestamp(),
+			'message' => 'parsedMessage',
+			'messageParameters' => ['arg' => 'uments'],
+			'systemMessage' => '',
+			'messageType' => 'comment',
+			'isReplyable' => true,
+			'referenceId' => sha1('ref'),
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -257,6 +330,7 @@ class ChatControllerTest extends TestCase {
 				'systemMessage' => '',
 				'messageType' => 'comment',
 				'isReplyable' => true,
+				'referenceId' => '',
 			]);
 
 		$chatMessage = $this->createMock(Message::class);
@@ -277,6 +351,7 @@ class ChatControllerTest extends TestCase {
 				'systemMessage' => '',
 				'messageType' => 'comment',
 				'isReplyable' => true,
+				'referenceId' => '',
 			]);
 
 		$this->messageParser->expects($this->exactly(2))
@@ -293,7 +368,7 @@ class ChatControllerTest extends TestCase {
 
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
-		$response = $this->controller->sendMessage('testMessage', '', 23);
+		$response = $this->controller->sendMessage('testMessage', '', '', 23);
 		$expected = new DataResponse([
 			'id' => 42,
 			'token' => 'testToken',
@@ -306,6 +381,7 @@ class ChatControllerTest extends TestCase {
 			'systemMessage' => '',
 			'messageType' => 'comment',
 			'isReplyable' => true,
+			'referenceId' => '',
 			'parent' => [
 				'id' => 23,
 				'token' => 'testToken',
@@ -318,6 +394,7 @@ class ChatControllerTest extends TestCase {
 				'systemMessage' => '',
 				'messageType' => 'comment',
 				'isReplyable' => true,
+				'referenceId' => '',
 			],
 		], Http::STATUS_CREATED);
 
@@ -354,7 +431,7 @@ class ChatControllerTest extends TestCase {
 
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
-		$response = $this->controller->sendMessage('testMessage', '', 23);
+		$response = $this->controller->sendMessage('testMessage', '', '', 23);
 		$expected = new DataResponse([], Http::STATUS_BAD_REQUEST);
 
 		$this->assertEquals($expected, $response);

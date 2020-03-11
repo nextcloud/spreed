@@ -175,6 +175,7 @@ class Message {
 			'systemMessage' => $this->getMessageType() === 'system' ? $this->getMessageRaw() : '',
 			'messageType' => $this->getMessageType(),
 			'isReplyable' => $this->isReplyable(),
+			'referenceId' => (string) $this->getComment()->getReferenceId(),
 		];
 	}
 }

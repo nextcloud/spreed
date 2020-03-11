@@ -1,8 +1,8 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
- * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
+ * @copyright Copyright (c) 2017, Daniel Calviño Sánchez <danxuliu@gmail.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -57,14 +57,18 @@ class ChatManagerTest extends TestCase {
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
-		$this->chatManager = new ChatManager($this->commentsManager,
-											 $this->dispatcher,
-											 $this->notifier,
-											 $this->timeFactory);
+		$this->chatManager = new ChatManager(
+			$this->commentsManager,
+			$this->dispatcher,
+			$this->notifier,
+			$this->timeFactory
+		);
 	}
 
-	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {
+	private function newComment($id, string $actorType, string $actorId, \DateTime $creationDateTime, string $message): IComment {
 		$comment = $this->createMock(IComment::class);
+
+		$id = (string) $id;
 
 		$comment->method('getId')->willReturn($id);
 		$comment->method('getActorType')->willReturn($actorType);
@@ -82,62 +86,98 @@ class ChatManagerTest extends TestCase {
 		return $comment;
 	}
 
-	public function testSendMessage() {
+	/**
+	 * @param array $data
+	 * @return IComment|MockObject
+	 */
+	private function newCommentFromArray(array $data): IComment {
 		$comment = $this->createMock(IComment::class);
 
-		$this->commentsManager->expects($this->once())
-			->method('create')
-			->with('users', 'testUser', 'chat', 1234)
-			->willReturn($comment);
+		foreach ($data as $key => $value) {
+			if ($key === 'id') {
+				$value = (string) $value;
+			}
+			$comment->method('get' . ucfirst($key))->willReturn($value);
+		}
 
-		$comment->expects($this->once())
-			->method('setMessage')
-			->with('testMessage');
-
-		$creationDateTime = new \DateTime();
-		$comment->expects($this->once())
-			->method('setCreationDateTime')
-			->with($creationDateTime);
-
-		$comment->expects($this->once())
-			->method('setVerb')
-			->with('comment');
-
-		$this->commentsManager->expects($this->once())
-			->method('save')
-			->with($comment);
-
-		$chat = $this->createMock(Room::class);
-		$chat->expects($this->any())
-			->method('getId')
-			->willReturn(1234);
-
-		$this->notifier->expects($this->once())
-			->method('notifyMentionedUsers')
-			->with($chat, $comment);
-
-		$participant = $this->createMock(Participant::class);
-
-		$this->chatManager->sendMessage($chat, $participant, 'users', 'testUser', 'testMessage', $creationDateTime, null);
+		return $comment;
 	}
 
-	public function testReplyToMessage() {
-		$replyTo = $this->createMock(IComment::class);
-		$comment = $this->createMock(IComment::class);
+	protected function assertCommentEquals(array $data, IComment $comment): void {
+		if (isset($data['id'])) {
+			$id = $data['id'];
+			unset($data['id']);
+			$this->assertEquals($id, $comment->getId());
+		}
+
+		$this->assertEquals($data, [
+			'actorType' => $comment->getActorType(),
+			'actorId' => $comment->getActorId(),
+			'creationDateTime' => $comment->getCreationDateTime(),
+			'message' => $comment->getMessage(),
+			'referenceId' => $comment->getReferenceId(),
+			'parentId'  => $comment->getParentId(),
+		]);
+	}
+
+	public function dataSendMessage(): array {
+		return [
+			'simple message' => ['testUser1', 'testMessage1', '', '0'],
+			'reference id'   => ['testUser2', 'testMessage2', 'referenceId2', '0'],
+			'as a reply'     => ['testUser3', 'testMessage3', '', '23'],
+			'reply w/ ref'   => ['testUser4', 'testMessage4', 'referenceId4', '23'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataSendMessage
+	 * @param string $userId
+	 * @param string $message
+	 * @param string $referenceId
+	 * @param string $parentId
+	 */
+	public function testSendMessage(string $userId, string $message, string $referenceId, string $parentId): void {
+		$creationDateTime = new \DateTime();
+
+		$commentExpected = [
+			'actorType' => 'users',
+			'actorId' => $userId,
+			'creationDateTime' => $creationDateTime,
+			'message' => $message,
+			'referenceId' => $referenceId,
+			'parentId' => $parentId,
+		];
+
+		$comment = $this->newCommentFromArray($commentExpected);
+
+		if ($parentId !== '0') {
+			$replyTo = $this->newCommentFromArray([
+				'id' => $parentId,
+			]);
+
+			$comment->expects($this->once())
+				->method('setParentId')
+				->with($parentId);
+		} else {
+			$replyTo = null;
+		}
 
 		$this->commentsManager->expects($this->once())
 			->method('create')
-			->with('users', 'testUser', 'chat', 1234)
+			->with('users', $userId, 'chat', 1234)
 			->willReturn($comment);
 
 		$comment->expects($this->once())
 			->method('setMessage')
-			->with('testMessage');
+			->with($message);
 
-		$creationDateTime = new \DateTime();
 		$comment->expects($this->once())
 			->method('setCreationDateTime')
 			->with($creationDateTime);
+
+		$comment->expects($referenceId === '' ? $this->never() : $this->once())
+			->method('setReferenceId')
+			->with($referenceId);
 
 		$comment->expects($this->once())
 			->method('setVerb')
@@ -156,16 +196,11 @@ class ChatManagerTest extends TestCase {
 			->method('notifyMentionedUsers')
 			->with($chat, $comment);
 
-		$replyTo->expects($this->once())
-			->method('getId')
-			->willReturn('12345');
-
-		$comment->expects($this->once())
-			->method('setParentId')
-			->with('12345');
-
 		$participant = $this->createMock(Participant::class);
-		$this->chatManager->sendMessage($chat, $participant, 'users', 'testUser', 'testMessage', $creationDateTime, $replyTo);
+
+		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, $replyTo, $referenceId);
+
+		$this->assertCommentEquals($commentExpected, $return);
 	}
 
 	public function testGetHistory() {
