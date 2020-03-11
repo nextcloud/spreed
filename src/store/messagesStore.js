@@ -68,6 +68,17 @@ const getters = {
 		return {}
 	},
 
+	getTemporaryReferences: (state) => (token, referenceId) => {
+		if (!state.messages[token]) {
+			return []
+		}
+
+		return Object.values(state.messages[token]).filter(message => {
+			return message.referenceId === referenceId
+				&& ('' + message.id).startsWith('temp-')
+		})
+	},
+
 	getFirstKnownMessageId: (state) => (token) => {
 		if (state.firstKnown[token]) {
 			return state.firstKnown[token]
@@ -153,6 +164,14 @@ const actions = {
 			context.commit('addMessage', message.parent)
 			message.parent = message.parent.id
 		}
+
+		if (message.referenceId) {
+			const tempMessages = context.getters.getTemporaryReferences(message.token, message.referenceId)
+			tempMessages.forEach(tempMessage => {
+				context.commit('deleteMessage', tempMessage)
+			})
+		}
+
 		context.commit('addMessage', message)
 	},
 
