@@ -29,7 +29,8 @@
 				:title="t('spreed', 'Add contacts')" />
 			<ParticipantsList
 				:items="addableUsers"
-				@click="handleClickParticipant" />
+				@click="handleClickParticipant"
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
@@ -37,7 +38,8 @@
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				:items="addableGroups"
-				@click="handleClickParticipant" />
+				@click="handleClickParticipant"
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
@@ -45,7 +47,8 @@
 				:title="t('spreed', 'Add emails')" />
 			<ParticipantsList
 				:items="addableEmails"
-				@click="handleClickParticipant" />
+				@click="handleClickParticipant"
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
@@ -53,7 +56,8 @@
 				:title="t('spreed', 'Add circles')" />
 			<ParticipantsList
 				:items="addableCircles"
-				@click="handleClickParticipant" />
+				@click="handleClickParticipant"
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 
 		<Caption v-if="sourcesWithoutResults"
@@ -294,6 +298,9 @@ export default {
 		},
 		handleClickHint() {
 			this.$emit('clickSearchHint')
+		},
+		handleUpdateSelectedParticipants(selectedParticipants) {
+			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
 	},
 }
