@@ -180,6 +180,7 @@ OC.L10N.register(
     "Show screen" : "Rodyti ekraną",
     "Disable video" : "Išjungti vaizdą",
     "Enable video" : "Įjungti vaizdą",
+    "This conversation is read only" : "Šis pokalbis yra tik skaitymui",
     "Favorite" : "Mėgstamas",
     "Chat notifications" : "Pokalbio pranešimai",
     "All messages" : "Visos žinutės",
