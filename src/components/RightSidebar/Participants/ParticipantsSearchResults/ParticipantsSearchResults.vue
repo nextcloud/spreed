@@ -58,11 +58,11 @@
 
 		<Caption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
-		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
+		<Hint v-if="contactsLoading && !noResults" :hint="t('spreed', 'Searching …')" />
 		<Hint v-else :hint="t('spreed', 'No search results')" />
 		<template v-if="noResults">
-			<div class="icon-category-search participants-list__icon" />
-			<p class="participants-list__warning">
+			<div class="icon-category-search participants-search-results__icon" />
+			<p class="participants-search-results__warning">
 				{{ t('spreed', 'No results') }}
 			</p>
 		</template>
@@ -73,8 +73,8 @@
 					:key="n" />
 			</template>
 			<template>
-				<div class="icon-loading participants-list__icon" />
-				<p class="participants-list__warning">
+				<div class="icon-loading participants-search-results__icon" />
+				<p class="participants-search-results__warning">
 					{{ t('spreed', 'Contacts loading') }}
 				</p>
 			</template>
@@ -86,7 +86,7 @@
 			input field -->
 		<div
 			v-if="displaySearchHint"
-			class="participants-list__hint"
+			class="participants-search-results__hint"
 			@click="handleClickHint">
 			<div class="icon-contacts-dark set-contacts__icon" />
 			<p>
@@ -304,4 +304,23 @@ export default {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+
+.participants-search-results {
+	&__icon {
+		margin-top: 40px;
+	}
+	&__warning {
+		margin-top: 20px;
+		text-align: center;
+	}
+	&__hint {
+		margin: 20px 0;
+		cursor: pointer;
+		p {
+			margin-top: 20px;
+			text-align: center;
+		}
+	}
+}
+
 </style>

@@ -72,23 +72,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.participants-list {
-	&__icon {
-		margin-top: 40px;
-	}
-	&__warning {
-		margin-top: 20px;
-		text-align: center;
-	}
-	&__hint {
-		margin: 20px 0;
-		cursor: pointer;
-		p {
-			margin-top: 20px;
-			text-align: center;
-		}
-	}
-}
-
 </style>

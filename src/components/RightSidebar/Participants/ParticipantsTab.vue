@@ -37,6 +37,7 @@
 			v-if="isSearching"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
+			:no-results="noResults"
 			@click="addParticipants" />
 	</div>
 </template>
@@ -120,6 +121,9 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
+		},
+		noResults() {
+			return this.searchResults === []
 		},
 	},
 
