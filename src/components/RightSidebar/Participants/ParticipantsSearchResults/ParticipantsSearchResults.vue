@@ -29,8 +29,7 @@
 				:title="t('spreed', 'Add contacts')" />
 			<ParticipantsList
 				:items="addableUsers"
-				@click="handleClickParticipant"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
@@ -38,8 +37,7 @@
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				:items="addableGroups"
-				@click="handleClickParticipant"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
@@ -47,8 +45,7 @@
 				:title="t('spreed', 'Add emails')" />
 			<ParticipantsList
 				:items="addableEmails"
-				@click="handleClickParticipant"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
@@ -56,8 +53,7 @@
 				:title="t('spreed', 'Add circles')" />
 			<ParticipantsList
 				:items="addableCircles"
-				@click="handleClickParticipant"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				@click="handleClickParticipant" />
 		</template>
 
 		<Caption v-if="sourcesWithoutResults"
@@ -104,7 +100,6 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import Caption from '../../../Caption'
 import Hint from '../../../Hint'
-import Vue from 'vue'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -123,16 +118,6 @@ export default {
 		contactsLoading: {
 			type: Boolean,
 			required: true,
-		},
-		/**
-		 * If true, clicking the participant will add it to to the current conversation.
-		 * This behavior is used in the right sidebar for already existing conversations.
-		 * If false, clicking on the participant will add the participant to the
-		 * `selectedParticipants` array in the data.
-		 */
-		addOnClick: {
-			type: Boolean,
-			default: true,
 		},
 		/**
 		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
@@ -162,10 +147,6 @@ export default {
 		loading: {
 			type: Boolean,
 			default: false,
-		},
-		selectedParticipants: {
-			type: Array,
-			default: () => [],
 		},
 	},
 
@@ -245,34 +226,6 @@ export default {
 		scrollable() {
 			return this.height !== 'auto'
 		},
-		/**
-		 * Creates a new array that combines the items (participants received as a prop)
-		 * with the current selectedParticipants so that each participant in the returned
-		 * array has a new 'selected' boolean key.
-		 * @returns {array} An array of 'participant' objects
-		 */
-		participants() {
-			/**
-			 * Compute this only in the new group conversation form.
-			 */
-			if (this.addOnClick === false) {
-				if (this.items !== []) {
-					const participants = this.items.slice()
-					participants.forEach(item => {
-						if (this.selectedParticipants.indexOf(item) !== -1) {
-							Vue.set(item, 'selected', true)
-						} else {
-							Vue.set(item, 'selected', false)
-						}
-					})
-					return participants
-				} else {
-					return []
-				}
-			} else {
-				return this.items
-			}
-		},
 	},
 
 	methods: {
@@ -285,9 +238,6 @@ export default {
 		},
 		handleClickHint() {
 			this.$emit('clickSearchHint')
-		},
-		handleUpdateSelectedParticipants(selectedParticipants) {
-			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
 	},
 }

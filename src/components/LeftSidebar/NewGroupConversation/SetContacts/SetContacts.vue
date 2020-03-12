@@ -44,7 +44,6 @@
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			:display-search-hint="!contactsLoading"
-			@updateSelectedParticipants="handleUpdateSelectedParticipants"
 			@clickSearchHint="focusInput" />
 	</div>
 </template>
@@ -113,13 +112,6 @@ export default {
 				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
-		},
-		/**
-		 * Forward the event from the children to the parent with thenew selected participants
-		 * @param {array} selectedParticipants the selected participants array
-		 */
-		handleUpdateSelectedParticipants(selectedParticipants) {
-			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
 		visibilityChanged(isVisible) {
 			if (isVisible) {

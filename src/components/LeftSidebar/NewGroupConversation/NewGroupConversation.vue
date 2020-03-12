@@ -68,9 +68,7 @@
 					<!-- Second page -->
 					<template v-if="page === 1">
 						<SetContacts
-							:conversation-name="conversationName"
-							:selected-participants="selectedParticipants"
-							@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+							:conversation-name="conversationName" />
 					</template>
 					<!-- Third page -->
 					<template v-if="page === 2">
@@ -164,7 +162,6 @@ export default {
 			isPublic: false,
 			isLoading: true,
 			token: '',
-			selectedParticipants: [],
 			success: false,
 			error: false,
 			password: '',
@@ -187,6 +184,9 @@ export default {
 		disabled() {
 			return this.conversationName === '' || (this.passwordProtect && this.password === '')
 		},
+		selectedParticipants() {
+			return this.$store.getters.selectedParticipants
+		}
 	},
 
 	methods: {
@@ -203,11 +203,11 @@ export default {
 			this.isPublic = false
 			this.isLoading = true
 			this.token = ''
-			this.selectedParticipants = []
 			this.success = false
 			this.error = false
 			this.passwordProtect = false
 			this.password = ''
+			this.$store.dispatch('purgeNewGroupConversationStore')
 		},
 		/** Switch to page 2 */
 		handleSetConversationName() {
@@ -216,12 +216,6 @@ export default {
 		/** Switch to page 1 from page 2 */
 		handleClickBack() {
 			this.page = 0
-		},
-		/** Updates the selected participants array
-		 * @param {array} participants the participants array
-		 */
-		handleUpdateSelectedParticipants(participants) {
-			this.selectedParticipants = participants
 		},
 		/** Handles the creation of the group conversation, adds the seleced
 		 * participants to it and routes to it */
