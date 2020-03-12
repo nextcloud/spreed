@@ -58,41 +58,30 @@
 
 		<Caption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
-		<Hint v-if="contactsLoading && !noResults" :hint="t('spreed', 'Searching …')" />
-		<Hint v-else :hint="t('spreed', 'No search results')" />
-		<template v-if="noResults">
-			<div class="icon-category-search participants-search-results__icon" />
-			<p class="participants-search-results__warning">
-				{{ t('spreed', 'No results') }}
-			</p>
-		</template>
-		<template v-if="loading">
-			<template>
-				<LoadingParticipant
-					v-for="n in dummyParticipants"
-					:key="n" />
-			</template>
-			<template>
-				<div class="icon-loading participants-search-results__icon" />
+		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
+		<Hint v-if="!contactsLoading && !isNewGroupConversation" :hint="t('spreed', 'No search results')" />
+		<template v-if="isNewGroupConversation">
+			<template v-if="noResults">
+				<div class="icon-category-search participants-search-results__icon" />
 				<p class="participants-search-results__warning">
-					{{ t('spreed', 'Contacts loading') }}
+					{{ t('spreed', 'No results') }}
 				</p>
 			</template>
+			<!-- 'search for more' empty content to display at the end of the
+				participants list, this is useful in case the participants list is used
+				to display the results of a search. Upon clicking on it, an event is
+				emitted to the parent component in order to be able to focus on it's
+				input field -->
+			<div
+				v-if="displaySearchHint && !noResults"
+				class="participants-search-results__hint"
+				@click="handleClickHint">
+				<div class="icon-contacts-dark set-contacts__icon" />
+				<p>
+					{{ t('spreed', 'Search for more contacts') }}
+				</p>
+			</div>
 		</template>
-		<!-- 'search for more' empty content to display at the end of the
-			participants list, this is useful in case the participants list is used
-			to display the results of a search. Upon clicking on it, an event is
-			emitted to the parent component in order to be able to focus on it's
-			input field -->
-		<div
-			v-if="displaySearchHint"
-			class="participants-search-results__hint"
-			@click="handleClickHint">
-			<div class="icon-contacts-dark set-contacts__icon" />
-			<p>
-				{{ t('spreed', 'Search for more contacts') }}
-			</p>
-		</div>
 	</div>
 </template>
 
@@ -225,6 +214,11 @@ export default {
 		},
 		scrollable() {
 			return this.height !== 'auto'
+		},
+		// Determines whether this component is used in the new group conversation creation
+		// context
+		isNewGroupConversation() {
+			return this.$parent.$options.name === 'SetContacts'
 		},
 	},
 

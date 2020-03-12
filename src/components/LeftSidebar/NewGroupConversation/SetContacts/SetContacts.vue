@@ -31,15 +31,9 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<!-- Loading state -->
-		<Caption v-if="contactsLoading"
-			:title="t('spreed', 'Loading contacts')" />
-		<!-- List of possilbe participants -->
-		<Caption v-if="!contactsLoading"
-			:title="t('spreed', 'Select participants')" />
 		<ParticipantSearchResults
 			:add-on-click="false"
-			height="200px"
+			height="315px"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
@@ -49,7 +43,6 @@
 </template>
 
 <script>
-import Caption from '../../../Caption'
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
@@ -57,7 +50,6 @@ import ParticipantSearchResults from '../../../RightSidebar/Participants/Partici
 export default {
 	name: 'SetContacts',
 	components: {
-		Caption,
 		ParticipantSearchResults,
 	},
 
