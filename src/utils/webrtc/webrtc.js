@@ -820,7 +820,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	})
 
 	webrtc.on('channelMessage', function(peer, label, data) {
-		if (label === 'status') {
+		if (label === 'status' || label === 'JanusDataChannel') {
 			if (data.type === 'audioOn') {
 				webrtc.emit('unmute', { id: peer.id, name: 'audio' })
 			} else if (data.type === 'audioOff') {
@@ -836,11 +836,13 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				} else {
 					webrtc.emit('nick', { id: peer.id, name: payload.name, userid: payload.userid })
 				}
+			} else {
+				console.debug('Unknown message type %s from %s datachannel', data.type, label, data)
 			}
 		} else if (label === 'hark') {
 			// Ignore messages from hark datachannel
 		} else {
-			console.debug('Uknown message from %s datachannel', label, data)
+			console.debug('Unknown message from %s datachannel', label, data)
 		}
 	})
 
