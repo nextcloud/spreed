@@ -186,7 +186,7 @@ export default {
 		},
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
-		}
+		},
 	},
 
 	methods: {

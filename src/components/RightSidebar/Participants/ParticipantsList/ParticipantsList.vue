@@ -29,18 +29,25 @@
 				:is-selectable="participantsSelectable"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
+		<template v-if="loading">
+			<LoadingParticipant
+				v-for="n in dummyParticipants"
+				:key="n" />
+		</template>
 	</div>
 </template>
 
 <script>
 
 import Participant from './Participant/Participant'
+import LoadingParticipant from './Participant/LoadingParticipant'
 
 export default {
 	name: 'ParticipantsList',
 
 	components: {
 		Participant,
+		LoadingParticipant,
 	},
 
 	props: {
@@ -50,6 +57,10 @@ export default {
 		items: {
 			type: Array,
 			required: true,
+		},
+		loading: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
