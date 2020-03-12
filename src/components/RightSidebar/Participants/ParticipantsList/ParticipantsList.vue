@@ -26,7 +26,7 @@
 				v-for="item in items"
 				:key="item.id"
 				:participant="item"
-				is-selected="item.selected"
+				:is-selectable="participantsSelectable"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
 	</div>
@@ -61,6 +61,11 @@ export default {
 		dummyParticipants() {
 			const dummies = 6 - this.items.length
 			return dummies > 0 ? dummies : 0
+		},
+		// If the parent component is "ParticipantsSearchResults", make the children
+		// participant components selectable
+		participantsSelectable() {
+			return this.$parent.$options.name === 'ParticipantsSearchResults'
 		},
 	},
 

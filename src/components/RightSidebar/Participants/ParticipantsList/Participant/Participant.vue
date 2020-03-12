@@ -87,16 +87,24 @@ export default {
 			type: Object,
 			required: true,
 		},
+		// Toggles the bulk selection state of this component
+		isSelectable: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
 		/**
-		 * This parameter is automatically computed by the ParticipantsList component
-		 * when both component are used in the new-group-conversation-form context
-		 * @returns {array}
+		 * Check if the current participant belongs to the selected participants array
+		 * in the store
+		 * @returns {boolean}
 		 */
 		isSelected() {
-			return this.participant.selected
+			if (this.isSelectable) {
+				return this.$store.getters.selectedParticipants.indexOf(this.participant) !== -1
+			}
+			return false
 		},
 		/**
 		 * If the Participant component is used as to display a search result, it will
