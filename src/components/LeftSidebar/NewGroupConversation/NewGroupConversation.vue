@@ -69,6 +69,7 @@
 					<template v-if="page === 1">
 						<SetContacts
 							:conversation-name="conversationName"
+							:selected-participants="selectedParticipants"
 							@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 					</template>
 					<!-- Third page -->

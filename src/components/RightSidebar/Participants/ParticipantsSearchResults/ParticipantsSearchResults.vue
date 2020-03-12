@@ -163,12 +163,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-	},
-
-	data() {
-		return {
-			selectedParticipants: [],
-		}
+		selectedParticipants: {
+			type: Array,
+			default: () => [],
+		},
 	},
 
 	computed: {
@@ -279,22 +277,11 @@ export default {
 
 	methods: {
 		handleClickParticipant(participant) {
+			// Needed for right sidebar
 			this.$emit('click', participant)
-			/**
-			 * Remove the clicked participant from the selected participants list
-			 */
-			if (this.selectedParticipants.indexOf(participant) !== -1) {
-				this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) => {
-					return selectedParticipant.id !== participant.id
-				})
-				this.$emit('updateSelectedParticipants', this.selectedParticipants)
-			} else {
-				/**
-				 * Add the clicked participant from the selected participants list
-				 */
-				this.selectedParticipants = [...this.selectedParticipants, participant]
-				this.$emit('updateSelectedParticipants', this.selectedParticipants)
-			}
+			// Needed for bulk participants selection (like in the new group conversation
+			// creation process)
+			this.$store.dispatch('updateSelectedParticipants', participant)
 		},
 		handleClickHint() {
 			this.$emit('clickSearchHint')

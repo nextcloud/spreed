@@ -26,6 +26,7 @@
 				v-for="item in items"
 				:key="item.id"
 				:participant="item"
+				is-selected="item.selected"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
 	</div>
