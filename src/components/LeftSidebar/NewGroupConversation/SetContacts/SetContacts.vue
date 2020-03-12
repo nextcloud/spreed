@@ -31,12 +31,22 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
+		<div class="selected-participants">
+			<div
+				v-for="participant in selectedParticipants"
+				:key="participant.label">
+				{{ participant.label }}
+				<button
+					class="icon-close"
+					@click="removeParticipantFromSelection(participant)" />
+			</div>
+		</div>
 		<ParticipantSearchResults
 			:add-on-click="false"
-			height="315px"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
+			:scrollable="true"
 			:display-search-hint="!contactsLoading"
 			@clickSearchHint="focusInput" />
 	</div>
@@ -69,6 +79,12 @@ export default {
 			contactsLoading: true,
 			noResults: false,
 		}
+	},
+
+	computed: {
+		selectedParticipants() {
+			return this.$store.getters.selectedParticipants
+		},
 	},
 
 	async mounted() {
@@ -114,6 +130,9 @@ export default {
 		focusInput() {
 			this.$refs.setContacts.focus()
 		},
+		removeParticipantFromSelection(participant) {
+			this.$store.dispatch('updateSelectedParticipants', participant)
+		},
 	},
 }
 </script>
@@ -134,6 +153,11 @@ export default {
 		margin-top: 20px;
 		text-align: center;
 	}
+}
+
+.selected-participants {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .icon-search {
