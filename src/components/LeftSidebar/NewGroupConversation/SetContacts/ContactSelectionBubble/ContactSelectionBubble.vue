@@ -28,7 +28,9 @@
 			:disable-menu="true"
 			:disable-tooltip="true"
 			:size="24" />
-		{{ trimmedName }}
+		<label class="contact-selection-bubble__username">
+			{{ trimmedName }}
+		</label>
 		<button
 			class="icon-close contact-selection-bubble__remove"
 			@click="removeParticipantFromSelection(participant)" />
@@ -74,13 +76,19 @@ export default {
     margin: 4px;
     background-color: var(--color-primary-light);
     border-radius: 24px;
+	&__avatar {
+		margin-right: 4px;
+	}
+	// Limit the length of the username
+	&__username {
+		max-width: 80px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 	&__remove {
 		margin-left: 4px;
 		border: none;
 		background-color: transparent;
-	}
-	&__avatar {
-		margin-right: 4px;
 	}
 }
 
