@@ -32,14 +32,10 @@
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
 		<div class="selected-participants">
-			<div
+			<ContactSelectionBubble
 				v-for="participant in selectedParticipants"
-				:key="participant.label">
-				{{ participant.label }}
-				<button
-					class="icon-close"
-					@click="removeParticipantFromSelection(participant)" />
-			</div>
+				:key="participant.label"
+				:participant="participant" />
 		</div>
 		<ParticipantSearchResults
 			:add-on-click="false"
@@ -56,11 +52,13 @@
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
+import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble'
 
 export default {
 	name: 'SetContacts',
 	components: {
 		ParticipantSearchResults,
+		ContactSelectionBubble,
 	},
 
 	props: {
@@ -129,9 +127,6 @@ export default {
 		},
 		focusInput() {
 			this.$refs.setContacts.focus()
-		},
-		removeParticipantFromSelection(participant) {
-			this.$store.dispatch('updateSelectedParticipants', participant)
 		},
 	},
 }
