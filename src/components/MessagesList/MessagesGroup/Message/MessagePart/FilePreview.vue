@@ -22,8 +22,10 @@
 <template>
 	<a :href="link"
 		class="container"
+		:class="{ 'is-viewer-available': isViewerAvailable }"
 		target="_blank"
-		rel="noopener noreferrer">
+		rel="noopener noreferrer"
+		@click="showPreview">
 		<img v-if="!isLoading && !failed"
 			class="preview"
 			alt=""
@@ -53,6 +55,10 @@ export default {
 			required: true,
 		},
 		name: {
+			type: String,
+			required: true,
+		},
+		path: {
 			type: String,
 			required: true,
 		},
@@ -91,6 +97,27 @@ export default {
 				height: previewSize,
 			})
 		},
+		isViewerAvailable() {
+			if (!OCA.Viewer) {
+				return false
+			}
+
+			const availableHandlers = OCA.Viewer.availableHandlers
+			for (let i = 0; i < availableHandlers.length; i++) {
+				if (availableHandlers[i].mimes.includes(this.mimetype)) {
+					return true
+				}
+			}
+
+			return false
+		},
+		internalAbsolutePath() {
+			if (this.path.startsWith('/')) {
+				return this.path
+			}
+
+			return '/' + this.path
+		},
 	},
 	mounted() {
 		const img = new Image()
@@ -103,6 +130,22 @@ export default {
 		}
 		img.src = this.previewUrl
 	},
+	methods: {
+		showPreview(event) {
+			if (!this.isViewerAvailable) {
+				// Regular event handling by opening the link.
+				return
+			}
+
+			event.stopPropagation()
+			event.preventDefault()
+
+			OCA.Viewer.open({
+				// Viewer expects an internal absolute path starting with "/".
+				path: this.internalAbsolutePath,
+			})
+		},
+	},
 }
 </script>
 
@@ -114,6 +157,22 @@ export default {
 	image. */
 	display: inline-block;
 
+	/* Show a hover colour around the preview when navigating with the
+	 * keyboard through the file links (or hovering them with the mouse). */
+	&:hover,
+	&:focus,
+	&:active {
+		.preview {
+			background-color: var(--color-background-hover);
+
+			/* Trick to keep the same position while adding a padding to show
+			 * the background. */
+			box-sizing: content-box !important;
+			padding: 10px;
+			margin: -10px;
+		}
+	}
+
 	.preview {
 		display: block;
 		width: 128px;
@@ -124,6 +183,12 @@ export default {
 		/* As the file preview is an inline block the name is set as a block to
 		force it to be on its own line below the preview. */
 		display: block;
+	}
+
+	&:not(.is-viewer-available) {
+		strong:after {
+			content: " ↗";
+		}
 	}
 }
 
