@@ -72,6 +72,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
+import isEqual from 'lodash/isEqual'
 
 export default {
 	name: 'Participant',
@@ -102,7 +103,13 @@ export default {
 		 */
 		isSelected() {
 			if (this.isSelectable) {
-				return this.$store.getters.selectedParticipants.indexOf(this.participant) !== -1
+				let isSelected = false
+				this.$store.getters.selectedParticipants.forEach(selectedParticipant => {
+					if (isEqual(selectedParticipant, this.participant)) {
+						isSelected = true
+					}
+				})
+				return isSelected
 			}
 			return false
 		},

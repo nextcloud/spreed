@@ -20,6 +20,7 @@
  *
  */
 import Vue from 'vue'
+import isEqual from 'lodash/isEqual'
 
 const state = {
 	selectedParticipants: [],
@@ -79,7 +80,13 @@ const actions = {
 	 * @param {object} participant the clicked participant;
 	 */
 	updateSelectedParticipants({ commit, state }, participant) {
-		if (state.selectedParticipants.indexOf(participant) !== -1) {
+		let isAlreadySelected = false
+		state.selectedParticipants.forEach(selectedParticipant => {
+			if (isEqual(selectedParticipant, participant)) {
+				isAlreadySelected = true
+			}
+		})
+		if (isAlreadySelected) {
 			/**
              * Remove the clicked participant from the selected participants list
              */
