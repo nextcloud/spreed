@@ -290,6 +290,12 @@ export default {
 		},
 	},
 
+	watch: {
+		showJoinCallButton() {
+			EventBus.$emit('scrollChatToBottom')
+		},
+	},
+
 	methods: {
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
