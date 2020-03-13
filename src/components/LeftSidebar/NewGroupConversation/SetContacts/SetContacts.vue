@@ -31,7 +31,9 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<div class="selected-participants">
+		<div
+			v-if="hasSelectedParticipants"
+			class="selected-participants">
 			<ContactSelectionBubble
 				v-for="participant in selectedParticipants"
 				:key="participant.label"
@@ -82,6 +84,9 @@ export default {
 	computed: {
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
+		},
+		hasSelectedParticipants() {
+			return this.selectedParticipants.length !== 0
 		},
 	},
 
@@ -153,6 +158,8 @@ export default {
 .selected-participants {
 	display: flex;
 	flex-wrap: wrap;
+	border-bottom: 1px solid var(--color-background-darker);
+	padding: 4px 0;
 }
 
 .icon-search {
