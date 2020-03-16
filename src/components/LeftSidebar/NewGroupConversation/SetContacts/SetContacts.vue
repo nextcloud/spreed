@@ -140,6 +140,7 @@ export default {
 <style lang="scss" scoped>
 .set-contacts {
 	position: relative;
+	height:100%;
 	&__input {
 		width: 100%;
 		font-size: 16px;

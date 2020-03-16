@@ -232,6 +232,7 @@ export default {
 .scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
+	height: 100%;
 }
 
 .participants-search-results {

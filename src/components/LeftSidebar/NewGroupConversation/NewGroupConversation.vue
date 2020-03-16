@@ -326,6 +326,9 @@ $dialog-height: 440px;
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
+	&__content {
+		height: 100%;
+	}
 }
 
 /** Size full in the modal component doesn't have border radius, this adds
