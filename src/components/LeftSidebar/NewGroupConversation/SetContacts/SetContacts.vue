@@ -140,12 +140,17 @@ export default {
 <style lang="scss" scoped>
 .set-contacts {
 	position: relative;
-	height:100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	&__input {
 		width: 100%;
 		font-size: 16px;
 		padding-left: 28px;
 		line-height: 34px;
+		box-shadow: 0px 10px 5px var(--color-main-background);
+		z-index: 1;
 	}
 	&__icon {
 		margin-top: 40px;
@@ -161,6 +166,11 @@ export default {
 	flex-wrap: wrap;
 	border-bottom: 1px solid var(--color-background-darker);
 	padding: 4px 0;
+	max-height: 97px;
+	overflow-y: auto;
+	flex: 0 240px;
+	flex: 1 0 auto;
+	align-content: flex-start;
 }
 
 .icon-search {
