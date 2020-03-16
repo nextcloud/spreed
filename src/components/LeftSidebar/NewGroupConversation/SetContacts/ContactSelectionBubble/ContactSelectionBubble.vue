@@ -76,6 +76,7 @@ export default {
     margin: 4px;
     background-color: var(--color-primary-light);
     border-radius: 24px;
+	height: 24px;
 	&__avatar {
 		margin-right: 4px;
 	}
