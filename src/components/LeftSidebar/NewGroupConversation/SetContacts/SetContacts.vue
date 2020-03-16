@@ -31,14 +31,16 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<div
+		<transition-group
 			v-if="hasSelectedParticipants"
+			name="zoom"
+			tag="div"
 			class="selected-participants">
 			<ContactSelectionBubble
 				v-for="participant in selectedParticipants"
 				:key="participant.label"
 				:participant="participant" />
-		</div>
+		</transition-group>
 		<ParticipantSearchResults
 			:add-on-click="false"
 			:search-results="searchResults"
@@ -178,4 +180,20 @@ export default {
 	top: 12px;
     left: 8px;
 }
+
+.zoom-enter-active {
+  animation: zoom-in .1s;
+}
+.zoom-leave-active {
+  animation: zoom-in .1s reverse;
+}
+@keyframes zoom-in {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 </style>
