@@ -121,6 +121,16 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
 
+	if (!constraints.audio && !constraints.video) {
+		self.emit('localStream', constraints, null)
+
+		if (cb) {
+			return cb(null, null, constraints)
+		}
+
+		return
+	}
+
 	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		const error = new Error('MediaStreamError')
 		error.name = 'NotSupportedError'
