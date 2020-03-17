@@ -30,6 +30,7 @@
 		"emoji-regex": "^8.0.0",
 		"escape-html": "^1.0.3",
 		"hark": "^1.2.3",
+		"lodash": "^4.17.15",
 		"mockconsole": "0.0.1",
 		"nextcloud-vue-collections": "^0.7.2",
 		"url-parse": "^1.4.7",

@@ -110,7 +110,7 @@ export default {
 			 */
 			displayMessagesLoader: false,
 			/**
-			 * We store this value in order to determine wether the user has scrolled up
+			 * We store this value in order to determine whether the user has scrolled up
 			 * or down at each iteration of the debounceHandleScroll method.
 			 */
 			previousScrollTopValue: null,

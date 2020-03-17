@@ -32,6 +32,7 @@ import sidebarStore from './sidebarStore'
 import tokenStore from './tokenStore'
 import windowVisibilityStore from './windowVisibilityStore'
 import fileUploadStore from './fileUploadStore'
+import newGroupConversationStore from './newGroupConversationStore'
 
 Vue.use(Vuex)
 
@@ -49,6 +50,7 @@ export default new Store({
 		tokenStore,
 		windowVisibilityStore,
 		fileUploadStore,
+		newGroupConversationStore,
 	},
 
 	mutations,
