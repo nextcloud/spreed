@@ -24,21 +24,6 @@
 	<div id="general_settings" class="videocalls section">
 		<h2>{{ t('spreed', 'General settings') }}</h2>
 
-		<p>
-			<label for="start_calls">{{ t('spreed', 'Start calls') }}</label>
-			<Multiselect id="start_calls"
-				v-model="startCalls"
-				:options="startCallOptions"
-				:placeholder="t('spreed', 'Who can start a call?')"
-				label="label"
-				track-by="value"
-				:disabled="loading || loadingStartCalls"
-				@input="saveStartCalls" />
-		</p>
-		<p>
-			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
-		</p>
-
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
 		<p>
@@ -83,12 +68,6 @@
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import { loadState } from '@nextcloud/initial-state'
 
-const startCallOptions = [
-	{ value: 0, label: t('spreed', 'Everyone') },
-	{ value: 1, label: t('spreed', 'Users and moderators') },
-	{ value: 2, label: t('spreed', 'Moderators only') },
-]
-
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
 	{ value: 2, label: t('spreed', '@-mentions only') },
@@ -104,11 +83,7 @@ export default {
 	data() {
 		return {
 			loading: true,
-			loadingStartCalls: false,
 			loadingConversationsFiles: false,
-
-			startCallOptions,
-			startCalls: startCallOptions[0],
 
 			defaultGroupNotificationOptions,
 			defaultGroupNotification: defaultGroupNotificationOptions[1],
@@ -120,7 +95,6 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
 		this.conversationsFiles = parseInt(loadState('talk', 'conversations_files')) === 1
 		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('talk', 'default_group_notification')) - 1]
 		this.conversationsFilesPublicShares = parseInt(loadState('talk', 'conversations_files_public_shares')) === 1
@@ -128,15 +102,6 @@ export default {
 	},
 
 	methods: {
-		saveStartCalls() {
-			this.loadingStartCalls = true
-
-			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
-				success: function() {
-					this.loadingStartCalls = false
-				}.bind(this),
-			})
-		},
 		saveDefaultGroupNotification() {
 			this.loadingStartCalls = true
 

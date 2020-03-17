@@ -30,6 +30,7 @@ use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
 use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -85,6 +86,8 @@ class RoomController extends AEnvironmentAwareController {
 	private $l10n;
 	/** @var IConfig */
 	private $config;
+	/** @var Config */
+	private $talkConfig;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -100,7 +103,8 @@ class RoomController extends AEnvironmentAwareController {
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
 								IL10N $l10n,
-								IConfig $config) {
+								IConfig $config,
+								Config $talkConfig) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->appManager = $appManager;
@@ -115,6 +119,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
 		$this->config = $config;
+		$this->talkConfig = $talkConfig;
 	}
 
 	/**
@@ -374,6 +379,16 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
+
+		if ($roomType !== Room::ONE_TO_ONE_CALL) {
+			/** @var IUser $user */
+			$user = $this->userManager->get($this->userId);
+
+			if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
+				return new DataResponse([], Http::STATUS_FORBIDDEN);
+			}
+		}
+
 		switch ($roomType) {
 			case Room::ONE_TO_ONE_CALL:
 				return $this->createOneToOneRoom($invite);

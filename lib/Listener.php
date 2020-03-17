@@ -42,8 +42,6 @@ class Listener {
 	protected $talkSession;
 	/** @var Config */
 	protected $config;
-	/** @var string[] */
-	protected $allowedGroupIds = [];
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,

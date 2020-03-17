@@ -239,6 +239,11 @@ class PageController extends Controller {
 		);
 
 		$this->initialStateService->provideInitialState(
+			'talk', 'start_conversations',
+			!$this->config->isNotAllowedToCreateConversations($user)
+		);
+
+		$this->initialStateService->provideInitialState(
 			'talk', 'circles_enabled',
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
