@@ -143,12 +143,25 @@ export default {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},
 
+		isSendingMediaAllowed() {
+			return this.conversation.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
+				|| this.conversation.objectType === 'share:password'
+				|| this.conversation.objectType === 'file'
+		},
+
 		async joinCall() {
+			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+			if (this.isSendingMediaAllowed()) {
+				flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			}
+
 			console.info('Joining call')
 			this.loading = true
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				flags: flags,
 			})
 			this.loading = false
 		},

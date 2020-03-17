@@ -86,6 +86,7 @@
 <script>
 import escapeHtml from 'escape-html'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { PARTICIPANT } from '../../constants'
 import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner'
 
 export default {
@@ -97,6 +98,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		model: {
 			type: Object,
 			required: true,
@@ -121,6 +126,25 @@ export default {
 	},
 
 	computed: {
+
+		conversation() {
+			if (this.$store.getters.conversations[this.token]) {
+				return this.$store.getters.conversations[this.token]
+			}
+
+			return {
+				sessionId: '0',
+				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+				objectType: null,
+			}
+		},
+
+		isScreensharingAllowed() {
+			return this.conversation.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
+				|| this.conversation.objectType === 'share:password'
+				|| this.conversation.objectType === 'file'
+		},
 
 		audioButtonClass() {
 			return {
@@ -227,12 +251,17 @@ export default {
 				'icon-screen': this.model.attributes.localScreen,
 				'screensharing-disabled': !this.model.attributes.localScreen,
 				'icon-screen-off': !this.model.attributes.localScreen,
+				'no-screensharing-available': !this.isScreensharingAllowed,
 			}
 		},
 
 		screenSharingButtonTooltip() {
 			if (this.screenSharingMenuOpen) {
 				return null
+			}
+
+			if (!this.isScreensharingAllowed) {
+				return t('spreed', 'No screensharing')
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
@@ -295,6 +324,10 @@ export default {
 		},
 
 		toggleScreenSharingMenu() {
+			if (!this.isScreensharingAllowed) {
+				return
+			}
+
 			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
 				if (window.location.protocol === 'https:') {
 					OCP.Toast.message(t('spreed', 'Screen sharing is not supported by your browser.'))
@@ -440,13 +473,15 @@ export default {
 }
 
 .nameIndicator button.no-audio-available,
-.nameIndicator button.no-video-available {
+.nameIndicator button.no-video-available,
+.nameIndicator button.no-screensharing-available {
 	opacity: .7;
 	cursor: not-allowed;
 }
 
 .nameIndicator button.no-audio-available:active,
-.nameIndicator button.no-video-available:active {
+.nameIndicator button.no-video-available:active,
+.nameIndicator button.no-screensharing-available:active {
 	background-color: transparent;
 }
 

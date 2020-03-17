@@ -40,6 +40,7 @@
 					@switchScreenToId="_switchScreenToId" />
 			</template>
 			<LocalVideo ref="localVideo"
+				:token="token"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:use-constrained-layout="useConstrainedLayout"

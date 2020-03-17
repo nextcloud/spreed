@@ -35,6 +35,7 @@
 			</div>
 		</div>
 		<LocalMediaControls ref="localMediaControls"
+			:token="token"
 			:model="localMediaModel"
 			:local-call-participant-model="localCallParticipantModel"
 			:screen-sharing-button-hidden="useConstrainedLayout"
@@ -60,6 +61,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		localMediaModel: {
 			type: Object,
 			required: true,
