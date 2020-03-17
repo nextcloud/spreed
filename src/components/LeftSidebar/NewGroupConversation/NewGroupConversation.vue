@@ -340,7 +340,7 @@ it back */
 
 .navigation {
 	display: flex;
-	flex: 0 0 content;
+	flex: 0 0 40px;
 	height: 50px;
 	box-shadow: 0px -15px 7px var(--color-main-background);
 	z-index: 1;
