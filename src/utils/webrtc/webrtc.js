@@ -525,10 +525,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		remoteVideosEl: '',
 		autoRequestMedia: true,
 		debug: false,
-		media: {
-			audio: true,
-			video: true,
-		},
 		autoAdjustMic: false,
 		audioFallback: true,
 		detectSpeakingEvents: true,
@@ -552,10 +548,17 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.leaveCall()
 	})
 
-	webrtc.startMedia = function(token) {
+	webrtc.startMedia = function(token, flags) {
 		startedWithMedia = undefined
 
-		webrtc.joinCall(token)
+		// If no flags are provided try to enable both audio and video.
+		// Otherwise, try to enable only that allowed by the flags.
+		const mediaConstraints = {
+			audio: !flags || !!(flags & PARTICIPANT.CALL_FLAG.WITH_AUDIO),
+			video: !flags || !!(flags & PARTICIPANT.CALL_FLAG.WITH_VIDEO),
+		}
+
+		webrtc.joinCall(token, mediaConstraints)
 	}
 
 	const sendDataChannelToAll = function(channel, message, payload) {

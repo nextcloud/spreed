@@ -186,7 +186,6 @@ export default {
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				flags: PARTICIPANT.CALL_FLAG.IN_CALL, // FIXME add audio+video as per setting
 			})
 			this.loading = false
 		},

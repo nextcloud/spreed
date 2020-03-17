@@ -31,10 +31,6 @@ function LocalMedia(opts) {
 	const config = this.config = {
 		detectSpeakingEvents: false,
 		audioFallback: false,
-		media: {
-			audio: true,
-			video: true,
-		},
 		harkOptions: null,
 		logger: mockconsole,
 	}
@@ -123,7 +119,7 @@ const cloneLinkedStream = function(stream) {
 
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
-	const constraints = mediaConstraints || this.config.media
+	const constraints = mediaConstraints || { audio: true, video: true }
 
 	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		const error = new Error('MediaStreamError')

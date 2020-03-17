@@ -159,10 +159,11 @@ async function signalingJoinConversation(token, sessionId) {
  * Join the call of the given conversation
  *
  * @param {string} token Conversation to join the call
+ * @param {int} flags Bitwise combination of PARTICIPANT.CALL_FLAG
  * @returns {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
-async function signalingJoinCall(token) {
+async function signalingJoinCall(token, flags) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
 
@@ -180,7 +181,7 @@ async function signalingJoinCall(token) {
 			startedCall = resolve
 			failedToStartCall = reject
 
-			webRtc.startMedia(token)
+			webRtc.startMedia(token, flags)
 		})
 	}
 }
