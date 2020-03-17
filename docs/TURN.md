@@ -103,7 +103,7 @@ simple-log
 ### What else
 Nextcloud Talk´s WebRTC handling is still mostly based on the one from the [Spreed.ME](https://www.spreed.me/) WebRTC solution. For this reason, all guides about how to configure coTURN for it, applies to Nextcloud Talk too.
 
-If you need to use Talk with more than 5-10 users, you will need the Spreed High Performance Back-end from Nextcloud GmbH. Check [the website](https://nextcloud.com/talk/) for details.
+If you need to use Talk with more than 5-10 users in the same call, you will need the Spreed High Performance Back-end from Nextcloud GmbH. Check [the website](https://nextcloud.com/talk/) for details.
 
 #### Further reference
 
