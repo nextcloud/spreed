@@ -37,7 +37,6 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
-import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
 import {
@@ -148,7 +147,6 @@ export default {
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				flags: PARTICIPANT.CALL_FLAG.IN_CALL,
 			})
 		},
 

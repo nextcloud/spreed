@@ -424,8 +424,15 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		webrtc.leaveCall()
 	})
 
-	webrtc.startMedia = function(token) {
-		webrtc.joinCall(token)
+	webrtc.startMedia = function(token, flags) {
+		// If no flags are provided try to enable both audio and video.
+		// Otherwise, try to enable only that allowed by the flags.
+		const mediaConstraints = {
+			audio: !flags || !!(flags & PARTICIPANT.CALL_FLAG.WITH_AUDIO),
+			video: !flags || !!(flags & PARTICIPANT.CALL_FLAG.WITH_VIDEO),
+		}
+
+		webrtc.joinCall(token, mediaConstraints)
 	}
 
 	const sendDataChannelToAll = function(channel, message, payload) {

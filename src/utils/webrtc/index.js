@@ -105,7 +105,7 @@ function setupWebRtc() {
 	})
 }
 
-async function joinCall(token) {
+async function joinCall(token, flags) {
 	await connectSignaling()
 
 	setupWebRtc()
@@ -115,7 +115,7 @@ async function joinCall(token) {
 	return new Promise((resolve, reject) => {
 		startedCall = resolve
 
-		webRtc.startMedia(token)
+		webRtc.startMedia(token, flags)
 	})
 }
 

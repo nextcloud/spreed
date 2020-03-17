@@ -344,9 +344,9 @@ SimpleWebRTC.prototype.setVolumeForAll = function(volume) {
 	})
 }
 
-SimpleWebRTC.prototype.joinCall = function(name) {
+SimpleWebRTC.prototype.joinCall = function(name, mediaConstraints) {
 	if (this.config.autoRequestMedia) {
-		this.startLocalVideo()
+		this.startLocalVideo(mediaConstraints)
 	}
 	this.roomName = name
 	this.emit('joinedRoom', name)
@@ -360,13 +360,13 @@ SimpleWebRTC.prototype.getEl = function(idOrEl) {
 	}
 }
 
-SimpleWebRTC.prototype.startLocalVideo = function() {
+SimpleWebRTC.prototype.startLocalVideo = function(mediaConstraints) {
 	const self = this
-	this.webrtc.start(this.config.media, function(err, stream) {
+	this.webrtc.start(mediaConstraints, function(err, stream) {
 		if (err) {
 			self.emit('localMediaError', err)
 		} else {
-			self.emit('localMediaStarted', self.config.media)
+			self.emit('localMediaStarted', mediaConstraints)
 
 			const localVideoContainer = self.getLocalVideoContainer()
 			if (localVideoContainer) {
