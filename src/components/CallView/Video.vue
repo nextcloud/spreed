@@ -19,7 +19,7 @@
   -->
 
 <template>
-	<div v-show="!placeholderForPromoted || sharedData.promoted"
+	<div v-show="isSendingMediaOrScreensharingAllowed && (!placeholderForPromoted || sharedData.promoted)"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass">
@@ -159,16 +159,49 @@ export default {
 			return participantName
 		},
 
-		currentParticipant() {
+		participant() {
+			if (typeof this.token === 'undefined') {
+				return {
+					participantType: undefined,
+				}
+			}
+
+			if (!this.model.attributes.userId) {
+				return {
+					// The participant might be a GUEST_MODERATOR, but
+					// unfortunately it is not possible to know it.
+					participantType: PARTICIPANT.TYPE.GUEST,
+				}
+			}
+
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, { participant: this.model.attributes.userId })
+			if (participantIndex !== -1) {
+				return this.$store.getters.getParticipant(this.token, participantIndex)
+			}
+
+			return {
+				participantType: undefined,
+			}
+		},
+
+		isSendingMediaOrScreensharingAllowed() {
+			return this.participant.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR
+				|| this.conversation.objectType === 'share:password'
+				|| this.conversation.objectType === 'file'
+		},
+
+		conversation() {
 			return this.$store.getters.conversations[this.token] || {
 				sessionId: '0',
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+				objectType: null,
 			}
 		},
 
 		selfIsModerator() {
-			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
+			return this.conversation.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
 		connectionStateFailedNoRestart() {
