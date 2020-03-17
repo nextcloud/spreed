@@ -159,8 +159,9 @@
 
 <script>
 import Grid from './Grid/Grid'
-import { SIMULCAST } from '../../constants'
+import { PARTICIPANT, SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel'
 import { fetchPeers } from '../../services/callsService'
 import { showMessage } from '@nextcloud/dialogs'
 import LocalMediaControls from './shared/LocalMediaControls'
@@ -216,7 +217,58 @@ export default {
 	},
 	computed: {
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
+			let callParticipantModels = callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
+
+			if (this.conversation.objectType === 'share:password'
+				|| this.conversation.objectType === 'file') {
+				return callParticipantModels
+			}
+
+			const allParticipantsCount = callParticipantModels.length
+
+			// Filter out subscriber only participants
+			callParticipantModels = callParticipantCollection.callParticipantModels.filter(callParticipantModel => {
+				const nextcloudSessionId = callParticipantModel.attributes.nextcloudSessionId
+
+				const participantIndex = this.$store.getters.getParticipantIndex(this.token, { sessionId: nextcloudSessionId })
+				if (participantIndex === -1) {
+					return false
+				}
+
+				const participant = this.$store.getters.getParticipant(this.token, participantIndex)
+
+				return participant.publishingPermissions !== PARTICIPANT.PUBLISHING_PERMISSIONS.NONE
+			})
+
+			const subscribersOnlyCount = allParticipantsCount - callParticipantModels.length
+
+			if (subscribersOnlyCount > 0) {
+				const subscribersOnlyPlaceholder = {
+					attributes: {
+						peerId: '-1',
+						connectionState: ConnectionState.CONNECTED,
+
+						speaking: false,
+						screen: null,
+						raisedHand: false,
+
+						subscribersOnlyPlaceholder: true,
+						subscribersOnlyCount,
+					},
+				}
+
+				callParticipantModels.push(subscribersOnlyPlaceholder)
+			}
+
+			return callParticipantModels
+		},
+
+		conversation() {
+			return this.$store.getters.conversations[this.token] || {
+				sessionId: '0',
+				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+				objectType: null,
+			}
 		},
 
 		reversedCallParticipantModels() {
