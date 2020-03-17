@@ -28,9 +28,9 @@
 			:disable-menu="true"
 			:disable-tooltip="true"
 			:size="24" />
-		<label class="contact-selection-bubble__username">
+		<span class="contact-selection-bubble__username">
 			{{ trimmedName }}
-		</label>
+		</span>
 		<button
 			class="icon-close contact-selection-bubble__remove"
 			@click="removeParticipantFromSelection(participant)" />
@@ -70,13 +70,16 @@ export default {
 
 <style lang="scss" scoped>
 
+// Component Variables
+$bubble-height: 24px;
+
 .contact-selection-bubble {
 	display: flex;
 	align-items: center;
     margin: 4px;
     background-color: var(--color-primary-light);
-    border-radius: 24px;
-	height: 24px;
+    border-radius: $bubble-height;
+	height: $bubble-height;
 	&__avatar {
 		margin-right: 4px;
 	}
@@ -87,9 +90,16 @@ export default {
 		text-overflow: ellipsis;
 	}
 	&__remove {
-		margin-left: 4px;
+		margin: 0 0 0 4px;
 		border: none;
-		background-color: transparent;
+		border-radius: $bubble-height;
+		height: $bubble-height;
+		width: $bubble-height;
+		background-color: var(--color-primary-active);
+		&:active,
+		&:focus {
+			background-color: transparent !important;
+		}
 	}
 }
 
