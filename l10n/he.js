@@ -69,6 +69,7 @@ OC.L10N.register(
     "Contacts" : "אנשי קשר",
     "Groups" : "קבוצות",
     "Loading" : "בטעינה",
+    "Invalid path selected" : "הנתיב שנבחר שגוי",
     "Error" : "שגיאה",
     "Password protect" : "הגנה בססמה",
     "Back" : "חזרה",
