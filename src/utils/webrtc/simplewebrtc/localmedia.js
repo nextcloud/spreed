@@ -86,6 +86,14 @@ LocalMedia.prototype.start = function(mediaConstraints, cb) {
 	const self = this
 	const constraints = mediaConstraints || this.config.media
 
+	if (!constraints.audio && !constraints.video) {
+		if (cb) {
+			return cb(null, null)
+		}
+
+		return
+	}
+
 	if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
 		const error = new Error('MediaStreamError')
 		error.name = 'NotSupportedError'
