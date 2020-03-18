@@ -21,7 +21,7 @@
 
 <template>
 	<Content :class="{ 'icon-loading': loading, 'in-call': isInCall }" app-name="Talk">
-		<LeftSidebar v-if="getUserId" />
+		<LeftSidebar v-if="getUserId && !isFullscreen" />
 		<AppContent>
 			<router-view />
 		</AppContent>
@@ -70,7 +70,10 @@ export default {
 
 	computed: {
 		windowIsVisible() {
-			return this.$store.getters.windowIsVisible
+			return this.$store.getters.windowIsVisible()
+		},
+		isFullscreen() {
+			return this.$store.getters.isFullscreen()
 		},
 		conversations() {
 			return this.$store.getters.conversations

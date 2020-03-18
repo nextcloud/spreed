@@ -62,13 +62,11 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			isFullscreen: false,
-		}
-	},
-
 	computed: {
+		isFullscreen() {
+			return this.$store.getters.isFullscreen()
+		},
+
 		iconFullscreen() {
 			if (this.forceWhiteIcons) {
 				return 'forced-white icon-fullscreen'
@@ -102,10 +100,10 @@ export default {
 		toggleFullscreen() {
 			if (this.isFullscreen) {
 				this.disableFullscreen()
-				this.isFullscreen = false
+				this.$store.dispatch('setIsFullscreen', false)
 			} else {
 				this.enableFullscreen()
-				this.isFullscreen = true
+				this.$store.dispatch('setIsFullscreen', true)
 			}
 		},
 

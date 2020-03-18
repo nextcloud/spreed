@@ -22,11 +22,15 @@
 
 const state = {
 	visible: true,
+	fullscreen: false,
 }
 
 const getters = {
 	windowIsVisible: (state) => () => {
 		return state.visible
+	},
+	isFullscreen: (state) => () => {
+		return state.fullscreen
 	},
 }
 
@@ -40,6 +44,16 @@ const mutations = {
 	setVisibility(state, value) {
 		state.visible = value
 	},
+
+	/**
+	 * Sets the fullscreen state
+	 *
+	 * @param {object} state current store state;
+	 * @param {boolean} value the value;
+	 */
+	setIsFullscreen(state, value) {
+		state.fullscreen = value
+	},
 }
 
 const actions = {
@@ -51,6 +65,16 @@ const actions = {
 	 */
 	setWindowVisibility(context, value) {
 		context.commit('setVisibility', value)
+	},
+
+	/**
+	 * Sets the fullscreen state
+	 *
+	 * @param {object} context the context object;
+	 * @param {boolean} value the value;
+	 */
+	setIsFullscreen(context, value) {
+		context.commit('setIsFullscreen', value)
 	},
 
 }
