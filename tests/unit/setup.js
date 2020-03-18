@@ -1,7 +1,7 @@
 /*
- * @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -20,7 +20,8 @@
  *
  */
 
-module.exports = {
-	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
-	setupFilesAfterEnv: ['<rootDir>/tests/unit/setup.js']
-}
+export default async function () {
+  global.OC = {
+    requestToken: '123'
+  }
+};
