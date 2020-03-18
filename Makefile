@@ -28,6 +28,9 @@ build-js-production:
 watch-js:
 	npm run watch
 
+test:
+	npm run test:unit
+
 lint:
 	npm run lint
 

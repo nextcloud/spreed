@@ -6,7 +6,7 @@
 	"author": "Joas Schilling <coding@schilljs.com>",
 	"scripts": {
 		"build": "NODE_ENV=production webpack --progress --hide-modules --config webpack.prod.js",
-		"test:unit": "vue-cli-service test:unit",
+		"test:unit": "vue-cli-service test:unit --watch",
 		"lint": "eslint --ext .js,.vue src",
 		"dev": "NODE_ENV=development webpack --config webpack.dev.js",
 		"lint:fix": "eslint --ext .js,.vue src --fix",
