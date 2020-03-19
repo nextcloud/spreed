@@ -1,6 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
 import AvatarWrapper from '../../src/components/AvatarWrapper'
-import { translate } from '@nextcloud/l10n'
 
 describe('AvatarWrapper.vue', () => {
 	it('Renders user avatars properly', () => {
@@ -45,13 +44,9 @@ describe('AvatarWrapper.vue', () => {
 				id: '',
 				name: '',
 			},
-			mocks: {
-				't' : (string) => string
-			}
 		})
-		expect(wrapper.element).toBe('m')
-		//Check that the first child is a div
-		// expect(wrapper.element.firstChild.nodeName).toBe('DIV')
+		expect(wrapper.element.firstChild.classList).toContain('guest')
+		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
 	})
 
 })
