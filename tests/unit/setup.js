@@ -19,9 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-export default async function () {
-  global.OC = {
-    requestToken: '123'
-  }
-};
+global.OC = {
+  requestToken: '123'
+}
+global.t =  (app, text) => text
