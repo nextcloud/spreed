@@ -54,7 +54,7 @@ export default {
 	},
 
 	computed: {
-		// First word of the  string
+		// First word of the string
 		trimmedName() {
 			return this.participant.label.match(/^([\w]+)/)[0]
 		},
