@@ -38,7 +38,7 @@
 			class="selected-participants">
 			<ContactSelectionBubble
 				v-for="participant in selectedParticipants"
-				:key="participant.label"
+				:key="participant.source + participant.id"
 				:participant="participant" />
 		</transition-group>
 		<ParticipantSearchResults
@@ -182,10 +182,11 @@ export default {
 }
 
 .zoom-enter-active {
-  animation: zoom-in .1s;
+  animation: zoom-in var(--animation-quick);
 }
 .zoom-leave-active {
-  animation: zoom-in .1s reverse;
+  animation: zoom-in var(--animation-quick) reverse;
+  will-change: transform;
 }
 @keyframes zoom-in {
   0% {
