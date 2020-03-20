@@ -21,10 +21,11 @@
 
 <template>
 	<div class="contact-selection-bubble">
-		<Avatar
+		<AvatarWrapper
+			:id="participant.id"
 			class="contact-selection-bubble__avatar"
-			:user="participant.userId"
-			:display-name="participant.label"
+			:name="participant.label"
+			:source="participant.source"
 			:disable-menu="true"
 			:disable-tooltip="true"
 			:size="24" />
@@ -38,12 +39,12 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import AvatarWrapper from '../../../../AvatarWrapper'
 export default {
 	name: 'ContactSelectionBubble',
 
 	components: {
-		Avatar,
+		AvatarWrapper,
 	},
 
 	props: {
@@ -76,9 +77,9 @@ $bubble-height: 24px;
 .contact-selection-bubble {
 	display: flex;
 	align-items: center;
-    margin: 4px;
-    background-color: var(--color-primary-light);
-    border-radius: $bubble-height;
+	margin: 4px;
+	background-color: var(--color-primary-light);
+	border-radius: $bubble-height;
 	height: $bubble-height;
 	&__avatar {
 		margin-right: 4px;

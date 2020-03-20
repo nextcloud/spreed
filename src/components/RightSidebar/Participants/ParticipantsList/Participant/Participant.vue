@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<li class="participant-row"
+	<li
+		class="participant-row"
 		:class="{
 			'offline': isOffline,
 			'currentUser': isSelf,
@@ -30,7 +31,8 @@
 		<AvatarWrapper
 			:id="computedId"
 			:name="computedName"
-			:source="participant.source" />
+			:source="participant.source"
+			:offline="isOffline" />
 		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
@@ -311,9 +313,7 @@ export default {
 }
 
 .offline {
-	& > .participant-row__avatar-wrapper {
-		opacity: .4;
-	}
+
 	& > span {
 		color: var(--color-text-maxcontrast);
 	}

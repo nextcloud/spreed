@@ -20,16 +20,22 @@
 -->
 
 <template>
-	<div class="avatar-wrapper">
+	<div
+		class="avatar-wrapper"
+		:class="{'offline': offline}">
 		<div v-if="iconClass"
-			class="avatar-32px icon"
-			:class="iconClass" />
+			class="icon"
+			:class="[`avatar-${sizeToString}px`, iconClass]" />
 		<Avatar v-else-if="id"
 			:user="id"
 			:display-name="name"
-			menu-position="left" />
+			menu-position="left"
+			:disable-tooltip="disableTooltip"
+			:disable-menu="disableMenu"
+			:size="size" />
 		<div v-else
-			class="avatar-32px guest">
+			class="guest"
+			:class="`avatar-${sizeToString}px`">
 			{{ firstLetterOfGuestName }}
 		</div>
 	</div>
@@ -59,8 +65,25 @@ export default {
 			type: String,
 			default: null,
 		},
+		offline: {
+			type: Boolean,
+			default: false,
+		},
+		size: {
+			type: Number,
+			default: 32,
+		},
+		disableTooltip: {
+			type: Boolean,
+			default: false,
+		},
+		disableMenu: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	computed: {
+		// Determines which icon is displayed
 		iconClass() {
 			if (!this.source || this.source === 'users') {
 				return ''
@@ -75,6 +98,10 @@ export default {
 			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
 		},
+		// Takes the the size prop and makes it a string for the classes
+		sizeToString() {
+			return this.size.toString()
+		},
 	},
 }
 </script>
@@ -85,8 +112,12 @@ export default {
 	$avatar-size: 32px;
 	height: $avatar-size;
 	width: $avatar-size;
-
 	@import '../assets/avatar.scss';
 	@include avatar-mixin($avatar-size);
 }
+
+.offline {
+	opacity: .4;
+}
+
 </style>

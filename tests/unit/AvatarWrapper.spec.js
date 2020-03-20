@@ -12,6 +12,7 @@ describe('AvatarWrapper.vue', () => {
 		expect(wrapper.vm.iconClass).toBe('')
 		//Check that the first child is the avatar component
 		expect(wrapper.element.firstChild.nodeName).toBe('AVATAR-STUB')
+		expect(wrapper.props().size).toBe(32)
 	})
 	it('Renders group icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
@@ -36,6 +37,8 @@ describe('AvatarWrapper.vue', () => {
 		expect(wrapper.vm.iconClass).toBe('icon-mail')
 		//Check that the first child is a div
 		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
+		// proper size
+		expect(wrapper.element.firstChild.classList).toContain('avatar-32px')
 	})
 	it('Renders guests icons properly', () => {
 
@@ -43,10 +46,12 @@ describe('AvatarWrapper.vue', () => {
 			propsData: { 
 				id: '',
 				name: '',
+				size: '24'
 			},
 		})
 		expect(wrapper.element.firstChild.classList).toContain('guest')
 		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
+		// proper size
+		expect(wrapper.element.firstChild.classList).toContain('avatar-24px')
 	})
-
 })
