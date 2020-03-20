@@ -35,15 +35,15 @@ const shareFile = async function(path, token) {
 			generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
 			{
 				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
-				path: path,
+				path,
 				shareWith: token,
 			})
 	} catch (error) {
 		if (error.response
-                && error.response.data
-                && error.response.data.ocs
-                && error.response.data.ocs.meta
-                && error.response.data.ocs.meta.message) {
+			&& error.response.data
+			&& error.response.data.ocs
+			&& error.response.data.ocs.meta
+			&& error.response.data.ocs.meta.message) {
 			console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
 			showError(error.response.data.ocs.meta.message)
 		} else {
