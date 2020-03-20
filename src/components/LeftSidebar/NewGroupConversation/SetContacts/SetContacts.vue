@@ -48,6 +48,7 @@
 			:no-results="noResults"
 			:scrollable="true"
 			:display-search-hint="!contactsLoading"
+			:selectable="true"
 			@clickSearchHint="focusInput" />
 	</div>
 </template>

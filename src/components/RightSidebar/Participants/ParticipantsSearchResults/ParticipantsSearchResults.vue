@@ -131,6 +131,13 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		/** If so, this component will add clicked participant to the selected
+		 * participants store;
+		 */
+		selectable: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -219,7 +226,10 @@ export default {
 			this.$emit('click', participant)
 			// Needed for bulk participants selection (like in the new group conversation
 			// creation process)
-			this.$store.dispatch('updateSelectedParticipants', participant)
+			if (this.selectable) {
+				this.$store.dispatch('updateSelectedParticipants', participant)
+			}
+
 		},
 		handleClickHint() {
 			this.$emit('clickSearchHint')
