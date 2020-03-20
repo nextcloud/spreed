@@ -54,9 +54,9 @@ export default {
 	},
 
 	computed: {
-		// First word of the string
+		// First group of characrers before the space in the name the string
 		trimmedName() {
-			return this.participant.label.match(/^([\w]+)/)[0]
+			return this.participant.label.match(/^\S*/)[0]
 		},
 	},
 
