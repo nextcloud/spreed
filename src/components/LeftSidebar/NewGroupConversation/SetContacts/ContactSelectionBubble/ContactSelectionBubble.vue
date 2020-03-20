@@ -21,14 +21,13 @@
 
 <template>
 	<div class="contact-selection-bubble">
-		<AvatarWrapper
+		<AvatarWrapperSmall
 			:id="participant.id"
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
 			:disable-menu="true"
-			:disable-tooltip="true"
-			:size="24" />
+			:disable-tooltip="true" />
 		<span class="contact-selection-bubble__username">
 			{{ trimmedName }}
 		</span>
@@ -39,12 +38,12 @@
 </template>
 
 <script>
-import AvatarWrapper from '../../../../AvatarWrapper'
+import AvatarWrapperSmall from '../../../../AvatarWrapperSmall'
 export default {
 	name: 'ContactSelectionBubble',
 
 	components: {
-		AvatarWrapper,
+		AvatarWrapperSmall,
 	},
 
 	props: {
