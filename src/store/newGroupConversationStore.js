@@ -91,13 +91,13 @@ const actions = {
 		})
 		if (isAlreadySelected) {
 			/**
-             * Remove the clicked participant from the selected participants list
-             */
+			 * Remove the clicked participant from the selected participants list
+			 */
 			commit('removeSelectedParticipant', participant)
 		} else {
 			/**
-             * Add the clicked participant from the selected participants list
-             */
+			 * Add the clicked participant from the selected participants list
+			 */
 			commit('addSelectedParticipant', participant)
 		}
 	},
