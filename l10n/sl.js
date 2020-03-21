@@ -74,7 +74,7 @@ OC.L10N.register(
     "{user} sent a message in conversation {call}" : "{actor} vam pošlje sporočilo v pogovor {call} ",
     "A deleted user sent a message in conversation {call}" : "Izbrisan uporabnik pošlje sporočilo v pogovor {call}",
     "{guest} (guest) sent a message in conversation {call}" : "{guest} (guest) pošlje sporočilo v pogovor {call}",
-    "A guest sent a message in conversation {call}" : "Gost pošlje sporočilo v pogovor {call}",
+    "A guest sent a message in conversation {call}" : "Gost je poslal sporočilo v pogovor {call}",
     "{user} replied to your private message" : "{user} odgovori na vaše zasebno sporočilo",
     "{user} mentioned you in a private conversation" : "{user} vas omeni v zasebnem pogovoru",
     "View chat" : "Pokaži klepet",
