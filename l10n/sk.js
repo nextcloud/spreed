@@ -181,6 +181,7 @@ OC.L10N.register(
     "Save changes" : "Uložiť zmeny",
     "Saving …" : "Ukladá sa...",
     "Saved!" : "Uložené!",
+    "Beta" : "Beta",
     "Name" : "Meno",
     "General settings" : "Všeobecné nastavenia",
     "Signaling servers" : "Signalizačné servery",
