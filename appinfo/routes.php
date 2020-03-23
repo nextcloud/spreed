@@ -33,6 +33,20 @@ return [
 			'url' => '/not-found',
 			'verb' => 'GET',
 		],
+
+		[
+			'name' => 'Page#showCall',
+			'url' => '/call/{token}',
+			'verb' => 'GET',
+			'root' => '',
+		],
+		[
+			'name' => 'Page#authenticatePassword',
+			'url' => '/call/{token}',
+			'verb' => 'POST',
+			'root' => '',
+		],
+
 	],
 	'ocs' => [
 		/**
