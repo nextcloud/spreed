@@ -115,6 +115,7 @@ export default {
 /** Username form for guest users */
 .username-form {
 	padding: 0 12px;
+	margin:auto;
 	& .icon-rename {
 		margin-left: 8px;
 		padding-left: 36px;
@@ -125,7 +126,7 @@ export default {
 	}
 	&__input {
 		padding-right: var(--clickable-area);
-		width: 300px;
+		width: 230px;
 	}
 	&__button {
 		margin-left: -44px;

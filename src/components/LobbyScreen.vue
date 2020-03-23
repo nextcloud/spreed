@@ -19,19 +19,27 @@
   -->
 
 <template>
-	<div class="lobby emptycontent">
-		<div class="icon icon-lobby" />
-		<h2>{{ currentConversationName }}</h2>
-		<p>{{ message }}</p>
+	<div class="lobby">
+		<div class="lobby emptycontent">
+			<div class="icon icon-lobby" />
+			<h2>{{ currentConversationName }}</h2>
+			<p>{{ message }}</p>
+		</div>
+		<SetGuestUsername />
 	</div>
 </template>
 
 <script>
 import moment from '@nextcloud/moment'
+import SetGuestUsername from './SetGuestUsername'
 
 export default {
 
 	name: 'LobbyScreen',
+
+	components: {
+		SetGuestUsername,
+	},
 
 	computed: {
 
@@ -64,3 +72,12 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+
+.lobby {
+	display: flex;
+	flex-direction: column;
+}
+
+</style>
