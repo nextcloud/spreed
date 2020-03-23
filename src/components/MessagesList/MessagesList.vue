@@ -62,6 +62,7 @@ import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'MessagesList',
@@ -207,8 +208,10 @@ export default {
 	},
 	mounted() {
 		this.scrollToBottom()
+		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 	},
 	beforeDestroy() {
+		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		this.cancelLookForNewMessages()
 	},
 
@@ -495,6 +498,17 @@ export default {
 				this.isScrolledToBottom = false
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
+			}
+		},
+
+		/**
+		 * @param {object} options Event options
+		 * @param {boolean} options.force Set to true, if the chat should be scrolled to the bottom even when it was not before
+		 */
+		handleScrollChatToBottomEvent(options) {
+			if ((options && options.force) || this.isScrolledToBottom) {
+				this.scrollToBottom()
+				this.isScrolledToBottom = true
 			}
 		},
 
