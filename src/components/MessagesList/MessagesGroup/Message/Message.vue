@@ -40,6 +40,10 @@ the main body of the message as well as a quote.
 					{{ message }}
 				</div>
 			</div>
+			<div v-else-if="showJoinCallButton" class="message__main__text call-started">
+				<RichText :text="message" :arguments="richParameters" :autolink="true" />
+				<CallButton />
+			</div>
 			<div v-else class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
@@ -68,6 +72,7 @@ the main body of the message as well as a quote.
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import CallButton from '../../../TopBar/CallButton'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
@@ -75,6 +80,7 @@ import RichText from '@juliushaertl/vue-richtext'
 import Quote from '../../../Quote'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
+import { PARTICIPANT } from '../../../../constants'
 
 export default {
 	name: 'Message',
@@ -82,6 +88,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		CallButton,
 		Quote,
 		RichText,
 	},
@@ -174,6 +181,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * The conversation token.
+		 */
+		systemMessage: {
+			type: String,
+			required: true,
+		},
+		/**
 		 * The parent message's id.
 		 */
 		parent: {
@@ -198,6 +212,38 @@ export default {
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
+		},
+
+		conversation() {
+			return this.$store.getters.conversations[this.token]
+		},
+
+		participant() {
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			if (participantIndex !== -1) {
+				return this.$store.getters.getParticipant(this.token, participantIndex)
+			}
+
+			return {
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}
+		},
+
+		messagesList() {
+			return this.$store.getters.messagesList(this.token)
+		},
+
+		isLastCallStartedMessage() {
+			const messages = this.messagesList
+			const lastCallStartedMessage = messages.reverse().find((message) => message.systemMessage === 'call_started')
+			return lastCallStartedMessage ? (this.id === lastCallStartedMessage.id) : false
+		},
+
+		showJoinCallButton() {
+			return this.systemMessage === 'call_started'
+				&& this.conversation.hasCall
+				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.isLastCallStartedMessage
 		},
 
 		isSingleEmoji() {
@@ -244,6 +290,12 @@ export default {
 		},
 	},
 
+	watch: {
+		showJoinCallButton() {
+			EventBus.$emit('scrollChatToBottom')
+		},
+	},
+
 	methods: {
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
@@ -286,6 +338,13 @@ export default {
 			.single-emoji {
 				font-size: 250%;
 				line-height: 100%;
+			}
+
+			&.call-started {
+				background-color: var(--color-primary-light);
+				padding: 10px;
+				border-radius: var(--border-radius-large);
+				text-align: center;
 			}
 
 			::v-deep .rich-text--wrapper {
