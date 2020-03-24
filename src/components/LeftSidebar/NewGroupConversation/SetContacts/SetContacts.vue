@@ -47,7 +47,7 @@
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			:scrollable="true"
-			:display-search-hint="!contactsLoading"
+			:display-search-hint="displaySearchHint"
 			:selectable="true"
 			@clickSearchHint="focusInput" />
 	</div>
@@ -135,6 +135,14 @@ export default {
 		},
 		focusInput() {
 			this.$refs.setContacts.focus()
+		},
+		/**
+		 * Search hint at the bottom of the participants list, displayed only if
+		 * the user is not searching
+		 * @returns {boolean}
+		 **/
+		displaySearchHint() {
+			return !this.contactsLoading && this.searchText === ''
 		},
 	},
 }
