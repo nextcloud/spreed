@@ -6,8 +6,9 @@ describe('AvatarWrapper.vue', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
 			propsData: {
 				id: 'mario',
-				ource: 'users',
-				name: 'mario' },
+				source: 'users',
+				name: 'mario',
+			},
 		})
 		expect(wrapper.vm.iconClass).toBe('')
 		// Check that the first child is the avatar component
@@ -41,7 +42,6 @@ describe('AvatarWrapper.vue', () => {
 		expect(wrapper.element.firstChild.classList).toContain('avatar-32px')
 	})
 	it('Renders guests icons properly', () => {
-
 		const wrapper = shallowMount(AvatarWrapper, {
 			propsData: {
 				id: '',
