@@ -1,7 +1,7 @@
 /*
- * @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,10 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-module.exports = {
-	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
-	// Allow tests in the src and in tests/unit folders
-	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
-	setupFilesAfterEnv: ['<rootDir>/src/test-setup.js'],
+global.OC = {
+	requestToken: '123',
 }
+global.t = (app, text) => text

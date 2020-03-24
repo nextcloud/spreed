@@ -19,11 +19,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
 import isEqual from 'lodash/isEqual'
 
 const state = {
 	selectedParticipants: [],
+}
+
+const getDefaultState = () => {
+	return {
+		selectedParticipants: [],
+	}
 }
 
 const getters = {
@@ -64,10 +69,8 @@ const mutations = {
 	 * Purges the store
 	 * @param {object} state current store state;
 	 */
-	purgeStore(state) {
-		Vue.set(state, {
-			selectedParticipants: [],
-		})
+	purgeNewGroupConversationStore(state) {
+		Object.assign(state, getDefaultState())
 	},
 }
 
@@ -88,13 +91,13 @@ const actions = {
 		})
 		if (isAlreadySelected) {
 			/**
-             * Remove the clicked participant from the selected participants list
-             */
+			 * Remove the clicked participant from the selected participants list
+			 */
 			commit('removeSelectedParticipant', participant)
 		} else {
 			/**
-             * Add the clicked participant from the selected participants list
-             */
+			 * Add the clicked participant from the selected participants list
+			 */
 			commit('addSelectedParticipant', participant)
 		}
 	},
@@ -105,7 +108,7 @@ const actions = {
 	 * @param {object} context default store context;
 	 */
 	purgeNewGroupConversationStore(context) {
-		context.commit('purgeStore')
+		context.commit('purgeNewGroupConversationStore')
 	},
 }
 

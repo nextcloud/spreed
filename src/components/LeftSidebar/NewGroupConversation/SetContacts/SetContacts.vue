@@ -31,13 +31,24 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
+		<transition-group
+			v-if="hasSelectedParticipants"
+			name="zoom"
+			tag="div"
+			class="selected-participants">
+			<ContactSelectionBubble
+				v-for="participant in selectedParticipants"
+				:key="participant.source + participant.id"
+				:participant="participant" />
+		</transition-group>
 		<ParticipantSearchResults
 			:add-on-click="false"
-			height="315px"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
+			:scrollable="true"
 			:display-search-hint="!contactsLoading"
+			:selectable="true"
 			@clickSearchHint="focusInput" />
 	</div>
 </template>
@@ -46,11 +57,13 @@
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
+import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble'
 
 export default {
 	name: 'SetContacts',
 	components: {
 		ParticipantSearchResults,
+		ContactSelectionBubble,
 	},
 
 	props: {
@@ -69,6 +82,15 @@ export default {
 			contactsLoading: true,
 			noResults: false,
 		}
+	},
+
+	computed: {
+		selectedParticipants() {
+			return this.$store.getters.selectedParticipants
+		},
+		hasSelectedParticipants() {
+			return this.selectedParticipants.length !== 0
+		},
 	},
 
 	async mounted() {
@@ -121,11 +143,17 @@ export default {
 <style lang="scss" scoped>
 .set-contacts {
 	position: relative;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	&__input {
 		width: 100%;
 		font-size: 16px;
 		padding-left: 28px;
 		line-height: 34px;
+		box-shadow: 0px 10px 5px var(--color-main-background);
+		z-index: 1;
 	}
 	&__icon {
 		margin-top: 40px;
@@ -136,9 +164,38 @@ export default {
 	}
 }
 
+.selected-participants {
+	display: flex;
+	flex-wrap: wrap;
+	border-bottom: 1px solid var(--color-background-darker);
+	padding: 4px 0;
+	max-height: 97px;
+	overflow-y: auto;
+	flex: 0 240px;
+	flex: 1 0 auto;
+	align-content: flex-start;
+}
+
 .icon-search {
 	position: absolute;
 	top: 12px;
     left: 8px;
 }
+
+.zoom-enter-active {
+  animation: zoom-in var(--animation-quick);
+}
+.zoom-leave-active {
+  animation: zoom-in var(--animation-quick) reverse;
+  will-change: transform;
+}
+@keyframes zoom-in {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 </style>

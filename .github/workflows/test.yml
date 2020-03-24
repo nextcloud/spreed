@@ -1,0 +1,19 @@
+name: Test
+
+on: [push]
+
+jobs:
+  jest:
+    runs-on: ubuntu-latest
+    name: ESLint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: NPM install
+        run: npm i
+      - name: jest
+        run: npm run test:unit

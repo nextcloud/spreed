@@ -20,27 +20,19 @@
 -->
 
 <template>
-	<li class="participant-row"
+	<li
+		class="participant-row"
 		:class="{
 			'offline': isOffline,
 			'currentUser': isSelf,
 			'guestUser': isGuest,
 			'selected': isSelected }"
 		@click="handleClick">
-		<div class="participant-row__avatar-wrapper">
-			<div v-if="iconClass"
-				class="avatar-32px icon"
-				:class="iconClass" />
-			<Avatar v-else-if="computedId"
-				:user="computedId"
-				:display-name="computedName"
-				menu-position="left" />
-			<div v-else
-				class="avatar-32px guest">
-				{{ firstLetterOfGuestName }}
-			</div>
-		</div>
-
+		<AvatarWrapper
+			:id="computedId"
+			:name="computedName"
+			:source="participant.source"
+			:offline="isOffline" />
 		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
@@ -70,9 +62,9 @@
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 import isEqual from 'lodash/isEqual'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 
 export default {
 	name: 'Participant',
@@ -80,7 +72,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
-		Avatar,
+		AvatarWrapper,
 	},
 
 	props: {
@@ -150,16 +142,6 @@ export default {
 		label() {
 			return this.participant.label
 		},
-		iconClass() {
-			if (!this.participant.source || this.participant.source === 'users') {
-				return ''
-			}
-			if (this.participant.source === 'emails') {
-				return 'icon-mail'
-			}
-			// source: groups, circles
-			return 'icon-contacts'
-		},
 		callIconClass() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
@@ -212,10 +194,6 @@ export default {
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
-		},
-		firstLetterOfGuestName() {
-			const customName = this.computedName !== t('spreed', 'Guest') ? this.computedName : '?'
-			return customName.charAt(0)
 		},
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
@@ -299,14 +277,6 @@ export default {
 	margin: 5px 0;
 	border-radius: 22px;
 
-	&__avatar-wrapper {
-		$avatar-size: 32px;
-		height: $avatar-size;
-		width: $avatar-size;
-
-		@import '../../../../../assets/avatar.scss';
-		@include avatar-mixin($avatar-size);
-	}
 	&__user-name {
 		margin-left: 6px;
 		display: inline-block;
@@ -343,9 +313,7 @@ export default {
 }
 
 .offline {
-	& > .participant-row__avatar-wrapper {
-		opacity: .4;
-	}
+
 	& > span {
 		color: var(--color-text-maxcontrast);
 	}

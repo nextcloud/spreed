@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
@@ -22,8 +22,7 @@
 <template>
 	<div
 		class="participants-search-results"
-		:class="{'scrollable': scrollable }"
-		:style="{ 'height': height }">
+		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<Caption
 				:title="t('spreed', 'Add contacts')" />
@@ -55,7 +54,6 @@
 				:items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
-
 		<Caption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
@@ -109,14 +107,6 @@ export default {
 			required: true,
 		},
 		/**
-		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
-		 * the ul and make it scrollable.
-		 */
-		height: {
-			type: String,
-			default: 'auto',
-		},
-		/**
 		 * Display no-results state instead of list.
 		 */
 		noResults: {
@@ -134,6 +124,17 @@ export default {
 		 * Display loading state instead of list.
 		 */
 		loading: {
+			type: Boolean,
+			default: false,
+		},
+		scrollable: {
+			type: Boolean,
+			default: false,
+		},
+		/** If so, this component will add clicked participant to the selected
+		 * participants store;
+		 */
+		selectable: {
 			type: Boolean,
 			default: false,
 		},
@@ -212,23 +213,23 @@ export default {
 			}
 			return []
 		},
-		scrollable() {
-			return this.height !== 'auto'
-		},
 		// Determines whether this component is used in the new group conversation creation
 		// context
 		isNewGroupConversation() {
 			return this.$parent.$options.name === 'SetContacts'
 		},
-	},
 
+	},
 	methods: {
 		handleClickParticipant(participant) {
 			// Needed for right sidebar
 			this.$emit('click', participant)
 			// Needed for bulk participants selection (like in the new group conversation
 			// creation process)
-			this.$store.dispatch('updateSelectedParticipants', participant)
+			if (this.selectable) {
+				this.$store.dispatch('updateSelectedParticipants', participant)
+			}
+
 		},
 		handleClickHint() {
 			this.$emit('clickSearchHint')
@@ -241,6 +242,7 @@ export default {
 .scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
+	flex-shrink: 1;
 }
 
 .participants-search-results {

@@ -306,9 +306,10 @@ export default {
 
 <style lang="scss" scoped>
 
+// Dialog variables
 $dialog-margin: 20px;
 $dialog-width: 300px;
-$dialog-height: 440px;
+$dialog-height: 480px;
 
 .toggle {
 	margin-left: 5px !important;
@@ -326,6 +327,9 @@ $dialog-height: 440px;
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
+	&__content {
+		height: calc(100% - 50px);
+	}
 }
 
 /** Size full in the modal component doesn't have border radius, this adds
@@ -336,8 +340,10 @@ it back */
 
 .navigation {
 	display: flex;
-	position: absolute;
-	bottom: 0;
+	flex: 0 0 40px;
+	height: 50px;
+	box-shadow: 0px -15px 7px var(--color-main-background);
+	z-index: 1;
 	// Same as above
 	width: $dialog-width - $dialog-margin * 2;
 	&__button-right {
