@@ -100,6 +100,13 @@ export default {
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 	},
 
+	beforeDestroy() {
+		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
+		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
+		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
+		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+	},
+
 	methods: {
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
