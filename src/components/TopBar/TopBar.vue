@@ -62,13 +62,11 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			isFullscreen: false,
-		}
-	},
-
 	computed: {
+		isFullscreen() {
+			return this.$store.getters.isFullscreen()
+		},
+
 		iconFullscreen() {
 			if (this.forceWhiteIcons) {
 				return 'forced-white icon-fullscreen'
@@ -95,17 +93,39 @@ export default {
 		},
 	},
 
+	mounted() {
+		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
+		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
+		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
+		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+	},
+
+	beforeDestroy() {
+		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
+		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
+		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
+		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+	},
+
 	methods: {
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
 		},
+
+		fullScreenChanged() {
+			this.$store.dispatch(
+				'setIsFullscreen',
+				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
+			)
+		},
+
 		toggleFullscreen() {
 			if (this.isFullscreen) {
 				this.disableFullscreen()
-				this.isFullscreen = false
+				this.$store.dispatch('setIsFullscreen', false)
 			} else {
 				this.enableFullscreen()
-				this.isFullscreen = true
+				this.$store.dispatch('setIsFullscreen', true)
 			}
 		},
 
