@@ -93,10 +93,25 @@ export default {
 		},
 	},
 
+	mounted() {
+		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
+		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
+		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
+		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+	},
+
 	methods: {
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
 		},
+
+		fullScreenChanged() {
+			this.$store.dispatch(
+				'setIsFullscreen',
+				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
+			)
+		},
+
 		toggleFullscreen() {
 			if (this.isFullscreen) {
 				this.disableFullscreen()
