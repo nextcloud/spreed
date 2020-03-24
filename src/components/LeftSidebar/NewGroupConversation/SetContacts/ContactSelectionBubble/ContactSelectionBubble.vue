@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import AvatarWrapperSmall from '../../../../AvatarWrapperSmall'
+import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall'
 export default {
 	name: 'ContactSelectionBubble',
 

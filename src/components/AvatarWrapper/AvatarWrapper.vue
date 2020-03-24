@@ -46,7 +46,7 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
 export default {
 
-	name: 'AvatarWrapperSmall',
+	name: 'AvatarWrapper',
 
 	components: {
 		Avatar,
@@ -71,7 +71,7 @@ export default {
 		},
 		size: {
 			type: Number,
-			default: 22,
+			default: 32,
 		},
 		disableTooltip: {
 			type: Boolean,
@@ -109,10 +109,10 @@ export default {
 <style lang="scss" scoped>
 
 .avatar-wrapper {
-	$avatar-size: 22px;
+	$avatar-size: 32px;
 	height: $avatar-size;
 	width: $avatar-size;
-	@import '../assets/avatar.scss';
+	@import '../../assets/avatar.scss';
 	@include avatar-mixin($avatar-size);
 }
 

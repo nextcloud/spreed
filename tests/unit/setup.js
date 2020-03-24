@@ -20,6 +20,6 @@
  *
  */
 global.OC = {
-  requestToken: '123'
+	requestToken: '123'
 }
 global.t =  (app, text) => text
