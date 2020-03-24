@@ -429,6 +429,8 @@ export default {
 	background-color: transparent;
 	border-radius: var(--border-radius) var(--border-radius) 0 0;
 	box-shadow: 0 0 15px var(--color-box-shadow);
+	bottom: 44px;
+	position: relative;
 }
 
 .constrained-layout #videos .videoContainer:not(.promoted) ::v-deep video {
