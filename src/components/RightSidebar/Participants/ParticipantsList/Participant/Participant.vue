@@ -64,7 +64,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 import isEqual from 'lodash/isEqual'
-import AvatarWrapper from '../../../../AvatarWrapper'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 
 export default {
 	name: 'Participant',

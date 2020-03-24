@@ -22,5 +22,7 @@
 
 module.exports = {
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
-	setupFilesAfterEnv: ['<rootDir>/tests/unit/setup.js']
+	// Allow tests in the src and in tests/unit folders
+	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)', '<rootDir>/tests/unit/**/*.(spec|test).(ts|js)'],
+	setupFilesAfterEnv: ['<rootDir>/tests/unit/setup.js'],
 }
