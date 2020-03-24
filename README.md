@@ -31,11 +31,23 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 
 Nextcloud Talk is really easy to install. You just need to enable the app from the [Nextcloud App Store](https://apps.nextcloud.com/apps/spreed) and everything will work out of the box.
 
-There are some scenarios (users behind strict firewalls / symmetric NATs) where a TURN server is needed. That's a bit more tricky installation, but the guys from [Nextcloud VM](https://github.com/nextcloud/vm) have developed a script which takes care of everything for you. You can find the script [here](https://github.com/nextcloud/vm/blob/master/apps/talk.sh). The script is tested on Ubuntu Server 18.04, but should work on 16.04 as well. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repo, not here.
+There are some scenarios (users behind strict firewalls / symmetric NATs) where a TURN server is needed. That's a bit more tricky to install. You can [find instructions in our documentation](https://nextcloud-talk.readthedocs.io/en/latest/TURN/) and the team behind the Nextcloud VM has developed a script which takes care of everything for you ([vm-talk.sh](https://github.com/nextcloud/vm/blob/master/apps/talk.sh)). The script is tested on Ubuntu Server 18.04, but should work on 16.04 as well. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repo, not here.
 
 Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
-If you need to use Talk in a enterprise environment, including the ability to have calls with more than 5-6 users, you can contact our sales team for access to our [high performance back-end](https://nextcloud.com/talk/#pricing). This is a set of components that replaces some of the PHP code with a more scalable and performant solution that decreases network traffic and allows dozens or hundreds of users in a call.
+## Scalability 
+
+Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants. As most users are on an asymetric local internet connection, the sending bandwidth often becomes the bottleneck. A typical Nextcloud Talk instance can handle a few dozen calls, but each call can have only 4-6 participants depending on the participants' bandwidth.
+
+To limit bandwidth usage, Talk automatically disables video when a call is started in a room 5 or more participants. As long as nobody enables video, this saves bandwidth but once video is started a user has to leave the call and re-join for the stream to stop. Even a muted or disabled video stream is being send out. This is due to the technical implementation details of WebRTC which is used by Talk.
+
+### Scaling beyond 5 users in a call
+
+Nextcloud offers a partner product, the Talk High Performance Back-end, which deals with this scalability issue by including a Selective Forwarding Unit (SFU). Each participant sends one stream to the SFU which distributes it under the participants. This typically scales to 30-50 or even more active participants. Further more, the HPB setup also allows calls with hundreds of passive participants. With this number of participants is only limited by the bandwidth of the SFU setup. This is ideal for one-to-many streaming like webinars or remote teaching lessons.
+
+The HPB also takes care of signaling, decreasing the load of many calls on the Talk server and optional SIP integration so users can dial in to calls by phone.
+
+If you need to use Talk in an enterprise environment, [contact our sales team](https://nextcloud.com/enterprise/buy/) for access to the high performance back-end. See our website for more details and [pricing](https://nextcloud.com/talk/#scalability).
 
 ## Development setup
 
