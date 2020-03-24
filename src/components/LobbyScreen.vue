@@ -25,7 +25,7 @@
 			<h2>{{ currentConversationName }}</h2>
 			<p>{{ message }}</p>
 		</div>
-		<SetGuestUsername />
+		<SetGuestUsername v-if="currentUserIsGuest" />
 	</div>
 </template>
 
@@ -67,7 +67,10 @@ export default {
 
 			return message
 		},
-
+		// Determines whether the current user is a guest user
+		currentUserIsGuest() {
+			return !this.$store.getters.getUserId()
+		},
 	},
 
 }
