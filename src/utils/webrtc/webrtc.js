@@ -34,6 +34,7 @@ import {
 	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import { Sounds } from '../sounds.js'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -211,6 +212,9 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		checkStartPublishOwnPeer(signaling)
 	}
 
+	let playJoinSound = false
+	let playLeaveSound = false
+
 	newUsers.forEach(function(user) {
 		if (!user.inCall) {
 			return
@@ -219,6 +223,9 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 		const sessionId = user.sessionId || user.sessionid
 		if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
+			if (sessionId === currentSessionId && previousUsersInRoom.indexOf(sessionId) !== -1) {
+				Sounds.playJoin(true)
+			}
 			return
 		}
 
@@ -269,6 +276,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				sendCurrentNick()
 			}
 		}
+
+		playJoinSound = true
 
 		const createPeer = function() {
 			const peer = webrtc.webrtc.createPeer({
@@ -339,12 +348,24 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 			clearInterval(delayedConnectionToPeer[sessionId])
 			delete delayedConnectionToPeer[sessionId]
 		}
+
+		playLeaveSound = true
 	})
+
+	if (selfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+		if (playJoinSound) {
+			Sounds.playJoin()
+		} else if (playLeaveSound) {
+			Sounds.playLeave()
+		}
+	}
 
 	previousUsersInRoom = arrayDiff(previousUsersInRoom, disconnectedSessionIds)
 }
 
 function usersInCallChanged(signaling, users) {
+	const previousSelfInCall = selfInCall
+
 	// The passed list are the users that are currently in the room,
 	// i.e. that are in the call and should call each other.
 	const currentSessionId = signaling.getSessionId()
@@ -370,7 +391,15 @@ function usersInCallChanged(signaling, users) {
 		userMapping[sessionId] = user
 	}
 
-	if (!selfInCall) {
+	if (previousSelfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
+		&& selfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+		Sounds.playJoin(true)
+	} else if (previousSelfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		&& selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+		Sounds.playLeave(true)
+	}
+
+	if (selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 		// Own session is no longer in the call, disconnect from all others.
 		usersChanged(signaling, [], previousUsersInRoom)
 		return
@@ -440,6 +469,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 
 		clearErrorNotification()
+		Sounds.playLeave(true)
 		webrtc.leaveCall()
 	})
 
