@@ -19,19 +19,27 @@
   -->
 
 <template>
-	<div class="lobby emptycontent">
-		<div class="icon icon-lobby" />
-		<h2>{{ currentConversationName }}</h2>
-		<p>{{ message }}</p>
+	<div class="lobby">
+		<div class="lobby emptycontent">
+			<div class="icon icon-lobby" />
+			<h2>{{ currentConversationName }}</h2>
+			<p>{{ message }}</p>
+		</div>
+		<SetGuestUsername v-if="currentUserIsGuest" />
 	</div>
 </template>
 
 <script>
 import moment from '@nextcloud/moment'
+import SetGuestUsername from './SetGuestUsername'
 
 export default {
 
 	name: 'LobbyScreen',
+
+	components: {
+		SetGuestUsername,
+	},
 
 	computed: {
 
@@ -59,8 +67,20 @@ export default {
 
 			return message
 		},
-
+		// Determines whether the current user is a guest user
+		currentUserIsGuest() {
+			return !this.$store.getters.getUserId()
+		},
 	},
 
 }
 </script>
+
+<style lang="scss" scoped>
+
+.lobby {
+	display: flex;
+	flex-direction: column;
+}
+
+</style>

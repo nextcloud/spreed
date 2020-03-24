@@ -129,36 +129,7 @@
 				:name="conversation.displayName" />
 		</AppSidebarTab>
 		<!-- Guest username setting form -->
-		<form
-			v-if="!getUserId"
-			class="username-form"
-			@submit.prevent="handleChooseUserName">
-			<h3>
-				{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
-				<button
-					class="icon-rename"
-					@click.prevent="handleEditUsername">
-					{{ t('spreed', 'Edit') }}
-				</button>
-			</h3>
-			<div
-				v-if="isEditingUsername"
-				class="username-form__wrapper">
-				<input
-					ref="usernameInput"
-					v-model="guestUserName"
-					:placeholder="t('spreed', 'Guest')"
-					class="username-form__input"
-					type="text"
-					@keydown.enter="handleChooseUserName"
-					@keydown.esc="isEditingUsername = !isEditingUsername">
-				<button
-					class="username-form__button"
-					type="submit">
-					<div class="icon-confirm" />
-				</button>
-			</div>
-		</form>
+		<SetGuestUsername v-if="!getUserId" />
 	</AppSidebar>
 </template>
 
@@ -181,8 +152,8 @@ import {
 	setConversationName,
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
-import { setGuestUserName } from '../../services/participantsService'
 import { generateUrl } from '@nextcloud/router'
+import SetGuestUsername from '../SetGuestUsername'
 
 export default {
 	name: 'RightSidebar',
@@ -197,6 +168,7 @@ export default {
 		ChatView,
 		CollectionList,
 		ParticipantsTab,
+		SetGuestUsername,
 	},
 
 	mixins: [
@@ -218,8 +190,6 @@ export default {
 			password: '',
 			// Switch for the password-editing operation
 			isEditingPassword: false,
-			guestUserName: '',
-			isEditingUsername: false,
 			// Changes the conversation title into an input field for renaming
 			isRenamingConversation: false,
 			// The conversation name (while editing)
@@ -253,10 +223,6 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
-		},
-
-		actorDisplayName() {
-			return this.$store.getters.getDisplayName()
 		},
 
 		isFavorited() {
@@ -428,35 +394,6 @@ export default {
 			this.password = ''
 			this.isEditingPassword = false
 		},
-		async handleChooseUserName() {
-			const previousName = this.$store.getters.getDisplayName()
-			try {
-				this.$store.dispatch('setDisplayName', this.guestUserName)
-				this.$store.dispatch('forceGuestName', {
-					token: this.token,
-					actorId: this.$store.getters.getActorId().substring(6),
-					actorDisplayName: this.guestUserName,
-				})
-				await setGuestUserName(this.token, this.guestUserName)
-				this.isEditingUsername = false
-			} catch (exception) {
-				this.$store.dispatch('setDisplayName', previousName)
-				this.$store.dispatch('forceGuestName', {
-					token: this.token,
-					actorId: this.$store.getters.getActorId().substring(6),
-					actorDisplayName: previousName,
-				})
-				console.debug(exception)
-			}
-		},
-
-		/** For when the currentUser is guest */
-		handleEditUsername() {
-			this.isEditingUsername = !this.isEditingUsername
-			this.$nextTick(() => {
-				this.$refs.usernameInput.focus()
-			})
-		},
 
 		handleRenameConversation() {
 			// Copy the current conversation's title into the renaming title
@@ -509,28 +446,6 @@ export default {
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
-}
-
-/** Username form for guest users */
-.username-form {
-	padding: 0 12px;
-	& .icon-rename {
-		margin-left: 8px;
-		padding-left: 36px;
-		background-position: 12px;
-	}
-	&__wrapper {
-		display: flex;
-	}
-	&__input {
-		padding-right: var(--clickable-area);
-		width: 300px;
-	}
-	&__button {
-		margin-left: -44px;
-		background-color: transparent;
-		border: none;
-	}
 }
 
 </style>
