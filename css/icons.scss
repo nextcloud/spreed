@@ -96,14 +96,6 @@
 			filter: initial;
 		}
 	}
-
-	.icon-search {
-		@include icon-color('search', 'actions', $color-main-text, 1, true);
-		&:hover,
-		&:focus {
-			filter: initial;
-		}
-	}
 }
 
 // The atwho panel is a direct child of the body, so it is not affected by

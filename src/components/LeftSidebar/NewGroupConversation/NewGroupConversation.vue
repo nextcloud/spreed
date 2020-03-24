@@ -342,7 +342,7 @@ it back */
 	display: flex;
 	flex: 0 0 40px;
 	height: 50px;
-	box-shadow: 0px -15px 7px var(--color-main-background);
+	box-shadow: 0px -10px 5px var(--color-main-background);
 	z-index: 1;
 	// Same as above
 	width: $dialog-width - $dialog-margin * 2;
