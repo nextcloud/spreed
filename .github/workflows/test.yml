@@ -1,19 +1,30 @@
 name: Test
 
-on: [push]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - stable*
 
 jobs:
-  jest:
+  build:
     runs-on: ubuntu-latest
-    name: ESLint
+
+    strategy:
+      matrix:
+        node-versions: [12.x]
+
+    name: node${{ matrix.node-versions }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Set up Node
+      - uses: actions/checkout@v2
+
+      - name: Set up node ${{ matrix.node-versions }}
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
-      - name: NPM install
-        run: npm i
-      - name: jest
+          node-versions: ${{ matrix.node-versions }}
+
+      - name: Install dependencies
+        run: npm ci
+      - name: Run jest
         run: npm run test:unit
