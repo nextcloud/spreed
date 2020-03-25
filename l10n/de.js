@@ -272,7 +272,7 @@ OC.L10N.register(
     "Participants" : "Teilnehmer",
     "An error occurred while fetching the participants" : "Es ist ein Fehler beim Abrufen der Teilnehmer aufgetreten",
     "Go to file" : "Zur Datei wechseln",
-    "Rename conversation" : "Benötigt keine Übersetzung. Für Android wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Rename conversation" : "Unterhaltung umbenennen",
     "Guests" : "Gäste",
     "Share link" : "Link teilen",
     "Password protection" : "Passwortschutz",
