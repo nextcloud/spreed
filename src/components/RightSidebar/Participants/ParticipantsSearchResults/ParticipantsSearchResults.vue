@@ -57,7 +57,7 @@
 		<Caption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
-		<Hint v-if="!contactsLoading && !isNewGroupConversation" :hint="t('spreed', 'No search results')" />
+		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 		<template v-if="isNewGroupConversation">
 			<template v-if="noResults">
 				<div class="icon-category-search participants-search-results__icon" />
