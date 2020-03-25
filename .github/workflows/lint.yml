@@ -1,53 +1,74 @@
 name: Lint
 
-on: [push]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - stable*
 
 jobs:
-  php-linters:
+  php:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         php-versions: ['7.2', '7.3', '7.4']
-    name: php${{ matrix.php-versions }} lint
+
+    name: php${{ matrix.php-versions }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Set up php${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@master
+      - uses: actions/checkout@v2
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v1
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: none
+
       - name: Lint
         run: "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;"
 
-  style-linter:
-    runs-on: ubuntu-latest
-    name: Style lint
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-      - name: Set up Stylelint 11
-        run: npm i -g stylelint@11.0.0
-      - name: Style lint
-        run: $(which stylelint) -f verbose css
-
   eslint:
     runs-on: ubuntu-latest
-    name: ESLint
+
+    strategy:
+      matrix:
+        node-versions: ['12.x']
+
+    name: eslint node${{ matrix.node-versions }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up node ${{ matrix.node-versions }}
+        uses: actions/setup-node@v1
+        with:
+          node-versions: ${{ matrix.node-versions }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+  stylelint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-versions: ['12.x']
+
+    name: stylelint node${{ matrix.node-versions }}
     steps:
       - name: Checkout
         uses: actions/checkout@master
+
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
-      - name: NPM install
-        run: npm i
-      - name: ESLint
-        run: npm run lint
-      - name: Stylelint for vue files
-        run: npm run stylelint
+          node-version: ${{ matrix.node-versions }}
+
+      - name: Install stylelint 11.0
+        run: npm i -g stylelint@11.0.0
+
+      - name: Lint
+        run: $(which stylelint) -f verbose css
