@@ -827,7 +827,7 @@ class RoomShareProvider implements IShareProvider {
 
 	private function isAccessibleResult(array $data): bool {
 		// exclude shares leading to deleted file entries
-		if ($data['fileid'] === null) {
+		if ($data['fileid'] === null || $data['path'] === null) {
 			return false;
 		}
 
