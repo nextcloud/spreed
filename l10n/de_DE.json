@@ -33,7 +33,7 @@
     "Talk updates ✅" : "Talk Aktualisierungen ✅",
     "{actor} created the conversation" : "{actor} hat die Unterhaltung begonnen",
     "You created the conversation" : "Sie haben die Unterhaltung erstellt",
-    "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} hat die Unterhaltung von \"%1$s\" nach \"%2$s\" umbenannt",
+    "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} hat die Unterhaltung von \"%1$s\" in \"%2$s\" umbenannt",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Sie haben die Unterhaltung von \"%1$s\" in \"%2$s\" umbenannt",
     "{actor} started a call" : "{actor} hat einen Anruf begonnen",
     "You started a call" : "Sie haben einen Anruf begonnen",
