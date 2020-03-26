@@ -58,16 +58,28 @@ class AdminSettings implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		// General settings
+		$this->initGeneralSettings();
+		$this->initAllowedGroups();
+		$this->initCommands();
+		$this->initStunServers();
+		$this->initTurnServers();
+		$this->initSignalingServers();
+
+		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
+	}
+
+	protected function initGeneralSettings(): void {
 		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
 		$this->initialStateService->provideInitialState('talk', 'default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
+	}
 
-		// Allowed groups
+	protected function initAllowedGroups(): void {
 		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $this->talkConfig->getAllowedGroupIds());
+	}
 
-		// Commands
+	protected function initCommands(): void {
 		$commands = $this->commandService->findAll();
 
 		$result = array_map(function(Command $command) {
@@ -75,22 +87,23 @@ class AdminSettings implements ISettings {
 		}, $commands);
 
 		$this->initialStateService->provideInitialState('talk', 'commands', $result);
+	}
 
-		// Stun servers
+	protected function initStunServers(): void {
 		$this->initialStateService->provideInitialState('talk', 'stun_servers', $this->talkConfig->getStunServers());
 		$this->initialStateService->provideInitialState('talk', 'has_internet_connection', $this->serverConfig->getSystemValueBool('has_internet_connection', true));
+	}
 
-		// Turn servers
+	protected function initTurnServers(): void {
 		$this->initialStateService->provideInitialState('talk', 'turn_servers', $this->talkConfig->getTurnServers());
+	}
 
-		// Signaling servers
+	protected function initSignalingServers(): void {
 		$this->initialStateService->provideInitialState('talk', 'signaling_servers', [
 			'servers' => $this->talkConfig->getSignalingServers(),
 			'secret' => $this->talkConfig->getSignalingSecret(),
 			'hideWarning' => $this->talkConfig->getHideSignalingWarning(),
 		]);
-
-		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}
 
 	/**
