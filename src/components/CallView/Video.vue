@@ -33,7 +33,7 @@
 				:display-name="model.attributes.name"
 				:class="avatarClass" />
 			<div v-else
-				:class="avatarSizeClass"
+				:class="guestAvatarClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
 			</div>
@@ -125,15 +125,18 @@ export default {
 			return (this.useConstrainedLayout && !this.sharedData.promoted) ? 64 : 128
 		},
 
-		avatarSizeClass() {
-			return 'avatar-' + this.avatarSize + 'px'
-		},
-
 		avatarClass() {
 			return {
 				'icon-loading': this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
 			}
 		},
+
+		guestAvatarClass() {
+			return Object.assign(this.avatarClass, {
+				['avatar-' + this.avatarSize + 'px']: true,
+			})
+		},
+
 		firstLetterOfGuestName() {
 			const customName = this.participantName !== t('spreed', 'Guest') ? this.participantName : '?'
 			return customName.charAt(0)
