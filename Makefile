@@ -68,7 +68,6 @@ appstore:
 	--exclude=.gitattributes \
 	--exclude=.github \
 	--exclude=.gitignore \
-	--exclude=js/**.js.map \
 	--exclude=.l10nignore \
 	--exclude=mkdocs.yml \
 	--exclude=Makefile \
