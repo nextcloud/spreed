@@ -27,6 +27,7 @@
 			:class="{ 'active' : isActive }"
 			href="#"
 			class="acli"
+			:aria-label="t('spreed', 'Conversation, ') + title"
 			@click="onClick">
 			<!-- default slot for avatar or icon -->
 			<slot name="icon" />
