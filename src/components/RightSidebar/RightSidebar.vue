@@ -118,7 +118,8 @@
 			icon="icon-contacts-dark">
 			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId"
+		<AppSidebarTab
+			v-if="getUserId"
 			id="projects"
 			:order="3"
 			:name="t('spreed', 'Projects')"
@@ -128,8 +129,14 @@
 				type="room"
 				:name="conversation.displayName" />
 		</AppSidebarTab>
-		<!-- Guest username setting form -->
-		<SetGuestUsername v-if="!getUserId" />
+		<AppSidebarTab
+			v-if="!getUserId"
+			id="settings"
+			:order="4"
+			:name="t('spreed', 'Settings')"
+			icon="icon-settings">
+			<SetGuestUsername />
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
