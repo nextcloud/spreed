@@ -41,6 +41,7 @@ let ownScreenPeer = null
 let selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 const delayedConnectionToPeer = []
 let callParticipantCollection = null
+let showedTURNWarning = false
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -519,6 +520,19 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	}
 
 	function handleIceConnectionStateFailed(peer) {
+		if (!showedTURNWarning && !signaling.settings.turnservers.length) {
+			showError(
+				t('spreed', 'Could not establish a connection with at least one participant. A TURN server might be needed for your scenario. Please ask your administrator to set one up following {linkstart}this documentation{linkend}.')
+					.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
+					.replace('{linkend}', '</a>'),
+				{
+					timeout: 30,
+					isHTML: true,
+				}
+			)
+			showedTURNWarning = true
+		}
+
 		if (!signaling.hasFeature('mcu')) {
 			if (spreedPeerConnectionTable[peer.id] < 5) {
 				if (peer.pc.localDescription.type === 'offer'
