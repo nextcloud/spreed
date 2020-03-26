@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>9.0.0-dev.1</version>
+	<version>9.0.0-dev.2</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -85,12 +85,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</commands>
 
 	<settings>
-		<admin>OCA\Talk\Settings\Admin\GeneralSettings</admin>
-		<admin>OCA\Talk\Settings\Admin\AllowedGroups</admin>
-		<admin>OCA\Talk\Settings\Admin\Commands</admin>
-		<admin>OCA\Talk\Settings\Admin\SignalingServer</admin>
-		<admin>OCA\Talk\Settings\Admin\StunServer</admin>
-		<admin>OCA\Talk\Settings\Admin\TurnServer</admin>
+		<admin>OCA\Talk\Settings\Admin\AdminSettings</admin>
 		<admin-section>OCA\Talk\Settings\Admin\Section</admin-section>
 	</settings>
 
