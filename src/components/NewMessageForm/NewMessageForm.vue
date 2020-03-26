@@ -46,6 +46,7 @@
 				</div>
 				<button
 					type="submit"
+					:aria-label="t('spreed', 'Send message')"
 					class="new-message-form__button submit icon-confirm-fade"
 					@click.prevent="handleSubmit" />
 			</form>
