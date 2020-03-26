@@ -34,9 +34,7 @@
 			<span v-else class="icon icon-loading-small" />
 		</h2>
 
-		<p class="settings-hint">
-			{{ t('spreed', 'A TURN server is used to proxy the traffic from participants behind a firewall.') }}
-		</p>
+		<p class="settings-hint" v-html="documentationHint" />
 
 		<ul class="turn-servers">
 			<transition-group name="fade" tag="li">
@@ -79,6 +77,14 @@ export default {
 			loading: false,
 			saved: false,
 		}
+	},
+
+	computed: {
+		documentationHint() {
+			return t('spreed', 'A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions.')
+				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
+				.replace('{linkend}', ' ↗</a>')
+		},
 	},
 
 	beforeMount() {
