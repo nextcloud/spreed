@@ -267,6 +267,7 @@ OC.L10N.register(
     "Start time (optional)" : "Pradžios laikas (nebūtinas)",
     "Chat" : "Pokalbis",
     "Projects" : "Projektai",
+    "Settings" : "Nustatymai",
     "Display name: " : "Rodomas vardas: ",
     "Edit" : "Taisyti",
     "Leave call" : "Išeiti iš skambučio",

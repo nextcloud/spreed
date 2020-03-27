@@ -83,6 +83,7 @@ OC.L10N.register(
     "Password protection" : "Protección con contraseña",
     "Enter a password" : "Ingresa una contraseña",
     "Chat" : "Chat",
+    "Settings" : "Configuraciones ",
     "Edit" : "Editar",
     "Leave call" : "Dejar la llamada",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
