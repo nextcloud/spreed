@@ -45,7 +45,10 @@
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 		<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
-		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
+		<Actions
+			v-if="canModerate && !isSearched"
+			:aria-label="t('spreed', 'Participant settings')"
+			class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
 				@click="demoteFromModerator">
