@@ -37,7 +37,8 @@
 					class="new-message-form__button">
 					<Actions
 						default-icon="icon-clip-add-file"
-						class="new-message-form__button">
+						class="new-message-form__button"
+						:aria-label="t('spreed', 'Share files to the conversation')">
 						<ActionButton
 							v-if="canShareAndUploadFiles"
 							:close-after-click="true"
