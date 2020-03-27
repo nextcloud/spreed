@@ -122,6 +122,7 @@ OC.L10N.register(
     "Enter a password" : "یک گذرواژه وارد کنید",
     "Webinar" : "وبینار",
     "Projects" : "پروژه ها",
+    "Settings" : "تنظیمات",
     "Edit" : "ویرایش",
     "Limit to groups" : "محدود کردن به گروه ها",
     "Save changes" : "ذخیره تغییرات",
