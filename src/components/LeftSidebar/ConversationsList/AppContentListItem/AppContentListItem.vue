@@ -56,6 +56,7 @@
 		<Actions
 			v-if="hasActions"
 			menu-align="right"
+			:aria-label="t('spreed', 'Conversation settings')"
 			class="actions">
 			<slot name="actions" />
 		</Actions>
