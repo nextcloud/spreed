@@ -24,14 +24,30 @@ export const Sounds = {
 	isInCall: false,
 	lastPlayedJoin: 0,
 	lastPlayedLeave: 0,
+	backgroundAudio: null,
+	backgroundInterval: null,
 
-	_playFile(soundFile) {
+	_playSounceOnce(soundFile) {
 		const file = generateFilePath('spreed', 'img', soundFile)
 		const audio = new Audio(file)
 		audio.play()
 	},
 
-	playJoin(force) {
+	async playWaiting() {
+		if (!this.backgroundAudio) {
+			console.debug('Loading waiting sound')
+			const file = generateFilePath('spreed', 'img', 'LibremPhoneCall.ogg')
+			this.backgroundAudio = new Audio(file)
+		}
+
+		this.backgroundInterval = setInterval(() => {
+			console.debug('Playing waiting sound')
+			this.backgroundAudio.play()
+		}, 7000)
+	},
+
+	async playJoin(force, playWaitingSound) {
+		clearInterval(this.backgroundInterval)
 		if (force) {
 			this.isInCall = true
 		} else if (!this.isInCall) {
@@ -55,10 +71,16 @@ export const Sounds = {
 			this.lastPlayedJoin = currentTime
 			console.debug('Playing join sound')
 		}
-		this._playFile('LibremEmailNotification.ogg')
+
+		this._playSounceOnce('LibremEmailNotification.ogg')
+
+		if (playWaitingSound) {
+			this.playWaiting()
+		}
 	},
 
-	playLeave(force) {
+	async playLeave(force, playWaitingSound) {
+		clearInterval(this.backgroundInterval)
 		if (!this.isInCall) {
 			return
 		}
@@ -78,6 +100,11 @@ export const Sounds = {
 			console.debug('Playing leave sound')
 		}
 		this.lastPlayedLeave = currentTime
-		this._playFile('LibremTextMessage.ogg')
+
+		this._playSounceOnce('LibremTextMessage.ogg')
+
+		if (playWaitingSound) {
+			this.playWaiting()
+		}
 	},
 }

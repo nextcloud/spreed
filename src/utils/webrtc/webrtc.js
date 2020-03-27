@@ -224,7 +224,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		const sessionId = user.sessionId || user.sessionid
 		if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
 			if (sessionId === currentSessionId && previousUsersInRoom.indexOf(sessionId) !== -1) {
-				Sounds.playJoin(true)
+				Sounds.playJoin(true, newUsers.length === 1)
 			}
 			return
 		}
@@ -352,15 +352,15 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		playLeaveSound = true
 	})
 
+	previousUsersInRoom = arrayDiff(previousUsersInRoom, disconnectedSessionIds)
+
 	if (selfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 		if (playJoinSound) {
 			Sounds.playJoin()
 		} else if (playLeaveSound) {
-			Sounds.playLeave()
+			Sounds.playLeave(false, previousUsersInRoom.length === 0)
 		}
 	}
-
-	previousUsersInRoom = arrayDiff(previousUsersInRoom, disconnectedSessionIds)
 }
 
 function usersInCallChanged(signaling, users) {
@@ -393,7 +393,7 @@ function usersInCallChanged(signaling, users) {
 
 	if (previousSelfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		&& selfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
-		Sounds.playJoin(true)
+		Sounds.playJoin(true, Object.keys(userMapping).length === 0)
 	} else if (previousSelfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		&& selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 		Sounds.playLeave(true)
