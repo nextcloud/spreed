@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import Commands from './views/AdminSettings/Commands'
+import AdminSettings from './views/AdminSettings'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,6 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#chat_commands',
-	name: 'CommandsSettings',
-	render: h => h(Commands),
+	el: '#admin_settings',
+	render: h => h(AdminSettings),
 })
