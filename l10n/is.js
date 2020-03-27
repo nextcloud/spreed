@@ -204,7 +204,6 @@ OC.L10N.register(
     "Script" : "Skrifta",
     "Response to" : "Svar til",
     "Enabled for" : "Virkjað fyrir",
-    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Skipanir er nýr eiginleiki í Nextcloud Talk. Þær gera þér kleift að keyra skriftur á Nextcloud-þjóninum þínum. Þú getur skilgreint þær með skipanalínuviðmóti okkar. Þæmi um reiknivélarskriftu má finna í <a {attributes}>hjálparskjölunum ↗</a>.",
     "General settings" : "Almennar stillingar",
     "Users and moderators" : "Notendur og umsjónarmenn",
     "Moderators only" : "Aðeins umsjónarmenn",
@@ -217,7 +216,6 @@ OC.L10N.register(
     "STUN servers" : "STUN-þjónar",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
     "TURN servers" : "TURN-miðlarar",
-    "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
     "Select a conversation to add to the project" : "Veldu samtal sem á að bæta við verkefnið",
     "Select conversation" : "Veldu samtal",
     "Join a conversation or start a new one" : "Taktu þátt í samtali eða byrjaðu nýtt samtal",
@@ -323,6 +321,8 @@ OC.L10N.register(
     "Room name can not be empty" : "Nafn á spjallsvæði má ekki vera autt",
     "Calls are disabled in this conversation." : "Símtöl eru óvirk í þessu samtali",
     "You can not send messages, because the conversation is locked." : "Þú getur ekki sent skilaboð því samtalið er læst.",
-    "The conversation is locked." : "Samtalið er læst."
+    "The conversation is locked." : "Samtalið er læst.",
+    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Skipanir er nýr eiginleiki í Nextcloud Talk. Þær gera þér kleift að keyra skriftur á Nextcloud-þjóninum þínum. Þú getur skilgreint þær með skipanalínuviðmóti okkar. Þæmi um reiknivélarskriftu má finna í <a {attributes}>hjálparskjölunum ↗</a>.",
+    "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg."
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

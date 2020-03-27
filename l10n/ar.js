@@ -39,6 +39,7 @@ OC.L10N.register(
     "Enter a password" : "إدخِل كلمة سرية",
     "Chat" : "الدردشة",
     "Projects" : "المشاريع",
+    "Settings" : "الإعدادات",
     "Edit" : "تعديل",
     "Save changes" : "حفظ التعديلات",
     "Beta" : "تجريبي",
