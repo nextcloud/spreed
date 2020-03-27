@@ -259,7 +259,7 @@ export default {
 			if (this.isInCall) {
 				OC.dialogs.confirm(
 					t('spreed', 'Do you really want to leave the call?'),
-					t('spreed', 'Leaving call'),
+					t('spreed', 'Leave call'),
 					(decision) => {
 						if (!decision) {
 							return
