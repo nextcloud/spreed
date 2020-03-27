@@ -169,6 +169,7 @@ OC.L10N.register(
     "Webinar" : "Webinár",
     "Chat" : "Správy",
     "Projects" : "Projekty",
+    "Settings" : "Nastavenia",
     "Edit" : "Upraviť",
     "Leave call" : "Opustiť hovor",
     "Start call" : "Začať hovor",

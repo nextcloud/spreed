@@ -188,7 +188,6 @@ OC.L10N.register(
     "Script" : "Skripts",
     "Response to" : "Atbilde uz",
     "Enabled for" : "Iespējots",
-    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Komandas ir jauna beta funkcija programmā Nextcloud Talk. Tās ļauj palaist skriptus Nextcloud serverī. Tos var definēt ar mūsu komandrindas interfeisu. Kalkulatora skripta piemērs atrodams mūsu  <a {attributes}> dokumentācijā ↗</a>.",
     "General settings" : "Vispārīgie iestatījumi",
     "Signaling servers" : "Signalizēšanas serveri",
     "Saved" : "Saglabāts",
@@ -200,7 +199,6 @@ OC.L10N.register(
     "STUN servers" : "STUN serveris",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN serveris tiek izmantots, lai noteiktu maršrutētāja dalībnieku publisko IP adresi.",
     "TURN servers" : "TURN serveris",
-    "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
     "Select a conversation to add to the project" : "Atlasiet sarunu, ko pievienot projektam",
     "Select conversation" : "Izvēlēties sarunu",
     "Join a conversation or start a new one" : "Pievienoties sarunai vai sākt jaunu",
@@ -313,6 +311,8 @@ OC.L10N.register(
     "* You can now notify all participants by posting \"@all\" into the chat" : "* Tagad varat paziņot visiem dalībniekiem, tērzēšanas sarunā ievietojot “@all”",
     "* With the \"arrow-up\" key you can repost your last message" : "* Izmantojot bulttaustiņu, varat pārgrāmatot pēdējo ziņojumu",
     "* Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "* Sarunai var būt komandas, sūtīt “/help” kā tērzēšanas ziņojumu, lai redzētu, vai administrators ir konfigurējis komandas",
-    "* With projects you can create quick links between conversations, files and other items" : "* Izmantojot projektus, var izveidot ātras saites starp sarunām, datnēm un citiem vienumiem"
+    "* With projects you can create quick links between conversations, files and other items" : "* Izmantojot projektus, var izveidot ātras saites starp sarunām, datnēm un citiem vienumiem",
+    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Komandas ir jauna beta funkcija programmā Nextcloud Talk. Tās ļauj palaist skriptus Nextcloud serverī. Tos var definēt ar mūsu komandrindas interfeisu. Kalkulatora skripta piemērs atrodams mūsu  <a {attributes}> dokumentācijā ↗</a>.",
+    "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
