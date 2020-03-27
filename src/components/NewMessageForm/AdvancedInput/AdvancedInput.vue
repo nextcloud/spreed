@@ -66,6 +66,8 @@
 		<div ref="contentEditable"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
+			role="textbox"
+			aria-multiline="true"
 			class="new-message-form__advancedinput"
 			@keydown.enter="handleKeydown"
 			@paste="onPaste" />

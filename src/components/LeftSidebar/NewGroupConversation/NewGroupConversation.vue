@@ -27,6 +27,7 @@
 				<ActionButton
 					class="toggle"
 					icon="icon-add"
+					:aria-label="t('spreed','Create a new group conversation')"
 					@click="showModal" />
 			</Actions>
 			<p>{{ t('spreed','Create a new group conversation') }}</p>
