@@ -21,6 +21,8 @@
 import { generateFilePath } from '@nextcloud/router'
 
 export const Sounds = {
+	BLOCK_SOUND_TIMEOUT: 5000,
+
 	isInCall: false,
 	lastPlayedJoin: 0,
 	lastPlayedLeave: 0,
@@ -40,6 +42,9 @@ export const Sounds = {
 			this.backgroundAudio = new Audio(file)
 		}
 
+		console.debug('Playing waiting sound')
+		this.backgroundAudio.play()
+
 		this.backgroundInterval = setInterval(() => {
 			console.debug('Playing waiting sound')
 			this.backgroundAudio.play()
@@ -55,27 +60,24 @@ export const Sounds = {
 		}
 
 		const currentTime = (new Date()).getTime()
-		if (!force && this.lastPlayedJoin >= (currentTime - 7000)) {
-			if (this.lastPlayedJoin >= (currentTime - 7000)) {
+		if (!force && this.lastPlayedJoin >= (currentTime - this.BLOCK_SOUND_TIMEOUT)) {
+			if (this.lastPlayedJoin >= (currentTime - this.BLOCK_SOUND_TIMEOUT)) {
 				console.debug('Skipping join sound because it was played %.2f seconds ago', currentTime - this.lastPlayedJoin)
 			}
 			return
 		}
 
 		if (force) {
-			// Don't play sounds for 8 more seconds when you just joined.
-			this.lastPlayedJoin = currentTime + 8000
-			this.lastPlayedLeave = currentTime + 8000
 			console.debug('Playing join sound because of self joining')
 		} else {
 			this.lastPlayedJoin = currentTime
 			console.debug('Playing join sound')
 		}
 
-		this._playSounceOnce('LibremEmailNotification.ogg')
-
 		if (playWaitingSound) {
 			this.playWaiting()
+		} else {
+			this._playSounceOnce('LibremEmailNotification.ogg')
 		}
 	},
 
@@ -86,8 +88,8 @@ export const Sounds = {
 		}
 
 		const currentTime = (new Date()).getTime()
-		if (!force && this.lastPlayedLeave >= (currentTime - 7000)) {
-			if (this.lastPlayedLeave >= (currentTime - 7000)) {
+		if (!force && this.lastPlayedLeave >= (currentTime - this.BLOCK_SOUND_TIMEOUT)) {
+			if (this.lastPlayedLeave >= (currentTime - this.BLOCK_SOUND_TIMEOUT)) {
 				console.debug('Skipping leave sound because it was played %f.2 seconds ago', currentTime - this.lastPlayedLeave)
 			}
 			return
