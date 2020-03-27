@@ -44,7 +44,7 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				<CallButton />
 			</div>
-			<div v-else class="message__main__text">
+			<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
 				<Quote v-if="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
@@ -207,6 +207,10 @@ export default {
 			return this.isReplyable
 		},
 
+		isSystemMessage() {
+			return this.systemMessage !== ''
+		},
+
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
 		},
@@ -345,6 +349,10 @@ export default {
 				padding: 10px;
 				border-radius: var(--border-radius-large);
 				text-align: center;
+			}
+
+			&.system-message {
+				color: var(--color-text-maxcontrast);
 			}
 
 			::v-deep .rich-text--wrapper {
