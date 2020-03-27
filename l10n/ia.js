@@ -26,6 +26,7 @@ OC.L10N.register(
     "Share link" : "Compartir ligamine",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Settings" : "Configurationes",
     "Edit" : "Modificar",
     "Save changes" : "Salveguardar cambios",
     "Name" : "Nomine",

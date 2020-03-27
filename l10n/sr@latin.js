@@ -32,6 +32,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
     "Webinar" : "Vebinar",
+    "Settings" : "Поставке",
     "Edit" : "Uredi",
     "Name" : "naziv",
     "Password" : "Password",
