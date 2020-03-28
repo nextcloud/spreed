@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Users" : "کارنان",
+    "Name" : "نوم",
     "Copy link" : "لېنک کاپي کول",
     "Favorite" : "په نښه شوی",
     "Remove from favorites" : "له نښو ويستل",
@@ -13,7 +14,7 @@ OC.L10N.register(
     "Today" : "نن",
     "Yesterday" : "پرون",
     "Share link" : "د شرېکېدو لېنک",
-    "Name" : "نوم",
+    "Settings" : "سمونې",
     "Password" : "پاسورډ",
     "Copy" : "کاپي کول",
     "Copied!" : "کاپي شو!",
