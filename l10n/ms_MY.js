@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "User" : "User",
     "Users" : "Pengguna",
+    "Name" : "Nama",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "Hubungi ",
@@ -16,8 +17,8 @@ OC.L10N.register(
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Settings" : "Tetapan",
     "Edit" : "Sunting",
-    "Name" : "Nama",
     "Password" : "Kata laluan",
     "Copied!" : "Disalin!",
     "Not supported!" : "Tidak menyokong!",
