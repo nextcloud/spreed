@@ -288,6 +288,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Escribe un mensaje, @ para mencionar a alguien…",
     "Upload new files" : "Subir nuevos archivos",
     "Share from Files" : "Compartir desde Archivos",
+    "Send message" : "Enviar mensaje",
     "File to share" : "Archivo que compartir",
     "moderator" : "moderador",
     "guest" : "invitado",

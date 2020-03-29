@@ -77,6 +77,7 @@ OC.L10N.register(
     "Today" : "오늘",
     "Yesterday" : "어제",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "메시지 보내기",
     "moderator" : "중재자",
     "guest" : "손님",
     "Demote from moderator" : "중재자 권한 박탈",

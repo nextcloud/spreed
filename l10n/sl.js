@@ -251,6 +251,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Write message, @ to mention someone …" : "Napišite sporočilo, z @ omenite osebo ...",
     "Upload new files" : "Pošlji nove datoteke",
+    "Send message" : "Pošlji sporočilo",
     "File to share" : "Datoteka z souporabo",
     "moderator" : "moderator",
     "guest" : "gost",

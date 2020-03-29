@@ -287,6 +287,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Upload new files" : "Upload nye filer",
     "Share from Files" : "Del fra Filer",
+    "Send message" : "Send besked",
     "File to share" : "Vælg fil til deling",
     "moderator" : "moderator",
     "guest" : "Gæst",

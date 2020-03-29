@@ -114,6 +114,7 @@ OC.L10N.register(
     "Reply" : "پاسخ",
     "Today" : "Today",
     "Yesterday" : "دیروز",
+    "Send message" : "پیام فرستادن",
     "guest" : "میهمان",
     "Demote from moderator" : "عزل از مدیر",
     "Promote to moderator" : "ترفیع به مدیر",

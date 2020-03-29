@@ -87,6 +87,7 @@ OC.L10N.register(
     "Today" : "Today",
     "Yesterday" : "Yesterday",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "Send message",
     "moderator" : "moderator",
     "guest" : "guest",
     "Demote from moderator" : "Demote from moderator",
