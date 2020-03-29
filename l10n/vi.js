@@ -128,6 +128,7 @@ OC.L10N.register(
     "Today" : "Hôm nay",
     "Yesterday" : "Hôm qua",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "Gửi thông điệp",
     "File to share" : "Tệp để chia sẻ",
     "moderator" : "Người kiểm duyệt",
     "Demote from moderator" : "Hạ uy tín từ người kiểm duyệt",
