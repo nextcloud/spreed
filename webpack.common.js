@@ -11,38 +11,38 @@ module.exports = {
 		'talk-files-sidebar-loader': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
 		'talk-public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 		'talk-public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
-		'flow': path.join(__dirname, 'src', 'flow.js')
+		'flow': path.join(__dirname, 'src', 'flow.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, './js'),
 		publicPath: '/js/',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	module: {
 		rules: [
 			{
 				test: /\.css$/,
-				use: ['vue-style-loader', 'css-loader']
+				use: ['vue-style-loader', 'css-loader'],
 			},
 			{
 				test: /\.scss$/,
-				use: ['vue-style-loader', 'css-loader', 'sass-loader']
+				use: ['vue-style-loader', 'css-loader', 'sass-loader'],
 			},
 			{
 				test: /\.(js|vue)$/,
 				use: 'eslint-loader',
 				exclude: /node_modules/,
-				enforce: 'pre'
+				enforce: 'pre',
 			},
 			{
 				test: /\.vue$/,
 				loader: 'vue-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
 			},
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
 			},
 			{
 				/**
@@ -61,24 +61,24 @@ module.exports = {
 						 * "webpack doesn't perform commonjs transformation for
 						 * codesplitting. Need to set commonjs conversion."
 						 */
-						['@babel/env', { modules: 'commonjs' }]
-					]
-				}
+						['@babel/env', { modules: 'commonjs' }],
+					],
+				},
 			},
 			{
 				test: /\.(png|jpg|gif|svg)$/,
 				loader: 'file-loader',
 				options: {
-					name: '[name].[ext]?[hash]'
-				}
-			}
-		]
+					name: '[name].[ext]?[hash]',
+				},
+			},
+		],
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new StyleLintPlugin()
+		new StyleLintPlugin(),
 	],
 	resolve: {
-		extensions: ['*', '.js', '.vue']
-	}
+		extensions: ['*', '.js', '.vue'],
+	},
 }
