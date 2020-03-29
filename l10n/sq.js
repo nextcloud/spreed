@@ -50,6 +50,7 @@ OC.L10N.register(
     "Reply" : "Përgjigju",
     "Today" : "Sot",
     "Yesterday" : "Dje",
+    "Send message" : "Dërgo mesazh",
     "guest" : "vizitor",
     "No results" : "Asnjë rezultat",
     "Rename conversation" : "Riemërtojeni bisedën",

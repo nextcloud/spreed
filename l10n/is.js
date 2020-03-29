@@ -194,6 +194,7 @@ OC.L10N.register(
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "Senda skilaboð",
     "File to share" : "Skrá til að deila",
     "moderator" : "umsjónarmaður",
     "guest" : "gestanotandi",
