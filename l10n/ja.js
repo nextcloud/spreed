@@ -211,6 +211,7 @@ OC.L10N.register(
     "Today" : "本日",
     "Yesterday" : "昨日",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "メッセージを送信",
     "File to share" : "共有するファイル",
     "moderator" : "モデレータ",
     "guest" : "ゲスト",

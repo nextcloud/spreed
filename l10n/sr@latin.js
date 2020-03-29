@@ -22,6 +22,7 @@ OC.L10N.register(
     "Reply" : "Odgovori",
     "Today" : "Today",
     "Yesterday" : "juče",
+    "Send message" : "Pošalji poruku",
     "guest" : "gost",
     "Demote from moderator" : "Skini ulogu moderatora",
     "Promote to moderator" : "Unapredi u moderatora",

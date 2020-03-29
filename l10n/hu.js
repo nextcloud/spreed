@@ -116,6 +116,7 @@ OC.L10N.register(
     "Today" : "Ma",
     "Yesterday" : "Tegnap",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Send message" : "Üzenet küldése",
     "File to share" : "Fájl megosztása",
     "moderator" : "moderátor",
     "guest" : "vendég",
