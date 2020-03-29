@@ -49,6 +49,7 @@ OC.L10N.register(
     "Reply" : "Responder",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
+    "Send message" : "Enviar mensaje",
     "No results" : "Sin resultados",
     "Participants" : "Participantes",
     "Rename conversation" : "Renombrar conversación",
