@@ -31,6 +31,7 @@
 		<AvatarWrapper
 			:id="computedId"
 			:name="computedName"
+			:disable-tooltip="true"
 			:source="participant.source"
 			:offline="isOffline" />
 		<span class="participant-row__user-name">{{ computedName }}</span>
