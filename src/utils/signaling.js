@@ -405,7 +405,8 @@ Signaling.Internal.prototype.sendCallMessage = function(data) {
 	 * @private
 	 */
 Signaling.Internal.prototype._startPullingMessages = function() {
-	if (!this.currentRoomToken) {
+	const token = this.currentRoomToken
+	if (!token) {
 		return
 	}
 
@@ -417,7 +418,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	// Connect to the messages endpoint and pull for new messages
 	const { request, cancel } = CancelableRequest(pullSignalingMessages)
 	this.pullMessagesRequest = cancel
-	request(this.currentRoomToken)
+	request(token)
 		.then(function(result) {
 			this.pullMessagesFails = 0
 			result.data.ocs.data.forEach(message => {
@@ -444,10 +445,12 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 		.catch(function(jqXHR, textStatus/*, errorThrown */) {
 			if (jqXHR.status === 0 && textStatus === 'abort') {
 				// Request has been aborted. Ignore.
+			} else if (token !== this.currentRoomToken) {
+				// User navigated away in the meantime. Ignore
 			} else if (jqXHR.status === 404 || jqXHR.status === 403) {
 				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
-			} else if (this.currentRoomToken) {
+			} else if (token) {
 				if (this.pullMessagesFails >= 3) {
 					console.error('Stop pulling messages after repeated failures')
 
