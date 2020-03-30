@@ -40,6 +40,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -70,7 +71,9 @@ class PageController extends Controller {
 	/** @var IInitialStateService */
 	private $initialStateService;
 	/** @var Config */
-	private $config;
+	private $talkConfig;
+	/** @var IConfig */
+	private $serverConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -84,7 +87,8 @@ class PageController extends Controller {
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
 								IInitialStateService $initialStateService,
-								Config $config) {
+								Config $talkConfig,
+								IConfig $serverConfig) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
 		$this->talkSession = $session;
@@ -96,7 +100,8 @@ class PageController extends Controller {
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
 		$this->initialStateService = $initialStateService;
-		$this->config = $config;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
 	}
 
 	/**
@@ -217,13 +222,18 @@ class PageController extends Controller {
 		}
 
 		$this->initialStateService->provideInitialState(
+			'talk', 'prefer_h264',
+			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
+		);
+
+		$this->initialStateService->provideInitialState(
 			'talk', 'circles_enabled',
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
 
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->config->getSettings($this->userId),
+			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -269,9 +279,14 @@ class PageController extends Controller {
 			}
 		}
 
+		$this->initialStateService->provideInitialState(
+			'talk', 'prefer_h264',
+			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
+		);
+
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->config->getSettings($this->userId),
+			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
 		];
 		$response = new PublicTemplateResponse($this->appName, 'index', $params);
 		$response->setFooterVisible(false);

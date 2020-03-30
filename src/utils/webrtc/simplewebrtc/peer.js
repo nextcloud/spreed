@@ -1,4 +1,5 @@
 /* global module */
+const initialState = require('@nextcloud/initial-state')
 const sdpTransform = require('sdp-transform')
 
 const util = require('util')
@@ -141,7 +142,10 @@ function preferH264VideoCodecIfAvailable(offer) {
 
 Peer.prototype.offer = function(options) {
 	this.pc.createOffer(options).then(function(offer) {
-		offer = preferH264VideoCodecIfAvailable(offer)
+		if (initialState.loadState('talk', 'prefer_h264')) {
+			console.debug('Preferring hardware codec H.264 as per global configuration')
+			offer = preferH264VideoCodecIfAvailable(offer)
+		}
 		this.pc.setLocalDescription(offer).then(function() {
 			if (this.parent.config.nick) {
 				// The offer is a RTCSessionDescription that only serializes
@@ -172,6 +176,10 @@ Peer.prototype.handleOffer = function(offer) {
 
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
+		if (initialState.loadState('talk', 'prefer_h264')) {
+			console.debug('Preferring hardware codec H.264 as per global configuration')
+			answer = preferH264VideoCodecIfAvailable(answer)
+		}
 		this.pc.setLocalDescription(answer).then(function() {
 			if (this.parent.config.nick) {
 				// The answer is a RTCSessionDescription that only serializes
