@@ -245,6 +245,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 					console.log('No offer nor answer received, sending offer again')
 					createPeer()
 				}, 10000)
+			} else {
+				console.debug('User has no streams, not sending another offer')
 			}
 		}
 
