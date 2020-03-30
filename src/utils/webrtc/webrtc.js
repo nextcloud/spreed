@@ -413,6 +413,11 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		webrtc.webrtc.config.peerConnectionConfig.sdpSemantics = 'plan-b'
 	}
 
+	if (!window.OCA.Talk) {
+		window.OCA.Talk = {}
+	}
+	window.OCA.Talk.SimpleWebRTC = webrtc
+
 	signaling.on('pullMessagesStoppedOnFail', function() {
 		// Force leaving the call in WebRTC; when pulling messages stops due
 		// to failures the room is left, and leaving the room indirectly
