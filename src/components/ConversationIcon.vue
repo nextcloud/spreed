@@ -26,6 +26,7 @@
 			:class="iconClass" />
 		<Avatar v-else
 			:size="44"
+			:disable-tooltip="true"
 			:user="item.name"
 			:display-name="item.displayName"
 			class="conversation-icon__avatar" />
