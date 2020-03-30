@@ -19,6 +19,8 @@
  *
  */
 
+import store from '../../../store/index.js'
+
 export default function LocalMediaModel() {
 
 	this.attributes = {
@@ -32,6 +34,7 @@ export default function LocalMediaModel() {
 		videoAvailable: false,
 		videoEnabled: false,
 		localScreen: null,
+		token: '',
 	}
 
 	this._handlers = []
@@ -152,6 +155,8 @@ LocalMediaModel.prototype = {
 		// local stream will be active at the same time.
 		this.set('localStream', localStream)
 
+		this.set('token', store.getters.getToken())
+
 		this._setInitialMediaState(configuration)
 	},
 
@@ -164,7 +169,7 @@ LocalMediaModel.prototype = {
 	_setInitialMediaState: function(configuration) {
 		if (configuration.audio !== false) {
 			this.set('audioAvailable', true)
-			if (this.get('audioEnabled')) {
+			if (!localStorage.getItem('audioDisabled_' + this.get('token')) || this.get('audioEnabled')) {
 				this.enableAudio()
 			} else {
 				this.disableAudio()
@@ -176,7 +181,7 @@ LocalMediaModel.prototype = {
 
 		if (configuration.video !== false) {
 			this.set('videoAvailable', true)
-			if (this.get('videoEnabled')) {
+			if (!localStorage.getItem('videoDisabled_' + this.get('token')) || this.get('videoEnabled')) {
 				this.enableVideo()
 			} else {
 				this.disableVideo()
@@ -281,6 +286,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
+		localStorage.removeItem('audioDisabled_' + this.get('token'))
 		if (!this.get('audioAvailable')) {
 			return
 		}
@@ -293,6 +299,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
+		localStorage.setItem('audioDisabled_' + this.get('token'), 'true')
 		if (!this.get('audioAvailable')) {
 			// Ensure that the audio will be disabled once available.
 			this.set('audioEnabled', false)
@@ -308,6 +315,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
+		localStorage.removeItem('videoDisabled_' + this.get('token'))
 		if (!this.get('videoAvailable')) {
 			return
 		}
@@ -320,6 +328,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
+		localStorage.setItem('videoDisabled_' + this.get('token'), 'true')
 		if (!this.get('videoAvailable')) {
 			// Ensure that the video will be disabled once available.
 			this.set('videoEnabled', false)
