@@ -94,6 +94,7 @@ export default {
 			 * Stores the cancel function for cancelableGetParticipants
 			 */
 			cancelGetParticipants: () => {},
+			fetchingParticipants: false,
 		}
 	},
 
@@ -134,13 +135,13 @@ export default {
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
 		// periodically gets a hash of all online sessions?
-		EventBus.$on('Signaling::participantListChanged', this.cancelableGetParticipnts)
+		EventBus.$on('Signaling::participantListChanged', this.debounceUpdateParticipants)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('joinedConversation', this.onJoinedConversation)
-		EventBus.$off('Signaling::participantListChanged', this.cancelableGetParticipnts)
+		EventBus.$off('Signaling::participantListChanged', this.debounceUpdateParticipants)
 	},
 
 	methods: {
@@ -158,7 +159,7 @@ export default {
 		 */
 		onJoinedConversation() {
 			this.$nextTick(() => {
-				this.cancelableGetParticipnts()
+				this.cancelableGetParticipants()
 			})
 		},
 
@@ -177,11 +178,16 @@ export default {
 			}
 		}, 250),
 
+		debounceUpdateParticipants: debounce(function() {
+			if (!this.fetchingParticipants) {
+				this.cancelableGetParticipants()
+			}
+		}, 250),
+
 		async fetchSearchResults() {
 			try {
 				const response = await searchPossibleConversations(this.searchText, this.token)
 				this.searchResults = response.data.ocs.data
-				this.cancelableGetParticipnts()
 				this.contactsLoading = false
 			} catch (exception) {
 				console.error(exception)
@@ -199,13 +205,13 @@ export default {
 			try {
 				await addParticipant(this.token, item.id, item.source)
 				this.searchText = ''
-				this.cancelableGetParticipnts()
+				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
 			}
 		},
 
-		async cancelableGetParticipnts() {
+		async cancelableGetParticipants() {
 			if (this.token === '' || this.isInLobby) {
 				return
 			}
@@ -217,6 +223,7 @@ export default {
 				// Clear previous requests if there's one pending
 				this.cancelGetParticipants('Cancel get participants')
 				// Get a new cancelable request function and cancel function pair
+				this.fetchingParticipants = true
 				const { request, cancel } = CancelableRequest(fetchParticipants)
 				this.cancelGetParticipants = cancel
 				const participants = await request(token)
@@ -241,6 +248,8 @@ export default {
 					console.error(exception)
 					showError(t('spreed', 'An error occurred while fetching the participants'))
 				}
+			} finally {
+				this.fetchingParticipants = false
 			}
 		},
 
