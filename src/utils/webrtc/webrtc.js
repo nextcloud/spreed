@@ -207,7 +207,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		}
 
 		if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
-			if (useMcu) {
+			if (useMcu && userHasStreams(user)) {
 				// TODO(jojo): Already create peer object to avoid duplicate offers.
 				signaling.requestOffer(user, 'video')
 
@@ -216,13 +216,13 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 
 					signaling.requestOffer(user, 'video')
 				}, 10000)
-			} else if (userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
+			} else if (!useMcu && userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
 				// To avoid overloading the user joining a room (who previously called
 				// all the other participants), we decide who calls who by comparing
 				// the session ids of the users: "larger" ids call "smaller" ones.
 				console.debug('Starting call with', user)
 				createPeer()
-			} else if (userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
+			} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
 				// If the remote peer is not aware that it was disconnected
 				// from the current peer the remote peer will not send a new
 				// offer; thus, if the current peer does not receive a new
@@ -241,6 +241,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 					console.debug('No offer nor answer received, sending offer again')
 					createPeer()
 				}, 10000)
+			} else {
+				console.debug('User has no streams, not sending another offer')
 			}
 		}
 
