@@ -418,7 +418,8 @@ export default {
 
 #videos .videoContainer.not-connected ::v-deep {
 	video,
-	.avatardiv {
+	.avatardiv,
+	.avatar.guest {
 		opacity: 0.5;
 	}
 }
