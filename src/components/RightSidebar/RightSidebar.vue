@@ -118,7 +118,8 @@
 			icon="icon-contacts-dark">
 			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId"
+		<AppSidebarTab
+			v-if="getUserId"
 			id="projects"
 			:order="3"
 			:name="t('spreed', 'Projects')"
@@ -128,37 +129,43 @@
 				type="room"
 				:name="conversation.displayName" />
 		</AppSidebarTab>
-		<!-- Guest username setting form -->
-		<form
+		<AppSidebarTab
 			v-if="!getUserId"
-			class="username-form"
-			@submit.prevent="handleChooseUserName">
-			<h3>
-				{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
-				<button
-					class="icon-rename"
-					@click.prevent="handleEditUsername">
-					{{ t('spreed', 'Edit') }}
-				</button>
-			</h3>
-			<div
-				v-if="isEditingUsername"
-				class="username-form__wrapper">
-				<input
-					ref="usernameInput"
-					v-model="guestUserName"
-					:placeholder="t('spreed', 'Guest')"
-					class="username-form__input"
-					type="text"
-					@keydown.enter="handleChooseUserName"
-					@keydown.esc="isEditingUsername = !isEditingUsername">
-				<button
-					class="username-form__button"
-					type="submit">
-					<div class="icon-confirm" />
-				</button>
-			</div>
-		</form>
+			id="settings"
+			:order="4"
+			:name="t('spreed', 'Settings')"
+			icon="icon-settings">
+			<form
+				v-if="!getUserId"
+				class="username-form"
+				@submit.prevent="handleChooseUserName">
+				<h3>
+					{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
+					<button
+						class="icon-rename"
+						@click.prevent="handleEditUsername">
+						{{ t('spreed', 'Edit') }}
+					</button>
+				</h3>
+				<div
+					v-if="isEditingUsername"
+					class="username-form__wrapper">
+					<input
+						ref="usernameInput"
+						v-model="guestUserName"
+						:placeholder="t('spreed', 'Guest')"
+						class="username-form__input"
+						type="text"
+						@keydown.enter="handleChooseUserName"
+						@keydown.esc="isEditingUsername = !isEditingUsername">
+					<button
+						class="username-form__button"
+						type="submit">
+						<div class="icon-confirm" />
+					</button>
+				</div>
+			</form>
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
