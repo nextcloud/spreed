@@ -53,10 +53,11 @@ class CallController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getPeersForCall(): DataResponse {
+		$timeout = $this->timeFactory->getTime() - 30;
 		$result = [];
-		$participants = $this->room->getParticipants($this->timeFactory->getTime() - 30);
+		$participants = $this->room->getParticipantsInCall();
 		foreach ($participants as $participant) {
-			if ($participant->getSessionId() === '0' || $participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+			if ($participant->getLastPing() < $timeout) {
 				// User is not active in call
 				continue;
 			}
