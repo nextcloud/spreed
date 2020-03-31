@@ -44,6 +44,7 @@ use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -78,7 +79,9 @@ class PageController extends Controller {
 	/** @var IRootFolder */
 	private $rootFolder;
 	/** @var Config */
-	private $config;
+	private $talkConfig;
+	/** @var IConfig */
+	private $serverConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -94,7 +97,8 @@ class PageController extends Controller {
 								IAppManager $appManager,
 								IInitialStateService $initialStateService,
 								IRootFolder $rootFolder,
-								Config $config) {
+								Config $talkConfig,
+								IConfig $serverConfig) {
 		parent::__construct($appName, $request);
 		$this->eventDispatcher = $eventDispatcher;
 		$this->api = $api;
@@ -108,7 +112,8 @@ class PageController extends Controller {
 		$this->appManager = $appManager;
 		$this->initialStateService = $initialStateService;
 		$this->rootFolder = $rootFolder;
-		$this->config = $config;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
 	}
 
 	/**
@@ -229,14 +234,19 @@ class PageController extends Controller {
 		}
 
 		$this->initialStateService->provideInitialState(
+			'talk', 'prefer_h264',
+			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
+		);
+
+		$this->initialStateService->provideInitialState(
 			'talk', 'circles_enabled',
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
 
-		$attachmentFolder = $this->config->getAttachmentFolder($user->getUID());
+		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
 		$this->initialStateService->provideInitialState(
 			'talk', 'attachment_folder',
-			$this->config->getAttachmentFolder($user->getUID())
+			$this->talkConfig->getAttachmentFolder($user->getUID())
 		);
 
 		if ($attachmentFolder) {
@@ -255,7 +265,7 @@ class PageController extends Controller {
 
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->config->getSettings($this->userId),
+			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -301,9 +311,14 @@ class PageController extends Controller {
 			}
 		}
 
+		$this->initialStateService->provideInitialState(
+			'talk', 'prefer_h264',
+			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
+		);
+
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->config->getSettings($this->userId),
+			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
 		];
 		$response = new PublicTemplateResponse($this->appName, 'index', $params);
 		$response->setFooterVisible(false);

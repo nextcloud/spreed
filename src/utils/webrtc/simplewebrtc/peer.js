@@ -1,4 +1,6 @@
 /* global module */
+const initialState = require('@nextcloud/initial-state')
+const sdpTransform = require('sdp-transform')
 
 const util = require('util')
 const webrtcSupport = require('webrtcsupport')
@@ -85,8 +87,65 @@ function Peer(options) {
 
 util.inherits(Peer, WildEmitter)
 
+function preferH264VideoCodecIfAvailable(offer) {
+	const sdpInfo = sdpTransform.parse(offer.sdp)
+
+	if (!sdpInfo || !sdpInfo.media) {
+		return offer
+	}
+
+	// Find video media
+	let videoIndex = -1
+	sdpInfo.media.forEach((media, mediaIndex) => {
+		if (media.type === 'video') {
+			videoIndex = mediaIndex
+		}
+	})
+
+	if (videoIndex === -1 || !sdpInfo.media[videoIndex].rtp) {
+		return offer
+	}
+
+	// Find all H264 codec videos
+	const h264Rtps = []
+	sdpInfo.media[videoIndex].rtp.forEach((rtp, rtpIndex) => {
+		if (rtp.codec.toLowerCase() === 'h264') {
+			h264Rtps.push(rtp.payload)
+		}
+	})
+
+	if (!h264Rtps.length) {
+		// No H264 codecs found
+		return offer
+	}
+
+	// Sort the H264 codecs to the front in the payload (which defines the preferred order)
+	const payloads = sdpInfo.media[videoIndex].payloads.split(' ')
+	payloads.sort((a, b) => {
+		if (h264Rtps.indexOf(parseInt(a, 10)) !== -1) {
+			return -1
+		}
+		if (h264Rtps.indexOf(parseInt(b, 10)) !== -1) {
+			return 1
+		}
+		return 0
+	})
+
+	// Write new payload order into video media payload
+	sdpInfo.media[videoIndex].payloads = payloads.join(' ')
+
+	// Write back the sdpInfo into the offer
+	offer.sdp = sdpTransform.write(sdpInfo)
+
+	return offer
+}
+
 Peer.prototype.offer = function(options) {
 	this.pc.createOffer(options).then(function(offer) {
+		if (initialState.loadState('talk', 'prefer_h264')) {
+			console.debug('Preferring hardware codec H.264 as per global configuration')
+			offer = preferH264VideoCodecIfAvailable(offer)
+		}
 		this.pc.setLocalDescription(offer).then(function() {
 			if (this.parent.config.nick) {
 				// The offer is a RTCSessionDescription that only serializes
@@ -117,6 +176,10 @@ Peer.prototype.handleOffer = function(offer) {
 
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
+		if (initialState.loadState('talk', 'prefer_h264')) {
+			console.debug('Preferring hardware codec H.264 as per global configuration')
+			answer = preferH264VideoCodecIfAvailable(answer)
+		}
 		this.pc.setLocalDescription(answer).then(function() {
 			if (this.parent.config.nick) {
 				// The answer is a RTCSessionDescription that only serializes
