@@ -75,9 +75,6 @@ export default {
 		isFullscreen() {
 			return this.$store.getters.isFullscreen()
 		},
-		conversations() {
-			return this.$store.getters.conversations
-		},
 
 		getUserId() {
 			return this.$store.getters.getUserId()
