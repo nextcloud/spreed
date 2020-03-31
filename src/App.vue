@@ -257,9 +257,17 @@ export default {
 		*/
 		Router.beforeEach((to, from, next) => {
 			if (this.isInCall) {
-				OC.dialogs.confirm(
-					t('spreed', 'Do you really want to leave the call?'),
-					t('spreed', 'Leaving call'),
+				OC.dialogs.confirmDestructive(
+					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
+						conversation: this.getConversationName(this.token),
+					}),
+					t('spreed', 'Leave call'),
+					{
+						type: OC.dialogs.YES_NO_BUTTONS,
+						confirm: t('spreed', 'Leave call'),
+						confirmClasses: 'error',
+						cancel: t('spreed', 'Stay in call'),
+					},
 					(decision) => {
 						if (!decision) {
 							return
