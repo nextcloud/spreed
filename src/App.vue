@@ -259,7 +259,7 @@ export default {
 			if (this.isInCall) {
 				OC.dialogs.confirmDestructive(
 					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
-						conversation: this.getConversationName(this.token)
+						conversation: this.getConversationName(this.token),
 					}),
 					t('spreed', 'Leave call'),
 					{
