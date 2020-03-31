@@ -25,7 +25,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
         `participantFlags` | int | Flags of the current user (only available with `in-call-flags` capability)
         `readOnly` | int | Read-only state for the current user (only available with `read-only-rooms` capability)
-        `count` | int | Number of active users
+        `count` | int | **Deprecated:** ~~Number of active users~~ - always returns `0` now
         `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string

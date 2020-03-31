@@ -234,7 +234,7 @@ class RoomController extends AEnvironmentAwareController {
 			'participantInCall' => ($currentParticipant->getInCallFlags() & Participant::FLAG_IN_CALL) !== 0,
 			'participantFlags' => $currentParticipant->getInCallFlags(),
 			'readOnly' => $room->getReadOnly(),
-			'count' => $room->getNumberOfParticipants(false, $this->timeFactory->getTime() - 30),
+			'count' => 0, // Deprecated, remove in future API version
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
 			'isFavorite' => $currentParticipant->isFavorite(),
