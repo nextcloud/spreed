@@ -27,6 +27,7 @@ the main body of the message as well as a quote.
 <template>
 	<div
 		class="message"
+		:class="{'hover': showActions && !isSystemMessage}"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
@@ -327,7 +328,7 @@ export default {
 @import '../../../../assets/variables';
 
 .message {
-	padding: 4px 0 4px 0;
+	padding: 12px 8px;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -376,10 +377,15 @@ export default {
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
 				position: absolute;
-				top: -12px;
-				right: 0;
+				bottom: -11px;
+				right: -4px;
 			}
 		}
 	}
+}
+
+.hover {
+	background-color: var(--color-background-hover);
+	border-radius: 8px;
 }
 </style>
