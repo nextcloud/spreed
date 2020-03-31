@@ -93,7 +93,7 @@ export default {
 		},
 
 		conversation() {
-			return this.$store.getters.conversations[this.token]
+			return this.$store.getters.conversation(this.token)
 		},
 
 		isOpen() {

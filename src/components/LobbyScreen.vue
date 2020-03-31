@@ -47,21 +47,21 @@ export default {
 			return this.$store.getters.getToken()
 		},
 
-		currentConversation() {
-			return this.$store.getters.conversations[this.token]
+		conversation() {
+			return this.$store.getters.conversation(this.token)
 		},
 
 		currentConversationName() {
-			return this.currentConversation ? this.currentConversation.displayName : ''
+			return this.conversation ? this.conversation.displayName : ''
 		},
 
 		message() {
 			let message = t('spreed', 'You are currently waiting in the lobby')
 
-			if (this.currentConversation.lobbyTimer) {
+			if (this.conversation.lobbyTimer) {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
-				const startTime = moment.unix(this.currentConversation.lobbyTimer).format('LLL')
+				const startTime = moment.unix(this.conversation.lobbyTimer).format('LLL')
 				message = t('spreed', 'You are currently waiting in the lobby. This meeting is scheduled for {startTime}', { startTime: startTime })
 			}
 

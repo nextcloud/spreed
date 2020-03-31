@@ -215,13 +215,14 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		conversation() {
-			if (this.$store.getters.conversations[this.token]) {
-				return this.$store.getters.conversations[this.token]
+			if (this.$store.getters.conversation(this.token)) {
+				return this.$store.getters.conversation(this.token)
 			}
 			return {
 				token: '',
 				displayName: '',
 				isFavorite: false,
+				hasPassword: false,
 				type: CONVERSATION.TYPE.PUBLIC,
 				lobbyState: WEBINAR.LOBBY.NONE,
 				lobbyTimer: 0,
@@ -305,7 +306,7 @@ export default {
 			return this.canModerate && (this.canFullModerate || this.isSharedPublicly)
 		},
 		isPasswordProtected() {
-			return this.$store.getters.conversations[this.token].hasPassword
+			return this.conversation.hasPassword
 		},
 		linkToConversation() {
 			if (this.token !== '') {

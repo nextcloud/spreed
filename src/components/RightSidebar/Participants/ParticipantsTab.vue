@@ -109,8 +109,8 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		conversation() {
-			if (this.$store.getters.conversations[this.token]) {
-				return this.$store.getters.conversations[this.token]
+			if (this.$store.getters.conversation(this.token)) {
+				return this.$store.getters.conversation(this.token)
 			}
 			return {
 				token: '',
