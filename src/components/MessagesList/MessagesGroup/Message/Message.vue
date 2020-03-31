@@ -27,7 +27,7 @@ the main body of the message as well as a quote.
 <template>
 	<div
 		class="message"
-		:class="{'hover': showActions && !isSystemMessage}"
+		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
@@ -328,7 +328,7 @@ export default {
 @import '../../../../assets/variables';
 
 .message {
-	padding: 12px 8px;
+	padding: 4px;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -382,6 +382,12 @@ export default {
 			}
 		}
 	}
+}
+
+// Increase the padding for regular messages to improve readability and
+// allow some space for the reply button
+.message:not(.system) {
+	padding: 12px 8px;
 }
 
 .hover {
