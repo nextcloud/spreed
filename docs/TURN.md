@@ -98,7 +98,7 @@ simple-log
 
 #### 5. Port opening/forwarding
 
-- The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine.
+- The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine. Also make sure to set the [`--external-ip` option](https://github.com/coturn/coturn/wiki/turnserver#options) when your TURN server is in a private networt.
 
 ### What else
 Nextcloud Talk´s WebRTC handling is still mostly based on the one from the [Spreed.ME](https://www.spreed.me/) WebRTC solution. For this reason, all guides about how to configure coTURN for it, applies to Nextcloud Talk too.
