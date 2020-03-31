@@ -49,7 +49,7 @@ $parameters = [
 ];
 $content = file_get_contents($endpoint . '?' . http_build_query($parameters));
 $results = json_decode($content, true);
-[, $titles, $descriptions, $links] = $results;
+[$titles, $descriptions, $links] = $results;
 
 $numArticles = count($titles);
 if ($numArticles === 0) {
