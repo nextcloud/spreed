@@ -377,8 +377,8 @@ export default {
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
 				position: absolute;
-				top: -12px;
-				right: 0;
+				bottom: -11px;
+				right: -4px;
 			}
 		}
 	}
