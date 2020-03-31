@@ -27,6 +27,7 @@
 			:class="{ 'active' : isActive }"
 			href="#"
 			class="acli"
+			:aria-label="t('spreed', 'Conversation, ') + title"
 			@click="onClick">
 			<!-- default slot for avatar or icon -->
 			<slot name="icon" />
@@ -55,6 +56,7 @@
 		<Actions
 			v-if="hasActions"
 			menu-align="right"
+			:aria-label="t('spreed', 'Conversation settings')"
 			class="actions">
 			<slot name="actions" />
 		</Actions>

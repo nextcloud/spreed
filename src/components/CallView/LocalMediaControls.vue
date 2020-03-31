@@ -25,6 +25,7 @@
 				id="mute"
 				v-shortkey="['m']"
 				v-tooltip="audioButtonTooltip"
+				:aria-label="audioButtonAriaLabel"
 				:class="audioButtonClass"
 				class="forced-white"
 				@shortkey="toggleAudio"
@@ -38,6 +39,7 @@
 			id="hideVideo"
 			v-shortkey="['v']"
 			v-tooltip="videoButtonTooltip"
+			:aria-label="videoButtonAriaLabel"
 			:class="videoButtonClass"
 			class="forced-white"
 			@shortkey="toggleVideo"
@@ -46,6 +48,7 @@
 			v-if="!screenSharingButtonHidden"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
+			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button forced-white"
 			@click="toggleScreenSharingMenu" />
@@ -149,6 +152,13 @@ export default {
 			}
 		},
 
+		audioButtonAriaLabel() {
+			if (!this.model.attributes.audioAvailable) {
+				return t('spreed', 'No audio')
+			}
+			return this.model.attributes.audioEnabled ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
+		},
+
 		currentVolumeIndicatorHeight() {
 			// refs can not be accessed on the initial render, only after the
 			// component has been mounted.
@@ -196,6 +206,22 @@ export default {
 			return t('spreed', 'Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time')
 		},
 
+		videoButtonAriaLabel() {
+			if (!this.model.attributes.videoAvailable) {
+				return t('spreed', 'No camera')
+			}
+
+			if (this.model.attributes.videoEnabled) {
+				return t('spreed', 'Disable video')
+			}
+
+			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
+				return t('spreed', 'Enable video')
+			}
+
+			return t('spreed', 'Enable video. Your connection will be briefly interrupted when enabling the video for the first time')
+		},
+
 		screenSharingButtonClass() {
 			return {
 				'icon-screen': this.model.attributes.localScreen,
@@ -207,6 +233,14 @@ export default {
 		screenSharingButtonTooltip() {
 			if (this.screenSharingMenuOpen) {
 				return null
+			}
+
+			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		screenSharingButtonAriaLabel() {
+			if (this.screenSharingMenuOpen) {
+				return ''
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')

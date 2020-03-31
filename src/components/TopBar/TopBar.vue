@@ -26,6 +26,7 @@
 			<ActionButton
 				v-shortkey="['f']"
 				:icon="iconFullscreen"
+				:aria-label="t('spreed', 'Toggle fullscreen')"
 				@shortkey.native="toggleFullscreen"
 				@click="toggleFullscreen">
 				{{ labelFullscreen }}

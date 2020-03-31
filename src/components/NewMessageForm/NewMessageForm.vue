@@ -31,6 +31,7 @@
 					<button
 						v-if="canShareAndUploadFiles"
 						class="new-message-form__button icon-clip-add-file"
+						:aria-label="t('spreed', 'Share files to the conversation')"
 						@click.prevent="handleFileShare" />
 				</div>
 				<div class="new-message-form__input">
@@ -46,6 +47,7 @@
 				</div>
 				<button
 					type="submit"
+					:aria-label="t('spreed', 'Send message')"
 					class="new-message-form__button submit icon-confirm-fade"
 					@click.prevent="handleSubmit" />
 			</form>
