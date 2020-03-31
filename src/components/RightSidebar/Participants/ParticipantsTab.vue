@@ -93,6 +93,9 @@ import isInLobby from '../../../mixins/isInLobby'
 import { loadState } from '@nextcloud/initial-state'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
+import CancelableRequest from '../../../utils/cancelableRequest'
+import Axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'ParticipantsTab',
@@ -122,6 +125,11 @@ export default {
 			contactsLoading: false,
 			participantsInitialised: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
+			/**
+			 * Stores the cancel function for cancelableGetParticipants
+			 */
+			cancelGetParticipants: () => {},
+			fetchingParticipants: false,
 		}
 	},
 
@@ -232,13 +240,13 @@ export default {
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
 		// periodically gets a hash of all online sessions?
-		EventBus.$on('Signaling::participantListChanged', this.getParticipants)
+		EventBus.$on('Signaling::participantListChanged', this.debounceUpdateParticipants)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('joinedConversation', this.onJoinedConversation)
-		EventBus.$off('Signaling::participantListChanged', this.getParticipants)
+		EventBus.$off('Signaling::participantListChanged', this.debounceUpdateParticipants)
 	},
 
 	methods: {
@@ -256,7 +264,7 @@ export default {
 		 */
 		onJoinedConversation() {
 			this.$nextTick(() => {
-				this.getParticipants()
+				this.cancelableGetParticipants()
 			})
 		},
 
@@ -275,15 +283,20 @@ export default {
 			}
 		}, 250),
 
+		debounceUpdateParticipants: debounce(function() {
+			if (!this.fetchingParticipants) {
+				this.cancelableGetParticipants()
+			}
+		}, 250),
+
 		async fetchSearchResults() {
 			try {
 				const response = await searchPossibleConversations(this.searchText, this.token)
 				this.searchResults = response.data.ocs.data
-				this.getParticipants()
 				this.contactsLoading = false
 			} catch (exception) {
 				console.error(exception)
-				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+				showError(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -297,13 +310,13 @@ export default {
 			try {
 				await addParticipant(this.token, item.id, item.source)
 				this.searchText = ''
-				this.getParticipants()
+				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
 			}
 		},
 
-		async getParticipants() {
+		async cancelableGetParticipants() {
 			if (this.token === '' || this.isInLobby) {
 				return
 			}
@@ -312,7 +325,13 @@ export default {
 				// The token must be stored in a local variable to ensure that
 				// the same token is used after waiting.
 				const token = this.token
-				const participants = await fetchParticipants(token)
+				// Clear previous requests if there's one pending
+				this.cancelGetParticipants('Cancel get participants')
+				// Get a new cancelable request function and cancel function pair
+				this.fetchingParticipants = true
+				const { request, cancel } = CancelableRequest(fetchParticipants)
+				this.cancelGetParticipants = cancel
+				const participants = await request(token)
 				this.$store.dispatch('purgeParticipantsStore', token)
 				participants.data.ocs.data.forEach(participant => {
 					this.$store.dispatch('addParticipant', {
@@ -330,8 +349,12 @@ export default {
 				})
 				this.participantsInitialised = true
 			} catch (exception) {
-				console.error(exception)
-				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
+				if (!Axios.isCancel(exception)) {
+					console.error(exception)
+					showError(t('spreed', 'An error occurred while fetching the participants'))
+				}
+			} finally {
+				this.fetchingParticipants = false
 			}
 		},
 
