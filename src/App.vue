@@ -75,9 +75,6 @@ export default {
 		isFullscreen() {
 			return this.$store.getters.isFullscreen()
 		},
-		conversations() {
-			return this.$store.getters.conversations
-		},
 
 		getUserId() {
 			return this.$store.getters.getUserId()
@@ -203,7 +200,7 @@ export default {
 
 		EventBus.$on('conversationsReceived', (params) => {
 			if (this.$route.name === 'conversation'
-				&& !this.$store.getters.conversations[this.token]) {
+				&& !this.$store.getters.conversation(this.token)) {
 				if (!params.singleConversation) {
 					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
 					this.refreshCurrentConversation()
@@ -227,7 +224,7 @@ export default {
 
 			if (!getCurrentUser()) {
 				// Set the current actor/participant for guests
-				const conversation = this.$store.getters.conversations[this.token]
+				const conversation = this.$store.getters.conversation(this.token)
 				this.$store.dispatch('setCurrentParticipant', conversation)
 			}
 		})
@@ -351,11 +348,11 @@ export default {
 		 * @returns {string} The conversation's name
 		 */
 		getConversationName(token) {
-			if (!this.$store.getters.conversations[token]) {
+			if (!this.$store.getters.conversation(this.token)) {
 				return ''
 			}
 
-			return this.$store.getters.conversations[token].displayName
+			return this.$store.getters.conversation(this.token).displayName
 		},
 
 		async fetchSingleConversation(token) {

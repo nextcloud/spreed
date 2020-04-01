@@ -160,7 +160,7 @@ export default {
 		},
 
 		currentParticipant() {
-			return this.$store.getters.conversations[this.token] || {
+			return this.$store.getters.conversation(this.token) || {
 				sessionId: '0',
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}

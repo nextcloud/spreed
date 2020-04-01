@@ -41,7 +41,7 @@ export default {
 
 	computed: {
 		conversation() {
-			return this.$store.getters.conversations[this.token]
+			return this.$store.getters.conversation(this.token)
 		},
 
 		participant() {
