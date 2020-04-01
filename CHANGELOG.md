@@ -1,6 +1,45 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.6 – 2020-04-01
+### Added
+- Remember the video/audio setting per conversation
+  [#3205](https://github.com/nextcloud/spreed/pull/3205)
+- Added the join button to the "Alice started a call" message to make it easier to join
+  [#3135](https://github.com/nextcloud/spreed/pull/3135)
+- Added a warning when no TURN server is configured but no ICE connection could be established
+  [#3162](https://github.com/nextcloud/spreed/pull/3162)
+- Added more aria labels to support screenreaders
+  [#3215](https://github.com/nextcloud/spreed/pull/3215)
+- **Tech Preview:** Added a setting to prefer H.264 video codec
+  [#3224](https://github.com/nextcloud/spreed/pull/3224)
+
+### Changed
+- Allow guests to set their name while they are already in a call
+  [#3169](https://github.com/nextcloud/spreed/pull/3169)
+- Automatically hide the left sidebar when in full screen in a call
+  [#3158](https://github.com/nextcloud/spreed/pull/3158)
+
+### Fixed
+- Fix unnecessary high load when users update their room list (every 30 seconds)
+  [#3225](https://github.com/nextcloud/spreed/pull/3225)
+- Fix videos being overlayed with the video/audio control icons
+  [#3149](https://github.com/nextcloud/spreed/pull/3149)
+- Correctly load/hide the guest avatar based on the WebRTC connection state
+  [#3196](https://github.com/nextcloud/spreed/pull/3196)
+- Stop signaling correctly when switching to another conversation
+  [#3200](https://github.com/nextcloud/spreed/pull/3200)
+- Do not constantly try to reconnect to peers without any streams
+  [#3199](https://github.com/nextcloud/spreed/pull/3199)
+- Do not retrigger an update of the participant list when it is already being updated
+  [#3202](https://github.com/nextcloud/spreed/pull/3202)
+- Fix a problem when trying to set a password with question marks or hash sign
+  [#3145](https://github.com/nextcloud/spreed/pull/3145)
+- Fix issues when a user or guest is being demoted from moderators while already being in a call with the lobby enabled with the external signaling server
+  [#3057](https://github.com/nextcloud/spreed/pull/3057)
+- Fix issues with interrupted audio streams when closing the sidebar in the files app while having a call
+  [#3044](https://github.com/nextcloud/spreed/pull/3044)
+
 ## 8.0.5 – 2020-03-03
 ### Added
 - Add a link to the file in the conversation info for file conversations
