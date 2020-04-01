@@ -70,7 +70,6 @@ appstore:
 	--exclude=.gitignore \
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
-	--exclude=js/**.js.map \
 	--exclude=l10n/no-php \
 	--exclude=.l10nignore \
 	--exclude=mkdocs.yml \
