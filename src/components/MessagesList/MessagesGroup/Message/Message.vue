@@ -388,6 +388,7 @@ export default {
 // allow some space for the reply button
 .message:not(.system) {
 	padding: 12px 8px;
+	margin: -6px 0;
 }
 
 .hover {
