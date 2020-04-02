@@ -87,11 +87,11 @@ function Peer(options) {
 
 util.inherits(Peer, WildEmitter)
 
-function preferH264VideoCodecIfAvailable(offer) {
-	const sdpInfo = sdpTransform.parse(offer.sdp)
+function preferH264VideoCodecIfAvailable(sessionDescription) {
+	const sdpInfo = sdpTransform.parse(sessionDescription.sdp)
 
 	if (!sdpInfo || !sdpInfo.media) {
-		return offer
+		return sessionDescription
 	}
 
 	// Find video media
@@ -103,7 +103,7 @@ function preferH264VideoCodecIfAvailable(offer) {
 	})
 
 	if (videoIndex === -1 || !sdpInfo.media[videoIndex].rtp) {
-		return offer
+		return sessionDescription
 	}
 
 	// Find all H264 codec videos
@@ -116,7 +116,7 @@ function preferH264VideoCodecIfAvailable(offer) {
 
 	if (!h264Rtps.length) {
 		// No H264 codecs found
-		return offer
+		return sessionDescription
 	}
 
 	// Sort the H264 codecs to the front in the payload (which defines the preferred order)
@@ -134,10 +134,10 @@ function preferH264VideoCodecIfAvailable(offer) {
 	// Write new payload order into video media payload
 	sdpInfo.media[videoIndex].payloads = payloads.join(' ')
 
-	// Write back the sdpInfo into the offer
-	offer.sdp = sdpTransform.write(sdpInfo)
+	// Write back the sdpInfo into the session description
+	sessionDescription.sdp = sdpTransform.write(sdpInfo)
 
-	return offer
+	return sessionDescription
 }
 
 Peer.prototype.offer = function(options) {
