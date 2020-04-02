@@ -87,11 +87,21 @@ function Peer(options) {
 
 util.inherits(Peer, WildEmitter)
 
-function preferH264VideoCodecIfAvailable(offer) {
-	const sdpInfo = sdpTransform.parse(offer.sdp)
+function shouldPreferH264() {
+	try {
+		return initialState.loadState('talk', 'prefer_h264')
+	} catch (exception) {
+		// If the state can not be loaded an exception is thrown
+		console.warn('Could not find initial state for H.264 preference')
+		return false
+	}
+}
+
+function preferH264VideoCodecIfAvailable(sessionDescription) {
+	const sdpInfo = sdpTransform.parse(sessionDescription.sdp)
 
 	if (!sdpInfo || !sdpInfo.media) {
-		return offer
+		return sessionDescription
 	}
 
 	// Find video media
@@ -103,7 +113,7 @@ function preferH264VideoCodecIfAvailable(offer) {
 	})
 
 	if (videoIndex === -1 || !sdpInfo.media[videoIndex].rtp) {
-		return offer
+		return sessionDescription
 	}
 
 	// Find all H264 codec videos
@@ -116,7 +126,7 @@ function preferH264VideoCodecIfAvailable(offer) {
 
 	if (!h264Rtps.length) {
 		// No H264 codecs found
-		return offer
+		return sessionDescription
 	}
 
 	// Sort the H264 codecs to the front in the payload (which defines the preferred order)
@@ -134,15 +144,15 @@ function preferH264VideoCodecIfAvailable(offer) {
 	// Write new payload order into video media payload
 	sdpInfo.media[videoIndex].payloads = payloads.join(' ')
 
-	// Write back the sdpInfo into the offer
-	offer.sdp = sdpTransform.write(sdpInfo)
+	// Write back the sdpInfo into the session description
+	sessionDescription.sdp = sdpTransform.write(sdpInfo)
 
-	return offer
+	return sessionDescription
 }
 
 Peer.prototype.offer = function(options) {
 	this.pc.createOffer(options).then(function(offer) {
-		if (initialState.loadState('talk', 'prefer_h264')) {
+		if (shouldPreferH264()) {
 			console.debug('Preferring hardware codec H.264 as per global configuration')
 			offer = preferH264VideoCodecIfAvailable(offer)
 		}
@@ -176,7 +186,7 @@ Peer.prototype.handleOffer = function(offer) {
 
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
-		if (initialState.loadState('talk', 'prefer_h264')) {
+		if (shouldPreferH264()) {
 			console.debug('Preferring hardware codec H.264 as per global configuration')
 			answer = preferH264VideoCodecIfAvailable(answer)
 		}
