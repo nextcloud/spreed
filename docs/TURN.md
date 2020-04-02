@@ -5,7 +5,7 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - Talk tries to establish a direct [peer-to-peer (P2P)](https://en.wikipedia.org/wiki/Peer-to-peer) connection, thus on connections **beyond the local network** (behind a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) or router), clients do not only need to know each others public IP, but the participants local IPs as well. Processing this, is the job of a [STUN](https://en.wikipedia.org/wiki/STUN) server. As there is one preconfigured for Nextcloud Talk, still nothing else needs to be done.
 
-- But in many cases, e.g. **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a STUN server will not work as well, and then a so called [TURN](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) server is required. Now no direct P2P connection is established, but all traffic is relayed through the TURN server, thus additional (at least internal) traffic and resources are used.
+- But in many cases, e.g. **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a direct P2P connection is not possible, even with the help of a STUN server, and a so called [TURN server](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) needs to be configured additionally.
 
 - Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus to be most flexible and guarantee functionality of your Nextcloud Talk instance in all possible connection cases, you most properly want to setup a TURN server.
 
