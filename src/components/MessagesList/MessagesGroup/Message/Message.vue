@@ -329,6 +329,8 @@ export default {
 
 .message {
 	padding: 4px;
+	font-size: $chat-font-size;
+	line-height: $chat-line-height;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -373,7 +375,8 @@ export default {
 			flex: 0 0 $message-utils-width;
 			display: flex;
 			color: var(--color-text-maxcontrast);
-			font-size: 13px;
+			font-size: 14px;
+			flex: 1 0 80px;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
 				position: absolute;
@@ -388,6 +391,7 @@ export default {
 // allow some space for the reply button
 .message:not(.system) {
 	padding: 12px 8px;
+	margin: -6px 0;
 }
 
 .hover {
