@@ -860,6 +860,8 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				} else {
 					webrtc.emit('nick', { id: peer.id, name: payload.name, userid: payload.userid })
 				}
+			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
+				// Valid known messages, but handled elsewhere
 			} else {
 				console.debug('Unknown message type %s from %s datachannel', data.type, label, data)
 			}
