@@ -39,7 +39,7 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants. As most users are on an asymetric local internet connection, the sending bandwidth often becomes the bottleneck. A typical Nextcloud Talk instance can handle a few dozen calls, but each call can have only 4-6 participants with video depending on the participants' bandwidth. Without video, more is possible.
 
-A single video stream currently uses about 1 mb/sec and the total required bandwidth can be calculated as follows:
+A single video stream currently uses about 1 mbit/sec and the total required bandwidth can be calculated as follows:
 
 ```
 1 mb/s * (participants - 1)
