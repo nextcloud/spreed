@@ -33,7 +33,9 @@ the main body of the message as well as a quote.
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
-		<div class="message__main">
+		<div
+			ref="messageMain"
+			class="message__main">
 			<div v-if="isSingleEmoji"
 				class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
@@ -51,7 +53,7 @@ the main body of the message as well as a quote.
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary" class="icon-loading-small" />
-				<h6 v-else>
+				<h6 v-if="hasDate">
 					{{ messageTime }}
 				</h6>
 				<Actions
@@ -200,6 +202,8 @@ export default {
 	data() {
 		return {
 			showActions: false,
+			// Is tall enough for both actions and date upon hovering
+			isTallEnough: false,
 		}
 	},
 
@@ -293,12 +297,23 @@ export default {
 			}.bind(this))
 			return richParameters
 		},
+
+		// Determines wether the date has to be displayed or not
+		hasDate() {
+			return this.isSystemMessage || (!this.isTemporary && !this.showActions) || this.isTallEnough
+		},
 	},
 
 	watch: {
 		showJoinCallButton() {
 			EventBus.$emit('scrollChatToBottom')
 		},
+	},
+
+	mounted() {
+		if (this.$refs.messageMain.clientHeight > 44) {
+			this.isTallEnough = true
+		}
 	},
 
 	methods: {
@@ -371,7 +386,6 @@ export default {
 			justify-self: flex-start;
 			justify-content:  space-between;
 			position: relative;
-			flex: 0 0 $message-utils-width;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: 14px;
