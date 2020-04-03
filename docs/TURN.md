@@ -1,13 +1,13 @@
 ### Background
 The configuration of Nextcloud Talk mainly depends on your desired usage:
 
-- As long as it shall be used only **within one local network**, besides the app, nothing else should be required. Just verify that all browsers support the underlying [WebRTC](https://en.wikipedia.org/wiki/WebRTC) protocol - all famous ones do on current versions - and you should be good to go. Browser support can be tested e.g. here: [https://test.webrtc.org/](https://test.webrtc.org/)
+- As long as it shall be used only **within one local network**, besides the app, nothing else should be required. Just verify that all browsers support the underlying [WebRTC](https://en.wikipedia.org/wiki/WebRTC) protocol - most contemporary browsers do with current versions, though mobile browsers tend to lag behind a little - and you should be good to go. Browser support can be tested for example here: [https://test.webrtc.org/](https://test.webrtc.org/)
 
-- Talk tries to establish a direct [peer-to-peer (P2P)](https://en.wikipedia.org/wiki/Peer-to-peer) connection, thus on connections **beyond the local network** (behind a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) or router), clients do not only need to know each others public IP, but the participants local IPs as well. Processing this, is the job of a [STUN](https://en.wikipedia.org/wiki/STUN) server. As there is one preconfigured for Nextcloud Talk, still nothing else needs to be done.
+- Talk tries to establish a direct [peer-to-peer (P2P)](https://en.wikipedia.org/wiki/Peer-to-peer) connection, thus on connections **beyond the local network** (behind a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) or router), clients do not only need to know each others public IP, but the participants local IPs as well. Processing this, is the job of a [STUN](https://en.wikipedia.org/wiki/STUN) server. As there is one preconfigured for Nextcloud Talk that is operated by Nextcloud GmbH, for this case nothing else needs to be done.
 
-- But in many cases, e.g. **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a direct P2P connection is not possible, even with the help of a STUN server, and a so called [TURN server](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) needs to be configured additionally.
+- But in many cases, especially **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a direct P2P connection is not possible, even with the help of a STUN server. For this a so called [TURN server](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) needs to be configured additionally.
 
-- Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus to be most flexible and guarantee functionality of your Nextcloud Talk instance in all possible connection cases, you most properly want to setup a TURN server.
+- Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus to be most flexible and guarantee functionality of your Nextcloud Talk instance in all possible connection cases, you would want to setup a TURN server.
 
 ## Install and setup _coTURN_ as TURN server
 

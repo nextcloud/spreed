@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.7 – 2020-04-02
+### Fixed
+- Calls in files and public sharing sidebar don't work
+  [#3241](https://github.com/nextcloud/spreed/pull/3241)
+- Add another missing index to the participants table to reduce the load
+  [#3239](https://github.com/nextcloud/spreed/pull/3239)
+- Fix blank page on Internet Explorer 11
+  [#3240](https://github.com/nextcloud/spreed/pull/3240)
+
 ## 8.0.6 – 2020-04-01
 ### Added
 - Remember the video/audio setting per conversation

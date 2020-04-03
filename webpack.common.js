@@ -42,7 +42,7 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules/,
+				exclude: /node_modules(?!(\/|\\)(@juliushaertl\/vue-richtext|fast-xml-parser|hot-patcher|nextcloud-vue-collections|webdav)(\/|\\))/,
 			},
 			{
 				/**

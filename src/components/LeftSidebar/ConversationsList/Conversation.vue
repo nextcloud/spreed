@@ -386,6 +386,6 @@ export default {
 }
 
 .forced-active {
-	box-shadow: inset 4px 0 var(--color-primary);
+	box-shadow: inset 4px 0 var(--color-primary-element);
 }
 </style>
