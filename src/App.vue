@@ -54,6 +54,7 @@ import {
 	connectSignaling,
 	getSignalingSync,
 } from './utils/webrtc/index'
+import { emit } from '@nextcloud/event-bus'
 
 export default {
 	name: 'App',
@@ -386,6 +387,9 @@ export default {
 		},
 		// Upon pressing ctrl+f, focus the search box in the left sidebar
 		handleAppSearch() {
+			emit('toggle-navigation', {
+				open: true,
+			})
 			document.querySelector('.conversations-search')[0].focus()
 		},
 	},
