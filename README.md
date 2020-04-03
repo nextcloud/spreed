@@ -47,18 +47,18 @@ A single video stream currently uses about 1 mb/sec and the total required bandw
 
 ![](https://nextcloud.com/wp-content/themes/next/assets/img/features/HPB-P2P.svg.png)
 
-This means that in a call with 5 participants, each has to send and receive about 4 mbit/sec. Given the asymetric nature of most typical broadband connections, it is sending video that quickly becomes the bottleneck.
+This means that in a call with 5 participants, each has to send and receive about 4 mbit/sec. Given the asymetric nature of most typical broadband connections, it is sending video that quickly becomes the bottleneck. Moreover, decoding all those video streams put a big strain on the system of each participant.
 
-To limit bandwidth usage, participants can keep video disabled. Once a video stream is enabled it can currently not be disabled, even a muted or disabled video stream is being send out. This is currently a technical limitation. However, Talk remembers the state of audio and video. This means that disabling video, leaving the call and joining again will drop the bandwidth use to audio only (about 50 kbit/sec). This is about 1/20th of the bandwidth of video, so when all participants are on a fast network, a call with 20 people without video could be doable.
+To limit and CPU bandwidth usage, participants can disable video. This will drop the bandwidth use to audio only (about 50 kbit/sec), about 1/20th of the bandwidth of video, and eliminates most decoding work. When all participants are on a fast network, a call with 20 people without video could be doable.
 
-Such a call does create a high load on the members' browsers and on the server as it handles signaling. This, for example, has consequences also for the devices that support calls. Mobile device browsers will sooner run out of compute capacity and cause issues to the call. While we continously work to optimize Talk for performance, there is still work to be done so it is not unlikely that the bottleneck will be there for the time being. We very much welcome help in optimization of calls!
+Still a call creates a load on the members' browsers (decoding streams) and on the server as it handles signaling. This, for example, has consequences also for the devices that support calls. Mobile device browsers will sooner run out of compute capacity and cause issues to the call. While we continously work to optimize Talk for performance, there is still work to be done so it is not unlikely that the bottleneck will be there for the time being. We very much welcome help in optimization of calls!
 
 ### How to have the maximum number of participants in a call
 
 To make sure a call can sustain the largest number of participants, make sure that:
 * each participant has a fast upload and download
-* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will not do) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par.
-* each participant has video disabled **from the start** - that means, if video is on when you start the call, disable it, exit the call and join again to ensure you are not sending 1 mbit/sec of blank screen
+* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will run out of computing power quickly) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par.
+* each participant disables video
 
 With this setup, 20 users should be doable in a typical setup.
 
