@@ -80,5 +80,6 @@ module.exports = {
 	],
 	resolve: {
 		extensions: ['*', '.js', '.vue'],
+		symlinks: false,
 	},
 }
