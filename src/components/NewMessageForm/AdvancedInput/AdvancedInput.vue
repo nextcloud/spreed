@@ -351,6 +351,7 @@ export default {
 
 .new-message-form__advancedinput {
 	overflow: visible;
+	margin-left: 6px !important;
 	width: 100%;
 	border:none;
 	margin: 0;

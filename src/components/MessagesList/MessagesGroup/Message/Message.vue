@@ -339,9 +339,8 @@ export default {
 		justify-content: space-between;
 		min-width: 100%;
 		&__text {
-			flex: 1 1 auto;
+			flex: 0 1 auto;
 			color: var(--color-text-light);
-			max-width: $message-max-width;
 			.single-emoji {
 				font-size: 250%;
 				line-height: 100%;
@@ -381,7 +380,10 @@ export default {
 			&__actions.action-item {
 				position: absolute;
 				bottom: -11px;
-				right: -4px;
+				right: -3px;
+			}
+			& h6 {
+				margin-left: auto;
 			}
 		}
 	}
@@ -390,7 +392,7 @@ export default {
 // Increase the padding for regular messages to improve readability and
 // allow some space for the reply button
 .message:not(.system) {
-	padding: 12px 8px;
+	padding: 12px 4px 12px 8px;
 	margin: -6px 0;
 }
 
