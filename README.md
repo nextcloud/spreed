@@ -42,7 +42,7 @@ Talk works peer to peer, that is, each participant sends an end-to-end encrypted
 A single video stream currently uses about 1 mbit/sec and the total required bandwidth can be calculated as follows:
 
 ```
-1 mb/s * (participants - 1)
+1 mbit/s * (participants - 1)
 ```
 
 ![](https://nextcloud.com/wp-content/themes/next/assets/img/features/HPB-P2P.svg.png)
