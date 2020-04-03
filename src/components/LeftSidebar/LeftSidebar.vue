@@ -24,6 +24,7 @@
 		<div class="new-conversation">
 			<SearchBox
 				v-model="searchText"
+				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
 				@abort-search="abortSearch" />

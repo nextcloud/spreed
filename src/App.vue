@@ -20,7 +20,11 @@
 -->
 
 <template>
-	<Content :class="{ 'icon-loading': loading, 'in-call': isInCall }" app-name="Talk">
+	<Content
+		v-shortkey="['ctrl', 'f']"
+		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
+		app-name="Talk"
+		@shortkey.native="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" />
 		<AppContent>
 			<router-view />
@@ -379,6 +383,10 @@ export default {
 				this.$router.push('/apps/spreed/not-found')
 				this.$store.dispatch('hideSidebar')
 			}
+		},
+		// Upon pressing ctrl+f, focus the search box in the left sidebar
+		handleAppSearch() {
+			document.querySelector('.conversations-search')[0].focus()
 		},
 	},
 }
