@@ -87,6 +87,8 @@ LocalMedia.prototype.start = function(mediaConstraints, cb) {
 	const constraints = mediaConstraints || this.config.media
 
 	if (!constraints.audio && !constraints.video) {
+		self.emit('localStream', constraints, null)
+
 		if (cb) {
 			return cb(null, null)
 		}
