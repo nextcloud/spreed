@@ -1205,6 +1205,7 @@ class Room {
 		if ($ignoreGuests) {
 			$query->andWhere($query->expr()->notIn('participant_type', $query->createNamedParameter([
 				Participant::GUEST,
+				Participant::GUEST_MODERATOR,
 				Participant::USER_SELF_JOINED,
 			], IQueryBuilder::PARAM_INT_ARRAY)));
 		}
