@@ -61,33 +61,33 @@ class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
 
 	/** @var string|null */
-	private $userId;
+	protected $userId;
 	/** @var IAppManager */
-	private $appManager;
+	protected $appManager;
 	/** @var TalkSession */
-	private $session;
+	protected $session;
 	/** @var IUserManager */
-	private $userManager;
+	protected $userManager;
 	/** @var IGroupManager */
-	private $groupManager;
+	protected $groupManager;
 	/** @var Manager */
-	private $manager;
+	protected $manager;
 	/** @var GuestManager */
-	private $guestManager;
+	protected $guestManager;
 	/** @var ChatManager */
-	private $chatManager;
+	protected $chatManager;
 	/** @var IEventDispatcher */
-	private $dispatcher;
+	protected $dispatcher;
 	/** @var MessageParser */
-	private $messageParser;
+	protected $messageParser;
 	/** @var ITimeFactory */
-	private $timeFactory;
+	protected $timeFactory;
 	/** @var IL10N */
-	private $l10n;
+	protected $l10n;
 	/** @var IConfig */
-	private $config;
+	protected $config;
 	/** @var Config */
-	private $talkConfig;
+	protected $talkConfig;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -174,12 +174,27 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * @param string $apiVersion
 	 * @param Room $room
 	 * @param Participant $currentParticipant
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
 	protected function formatRoom(Room $room, ?Participant $currentParticipant): array {
+		if ($this->getAPIVersion() === 2) {
+			return $this->formatRoomV2($room, $currentParticipant);
+		}
+
+		return $this->formatRoomV1($room, $currentParticipant);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param Participant $currentParticipant
+	 * @return array
+	 * @throws RoomNotFoundException
+	 */
+	protected function formatRoomV1(Room $room, ?Participant $currentParticipant): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -346,6 +361,145 @@ class RoomController extends AEnvironmentAwareController {
 			'numGuests' => $numActiveGuests,
 			'lastMessage' => $lastMessage,
 		]);
+
+		return $roomData;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param Participant $currentParticipant
+	 * @return array
+	 * @throws RoomNotFoundException
+	 */
+	protected function formatRoomV2(Room $room, ?Participant $currentParticipant): array {
+		$roomData = [
+			'id' => $room->getId(),
+			'token' => $room->getToken(),
+			'type' => $room->getType(),
+			'name' => '',
+			'displayName' => '',
+			'objectType' => '',
+			'objectId' => '',
+			'participantType' => Participant::GUEST,
+			'participantFlags' => Participant::FLAG_DISCONNECTED,
+			'readOnly' => Room::READ_WRITE,
+			'hasPassword' => $room->hasPassword(),
+			'hasCall' => false,
+			'canStartCall' => false,
+			'lastActivity' => 0,
+			'lastReadMessage' => 0,
+			'unreadMessages' => 0,
+			'unreadMention' => false,
+			'isFavorite' => false,
+			'canLeaveConversation' => false,
+			'canDeleteConversation' => false,
+			'notificationLevel' => Participant::NOTIFY_NEVER,
+			'lastPing' => 0,
+			'sessionId' => '0',
+			'guestList' => '',
+			'lastMessage' => [],
+		];
+
+		if (!$currentParticipant instanceof Participant) {
+			return $roomData;
+		}
+
+		$lastActivity = $room->getLastActivity();
+		if ($lastActivity instanceof \DateTimeInterface) {
+			$lastActivity = $lastActivity->getTimestamp();
+		} else {
+			$lastActivity = 0;
+		}
+
+		$lobbyTimer = $room->getLobbyTimer();
+		if ($lobbyTimer instanceof \DateTimeInterface) {
+			$lobbyTimer = $lobbyTimer->getTimestamp();
+		} else {
+			$lobbyTimer = 0;
+		}
+
+		$roomData = array_merge($roomData, [
+			'name' => $room->getName(),
+			'displayName' => $room->getDisplayName($currentParticipant->getUser()),
+			'objectType' => $room->getObjectType(),
+			'objectId' => $room->getObjectId(),
+			'participantType' => $currentParticipant->getParticipantType(),
+			'participantFlags' => $currentParticipant->getInCallFlags(),
+			'readOnly' => $room->getReadOnly(),
+			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'lastActivity' => $lastActivity,
+			'isFavorite' => $currentParticipant->isFavorite(),
+			'notificationLevel' => $currentParticipant->getNotificationLevel(),
+			'lobbyState' => $room->getLobbyState(),
+			'lobbyTimer' => $lobbyTimer,
+			'lastPing' => $currentParticipant->getLastPing(),
+			'sessionId' => $currentParticipant->getSessionId(),
+		]);
+
+		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
+			if ($currentParticipant->isGuest()) {
+				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
+			} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
+			} else {
+				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
+				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
+					$roomData['notificationLevel'] = Participant::NOTIFY_MENTION;
+				} else {
+					$roomData['notificationLevel'] = $adminSetting;
+				}
+			}
+		}
+
+		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
+			!$currentParticipant->hasModeratorPermissions()) {
+			// No participants and chat messages for users in the lobby.
+			return $roomData;
+		}
+
+		$roomData['canStartCall'] = $currentParticipant->canStartCall();
+
+		$currentUser = $this->userManager->get($currentParticipant->getUser());
+		if ($currentUser instanceof IUser) {
+			$lastReadMessage = $currentParticipant->getLastReadMessage();
+			if ($lastReadMessage === -1) {
+				/*
+				 * Because the migration from the old comment_read_markers was
+				 * not possible in a programmatic way with a reasonable O(1) or O(n)
+				 * but only with O(user×chat), we do the conversion here.
+				 */
+				$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
+				$currentParticipant->setLastReadMessage($lastReadMessage);
+			}
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+
+			$lastMention = $currentParticipant->getLastMentionMessage();
+			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+			$roomData['lastReadMessage'] = $lastReadMessage;
+
+			$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
+				&& $currentParticipant->hasModeratorPermissions(false);
+			$roomData['canLeaveConversation'] = !$roomData['canDeleteConversation']
+				|| ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getNumberOfParticipants() > 1);
+		}
+
+		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$participants = $room->getParticipants();
+			foreach ($participants as $participant) {
+				$user = $this->userManager->get($participant->getUser());
+				if ($user instanceof IUser && $user->getUID() !== $currentParticipant->getUser()) {
+					$roomData['name'] = $user->getUID();
+				}
+			}
+		}
+
+		$lastMessage = $room->getLastMessage();
+		if ($lastMessage instanceof IComment) {
+			$roomData['lastMessage'] = $this->formatLastMessage($room, $currentParticipant, $lastMessage);
+		} else {
+			$roomData['lastMessage'] = [];
+		}
 
 		return $roomData;
 	}
