@@ -465,7 +465,7 @@ export default {
 
 .nameIndicator button.audio-disabled:not(.no-audio-available),
 .nameIndicator button.video-disabled:not(.no-video-available),
-.nameIndicator button.screensharing-disabled {
+.nameIndicator button.screensharing-disabled:not(.no-screensharing-available) {
 	&:hover,
 	&:focus {
 		opacity: 1;
