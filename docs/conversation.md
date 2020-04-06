@@ -1,6 +1,7 @@
 # Conversation API
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
 
 ## Get user´s conversations
 
@@ -15,34 +16,36 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
         Array of conversations, each conversation has at least:
 
-        field | type | Description
-        ------|------|------------
-        `token` | string | Token identifier of the conversation which is used for further interaction
-        `type` | int |
-        `name` | string | Name of the conversation (can also be empty)
-        `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
-        `participantType` | int | Permissions level of the current user
-        `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
-        `participantFlags` | int | Flags of the current user (only available with `in-call-flags` capability)
-        `readOnly` | int | Read-only state for the current user (only available with `read-only-rooms` capability)
-        `count` | int | **Deprecated:** ~~Number of active users~~ - always returns `0` now
-        `numGuests` | int | Number of active guests
-        `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
-        `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
-        `hasPassword` | bool | Flag if the conversation has a password
-        `hasCall` | bool | Flag if the conversation has an active call
-        `canStartCall` | bool | Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)
-        `lastActivity` | int | Timestamp of the last activity in the conversation, in seconds and UTC time zone
-        `isFavorite` | bool | Flag if the conversation is favorited by the user
-        `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
-        `lobbyState` | int | Webinary lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability)
-        `lobbyTimer` | int | Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
-        `unreadMessages` | int | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
-        `unreadMention` | bool | Flag if the user was mentioned since their last visit
-        `lastReadMessage` | int | ID of the last read message in a room (only available with `chat-read-marker` capability)
-        `lastMessage` | message | Last message in a conversation if available, otherwise empty
-        `objectType` | string | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
-        `objectId` | string | Share token if "objectType" is "share:password", otherwise empty
+        field | type | API | Description
+        ------|------|-----|------------
+        `token` | string | * | Token identifier of the conversation which is used for further interaction
+        `type` | int | * | See list of conversation types in the [constants list](constants.md#Conversation-types)
+        `name` | string | * | Name of the conversation (can also be empty)
+        `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
+        `participantType` | int | * | Permissions level of the current user
+        `participantInCall` | bool | 🏴 v1 | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
+        `participantFlags` | int | * | Flags of the current user (only available with `in-call-flags` capability)
+        `readOnly` | int | * | Read-only state for the current user (only available with `read-only-rooms` capability)
+        `count` | int | 🏴 v1 | **Deprecated:** ~~Number of active users~~ - always returns `0`
+        `numGuests` | int | 🏴 v1 | Number of active guests
+        `lastPing` | int | * | Timestamp of the last ping of the current user (should be used for sorting)
+        `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
+        `hasPassword` | bool | * | Flag if the conversation has a password
+        `hasCall` | bool | * | Flag if the conversation has an active call
+        `canStartCall` | bool | * | Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)
+        `canDeleteConversation` | bool | 🆕 v2 | Flag if the user can delete the conversation for everyone (not possible without moderator permissions or in one-to-one conversations)
+        `canLeaveConversation` | bool | 🆕 v2 | Flag if the user can leave the conversation (not possible for the last user with moderator permissions)
+        `lastActivity` | int | * | Timestamp of the last activity in the conversation, in seconds and UTC time zone
+        `isFavorite` | bool | * | Flag if the conversation is favorited by the user
+        `notificationLevel` | int | * | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
+        `lobbyState` | int | * | Webinary lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability)
+        `lobbyTimer` | int | * | Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
+        `unreadMessages` | int | * | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
+        `unreadMention` | bool | * | Flag if the user was mentioned since their last visit
+        `lastReadMessage` | int | * | ID of the last read message in a room (only available with `chat-read-marker` capability)
+        `lastMessage` | message | * | Last message in a conversation if available, otherwise empty
+        `objectType` | string | * | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
+        `objectId` | string | * | Share token if "objectType" is "share:password", otherwise empty
 
 ## Creating a new conversation
 
