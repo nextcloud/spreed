@@ -52,6 +52,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Util;
 
 class PageController extends Controller {
 	/** @var string|null */
@@ -233,6 +234,9 @@ class PageController extends Controller {
 			}
 		}
 
+		// Needed to enable the screensharing extension in Chromium < 72.
+		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+
 		$this->initialStateService->provideInitialState(
 			'talk', 'prefer_h264',
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
@@ -310,6 +314,9 @@ class PageController extends Controller {
 				return new RedirectResponse($passwordVerification['url']);
 			}
 		}
+
+		// Needed to enable the screensharing extension in Chromium < 72.
+		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
 
 		$this->initialStateService->provideInitialState(
 			'talk', 'prefer_h264',
