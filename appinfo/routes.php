@@ -47,6 +47,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Signaling#getWelcomeMessage',
+			'url' => '/api/{apiVersion}/signaling/welcome/{serverId}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'serverId' => '^\d+$',
+			],
+		],
+		[
 			'name' => 'Signaling#backend',
 			'url' => '/api/{apiVersion}/signaling/backend',
 			'verb' => 'POST',
