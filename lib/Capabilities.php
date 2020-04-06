@@ -75,6 +75,7 @@ class Capabilities implements IPublicCapability {
 					'audio',
 					'video',
 					'chat-v2',
+					'conversation-v2',
 					'guest-signaling',
 					'empty-group-room',
 					'guest-display-names',

@@ -49,3 +49,4 @@ title: Capabilities
 * `config => attachments => folder` - User defined folder where items should be uploaded to
 * `config => conversations => can-create` - Whether the user can create public and group conversations, if not only one-to-one conversations are allowed
 * `force-mute` - "forceMute" signaling messages can be sent to mute other participants.
+* `conversation-v2` - The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).
