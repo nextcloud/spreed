@@ -37,7 +37,7 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 ## Scalability 
 
-Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants. As most users are on an asymetric local internet connection, the sending bandwidth often becomes the bottleneck. A typical Nextcloud Talk instance can handle a few dozen calls, but each call can have only 4-6 participants with video depending on the participants' bandwidth. Without video, more is possible.
+Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants.
 
 A single video stream currently uses about 1 mbit/sec and the total required bandwidth can be calculated as follows:
 
@@ -57,7 +57,7 @@ Still a call creates a load on the members' browsers (decoding streams) and on t
 
 To make sure a call can sustain the largest number of participants, make sure that:
 * each participant has a fast upload and download
-* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will run out of computing power quickly) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par.
+* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will run out of computing power quickly) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par. On a laptop, plug in the power - this often results in better CPU performance.
 * each participant disables video
 
 With this setup, 20 users should be doable in a typical setup.
