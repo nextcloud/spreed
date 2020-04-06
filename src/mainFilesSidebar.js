@@ -30,6 +30,9 @@ import FilesSidebarTabApp from './FilesSidebarTabApp'
 import Vuex from 'vuex'
 import store from './store'
 
+// Plugins
+import browserDetect from 'vue-browser-detect-plugin'
+
 // Utils
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
@@ -56,6 +59,7 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+Vue.use(browserDetect)
 
 const newCallView = () => new Vue({
 	store,

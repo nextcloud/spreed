@@ -50,6 +50,7 @@ import {
 	connectSignaling,
 	getSignalingSync,
 } from './utils/webrtc/index'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 	name: 'App',
@@ -60,6 +61,9 @@ export default {
 		PreventUnload,
 		RightSidebar,
 	},
+
+	mixins: [browserCheck],
+
 	data: function() {
 		return {
 			savedLastMessageMap: {},
