@@ -69,12 +69,6 @@ export default {
 			return this.conversation && this.conversation.objectType === 'file'
 		},
 
-		numberOfParticipants() {
-			const numberOfUsers = this.conversation ? Object.keys(this.conversation.participants).length : 0
-			const numberOfGuests = this.conversation ? this.conversation.numGuests : 0
-			return numberOfUsers + numberOfGuests
-		},
-
 		canInviteOthers() {
 			return this.conversation && (
 				this.conversation.participantType === PARTICIPANT.TYPE.OWNER
@@ -94,10 +88,6 @@ export default {
 		},
 
 		title() {
-			if (this.numberOfParticipants === 1) {
-				return t('spreed', 'No other people in this call')
-			}
-
 			return t('spreed', 'Waiting for others to join the call …')
 		},
 
