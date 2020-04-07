@@ -66,7 +66,14 @@ class BackendNotifier {
 		}
 
 		$client = $this->clientService->newClient();
-		$client->post($url, $params);
+		try {
+			$client->post($url, $params);
+		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'app' => 'spreed',
+				'message' => 'Failed to send message to signaling server',
+			]);
+		}
 	}
 
 	/**
