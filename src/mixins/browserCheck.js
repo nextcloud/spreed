@@ -29,8 +29,7 @@ const browserCheck = {
 				showError(
 					this.unsupportedWarning,
 					{
-						timeout: 3600,
-						isHTML: true,
+						timeout: 0,
 					})
 			}
 		},
@@ -44,10 +43,11 @@ const browserCheck = {
 		blockCalls() {
 			return (this.$browserDetect.isFirefox && this.$browserDetect.meta.version < 52)
 			|| (this.$browserDetect.isChrome && this.$browserDetect.meta.version < 49)
+			|| this.$browserDetect.isIE
 		},
 		// Used both in the toast and in the callbutton tooltip
 		unsupportedWarning() {
-			return t('spreed', "The browser you're using is not fully supported by talk. Please use the latest version of {firefox}, {edge}, {chrome} or {safari}.").replace('{firefox}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://www.mozilla.org/en-US/firefox/new/">Mozilla Firefox</a>').replace('{edge}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://www.microsoft.com/en-us/edge">Microsoft Edge</a>').replace('{chrome}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://www.google.com/chrome/?brand=CHBD&gclid=EAIaIQobChMIkY_v0ZDU6AIVhYXVCh0sfA7XEAAYASAAEgIKfPD_BwE&gclsrc=aw.ds">Google Chrome</a>').replace('{safari}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://support.apple.com/downloads/safari">Apple Safari</a>')
+			return t('spreed', "The browser you're using is not fully supported by talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari.")
 		},
 		// Used in CallButton.vue
 		callButtonTooltipText() {
