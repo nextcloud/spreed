@@ -23,15 +23,17 @@
 import { showError } from '@nextcloud/dialogs'
 
 const browserCheck = {
-	mounted() {
-		if (!this.isFullySupported) {
-			showError(
-				this.unsupportedWarning,
-				{
-					timeout: 3600,
-					isHTML: true,
-				})
-		}
+	methods: {
+		checkBrowser() {
+			if (!this.isFullySupported) {
+				showError(
+					this.unsupportedWarning,
+					{
+						timeout: 3600,
+						isHTML: true,
+					})
+			}
+		},
 	},
 	computed: {
 		isFullySupported() {

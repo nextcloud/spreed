@@ -290,6 +290,11 @@ export default {
 		}
 	},
 
+	mounted() {
+		// see browserCheck mixin
+		this.checkBrowser()
+	},
+
 	methods: {
 		fixmeDelayedSetupOfGuestUsers() {
 			// FIXME Refresh the data now that the user joined the conversation
