@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\ContactsMenu\Providers;
 
+use OCA\Talk\Config;
 use OCP\Contacts\ContactsMenu\IActionFactory;
 use OCP\Contacts\ContactsMenu\IEntry;
 use OCP\Contacts\ContactsMenu\IProvider;
@@ -36,24 +37,25 @@ class CallProvider implements IProvider {
 
 	/** @var IActionFactory */
 	private $actionFactory;
-
 	/** @var IURLGenerator */
 	private $urlGenerator;
-
 	/** @var IUserManager */
 	private $userManager;
-
 	/** @var IL10N */
 	private $l10n;
+	/** @var Config */
+	private $config;
 
 	public function __construct(IActionFactory $actionFactory,
 								IURLGenerator $urlGenerator,
 								IL10N $l10n,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								Config $config) {
 		$this->actionFactory = $actionFactory;
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;
 		$this->l10n = $l10n;
+		$this->config = $config;
 	}
 
 	public function process(IEntry $entry): void {
@@ -72,6 +74,11 @@ class CallProvider implements IProvider {
 		$user = $this->userManager->get($uid);
 		if(!$user instanceof IUser) {
 			// No valid user object
+			return;
+		}
+
+		if ($this->config->isDisabledForUser($user)) {
+			// User can not use Talk
 			return;
 		}
 

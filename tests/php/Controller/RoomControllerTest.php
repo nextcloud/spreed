@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Controller;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
@@ -71,7 +72,9 @@ class RoomControllerTest extends TestCase {
 	/** @var IL10N|MockObject */
 	private $l;
 	/** @var IConfig|MockObject */
-	private $config;
+	private $serverConfig;
+	/** @var Config|MockObject */
+	private $talkConfig;
 
 
 	public function setUp(): void {
@@ -89,7 +92,8 @@ class RoomControllerTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
-		$this->config = $this->createMock(IConfig::class);
+		$this->serverConfig = $this->createMock(IConfig::class);
+		$this->talkConfig = $this->createMock(Config::class);
 	}
 
 	/**
@@ -113,7 +117,8 @@ class RoomControllerTest extends TestCase {
 			$this->messageParser,
 			$this->timeFactory,
 			$this->l,
-			$this->config
+			$this->serverConfig,
+			$this->talkConfig
 		);
 		$controller->setRoom($room);
 		$controller->setParticipant($participant);

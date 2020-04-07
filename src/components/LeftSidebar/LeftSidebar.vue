@@ -27,7 +27,8 @@
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
 				@abort-search="abortSearch" />
-			<NewGroupConversation />
+			<NewGroupConversation
+				v-if="canStartConversations" />
 		</div>
 		<ul class="left-sidebar__list">
 			<Caption v-if="isSearching"
@@ -46,7 +47,14 @@
 							@click="createAndJoinConversation" />
 					</li>
 				</template>
-
+				<template v-if="!showStartConversationsOptions">
+					<Caption v-if="searchResultsUsers.length === 0"
+						:title="t('spreed', 'Contacts')" />
+					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+					<Hint v-else :hint="t('spreed', 'No search results')" />
+				</template>
+			</template>
+			<template v-if="showStartConversationsOptions">
 				<template v-if="searchResultsGroups.length !== 0">
 					<Caption
 						:title="t('spreed', 'Groups')" />
@@ -129,6 +137,7 @@ export default {
 			searchResultsCircles: [],
 			contactsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
+			canStartConversations: loadState('talk', 'start_conversations'),
 			attachmentFolderLoading: true,
 		}
 	},
@@ -139,6 +148,9 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
+		},
+		showStartConversationsOptions() {
+			return this.isSearching && this.canStartConversations
 		},
 
 		sourcesWithoutResults() {
@@ -206,7 +218,7 @@ export default {
 
 		async fetchSearchResults() {
 			this.contactsLoading = true
-			const response = await searchPossibleConversations(this.searchText)
+			const response = await searchPossibleConversations(this.searchText, undefined, !this.canStartConversations)
 			this.searchResults = response.data.ocs.data
 			this.searchResultsUsers = this.searchResults.filter((match) => {
 				return match.source === 'users'

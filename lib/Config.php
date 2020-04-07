@@ -52,14 +52,33 @@ class Config {
 	/**
 	 * @return string[]
 	 */
-	public function getAllowedGroupIds(): array {
+	public function getAllowedTalkGroupIds(): array {
 		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
 		$groups = json_decode($groups, true);
 		return \is_array($groups) ? $groups : [];
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
-		$allowedGroups = $this->getAllowedGroupIds();
+		$allowedGroups = $this->getAllowedTalkGroupIds();
+		if (empty($allowedGroups)) {
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getAllowedConversationsGroupIds(): array {
+		$groups = $this->config->getAppValue('spreed', 'start_conversations', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	public function isNotAllowedToCreateConversations(IUser $user): bool {
+		$allowedGroups = $this->getAllowedConversationsGroupIds();
 		if (empty($allowedGroups)) {
 			return false;
 		}

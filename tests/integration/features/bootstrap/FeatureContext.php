@@ -68,6 +68,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array */
 	protected $createdGroups = [];
 
+	/** @var array */
+	protected $changedConfigs = [];
+
 	/** @var SharingContext */
 	private $sharingContext;
 
@@ -901,6 +904,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^the following app config is set$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function setAppConfig(TableNode $formData): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		foreach ($formData->getRows() as $row) {
+			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/spreed/' . $row[0], [
+				'value' => $row[1],
+			]);
+			$this->changedConfigs[] = $row[0];
+		}
+		$this->setCurrentUser($currentUser);
+	}
+
+	/**
 	 * @BeforeScenario
 	 * @AfterScenario
 	 */
@@ -908,6 +928,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/apps/spreedcheats/');
+		foreach ($this->changedConfigs as $config) {
+			$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/spreed/' . $config);
+		}
+
 		$this->setCurrentUser($currentUser);
 	}
 
