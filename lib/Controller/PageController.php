@@ -244,7 +244,7 @@ class PageController extends Controller {
 
 		$this->initialStateService->provideInitialState(
 			'talk', 'start_conversations',
-			!$this->config->isNotAllowedToCreateConversations($user)
+			!$this->talkConfig->isNotAllowedToCreateConversations($user)
 		);
 
 		$this->initialStateService->provideInitialState(
