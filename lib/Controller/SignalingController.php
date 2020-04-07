@@ -39,6 +39,9 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -52,7 +55,11 @@ class SignalingController extends OCSController {
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
 	/** @var Config */
-	private $config;
+	private $talkConfig;
+	/** @var IConfig */
+	private $serverConfig;
+	/** @var ICache */
+	private $cache;
 	/** @var TalkSession */
 	private $session;
 	/** @var Manager */
@@ -74,7 +81,9 @@ class SignalingController extends OCSController {
 
 	public function __construct(string $appName,
 								IRequest $request,
-								Config $config,
+								Config $talkConfig,
+								IConfig $serverConfig,
+								ICacheFactory $cacheFactory,
 								TalkSession $session,
 								Manager $manager,
 								IDBConnection $connection,
@@ -85,7 +94,9 @@ class SignalingController extends OCSController {
 								IClientService $clientService,
 								?string $UserId) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
+		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
@@ -100,13 +111,83 @@ class SignalingController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
-	 * Only available for logged in users because guests can not use the apps
-	 * right now.
-	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getSettings(): DataResponse {
-		return new DataResponse($this->config->getSettings($this->userId));
+	public function getSettings(string $token = ''): DataResponse {
+		$stun = [];
+		$stunServer = $this->talkConfig->getStunServer();
+		if ($stunServer) {
+			$stun[] = [
+				'url' => 'stun:' . $stunServer,
+			];
+		}
+
+		$turn = [];
+		$turnSettings = $this->talkConfig->getTurnSettings();
+		if (!empty($turnSettings['server'])) {
+			$protocols = explode(',', $turnSettings['protocols']);
+			foreach ($protocols as $proto) {
+				$turn[] = [
+					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'username' => $turnSettings['username'],
+					'credential' => $turnSettings['password'],
+				];
+			}
+		}
+
+		$signaling = '';
+		$servers = $this->talkConfig->getSignalingServers();
+		if (!empty($servers)) {
+			try {
+				$serverId = random_int(0, count($servers) - 1);
+			} catch (\Exception $e) {
+				$serverId = 0;
+			}
+			$signalingClusterMode = $this->serverConfig->getAppValue('spreed', 'hpb_cluster_mode', '');
+			if ($signalingClusterMode === 'conversation') {
+				try {
+					$serverId = $this->getSignalingServerForConversation($this->userId, $serverId, $token);
+				} catch (RoomNotFoundException $e) {
+					return new DataResponse([], Http::STATUS_NOT_FOUND);
+				}
+			}
+			$signaling = $servers[$serverId]['server'];
+		}
+
+		return new DataResponse([
+			'userId' => $this->userId,
+			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
+			'server' => $signaling,
+			'ticket' => $this->talkConfig->getSignalingTicket($this->userId),
+			'stunservers' => $stun,
+			'turnservers' => $turn,
+		]);
+	}
+
+	/**
+	 * @param string|null $userId
+	 * @param int $randomServerId
+	 * @param string $token
+	 * @throws RoomNotFoundException
+	 * @return int
+	 */
+	protected function getSignalingServerForConversation(?string $userId, int $randomServerId, string $token): int {
+		$room = $this->manager->getRoomForParticipantByToken($token, $userId);
+		$serverId = $room->getAssignedSignalingServer();
+
+		if ($serverId === null) {
+			// Avoid concurrency issues
+			$serverId = $this->cache->get($token);
+			if ($serverId === null) {
+				$this->cache->set($token, $randomServerId);
+				$serverId = $randomServerId;
+				$room->setAssignedSignalingServer($randomServerId);
+			}
+		}
+
+		return $serverId;
 	}
 
 	/**
@@ -117,7 +198,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getWelcomeMessage(int $serverId): DataResponse {
-		$signalingServers = $this->config->getSignalingServers();
+		$signalingServers = $this->talkConfig->getSignalingServers();
 		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -161,7 +242,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function signaling(string $token, string $messages): DataResponse {
-		$signaling = $this->config->getSignalingServers();
+		$signaling = $this->talkConfig->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
@@ -207,7 +288,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pullMessages(string $token): DataResponse {
-		$signaling = $this->config->getSignalingServers();
+		$signaling = $this->talkConfig->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
@@ -332,7 +413,7 @@ class SignalingController extends OCSController {
 		if (empty($checksum)) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
+		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getSignalingSecret());
 		return hash_equals($hash, strtolower($checksum));
 	}
 
@@ -394,7 +475,7 @@ class SignalingController extends OCSController {
 	private function backendAuth(array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
-		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
+		if (!$this->talkConfig->validateSignalingTicket($userId, $params['ticket'])) {
 			return new DataResponse([
 				'type' => 'error',
 				'error' => [

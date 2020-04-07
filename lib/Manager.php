@@ -140,6 +140,11 @@ class Manager {
 			]));
 		}
 
+		$assignedSignalingServer = $row['assigned_hpb'];
+		if ($assignedSignalingServer !== null) {
+			$assignedSignalingServer = (int) $assignedSignalingServer;
+		}
+
 		return new Room(
 			$this,
 			$this->db,
@@ -151,6 +156,7 @@ class Manager {
 			(int) $row['type'],
 			(int) $row['read_only'],
 			(int) $row['lobby_state'],
+			$assignedSignalingServer,
 			(string) $row['token'],
 			(string) $row['name'],
 			(string) $row['password'],

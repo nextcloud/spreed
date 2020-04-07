@@ -124,6 +124,8 @@ class Room {
 	private $readOnly;
 	/** @var int */
 	private $lobbyState;
+	/** @var int|null */
+	private $assignedSignalingServer;
 	/** @var \DateTime|null */
 	private $lobbyTimer;
 	/** @var string */
@@ -162,6 +164,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $lobbyState,
+								?int $assignedSignalingServer,
 								string $token,
 								string $name,
 								string $password,
@@ -183,6 +186,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->lobbyState = $lobbyState;
+		$this->assignedSignalingServer = $assignedSignalingServer;
 		$this->token = $token;
 		$this->name = $name;
 		$this->password = $password;
@@ -222,6 +226,10 @@ class Room {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
 			$this->setLobby(Webinary::LOBBY_NONE, null, true);
 		}
+	}
+
+	public function getAssignedSignalingServer(): ?int {
+		return $this->assignedSignalingServer;
 	}
 
 	public function getToken(): string {
@@ -497,6 +505,19 @@ class Room {
 
 		$this->activeGuests = 0;
 		$this->activeSince = null;
+
+		return (bool) $query->execute();
+	}
+
+	public function setAssignedSignalingServer(?int $signalingServer): bool {
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('assigned_hpb', $query->createNamedParameter($signalingServer))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($signalingServer !== null) {
+			$query->andWhere($query->expr()->isNull('assigned_hpb'));
+		}
 
 		return (bool) $query->execute();
 	}

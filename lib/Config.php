@@ -94,49 +94,6 @@ class Config {
 		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
 	}
 
-	public function getSettings(?string $userId): array {
-		$stun = [];
-		$stunServer = $this->getStunServer();
-		if ($stunServer) {
-			$stun[] = [
-				'url' => 'stun:' . $stunServer,
-			];
-		}
-		$turn = [];
-		$turnSettings = $this->getTurnSettings();
-		if (!empty($turnSettings['server'])) {
-			$protocols = explode(',', $turnSettings['protocols']);
-			foreach ($protocols as $proto) {
-				$turn[] = [
-					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'username' => $turnSettings['username'],
-					'credential' => $turnSettings['password'],
-				];
-			}
-		}
-
-		$signaling = [];
-		$servers = $this->getSignalingServers();
-		if (!empty($servers)) {
-			try {
-				$signaling = $servers[random_int(0, count($servers) - 1)];
-			} catch (\Exception $e) {
-				$signaling = $servers[0];
-			}
-			$signaling = $signaling['server'];
-		}
-
-		return [
-			'userId' => $userId,
-			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
-			'server' => $signaling,
-			'ticket' => $this->getSignalingTicket($userId),
-			'stunservers' => $stun,
-			'turnservers' => $turn,
-		];
-	}
-
 	/**
 	 * @return string[]
 	 */
