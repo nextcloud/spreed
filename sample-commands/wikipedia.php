@@ -42,42 +42,39 @@ if ($searchTerm === '--help') {
 
 $endpoint = 'https://en.wikipedia.org/w/api.php';
 $parameters = [
-	'action' => 'opensearch',
+	'action' => 'query',
+	'generator' => 'prefixsearch',
+	'gpssearch' => $searchTerm,
+	'prop' => 'description|info',
 	'format' => 'json',
 	'formatversion' => 2,
-	'search' => $searchTerm,
+	'inprop' => 'url',
 ];
 $content = file_get_contents($endpoint . '?' . http_build_query($parameters));
 $results = json_decode($content, true);
-[, $titles, $descriptions, $links] = $results;
+$pages = $results['query']['pages'];
 
-$numArticles = count($titles);
+$numArticles = count($pages);
 if ($numArticles === 0) {
 	echo 'Wikipedia did not have any results for "' . $searchTerm . '" :(' . "\n";
 	return;
 }
 
-if ($numArticles !== count($descriptions) || $numArticles !== count($links)) {
-	echo 'Result returned from wikipedia is maleformed';
-	return 1;
-}
-
 $response = 'Wikipedia search results for "' . $searchTerm . '":' . "\n";
-
 $maxArticles = $numArticles > 7 ? 5 : $numArticles;
 $length = (int) ((800 - strlen($response)) / $maxArticles);
 
-foreach ($titles as $key => $title) {
+foreach ($pages as $key => $page) {
 	if ($key >= $maxArticles) {
 		break;
 	}
 
-	$link = " - {$links[$key]}\n";
-	$remainingLength = max(strlen($title),$length - strlen($link));
-	if ($remainingLength < strlen("* $title - {$descriptions[$key]}")) {
-		$response .= substr("* $title - {$descriptions[$key]}", 0, $remainingLength) . '…' . $link;
+	$link = " - {$page['canonicalurl']}\n";
+	$remainingLength = max(strlen($page['title']),$length - strlen($link));
+	if ($remainingLength < strlen("* {$page['title']} - {$page['description']}")) {
+		$response .= substr("* {$page['title']} - {$page['description']}", 0, $remainingLength) . '…' . $link;
 	} else {
-		$response .= "* $title - {$descriptions[$key]}" . $link;
+		$response .= "* {$page['title']} - {$page['description']}" . $link;
 	}
 }
 
