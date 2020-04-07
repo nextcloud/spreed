@@ -458,14 +458,16 @@ class SignalingController extends OCSController {
 			]);
 		}
 
+		$pingSessionIds = [];
 		$now = $this->timeFactory->getTime();
 		foreach ($request['entries'] as $entry) {
-			if (array_key_exists('userid', $entry)) {
-				$room->ping($entry['userid'], $entry['sessionid'], $now);
-			} else {
-				$room->ping('', $entry['sessionid'], $now);
+			if ($entry['sessionid'] !== '0') {
+				$pingSessionIds[] = $entry['sessionid'];
 			}
 		}
+
+		// Ping all active sessions with one query
+		$room->pingSessionIds($pingSessionIds, $now);
 
 		$response = [
 			'type' => 'room',
