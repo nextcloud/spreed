@@ -47,7 +47,7 @@ const browserCheck = {
 		},
 		// Used both in the toast and in the callbutton tooltip
 		unsupportedWarning() {
-			return t('spreed', "The browser you're using is not fully supported by talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari.")
+			return t('spreed', "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari.")
 		},
 		// Used in CallButton.vue
 		callButtonTooltipText() {
