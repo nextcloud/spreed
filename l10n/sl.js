@@ -216,6 +216,7 @@ OC.L10N.register(
     "Enable video" : "Omogoči video",
     "Screensharing options" : "Možnosti prikazovanja zaslona",
     "Enable screensharing" : "Omogoči souporabo zaslona",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Souporaba zaslona deluje le na različici brskalnika 52 ali višji.",
     "An error occurred while starting screensharing." : "Prišlo je do napake med omogočanjem souporabe zaslona.",
     "You have been muted by a moderator" : "Moderator vas je začasno utišal",
     "Your screen" : "Vaš zaslon",
