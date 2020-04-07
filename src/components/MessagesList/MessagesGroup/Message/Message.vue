@@ -388,7 +388,7 @@ export default {
 			position: relative;
 			display: flex;
 			color: var(--color-text-maxcontrast);
-			font-size: 14px;
+			font-size: $chat-font-size;
 			flex: 1 0 80px;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
