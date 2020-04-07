@@ -150,6 +150,8 @@ class SignalingController extends OCSController {
 			}
 
 			return new DataResponse($data);
+		} catch (\GuzzleHttp\Exception\ConnectException $e) {
+			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}

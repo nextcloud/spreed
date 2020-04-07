@@ -85,6 +85,7 @@ export default {
 			checked: false,
 			customError: '',
 			versionFound: '',
+			canNotConnect: false,
 			responseNotValidJson: false,
 			versionNotSupported: false,
 		}
@@ -94,6 +95,9 @@ export default {
 		connectionState() {
 			if (!this.checked) {
 				return t('spreed', 'Status: Checking connection')
+			}
+			if (this.canNotConnect) {
+				return t('spreed', 'Error: Can not connect to server')
 			}
 			if (this.responseNotValidJson) {
 				return t('spreed', 'Error: Server did not respond with proper JSON')
@@ -140,6 +144,7 @@ export default {
 
 			this.customError = ''
 			this.versionFound = ''
+			this.canNotConnect = false
 			this.responseNotValidJson = false
 			this.versionNotSupported = false
 
@@ -150,7 +155,9 @@ export default {
 			} catch (exception) {
 				this.checked = true
 				this.customError = t('spreed', 'Error: Unknown error occurred')
-				if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
+				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
+					this.canNotConnect = true
+				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
 					this.responseNotValidJson = true
 				} else if (exception.response.data.ocs.data.error === 'VERSION_TOO_OLD') {
 					this.versionNotSupported = true
