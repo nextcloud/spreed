@@ -298,7 +298,7 @@ export default {
 			return richParameters
 		},
 
-		// Determines wether the date has to be displayed or not
+		// Determines whether the date has to be displayed or not
 		hasDate() {
 			return this.isSystemMessage || (!this.isTemporary && !this.showActions) || this.isTallEnough
 		},
