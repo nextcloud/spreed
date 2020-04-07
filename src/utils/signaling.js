@@ -39,6 +39,11 @@ import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import {
+	showError,
+	showWarning,
+} from '@nextcloud/dialogs'
+
 const Signaling = {
 	Base: {},
 	Internal: {},
@@ -82,6 +87,8 @@ function Base(settings) {
 	this.handlers = {}
 	this.features = {}
 	this._sendVideoIfAvailable = true
+	this.signalingConnectionWarning = null
+	this.signalingConnectionError = null
 }
 
 Signaling.Base = Base
@@ -576,7 +583,16 @@ Signaling.Standalone.prototype.reconnect = function() {
 }
 
 Signaling.Standalone.prototype.connect = function() {
-	console.log('Connecting to', this.url)
+
+	if (this.signalingConnectionWarning === null) {
+		setTimeout(() => {
+			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
+				timeout: 0,
+			})
+		}, 2000)
+	}
+
+	console.debug('Connecting to', this.url)
 	this.callbacks = {}
 	this.id = 1
 	this.pendingMessages = []
@@ -585,16 +601,41 @@ Signaling.Standalone.prototype.connect = function() {
 	this.socket = new WebSocket(this.url)
 	window.signalingSocket = this.socket
 	this.socket.onopen = function(event) {
-		console.log('Connected', event)
+		console.debug('Connected', event)
+		if (this.signalingConnectionWarning !== null) {
+			this.signalingConnectionWarning.hideToast()
+			this.signalingConnectionWarning = null
+		}
+		if (this.signalingConnectionError !== null) {
+			this.signalingConnectionError.hideToast()
+			this.signalingConnectionError = null
+		}
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		this.sendHello()
 	}.bind(this)
 	this.socket.onerror = function(event) {
-		console.log('Error', event)
+		console.error('Error', event)
+		if (this.signalingConnectionWarning !== null) {
+			this.signalingConnectionWarning.hideToast()
+			this.signalingConnectionWarning = null
+		}
+		if (this.signalingConnectionError === null) {
+			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+				timeout: 0,
+			})
+		}
 		this.reconnect()
 	}.bind(this)
 	this.socket.onclose = function(event) {
-		console.log('Close', event)
+		console.debug('Close', event)
+		if (this.signalingConnectionWarning !== null) {
+			this.signalingConnectionWarning.hideToast()
+			this.signalingConnectionWarning = null
+		}
+		if (this.signalingConnectionError !== null) {
+			this.signalingConnectionError.hideToast()
+			this.signalingConnectionError = null
+		}
 		this.reconnect()
 	}.bind(this)
 	this.socket.onmessage = function(event) {
