@@ -1,6 +1,8 @@
 <!--
   - @copyright Copyright (c) 2020, Daniel Calviño Sánchez <danxuliu@gmail.com>
   -
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  -
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
@@ -56,6 +58,7 @@ import {
 	getSignaling,
 	getSignalingSync,
 } from './utils/webrtc/index'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 
@@ -67,6 +70,8 @@ export default {
 		ChatView,
 		PreventUnload,
 	},
+
+	mixins: [browserCheck],
 
 	props: {
 		shareToken: {
@@ -124,6 +129,11 @@ export default {
 				leaveConversationSync(this.token)
 			}
 		})
+	},
+
+	mounted() {
+		// see browserCheck mixin
+		this.checkBrowser()
 	},
 
 	methods: {
