@@ -231,11 +231,7 @@ class PageController extends Controller {
 			$this->appManager->isEnabledForUser('circles', $user)
 		);
 
-		$params = [
-			'token' => $token,
-			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
-		];
-		$response = new TemplateResponse($this->appName, 'index', $params);
+		$response = new TemplateResponse($this->appName, 'index');
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
@@ -284,11 +280,7 @@ class PageController extends Controller {
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
 		);
 
-		$params = [
-			'token' => $token,
-			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
-		];
-		$response = new PublicTemplateResponse($this->appName, 'index', $params);
+		$response = new PublicTemplateResponse($this->appName, 'index');
 		$response->setFooterVisible(false);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
