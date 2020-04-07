@@ -21,7 +21,14 @@
 
 <template>
 	<button v-if="showStartCallButton"
-		:disabled="startCallButtonDisabled || loading"
+		v-tooltip="{
+			placement: 'auto',
+			trigger: 'hover',
+			content: callButtonTooltipText,
+			autoHide: false,
+			html: true
+		}"
+		:disabled="startCallButtonDisabled || loading || blockCalls"
 		class="top-bar__button primary"
 		@click="joinCall">
 		<span
@@ -42,9 +49,17 @@
 
 <script>
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
+import browserCheck from '../../mixins/browserCheck'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 export default {
 	name: 'CallButton',
+
+	directives: {
+		Tooltip,
+	},
+
+	mixins: [browserCheck],
 
 	data() {
 		return {

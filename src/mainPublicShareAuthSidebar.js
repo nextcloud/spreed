@@ -30,6 +30,9 @@ import store from './store'
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 
+// Plugins
+import browserDetect from 'vue-browser-detect-plugin'
+
 // Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueShortKey from 'vue-shortkey'
@@ -52,6 +55,7 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+Vue.use(browserDetect)
 
 /**
  * Wraps all the body contents in its own container.
