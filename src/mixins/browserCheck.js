@@ -38,14 +38,17 @@ const browserCheck = {
 		isFullySupported() {
 			return (this.$browserDetect.isFirefox && this.$browserDetect.meta.version >= 52)
 			|| (this.$browserDetect.isChrome && this.$browserDetect.meta.version >= 49)
+			|| (this.$browserDetect.isSafari && this.$browserDetect.meta.version >= 12)
+			|| this.$browserDetect.isEdge
 		},
 		// Disable the call button and show the tooltip
 		blockCalls() {
 			return (this.$browserDetect.isFirefox && this.$browserDetect.meta.version < 52)
 			|| (this.$browserDetect.isChrome && this.$browserDetect.meta.version < 49)
+			|| (this.$browserDetect.isSafari && this.$browserDetect.meta.version < 12)
 			|| this.$browserDetect.isIE
 		},
-		// Used both in the toast and in the callbutton tooltip
+		// Used both in the toast and in the call button tooltip
 		unsupportedWarning() {
 			return t('spreed', "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari.")
 		},
@@ -54,7 +57,7 @@ const browserCheck = {
 			if (this.blockCalls) {
 				return this.unsupportedWarning
 			} else {
-				// Passind a falsy value into the content of the tooltip
+				// Passing a falsy value into the content of the tooltip
 				// is the only way to disable it conditionally.
 				return false
 			}
