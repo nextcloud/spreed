@@ -1,12 +1,12 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "Almal",
     "Save changes" : "Bewaar veranderinge",
     "Saving …" : "Word gestoor …",
     "Saved!" : "Gestoor!",
     "None" : "Geen",
     "User" : "Gebruiker",
-    "Everyone" : "Almal",
     "Users" : "Gebruikers",
     "Name" : "Naam",
     "Saved" : "Bewaar",
@@ -15,8 +15,8 @@ OC.L10N.register(
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
     "Contacts" : "Kontakte",
-    "Groups" : "Groepe",
     "Loading" : "Laai tans..",
+    "Groups" : "Groepe",
     "Error" : "Fout",
     "Password protect" : "Beskerm met 'n wagwoord",
     "Back" : "Terug",
