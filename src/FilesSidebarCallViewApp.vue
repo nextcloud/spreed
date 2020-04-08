@@ -1,6 +1,8 @@
 <!--
   - @copyright Copyright (c) 2019, Daniel Calviño Sánchez <danxuliu@gmail.com>
   -
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  -
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
@@ -32,6 +34,7 @@
 import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 
@@ -41,6 +44,8 @@ export default {
 		CallView,
 		PreventUnload,
 	},
+
+	mixins: [browserCheck],
 
 	data() {
 		return {
@@ -146,6 +151,11 @@ export default {
 
 			this.restoreSidebarHeaderContents()
 		},
+	},
+
+	mounted() {
+		// see browserCheck mixin
+		this.checkBrowser()
 	},
 
 	methods: {
