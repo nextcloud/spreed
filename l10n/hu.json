@@ -47,13 +47,12 @@
     "This conversation has ended" : "Ez a beszélgetés véget ért",
     "Limit to groups" : "Csoportokra korlátozás",
     "Guests can still join public conversations." : "A vendégek még mindig képesek hozzácsatlakozni a nyilvános beszélgetésekhez.",
-    "Limit app usage to groups." : "Az alkalmazás használatának csoportokra korlátozása.",
+    "Everyone" : "Mindenki",
     "Save changes" : "Változások mentése",
     "Saving …" : "Mentés ...",
     "Saved!" : "Elmentve!",
     "None" : "Nincs",
     "User" : "Felhasználó",
-    "Everyone" : "Mindenki",
     "Disabled" : "Letiltva",
     "Users" : "Felhasználók",
     "Commands" : "Parancsok",
@@ -103,9 +102,9 @@
     "Add to favorites" : "Hozzáadás a kedvencekhez ",
     "Conversations" : "Beszélgetések",
     "Contacts" : "Névjegyek",
+    "Loading" : "Betöltés",
     "Groups" : "Csoportok",
     "Circles" : "Körök",
-    "Loading" : "Betöltés",
     "Error" : "Hiba",
     "Password protect" : "Jelszóvédelem",
     "Back" : "Vissza",
@@ -213,6 +212,7 @@
     "A group call has started" : "Csoportos hívás kezdődött",
     "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Video- és audiokonferencia WebRTC segítségével\n\n* 💬 **Csevegés-integráció!** A Nextcloud Beszélgetés egy egyszerű szöveges csevegővel érkezik a Nextcloud 13 óta. További funkciók vannak tervben a jövőbeli verziókban.\n* 👥 **Privát, csoportos, nyilvános és jelszóval védett hívások!** Csak hívjon meg valakit, egy teljes csoportot vagy küldjön nyilvános hivatkozást, hogy meghívjon valakit egy hívásba.\n* 💻 **Képernyőmegosztás!** A képernyője megosztása a hívás résztvevőivel.\n* 🚀 **Integráció a többi Nextcloud alkalmazással!** Jelenleg a Névjegyekkel és a Felhasználókkal – továbbiak készülőben.\n* 🙈 **Nem találjuk fel újra a kereket!** A nagyszerű [simpleWebRTC](https://simplewebrtc.com/) programkönyvtár alapjain.\n\nÉs készülőben az [elkövetkező verziókhoz](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Föderált hívások](https://github.com/nextcloud/spreed/issues/21), hogy más Nextcloud példányokon lévő felhasználókat hívhasson",
     "This call is password-protected" : "Ez a hívás jelszóval védett",
-    "Signaling server" : "Jelző szerver"
+    "Signaling server" : "Jelző szerver",
+    "Limit app usage to groups." : "Az alkalmazás használatának csoportokra korlátozása."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

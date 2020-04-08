@@ -7,13 +7,12 @@ OC.L10N.register(
     "Invalid date, date format must be YYYY-MM-DD" : "無效的日期，需為 YYYY-MM-DD 格式",
     "Leave call" : "離開通話",
     "Limit to groups" : "限制給特定群組",
-    "Limit app usage to groups." : "限制群組的使用率:",
+    "Everyone" : "所有人",
     "Save changes" : "儲存變更",
     "Saving …" : "儲存中 ...",
     "Saved!" : "已儲存!",
     "None" : "無",
     "User" : "使用者",
-    "Everyone" : "所有人",
     "Disabled" : "停用",
     "Moderators" : "主持人",
     "Users" : "使用者",
@@ -35,8 +34,8 @@ OC.L10N.register(
     "Remove from favorites" : "取消我的最愛",
     "Add to favorites" : "加到我的最愛",
     "Contacts" : "聯絡人",
-    "Groups" : "群組",
     "Loading" : "載入中",
+    "Groups" : "群組",
     "Invalid path selected" : "所選的路徑無效",
     "Error" : "錯誤",
     "Password protect" : "密碼防護",
@@ -102,6 +101,7 @@ OC.L10N.register(
     "Never notify" : "取消提醒",
     ", " : "，",
     "Enter name for a new conversation" : "輸入新對話名稱",
-    "Room name can not be empty" : "名稱不能空白"
+    "Room name can not be empty" : "名稱不能空白",
+    "Limit app usage to groups." : "限制群組的使用率:"
 },
 "nplurals=1; plural=0;");

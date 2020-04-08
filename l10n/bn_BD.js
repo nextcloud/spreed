@@ -1,9 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "সকলে",
     "None" : "কোনটিই নয়",
     "User" : "User",
-    "Everyone" : "সকলে",
     "Disabled" : "অকার্যকর",
     "Users" : "ব্যবহারকারী",
     "Name" : "নাম",
@@ -13,8 +13,8 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "পরিচিতজন",
-    "Groups" : "গোষ্ঠীসমূহ",
     "Loading" : "Loading",
+    "Groups" : "গোষ্ঠীসমূহ",
     "Error" : "সমস্যা",
     "Password protect" : "কূটশব্দ সুরক্ষিত",
     "Back" : "পেছনে যাও",
