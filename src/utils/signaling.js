@@ -649,7 +649,10 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionError.hideToast()
 			this.signalingConnectionError = null
 		}
-		this.reconnect()
+		if (this.socket) {
+			console.debug('Reconnecting socket as the connection was closed unexpected')
+			this.reconnect()
+		}
 	}.bind(this)
 	this.socket.onmessage = function(event) {
 		let data = event.data
