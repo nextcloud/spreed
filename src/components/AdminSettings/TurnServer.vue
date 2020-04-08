@@ -56,7 +56,7 @@
 		</select>
 
 		<a v-show="!loading"
-			v-tooltip.auto="t('spreed', 'Test this server')"
+			v-tooltip.auto="testResult"
 			class="icon"
 			:class="testIconClasses"
 			@click="testServer" />
@@ -115,7 +115,17 @@ export default {
 				'icon-error': this.testingError,
 				'icon-checkmark': this.testingSuccess,
 			}
-		}
+		},
+		testResult() {
+			if (this.testingSuccess) {
+				return t('spreed', 'OK: Successful ICE candidates returned by the TURN server')
+			} else if (this.testingError) {
+				return t('spreed', 'Error: No working ICE candidates returned by the TURN server')
+			} else if (this.testing) {
+				return t('spreed', 'Testing whether the TURN server returns ICE candidates')
+			}
+			return t('spreed', 'Test this server')
+		},
 	},
 
 	data() {
@@ -221,7 +231,7 @@ export default {
 			setTimeout(() => {
 				this.testingError = false
 				this.testingSuccess = false
-			}, 3000)
+			}, 30000)
 
 			clearTimeout(timeout)
 		},
