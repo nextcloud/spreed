@@ -1,9 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "Hamı",
     "None" : "Heç bir",
     "User" : "User",
-    "Everyone" : "Hamı",
     "Disabled" : "Dayandırılıb",
     "Users" : "İstifadəçilər",
     "Name" : "Ad",
@@ -13,8 +13,8 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "Əlaqələr",
-    "Groups" : "Qruplar",
     "Loading" : "Loading",
+    "Groups" : "Qruplar",
     "Error" : "Səhv",
     "Close" : "Bağla",
     "Reply" : "Cavab",

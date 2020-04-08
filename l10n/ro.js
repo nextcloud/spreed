@@ -3,13 +3,12 @@ OC.L10N.register(
     {
     "Invalid date, date format must be YYYY-MM-DD" : "Dată invalidă, formatul trebuie să fie AAAA-LL-ZZ",
     "Limit to groups" : "Limitează pentru grupuri",
-    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri",
+    "Everyone" : "Toți",
     "Save changes" : "Salvează modificările",
     "Saving …" : "Se salvează",
     "Saved!" : "Salvat!",
     "None" : "Niciuna",
     "User" : "Utilizator",
-    "Everyone" : "Toți",
     "Disabled" : "Dezactivați",
     "Users" : "Utilizatori",
     "Name" : "Nume",
@@ -19,9 +18,9 @@ OC.L10N.register(
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
     "Contacts" : "Contacte",
+    "Loading" : "Loading",
     "Groups" : "Grupuri",
     "Circles" : "Cercuri",
-    "Loading" : "Loading",
     "Error" : "Eroare",
     "Password protect" : "Protejare cu parolă",
     "Back" : "Înapoi",
@@ -55,6 +54,7 @@ OC.L10N.register(
     "Send" : "Trimite",
     "Error while sharing" : "Eroare la partajare",
     "Favorited" : "Adăugate la favorite",
-    ", " : ","
+    ", " : ",",
+    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

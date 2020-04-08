@@ -22,12 +22,11 @@
     "Leave call" : "Leave call",
     "This conversation has ended" : "This conversation has ended",
     "Limit to groups" : "Limit to groups",
-    "Limit app usage to groups." : "Limit app usage to groups.",
+    "Everyone" : "Everyone",
     "Save changes" : "Save changes",
     "Saved!" : "Saved!",
     "None" : "None",
     "User" : "User",
-    "Everyone" : "Everyone",
     "Disabled" : "Disabled",
     "Users" : "Users",
     "Beta" : "Beta",
@@ -74,9 +73,9 @@
     "Add to favorites" : "Add to favourites",
     "Conversations" : "Conversations",
     "Contacts" : "Contacts",
+    "Loading" : "Loading",
     "Groups" : "Groups",
     "Circles" : "Circles",
-    "Loading" : "Loading",
     "Error" : "Error",
     "Password protect" : "Password protect",
     "Back" : "Back",
@@ -175,6 +174,7 @@
     "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds",
     "This call is password-protected" : "This call is password-protected",
     "Signaling server" : "Signaling server",
-    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device."
+    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device.",
+    "Limit app usage to groups." : "Limit app usage to groups."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
