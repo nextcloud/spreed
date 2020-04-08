@@ -110,11 +110,6 @@ export default {
 
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
-		handleInput(payload) {
-			const selectedConversationToken = payload.token
-			this.joinConversation(selectedConversationToken)
-			this.$router.push({ path: `/call/${selectedConversationToken}` })
-		},
 		async fetchConversations() {
 			/** Fetches the conversations from the server and then adds them one by one
 			 * to the store.
