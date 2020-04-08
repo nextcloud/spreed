@@ -750,8 +750,8 @@ class SignalingControllerTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn($roomToken);
 		$room->expects($this->once())
-			->method('ping')
-			->with($this->userId, $sessionId);
+			->method('pingSessionIds')
+			->with([$sessionId]);
 
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
@@ -786,8 +786,8 @@ class SignalingControllerTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn($roomToken);
 		$room->expects($this->once())
-			->method('ping')
-			->with('', $sessionId);
+			->method('pingSessionIds')
+			->with([$sessionId]);
 
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
@@ -797,6 +797,50 @@ class SignalingControllerTest extends \Test\TestCase {
 					[
 						'userid' => '',
 						'sessionid' => $sessionId,
+					],
+				],
+			],
+		]);
+		$this->assertSame([
+			'type' => 'room',
+			'room' => [
+				'version' => '1.0',
+				'roomid' => $roomToken,
+			],
+		], $result->getData());
+	}
+
+	public function testBackendPingMixedAndInactive() {
+		$roomToken = 'the-room';
+		$sessionId = 'the-session';
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with($roomToken)
+			->willReturn($room);
+		$room->expects($this->once())
+			->method('getToken')
+			->willReturn($roomToken);
+		$room->expects($this->once())
+			->method('pingSessionIds')
+			->with([$sessionId . '1', $sessionId . '2']);
+
+		$result = $this->performBackendRequest([
+			'type' => 'ping',
+			'ping' => [
+				'roomid' => $roomToken,
+				'entries' => [
+					[
+						'userid' => '',
+						'sessionid' => $sessionId . '1',
+					],
+					[
+						'userid' => $this->userId,
+						'sessionid' => $sessionId . '2',
+					],
+					[
+						'userid' => 'inactive',
+						'sessionid' => '0',
 					],
 				],
 			],
