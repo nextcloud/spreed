@@ -51,7 +51,6 @@ import {
 } from './services/participantsService'
 import { PARTICIPANT } from './constants'
 import {
-	connectSignaling,
 	signalingKill,
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
@@ -200,10 +199,6 @@ export default {
 			// Automatically join the conversation as well
 			joinConversation(this.$route.params.token)
 		}
-
-		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
-		// FIXME This was just added as a quick hack because of timing
-		connectSignaling()
 
 		window.addEventListener('resize', this.onResize)
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)

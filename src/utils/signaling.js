@@ -51,8 +51,9 @@ const Signaling = {
 	 * @param {string} token Conversation token to load the signaling settings for
 	 */
 	async loadSettings(token) {
+		this.settings = {}
 		const response = await fetchSignalingSettings(token)
-		this.settings = response.data.ocs.data
+		this.settings = Object.assign({ token }, response.data.ocs.data)
 	},
 
 	/**
@@ -194,28 +195,20 @@ Signaling.Base.prototype.leaveCurrentCall = function() {
 	})
 }
 
-Signaling.Base.prototype.joinRoom = function(token, password) {
+Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 	return new Promise((resolve, reject) => {
-		axios.post(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active', {
-			password: password,
-		})
-			.then(function(result) {
-				console.debug('Joined', result)
-				this.currentRoomToken = token
-				this._trigger('joinRoom', [token])
-				resolve()
-				if (this.currentCallToken === token) {
-					// We were in this call before, join again.
-					this.joinCall(token, this.currentCallFlags)
-				} else {
-					this.currentCallToken = null
-					this.currentCallFlags = null
-				}
-				this._joinRoomSuccess(token, result.data.ocs.data.sessionId)
-			}.bind(this))
-			.catch(function(result) {
-				reject(result)
-			})
+		console.debug('Joined')
+		this.currentRoomToken = token
+		this._trigger('joinRoom', [token])
+		resolve()
+		if (this.currentCallToken === token) {
+			// We were in this call before, join again.
+			this.joinCall(token, this.currentCallFlags)
+		} else {
+			this.currentCallToken = null
+			this.currentCallFlags = null
+		}
+		this._joinRoomSuccess(token, sessionId)
 	})
 }
 
@@ -230,18 +223,12 @@ Signaling.Base.prototype.leaveRoom = function(token) {
 			this._doLeaveRoom(token)
 
 			return new Promise((resolve, reject) => {
-				axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active')
-					.then(function() {
-						this._leaveRoomSuccess(token)
-						resolve()
-						// We left the current room.
-						if (token === this.currentRoomToken) {
-							this.currentRoomToken = null
-						}
-					}.bind(this))
-					.catch(function() {
-						reject(new Error())
-					})
+				this._leaveRoomSuccess(token)
+				resolve()
+				// We left the current room.
+				if (token === this.currentRoomToken) {
+					this.currentRoomToken = null
+				}
 			})
 		})
 }
@@ -559,7 +546,7 @@ Signaling.Standalone.prototype.connect = function() {
 		}, 2000)
 	}
 
-	console.debug('Connecting to', this.url)
+	console.debug('Connecting to ' + this.url + ' for ' + this.settings.token)
 	this.callbacks = {}
 	this.id = 1
 	this.pendingMessages = []
@@ -867,7 +854,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	}
 }
 
-Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
+Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
 	if (!this.sessionId) {
 		if (this._pendingJoinRoomPromise && this._pendingJoinRoomPromise.token === token) {
 			return this._pendingJoinRoomPromise
