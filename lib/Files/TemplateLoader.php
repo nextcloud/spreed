@@ -58,6 +58,9 @@ class TemplateLoader implements IEventListener {
 		Util::addStyle(Application::APP_ID, 'merged-files');
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar-loader');
+
+		// Needed to enable the screensharing extension in Chromium < 72.
+		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
 	}
 
 }
