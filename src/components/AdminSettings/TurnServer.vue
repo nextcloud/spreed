@@ -58,7 +58,7 @@
 		<a v-show="!loading"
 			v-tooltip.auto="t('spreed', 'Test this server')"
 			class="icon"
-			:class="{'icon-category-monitoring': !testing && !testingError && !testingSuccess, 'icon-loading-small': testing, 'icon-error': testingError, 'icon-checkmark': testingSuccess}"
+			:class="testIconClasses"
 			@click="testServer" />
 		<a v-show="!loading"
 			v-tooltip.auto="t('spreed', 'Delete this server')"
@@ -107,20 +107,22 @@ export default {
 		},
 	},
 
-	data: () => {
+	computed: {
+		testIconClasses() {
+			return {
+				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
+				'icon-loading-small': this.testing,
+				'icon-error': this.testingError,
+				'icon-checkmark': this.testingSuccess,
+			}
+		}
+	},
+
+	data() {
 		return {
-			testing: {
-				type: Boolean,
-				default: false,
-			},
-			testingError: {
-				type: Boolean,
-				default: false,
-			},
-			testingSuccess: {
-				type: Boolean,
-				default: false,
-			},
+			testing: false,
+			testingError: false,
+			testingSuccess: false,
 		}
 	},
 
