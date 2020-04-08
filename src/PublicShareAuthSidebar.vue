@@ -47,9 +47,7 @@ import {
 	joinConversation,
 	leaveConversationSync,
 } from './services/participantsService'
-import {
-	signalingKill,
-} from './utils/webrtc/index'
+import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
 
 export default {
