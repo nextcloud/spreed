@@ -82,6 +82,7 @@ function Base(settings) {
 	this.handlers = {}
 	this.features = {}
 	this._sendVideoIfAvailable = true
+	this.signalingConnectionTimeout = null
 	this.signalingConnectionWarning = null
 	this.signalingConnectionError = null
 }
@@ -550,7 +551,7 @@ Signaling.Standalone.prototype.reconnect = function() {
 
 Signaling.Standalone.prototype.connect = function() {
 	if (this.signalingConnectionWarning === null) {
-		setTimeout(() => {
+		this.signalingConnectionTimeout = setTimeout(() => {
 			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
 				timeout: 0,
 			})
@@ -567,6 +568,10 @@ Signaling.Standalone.prototype.connect = function() {
 	window.signalingSocket = this.socket
 	this.socket.onopen = function(event) {
 		console.debug('Connected', event)
+		if (this.signalingConnectionTimeout !== null) {
+			clearTimeout(this.signalingConnectionTimeout)
+			this.signalingConnectionTimeout = null
+		}
 		if (this.signalingConnectionWarning !== null) {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
@@ -580,6 +585,10 @@ Signaling.Standalone.prototype.connect = function() {
 	}.bind(this)
 	this.socket.onerror = function(event) {
 		console.error('Error', event)
+		if (this.signalingConnectionTimeout !== null) {
+			clearTimeout(this.signalingConnectionTimeout)
+			this.signalingConnectionTimeout = null
+		}
 		if (this.signalingConnectionWarning !== null) {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
@@ -593,6 +602,10 @@ Signaling.Standalone.prototype.connect = function() {
 	}.bind(this)
 	this.socket.onclose = function(event) {
 		console.debug('Close', event)
+		if (this.signalingConnectionTimeout !== null) {
+			clearTimeout(this.signalingConnectionTimeout)
+			this.signalingConnectionTimeout = null
+		}
 		if (this.signalingConnectionWarning !== null) {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
