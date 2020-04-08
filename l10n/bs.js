@@ -1,9 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "Svi",
     "None" : "Ništa",
     "User" : "User",
-    "Everyone" : "Svi",
     "Disabled" : "Onemogućeno",
     "Users" : "Korisnici",
     "Name" : "Ime",
@@ -12,8 +12,8 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "Kontakti",
-    "Groups" : "Grupe",
     "Loading" : "Loading",
+    "Groups" : "Grupe",
     "Error" : "Greška",
     "Password protect" : "Zaštitita lozinkom",
     "Close" : "Zatvori",
