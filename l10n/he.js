@@ -26,13 +26,12 @@ OC.L10N.register(
     "Error requesting the password." : "בקשת הססמה נכשלה.",
     "This conversation has ended" : "הדיון הסתיים",
     "Limit to groups" : "הגבלה לקבוצות",
-    "Limit app usage to groups." : "להגביל את השימוש ביישומון לקבוצות.",
+    "Everyone" : "כולם",
     "Save changes" : "שמירת שינויים",
     "Saving …" : "מתבצעת שמירה…",
     "Saved!" : "נשמר!",
     "None" : "אין",
     "User" : "משתמש",
-    "Everyone" : "כולם",
     "Disabled" : "מושבת",
     "Users" : "משתמשים",
     "Name" : "שם",
@@ -80,8 +79,8 @@ OC.L10N.register(
     "Add to favorites" : "הוספה למועדפים",
     "Conversations" : "דיונים",
     "Contacts" : "אנשי קשר",
-    "Groups" : "קבוצות",
     "Loading" : "בטעינה",
+    "Groups" : "קבוצות",
     "Invalid path selected" : "הנתיב שנבחר שגוי",
     "Error" : "שגיאה",
     "Password protect" : "הגנה בססמה",
@@ -179,6 +178,7 @@ OC.L10N.register(
     "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "This call is password-protected" : "שיחה זו מוגנת בססמה",
     "Signaling server" : "שרת איתות",
-    "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר."
+    "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר.",
+    "Limit app usage to groups." : "להגביל את השימוש ביישומון לקבוצות."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

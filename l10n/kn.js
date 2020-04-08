@@ -1,9 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "﻿ಪ್ರತಿಯೊಬ್ಬರೂ",
     "None" : "﻿ಯಾವುದೂ ಇಲ್ಲ",
     "User" : "User",
-    "Everyone" : "﻿ಪ್ರತಿಯೊಬ್ಬರೂ",
     "Disabled" : "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
     "Users" : "﻿ಬಳಕೆದಾರರು",
     "Name" : "﻿ಹೆಸರು",
@@ -11,8 +11,8 @@ OC.L10N.register(
     "Favorite" : "ಅಚ್ಚುಮೆಚ್ಚಿನ",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Groups" : "﻿ಗುಂಪುಗಳು",
     "Loading" : "Loading",
+    "Groups" : "﻿ಗುಂಪುಗಳು",
     "Error" : "﻿ತಪ್ಪಾಗಿದೆ",
     "Password protect" : "﻿ಗುಪ್ತಪದ ರಕ್ಷಿಸಿಕೂಳ್ಲಿ",
     "Close" : "ಮುಚ್ಚು",

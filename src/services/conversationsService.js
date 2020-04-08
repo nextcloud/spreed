@@ -45,16 +45,21 @@ const fetchConversation = async function(token) {
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
  * @param {string} [token] The token of the conversation (if any)
+ * @param {boolean} [onlyUsers] Only return users
  */
-const searchPossibleConversations = async function(searchText, token) {
+const searchPossibleConversations = async function(searchText, token, onlyUsers) {
 	token = token || 'new'
+	onlyUsers = !!onlyUsers
 	const shareTypes = [
 		SHARE.TYPE.USER,
-		SHARE.TYPE.GROUP,
-		SHARE.TYPE.CIRCLE,
 	]
-	if (token !== 'new') {
-		shareTypes.push(SHARE.TYPE.EMAIL)
+
+	if (!onlyUsers) {
+		shareTypes.push(SHARE.TYPE.GROUP)
+		shareTypes.push(SHARE.TYPE.CIRCLE)
+		if (token !== 'new') {
+			shareTypes.push(SHARE.TYPE.EMAIL)
+		}
 	}
 
 	try {

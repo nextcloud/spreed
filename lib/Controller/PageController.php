@@ -52,6 +52,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Util;
 
 class PageController extends Controller {
 	/** @var string|null */
@@ -233,9 +234,17 @@ class PageController extends Controller {
 			}
 		}
 
+		// Needed to enable the screensharing extension in Chromium < 72.
+		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+
 		$this->initialStateService->provideInitialState(
 			'talk', 'prefer_h264',
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
+		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'start_conversations',
+			!$this->talkConfig->isNotAllowedToCreateConversations($user)
 		);
 
 		$this->initialStateService->provideInitialState(
@@ -263,11 +272,7 @@ class PageController extends Controller {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
 
-		$params = [
-			'token' => $token,
-			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
-		];
-		$response = new TemplateResponse($this->appName, 'index', $params);
+		$response = new TemplateResponse($this->appName, 'index');
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
@@ -311,16 +316,15 @@ class PageController extends Controller {
 			}
 		}
 
+		// Needed to enable the screensharing extension in Chromium < 72.
+		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+
 		$this->initialStateService->provideInitialState(
 			'talk', 'prefer_h264',
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
 		);
 
-		$params = [
-			'token' => $token,
-			'signaling-settings' => $this->talkConfig->getSettings($this->userId),
-		];
-		$response = new PublicTemplateResponse($this->appName, 'index', $params);
+		$response = new PublicTemplateResponse($this->appName, 'index');
 		$response->setFooterVisible(false);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');

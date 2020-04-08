@@ -37,9 +37,9 @@ c) ...
 
 **Talk app version:** (see apps admin page: `/index.php/settings/apps`)
 
-**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk`)
 
-**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk`)
 
 
 ## Server configuration

@@ -37,7 +37,7 @@
 			<Multiselect v-model="allowedGroups"
 				class="allowed-groups-select"
 				:options="groups"
-				:placeholder="t('spreed', 'Limit app usage to groups.')"
+				:placeholder="t('spreed', 'Limit using Talk')"
 				:disabled="loading"
 				:multiple="true"
 				:searchable="true"
@@ -49,9 +49,46 @@
 
 			<button class="button primary"
 				:disabled="loading"
-				@click="saveChanges">
-				{{ saveButtonText }}
+				@click="saveAllowedGroups">
+				{{ saveLabelAllowedGroups }}
 			</button>
+		</p>
+
+		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
+		<p class="allowed-groups-settings-content">
+			<Multiselect v-model="canStartConversations"
+				class="allowed-groups-select"
+				:options="groups"
+				:placeholder="t('spreed', 'Limit creating conversations')"
+				:disabled="loading"
+				:multiple="true"
+				:searchable="true"
+				:tag-width="60"
+				:loading="loadingGroups"
+				:show-no-options="false"
+				:close-on-select="false"
+				@search-change="searchGroup" />
+
+			<button class="button primary"
+				:disabled="loading"
+				@click="saveStartConversationsGroups">
+				{{ saveLabelStartConversations }}
+			</button>
+		</p>
+
+		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
+		<p>
+			<Multiselect id="start_calls"
+				v-model="startCalls"
+				:options="startCallOptions"
+				:placeholder="t('spreed', 'Limit starting calls')"
+				label="label"
+				track-by="value"
+				:disabled="loading || loadingStartCalls"
+				@input="saveStartCalls" />
+		</p>
+		<p>
+			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
 	</div>
 </template>
@@ -62,6 +99,12 @@ import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
+
+const startCallOptions = [
+	{ value: 0, label: t('spreed', 'Everyone') },
+	{ value: 1, label: t('spreed', 'Users and moderators') },
+	{ value: 2, label: t('spreed', 'Moderators only') },
+]
 
 export default {
 	name: 'AllowedGroups',
@@ -74,16 +117,26 @@ export default {
 		return {
 			loading: false,
 			loadingGroups: false,
+			loadingStartCalls: false,
 			groups: [],
 			allowedGroups: [],
-			saveButtonText: t('spreed', 'Save changes'),
+			canStartConversations: [],
+			saveLabelAllowedGroups: t('spreed', 'Save changes'),
+			saveLabelStartConversations: t('spreed', 'Save changes'),
+
+			startCallOptions,
+			startCalls: startCallOptions[0],
 		}
 	},
 
 	mounted() {
 		this.loading = true
 		this.allowedGroups = loadState('talk', 'allowed_groups')
-		this.groups = this.allowedGroups
+		this.canStartConversations = loadState('talk', 'start_conversations')
+		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
+		this.groups = [...new Set(this.allowedGroups.concat(this.canStartConversations))].sort(function(a, b) {
+			return a.localeCompare(b)
+		})
 		this.loading = false
 
 		this.searchGroup('')
@@ -93,7 +146,11 @@ export default {
 		searchGroup: debounce(async function(query) {
 			this.loadingGroups = true
 			try {
-				const res = await axios.get(generateOcsUrl('cloud', 2) + `groups?offset=0&search=${encodeURIComponent(query)}&limit=20`)
+				const res = await axios.get(generateOcsUrl('cloud', 2) + 'groups', {
+					search: query,
+					limit: 20,
+					offset: 0,
+				})
 				// remove duplicates and sort
 				this.groups = [...new Set(res.data.ocs.data.groups)].sort(function(a, b) {
 					return a.localeCompare(b)
@@ -105,19 +162,46 @@ export default {
 			}
 		}, 500),
 
-		saveChanges() {
+		saveAllowedGroups() {
 			this.loading = true
 			this.loadingGroups = true
-			this.saveButtonText = t('spreed', 'Saving …')
+			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
 			OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(this.allowedGroups), {
 				success: function() {
 					this.loading = false
 					this.loadingGroups = false
-					this.saveButtonText = t('spreed', 'Saved!')
+					this.saveLabelAllowedGroups = t('spreed', 'Saved!')
 					setTimeout(function() {
-						this.saveButtonText = t('spreed', 'Save changes')
+						this.saveLabelAllowedGroups = t('spreed', 'Save changes')
 					}.bind(this), 5000)
+				}.bind(this),
+			})
+		},
+
+		saveStartConversationsGroups() {
+			this.loading = true
+			this.loadingGroups = true
+			this.saveLabelStartConversations = t('spreed', 'Saving …')
+
+			OCP.AppConfig.setValue('spreed', 'start_conversations', JSON.stringify(this.canStartConversations), {
+				success: function() {
+					this.loading = false
+					this.loadingGroups = false
+					this.saveLabelStartConversations = t('spreed', 'Saved!')
+					setTimeout(function() {
+						this.saveLabelStartConversations = t('spreed', 'Save changes')
+					}.bind(this), 5000)
+				}.bind(this),
+			})
+		},
+
+		saveStartCalls() {
+			this.loadingStartCalls = true
+
+			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
+				success: function() {
+					this.loadingStartCalls = false
 				}.bind(this),
 			})
 		},
@@ -136,5 +220,10 @@ export default {
 	button {
 		margin-left: 10px;
 	}
+}
+
+.multiselect {
+	flex-grow: 1;
+	max-width: 300px;
 }
 </style>

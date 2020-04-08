@@ -55,6 +55,7 @@ import {
 	getSignalingSync,
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 	name: 'App',
@@ -65,6 +66,9 @@ export default {
 		PreventUnload,
 		RightSidebar,
 	},
+
+	mixins: [browserCheck],
+
 	data: function() {
 		return {
 			savedLastMessageMap: {},
@@ -289,6 +293,11 @@ export default {
 		} else {
 			console.debug('Can not set current user because it\'s a guest')
 		}
+	},
+
+	mounted() {
+		// see browserCheck mixin
+		this.checkBrowser()
 	},
 
 	methods: {

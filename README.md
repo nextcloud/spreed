@@ -37,11 +37,32 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 ## Scalability 
 
-Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants. As most users are on an asymetric local internet connection, the sending bandwidth often becomes the bottleneck. A typical Nextcloud Talk instance can handle a few dozen calls, but each call can have only 4-6 participants depending on the participants' bandwidth.
+Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants.
 
-To limit bandwidth usage, Talk automatically disables video when a call is started in a room 5 or more participants. As long as nobody enables video, this saves bandwidth but once video is started a user has to leave the call and re-join for the stream to stop. Even a muted or disabled video stream is being send out. This is due to the technical implementation details of WebRTC which is used by Talk.
+A single video stream currently uses about 1 mbit/sec and the total required bandwidth can be calculated as follows:
 
-### Scaling beyond 5 users in a call
+```
+1 mbit/s * (participants - 1)
+```
+
+![](https://github.com/nextcloud/spreed/raw/e419b79819963a631ce811ffed432853ec4723c2/docs/HPB-P2P.svg.png)
+
+This means that in a call with 5 participants, each has to send and receive about 4 mbit/sec. Given the asymetric nature of most typical broadband connections, it is sending video that quickly becomes the bottleneck. Moreover, decoding all those video streams put a big strain on the system of each participant.
+
+To limit and CPU bandwidth usage, participants can disable video. This will drop the bandwidth use to audio only (about 50 kbit/sec), about 1/20th of the bandwidth of video, and eliminates most decoding work. When all participants are on a fast network, a call with 20 people without video could be doable.
+
+Still a call creates a load on the members' browsers (decoding streams) and on the server as it handles signaling. This, for example, has consequences also for the devices that support calls. Mobile device browsers will sooner run out of compute capacity and cause issues to the call. While we continously work to optimize Talk for performance, there is still work to be done so it is not unlikely that the bottleneck will be there for the time being. We very much welcome help in optimization of calls!
+
+### How to have the maximum number of participants in a call
+
+To make sure a call can sustain the largest number of participants, make sure that:
+* each participant has a fast upload and download
+* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will run out of computing power quickly) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par. On a laptop, plug in the power - this often results in better CPU performance.
+* each participant disables video
+
+With this setup, 20 users should be doable in a typical setup.
+
+### Scaling beyond 5-20 users in a call
 
 Nextcloud offers a partner product, the Talk High Performance Back-end, which deals with this scalability issue by including a Selective Forwarding Unit (SFU). Each participant sends one stream to the SFU which distributes it under the participants. This typically scales to 30-50 or even more active participants. Further more, the HPB setup also allows calls with hundreds of passive participants. With this number of participants is only limited by the bandwidth of the SFU setup. This is ideal for one-to-many streaming like webinars or remote teaching lessons.
 

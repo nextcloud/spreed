@@ -1,9 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Everyone" : "所有人",
     "None" : "空",
     "User" : "User",
-    "Everyone" : "所有人",
     "Disabled" : "停用",
     "Users" : "用戶",
     "Name" : "名稱",
@@ -12,8 +12,8 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "聯絡人",
-    "Groups" : "群組",
     "Loading" : "Loading",
+    "Groups" : "群組",
     "Error" : "錯誤",
     "Password protect" : "密碼保護",
     "Back" : "返回",

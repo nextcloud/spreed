@@ -65,6 +65,10 @@ class Capabilities implements IPublicCapability {
 			$attachments['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 		}
 
+		$conversations = [
+			'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
+		];
+
 		return [
 			'spreed' => [
 				'features' => [
@@ -97,6 +101,7 @@ class Capabilities implements IPublicCapability {
 					'chat' => [
 						'max-length' => $maxChatLength,
 					],
+					'conversations' => $conversations,
 				],
 			],
 		];

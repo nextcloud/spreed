@@ -103,12 +103,27 @@ class CapabilitiesTest extends TestCase {
 					'chat' => [
 						'max-length' => 1000,
 					],
+					'conversations' => [
+						'can-create' => false,
+					],
 				],
 			],
 		], $capabilities->getCapabilities());
 	}
 
-	public function testGetCapabilitiesUserAllowed(): void {
+	public function dataGetCapabilitiesUserAllowed(): array {
+		return [
+			[true, false],
+			[false, true],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetCapabilitiesUserAllowed
+	 * @param bool $isNotAllowed
+	 * @param bool $canCreate
+	 */
+	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate): void {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -132,6 +147,11 @@ class CapabilitiesTest extends TestCase {
 			->method('getAttachmentFolder')
 			->with('uid')
 			->willReturn('/Talk');
+
+		$this->talkConfig->expects($this->once())
+			->method('isNotAllowedToCreateConversations')
+			->with($user)
+			->willReturn($isNotAllowed);
 
 		$this->serverConfig->expects($this->once())
 			->method('getSystemValueString')
@@ -173,6 +193,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'chat' => [
 						'max-length' => 32000,
+					],
+					'conversations' => [
+						'can-create' => $canCreate,
 					],
 				],
 			],

@@ -69,14 +69,15 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
 		$this->initialStateService->provideInitialState('talk', 'default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
 	}
 
 	protected function initAllowedGroups(): void {
-		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $this->talkConfig->getAllowedGroupIds());
+		$this->initialStateService->provideInitialState('talk', 'start_conversations', $this->talkConfig->getAllowedConversationsGroupIds());
+		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
+		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $this->talkConfig->getAllowedTalkGroupIds());
 	}
 
 	protected function initCommands(): void {

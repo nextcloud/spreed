@@ -17,12 +17,11 @@ OC.L10N.register(
     "Invalid date, date format must be YYYY-MM-DD" : "Data inválida, o formato da data deve ser AAAA-MM-DD",
     "Leave call" : "Sair da chamada",
     "Limit to groups" : "Limitado a grupos",
-    "Limit app usage to groups." : "Limitar o uso da aplicação a grupos.",
+    "Everyone" : "Para todos",
     "Save changes" : "Guardar alterações",
     "Saved!" : "Gravado!",
     "None" : "Nenhum",
     "User" : "Utilizador",
-    "Everyone" : "Para todos",
     "Disabled" : "Desactivado",
     "Users" : "Utilizadores",
     "Name" : "Nome",
@@ -57,9 +56,9 @@ OC.L10N.register(
     "Add to favorites" : "Adicionar aos favoritos",
     "Conversations" : "Conversações",
     "Contacts" : "Contactos",
+    "Loading" : "A carregar",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
-    "Loading" : "A carregar",
     "Error" : "Erro",
     "Password protect" : "Proteger com palavra-passe",
     "Back" : "Anterior",
@@ -133,6 +132,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "Ecrã de {nomeDeParticipante}",
     "Guest's screen" : "Ecrã do convidado",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
-    ", " : ","
+    ", " : ",",
+    "Limit app usage to groups." : "Limitar o uso da aplicação a grupos."
 },
 "nplurals=2; plural=(n != 1);");
