@@ -614,7 +614,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionError.hideToast()
 			this.signalingConnectionError = null
 		}
-		if (this.socket) {
+		if (this.socket && event.code !== 1001) {
 			console.debug('Reconnecting socket as the connection was closed unexpected')
 			this.reconnect()
 		}
