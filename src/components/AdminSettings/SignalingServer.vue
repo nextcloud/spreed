@@ -87,7 +87,6 @@ export default {
 			versionFound: '',
 			canNotConnect: false,
 			responseNotValidJson: false,
-			versionNotSupported: false,
 		}
 	},
 
@@ -101,9 +100,6 @@ export default {
 			}
 			if (this.responseNotValidJson) {
 				return t('spreed', 'Error: Server did not respond with proper JSON')
-			}
-			if (this.versionNotSupported) {
-				return t('spreed', 'Error: Server version is too old')
 			}
 			if (this.customError) {
 				return this.customError
@@ -159,8 +155,6 @@ export default {
 					this.canNotConnect = true
 				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
 					this.responseNotValidJson = true
-				} else if (exception.response.data.ocs.data.error === 'VERSION_TOO_OLD') {
-					this.versionNotSupported = true
 				} else if (exception.response.data.ocs.data.error) {
 					this.customError = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
 				}
