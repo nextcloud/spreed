@@ -30,7 +30,15 @@ components.
 			<div class="quote__main__author">
 				<h6>{{ getDisplayName }}</h6>
 			</div>
-			<div class="quote__main__text">
+			<div v-if="isFileShareMessage"
+				class="quote__main__text">
+				<RichText
+					:text="message"
+					:arguments="richParameters"
+					:autolink="true" />
+			</div>
+			<div v-else
+				class="quote__main__text">
 				<p>{{ shortenedQuoteMessage }}</p>
 			</div>
 		</div>
@@ -48,12 +56,16 @@ components.
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import RichText from '@juliushaertl/vue-richtext'
+import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview'
+import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter'
 
 export default {
 	name: 'Quote',
 	components: {
 		Actions,
 		ActionButton,
+		RichText,
 	},
 	props: {
 		/**
@@ -121,6 +133,33 @@ export default {
 			}
 
 			return displayName
+		},
+
+		isFileShareMessage() {
+			return this.message === '{file}'
+				&& 'file' in this.messageParameters
+		},
+
+		richParameters() {
+			const richParameters = {}
+			Object.keys(this.messageParameters).forEach(function(p) {
+				const type = this.messageParameters[p].type
+				if (type === 'file') {
+					richParameters[p] = {
+						component: FilePreview,
+						props: Object.assign({
+							previewSize: 64,
+						}, this.messageParameters[p]
+						),
+					}
+				} else {
+					richParameters[p] = {
+						component: DefaultParameter,
+						props: this.messageParameters[p],
+					}
+				}
+			}.bind(this))
+			return richParameters
 		},
 
 		/**
