@@ -15,6 +15,7 @@ OC.L10N.register(
     "Users" : "Ususarios",
     "Name" : "Nombre",
     "General settings" : "Configuraciones generales",
+    "Off" : "Apagado",
     "Saved" : "Guardado",
     "TURN server protocols" : "Protocolos del servidor TURN",
     "UDP and TCP" : "UDP y TCP",

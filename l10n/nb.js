@@ -29,6 +29,7 @@ OC.L10N.register(
     "Users" : "Brukere",
     "Name" : "Navn",
     "General settings" : "Generelle innstillinger",
+    "Off" : "ett kvarter",
     "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Saved" : "Lagret",
     "Shared secret" : "Delt hemmelighet",
