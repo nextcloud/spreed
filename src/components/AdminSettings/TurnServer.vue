@@ -56,9 +56,9 @@
 		</select>
 
 		<a v-show="!loading"
-			v-tooltip.auto="t('spreed', 'Test this server')"
+			v-tooltip.auto="testResult"
 			class="icon"
-			:class="{'icon-category-monitoring': !testing && !testingError && !testingSuccess, 'icon-loading-small': testing, 'icon-error': testingError, 'icon-checkmark': testingSuccess}"
+			:class="testIconClasses"
 			@click="testServer" />
 		<a v-show="!loading"
 			v-tooltip.auto="t('spreed', 'Delete this server')"
@@ -107,20 +107,32 @@ export default {
 		},
 	},
 
-	data: () => {
+	computed: {
+		testIconClasses() {
+			return {
+				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
+				'icon-loading-small': this.testing,
+				'icon-error': this.testingError,
+				'icon-checkmark': this.testingSuccess,
+			}
+		},
+		testResult() {
+			if (this.testingSuccess) {
+				return t('spreed', 'OK: Successful ICE candidates returned by the TURN server')
+			} else if (this.testingError) {
+				return t('spreed', 'Error: No working ICE candidates returned by the TURN server')
+			} else if (this.testing) {
+				return t('spreed', 'Testing whether the TURN server returns ICE candidates')
+			}
+			return t('spreed', 'Test this server')
+		},
+	},
+
+	data() {
 		return {
-			testing: {
-				type: Boolean,
-				default: false,
-			},
-			testingError: {
-				type: Boolean,
-				default: false,
-			},
-			testingSuccess: {
-				type: Boolean,
-				default: false,
-			},
+			testing: false,
+			testingError: false,
+			testingSuccess: false,
 		}
 	},
 
@@ -219,7 +231,7 @@ export default {
 			setTimeout(() => {
 				this.testingError = false
 				this.testingSuccess = false
-			}, 3000)
+			}, 30000)
 
 			clearTimeout(timeout)
 		},
