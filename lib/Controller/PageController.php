@@ -32,6 +32,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCA\Talk\TInitialState;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -48,9 +49,11 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
-use OCP\Util;
 
 class PageController extends Controller {
+
+	use TInitialState;
+
 	/** @var string|null */
 	private $userId;
 	/** @var RoomController */
@@ -69,12 +72,6 @@ class PageController extends Controller {
 	private $notificationManager;
 	/** @var IAppManager */
 	private $appManager;
-	/** @var IInitialStateService */
-	private $initialStateService;
-	/** @var Config */
-	private $talkConfig;
-	/** @var IConfig */
-	private $serverConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -222,18 +219,7 @@ class PageController extends Controller {
 			}
 		}
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'prefer_h264',
-			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
-		);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'circles_enabled',
-			$this->appManager->isEnabledForUser('circles', $user)
-		);
+		$this->publishInitialStateForUser($user, $this->appManager);
 
 		$response = new TemplateResponse($this->appName, 'index');
 		$csp = new ContentSecurityPolicy();
@@ -283,13 +269,7 @@ class PageController extends Controller {
 			}
 		}
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'prefer_h264',
-			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
-		);
+		$this->publishInitialStateForGuest();
 
 		$response = new PublicTemplateResponse($this->appName, 'index');
 		$response->setFooterVisible(false);
