@@ -347,8 +347,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables';
+
 .new-message-form__advancedinput {
 	overflow: visible;
+	margin-left: 6px !important;
 	width: 100%;
 	border:none;
 	margin: 0;
@@ -358,7 +361,8 @@ export default {
 
 // Support for the placeholder text in the div contenteditable
 div[contenteditable] {
-	font-size: 14px;
+	font-size: $chat-font-size;
+	line-height: $chat-line-height;
 }
 
 // Support for the placeholder text in the div contenteditable

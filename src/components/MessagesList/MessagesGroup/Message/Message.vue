@@ -33,7 +33,9 @@ the main body of the message as well as a quote.
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
-		<div class="message__main">
+		<div
+			ref="messageMain"
+			class="message__main">
 			<div v-if="isSingleEmoji"
 				class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
@@ -51,7 +53,7 @@ the main body of the message as well as a quote.
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary" class="icon-loading-small" />
-				<h6 v-else>
+				<h6 v-if="hasDate">
 					{{ messageTime }}
 				</h6>
 				<Actions
@@ -200,6 +202,8 @@ export default {
 	data() {
 		return {
 			showActions: false,
+			// Is tall enough for both actions and date upon hovering
+			isTallEnough: false,
 		}
 	},
 
@@ -293,12 +297,23 @@ export default {
 			}.bind(this))
 			return richParameters
 		},
+
+		// Determines whether the date has to be displayed or not
+		hasDate() {
+			return this.isSystemMessage || (!this.isTemporary && !this.showActions) || this.isTallEnough
+		},
 	},
 
 	watch: {
 		showJoinCallButton() {
 			EventBus.$emit('scrollChatToBottom')
 		},
+	},
+
+	mounted() {
+		if (this.$refs.messageMain.clientHeight > 44) {
+			this.isTallEnough = true
+		}
 	},
 
 	methods: {
@@ -329,6 +344,8 @@ export default {
 
 .message {
 	padding: 4px;
+	font-size: $chat-font-size;
+	line-height: $chat-line-height;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -337,9 +354,8 @@ export default {
 		justify-content: space-between;
 		min-width: 100%;
 		&__text {
-			flex: 1 1 auto;
+			flex: 0 1 auto;
 			color: var(--color-text-light);
-			max-width: $message-max-width;
 			.single-emoji {
 				font-size: 250%;
 				line-height: 100%;
@@ -370,15 +386,18 @@ export default {
 			justify-self: flex-start;
 			justify-content:  space-between;
 			position: relative;
-			flex: 0 0 $message-utils-width;
 			display: flex;
 			color: var(--color-text-maxcontrast);
-			font-size: 13px;
+			font-size: $chat-font-size;
+			flex: 1 0 80px;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
 				position: absolute;
 				bottom: -11px;
-				right: -4px;
+				right: -3px;
+			}
+			& h6 {
+				margin-left: auto;
 			}
 		}
 	}
@@ -387,7 +406,7 @@ export default {
 // Increase the padding for regular messages to improve readability and
 // allow some space for the reply button
 .message:not(.system) {
-	padding: 12px 8px;
+	padding: 12px 4px 12px 8px;
 	margin: -6px 0;
 }
 

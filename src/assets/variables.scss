@@ -57,13 +57,13 @@ $navigation-width: 300px;
 $breakpoint-mobile: 1024px;
 
 //messages list max width
-$messages-list-max-width: 900px;
+$messages-list-max-width: 800px;
 
 //message max width
-$message-max-width: 720px;
+$message-max-width: 680px;
 
 //message utils width
-$message-utils-width: 120px;
+$message-utils-width: 100px;
 
 //message form max height
 $message-form-max-height: 150px;
@@ -74,3 +74,10 @@ $top-bar-height: 60px;
 
 $color-guests-avatar: #ffffff;
 $color-background-guests-avatar: #b9b9b9;
+
+
+//chat font size
+$chat-font-size: 15px;
+
+//chat line height
+$chat-line-height: 1.6em;
