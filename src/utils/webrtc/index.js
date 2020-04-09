@@ -29,7 +29,6 @@ import { PARTICIPANT } from '../../constants'
 import { EventBus } from '../../services/EventBus'
 import { fetchSignalingSettings } from '../../services/signalingService'
 
-let signaling = null
 let signalingToken = null
 let webRtc = null
 let settings = null
@@ -39,85 +38,87 @@ const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
 let sentVideoQualityThrottler = null
 
-let pendingConnectSignaling = null
+const signalingConnections = {}
+const pendingSignalingConnections = {}
 
 async function loadSignalingSettings(token) {
 	const response = await fetchSignalingSettings(token)
 	settings = response.data.ocs.data
 }
 
-async function connectSignaling() {
-	if (signaling) {
+async function connectSignaling(token) {
+	if (token in signalingConnections) {
 		return
 	}
 
-	if (pendingConnectSignaling) {
-		return pendingConnectSignaling
+	if (token in pendingSignalingConnections) {
+		return pendingSignalingConnections[token]
 	}
 
-	pendingConnectSignaling = new Promise((resolve, reject) => {
-		signaling = Signaling.createConnection(settings)
+	pendingSignalingConnections[token] = new Promise((resolve, reject) => {
+		signalingConnections[token] = Signaling.createConnection(settings)
 		EventBus.$emit('signalingConnectionEstablished')
-		pendingConnectSignaling = null
-		resolve()
+		delete pendingSignalingConnections[token]
+		resolve(signalingConnections[token])
 	})
 
-	return pendingConnectSignaling
+	return pendingSignalingConnections[token]
 }
 
 async function getSignaling(token) {
 	if (signalingToken !== token) {
 		await loadSignalingSettings(token)
 
-		if (currentSignalingServer !== settings.url && signaling) {
-			signaling.disconnect()
-			signaling = null
+		if (currentSignalingServer !== settings.url && token in signalingConnections) {
+			signalingConnections[token].disconnect()
+			delete signalingConnections[token]
+			delete pendingSignalingConnections[token]
 		}
 
 		signalingToken = token
 		currentSignalingServer = settings.url
 
-		if (!signaling) {
+		if (!(token in signalingConnections)) {
 			await connectSignaling(token)
 		}
 	}
 
-	return signaling
+	return signalingConnections[token]
 }
 
 let currentToken = null
 let startedCall = null
 
-function startCall(configuration) {
+function startCall(token, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
 			flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
 		}
-		if (configuration.video && signaling.getSendVideoIfAvailable()) {
+		if (configuration.video && signalingConnections[token].getSendVideoIfAvailable()) {
 			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 		}
 	}
 
-	signaling.joinCall(currentToken, flags)
+	signalingConnections[token].joinCall(currentToken, flags)
 
 	startedCall()
 }
 
-function setupWebRtc() {
+function setupWebRtc(token) {
 	if (webRtc) {
 		return
 	}
 
-	webRtc = initWebRtc(signaling, callParticipantCollection)
+	webRtc = initWebRtc(signalingConnections[token], callParticipantCollection)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
-	webRtc.on('localMediaStarted', function(configuration) {
-		startCall(configuration)
+	webRtc.on('localMediaStarted', (configuration) => {
+		startCall(token, configuration)
 	})
-	webRtc.on('localMediaError', function() {
-		startCall(null)
+	webRtc.on('localMediaError', () => {
+		startCall(token, null)
 	})
 }
 
@@ -130,7 +131,13 @@ function setupWebRtc() {
  */
 async function signalingJoinConversation(token, sessionId) {
 	await getSignaling(token)
-	await signaling.joinRoom(token, sessionId)
+	if (token in signalingConnections) {
+		await signalingConnections[token].joinRoom(token, sessionId)
+	} else {
+		pendingSignalingConnections[token].then(() => {
+			signalingConnections[token].joinRoom(token, sessionId)
+		})
+	}
 }
 
 /**
@@ -140,9 +147,9 @@ async function signalingJoinConversation(token, sessionId) {
  * @returns {Promise<void>}
  */
 async function signalingJoinCall(token) {
-	await connectSignaling(token)
+	await getSignaling(token)
 
-	setupWebRtc()
+	setupWebRtc(token)
 
 	currentToken = token
 
@@ -165,8 +172,9 @@ async function signalingLeaveCall(token) {
 	sentVideoQualityThrottler.destroy()
 	sentVideoQualityThrottler = null
 
-	await getSignaling(token)
-	await signaling.leaveCall(token)
+	if (token in signalingConnections) {
+		await signalingConnections[token].leaveCall(token)
+	}
 }
 
 /**
@@ -176,8 +184,9 @@ async function signalingLeaveCall(token) {
  * @returns {Promise<void>}
  */
 async function signalingLeaveConversation(token) {
-	await getSignaling(token)
-	await signaling.leaveRoom(token)
+	if (token in signalingConnections) {
+		await signalingConnections[token].leaveRoom(token)
+	}
 }
 
 /**
@@ -185,9 +194,9 @@ async function signalingLeaveConversation(token) {
  * This should be called only in the unload handler
  */
 function signalingKill() {
-	if (signaling) {
-		signaling.disconnect()
-	}
+	Object.keys(signalingConnections).forEach((token) => {
+		signalingConnections[token].disconnect()
+	})
 }
 
 export {
