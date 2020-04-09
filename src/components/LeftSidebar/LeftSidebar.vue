@@ -20,10 +20,11 @@
 -->
 
 <template>
-	<AppNavigation class="vue navigation">
+	<AppNavigation>
 		<div class="new-conversation">
 			<SearchBox
 				v-model="searchText"
+				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
 				@abort-search="abortSearch" />
@@ -299,33 +300,4 @@ export default {
 	border-bottom: 1px solid var(--color-border-dark);
 }
 
-.navigation {
-	width: $navigation-width;
-	position: fixed;
-	top: 50px;
-	left: 0;
-	z-index: 500;
-	overflow-y: auto;
-	overflow-x: hidden;
-	// Do not use vh because of mobile headers
-	// are included in the calculation
-	height: calc(100% - 50px);
-	box-sizing: border-box;
-	background-color: var(--color-main-background);
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	border-right: 1px solid var(--color-border);
-	display: flex;
-	flex-direction: column;
-	flex-grow: 0;
-	flex-shrink: 0;
-}
-
-.settings {
-	position: sticky;
-	bottom: 0;
-	border-top: 1px solid var(--color-border-dark);
-}
 </style>

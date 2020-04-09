@@ -20,7 +20,11 @@
 -->
 
 <template>
-	<Content :class="{ 'icon-loading': loading, 'in-call': isInCall }" app-name="Talk">
+	<Content
+		v-shortkey="['ctrl', 'f']"
+		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
+		app-name="talk"
+		@shortkey.native="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" />
 		<AppContent>
 			<router-view />
@@ -50,6 +54,7 @@ import {
 	connectSignaling,
 	getSignalingSync,
 } from './utils/webrtc/index'
+import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
 
 export default {
@@ -388,6 +393,13 @@ export default {
 				this.$router.push('/apps/spreed/not-found')
 				this.$store.dispatch('hideSidebar')
 			}
+		},
+		// Upon pressing ctrl+f, focus the search box in the left sidebar
+		handleAppSearch() {
+			emit('toggle-navigation', {
+				open: true,
+			})
+			document.querySelector('.conversations-search')[0].focus()
 		},
 	},
 }
