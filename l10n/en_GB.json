@@ -32,6 +32,7 @@
     "Beta" : "Beta",
     "Name" : "Name",
     "General settings" : "General settings",
+    "Off" : "Off",
     "Validate SSL certificate" : "Validate SSL certificate",
     "Saved" : "Saved",
     "Shared secret" : "Shared secret",

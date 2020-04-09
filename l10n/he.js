@@ -36,6 +36,7 @@ OC.L10N.register(
     "Users" : "משתמשים",
     "Name" : "שם",
     "General settings" : "הגדרות כלליות",
+    "Off" : "כבוי",
     "TURN server URL" : "כתובת שרת TURN",
     "Validate SSL certificate" : "אימות אישור SSL",
     "Saved" : "נשמר",
