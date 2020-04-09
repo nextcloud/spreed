@@ -221,6 +221,7 @@ OC.L10N.register(
     "Mute" : "Utišaj",
     "You need to be logged in to upload files" : "Za pošiljanje datotek morate biti prijavljeni v oblak",
     "This conversation is read only" : "Ta pogovor je le za branje",
+    "Drop your files to upload" : "Spustite datoteke za pošiljanje v oblak",
     "Call in progress" : "Klic je v teku ...",
     "Favorite" : "Priljubljeno",
     "Conversation, " : "Pogovor,",
