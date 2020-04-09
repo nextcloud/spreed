@@ -49,7 +49,7 @@ class Listener {
 	protected static function isUsingInternalSignaling(): bool {
 		/** @var Config $config */
 		$config = \OC::$server->query(Config::class);
-		return empty($config->getSignalingServers());
+		return $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
 	}
 
 	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {

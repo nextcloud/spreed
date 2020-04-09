@@ -32,6 +32,7 @@ class Config {
 
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
+	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
 	/** @var IConfig */
 	protected $config;
@@ -235,10 +236,26 @@ class Config {
 	}
 
 	public function getSignalingMode(): string {
-		if (empty($this->getSignalingServers())) {
+		$validModes = [
+			self::SIGNALING_INTERNAL,
+			self::SIGNALING_EXTERNAL,
+			self::SIGNALING_CLUSTER_CONVERSATION,
+		];
+
+		$mode = $this->config->getAppValue('spreed', 'signaling_mode', null);
+		if ($mode === self::SIGNALING_INTERNAL) {
 			return self::SIGNALING_INTERNAL;
 		}
-		return self::SIGNALING_EXTERNAL;
+
+		$numSignalingServers = count($this->getSignalingServers());
+		if ($numSignalingServers === 0) {
+			return self::SIGNALING_INTERNAL;
+		}
+		if ($numSignalingServers === 1) {
+			return self::SIGNALING_EXTERNAL;
+		}
+
+		return \in_array($mode, $validModes, true) ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**

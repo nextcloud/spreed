@@ -84,10 +84,14 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	private function backendRequest(string $url, array $data): void {
-		$servers = $this->config->getSignalingServers();
-		if (empty($servers)) {
+		if ($this->config->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return;
 		}
+
+		if ($this->config->getSignalingMode() === Config::SIGNALING_CLUSTER_CONVERSATION) {
+			// FIXME need to send it to the right signaling server
+		}
+		$servers = $this->config->getSignalingServers();
 
 		// We can use any server of the available backends.
 		$signaling = $servers[random_int(0, count($servers) - 1)];
