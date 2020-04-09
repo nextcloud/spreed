@@ -83,10 +83,8 @@ export default {
 	data() {
 		return {
 			checked: false,
-			customError: '',
+			errorMessage: '',
 			versionFound: '',
-			canNotConnect: false,
-			responseNotValidJson: false,
 		}
 	},
 
@@ -95,14 +93,8 @@ export default {
 			if (!this.checked) {
 				return t('spreed', 'Status: Checking connection')
 			}
-			if (this.canNotConnect) {
-				return t('spreed', 'Error: Can not connect to server')
-			}
-			if (this.responseNotValidJson) {
-				return t('spreed', 'Error: Server did not respond with proper JSON')
-			}
-			if (this.customError) {
-				return this.customError
+			if (this.errorMessage) {
+				return this.errorMessage
 			}
 			return t('spreed', 'OK: Running version: {version}', {
 				version: this.versionFound,
@@ -138,11 +130,8 @@ export default {
 		async checkServerVersion() {
 			this.checked = false
 
-			this.customError = ''
+			this.errorMessage = ''
 			this.versionFound = ''
-			this.canNotConnect = false
-			this.responseNotValidJson = false
-			this.versionNotSupported = false
 
 			try {
 				const response = await getWelcomeMessage(this.index)
@@ -150,15 +139,15 @@ export default {
 				this.versionFound = response.data.ocs.data.version
 			} catch (exception) {
 				this.checked = true
-				this.customError = t('spreed', 'Error: Unknown error occurred')
 				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
-					this.canNotConnect = true
+					this.errorMessage = t('spreed', 'Error: Can not connect to server')
 				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
-					this.responseNotValidJson = true
+					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
 				} else if (exception.response.data.ocs.data.error) {
-					this.customError = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
+					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
+				} else {
+					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
 				}
-				console.debug(exception.response.data.ocs.data.error)
 			}
 		},
 	},
