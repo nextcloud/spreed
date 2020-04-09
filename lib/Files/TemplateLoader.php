@@ -25,9 +25,17 @@ namespace OCA\Talk\Files;
 
 use OCA\Files\Event\LoadSidebar;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
+use OCA\Talk\TInitialState;
+use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\IInitialStateService;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Util;
 
 /**
@@ -35,8 +43,32 @@ use OCP\Util;
  */
 class TemplateLoader implements IEventListener {
 
+	use TInitialState;
+
+	/** @var IAppManager */
+	private $appManager;
+	/** @var IRootFolder */
+	private $rootFolder;
+	/** @var IUserSession */
+	private $userSession;
+
+	public function __construct(IInitialStateService $initialStateService,
+								Config $talkConfig,
+								IConfig $serverConfig,
+								IAppManager $appManager,
+								IRootFolder $rootFolder,
+								IUserSession $userSession) {
+		$this->initialStateService = $initialStateService;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
+		$this->appManager = $appManager;
+		$this->rootFolder = $rootFolder;
+		$this->userSession = $userSession;
+	}
+
+
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addServiceListener(LoadSidebar::class, TemplateLoader::class);
+		$dispatcher->addServiceListener(LoadSidebar::class, self::class);
 	}
 
 	/**
@@ -44,14 +76,15 @@ class TemplateLoader implements IEventListener {
 	 *
 	 * This method should be called when handling the LoadSidebar event of the
 	 * Files app.
+	 *
+	 * @param Event $event
 	 */
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadSidebar)) {
 			return;
 		}
 
-		$config = \OC::$server->getConfig();
-		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1') {
 			return;
 		}
 
@@ -59,8 +92,12 @@ class TemplateLoader implements IEventListener {
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar-loader');
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser) {
+			$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
+		} else {
+			$this->publishInitialStateForGuest();
+		}
 	}
 
 }

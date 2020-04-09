@@ -32,6 +32,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCA\Talk\TInitialState;
 use OCA\Viewer\Event\LoadViewer;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
@@ -55,6 +56,9 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Util;
 
 class PageController extends Controller {
+
+	use TInitialState;
+
 	/** @var string|null */
 	private $userId;
 	/** @var IEventDispatcher */
@@ -75,14 +79,8 @@ class PageController extends Controller {
 	private $notificationManager;
 	/** @var IAppManager */
 	private $appManager;
-	/** @var IInitialStateService */
-	private $initialStateService;
 	/** @var IRootFolder */
 	private $rootFolder;
-	/** @var Config */
-	private $talkConfig;
-	/** @var IConfig */
-	private $serverConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -234,39 +232,7 @@ class PageController extends Controller {
 			}
 		}
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'prefer_h264',
-			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
-		);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'start_conversations',
-			!$this->talkConfig->isNotAllowedToCreateConversations($user)
-		);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'circles_enabled',
-			$this->appManager->isEnabledForUser('circles', $user)
-		);
-
-		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
-		$this->initialStateService->provideInitialState(
-			'talk', 'attachment_folder',
-			$this->talkConfig->getAttachmentFolder($user->getUID())
-		);
-
-		if ($attachmentFolder) {
-			$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-			if (!$userFolder->nodeExists($attachmentFolder)) {
-				try {
-					$userFolder->newFolder($attachmentFolder);
-				} catch (NotPermittedException $e) {
-				}
-			}
-		}
+		$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
 
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
@@ -320,13 +286,7 @@ class PageController extends Controller {
 			}
 		}
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
-
-		$this->initialStateService->provideInitialState(
-			'talk', 'prefer_h264',
-			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
-		);
+		$this->publishInitialStateForGuest();
 
 		$response = new PublicTemplateResponse($this->appName, 'index');
 		$response->setFooterVisible(false);
