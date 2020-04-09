@@ -23,7 +23,7 @@
 	<Content
 		v-shortkey="['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
-		app-name="Talk"
+		app-name="talk"
 		@shortkey.native="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" />
 		<AppContent>
