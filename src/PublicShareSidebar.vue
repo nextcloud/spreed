@@ -56,7 +56,7 @@ import {
 } from './services/participantsService'
 import {
 	getSignaling,
-	getSignalingSync,
+	signalingKill,
 } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
 
@@ -122,10 +122,7 @@ export default {
 			if (this.token) {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
-				const signaling = getSignalingSync()
-				if (signaling) {
-					signaling.disconnect()
-				}
+				signalingKill()
 				leaveConversationSync(this.token)
 			}
 		})
