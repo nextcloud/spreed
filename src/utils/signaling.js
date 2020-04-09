@@ -26,10 +26,7 @@
  *
  */
 
-import {
-	fetchSignalingSettings,
-	pullSignalingMessages,
-} from '../services/signalingService'
+import { pullSignalingMessages } from '../services/signalingService'
 import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
@@ -43,33 +40,22 @@ const Signaling = {
 	Base: {},
 	Internal: {},
 	Standalone: {},
-	settings: {},
-
-	/**
-	 * Loads the signaling settings.
-	 *
-	 * @param {string} token Conversation token to load the signaling settings for
-	 */
-	async loadSettings(token) {
-		this.settings = {}
-		const response = await fetchSignalingSettings(token)
-		this.settings = Object.assign({ token }, response.data.ocs.data)
-	},
 
 	/**
 	 * Creates a connection to the signaling server
+	 *
+	 * @param {Object} settings The signaling settings
 	 * @returns {Standalone|Internal}
 	 */
-	createConnection() {
-		if (!this.settings) {
-			console.error('Signaling settings are not yet loaded')
+	createConnection(settings) {
+		if (!settings) {
+			console.error('Signaling settings are not given')
 		}
 
-		const urls = this.settings.server
-		if (urls && urls.length) {
-			return new Signaling.Standalone(this.settings, urls)
+		if (settings.signalingMode !== 'internal') {
+			return new Signaling.Standalone(settings, settings.server)
 		} else {
-			return new Signaling.Internal(this.settings)
+			return new Signaling.Internal(settings)
 		}
 	},
 }
