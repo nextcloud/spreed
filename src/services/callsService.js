@@ -46,7 +46,7 @@ const leaveCall = async function(token) {
 	try {
 		const signaling = await getSignaling()
 
-		await signaling.leaveCurrentCall()
+		await signaling.leaveCall(token)
 	} catch (error) {
 		console.debug('Error while leaving call: ', error)
 	}
