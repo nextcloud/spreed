@@ -167,7 +167,7 @@ export default {
 	&.active,
 	&:active,
 	&:active ~ .app-navigation-entry__utils {
-		background-color: var(--color-primary-element-light);
+		background-color: var(--color-primary-light);
 	}
 
 	&__content {
