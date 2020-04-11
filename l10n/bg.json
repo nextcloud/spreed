@@ -42,13 +42,17 @@
     "Reply" : "Отговори",
     "Today" : "Днес",
     "Yesterday" : "Вчера",
+    "Send message" : "Изпрати съобщение",
     "guest" : "гост",
+    "Remove participant" : "Премахване на участник",
     "Searching …" : "Търсене ...",
     "No results" : "Няма резултати",
+    "Participants" : "Участници",
     "Guests" : "Гости",
     "Share link" : "Сподели връзка",
     "Password protection" : "Password protection",
     "Enter a password" : "Въведете парола",
+    "Webinar" : "Уебинар",
     "Chat" : "Съобщения",
     "Settings" : "Настройки",
     "Edit" : "Променяне",
@@ -82,6 +86,8 @@
     "Error while sharing" : "Грешка при споделяне",
     "Share screen" : "Споделяне на екран",
     "Favorited" : "Отбелязано в любими",
+    "Always notify" : "Винаги уведомявайте",
+    "Never notify" : "Никога не уведомявайте",
     ", " : ", "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
