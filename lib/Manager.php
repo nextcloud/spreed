@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 
-use OCA\Talk\Chat\Changelog;
+use OCA\Talk\Chat\SpecialRoom;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\CreateRoomTokenEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -554,40 +554,46 @@ class Manager {
 		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
 	}
 
-	/**
-	 * Makes sure the user is part of a changelog room and returns it
-	 *
-	 * @param string $userId
-	 * @return Room
-	 */
-	public function getChangelogRoom(string $userId): Room {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_rooms')
-			->where($query->expr()->eq('type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
+    /**
+    *
+    * @param string $userId
+    * @param string type
+    * @return Room
+    */
+    public function getSpecialRoom(string $userId, int $type): Room {
+            if ($type !== Room::CHANGELOG_CONVERSATION && $type !== Room::NOTES_CONVERSATION) {
+                return null;
+            }
 
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
+    		$query = $this->db->getQueryBuilder();
+    		$query->select('*')
+    			->from('talk_rooms')
+    			->where($query->expr()->eq('type', $query->createNamedParameter($type, IQueryBuilder::PARAM_INT)))
+    			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
 
-		if ($row === false) {
-			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
-			$room->addUsers(['userId' => $userId]);
-			$room->setReadOnly(Room::READ_ONLY);
-			return $room;
-		}
+    		$result = $query->execute();
+    		$row = $result->fetch();
+    		$result->closeCursor();
 
-		$room = $this->createRoomObject($row);
+    		if ($row === false) {
+    			$room = $this->createRoom($type, $userId);
+    			$room->addUsers(['userId' => $userId]);
+    			if ($type === ROOM::CHANGELOG_CONVERSATION) {
+    			    $room->setReadOnly(Room::READ_ONLY);
+    			}
+    			return $room;
+    		}
 
-		try {
-			$room->getParticipant($userId);
-		} catch (ParticipantNotFoundException $e) {
-			$room->addUsers(['userId' => $userId]);
-		}
+    		$room = $this->createRoomObject($row);
 
-		return $room;
-	}
+    		try {
+    			$room->getParticipant($userId);
+    		} catch (ParticipantNotFoundException $e) {
+    			$room->addUsers(['userId' => $userId]);
+    		}
+
+    		return $room;
+    }
 
 	/**
 	 * @param int $type
@@ -687,6 +693,11 @@ class Manager {
 		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
 			return $this->l->t('Talk updates ✅');
 		}
+
+		if ($room->getType() === Room::NOTES_CONVERSATION) {
+		    return $this->l->t('My notes');
+		}
+
 		if ($userId === '' && $room->getType() !== Room::PUBLIC_CALL) {
 			return $this->l->t('Private conversation');
 		}

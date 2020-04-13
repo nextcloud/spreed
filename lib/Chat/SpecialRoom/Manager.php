@@ -20,14 +20,17 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Chat\SpecialRoom;
 
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Room;
 use OCA\Talk\Manager as RoomManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IL10N;
+
 
 class Manager {
 
@@ -54,6 +57,10 @@ class Manager {
 		$this->l = $l;
 	}
 
+	public function getNotesForUser(string $userId): int {
+		return (int) $this->config->getUserValue($userId, 'spreed', 'notes', 0);
+	}
+
 	public function getChangelogForUser(string $userId): int {
 		return (int) $this->config->getUserValue($userId, 'spreed', 'changelog', 0);
 	}
@@ -62,8 +69,47 @@ class Manager {
 		return $this->getChangelogForUser($userId) < count($this->getChangelogs());
 	}
 
+    public function createNotesIfNeeded(string $userId): void {
+        $room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
+
+        if ($this->getNotesForUser($userId) === (int) 0) {
+            $this->setNotesConversationAsFavorite($room, $userId);
+            $this->addNotesWelcomeMessages($room, $userId);
+        }
+    }
+
+    public function setNotesConversationAsFavorite(Room $room, string $userId) {
+		try {
+			$participant = $room->getParticipant($userId);
+			$participant->setFavorite(true);
+		} catch (ParticipantNotFoundException $e) {
+		    // do nothing
+		}
+    }
+
+    public function addNotesWelcomeMessages(Room $room, string $userId) {
+    	$notesWelcomeMessages = $this->getNotesWelcomeMessages();
+		foreach ($notesWelcomeMessages as $key => $welcomeMessage) {
+			if ($welcomeMessage === '') {
+				continue;
+			}
+			$this->chatManager->addSpecialMessage($room, 'notes', $welcomeMessage);
+		}
+
+		$this->config->setUserValue($userId, 'spreed', 'notes', 1);
+    }
+
+    public function getNotesWelcomeMessages(): array {
+        return [
+        		$this->l->t("Welcome to your notes!"),
+        		$this->l->t('Forward any messages to save'),
+        		$this->l->t('Never forget to buy milk again'),
+        		$this->l->t('View on any device')
+        ];
+    }
+
 	public function updateChangelog(string $userId): void {
-		$room = $this->roomManager->getChangelogRoom($userId);
+		$room = $this->roomManager->getSpecialRoom($userId, Room::CHANGELOG_CONVERSATION);
 
 		$logs = $this->getChangelogs();
 		$hasReceivedLog = $this->getChangelogForUser($userId);
@@ -72,7 +118,7 @@ class Manager {
 			if ($key < $hasReceivedLog || $changelog === '') {
 				continue;
 			}
-			$this->chatManager->addChangelogMessage($room, $changelog);
+			$this->chatManager->addSpecialMessage($room, 'changelog', $changelog);
 		}
 
 		$this->config->setUserValue($userId, 'spreed', 'changelog', count($this->getChangelogs()));
