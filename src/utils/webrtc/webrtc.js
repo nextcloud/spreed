@@ -662,7 +662,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 				if (result) {
 					resolve()
 				} else {
-					reject(new Error())
+					reject(new Error('No bytes received'))
 				}
 			})
 		})
