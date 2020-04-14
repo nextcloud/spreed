@@ -46,7 +46,7 @@ class Listener {
 	}
 
 	public function preGetRooms(string $userId): void {
-	    $this->manager->createNotesIfNeeded($userId);
+		$this->manager->createNotesIfNeeded($userId);
 
 		if (!$this->manager->userHasNewChangelog($userId)) {
 			return;

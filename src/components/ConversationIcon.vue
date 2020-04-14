@@ -96,7 +96,7 @@ export default {
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
 				return 'icon-public'
 			} else if (this.item.type === CONVERSATION.TYPE.NOTES) {
-			    return 'icon-notes'
+				return 'icon-notes'
 			}
 
 			return ''

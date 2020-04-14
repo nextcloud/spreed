@@ -69,26 +69,26 @@ class Manager {
 		return $this->getChangelogForUser($userId) < count($this->getChangelogs());
 	}
 
-    public function createNotesIfNeeded(string $userId): void {
-        $room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
+	public function createNotesIfNeeded(string $userId): void {
+		$room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
 
-        if ($this->getNotesForUser($userId) === (int) 0) {
-            $this->setNotesConversationAsFavorite($room, $userId);
-            $this->addNotesWelcomeMessages($room, $userId);
-        }
-    }
+		if ($this->getNotesForUser($userId) === (int) 0) {
+			$this->setNotesConversationAsFavorite($room, $userId);
+			$this->addNotesWelcomeMessages($room, $userId);
+		}
+	}
 
-    public function setNotesConversationAsFavorite(Room $room, string $userId) {
+	public function setNotesConversationAsFavorite(Room $room, string $userId) {
 		try {
 			$participant = $room->getParticipant($userId);
 			$participant->setFavorite(true);
 		} catch (ParticipantNotFoundException $e) {
-		    // do nothing
+			// do nothing
 		}
-    }
+	}
 
-    public function addNotesWelcomeMessages(Room $room, string $userId) {
-    	$notesWelcomeMessages = $this->getNotesWelcomeMessages();
+	public function addNotesWelcomeMessages(Room $room, string $userId) {
+		$notesWelcomeMessages = $this->getNotesWelcomeMessages();
 		foreach ($notesWelcomeMessages as $key => $welcomeMessage) {
 			if ($welcomeMessage === '') {
 				continue;
@@ -97,16 +97,16 @@ class Manager {
 		}
 
 		$this->config->setUserValue($userId, 'spreed', 'notes', 1);
-    }
+	}
 
-    public function getNotesWelcomeMessages(): array {
-        return [
-        		$this->l->t("Welcome to your notes!"),
-        		$this->l->t('Forward any messages to save'),
-        		$this->l->t('Never forget to buy milk again'),
-        		$this->l->t('View on any device')
-        ];
-    }
+	public function getNotesWelcomeMessages(): array {
+		return [
+			$this->l->t('Welcome to your notes!'),
+			$this->l->t('Forward any messages to save'),
+			$this->l->t('Never forget to buy milk again'),
+			$this->l->t('View on any device')
+		];
+	}
 
 	public function updateChangelog(string $userId): void {
 		$room = $this->roomManager->getSpecialRoom($userId, Room::CHANGELOG_CONVERSATION);

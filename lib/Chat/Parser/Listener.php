@@ -67,7 +67,6 @@ class Listener {
 				// Unknown message, ignore
 			}
 
-
 		}, -75);
 
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {

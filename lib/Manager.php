@@ -554,46 +554,46 @@ class Manager {
 		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
 	}
 
-    /**
-    *
-    * @param string $userId
-    * @param string type
-    * @return Room
-    */
-    public function getSpecialRoom(string $userId, int $type): Room {
-            if ($type !== Room::CHANGELOG_CONVERSATION && $type !== Room::NOTES_CONVERSATION) {
-                return null;
-            }
+	/**
+	 *
+	 * @param string $userId
+	 * @param int type
+	 * @return Room
+	 */
+	public function getSpecialRoom(string $userId, int $type): Room {
+		if ($type !== Room::CHANGELOG_CONVERSATION && $type !== Room::NOTES_CONVERSATION) {
+			throw new \OutOfBoundsException('Unsupported type');
+		}
 
-    		$query = $this->db->getQueryBuilder();
-    		$query->select('*')
-    			->from('talk_rooms')
-    			->where($query->expr()->eq('type', $query->createNamedParameter($type, IQueryBuilder::PARAM_INT)))
-    			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter($type, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
 
-    		$result = $query->execute();
-    		$row = $result->fetch();
-    		$result->closeCursor();
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
 
-    		if ($row === false) {
-    			$room = $this->createRoom($type, $userId);
-    			$room->addUsers(['userId' => $userId]);
-    			if ($type === ROOM::CHANGELOG_CONVERSATION) {
-    			    $room->setReadOnly(Room::READ_ONLY);
-    			}
-    			return $room;
-    		}
+		if ($row === false) {
+			$room = $this->createRoom($type, $userId);
+			$room->addUsers(['userId' => $userId]);
+			if ($type === ROOM::CHANGELOG_CONVERSATION) {
+				$room->setReadOnly(Room::READ_ONLY);
+			}
+			return $room;
+		}
 
-    		$room = $this->createRoomObject($row);
+		$room = $this->createRoomObject($row);
 
-    		try {
-    			$room->getParticipant($userId);
-    		} catch (ParticipantNotFoundException $e) {
-    			$room->addUsers(['userId' => $userId]);
-    		}
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers(['userId' => $userId]);
+		}
 
-    		return $room;
-    }
+		return $room;
+	}
 
 	/**
 	 * @param int $type
@@ -695,13 +695,12 @@ class Manager {
 		}
 
 		if ($room->getType() === Room::NOTES_CONVERSATION) {
-		    return $this->l->t('My notes');
+			return $this->l->t('My notes');
 		}
 
 		if ($userId === '' && $room->getType() !== Room::PUBLIC_CALL) {
 			return $this->l->t('Private conversation');
 		}
-
 
 		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {
 			$room->setName($this->getRoomNameByParticipants($room));
