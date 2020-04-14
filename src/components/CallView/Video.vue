@@ -108,6 +108,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isGrid: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -117,7 +121,7 @@ export default {
 				'videoContainer-dummy': this.placeholderForPromoted,
 				'not-connected': !this.placeholderForPromoted && this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED,
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
-				'promoted': !this.placeholderForPromoted && this.sharedData.promoted,
+				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 			}
 		},
 
