@@ -1,20 +1,18 @@
 <template>
-	<div class="mainView">
+	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
 			<TopBar :force-white-icons="showChatInSidebar" />
-
 			<ChatView v-if="!showChatInSidebar" :token="token" />
 			<template v-else>
-				<CallView
-					:token="token" />
+				<GridView :grid-width="mainViewWidth" />
 			</template>
 		</template>
 	</div>
 </template>
 
 <script>
-import CallView from '../components/CallView/CallView'
+import GridView from '../components/GridView/GridView'
 import ChatView from '../components/ChatView'
 import LobbyScreen from '../components/LobbyScreen'
 import TopBar from '../components/TopBar/TopBar'
@@ -24,11 +22,12 @@ import isInLobby from '../mixins/isInLobby'
 export default {
 	name: 'MainView',
 	components: {
-		CallView,
 		ChatView,
 		LobbyScreen,
 		TopBar,
+		GridView,
 	},
+
 	mixins: [
 		isInLobby,
 	],
@@ -37,6 +36,11 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+	data() {
+		return {
+			mainViewWidth: 0,
+		}
 	},
 
 	computed: {
@@ -64,6 +68,12 @@ export default {
 		showChatInSidebar() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
+		mainView() {
+			return document.getElementsByClassName('main-view')[0]
+		},
+		sidebarStatus() {
+			return this.$store.getters.getSidebarStatus
+		},
 	},
 
 	watch: {
@@ -74,6 +84,29 @@ export default {
 					token: this.token,
 					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 				})
+			}
+		},
+		sidebarStatus: () => {
+			this.$nextTick(() => {
+				this.handleResize()
+			})
+		},
+	},
+	// bind event handlers to the `handleResize` method
+	mounted() {
+		this.mainView.addEventListener('resize', this.handleResize)
+		this.handleResize()
+
+	},
+	beforeDestroy() {
+		this.mainView.removeEventListener('resize', this.handleResize)
+	},
+
+	methods: {
+		// whenever the document is resized, re-set the 'clientWidth' variable
+		handleResize(event) {
+			if (this.mainView) {
+				this.mainViewWidth = this.mainView.clientWidth
 			}
 		},
 	},
@@ -103,8 +136,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mainView {
+.main-view {
 	height: 100%;
+	width: 100%;
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;
