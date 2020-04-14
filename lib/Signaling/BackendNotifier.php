@@ -79,24 +79,32 @@ class BackendNotifier {
 	/**
 	 * Perform a request to the signaling backend.
 	 *
-	 * @param string $url
+	 * @param Room $room
 	 * @param array $data
 	 * @throws \Exception
 	 */
-	private function backendRequest(string $url, array $data): void {
+	private function backendRequest(Room $room, array $data): void {
 		if ($this->config->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return;
 		}
 
+		$servers = $this->config->getSignalingServers();
+		$serverId = null;
 		if ($this->config->getSignalingMode() === Config::SIGNALING_CLUSTER_CONVERSATION) {
 			// FIXME need to send it to the right signaling server
+			$serverId = $room->getAssignedSignalingServer();
+			// FIXME some need to go to all HPBs?
 		}
-		$servers = $this->config->getSignalingServers();
+		if ($serverId === null) {
+			// We can use any server of the available backends.
+			$serverId = random_int(0, count($servers) - 1);
+		}
 
-		// We can use any server of the available backends.
-		$signaling = $servers[random_int(0, count($servers) - 1)];
+		$signaling = $servers[$serverId];
 		$signaling['server'] = rtrim($signaling['server'], '/');
-		$url = rtrim($signaling['server'], '/') . $url;
+
+		$url = '/api/v1/room/' . $room->getToken();
+		$url = $signaling['server'] . $url;
 		if (strpos($url, 'wss://') === 0) {
 			$url = 'https://' . substr($url, 6);
 		} else if (strpos($url, 'ws://') === 0) {
@@ -135,7 +143,7 @@ class BackendNotifier {
 		foreach ($users as $user) {
 			$userIds[] = $user['userId'];
 		}
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'invite',
 			'invite' => [
 				'userids' => $userIds,
@@ -156,7 +164,7 @@ class BackendNotifier {
 	 */
 	public function roomsDisinvited(Room $room, array $userIds): void {
 		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true), ['app' => 'spreed']);
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => $userIds,
@@ -177,7 +185,7 @@ class BackendNotifier {
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
 		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true), ['app' => 'spreed']);
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'sessionids' => $sessionIds,
@@ -197,7 +205,7 @@ class BackendNotifier {
 	 */
 	public function roomModified(Room $room): void {
 		$this->logger->info('Room modified: ' . $room->getToken(), ['app' => 'spreed']);
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => $room->getParticipantUserIds(),
@@ -216,7 +224,7 @@ class BackendNotifier {
 	public function roomDeleted(Room $room, array $participants): void {
 		$this->logger->info('Room deleted: ' . $room->getToken(), ['app' => 'spreed']);
 		$userIds = array_keys($participants['users']);
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'delete',
 			'delete' => [
 				'userids' => $userIds,
@@ -258,7 +266,7 @@ class BackendNotifier {
 				$changed[] = $participant;
 			}
 		}
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => $changed,
@@ -301,7 +309,7 @@ class BackendNotifier {
 			}
 		}
 
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'incall',
 			'incall' => [
 				'incall' => $flags,
@@ -320,7 +328,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function sendRoomMessage(Room $room, array $message): void {
-		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+		$this->backendRequest($room, [
 			'type' => 'message',
 			'message' => [
 				'data' => $message,
