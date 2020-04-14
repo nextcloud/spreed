@@ -28,6 +28,29 @@ jobs:
       - name: Lint
         run: "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;"
 
+  php-cs:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: ['7.4']
+
+    name: php${{ matrix.php-versions }} CS
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+
+      - name: Composer
+        run: composer install
+
+      - name: Check CS
+        run: composer run cs:check
+
   node:
     runs-on: ubuntu-latest
 

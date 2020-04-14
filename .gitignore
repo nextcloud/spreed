@@ -14,3 +14,7 @@ tests/integration/vendor
 tests/integration/output
 
 js
+
+# PHP Coding Style
+vendor/
+.php_cs.cache
