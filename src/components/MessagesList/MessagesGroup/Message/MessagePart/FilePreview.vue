@@ -27,11 +27,11 @@
 		rel="noopener noreferrer"
 		@click="showPreview">
 		<img v-if="!isLoading && !failed"
-			class="preview"
+			:class="previewSizeClass"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
-			class="preview"
+			:class="previewSizeClass"
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
@@ -74,6 +74,10 @@ export default {
 			type: String,
 			default: 'no',
 		},
+		previewSize: {
+			type: Number,
+			default: 128,
+		},
 	},
 	data() {
 		return {
@@ -85,12 +89,18 @@ export default {
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
+		previewSizeClass() {
+			if (this.previewSize === 64) {
+				return 'preview-64'
+			}
+			return 'preview'
+		},
 		previewUrl() {
 			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 
-			const previewSize = Math.ceil(128 * window.devicePixelRatio)
+			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
 			return generateUrl('/core/preview?fileId={fileId}&x={width}&y={height}', {
 				fileId: this.id,
 				width: previewSize,
@@ -177,6 +187,11 @@ export default {
 		display: block;
 		width: 128px;
 		height: 128px;
+	}
+	.preview-64 {
+		display: block;
+		width: 64px;
+		height: 64px;
 	}
 
 	strong {
