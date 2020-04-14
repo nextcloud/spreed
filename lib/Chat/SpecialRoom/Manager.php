@@ -72,13 +72,13 @@ class Manager {
 	public function createNotesIfNeeded(string $userId): void {
 		$room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
 
-		if ($this->getNotesForUser($userId) === (int) 0) {
+		if ($this->getNotesForUser($userId) === 0) {
 			$this->setNotesConversationAsFavorite($room, $userId);
 			$this->addNotesWelcomeMessages($room, $userId);
 		}
 	}
 
-	public function setNotesConversationAsFavorite(Room $room, string $userId) {
+	public function setNotesConversationAsFavorite(Room $room, string $userId): void {
 		try {
 			$participant = $room->getParticipant($userId);
 			$participant->setFavorite(true);
@@ -87,7 +87,7 @@ class Manager {
 		}
 	}
 
-	public function addNotesWelcomeMessages(Room $room, string $userId) {
+	public function addNotesWelcomeMessages(Room $room, string $userId): void {
 		$notesWelcomeMessages = $this->getNotesWelcomeMessages();
 		foreach ($notesWelcomeMessages as $key => $welcomeMessage) {
 			if ($welcomeMessage === '') {
