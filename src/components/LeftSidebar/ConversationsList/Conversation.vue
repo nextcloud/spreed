@@ -167,10 +167,10 @@ export default {
 			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
 		},
 		canDeleteConversation() {
-			return this.item.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.item.participantType === PARTICIPANT.TYPE.OWNER || this.item.participantType === PARTICIPANT.TYPE.MODERATOR)
+			return this.item.canDeleteConversation
 		},
 		canLeaveConversation() {
-			return !this.canDeleteConversation || (this.item.type !== CONVERSATION.TYPE.ONE_TO_ONE && Object.keys(this.item.participants).length > 1)
+			return this.item.canLeaveConversation
 		},
 		iconLeaveConversation() {
 			if (this.canDeleteConversation) {

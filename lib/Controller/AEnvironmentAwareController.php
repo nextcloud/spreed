@@ -32,10 +32,20 @@ use OCP\AppFramework\OCSController;
 
 abstract class AEnvironmentAwareController extends OCSController {
 
+	/** @var int */
+	protected $apiVersion = 1;
 	/** @var Room */
 	protected $room;
 	/** @var Participant */
 	protected $participant;
+
+	public function setAPIVersion(int $apiVersion): void {
+		$this->apiVersion = $apiVersion;
+	}
+
+	public function getAPIVersion(): int {
+		return $this->apiVersion;
+	}
 
 	public function setRoom(Room $room): void {
 		$this->room = $room;

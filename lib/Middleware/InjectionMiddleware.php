@@ -81,6 +81,9 @@ class InjectionMiddleware extends Middleware {
 			return;
 		}
 
+		$apiVersion = $this->request->getParam('apiVersion');
+		$controller->setAPIVersion((int) substr($apiVersion, 1));
+
 		if ($this->reflector->hasAnnotation('RequireLoggedInParticipant')) {
 			$this->getLoggedIn($controller, false);
 		}
