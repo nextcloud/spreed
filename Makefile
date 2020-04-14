@@ -58,6 +58,7 @@ appstore:
 	rm -rf $(build_dir)
 	mkdir -p $(sign_dir)
 	rsync -a \
+	--exclude=babel.config.js \
 	--exclude=/build \
 	--exclude=check-vuejs-builds.sh \
 	--exclude=docs \
@@ -68,6 +69,7 @@ appstore:
 	--exclude=.gitattributes \
 	--exclude=.github \
 	--exclude=.gitignore \
+	--exclude=jest.config.js \
 	--exclude=.l10nignore \
 	--exclude=mkdocs.yml \
 	--exclude=Makefile \
