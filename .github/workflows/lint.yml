@@ -28,28 +28,21 @@ jobs:
       - name: Lint
         run: "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;"
 
-  php-cs:
+  php-cs-fixer:
+    name: php-cs check
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-versions: ['7.4']
-
-    name: php${{ matrix.php-versions }} CS
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@v1
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Set up php
+        uses: shivammathur/setup-php@master
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: 7.4
           coverage: none
-
-      - name: Composer
-        run: composer install
-
-      - name: Check CS
-        run: composer run cs:check
+      - name: Install dependencies
+        run: composer i
+      - name: Run coding standards check
+        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 
   node:
     runs-on: ubuntu-latest
