@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>9.0.0-dev.6</version>
+	<version>9.0.0-dev.7</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -52,6 +52,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<background-jobs>
 		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
 		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
+		<job>OCA\Talk\BackgroundJob\ResetAssignedSignalingServer</job>
 	</background-jobs>
 
 	<repair-steps>

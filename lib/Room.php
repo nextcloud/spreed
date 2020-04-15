@@ -1128,6 +1128,23 @@ class Room {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function hasActiveSessions(): bool {
+		$query = $this->db->getQueryBuilder();
+		$query->select('room_id')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('session_id', $query->createNamedParameter('0')))
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (bool) $row;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getActiveSessions(): array {
