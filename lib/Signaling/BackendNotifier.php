@@ -40,15 +40,19 @@ class BackendNotifier {
 	private $clientService;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var Manager */
+	private $signalingManager;
 
 	public function __construct(Config $config,
 								ILogger $logger,
 								IClientService $clientService,
-								ISecureRandom $secureRandom) {
+								ISecureRandom $secureRandom,
+								Manager $signalingManager) {
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;
 		$this->secureRandom = $secureRandom;
+		$this->signalingManager = $signalingManager;
 	}
 
 	/**
@@ -88,19 +92,8 @@ class BackendNotifier {
 			return;
 		}
 
-		$servers = $this->config->getSignalingServers();
-		$serverId = null;
-		if ($this->config->getSignalingMode() === Config::SIGNALING_CLUSTER_CONVERSATION) {
-			// FIXME need to send it to the right signaling server
-			$serverId = $room->getAssignedSignalingServer();
-			// FIXME some need to go to all HPBs?
-		}
-		if ($serverId === null) {
-			// We can use any server of the available backends.
-			$serverId = random_int(0, count($servers) - 1);
-		}
-
-		$signaling = $servers[$serverId];
+		// FIXME some need to go to all HPBs, but that doesn't scale, so bad luck for now :(
+		$signaling = $this->signalingManager->getSignalingServerForConversation($room);
 		$signaling['server'] = rtrim($signaling['server'], '/');
 
 		$url = '/api/v1/room/' . $room->getToken();

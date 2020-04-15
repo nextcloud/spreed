@@ -41,10 +41,16 @@ class Manager {
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 	}
 
-	public function getSignalingServerForConversation(?Room $room): string {
+	public function getSignalingServerLinkForConversation(?Room $room): string {
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			return '';
+		}
+
+		return $this->getSignalingServerForConversation($room)['server'];
+	}
+
+	public function getSignalingServerForConversation(?Room $room): array {
 		switch ($this->talkConfig->getSignalingMode()) {
-			case Config::SIGNALING_INTERNAL:
-				return '';
 			case Config::SIGNALING_EXTERNAL:
 				return $this->getSignalingServerRandomly();
 			case Config::SIGNALING_CLUSTER_CONVERSATION:
@@ -53,26 +59,26 @@ class Manager {
 				}
 				return $this->getSignalingServerConversationCluster($room);
 			default:
-				throw new \RuntimeException('Unknown signaling mode');
+				throw new \RuntimeException('Unsupported signaling mode');
 		}
 	}
 
-	public function getSignalingServerRandomly(): string {
+	public function getSignalingServerRandomly(): array {
 		$servers = $this->talkConfig->getSignalingServers();
 		try {
 			$serverId = random_int(0, count($servers) - 1);
-			return $servers[$serverId]['server'];
+			return $servers[$serverId];
 		} catch (\Exception $e) {
-			return $servers[0]['server'];
+			return $servers[0];
 		}
 	}
 
-	public function getSignalingServerConversationCluster(Room $room): string {
+	public function getSignalingServerConversationCluster(Room $room): array {
 		$serverId = $room->getAssignedSignalingServer();
 		$servers = $this->talkConfig->getSignalingServers();
 
 		if ($serverId !== null && isset($servers[$serverId])) {
-			return $servers[$serverId]['server'];
+			return $servers[$serverId];
 		}
 
 		$randomServerId = random_int(0, count($servers) - 1);
@@ -83,6 +89,6 @@ class Manager {
 			$room->setAssignedSignalingServer($serverId);
 		}
 
-		return $servers[$serverId]['server'];
+		return $servers[$serverId];
 	}
 }

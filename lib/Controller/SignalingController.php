@@ -149,7 +149,7 @@ class SignalingController extends OCSController {
 		}
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
-		$signaling = $this->signalingManager->getSignalingServerForConversation($room);
+		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
 		return new DataResponse([
 			'signalingMode' => $signalingMode,
