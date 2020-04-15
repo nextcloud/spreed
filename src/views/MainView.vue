@@ -5,7 +5,7 @@
 			<TopBar :force-white-icons="showChatInSidebar" />
 			<ChatView v-if="!showChatInSidebar" :token="token" />
 			<template v-else>
-				<GridView :grid-width="mainViewWidth" />
+				<GridView :grid-width="mainViewWidth" :grid-height="mainViewHeight" />
 			</template>
 		</template>
 	</div>
@@ -40,6 +40,7 @@ export default {
 	data() {
 		return {
 			mainViewWidth: 0,
+			mainViewHeight: 0,
 		}
 	},
 
@@ -94,12 +95,12 @@ export default {
 	},
 	// bind event handlers to the `handleResize` method
 	mounted() {
-		this.mainView.addEventListener('resize', this.handleResize)
+		window.addEventListener('resize', this.handleResize)
 		this.handleResize()
 
 	},
 	beforeDestroy() {
-		this.mainView.removeEventListener('resize', this.handleResize)
+		window.removeEventListener('resize', this.handleResize)
 	},
 
 	methods: {
@@ -107,6 +108,7 @@ export default {
 		handleResize(event) {
 			if (this.mainView) {
 				this.mainViewWidth = this.mainView.clientWidth
+				this.mainViewHeight = this.mainView.clientHeight
 			}
 		},
 	},

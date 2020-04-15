@@ -22,7 +22,7 @@
 <template>
 	<div
 		class="grid"
-		:style="{ gridTemplateColumns: `repeat(${displayedColumns}, minmax(${minWidth}px, 1fr))`, width: `${gridWidth}px`}">
+		:style="{ gridTemplateColumns: `repeat(${columns},  minmax(${minWidth}px, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(${minHeight}px, 1fr)))`}">
 		<div
 			v-for="video in displayedVideos"
 			:key="video"
@@ -40,37 +40,127 @@ export default {
 			type: Number,
 			required: true,
 		},
+		gridHeight: {
+			type: Number,
+			required: true,
+		},
+		/**
+		 * The ideal aspect ratio of the video components. This will not be
+		 * the final aspect ratio of the video components but the grid will
+		 * adjust itself in order to get as close as possible to it, given
+		 * any width and height
+		 */
+		targetAspectRatio: {
+			type: Number,
+			default: 1,
+		},
 	},
 
 	data() {
 		return {
-			videos: Array.from(Array(50).keys()),
+			videos: Array.from(Array(5).keys()),
+			// Min width and height of the video components
+			minWidth: 200,
+			minHeight: 200,
+			columns: 0,
+			rows: 0,
 		}
 	},
 
 	computed: {
-		// Video components will need to accept this min width as a prop
-		minWidth() {
-			return 300
+
+		// Number of videos TODO: link it to the real one
+		videosCount() {
+			return this.videos.length
 		},
-		// The number of columns is always the square root of the number of videos
-		columns() {
-			return Math.ceil((Math.sqrt(this.videos.length)))
+
+		// The aspect ratio of main-view and of the grid itself
+		gridAspectRatio() {
+			return this.gridWidth / this.gridHeight
 		},
-		rows() {
-			return Math.floor(this.columns / 2) + 1
+
+		// Max number of columns given the size of the parent
+		columnsMax() {
+			if (Math.floor(this.gridWidth / this.minWidth) < 1) {
+				// Return at least 1 column
+				return 1
+			} else {
+				return Math.floor(this.gridWidth / this.minWidth)
+			}
 		},
-		minGridWidth() {
-			return this.minWidth * this.columns
+
+		// Max number of rows given the size of the parent
+		rowsMax() {
+			if (Math.floor(this.gridHeight / this.minHeight) < 1) {
+				// Return at least 1 row
+				return 1
+			} else {
+				return Math.floor(this.gridHeight / this.minHeight)
+			}
 		},
-		isSwipable() {
-			return this.gridWidth < this.minGridWidth
+
+		hasMultiplePages() {
+			return this.displayedVideos.length < this.videosCount
 		},
-		displayedColumns() {
-			return Math.floor(this.gridWidth / this.minWidth)
-		},
+		// The number of videos that are displayed in one "page"
 		displayedVideos() {
-			return this.videos.slice(0, this.rows * this.displayedColumns)
+			return this.videos.slice(0, this.rows * this.columns)
+		},
+	},
+
+	watch: {
+		gridAspectRatio() {
+			// If the aspect ratio changes, rebuild the grid
+			this.makeGrid()
+		},
+	},
+
+	beforeMount() {
+		this.makeGrid()
+	},
+
+	methods: {
+		makeGrid() {
+			// Start by assigning the max possible value to rows and columns. This
+			// will fit as many video components as possible given the parent's
+			// dimensions.
+			this.columns = this.columnsMax
+			this.rows = this.rowsMax
+			// However, if we have only a couple of videos to display and a very big
+			// window, we now have a lot of columns and rows, and oud video components
+			// would be too small. To solve this, we shrink this 'virtual grid' we've
+			// just created to fit the number of elements that we have.
+			this.shrinkGrid()
+			// this.adjustGrid()
+		},
+		shrinkGrid() {
+			// Max available grid slots given parent's dimensions and the minimum video
+			// dimensions
+			let slots = this.columns * this.rows
+			// Run this code only if we don't have an 'overflow' of videos.
+			if (this.videosCount < slots) {
+				// The aspect ratio of the virtual grid while shrinking
+				const currentAspectRatio = this.columns / this.rows
+				// Compare the current aspect ratio to the grid aspectratio
+				if (currentAspectRatio <= this.gridAspectRatio) {
+					this.rows--
+					// Ceck that there are still enough slots available
+					slots = this.columns * this.rows
+					if (this.videosCount > slots) {
+						this.rows++
+						return
+					}
+				} else {
+					this.columns--
+					// Ceck that there are still enough slots available
+					slots = this.columns * this.rows
+					if (this.videosCount > slots) {
+						this.rows++
+						return
+					}
+				}
+				this.shrinkGrid()
+			}
 		},
 	},
 }

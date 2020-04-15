@@ -429,4 +429,9 @@ export default {
 		}
 	}
 }
+
+#app-content {
+	min-width: 0;
+	flex: 1 1 100%;
+}
 </style>
