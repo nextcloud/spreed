@@ -26,6 +26,7 @@ namespace OCA\Talk\PublicShareAuth;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Share\IShare;
@@ -44,9 +45,11 @@ class TemplateLoader {
 	use TInitialState;
 
 	public function __construct(IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 	}

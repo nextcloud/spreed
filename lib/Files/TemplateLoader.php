@@ -32,6 +32,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IUser;
@@ -53,12 +54,14 @@ class TemplateLoader implements IEventListener {
 	private $userSession;
 
 	public function __construct(IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig,
 								IAppManager $appManager,
 								IRootFolder $rootFolder,
 								IUserSession $userSession) {
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->appManager = $appManager;
