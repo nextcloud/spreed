@@ -58,8 +58,8 @@ class SignalingController extends OCSController {
 	private $talkConfig;
 	/** @var IConfig */
 	private $serverConfig;
-	/** @var ICache */
-	private $cache;
+	/** @var \OCA\Talk\Signaling\Manager */
+	private $signalingManager;
 	/** @var TalkSession */
 	private $session;
 	/** @var Manager */
@@ -83,7 +83,7 @@ class SignalingController extends OCSController {
 								IRequest $request,
 								Config $talkConfig,
 								IConfig $serverConfig,
-								ICacheFactory $cacheFactory,
+								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
 								Manager $manager,
 								IDBConnection $connection,
@@ -96,7 +96,7 @@ class SignalingController extends OCSController {
 		parent::__construct($appName, $request);
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
-		$this->cache = $cacheFactory->createDistributed('hpb_servers');
+		$this->signalingManager = $signalingManager;
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
@@ -115,6 +115,17 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getSettings(string $token = ''): DataResponse {
+		try {
+			if ($token !== '') {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			} else {
+				// FIXME Soft-fail for legacy support in mobile apps
+				$room = null;
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$stun = [];
 		$stunServer = $this->talkConfig->getStunServer();
 		if ($stunServer) {
@@ -137,24 +148,8 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		$signaling = '';
 		$signalingMode = $this->talkConfig->getSignalingMode();
-		if ($signalingMode !== Config::SIGNALING_INTERNAL) {
-			$servers = $this->talkConfig->getSignalingServers();
-			try {
-				$serverId = random_int(0, count($servers) - 1);
-			} catch (\Exception $e) {
-				$serverId = 0;
-			}
-			if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION) {
-				try {
-					$serverId = $this->getSignalingServerForConversation($this->userId, $serverId, $token);
-				} catch (RoomNotFoundException $e) {
-					return new DataResponse([], Http::STATUS_NOT_FOUND);
-				}
-			}
-			$signaling = $servers[$serverId]['server'];
-		}
+		$signaling = $this->signalingManager->getSignalingServerForConversation($room);
 
 		return new DataResponse([
 			'signalingMode' => $signalingMode,
@@ -165,30 +160,6 @@ class SignalingController extends OCSController {
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 		]);
-	}
-
-	/**
-	 * @param string|null $userId
-	 * @param int $randomServerId
-	 * @param string $token
-	 * @throws RoomNotFoundException
-	 * @return int
-	 */
-	protected function getSignalingServerForConversation(?string $userId, int $randomServerId, string $token): int {
-		$room = $this->manager->getRoomForParticipantByToken($token, $userId);
-		$serverId = $room->getAssignedSignalingServer();
-
-		if ($serverId === null) {
-			// Avoid concurrency issues
-			$serverId = $this->cache->get($token);
-			if ($serverId === null) {
-				$this->cache->set($token, $randomServerId);
-				$serverId = $randomServerId;
-				$room->setAssignedSignalingServer($randomServerId);
-			}
-		}
-
-		return $serverId;
 	}
 
 	/**
