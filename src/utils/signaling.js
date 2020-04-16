@@ -448,12 +448,10 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			})
 			this._startPullingMessages()
 		}.bind(this))
-		.catch(function(jqXHR, textStatus/*, errorThrown */) {
-			if (jqXHR.status === 0 && textStatus === 'abort') {
-				// Request has been aborted. Ignore.
-			} else if (token !== this.currentRoomToken) {
+		.catch(function(error) {
+			if (token !== this.currentRoomToken) {
 				// User navigated away in the meantime. Ignore
-			} else if (jqXHR.status === 404 || jqXHR.status === 403) {
+			} else if (error.response.status === 404 || error.response.status === 403) {
 				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
 			} else if (token) {
