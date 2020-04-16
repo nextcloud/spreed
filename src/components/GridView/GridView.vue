@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import debounce from 'debounce'
 export default {
 	name: 'GridView',
 
@@ -130,7 +131,7 @@ export default {
 	watch: {
 		gridAspectRatio() {
 		// If the aspect ratio changes, rebuild the grid
-			this.makeGrid()
+			debounce(this.makeGrid(), 200)
 		},
 	},
 
