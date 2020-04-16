@@ -62,8 +62,8 @@ const getters = {
 
 		let index
 
-		if (participantIdentifier.hasOwnProperty('participant')) {
-			index = state.participants[token].findIndex(participant => participant.userId === participantIdentifier.participant)
+		if (participantIdentifier.hasOwnProperty('userId')) {
+			index = state.participants[token].findIndex(participant => participant.userId === participantIdentifier.userId)
 		} else {
 			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
 		}
@@ -144,7 +144,15 @@ const actions = {
 			return
 		}
 
-		await promoteToModerator(token, participantIdentifier)
+		if (participantIdentifier.userId) {
+			// Moderation endpoint requires "participant" instead of "userId"
+			await promoteToModerator(token, {
+				participant: participantIdentifier.userId,
+			})
+		} else {
+			// Guests are identified by sessionId in both cases
+			await promoteToModerator(token, participantIdentifier)
+		}
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
@@ -158,7 +166,15 @@ const actions = {
 			return
 		}
 
-		await demoteFromModerator(token, participantIdentifier)
+		if (participantIdentifier.userId) {
+			// Moderation endpoint requires "participant" instead of "userId"
+			await demoteFromModerator(token, {
+				participant: participantIdentifier.userId,
+			})
+		} else {
+			// Guests are identified by sessionId in both cases
+			await demoteFromModerator(token, participantIdentifier)
+		}
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
