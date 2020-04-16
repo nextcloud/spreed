@@ -23,12 +23,16 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
+import { showError } from '@nextcloud/dialogs'
+
+let talkCacheBusterHash = null
 
 /**
  * Fetches the conversations from the server.
  */
 const fetchConversations = async function() {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
+	checkTalkVersionHash(response)
 	return response
 }
 
@@ -38,7 +42,23 @@ const fetchConversations = async function() {
  */
 const fetchConversation = async function(token) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
+	checkTalkVersionHash(response)
 	return response
+}
+
+const checkTalkVersionHash = function(response) {
+	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
+	if (talkCacheBusterHash === null) {
+		console.debug('Setting initial Talk Hash: ', newTalkCacheBusterHash)
+		talkCacheBusterHash = newTalkCacheBusterHash
+	} else if (talkCacheBusterHash !== newTalkCacheBusterHash) {
+		console.debug('Updating Talk Hash: ', newTalkCacheBusterHash)
+		talkCacheBusterHash = newTalkCacheBusterHash
+
+		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+			timeout: -1,
+		})
+	}
 }
 
 /**
