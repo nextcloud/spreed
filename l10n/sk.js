@@ -177,6 +177,7 @@ OC.L10N.register(
     "Demote from moderator" : "Odobrať moderovanie",
     "Promote to moderator" : "Povýšiť na moderátora",
     "Remove participant" : "Odstrániť účastníka",
+    "Searching …" : "Hľadá sa …",
     "No results" : "Žiadne výsledky",
     "Participants" : "Účastníci",
     "Go to file" : "Prejsť na súbor",
