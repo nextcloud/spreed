@@ -313,7 +313,17 @@ class SignalingController extends OCSController {
 			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
 		} catch (RoomNotFoundException $e) {
 			$data[] = ['type' => 'usersInRoom', 'data' => []];
-			return new DataResponse($data, Http::STATUS_NOT_FOUND);
+
+			// Was the session killed or the complete conversation?
+			try {
+				$this->manager->getRoomForParticipantByToken($token, $this->userId);
+
+				// Session was killed, make the UI redirect to an error
+				return new DataResponse($data, Http::STATUS_CONFLICT);
+			} catch (RoomNotFoundException $e) {
+				// Complete conversation was killed, bye!
+				return new DataResponse($data, Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		return new DataResponse($data);
