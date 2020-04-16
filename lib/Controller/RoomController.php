@@ -122,6 +122,15 @@ class RoomController extends AEnvironmentAwareController {
 		$this->talkConfig = $talkConfig;
 	}
 
+	protected function getTalkHashHeader(): array {
+		return [
+			'X-Nextcloud-Talk-Hash' => sha1(
+				$this->config->getSystemValueString('version') . '#' .
+				$this->config->getAppValue('spreed', 'installed_version', '') . '#' .
+				$this->config->getAppValue('theming', 'cachebuster', '1')
+		)];
+	}
+
 	/**
 	 * Get all currently existent rooms which the user has joined
 	 *
@@ -144,7 +153,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		return new DataResponse($return);
+		return new DataResponse($return, Http::STATUS_OK, $this->getTalkHashHeader());
 	}
 
 	/**
@@ -167,7 +176,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 			}
 
-			return new DataResponse($this->formatRoom($room, $participant));
+			return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
