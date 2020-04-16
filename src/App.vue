@@ -120,7 +120,19 @@ export default {
 
 			const lastMessage = {}
 			conversationList.forEach(conversation => {
-				lastMessage[conversation.token] = 0 + (conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0)
+				lastMessage[conversation.token] = 0
+				if (conversation.lastMessage) {
+					const currentActorIsAuthor = conversation.lastMessage.actorType === this.$store.getters.getActorType()
+						&& conversation.lastMessage.actorId === this.$store.getters.getActorId()
+					if (currentActorIsAuthor) {
+						// Set a special value when the actor is the author so we can skip it.
+						// Can't use 0 though because hidden commands result in 0
+						// and they would hide other previously posted new messages
+						lastMessage[conversation.token] = -1
+					} else {
+						lastMessage[conversation.token] = 0 + (conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0)
+					}
+				}
 			})
 			return lastMessage
 		},
@@ -133,8 +145,9 @@ export default {
 		atLeastOneLastMessageIdChanged() {
 			let modified = false
 			Object.keys(this.lastMessageMap).forEach(token => {
-				if (!this.savedLastMessageMap[token]
-					|| this.savedLastMessageMap[token] !== this.lastMessageMap[token]) {
+				if (!this.savedLastMessageMap[token] // Conversation is new
+					|| (this.savedLastMessageMap[token] !== this.lastMessageMap[token] // Last message changed
+						&& this.lastMessageMap[token] !== -1)) { // But is not from the current user
 					modified = true
 				}
 			})
