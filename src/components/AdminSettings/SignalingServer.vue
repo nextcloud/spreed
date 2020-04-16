@@ -28,7 +28,7 @@
 			placeholder="wss://signaling.example.org"
 			:value="server"
 			:disabled="loading"
-			:aria-label="t('spreed', 'TURN server URL')"
+			:aria-label="t('spreed', 'Signaling server URL')"
 			@input="updateServer">
 		<input :id="'verify' + index"
 			type="checkbox"
@@ -42,11 +42,14 @@
 			v-tooltip.auto="t('spreed', 'Delete this server')"
 			class="icon icon-delete"
 			@click="removeServer" />
+
+		<span v-if="server">{{ connectionState }}</span>
 	</div>
 </template>
 
 <script>
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { getWelcomeMessage } from '../../services/signalingService'
 
 export default {
 	name: 'SignalingServer',
@@ -77,6 +80,42 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			checked: false,
+			errorMessage: '',
+			versionFound: '',
+		}
+	},
+
+	computed: {
+		connectionState() {
+			if (!this.checked) {
+				return t('spreed', 'Status: Checking connection')
+			}
+			if (this.errorMessage) {
+				return this.errorMessage
+			}
+			return t('spreed', 'OK: Running version: {version}', {
+				version: this.versionFound,
+			})
+		},
+	},
+
+	watch: {
+		loading(isLoading) {
+			if (!isLoading) {
+				this.checkServerVersion()
+			}
+		},
+	},
+
+	mounted() {
+		if (this.server) {
+			this.checkServerVersion()
+		}
+	},
+
 	methods: {
 		removeServer() {
 			this.$emit('removeServer', this.index)
@@ -86,6 +125,30 @@ export default {
 		},
 		updateVerify(event) {
 			this.$emit('update:verify', event.target.checked)
+		},
+
+		async checkServerVersion() {
+			this.checked = false
+
+			this.errorMessage = ''
+			this.versionFound = ''
+
+			try {
+				const response = await getWelcomeMessage(this.index)
+				this.checked = true
+				this.versionFound = response.data.ocs.data.version
+			} catch (exception) {
+				this.checked = true
+				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
+					this.errorMessage = t('spreed', 'Error: Can not connect to server')
+				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
+					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
+				} else if (exception.response.data.ocs.data.error) {
+					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
+				} else {
+					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
+				}
+			}
 		},
 	},
 }

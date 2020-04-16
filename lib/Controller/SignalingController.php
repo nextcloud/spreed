@@ -38,6 +38,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -66,6 +67,8 @@ class SignalingController extends OCSController {
 	private $dispatcher;
 	/** @var ITimeFactory */
 	private $timeFactory;
+	/** @var IClientService */
+	private $clientService;
 	/** @var string|null */
 	private $userId;
 
@@ -79,6 +82,7 @@ class SignalingController extends OCSController {
 								IUserManager $userManager,
 								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
+								IClientService $clientService,
 								?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -89,6 +93,7 @@ class SignalingController extends OCSController {
 		$this->userManager = $userManager;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
+		$this->clientService = $clientService;
 		$this->userId = $UserId;
 	}
 
@@ -102,6 +107,50 @@ class SignalingController extends OCSController {
 	 */
 	public function getSettings(): DataResponse {
 		return new DataResponse($this->config->getSettings($this->userId));
+	}
+
+	/**
+	 * Only available for logged in users because guests can not use the apps
+	 * right now.
+	 *
+	 * @param int $serverId
+	 * @return DataResponse
+	 */
+	public function getWelcomeMessage(int $serverId): DataResponse {
+		$signalingServers = $this->config->getSignalingServers();
+		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$url = rtrim($signalingServers[$serverId]['server'], '/');
+
+		if (strpos($url, 'wss://') === 0) {
+			$url = 'https://' . substr($url, 6);
+		}
+
+		if (strpos($url, 'ws://') === 0) {
+			$url = 'http://' . substr($url, 5);
+		}
+
+		$client = $this->clientService->newClient();
+		try {
+			$response = $client->get($url . '/api/v1/welcome', [
+				'verify' => (bool) $signalingServers[$serverId]['verify'],
+			]);
+
+			$body = $response->getBody();
+
+			$data = json_decode($body, true);
+			if (!is_array($data) || !isset($data['version'])) {
+				return new DataResponse(['error' => 'JSON_INVALID'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
+			return new DataResponse($data);
+		} catch (\GuzzleHttp\Exception\ConnectException $e) {
+			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (\Exception $e) {
+			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
