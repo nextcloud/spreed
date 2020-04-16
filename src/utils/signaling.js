@@ -31,11 +31,15 @@ import { rejoinConversation } from '../services/participantsService'
 import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
-import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import {
+	generateOcsUrl,
+	generateUrl,
+} from '@nextcloud/router'
 import {
 	showError,
 	showWarning,
 } from '@nextcloud/dialogs'
+import SessionStorage from '../services/SessionStorage'
 
 const Signaling = {
 	Base: {},
@@ -431,6 +435,30 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
+			} else if (error.response && error.response.status === 409) {
+				console.error('Session was killed but the conversation still exists')
+				this._trigger('pullMessagesStoppedOnFail')
+
+				OC.dialogs.confirmDestructive(
+					t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+					t('spreed', 'Duplicate session'),
+					{
+						type: OC.dialogs.YES_NO_BUTTONS,
+						confirm: t('spreed', 'Restart here'),
+						confirmClasses: 'error',
+						cancel: t('spreed', 'Leave this page'),
+					},
+					decision => {
+						if (!decision) {
+							// Cancel
+							SessionStorage.removeItem('joined_conversation')
+							window.location = generateUrl('/apps/spreed')
+						} else {
+							// Confirm
+							window.location = generateUrl('call/' + token)
+						}
+					}
+				)
 			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
 				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
