@@ -23,7 +23,7 @@
 	<div class="wrapper">
 		<div
 			class="grid"
-			:style="{ gridTemplateColumns: `repeat(${columns},  minmax(${minWidth}px, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(${minHeight}px, 1fr)))`}">
+			:style="gridStyle">
 			<div
 				v-for="video in displayedVideos"
 				:key="video"
@@ -68,7 +68,7 @@ export default {
 
 	data() {
 		return {
-			videos: Array.from(Array(99).keys()),
+			videos: Array.from(Array(40).keys()),
 			// Min width and height of the video components
 			minWidth: 200,
 			minHeight: 200,
@@ -126,11 +126,19 @@ export default {
 				return false
 			}
 		},
+
+		gridStyle() {
+			return { gridTemplateColumns: `repeat(${this.columns},  minmax(${this.minWidth}px, 1fr))`, gridTemplateRows: `repeat(${this.rows}, minmax(${this.minHeight}px, 1fr)))` }
+		},
 	},
 
 	watch: {
 		gridAspectRatio() {
 		// If the aspect ratio changes, rebuild the grid
+		// TODO: properly handle resizes when not on first page:
+		// currently if the user is not on the 'first page', upon resize the
+		// current position in the videos array is lost (first element
+		// in the grid goes back to be first video)
 			debounce(this.makeGrid(), 200)
 		},
 	},
@@ -141,9 +149,9 @@ export default {
 
 	methods: {
 		makeGrid() {
-		// Start by assigning the max possible value to rows and columns. This
-		// will fit as many video components as possible given the parent's
-		// dimensions.
+			// Start by assigning the max possible value to rows and columns. This
+			// would fit as many video components as possible given the parent's
+			// dimensions.
 			this.columns = this.columnsMax
 			this.rows = this.rowsMax
 			// However, if we have only a couple of videos to display and a very big
@@ -152,8 +160,9 @@ export default {
 			// just created to fit the number of elements that we have.
 			if (this.videosCap !== 0) {
 				this.shrinkGrid(this.videosCap)
+			} else {
+				this.shrinkGrid(this.videosCount)
 			}
-			this.shrinkGrid(this.videosCount)
 			// Once the grid is done, populate it with video components
 			this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
 

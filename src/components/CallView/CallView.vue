@@ -21,51 +21,7 @@
 <template>
 	<div id="call-container" :class="callViewClass">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive" />
-		<div class="grid">
-			<template v-for="callParticipantModel in reversedCallParticipantModels">
-				<Video
-					:key="callParticipantModel.attributes.peerId + '1'"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					:is-grid="true"
-					@switchScreenToId="_switchScreenToId" />
-				<Video
-					:key="callParticipantModel.attributes.peerId + '2'"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					:is-grid="true"
-					@switchScreenToId="_switchScreenToId" />
-				<Video
-					:key="callParticipantModel.attributes.peerId + '3'"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					:is-grid="true"
-					@switchScreenToId="_switchScreenToId" />
-				<Video
-					:key="callParticipantModel.attributes.peerId + '3'"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					:is-grid="true"
-					@switchScreenToId="_switchScreenToId" />
-				<Video
-					:key="callParticipantModel.attributes.peerId + '3'"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					:is-grid="true"
-					@switchScreenToId="_switchScreenToId" />
-			</template>
-		</div>
-		<div v-if="false" id="videos">
+		<div id="videos">
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
 				<Video
 					:key="callParticipantModel.attributes.peerId"
@@ -664,11 +620,5 @@ export default {
 	100% {
 		opacity: 1;
 	}
-}
-
-.grid {
-	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
-	grid-template-rows: repeat( auto-fit, minmax(250px, 1fr) );
 }
 </style>
