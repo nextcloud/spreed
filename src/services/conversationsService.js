@@ -26,14 +26,29 @@ import { CONVERSATION, SHARE } from '../constants'
 import { showError } from '@nextcloud/dialogs'
 
 let talkCacheBusterHash = null
+let maintenanceWarning = null
 
 /**
  * Fetches the conversations from the server.
  */
 const fetchConversations = async function() {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
-	checkTalkVersionHash(response)
-	return response
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
+		checkTalkVersionHash(response)
+
+		if (maintenanceWarning) {
+			maintenanceWarning.hideToast()
+			maintenanceWarning = null
+		}
+		return response
+	} catch (error) {
+		if (error.response.status === 503 && !maintenanceWarning) {
+			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: -1,
+			})
+		}
+		throw error
+	}
 }
 
 /**
@@ -41,9 +56,23 @@ const fetchConversations = async function() {
  * @param {string} token The token of the conversation to be fetched.
  */
 const fetchConversation = async function(token) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
-	checkTalkVersionHash(response)
-	return response
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
+		checkTalkVersionHash(response)
+
+		if (maintenanceWarning) {
+			maintenanceWarning.hideToast()
+			maintenanceWarning = null
+		}
+		return response
+	} catch (error) {
+		if (error.response.status === 503 && !maintenanceWarning) {
+			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: -1,
+			})
+		}
+		throw error
+	}
 }
 
 const checkTalkVersionHash = function(response) {
