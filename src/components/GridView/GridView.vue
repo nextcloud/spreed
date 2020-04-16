@@ -20,14 +20,26 @@
 -->
 
 <template>
-	<div
-		class="grid"
-		:style="{ gridTemplateColumns: `repeat(${columns},  minmax(${minWidth}px, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(${minHeight}px, 1fr)))`}">
+	<div class="wrapper">
 		<div
-			v-for="video in displayedVideos"
-			:key="video"
-			class="video"
-			v-text="video" />
+			class="grid"
+			:style="{ gridTemplateColumns: `repeat(${columns},  minmax(${minWidth}px, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(${minHeight}px, 1fr)))`}">
+			<div
+				v-for="video in displayedVideos"
+				:key="video"
+				class="video"
+				v-text="video" />
+		</div>
+		<button v-if="hasNextPage"
+			class="grid-navigation next"
+			@click="handleClickNext">
+			Next
+		</button>
+		<button v-if="hasPreviousPage"
+			class="grid-navigation previous"
+			@click="handleClickPrevious">
+			Previous
+		</button>
 	</div>
 </template>
 
@@ -55,10 +67,12 @@ export default {
 
 	data() {
 		return {
-			videos: Array.from(Array(10).keys()),
+			videos: Array.from(Array(99).keys()),
 			// Min width and height of the video components
 			minWidth: 200,
 			minHeight: 200,
+			// Array of currently displayed videos
+			displayedVideos: [],
 			columns: 0,
 			rows: 0,
 		}
@@ -96,18 +110,26 @@ export default {
 			}
 		},
 
-		hasMultiplePages() {
-			return this.displayedVideos.length < this.videosCount
+		hasNextPage() {
+			if (this.displayedVideos !== []) {
+				return this.displayedVideos[this.displayedVideos.length - 1] !== this.videos[this.videos.length - 1]
+			} else {
+				return false
+			}
 		},
-		// The number of videos that are displayed in one "page"
-		displayedVideos() {
-			return this.videos.slice(0, this.rows * this.columns)
+
+		hasPreviousPage() {
+			if (this.displayedVideos !== []) {
+				return this.displayedVideos[0] !== this.videos[0]
+			} else {
+				return false
+			}
 		},
 	},
 
 	watch: {
 		gridAspectRatio() {
-			// If the aspect ratio changes, rebuild the grid
+		// If the aspect ratio changes, rebuild the grid
 			this.makeGrid()
 		},
 	},
@@ -118,9 +140,9 @@ export default {
 
 	methods: {
 		makeGrid() {
-			// Start by assigning the max possible value to rows and columns. This
-			// will fit as many video components as possible given the parent's
-			// dimensions.
+		// Start by assigning the max possible value to rows and columns. This
+		// will fit as many video components as possible given the parent's
+		// dimensions.
 			this.columns = this.columnsMax
 			this.rows = this.rowsMax
 			// However, if we have only a couple of videos to display and a very big
@@ -131,15 +153,18 @@ export default {
 				this.shrinkGrid(this.videosCap)
 			}
 			this.shrinkGrid(this.videosCount)
+			// Once the grid is done, populate it with video components
+			this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
+
 		},
 
 		shrinkGrid(videos) {
-			// Max available grid slots given parent's dimensions and the minimum video
-			// dimensions
+		// Max available grid slots given parent's dimensions and the minimum video
+		// dimensions
 			let slots = this.columns * this.rows
 			// Run this code only if we don't have an 'overflow' of videos.
 			if (videos < slots) {
-				// The aspect ratio of the virtual grid while shrinking
+			// The aspect ratio of the virtual grid while shrinking
 				const currentAspectRatio = this.columns / this.rows
 				// Compare the current aspect ratio to the grid aspectratio
 				if (currentAspectRatio <= this.gridAspectRatio) {
@@ -162,16 +187,34 @@ export default {
 				this.shrinkGrid(videos)
 			}
 		},
+
+		handleClickNext() {
+			const currentLastDisplayedElement = this.displayedVideos[this.displayedVideos.length - 1]
+			const firstElementOfNextPage = this.videos.indexOf(currentLastDisplayedElement) + 1
+			this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns)
+
+		},
+		handleClickPrevious() {
+			const currentFirstDisplayedElement = this.displayedVideos[0]
+			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement)
+			this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
+
+		},
 	},
 }
+
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+	height: 100%;
+	width: 100%;
+}
+
 .grid {
 	display: grid;
 	height: 100%;
 	width: 100%;
-	overflow: scroll;
 }
 
 .video {
@@ -184,4 +227,19 @@ export default {
 .video:last-child {
 	grid-column-end: -1;
 }
+
+.grid-navigation {
+	position: absolute;
+	top: 50%;
+	margin-top: -17px
+
+}
+
+.next {
+	right: 40px;
+}
+.previous {
+	left: 40px;
+}
+
 </style>
