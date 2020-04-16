@@ -296,6 +296,7 @@ function Internal(settings) {
 	this.hideWarning = settings.hideWarning
 	this.spreedArrayConnection = []
 
+	this.pullMessageErrorToast = null
 	this.pullMessagesFails = 0
 	this.pullMessagesRequest = null
 
@@ -409,6 +410,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	request(token)
 		.then(function(result) {
 			this.pullMessagesFails = 0
+			if (this.pullMessageErrorToast) {
+				this.pullMessageErrorToast.hideToast()
+				this.pullMessageErrorToast = null
+			}
+
 			result.data.ocs.data.forEach(message => {
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
@@ -436,6 +442,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
 			} else if (error.response && error.response.status === 409) {
+				// Participant joined a second time and this session was killed
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
@@ -460,22 +467,32 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					}
 				)
 			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
-				console.error('Stop pulling messages because room does not exist or is not accessible')
-				this._trigger('pullMessagesStoppedOnFail')
+				// Conversation was deleted or the user was removed
+				console.error('Conversation was not found anymore')
+				OC.redirect(generateUrl('/apps/spreed/not-found'))
 			} else if (token) {
-				if (this.pullMessagesFails >= 3) {
-					console.error('Stop pulling messages after repeated failures')
+				if (this.pullMessagesFails === 1) {
+					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
+						timeout: -1,
+					})
+				}
+				if (this.pullMessagesFails === 30) {
+					if (this.pullMessageErrorToast) {
+						this.pullMessageErrorToast.hideToast()
+					}
 
-					this._trigger('pullMessagesStoppedOnFail')
-
+					// Giving up after 5 minutes
+					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
+						timeout: -1,
+					})
 					return
 				}
 
 				this.pullMessagesFails++
-				// Retry to pull messages after 5 seconds
+				// Retry to pull messages after 10 seconds
 				window.setTimeout(function() {
 					this._startPullingMessages()
-				}.bind(this), 5000)
+				}.bind(this), 10000)
 			}
 		}.bind(this))
 }
