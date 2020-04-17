@@ -35,6 +35,7 @@ use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -78,6 +79,8 @@ class SignalingControllerTest extends \Test\TestCase {
 	protected $userManager;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
+	/** @var IClientService|MockObject */
+	protected $clientService;
 	/** @var string */
 	private $userId;
 	/** @var ISecureRandom */
@@ -108,6 +111,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->clientService = $this->createMock(IClientService::class);
 		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->recreateSignalingController();
 	}
@@ -124,6 +128,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->userManager,
 			$this->dispatcher,
 			$this->timeFactory,
+			$this->clientService,
 			$this->userId
 		);
 	}
