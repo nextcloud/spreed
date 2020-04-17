@@ -33,12 +33,12 @@
 			</ActionButton>
 		</Actions>
 		<Actions v-if="isInCall">
-			<ActionButton
+			<ActionButton v-if="isInCall"
 				class="top-bar__button"
 				:icon="changeViewIconClass"
 				@click="changeView">
 				{{ changeViewText }}
-			</ActionButton>
+			</actionbutton>
 		</Actions>
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
@@ -114,9 +114,9 @@ export default {
 		},
 		changeViewIconClass() {
 			if (this.isGrid) {
-				return 'icon-promoted-view'
+				return 'icon-promoted-view-white'
 			} else {
-				return 'icon-grid-view'
+				return 'icon-toggle-pictures-white'
 			}
 		},
 	},
