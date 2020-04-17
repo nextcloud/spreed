@@ -293,8 +293,12 @@ class PageController extends Controller {
 				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException $e) {
+			$redirectUrl = $this->url->linkToRoute('spreed.Page.index');
+			if ($token) {
+				$redirectUrl = $this->url->linkToRoute('spreed.pagecontroller.showCall', ['token' => $token]);
+			}
 			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
-				'redirect_url' => $this->url->linkToRoute('spreed.pagecontroller.showCall', ['token' => $token]),
+				'redirect_url' => $redirectUrl,
 			]));
 		}
 
