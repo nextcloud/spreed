@@ -28,11 +28,66 @@ use Test\TestCase;
 
 class ShellExecutorTest extends TestCase {
 
+	public function dataExecShellRun(): array {
+		return [
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$PATH', '$PATH'],
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$PATH', '$PATH'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$PATH', '$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '$PATH', '$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '$(pwd)', '$(pwd)'],
+
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$PATH', '\\$PATH'],
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$PATH', '\\$PATH'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\$PATH', '\\$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\$PATH', '\\$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\$(pwd)', '\\$(pwd)'],
+
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '`pwd`', '`pwd`'],
+
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', 'echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\`pwd \\`', '\\`pwd \\`'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataExecShellRun
+	 * @param string|null $actorId
+	 * @param string $roomToken
+	 * @param string $cmd
+	 * @param string $arguments
+	 * @param string $output
+	 */
+	public function testExecShellRun(?string $actorId, string $roomToken, string $cmd, string $arguments, string $output): void {
+		$executor = new ShellExecutor();
+		$this->assertSame($output, $executor->execShell($cmd, $arguments, $roomToken, $actorId));
+
+	}
+
 	public function dataExecShell(): array {
 		return [
 			['admin', 'token', '', '', '', ''],
 			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} {ARGUMENTS}', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' 'foo' 'bar' \"hello bear\"", 'output1'],
 			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} --arguments="{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' --arguments=\"foo bar \\\"hello bear\\\"\"", "out\nput\n2"],
+			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} --arguments="{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', '$PATH', "/var/www/nextcloud/script.sh 'admin' 'token' --arguments=\"\\\$PATH\"", "out\nput\n2"],
 		];
 	}
 
