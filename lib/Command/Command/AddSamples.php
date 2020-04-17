@@ -67,7 +67,7 @@ class AddSamples extends Base {
 			$output,
 			'wiki',
 			'Wikipedia',
-			'php ' . $appPath . '/sample-commands/wikipedia.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"'
+			'php ' . $appPath . '/sample-commands/wikipedia.php {ARGUMENTS}'
 		);
 
 		$chmod = fileperms($appPath . '/sample-commands/calc.sh');
@@ -80,7 +80,7 @@ class AddSamples extends Base {
 				$output,
 				'calculator',
 				'Calculator',
-				$appPath . '/sample-commands/calc.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
+				$appPath . '/sample-commands/calc.sh {ARGUMENTS}',
 				Command::RESPONSE_USER
 			);
 
@@ -97,7 +97,7 @@ class AddSamples extends Base {
 			$output,
 			'hackernews',
 			'Hacker News',
-			'php ' . $appPath . '/sample-commands/hackernews.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"'
+			'php ' . $appPath . '/sample-commands/hackernews.php {ARGUMENTS}'
 		);
 
 		if (empty($this->commands)) {
