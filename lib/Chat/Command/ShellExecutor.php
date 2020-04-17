@@ -28,6 +28,8 @@ class ShellExecutor {
 	public const PLACEHOLDER_ROOM = '{ROOM}';
 	public const PLACEHOLDER_USER = '{USER}';
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
+
+	// Legacy placeholder just returning the --help nowadays
 	public const PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED = '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}';
 
 	/**
@@ -47,49 +49,11 @@ class ShellExecutor {
 		], [
 			escapeshellarg($room),
 			escapeshellarg($user),
-			$this->escapeArguments($arguments),
-			str_replace(['$', '`', '"'], ['\\$', '\\`', '\\"'], $arguments),
+			escapeshellarg($arguments),
+			'--help',
 		], $cmd);
 
 		return $this->wrapExec($cmd);
-	}
-
-	protected function escapeArguments(string $argumentString): string {
-		$arguments = explode(' ', $argumentString);
-
-		$result = [];
-		$buffer = [];
-		$quote = '';
-		foreach ($arguments as $argument) {
-			if ($quote === '') {
-				if (ltrim($argument, '"\'') === $argument) {
-					$result[] = escapeshellarg($argument);
-				} else {
-					$quote = $argument[0];
-					$temp = substr($argument, 1);
-					if (rtrim($temp, $quote) === $temp) {
-						$buffer[] = $temp;
-					} else {
-						$result[] = $quote . str_replace($quote, '\\'. $quote, substr($temp, 0, -1)) . $quote;
-						$quote = '';
-					}
-				}
-			} else if (rtrim($argument, $quote) === $argument) {
-				$buffer[] = $argument;
-			} else {
-				$buffer[] = substr($argument, 0, -1);
-
-				$result[] = $quote . str_replace($quote, '\\'. $quote, implode(' ', $buffer)) . $quote;
-				$quote = '';
-				$buffer = [];
-			}
-		}
-
-		if ($quote !== '') {
-			$result[] = escapeshellarg($quote . implode(' ', $buffer));
-		}
-
-		return implode(' ', $result);
 	}
 
 	/**
