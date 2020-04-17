@@ -21,8 +21,12 @@
 
 <template>
 	<div class="call-view">
-		<GridView v-if="isGrid" v-bind="$attrs" />
-		<PromotedView v-else v-bind="$attrs" />
+		<transition name="fade">
+			<GridView v-if="isGrid" v-bind="$attrs" />
+		</transition>
+		<transition name="fade">
+			<PromotedView v-if="!isGrid" v-bind="$attrs" />
+		</transition>
 	</div>
 </template>
 
@@ -47,9 +51,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables.scss';
 
 .call-view {
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
+	background-color: black,
 }
 </style>

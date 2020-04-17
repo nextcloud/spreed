@@ -172,23 +172,4 @@ export default {
 		transition: all 150ms ease-in-out;
 	}
 }
-
-.fade {
-	&-enter {
-		opacity: 0;
-	}
-	&-enter-to {
-		opacity: 1;
-	}
-	&-leave {
-		opacity: 1;
-	}
-	&-leave-to {
-		opacity: 0;
-	}
-	&-enter-active,
-	&-leave-active {
-		transition: all 150ms ease-in-out;
-	}
-}
 </style>

@@ -81,3 +81,23 @@ $chat-font-size: 15px;
 
 //chat line height
 $chat-line-height: 1.6em;
+
+// fade transition
+.fade {
+	&-enter {
+		opacity: 0;
+	}
+	&-enter-to {
+		opacity: 1;
+	}
+	&-leave {
+		opacity: 1;
+	}
+	&-leave-to {
+		opacity: 0;
+	}
+	&-enter-active,
+	&-leave-active {
+		transition: all 150ms ease-in-out;
+	}
+}
