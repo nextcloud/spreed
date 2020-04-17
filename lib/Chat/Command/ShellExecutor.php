@@ -48,7 +48,7 @@ class ShellExecutor {
 			escapeshellarg($room),
 			escapeshellarg($user),
 			$this->escapeArguments($arguments),
-			str_replace('"', '\\"', $arguments),
+			str_replace(['$', '`', '"'], ['\\$', '\\`', '\\"'], $arguments),
 		], $cmd);
 
 		return $this->wrapExec($cmd);
