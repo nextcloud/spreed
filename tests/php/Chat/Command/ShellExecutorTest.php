@@ -102,6 +102,17 @@ class ShellExecutorTest extends TestCase {
 			->willReturn($output);
 
 		$this->assertSame($output, self::invokePrivate($executor, 'execShell', [$cmd, $arguments, $roomToken, $actorId]));
+	}
 
+	public function testLegacyArguments(): void {
+		$executor = $this->getMockBuilder(ShellExecutor::class)
+			->setMethods(['wrapExec'])
+			->getMock();
+
+		$executor->expects($this->never())
+			->method('wrapExec');
+
+		$this->expectException(\InvalidArgumentException::class);
+		self::invokePrivate($executor, 'execShell', ['echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', 'arguments', '', '']);
 	}
 }
