@@ -86,7 +86,7 @@
 <script>
 import escapeHtml from 'escape-html'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner'
+import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 
 export default {
 

@@ -37,7 +37,7 @@
 
 <script>
 import { generateUrl } from '@nextcloud/router'
-import { CONVERSATION, PARTICIPANT } from '../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
 export default {
 

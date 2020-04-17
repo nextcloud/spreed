@@ -5,14 +5,14 @@
 			<TopBar :force-white-icons="showChatInSidebar" />
 			<ChatView v-if="!showChatInSidebar" :token="token" />
 			<template v-else>
-				<GridView :grid-width="mainViewWidth" :grid-height="mainViewHeight" />
+				<CallView :grid-width="mainViewWidth" :grid-height="mainViewHeight" />
 			</template>
 		</template>
 	</div>
 </template>
 
 <script>
-import GridView from '../components/GridView/GridView'
+import CallView from '../components/CallView/CallView'
 import ChatView from '../components/ChatView'
 import LobbyScreen from '../components/LobbyScreen'
 import TopBar from '../components/TopBar/TopBar'
@@ -25,7 +25,7 @@ export default {
 		ChatView,
 		LobbyScreen,
 		TopBar,
-		GridView,
+		CallView,
 	},
 
 	mixins: [

@@ -70,8 +70,8 @@
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel'
-import { PARTICIPANT } from '../../constants'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
+import { PARTICIPANT } from '../../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 
@@ -289,7 +289,7 @@ export default {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 
-@import '../../assets/avatar.scss';
+@import '../../../assets/avatar.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
