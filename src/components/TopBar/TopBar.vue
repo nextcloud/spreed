@@ -114,9 +114,9 @@ export default {
 		},
 		changeViewIconClass() {
 			if (this.isGrid) {
-				return 'promoted-view'
+				return 'icon-promoted-view'
 			} else {
-				return 'grid-view'
+				return 'icon-grid-view'
 			}
 		},
 	},
