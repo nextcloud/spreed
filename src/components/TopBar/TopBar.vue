@@ -32,6 +32,14 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 		</Actions>
+		<Actions v-if="isInCall">
+			<ActionButton
+				class="top-bar__button"
+				:icon="changeViewIconClass"
+				@click="changeView">
+				{{ changeViewText }}
+			</ActionButton>
+		</Actions>
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
@@ -57,9 +65,13 @@ export default {
 	},
 
 	props: {
-		forceWhiteIcons: {
+		isInCall: {
 			type: Boolean,
-			default: false,
+			required: true,
+		},
+		isGrid: {
+			type: Boolean,
+			required: true,
 		},
 	},
 
@@ -69,7 +81,7 @@ export default {
 		},
 
 		iconFullscreen() {
-			if (this.forceWhiteIcons) {
+			if (this.isInCall) {
 				return 'forced-white icon-fullscreen'
 			}
 			return 'icon-fullscreen'
@@ -83,7 +95,7 @@ export default {
 		},
 
 		iconMenuPeople() {
-			if (this.forceWhiteIcons) {
+			if (this.isInCall) {
 				return 'forced-white icon-menu-people'
 			}
 			return 'icon-menu-people'
@@ -91,6 +103,21 @@ export default {
 
 		showOpenSidebarButton() {
 			return !this.$store.getters.getSidebarStatus()
+		},
+
+		changeViewText() {
+			if (this.isGrid) {
+				return t('spreed', 'Switch to promoted view')
+			} else {
+				return t('spreed', 'Switch to grid view')
+			}
+		},
+		changeViewIconClass() {
+			if (this.isGrid) {
+				return 'promoted-view'
+			} else {
+				return 'grid-view'
+			}
 		},
 	},
 
@@ -154,6 +181,10 @@ export default {
 			} else if (document.msExitFullscreen) {
 				document.msExitFullscreen()
 			}
+		},
+
+		changeView() {
+			this.$emit('changeView')
 		},
 	},
 }

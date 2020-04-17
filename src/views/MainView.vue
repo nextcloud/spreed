@@ -2,10 +2,17 @@
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :force-white-icons="showChatInSidebar" />
+			<TopBar
+				:is-in-call="showChatInSidebar"
+				:is-grid="isGrid"
+				@changeView="handleChangeView" />
 			<ChatView v-if="!showChatInSidebar" :token="token" />
 			<template v-else>
-				<CallView :grid-width="mainViewWidth" :grid-height="mainViewHeight" />
+				<CallView
+					:is-grid="isGrid"
+					:grid-width="mainViewWidth"
+					:grid-height="mainViewHeight"
+					:token="token" />
 			</template>
 		</template>
 	</div>
@@ -41,6 +48,7 @@ export default {
 		return {
 			mainViewWidth: 0,
 			mainViewHeight: 0,
+			isGrid: true,
 		}
 	},
 
@@ -110,6 +118,10 @@ export default {
 				this.mainViewWidth = this.mainView.clientWidth
 				this.mainViewHeight = this.mainView.clientHeight
 			}
+		},
+
+		handleChangeView() {
+			this.isGrid = !this.isGrid
 		},
 	},
 

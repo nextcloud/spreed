@@ -138,3 +138,11 @@ export default {
 
 }
 </script>
+
+<style lang="scss">
+.emptycontent {
+	margin-top: 0;
+	position: absolute;
+	top: 30vh;
+}
+</style>
