@@ -37,7 +37,7 @@
 		{{ startCallLabel }}
 	</button>
 	<button v-else-if="showLeaveCallButton"
-		class="top-bar__button primary"
+		class="top-bar__button error"
 		:disabled="loading"
 		@click="leaveCall">
 		<span
