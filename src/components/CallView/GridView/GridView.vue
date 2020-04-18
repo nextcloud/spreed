@@ -24,20 +24,29 @@
 		<div
 			class="grid"
 			:style="gridStyle">
-			<template v-for="callParticipantModel in displayedVideos">
-				<Video
-					:key="callParticipantModel.attributes.peerId"
-					class="video"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="{videoEnabled: true}" />
+			<template v-if="!devMode">
+				<template v-for="callParticipantModel in displayedVideos">
+					<Video
+						:key="callParticipantModel.attributes.peerId"
+						:class="video"
+						:token="token"
+						:model="callParticipantModel"
+						:shared-data="{videoEnabled: true}" />
+				</template>
+				<LocalVideo ref="localVideo"
+					:class="video"
+					:local-media-model="localMediaModel"
+					:local-call-participant-model="localCallParticipantModel"
+					:use-constrained-layout="useConstrainedLayout"
+					@switchScreenToId="_switchScreenToId" />
 			</template>
-			<LocalVideo ref="localVideo"
-				class="video"
-				:local-media-model="localMediaModel"
-				:local-call-participant-model="localCallParticipantModel"
-				:use-constrained-layout="useConstrainedLayout"
-				@switchScreenToId="_switchScreenToId" />
+			<template v-else>
+				<div
+					v-for="video in displayedVideos"
+					:key="video"
+					class="dev-mode-video video"
+					v-text="video" />
+			</template>
 		</div>
 		<button v-if="hasNextPage"
 			class="grid-navigation next"
@@ -49,6 +58,14 @@
 			@click="handleClickPrevious">
 			Previous
 		</button>
+		<div
+			v-if="pages !== 0"
+			class="pages-indicator">
+			<div v-for="(page, index) in pages"
+				:key="index"
+				class="pages-indicator__dot"
+				:class="{'pages-indicator__dot--active': index === currentPage }" />
+		</div>
 	</div>
 </template>
 
@@ -130,6 +147,10 @@ export default {
 			columns: 0,
 			// Rows of the grid at any given moment
 			rows: 0,
+			// Grid pages at any given moment
+			pages: 0,
+			// The current page
+			currentPage: 0,
 		}
 	},
 
@@ -178,6 +199,11 @@ export default {
 			} else {
 				return Math.floor(this.gridHeight / this.minHeight)
 			}
+		},
+
+		// Number of grid slots at any given moment
+		slots() {
+			return this.rows * this.columns
 		},
 
 		// Hides or displays the `grid-navigation next` button
@@ -257,15 +283,18 @@ export default {
 				// `- 1` because we a ccount for the localVideo component (see template)
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
 			}
+			// Set the current number of pages
+			this.pages = Math.ceil(this.videosCount / this.slots)
+			// Set the current page to 0
+			// TODO: add support for keeping position in the videos array when resizing
+			this.currentPage = 0
 		},
 
 		// Fine tune the number of rows and columns of the grid
 		shrinkGrid(videos) {
-			// Get the max available grid slots
-			let slots = this.columns * this.rows
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
-			if (videos < slots) {
+			if (videos < this.slots) {
 				// Get the aspect ratio (in terms of coulmns and rows)of the current grid
 				// while shrinking
 				const currentAspectRatio = this.columns / this.rows
@@ -275,8 +304,7 @@ export default {
 				if (currentAspectRatio <= this.gridAspectRatio) {
 					this.rows--
 					// Ceck that there are still enough slots available
-					slots = this.columns * this.rows
-					if (videos > slots) {
+					if (videos > this.slots) {
 						// If not, revert the changes and break the loop
 						this.rows++
 						return
@@ -284,8 +312,7 @@ export default {
 				} else {
 					this.columns--
 					// Ceck that there are still enough slots available
-					slots = this.columns * this.rows
-					if (videos > slots) {
+					if (videos > this.slots) {
 						// If not, revert the changes and break the loop
 						this.rows++
 						return
@@ -305,6 +332,7 @@ export default {
 				// `- 1` because we a ccount for the localVideo component (see template)
 				this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns - 1)
 			}
+			this.currentPage++
 		},
 		// Slice the `videos` array to display the previous set of videos
 		handleClickPrevious() {
@@ -316,6 +344,7 @@ export default {
 				// `- 1` because we a ccount for the localVideo component (see template)
 				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage - 1)
 			}
+			this.currentPage--
 		},
 	},
 }
@@ -334,9 +363,13 @@ export default {
 	width: 100%;
 }
 
-.video {
-	border: 2x solid white;
+.dev-mode-video {
+	border: 1px solid white;
 	color: white;
+	font-size: 30px;
+		text-align: center;
+	vertical-align: middle;
+	padding-top: 80px;
 }
 
 .video:last-child {
@@ -351,10 +384,33 @@ export default {
 }
 
 .next {
-	right: 40px;
+	right: 20px;
 }
 .previous {
-	left: 40px;
+	left: 20px;
+}
+
+.pages-indicator {
+	position: absolute;
+	right: 50%;
+	top: 4px;
+	display: flex;
+	background-color: var(--color-bakground-hover);
+	height: 44px;
+	padding: 0 22px;
+	border-radius: 22px;
+	&__dot {
+		width: 8px;
+		height: 8px;
+		margin: auto 4px;
+		border-radius: 4px;
+		background-color: white;
+		opacity: 50%;
+		box-shadow: 0px 0px 4px black;
+	&--active {
+			opacity: 100%;
+		}
+	}
 }
 
 </style>

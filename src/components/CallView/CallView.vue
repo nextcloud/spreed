@@ -22,7 +22,10 @@
 <template>
 	<div class="call-view">
 		<transition name="fade">
-			<GridView v-if="isGrid" v-bind="$attrs" />
+			<GridView v-if="isGrid"
+				v-bind="$attrs"
+				:dev-mode="true"
+				:dummies="30" />
 		</transition>
 		<transition name="fade">
 			<PromotedView v-if="!isGrid" v-bind="$attrs" />
