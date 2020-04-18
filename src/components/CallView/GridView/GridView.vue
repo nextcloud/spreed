@@ -46,9 +46,22 @@
 					:key="video"
 					class="dev-mode-video video"
 					v-text="video" />
-				<h1 class="dev-mode">
-					dev mode on ;-)
+				<h1 class="dev-mode__title">
+					Dev mode on ;-)
 				</h1>
+				<div class="dev-mode__data">
+					<p>GRID INFO</p>
+					<p>Videos (total): {{ videosCount }}</p>
+					<p>Displayed videos: {{ displayedVideos.length }}</p>
+					<p>Max per page: ~{{ videosCap }}</p>
+					<p>Grid width: {{ gridWidth }}</p>
+					<p>Grid height: {{ gridHeight }}</p>
+					<p>Min video width: {{ minWidth }} </p>
+					<p>Min video Height: {{ minHeight }} </p>
+					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
+					<p>Number of pages: {{ numberOfPages }}</p>
+					<p>Current page: {{ currentPage }}</p>
+				</div>
 			</template>
 		</div>
 		<button v-if="hasNextPage"
@@ -181,7 +194,7 @@ export default {
 
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
-			return this.gridWidth / this.gridHeight
+			return this.gridWidth / this.gridHeight.toPrecision([2])
 		},
 
 		// Max number of columns possible
@@ -403,26 +416,44 @@ export default {
 }
 
 .dev-mode-video {
-	border: 1px solid white;
-	color: white;
+	border: 1px solid #00FF41;
+	color: #00FF41;
 	font-size: 30px;
-		text-align: center;
+	text-align: center;
 	vertical-align: middle;
 	padding-top: 80px;
 }
-
-.dev-mode {
+.dev-mode__title {
 	position: absolute;
-	font-size: 100px;
+	top: 44px;
+	left: 44px;
+	color: #00FF41;
+	z-index: 100;
+	font-size: 30px;
 	line-height: 120px;
-	text-align: center;
-	top: calc(50% - 60px);
-	left: calc(50% - 357px);
-	opacity: 40%;
-	color: white;
 	font-weight: 900;
+	font-size: 100px !important;
+	top: 88px;
+	opacity: 25%;
 }
 
+.dev-mode__data {
+	font-family: monospace;
+	position: absolute;
+	color: #00FF41;
+	left: 20px;
+	bottom: 20px;
+	padding: 20px;
+	background: rgba(0,0,0,0.8);
+	border: 1px solid #00FF41;
+	width: 212px;
+	font-size: 12px;
+	& p {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+}
 .video:last-child {
 	grid-column-end: -1;
 }
@@ -456,7 +487,7 @@ export default {
 		margin: auto 4px;
 		border-radius: 4px;
 		background-color: white;
-		opacity: 50%;
+		opacity: 80%;
 		box-shadow: 0px 0px 4px black;
 	&--active {
 			opacity: 100%;
