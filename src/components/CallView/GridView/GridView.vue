@@ -59,9 +59,9 @@
 			Previous
 		</button>
 		<div
-			v-if="pages !== 0"
+			v-if="numberOfPages !== 0"
 			class="pages-indicator">
-			<div v-for="(page, index) in pages"
+			<div v-for="(page, index) in numberOfPages"
 				:key="index"
 				class="pages-indicator__dot"
 				:class="{'pages-indicator__dot--active': index === currentPage }" />
@@ -148,7 +148,7 @@ export default {
 			// Rows of the grid at any given moment
 			rows: 0,
 			// Grid pages at any given moment
-			pages: 0,
+			numberOfPages: 0,
 			// The current page
 			currentPage: 0,
 		}
@@ -209,8 +209,7 @@ export default {
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
 			if (this.displayedVideos !== []) {
-				return this.displayedVideos[this.displayedVideos.length - 1]
-				!== this.videos[this.videos.length - 1]
+				return this.displayedVideos[this.displayedVideos.length - 1] !== this.videos[this.videos.length - 1]
 			} else {
 				return false
 			}
@@ -225,6 +224,10 @@ export default {
 			}
 		},
 
+		isLastPage() {
+			return !this.hasNextPage
+		},
+
 		// Computed css to reactively style the grid
 		gridStyle() {
 			return {
@@ -235,29 +238,51 @@ export default {
 
 	watch: {
 		// If the aspect ratio changes, rebuild the grid
-		gridAspectRatio() {
+		async gridAspectRatio() {
 		// TODO: properly handle resizes when not on first page:
 		// currently if the user is not on the 'first page', upon resize the
 		// current position in the videos array is lost (first element
 		// in the grid goes back to be first video)
-			debounce(this.makeGrid(), 200)
+			await debounce(this.makeGrid(), 200)
+			this.setNumberOfPages()
+			// Set the current page to 0
+			// TODO: add support for keeping position in the videos array when resizing
+			this.currentPage = 0
 		},
 		// If the video array changes, rebuild the grid
 		videos() {
 			this.makeGrid()
+			this.setNumberOfPages()
+			// Set the current page to 0
+			// TODO: add support for keeping position in the videos array when resizing
+			this.currentPage = 0
 		},
+		// Exception for when navigating in and away from the last page of the
+		// grid
+		 isLastPage(newValue, oldValue) {
+			// If navigating into last page, make grid for last page
+			if (newValue && this.currentPage !== 0) {
+				this.makeGridForLastPage()
+			} else if (!newValue) {
+				// TODO: make a proper grid for when navigating away from last page
+				this.makeGrid()
+			}
+		 },
 	},
 
 	beforeMount() {
 		// First build of the grid when mounting the component
 		this.makeGrid()
+		this.setNumberOfPages()
+		// Set the current page to 0
+		// TODO: add support for keeping position in the videos array when resizing
+		this.currentPage = 0
 	},
 
 	methods: {
-		/**
-		 * Find the right size if the grid in rows and columns (we already know
-		 * the size in px).
-		 */
+		// Find the right size if the grid in rows and columns (we already know
+		// the size in px).
+
 		makeGrid() {
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
@@ -283,18 +308,13 @@ export default {
 				// `- 1` because we a ccount for the localVideo component (see template)
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
 			}
-			// Set the current number of pages
-			this.pages = Math.ceil(this.videosCount / this.slots)
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
 		},
 
 		// Fine tune the number of rows and columns of the grid
-		shrinkGrid(videos) {
+		shrinkGrid(numberOfVideos) {
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
-			if (videos < this.slots) {
+			if (numberOfVideos < this.slots) {
 				// Get the aspect ratio (in terms of coulmns and rows)of the current grid
 				// while shrinking
 				const currentAspectRatio = this.columns / this.rows
@@ -304,7 +324,7 @@ export default {
 				if (currentAspectRatio <= this.gridAspectRatio) {
 					this.rows--
 					// Ceck that there are still enough slots available
-					if (videos > this.slots) {
+					if (numberOfVideos > this.slots) {
 						// If not, revert the changes and break the loop
 						this.rows++
 						return
@@ -312,14 +332,30 @@ export default {
 				} else {
 					this.columns--
 					// Ceck that there are still enough slots available
-					if (videos > this.slots) {
+					if (numberOfVideos > this.slots) {
 						// If not, revert the changes and break the loop
 						this.rows++
 						return
 					}
 				}
-				this.shrinkGrid(videos)
+				this.shrinkGrid(numberOfVideos)
 			}
+		},
+
+		// Set the current number of pages
+		setNumberOfPages() {
+			this.numberOfPages = Math.ceil(this.videosCount / this.slots)
+		},
+
+		// The last grid page is very likely not to have the same number of
+		// elements as the previous pages so the grid needs to be tweaked
+		// accordingly
+		makeGridForLastPage() {
+			this.columns = this.columnsMax
+			this.rows = this.rowsMax
+			// The displayed videos for the last page have already been set
+			// in `handleClickNext`
+			this.shrinkGrid(this.displayedVideos.length)
 		},
 
 		// Slice the `videos` array to display the next set of videos
