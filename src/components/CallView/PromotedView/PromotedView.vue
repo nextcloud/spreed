@@ -62,8 +62,8 @@ import EmptyCallView from '../shared/EmptyCallView'
 import LocalVideo from '../shared/LocalVideo'
 import Screen from '../shared/Screen'
 import Video from '../shared/Video'
-
-import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../../utils/webrtc/index'
+import call from '../../../mixins/call'
+import { callParticipantCollection } from '../../../utils/webrtc/index'
 
 export default {
 
@@ -76,12 +76,9 @@ export default {
 		Video,
 	},
 
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
+	mixins: [call],
 
+	props: {
 		useConstrainedLayout: {
 			type: Boolean,
 			default: false,
@@ -92,16 +89,12 @@ export default {
 		return {
 			speakers: [],
 			speakingUnwatchers: {},
-			screens: [],
 			screenUnwatchers: {},
 			// callParticipantModelsWithScreen: [],
 			localSharedData: {
 				screenVisible: true,
 			},
 			sharedDatas: {},
-
-			localMediaModel: localMediaModel,
-			localCallParticipantModel: localCallParticipantModel,
 			callParticipantCollection: callParticipantCollection,
 		}
 	},
@@ -118,55 +111,6 @@ export default {
 
 			return callViewClass
 		},
-
-		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels
-		},
-
-		reversedCallParticipantModels() {
-			return this.callParticipantModels.slice().reverse()
-		},
-
-		remoteParticipantsCount() {
-			return this.callParticipantModels.length
-		},
-
-		callParticipantModelsWithScreen() {
-			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
-		},
-
-		localScreen() {
-			return localMediaModel.attributes.localScreen
-		},
-
-		screenSharingActive() {
-			return this.screens.length > 0
-		},
-
-	},
-
-	watch: {
-
-		localScreen: function(localScreen) {
-			this._setScreenAvailable(this.localCallParticipantModel.attributes.peerId, localScreen)
-		},
-
-		callParticipantModels: function(models) {
-			this.updateDataFromCallParticipantModels(models)
-		},
-
-		'speakers': function() {
-			this._setPromotedParticipant()
-		},
-
-		'screenSharingActive': function() {
-			this._setPromotedParticipant()
-		},
-
-		'screens': function() {
-			this._setScreenVisible()
-		},
-
 	},
 
 	created() {

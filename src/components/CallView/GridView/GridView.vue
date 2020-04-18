@@ -24,11 +24,20 @@
 		<div
 			class="grid"
 			:style="gridStyle">
-			<div
-				v-for="video in displayedVideos"
-				:key="video"
+			<template v-for="callParticipantModel in displayedVideos">
+				<Video
+					:key="callParticipantModel.attributes.peerId"
+					class="video"
+					:token="token"
+					:model="callParticipantModel"
+					:shared-data="{videoEnabled: true}" />
+			</template>
+			<LocalVideo ref="localVideo"
 				class="video"
-				v-text="video" />
+				:local-media-model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:use-constrained-layout="useConstrainedLayout"
+				@switchScreenToId="_switchScreenToId" />
 		</div>
 		<button v-if="hasNextPage"
 			class="grid-navigation next"
@@ -45,8 +54,19 @@
 
 <script>
 import debounce from 'debounce'
+import call from '../../../mixins/call'
+import Video from '../shared/Video'
+import LocalVideo from '../shared/LocalVideo'
+
 export default {
 	name: 'GridView',
+
+	components: {
+		Video,
+		LocalVideo,
+	},
+
+	mixins: [call],
 
 	props: {
 		gridWidth: {
@@ -64,11 +84,14 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		devMode: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
 		return {
-			videos: Array.from(Array(40).keys()),
 			// Min width and height of the video components
 			minWidth: 200,
 			minHeight: 200,
@@ -80,10 +103,22 @@ export default {
 	},
 
 	computed: {
+		videos() {
+			if (this.devMode) {
+				return Array.from(Array(40).keys())
+			} else {
+				return this.callParticipantModels
+			}
+		},
 
-		// Number of videos TODO: link it to the real one
+		// Number of video components (includes localvideo if not in dev mode)
 		videosCount() {
-			return this.videos.length
+			if (this.devMode) {
+				return this.videos.length
+			} else {
+				// Add the local video to the count
+				return this.videos.length + 1
+			}
 		},
 
 		// The aspect ratio of main-view and of the grid itself
@@ -141,6 +176,9 @@ export default {
 		// in the grid goes back to be first video)
 			debounce(this.makeGrid(), 200)
 		},
+		videos() {
+			this.makeGrid()
+		},
 	},
 
 	beforeMount() {
@@ -164,8 +202,12 @@ export default {
 				this.shrinkGrid(this.videosCount)
 			}
 			// Once the grid is done, populate it with video components
-			this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
-
+			if (this.devMode) {
+				this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
+			} else {
+				// Account for the localVideo component
+				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
+			}
 		},
 
 		shrinkGrid(videos) {
@@ -201,14 +243,20 @@ export default {
 		handleClickNext() {
 			const currentLastDisplayedElement = this.displayedVideos[this.displayedVideos.length - 1]
 			const firstElementOfNextPage = this.videos.indexOf(currentLastDisplayedElement) + 1
-			this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns)
-
+			if (this.devMode) {
+				this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns)
+			} else {
+				this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns - 1)
+			}
 		},
 		handleClickPrevious() {
 			const currentFirstDisplayedElement = this.displayedVideos[0]
 			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement)
-			this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
-
+			if (this.devMode) {
+				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
+			} else {
+				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage - 1)
+			}
 		},
 	},
 }
@@ -228,9 +276,7 @@ export default {
 }
 
 .video {
-	min-height: 50px;
-	background-color: blue;
-	border: 5px solid red;
+	border: 2x solid white;
 	color: white;
 }
 
