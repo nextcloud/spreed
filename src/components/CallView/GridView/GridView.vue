@@ -46,6 +46,9 @@
 					:key="video"
 					class="dev-mode-video video"
 					v-text="video" />
+				<h1 class="dev-mode">
+					dev mode on ;-)
+				</h1>
 			</template>
 		</div>
 		<button v-if="hasNextPage"
@@ -105,7 +108,7 @@ export default {
 		 */
 		minWidth: {
 			type: Number,
-			default: 200,
+			default: 300,
 		},
 		/**
 		 * Minimum height of the video components
@@ -406,6 +409,18 @@ export default {
 		text-align: center;
 	vertical-align: middle;
 	padding-top: 80px;
+}
+
+.dev-mode {
+	position: absolute;
+	font-size: 100px;
+	line-height: 120px;
+	text-align: center;
+	top: calc(50% - 60px);
+	left: calc(50% - 357px);
+	opacity: 40%;
+	color: white;
+	font-weight: 900;
 }
 
 .video:last-child {
