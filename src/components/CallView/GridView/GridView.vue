@@ -139,7 +139,7 @@ export default {
 		// `videosCap`, these videos are shown in one or more grid 'pages'.
 		videos() {
 			if (this.devMode) {
-				return Array.from(Array(40).keys())
+				return Array.from(Array(this.dummies).keys())
 			} else {
 				return this.callParticipantModels
 			}
