@@ -163,6 +163,8 @@ OC.L10N.register(
     "Off" : "Išjungta",
     "Signaling server URL" : "Signalinio serverio URL",
     "Delete this server" : "Ištrinti šį serverį",
+    "Error: Can not connect to server" : "Klaida: Nepavyksta prisijungti prie serverio",
+    "Error: Unknown error occurred" : "Klaida: Įvyko nežinoma klaida",
     "Signaling servers" : "Signaliniai serveriai",
     "Saved" : "Įrašyta",
     "Add a new server" : "Pridėti naują serverį",

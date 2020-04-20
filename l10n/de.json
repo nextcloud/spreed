@@ -421,7 +421,7 @@
     "Error while sharing" : "Fehler beim Teilen",
     "No other people in this call" : "Niemand anderes in diesem Anruf",
     "Waiting for {participantName} to join the call …" : "Warte auf Teilnehmer {participantName}…",
-    "WebRTC is not supported in your browser :-/" : "WebRTC wird von Deinem Browser nicht unterstützt",
+    "WebRTC is not supported in your browser :-/" : "WebRTC wird von Deinem Browser nicht unterstützt :-/",
     "Waiting for camera and microphone permissions" : "Warte auf Berechtigungen für Kamera und Mikrofon",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Bitte lasse Deinen Browser auf die Kamera und das Mikrofon zugreifen, um diese App nutzen zu können.",
     "Share screen" : "Bildschirm teilen",
