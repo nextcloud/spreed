@@ -40,6 +40,7 @@
 					:use-constrained-layout="useConstrainedLayout"
 					@switchScreenToId="_switchScreenToId" />
 			</template>
+			<!-- Grid developer mode -->
 			<template v-else>
 				<div
 					v-for="video in displayedVideos"
@@ -63,6 +64,7 @@
 					<p>Current page: {{ currentPage }}</p>
 				</div>
 			</template>
+		<!-- Grid pagination -->
 		</div>
 		<button v-if="hasNextPage"
 			class="grid-navigation next"
@@ -75,7 +77,7 @@
 			Previous
 		</button>
 		<div
-			v-if="numberOfPages !== 0"
+			v-if="numberOfPages !== 0 && hasPagination"
 			class="pages-indicator">
 			<div v-for="(page, index) in numberOfPages"
 				:key="index"
@@ -152,6 +154,13 @@ export default {
 			type: Number,
 			default: 10,
 		},
+		/**
+		 * Display the overflow of videos in separate pages;
+		 */
+		hasPagination: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -224,7 +233,7 @@ export default {
 
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
-			if (this.displayedVideos !== []) {
+			if (this.displayedVideos !== [] && this.hasPagination) {
 				return this.displayedVideos[this.displayedVideos.length - 1] !== this.videos[this.videos.length - 1]
 			} else {
 				return false
@@ -233,7 +242,7 @@ export default {
 
 		// Hides or displays the `grid-navigation previous` button
 		hasPreviousPage() {
-			if (this.displayedVideos !== []) {
+			if (this.displayedVideos !== [] && this.hasPagination) {
 				return this.displayedVideos[0] !== this.videos[0]
 			} else {
 				return false
@@ -260,39 +269,47 @@ export default {
 		// current position in the videos array is lost (first element
 		// in the grid goes back to be first video)
 			await debounce(this.makeGrid(), 200)
-			this.setNumberOfPages()
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
+			if (this.hasPagination) {
+				this.setNumberOfPages()
+				// Set the current page to 0
+				// TODO: add support for keeping position in the videos array when resizing
+				this.currentPage = 0
+			}
 		},
 		// If the video array changes, rebuild the grid
 		videos() {
 			this.makeGrid()
-			this.setNumberOfPages()
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
+			if (this.hasPagination) {
+				this.setNumberOfPages()
+				// Set the current page to 0
+				// TODO: add support for keeping position in the videos array when resizing
+				this.currentPage = 0
+			}
 		},
 		// Exception for when navigating in and away from the last page of the
 		// grid
 		 isLastPage(newValue, oldValue) {
-			// If navigating into last page, make grid for last page
-			if (newValue && this.currentPage !== 0) {
-				this.makeGridForLastPage()
-			} else if (!newValue) {
+			 if (this.hasPagination) {
+				 // If navigating into last page, make grid for last page
+				if (newValue && this.currentPage !== 0) {
+					this.makeGridForLastPage()
+				} else if (!newValue) {
 				// TODO: make a proper grid for when navigating away from last page
-				this.makeGrid()
-			}
+					this.makeGrid()
+				}
+			 }
 		 },
 	},
 
 	beforeMount() {
 		// First build of the grid when mounting the component
 		this.makeGrid()
-		this.setNumberOfPages()
-		// Set the current page to 0
-		// TODO: add support for keeping position in the videos array when resizing
-		this.currentPage = 0
+		if (this.hasPagination) {
+			this.setNumberOfPages()
+			// Set the current page to 0
+			// TODO: add support for keeping position in the videos array when resizing
+			this.currentPage = 0
+		}
 	},
 
 	methods: {
