@@ -92,6 +92,7 @@ import debounce from 'debounce'
 import call from '../../../mixins/call'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 	name: 'GridView',
@@ -123,14 +124,14 @@ export default {
 		 */
 		minWidth: {
 			type: Number,
-			default: 300,
+			default: 200,
 		},
 		/**
 		 * Minimum height of the video components
 		 */
 		minHeight: {
 			type: Number,
-			default: 200,
+			default: 150,
 		},
 		/**
 		 * Max number of videos per page. `0`, the default value, means no cap
@@ -259,6 +260,11 @@ export default {
 				gridTemplateColumns: `repeat(${this.columns}, minmax(${this.minWidth}px, 1fr))`,
 				gridTemplateRows: `repeat(${this.rows}, minmax(${this.minHeight}px, 1fr)))` }
 		},
+
+		// Check if there's an overflow of videos (videos that don't fit in the grid)
+		hasVideoOverflow() {
+			return this.displayedVideos.length < this.videosCount
+		},
 	},
 
 	watch: {
@@ -340,6 +346,14 @@ export default {
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
+			}
+			// Send event to display hint in the topbar component if there's an
+			// overflow of videos
+			if (this.hasVideoOverflow) {
+				EventBus.$emit('toggleLayoutHint', true)
+			} else {
+				// Remove the hint if user resizes
+				EventBus.$emit('toggleLayoutHint', false)
 			}
 		},
 

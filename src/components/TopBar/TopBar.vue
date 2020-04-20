@@ -32,14 +32,36 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 		</Actions>
-		<Actions v-if="isInCall">
-			<ActionButton v-if="isInCall"
-				class="top-bar__button"
-				:icon="changeViewIconClass"
-				@click="changeView">
-				{{ changeViewText }}
-			</actionbutton>
-		</Actions>
+		<!-- Call layout switcher -->
+		<Popover v-if="isInCall"
+			class="top-bar__button"
+			trigger="manual"
+			:open="showLayoutHint"
+			@auto-hide="showLayoutHint=false">
+			<Actions slot="trigger">
+				<ActionButton v-if="isInCall"
+					:icon="changeViewIconClass"
+					@click="changeView">
+					{{ changeViewText }}
+				</actionbutton>
+			</Actions>
+			<div class="hint">
+				{{ layoutHintText }}
+				<div class="hint__actions">
+					<button
+						class="error"
+						@click="showLayoutHint=false">
+						{{ t('spreed', 'Dismiss') }}
+					</button>
+					<button
+						class="primary"
+						@click="changeView">
+						{{ t('spreed', 'Use promoted-view') }}
+					</button>
+				</div>
+			</div>
+		</Popover>
+		<!-- sidebar toggle -->
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
@@ -52,8 +74,10 @@
 
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import CallButton from './CallButton'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'TopBar',
@@ -62,6 +86,7 @@ export default {
 		ActionButton,
 		Actions,
 		CallButton,
+		Popover,
 	},
 
 	props: {
@@ -73,6 +98,12 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			showLayoutHint: false,
+		}
 	},
 
 	computed: {
@@ -119,6 +150,10 @@ export default {
 				return 'icon-toggle-pictures-white'
 			}
 		},
+
+		layoutHintText() {
+			return t('Spreed', `There are currently a lot of participants in this call: consider maximising your window or switching to 'promoted view' for a better experience`)
+		},
 	},
 
 	mounted() {
@@ -126,6 +161,10 @@ export default {
 		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+		// Add call layout hint listener
+		EventBus.$on('toggleLayoutHint', (display) => {
+			this.showLayoutHint = display
+		})
 	},
 
 	beforeDestroy() {
@@ -133,6 +172,10 @@ export default {
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+		// Remove call layout hint listener
+		EventBus.$off('toggleLayoutHint', (display) => {
+			this.showLayoutHint = display
+		})
 	},
 
 	methods: {
@@ -185,6 +228,7 @@ export default {
 
 		changeView() {
 			this.$emit('changeView')
+			this.showLayoutHint = false
 		},
 	},
 }
@@ -207,5 +251,15 @@ export default {
 		align-self: center;
 	}
 
+}
+
+.hint {
+	padding: 4px;
+	text-align: left;
+	&__actions{
+		display: flex;
+		justify-content: space-between;
+		padding-top:4px;
+	}
 }
 </style>

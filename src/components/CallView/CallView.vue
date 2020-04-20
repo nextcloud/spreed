@@ -24,7 +24,6 @@
 		<transition name="fade">
 			<GridView v-if="isGrid"
 				v-bind="$attrs"
-				:videos-cap="10"
 				:dev-mode="true"
 				:dummies="99" />
 		</transition>
