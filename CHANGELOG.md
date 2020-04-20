@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.5 – 2020-04-20
+### Fixed
+- Removed unnecessary double-quote argument parameter from commands
+  [#3364](https://github.com/nextcloud/spreed/pull/3364)
+
 ## 6.0.4 – 2019-07-31
 ### Fixed
 - Audio missing in chromium when enabling video until a video is received
