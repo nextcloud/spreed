@@ -52,13 +52,14 @@ $parameters = [
 ];
 $content = file_get_contents($endpoint . '?' . http_build_query($parameters));
 $results = json_decode($content, true);
-$pages = $results['query']['pages'];
 
-$numArticles = count($pages);
-if ($numArticles === 0) {
+if (empty($results['query']['pages'])) {
 	echo 'Wikipedia did not have any results for "' . $searchTerm . '" :(' . "\n";
 	return;
 }
+
+$pages = $results['query']['pages'];
+$numArticles = count($pages);
 
 $response = 'Wikipedia search results for "' . $searchTerm . '":' . "\n";
 $maxArticles = $numArticles > 7 ? 5 : $numArticles;
