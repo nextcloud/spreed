@@ -26,7 +26,6 @@ Parameter | Description
 `{ROOM}` | The token of the room the command was used in
 `{USER}` | ID of the user that called the command
 `{ARGUMENTS}` | Everything the user write after the actual command
-`{ARGUMENTS_DOUBLEQUOTE_ESCAPED}` | … but with double quotes `"` escaped.
 
 ## Example
 
@@ -62,7 +61,7 @@ It should return a useful description, the first line is also displayed in a lis
 Make sure to use the absolute path to your script when registering the command:
 
 ```
-./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
+./occ talk:command:add calculator calculator "/path/to/calc.sh {ARGUMENTS} {ROOM} {USER}" 1 3
 ```
 
 ### Explanation
@@ -76,7 +75,7 @@ Make sure to use the absolute path to your script when registering the command:
 * Executed shell command:
 
     ```
-    /path/to/calc.sh "1 + 2 + 3 + \"hello\"" '4tf349j' 'my user id'
+    /path/to/calc.sh '1 + 2 + 3 + "hello"' '4tf349j' 'my user id'
     ```
 
 ## Aliases

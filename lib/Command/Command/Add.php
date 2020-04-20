@@ -98,6 +98,9 @@ class Add extends Base {
 				case 5:
 					$output->writeln('<error>The enabled value is invalid</error>');
 					break;
+				case 6:
+					$output->writeln('<error>The placeholders {ROOM}, {USER} and {ARGUMENTS} must not be used inside quotes</error>');
+					break;
 				default:
 					$output->writeln('<error>The command could not be added</error>');
 					break;
