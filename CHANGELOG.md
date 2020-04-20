@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.3 – 2020-04-20
+### Fixed
+- Removed unnecessary double-quote argument parameter from commands
+  [#3363](https://github.com/nextcloud/spreed/pull/3363)
+
 ## 7.0.2 – 2019-11-12
 ### Changed
 - Improve the settings for Talk and extend the explanations
