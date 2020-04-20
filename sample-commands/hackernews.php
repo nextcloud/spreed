@@ -45,7 +45,7 @@ $content = file_get_contents($endpoint);
 $results = json_decode($content, true);
 $stories = array_slice($results, 0, 5);
 
-$response = 'Hackernews ' . ucfirst($mode) . '  5:' . "\n";
+$response = 'Hackernews ' . ucfirst($mode) . ' 5:' . "\n";
 $length = 120;
 
 foreach ($stories as $storyId) {
