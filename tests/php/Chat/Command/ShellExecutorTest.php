@@ -28,11 +28,57 @@ use Test\TestCase;
 
 class ShellExecutorTest extends TestCase {
 
+	public function dataExecShellRun(): array {
+		return [
+			['admin', 'token', 'echo {ARGUMENTS}', '$PATH', '$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '$PATH', '$PATH'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '$(pwd)', '$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '$PATH', '$PATH'],
+
+			['admin', 'token', 'echo {ARGUMENTS}', '\\$PATH', '\\$PATH'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '\\$PATH', '\\$PATH'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '\\$(pwd)', '\\$(pwd)'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '\\$PATH', '\\$PATH'],
+
+			['admin', 'token', 'echo {ARGUMENTS}', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '`echo $PATH`', '`echo $PATH`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '`pwd`', '`pwd`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '`echo $PATH`', '`echo $PATH`'],
+
+			['admin', 'token', 'echo {ARGUMENTS}', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', 'echo {ARGUMENTS}', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-argument.sh {ARGUMENTS}', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '\\`pwd \\`', '\\`pwd \\`'],
+			['admin', 'token', __DIR__ . '/echo-option.sh -a {ARGUMENTS}', '\\`echo $PATH\\`', '\\`echo $PATH\\`'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataExecShellRun
+	 * @param string|null $actorId
+	 * @param string $roomToken
+	 * @param string $cmd
+	 * @param string $arguments
+	 * @param string $output
+	 */
+	public function testExecShellRun(?string $actorId, string $roomToken, string $cmd, string $arguments, string $output): void {
+		$executor = new ShellExecutor();
+		$this->assertSame($output, $executor->execShell($cmd, $arguments, $roomToken, $actorId));
+
+	}
+
 	public function dataExecShell(): array {
 		return [
 			['admin', 'token', '', '', '', ''],
-			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} {ARGUMENTS}', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' 'foo' 'bar' \"hello bear\"", 'output1'],
-			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} --arguments="{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' --arguments=\"foo bar \\\"hello bear\\\"\"", "out\nput\n2"],
+			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} {ARGUMENTS}', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' 'foo bar \"hello bear\"'", 'output1'],
+			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} --arguments {ARGUMENTS}', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' --arguments 'foo bar \"hello bear\"'", "out\nput\n2"],
 		];
 	}
 
@@ -56,29 +102,17 @@ class ShellExecutorTest extends TestCase {
 			->willReturn($output);
 
 		$this->assertSame($output, self::invokePrivate($executor, 'execShell', [$cmd, $arguments, $roomToken, $actorId]));
-
 	}
 
-	public function dataEscapeArguments(): array {
-		return [
-			['foobar',             "'foobar'"],
-			['foo bar',            "'foo' 'bar'"],
-			['"foo" bar',          "\"foo\" 'bar'"],
-			['"foo"bar',           "'\"foo\"bar'"],
-			['"foo bar"',          '"foo bar"'],
-			['"foo foo"bar bar"',  '"foo foo\\"bar bar"'],
-			['"foo foo\"bar bar"', '"foo foo\\\\"bar bar"'],
-			['" foo bar "',        '" foo bar "'],
-			['" foo bar ',         "'\" foo bar '"],
-		];
-	}
+	public function testLegacyArguments(): void {
+		$executor = $this->getMockBuilder(ShellExecutor::class)
+			->setMethods(['wrapExec'])
+			->getMock();
 
-	/**
-	 * @dataProvider dataEscapeArguments
-	 * @param string $arguments
-	 * @param string $expected
-	 */
-	public function testEscapeArguments(string $arguments, string $expected): void {
-		$this->assertSame($expected, self::invokePrivate(new ShellExecutor(), 'escapeArguments', [$arguments]));
+		$executor->expects($this->never())
+			->method('wrapExec');
+
+		$this->expectException(\InvalidArgumentException::class);
+		self::invokePrivate($executor, 'execShell', ['echo "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"', 'arguments', '', '']);
 	}
 }
