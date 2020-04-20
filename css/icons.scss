@@ -68,6 +68,9 @@
 		&.icon-screen-off {
 			background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
 		}
+		&.icon-promoted-view{
+			background-image: url(icon-color-path('promoted-view', 'actions', 'fff', 1, true));
+		} 
 	}
 
 	.icon-favorite {
@@ -114,3 +117,4 @@
 		background-image: url(icon-color-path('close', 'actions', 'fff', 1, true));
 	}
 }
+
