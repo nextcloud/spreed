@@ -142,6 +142,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Nhập mật khẩu",
     "Chat" : "Trò chuyện",
+    "Projects" : "Dự án",
     "Settings" : "Thiết lập",
     "Edit" : "Chỉnh sửa",
     "Start call" : "Bắt đầu cuộc gọi",
