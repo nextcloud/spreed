@@ -142,6 +142,13 @@ class CommandService {
 					throw new \InvalidArgumentException('script', 3);
 				}
 			} else {
+				if (preg_match('/[`\'"]{(?:ARGUMENTS|ROOM|USER)}[`\'"]/i', $script)) {
+					throw new \InvalidArgumentException('script-parameters', 6);
+				}
+				if (strpos($script, '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}') !== false) {
+					throw new \InvalidArgumentException('script-parameters', 6);
+				}
+
 				try {
 					$this->shellExecutor->execShell($script, '--help');
 				} catch (\InvalidArgumentException $e) {
