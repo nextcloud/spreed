@@ -10,8 +10,6 @@
 			<template v-else>
 				<CallView
 					:is-grid="isGrid"
-					:grid-width="mainViewWidth"
-					:grid-height="mainViewHeight"
 					:token="token" />
 			</template>
 		</template>
@@ -46,8 +44,6 @@ export default {
 	},
 	data() {
 		return {
-			mainViewWidth: 0,
-			mainViewHeight: 0,
 			isGrid: true,
 		}
 	},
@@ -77,12 +73,6 @@ export default {
 		showChatInSidebar() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
-		mainView() {
-			return document.getElementsByClassName('main-view')[0]
-		},
-		sidebarStatus() {
-			return this.$store.getters.getSidebarStatus
-		},
 	},
 
 	watch: {
@@ -95,31 +85,9 @@ export default {
 				})
 			}
 		},
-		sidebarStatus: () => {
-			this.$nextTick(() => {
-				this.handleResize()
-			})
-		},
-	},
-	// bind event handlers to the `handleResize` method
-	mounted() {
-		window.addEventListener('resize', this.handleResize)
-		this.handleResize()
-
-	},
-	beforeDestroy() {
-		window.removeEventListener('resize', this.handleResize)
 	},
 
 	methods: {
-		// whenever the document is resized, re-set the 'clientWidth' variable
-		handleResize(event) {
-			if (this.mainView) {
-				this.mainViewWidth = this.mainView.clientWidth
-				this.mainViewHeight = this.mainView.clientHeight
-			}
-		},
-
 		handleChangeView() {
 			this.isGrid = !this.isGrid
 		},
@@ -141,8 +109,8 @@ export default {
 	methods: {
 		loadSignalingSettings(token) {
 			console.debug('Loading signaling settings for ' + this.token)
-			// FIXME reset the settings so we can check it later on if loading is finished
 			this.signaling.loadSettings(token)
+			// FIXME reset the settings so we can check it later on if loading is finished
 		},
 	},
 	*/

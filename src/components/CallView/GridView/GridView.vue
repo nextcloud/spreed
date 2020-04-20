@@ -93,6 +93,7 @@ import call from '../../../mixins/call'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {
 	name: 'GridView',
@@ -105,20 +106,6 @@ export default {
 	mixins: [call],
 
 	props: {
-		/**
-		 * The width of the grid
-		 */
-		gridWidth: {
-			type: Number,
-			required: true,
-		},
-		/**
-		 * The height of the grid
-		 */
-		gridHeight: {
-			type: Number,
-			required: true,
-		},
 		/**
 		 * Minimum width of the video components
 		 */
@@ -166,6 +153,8 @@ export default {
 
 	data() {
 		return {
+			gridWidth: 0,
+			gridHeight: 0,
 			// Array of videos that are being displayed in the grid at any
 			// given moment
 			displayedVideos: [],
@@ -204,7 +193,7 @@ export default {
 
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
-			return this.gridWidth / this.gridHeight.toPrecision([2])
+			return (this.gridWidth / this.gridHeight).toPrecision([2])
 		},
 
 		// Max number of columns possible
@@ -265,23 +254,17 @@ export default {
 		hasVideoOverflow() {
 			return this.displayedVideos.length < this.videosCount
 		},
+
+		sidebarStatus() {
+			return this.$store.getters.getSidebarStatus()
+		},
+
+		mainView() {
+			return document.getElementsByClassName('main-view')[0]
+		},
 	},
 
 	watch: {
-		// If the aspect ratio changes, rebuild the grid
-		async gridAspectRatio() {
-		// TODO: properly handle resizes when not on first page:
-		// currently if the user is not on the 'first page', upon resize the
-		// current position in the videos array is lost (first element
-		// in the grid goes back to be first video)
-			await debounce(this.makeGrid(), 200)
-			if (this.hasPagination) {
-				this.setNumberOfPages()
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
-		},
 		// If the video array changes, rebuild the grid
 		videos() {
 			this.makeGrid()
@@ -305,6 +288,10 @@ export default {
 				}
 			 }
 		 },
+		 sidebarStatus() {
+			// Handle the resize after the sidebar animation has completed
+			setTimeout(this.handleResize, 500)
+		},
 	},
 
 	beforeMount() {
@@ -318,10 +305,39 @@ export default {
 		}
 	},
 
+	// bind event handlers to the `handleResize` method
+	mounted() {
+		window.addEventListener('resize', this.handleResize)
+		subscribe('navigation-toggled', this.handleResize)
+		this.handleResize()
+
+	},
+	beforeDestroy() {
+		window.removeEventListener('resize', this.handleResize)
+		unsubscribe('navigation-toggled', this.handleResize)
+	},
+
 	methods: {
+
+		// whenever the document is resized, re-set the 'clientWidth' variable
+		handleResize(event) {
+			this.gridWidth = this.mainView.clientWidth
+			this.gridHeight = this.mainView.clientHeight
+			// TODO: properly handle resizes when not on first page:
+			// currently if the user is not on the 'first page', upon resize the
+			// current position in the videos array is lost (first element
+			// in the grid goes back to be first video)
+			debounce(this.makeGrid(), 200)
+			if (this.hasPagination) {
+				this.setNumberOfPages()
+				// Set the current page to 0
+				// TODO: add support for keeping position in the videos array when resizing
+				this.currentPage = 0
+			}
+		},
+
 		// Find the right size if the grid in rows and columns (we already know
 		// the size in px).
-
 		makeGrid() {
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
