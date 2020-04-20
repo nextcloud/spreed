@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.8 – 2020-04-20
+### Changed
+- Show a warning to users when they use an unsupported browser already when chatting
+  [#3296](https://github.com/nextcloud/spreed/pull/3296)
+
+### Fixed
+- Further performance improvements when interacting with participant sessions
+  [#3345](https://github.com/nextcloud/spreed/pull/3345)
+  [#3322](https://github.com/nextcloud/spreed/pull/3322)
+- Show a warning and error in case the signaling connection is failing
+  [#3288](https://github.com/nextcloud/spreed/pull/3288)
+- Fix missing header element to make Chrome aware of the screenshare extension
+  [#3281](https://github.com/nextcloud/spreed/pull/3281)
+- Don't error when a guest tries to open the Talk app without a conversation token
+  [#3344](https://github.com/nextcloud/spreed/pull/3344)
+- Removed unnecessary double-quote argument parameter from commands
+  [#3362](https://github.com/nextcloud/spreed/pull/3362)
+
 ## 8.0.7 – 2020-04-02
 ### Fixed
 - Calls in files and public sharing sidebar don't work
