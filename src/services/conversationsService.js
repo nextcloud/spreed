@@ -23,13 +23,32 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
+import { showError } from '@nextcloud/dialogs'
+
+let talkCacheBusterHash = null
+let maintenanceWarning = null
 
 /**
  * Fetches the conversations from the server.
  */
 const fetchConversations = async function() {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room')
-	return response
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room')
+		checkTalkVersionHash(response)
+
+		if (maintenanceWarning) {
+			maintenanceWarning.hideToast()
+			maintenanceWarning = null
+		}
+		return response
+	} catch (error) {
+		if (error.response.status === 503 && !maintenanceWarning) {
+			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: -1,
+			})
+		}
+		throw error
+	}
 }
 
 /**
@@ -37,8 +56,38 @@ const fetchConversations = async function() {
  * @param {string} token The token of the conversation to be fetched.
  */
 const fetchConversation = async function(token) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}`)
-	return response
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}`)
+		checkTalkVersionHash(response)
+
+		if (maintenanceWarning) {
+			maintenanceWarning.hideToast()
+			maintenanceWarning = null
+		}
+		return response
+	} catch (error) {
+		if (error.response.status === 503 && !maintenanceWarning) {
+			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: -1,
+			})
+		}
+		throw error
+	}
+}
+
+const checkTalkVersionHash = function(response) {
+	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
+	if (talkCacheBusterHash === null) {
+		console.debug('Setting initial Talk Hash: ', newTalkCacheBusterHash)
+		talkCacheBusterHash = newTalkCacheBusterHash
+	} else if (talkCacheBusterHash !== newTalkCacheBusterHash) {
+		console.debug('Updating Talk Hash: ', newTalkCacheBusterHash)
+		talkCacheBusterHash = newTalkCacheBusterHash
+
+		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+			timeout: -1,
+		})
+	}
 }
 
 /**
