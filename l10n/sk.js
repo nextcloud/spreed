@@ -197,6 +197,7 @@ OC.L10N.register(
     "Fullscreen (f)" : "Celá obrazovka  (f)",
     "Join a conversation or start a new one" : "Pripojte sa k rozhovoru, alebo začnite nový",
     "Say hi to your friends and colleagues!" : "Pozdravte svojich priateľov a kolegov!",
+    "Error while sharing file" : "Pri zdieľaní súboru došlo k chybe",
     "Access to microphone & camera is only possible with HTTPS" : "Prístup ku mikrofónu a kamere je možný iba použitím HTTPS",
     "Please move your setup to HTTPS" : "Prosím, prejdite na používanie HTTPS",
     "Access to microphone & camera was denied" : "Prístup ku mikrofónu a kamere bol zamietnutý",
