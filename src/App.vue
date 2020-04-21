@@ -130,7 +130,10 @@ export default {
 						// and they would hide other previously posted new messages
 						lastMessage[conversation.token] = -1
 					} else {
-						lastMessage[conversation.token] = 0 + (conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0)
+						lastMessage[conversation.token] = Math.max(
+							conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0,
+							this.$store.getters.getLastKnownMessageId(conversation.token) ? this.$store.getters.getLastKnownMessageId(conversation.token) : 0,
+						)
 					}
 				}
 			})
