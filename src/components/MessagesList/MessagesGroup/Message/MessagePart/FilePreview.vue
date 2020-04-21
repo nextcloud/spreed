@@ -153,6 +153,12 @@ export default {
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: this.internalAbsolutePath,
+				list: [
+					{
+						filename: this.internalAbsolutePath,
+						basename: this.name,
+					},
+				],
 			})
 		},
 	},
