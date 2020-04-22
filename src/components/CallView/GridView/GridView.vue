@@ -21,24 +21,26 @@
 
 <template>
 	<div class="wrapper">
+		<EmptyCallView v-if="videosCount <= 1" />
 		<div
+			v-else
 			class="grid"
 			:style="gridStyle">
 			<template v-if="!devMode">
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
 						:key="callParticipantModel.attributes.peerId"
-						:class="video"
+						class="video"
 						:token="token"
 						:model="callParticipantModel"
 						:shared-data="{videoEnabled: true}" />
 				</template>
 				<LocalVideo ref="localVideo"
-					:class="video"
+					class="video"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
-					:use-constrained-layout="useConstrainedLayout"
-					@switchScreenToId="_switchScreenToId" />
+					:use-constrained-layout="false"
+					@switchScreenToId="1" />
 			</template>
 			<!-- Grid developer mode -->
 			<template v-else>
@@ -94,6 +96,7 @@ import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import EmptyCallView from '../shared/EmptyCallView'
 
 export default {
 	name: 'GridView',
@@ -101,6 +104,7 @@ export default {
 	components: {
 		Video,
 		LocalVideo,
+		EmptyCallView,
 	},
 
 	mixins: [call],
@@ -200,7 +204,7 @@ export default {
 		columnsMax() {
 			if (Math.floor(this.gridWidth / this.minWidth) < 1) {
 				// Return at least 1 column
-				return 1.2
+				return 1
 			} else {
 				return Math.floor(this.gridWidth / this.minWidth)
 			}
@@ -247,12 +251,12 @@ export default {
 		gridStyle() {
 			return {
 				gridTemplateColumns: `repeat(${this.columns}, minmax(${this.minWidth}px, 1fr))`,
-				gridTemplateRows: `repeat(${this.rows}, minmax(${this.minHeight}px, 1fr)))` }
+				gridTemplateRows: `repeat(${this.rows}, minmax(${this.minHeight}px, 1fr))` }
 		},
 
 		// Check if there's an overflow of videos (videos that don't fit in the grid)
 		hasVideoOverflow() {
-			return this.displayedVideos.length < this.videosCount
+			return this.videosCount > this.slots
 		},
 
 		sidebarStatus() {
@@ -384,22 +388,17 @@ export default {
 				// At each iteration of this recursive method, we want to compare the
 				// current aspect ratio of the grid (in terms of rows and columns) to
 				// the aspect ratio of the grid (in terms of px).
-				if (currentAspectRatio <= this.gridAspectRatio) {
+				if (currentAspectRatio <= this.gridAspectRatio && this.rows >= 2) {
 					this.rows--
-					// Ceck that there are still enough slots available
-					if (numberOfVideos > this.slots) {
-						// If not, revert the changes and break the loop
-						this.rows++
-						return
-					}
-				} else {
+				} else if (this.columns >= 2) {
 					this.columns--
 					// Ceck that there are still enough slots available
-					if (numberOfVideos > this.slots) {
-						// If not, revert the changes and break the loop
-						this.rows++
-						return
-					}
+				}
+				// Ceck that there are still enough slots available
+				if (numberOfVideos > this.slots) {
+					// If not, revert the changes and break the loop
+					this.rows++
+					return
 				}
 				this.shrinkGrid(numberOfVideos)
 			}
@@ -460,6 +459,15 @@ export default {
 	display: grid;
 	height: 100%;
 	width: 100%;
+}
+
+.video {
+	position:relative;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+	border: 1px solid white;
 }
 
 .dev-mode-video {
