@@ -43,7 +43,6 @@ OC.L10N.register(
     "Change password" : "Нууц үг солих",
     "Rename" : "Нэрлэнэ үү",
     "Send" : "илгээх",
-    "Error while sharing" : "Түгээхэд алдаа гарлаа",
-    ", " : ", "
+    "Error while sharing" : "Түгээхэд алдаа гарлаа"
 },
 "nplurals=2; plural=(n != 1);");

@@ -28,7 +28,6 @@ OC.L10N.register(
     "Share" : "බෙදා හදා ගන්න",
     "Cancel" : "අවලංගු කරන්න",
     "Change password" : "මුරපදය වෙනස් කිරීම",
-    "Rename" : "නැවත නම් කරන්න",
-    ", " : ", "
+    "Rename" : "නැවත නම් කරන්න"
 },
 "nplurals=2; plural=(n != 1);");

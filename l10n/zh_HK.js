@@ -38,7 +38,6 @@ OC.L10N.register(
     "Change password" : "更改密碼",
     "Rename" : "重新命名",
     "Send" : "發送",
-    "Error while sharing" : "分享時發生錯誤",
-    ", " : ","
+    "Error while sharing" : "分享時發生錯誤"
 },
 "nplurals=1; plural=0;");

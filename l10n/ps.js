@@ -26,7 +26,6 @@ OC.L10N.register(
     "Rename" : "نوم بدلول",
     "Send" : "لېږل",
     "Error while sharing" : "شريکولو کې ستونزه",
-    "Favorited" : "په نښه شو",
-    ", " : ", "
+    "Favorited" : "په نښه شو"
 },
 "nplurals=2; plural=(n != 1);");

@@ -33,7 +33,6 @@
     "Change password" : "Şifrəni dəyiş",
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
-    "Favorited" : "İstəkləndi",
-    ", " : ","
+    "Favorited" : "İstəkləndi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -54,7 +54,6 @@ OC.L10N.register(
     "Password" : "الكلمة السرية",
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
-    "New public conversation" : "محادثة عمومية جديدة",
     "Copy" : "أنسخ",
     "Copied!" : "تم نسخه !",
     "Not supported!" : "غير مدعوم!",
@@ -70,8 +69,6 @@ OC.L10N.register(
     "You" : "أنت",
     "Send" : "أرسل",
     "Error while sharing" : "حصل خطأ عند عملية المشاركة",
-    "Favorited" : "المفضلة",
-    ", " : ",",
-    "Join now" : "انضم الآن"
+    "Favorited" : "المفضلة"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

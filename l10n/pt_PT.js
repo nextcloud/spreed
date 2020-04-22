@@ -98,9 +98,6 @@ OC.L10N.register(
     "Password" : "Palavra-passe",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
-    "Delete server" : "Apagar servidor",
-    "Add new server" : "Adicionar novo servidor",
-    "New public conversation" : "Nova conversação pública",
     "Copy" : "Copiar",
     "Copied!" : "Copiado!",
     "Not supported!" : "Não suportado!",
@@ -138,7 +135,6 @@ OC.L10N.register(
     "{participantName}'s screen" : "Ecrã de {participantName}",
     "Guest's screen" : "Ecrã do convidado",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
-    ", " : ",",
     "Limit app usage to groups." : "Limitar o uso da aplicação a grupos."
 },
 "nplurals=2; plural=(n != 1);");

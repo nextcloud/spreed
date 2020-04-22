@@ -60,7 +60,6 @@ OC.L10N.register(
     "You" : "Vi",
     "Send" : "Sendi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Favorited" : "Pliŝatitaj",
-    ", " : ", "
+    "Favorited" : "Pliŝatitaj"
 },
 "nplurals=2; plural=(n != 1);");

@@ -105,9 +105,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "대규모 사용자가 필요한 경우 외부 신호 서버를 사용할 수 있습니다. 비워 두면 내장 신호 서버를 사용합니다.",
     "Android app" : "Android 앱",
     "iOS app" : "iOS 앱",
-    "Delete server" : "서버 삭제",
-    "Add new server" : "새 서버 추가",
-    "TURN server shared secret" : "TURN 서버 공유 비밀 키",
     "Copy" : "복사",
     "Copied!" : "복사 성공!",
     "Not supported!" : "지원하지 않음!",
@@ -143,11 +140,6 @@ OC.L10N.register(
     "Never notify" : "알림 끄기",
     "{participantName}'s screen" : "{participantName} 님의 화면",
     "Guest's screen" : "손님의 화면",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong>대화</strong>방에 초대받았거나 <strong>통화</strong>가 진행됨",
-    "_%n other guest_::_%n other guests_" : ["다른 손님 %n명"],
-    ", " : ",",
-    "A group call has started" : "그룹 통화가 시작됨",
-    "This call is password-protected" : "이 통화가 암호로 보호되어 있음",
-    "Signaling server" : "신호 서버"
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong>대화</strong>방에 초대받았거나 <strong>통화</strong>가 진행됨"
 },
 "nplurals=1; plural=0;");

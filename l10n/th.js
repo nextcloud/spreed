@@ -33,7 +33,6 @@ OC.L10N.register(
     "Password" : "รหัสผ่าน",
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
-    "Test server" : "เซิร์ฟเวอร์ทดสอบ",
     "Copy" : "คัดลอก",
     "Copied!" : "คัดลอกแล้ว",
     "Not supported!" : "ไม่สนับสนุน",
@@ -45,7 +44,6 @@ OC.L10N.register(
     "Rename" : "เปลี่ยนชื่อ",
     "Send" : "ส่ง",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
-    "Favorited" : "รายการโปรด",
-    ", " : "หรือ"
+    "Favorited" : "รายการโปรด"
 },
 "nplurals=1; plural=0;");

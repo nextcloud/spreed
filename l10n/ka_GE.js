@@ -96,9 +96,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
-    "Delete server" : "სერვერის გაუქმება",
-    "Add new server" : "ახალი სერვერის დამატება",
-    "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო",
     "Copy" : "კოპირება",
     "Copied!" : "კოპირებულია!",
     "Not supported!" : "არ არის მხარდაჭერილი!",
@@ -132,11 +129,6 @@ OC.L10N.register(
     "Favorited" : "დამატებულია რჩეულებში",
     "{participantName}'s screen" : "{participantName} მომხმარებლის ეკრანი",
     "Guest's screen" : "სტუმრის ეკრანი",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "თქვენ დაგპატიჟეს ოთახში <strong>სასაუბროთ</strong> ან მიიღეთ <strong>ზარი</strong>",
-    "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი","%n სხვა სტუმარი"],
-    ", " : ",",
-    "A group call has started" : "ჯგუფური ზარი დაწყებულია",
-    "This call is password-protected" : "ეს ზარი დაცულია პაროლით",
-    "Signaling server" : "სერვერზე იგზავნება სიგნალი"
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "თქვენ დაგპატიჟეს ოთახში <strong>სასაუბროთ</strong> ან მიიღეთ <strong>ზარი</strong>"
 },
 "nplurals=2; plural=(n!=1);");
