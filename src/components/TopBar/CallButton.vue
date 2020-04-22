@@ -52,6 +52,7 @@
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { emit } from '@nextcloud/event-bus'
 
 export default {
 	name: 'CallButton',
@@ -169,6 +170,10 @@ export default {
 		async joinCall() {
 			console.info('Joining call')
 			this.loading = true
+			// Close navigation
+			emit('toggle-navigation', {
+				open: false,
+			})
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
@@ -180,6 +185,10 @@ export default {
 		async leaveCall() {
 			console.info('Leaving call')
 			this.loading = true
+			// Open navigarion
+			emit('toggle-navigation', {
+				open: true,
+			})
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
