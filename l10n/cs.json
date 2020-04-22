@@ -357,6 +357,8 @@
     "Say hi to your friends and colleagues!" : "Pozdravte své přátele a kolegy!",
     "Link to a conversation" : "Odkaz na konverzaci",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Webový prohlížeč, který používáte, není Nextcloud Talk plně podporován. Prosíme použijte nejnovější verzi Mozilla Firefox, Microsoft Edge, Google Chrome nebo Apple Safari.",
+    "Nextcloud is in maintenance mode, please reload the page" : "V Nexcloud probíhá údržba – načtěte stránku znovu",
+    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk bylo aktualizováno – prosím načtěte stránku znovu",
     "Error while sharing file" : "Chyba při sdílení souboru",
     "Error while uploading file" : "Chyba při nahrávání souboru",
     "Sending signaling message has failed." : "Odeslání signálové zprávy se nezdařilo.",
