@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Users" : "کارنان",
+    "Name" : "نوم",
     "Copy link" : "لېنک کاپي کول",
     "Favorite" : "په نښه شوی",
     "Remove from favorites" : "له نښو ويستل",
@@ -13,19 +14,18 @@ OC.L10N.register(
     "Today" : "نن",
     "Yesterday" : "پرون",
     "Share link" : "د شرېکېدو لېنک",
-    "Name" : "نوم",
+    "Settings" : "سمونې",
     "Password" : "پاسورډ",
-    "Cancel" : "پرېښول",
     "Copy" : "کاپي کول",
     "Copied!" : "کاپي شو!",
     "Not supported!" : "د کار نه کېږي",
     "Press ⌘-C to copy." : "د کاپي لپاره د ⌘-C تڼۍ کېکاږئ.",
     "Press Ctrl-C to copy." : "د کاپي لپاره د Ctrl-C تڼۍ کېکاږئ.",
     "Share" : "شریکول",
+    "Cancel" : "پرېښول",
     "Rename" : "نوم بدلول",
     "Send" : "لېږل",
     "Error while sharing" : "شريکولو کې ستونزه",
-    "Favorited" : "په نښه شو",
-    ", " : ", "
+    "Favorited" : "په نښه شو"
 },
 "nplurals=2; plural=(n != 1);");
