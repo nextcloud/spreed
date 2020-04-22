@@ -24,8 +24,8 @@
 		<transition name="fade">
 			<GridView v-if="isGrid"
 				v-bind="$attrs"
-				:dev-mode="true"
-				:dummies="30" />
+				:dev-mode="false"
+				:dummies="2" />
 		</transition>
 		<transition name="fade">
 			<PromotedView v-if="!isGrid" v-bind="$attrs" />
