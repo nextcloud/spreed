@@ -152,7 +152,7 @@ export default {
 		},
 
 		layoutHintText() {
-			return t('Spreed', `There are currently a lot of participants in this call: consider maximising your window or switching to 'promoted view' for a better experience`)
+			return t('Spreed', `The videos in this call don'd fit in your window: consider maximising it or switching to 'promoted view' for a better experience`)
 		},
 	},
 
