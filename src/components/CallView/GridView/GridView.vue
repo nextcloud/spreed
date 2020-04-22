@@ -131,6 +131,10 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		targetAspectRatio: {
+			type: Number,
+			default: 1.5,
+		},
 		/**
 		 * Developer mode: If enabled it allows to debug the grid using dummy
 		 * videos
@@ -379,26 +383,48 @@ export default {
 
 		// Fine tune the number of rows and columns of the grid
 		shrinkGrid(numberOfVideos) {
+			// No need to shrink more if 1 row and 1 column
+			if (this.rows === 1 && this.columns === 1) {
+				return
+			}
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
 			if (numberOfVideos < this.slots) {
-				// Get the aspect ratio (in terms of coulmns and rows)of the current grid
-				// while shrinking
-				const currentAspectRatio = this.columns / this.rows
-				// At each iteration of this recursive method, we want to compare the
-				// current aspect ratio of the grid (in terms of rows and columns) to
-				// the aspect ratio of the grid (in terms of px).
-				if (currentAspectRatio <= this.gridAspectRatio && this.rows >= 2) {
-					this.rows--
-				} else if (this.columns >= 2) {
-					this.columns--
+				// Current video dimensions
+				const videoWidth = this.gridWidth / this.columns
+				const videoHeigth = this.gridHeight / this.rows
+				// Hypotetical width with one column less than current
+				const videoWidthWithOneColumnLess = this.gridWidth / (this.columns - 1)
+				// Hypotetical height with one row less than current
+				const videoHeightWithOneRowLess = this.gridHeight / (this.rows - 1)
+				// Hypotetical aspect ratio with one column less than current
+				const aspectRatioWithOneCoulumnLess = videoWidthWithOneColumnLess / videoHeigth
+				// Hypotetical aspect ratio with one row less than current
+				const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
+				// Deltas with target aspect ratio
+				const deltaAspectRatioWithOneCoulumnLess = Math.abs(aspectRatioWithOneCoulumnLess - this.targetAspectRatio)
+				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
+				// Compare the deltas to find out whether we need to remove a column or a row
+				if (deltaAspectRatioWithOneCoulumnLess <= deltaAspectRatioWithOneRowLess) {
+					if (this.columns >= 2) {
+						this.columns--
+					}
 					// Ceck that there are still enough slots available
-				}
-				// Ceck that there are still enough slots available
-				if (numberOfVideos > this.slots) {
+					if (numberOfVideos > this.slots) {
+						// If not, revert the changes and break the loop
+						this.columns++
+						return
+					}
+				} else {
+					if (this.rows >= 2) {
+						this.rows--
+					}
+					// Ceck that there are still enough slots available
+					if (numberOfVideos > this.slots) {
 					// If not, revert the changes and break the loop
-					this.rows++
-					return
+						this.rows++
+						return
+					}
 				}
 				this.shrinkGrid(numberOfVideos)
 			}

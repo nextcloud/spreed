@@ -407,6 +407,12 @@ export default {
 	border-bottom-color: transparent;
 }
 
+.nameIndicator {
+	position: absolute;
+	right: 20px;
+	bottom: 12px;
+	}
+
 .nameIndicator button {
 	background-color: transparent;
 	border: none;
