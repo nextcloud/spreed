@@ -42,7 +42,6 @@ OC.L10N.register(
     "Rename" : "Ëmbenennen",
     "Send" : "Schécken",
     "Error while sharing" : "Feeler beim Deelen",
-    "Favorited" : "Favoriséiert",
-    ", " : ", "
+    "Favorited" : "Favoriséiert"
 },
 "nplurals=2; plural=(n != 1);");

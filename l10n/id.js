@@ -49,7 +49,6 @@ OC.L10N.register(
     "Rename" : "Ubah nama",
     "Send" : "Kirim",
     "Error while sharing" : "Kesalahan saat membagikan",
-    "Favorited" : "Difavoritkan",
-    ", " : "n"
+    "Favorited" : "Difavoritkan"
 },
 "nplurals=1; plural=0;");

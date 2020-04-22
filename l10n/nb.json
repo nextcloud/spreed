@@ -116,13 +116,6 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
-    "Delete server" : "Slett server",
-    "Add new server" : "Legg til ny server",
-    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Du slettet alle STUN-servere. Siden behovet nesten alltid er der, har en forvalgt STUN-server blitt lagt til.",
-    "TURN server shared secret" : "TURN-servers delte hemmelighet",
-    "Test server" : "Test-server",
-    "New public conversation" : "Ny offentlig samtale",
-    "New group conversation" : "Ny gruppesamtale",
     "New conversation …" : "Ny samtale…",
     "Copy" : "Kopier",
     "Copied!" : "Kopiert!",
@@ -162,11 +155,6 @@
     "Never notify" : "Aldri varsle",
     "{participantName}'s screen" : "{participantName}'s skjerm",
     "Guest's screen" : "Gjestens skjerm",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Du ble invitert til et <strong>samtale</strong>-rom, eller fikk et <strong>anrop</strong>",
-    "_%n other guest_::_%n other guests_" : ["%n annen gjest","%n andre gjester"],
-    ", " : ", ",
-    "A group call has started" : "En gruppesamtale har blitt startet",
-    "This call is password-protected" : "Denne samtalen er passordbeskyttet",
-    "Signaling server" : "Signalserver"
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Du ble invitert til et <strong>samtale</strong>-rom, eller fikk et <strong>anrop</strong>"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

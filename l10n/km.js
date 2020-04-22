@@ -31,7 +31,6 @@ OC.L10N.register(
     "Change password" : "ប្តូរ​ពាក្យសម្ងាត់",
     "Rename" : "ប្ដូរ​ឈ្មោះ",
     "Send" : "ផ្ញើ",
-    "Error while sharing" : "កំហុស​ពេល​ចែក​រំលែក",
-    ", " : ", "
+    "Error while sharing" : "កំហុស​ពេល​ចែក​រំលែក"
 },
 "nplurals=1; plural=0;");

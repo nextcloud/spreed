@@ -28,7 +28,6 @@ OC.L10N.register(
     "Cancel" : "Batal",
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
-    "Send" : "Hantar",
-    ", " : ","
+    "Send" : "Hantar"
 },
 "nplurals=1; plural=0;");

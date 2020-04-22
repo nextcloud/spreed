@@ -54,7 +54,6 @@ OC.L10N.register(
     "Send" : "Inviar",
     "Error while sharing" : "Error al compartir",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
-    "Favorited" : "Favorite",
-    ", " : ", "
+    "Favorited" : "Favorite"
 },
 "nplurals=2; plural=(n != 1);");

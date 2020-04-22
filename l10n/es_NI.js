@@ -94,9 +94,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
-    "Delete server" : "Borrar servidor",
-    "Add new server" : "Agregar un servidor nuevo ",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
     "Copy" : "Copiar",
     "Copied!" : "¡Copiado!",
     "Not supported!" : "¡No soportado!",
@@ -126,11 +123,6 @@ OC.L10N.register(
     "Favorited" : "Marcado como favorito",
     "{participantName}'s screen" : "Pantalla de {participantName}",
     "Guest's screen" : "Pantalla del invitado",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Te invitaron a un cuarto de <strong>conversación</strong> o tuviste una <strong>llamada</strong>",
-    "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
-    ", " : ",",
-    "A group call has started" : "Una llamada en grupo ha iniciado",
-    "This call is password-protected" : "Esta llamada está protegida con contraseña",
-    "Signaling server" : "Señalizando al servidor"
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Te invitaron a un cuarto de <strong>conversación</strong> o tuviste una <strong>llamada</strong>"
 },
 "nplurals=2; plural=(n != 1);");

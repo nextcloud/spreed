@@ -70,7 +70,6 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
     "Copy" : "Copiar",
     "Copied!" : "¡Copiado!",
     "Not supported!" : "¡No soportado!",
@@ -98,8 +97,6 @@
     "Always notify" : "Notificar siempre",
     "Never notify" : "Nunca notificar",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla del invitado",
-    "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
-    ", " : ","
+    "Guest's screen" : "Pantalla del invitado"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

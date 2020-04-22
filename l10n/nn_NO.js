@@ -36,7 +36,6 @@ OC.L10N.register(
     "Change password" : "Endra passord",
     "Rename" : "Gje nytt namn",
     "Send" : "Send",
-    "Error while sharing" : "Feil ved deling",
-    ", " : ", "
+    "Error while sharing" : "Feil ved deling"
 },
 "nplurals=2; plural=(n != 1);");
