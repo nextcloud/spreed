@@ -37,7 +37,6 @@ OC.L10N.register(
     "Settings" : "Поставке",
     "Edit" : "Uredi",
     "Password" : "Password",
-    "New public conversation" : "Novi javni razgovor",
     "Copy" : "Kopiraj",
     "Copied!" : "Копирано!",
     "Not supported!" : "Није подржано!",
@@ -53,7 +52,6 @@ OC.L10N.register(
     "Send" : "Pošalji",
     "Error while sharing" : "Greška pri deljenju",
     "Always notify" : "Uvek obavesti",
-    "Never notify" : "Nikad ne obaveštavaj",
-    ", " : ", "
+    "Never notify" : "Nikad ne obaveštavaj"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

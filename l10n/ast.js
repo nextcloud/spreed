@@ -67,8 +67,6 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
-    "Delete server" : "Desaniciar sirvidor",
-    "TURN server shared secret" : "Secretu compartíu del sirvidor TURN",
     "Copy" : "Copiar",
     "Copied!" : "¡Copióse!",
     "Not supported!" : "¡Nun se sofita!",
@@ -91,8 +89,6 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "El to restolador nun sofita la compartición de pantalla.",
     "Favorited" : "Favoritos",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla de convidáu/ada",
-    "_%n other guest_::_%n other guests_" : ["%n convidáu/ada más","%n convidaos/es más"],
-    ", " : ", "
+    "Guest's screen" : "Pantalla de convidáu/ada"
 },
 "nplurals=2; plural=(n != 1);");

@@ -69,9 +69,6 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
-    "TURN server shared secret" : "Serveri TURN ndan sekret",
-    "Test server" : "Shërbyes provash",
-    "New public conversation" : "Bisedë e re publike",
     "Copy" : "Kopjo",
     "Copied!" : "U kopjua!",
     "Not supported!" : "Nuk mbështetet!",
@@ -98,8 +95,6 @@
     "Favorited" : "U kalua e parapëlqyer",
     "{participantName}'s screen" : "Ekrani i {participantName}",
     "Guest's screen" : "Ekrani i të ftuarit",
-    "_%n other guest_::_%n other guests_" : ["%n përdorues të tjerë","%n të tjerë"],
-    ", " : ",",
     "%s invited you to a private conversation" : "%s ju ftoi në një bisedë private",
     "%s invited you to a group conversation: %s" : "%s ju ftoi në një bisedë grupi: %s"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

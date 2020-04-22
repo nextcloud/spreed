@@ -50,7 +50,6 @@ OC.L10N.register(
     "Rename" : "Nimeta ümber",
     "Send" : "Saada",
     "Error while sharing" : "Viga jagamisel",
-    "Favorited" : "Lemmikud",
-    ", " : ", "
+    "Favorited" : "Lemmikud"
 },
 "nplurals=2; plural=(n != 1);");

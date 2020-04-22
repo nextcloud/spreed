@@ -118,12 +118,6 @@
     "%s Talk on your mobile devices" : "%s Talk on your mobile devices",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
-    "Delete server" : "Delete server",
-    "Add new server" : "Add new server",
-    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "You deleted all STUN servers. As it is almost always needed, a default STUN server was added.",
-    "TURN server shared secret" : "TURN server shared secret",
-    "New public conversation" : "New public conversation",
-    "New group conversation" : "New group conversation",
     "New conversation …" : "New conversation …",
     "Copy" : "Copy",
     "Copied!" : "Copied!",
@@ -164,18 +158,9 @@
     "{participantName}'s screen" : "{participantName}'s screen",
     "Guest's screen" : "Guest's screen",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>",
-    "_%n other guest_::_%n other guests_" : ["%n other guest","%n other guests"],
-    ", " : ", ",
     "%s invited you to a private conversation" : "%s invited you to a private conversation",
     "%s invited you to a group conversation: %s" : "%s invited you to a group conversation: %s",
-    "%s invited you to a group conversation" : "%s invited you to a group conversation",
-    "{user} invited you to a group conversation" : "{user} invited you to a group conversation",
-    "A group call has started" : "A group call has started",
-    "Video & audio-conferencing using WebRTC" : "Video & audio-conferencing using WebRTC",
-    "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds",
-    "This call is password-protected" : "This call is password-protected",
-    "Signaling server" : "Signaling server",
-    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device.",
-    "Limit app usage to groups." : "Limit app usage to groups."
+    "Limit app usage to groups." : "Limit app usage to groups.",
+    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -35,7 +35,6 @@ OC.L10N.register(
     "Change password" : "Şifrəni dəyiş",
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
-    "Favorited" : "İstəkləndi",
-    ", " : ","
+    "Favorited" : "İstəkləndi"
 },
 "nplurals=2; plural=(n != 1);");

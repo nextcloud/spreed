@@ -68,10 +68,7 @@
     "Password" : "密碼",
     "Android app" : "安卓應用",
     "iOS app" : "蘋果應用",
-    "Delete server" : "刪除伺服器",
-    "Add new server" : "新增伺服器",
-    "New public conversation" : "新的公開對話",
-    "New group conversation" : "新群組對話",
+    "Enter name for a new conversation" : "輸入新對話名稱",
     "New conversation …" : "新對話",
     "Copy" : "複製",
     "Copied!" : "已複製！",
@@ -80,6 +77,7 @@
     "Press Ctrl-C to copy." : "按下 Ctrl-C 複製",
     "Start a conversation" : "新對話",
     "Share" : "分享",
+    "Room name can not be empty" : "名稱不能空白",
     "Password required" : "請輸入密碼",
     "Cancel" : "取消",
     "Submit" : "送出",
@@ -98,9 +96,6 @@
     "Favorited" : "已加入最愛",
     "Always notify" : "總是通知",
     "Never notify" : "取消提醒",
-    ", " : "，",
-    "Enter name for a new conversation" : "輸入新對話名稱",
-    "Room name can not be empty" : "名稱不能空白",
     "Limit app usage to groups." : "限制群組的使用率:"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

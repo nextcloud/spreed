@@ -35,7 +35,6 @@ OC.L10N.register(
     "Change password" : "কূটশব্দ পরিবর্তন করুন",
     "Rename" : "পূনঃনামকরণ",
     "Send" : "পাঠাও",
-    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  ",
-    ", " : ", "
+    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  "
 },
 "nplurals=2; plural=(n != 1);");

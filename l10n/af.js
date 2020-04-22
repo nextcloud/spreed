@@ -46,7 +46,6 @@ OC.L10N.register(
     "Rename" : "Hernoem",
     "Send" : "Stuur",
     "Error while sharing" : "Fout terwyl deel",
-    "Favorited" : "As gunsteling ",
-    ", " : ", "
+    "Favorited" : "As gunsteling "
 },
 "nplurals=2; plural=(n != 1);");
