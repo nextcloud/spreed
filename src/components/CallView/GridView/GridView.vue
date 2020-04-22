@@ -33,10 +33,12 @@
 						class="video"
 						:token="token"
 						:model="callParticipantModel"
+						:is-grid="true"
 						:shared-data="{videoEnabled: true}" />
 				</template>
 				<LocalVideo ref="localVideo"
 					class="video"
+					:is-grid="true"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
 					:use-constrained-layout="false"
@@ -485,15 +487,6 @@ export default {
 	display: grid;
 	height: 100%;
 	width: 100%;
-}
-
-.video {
-	position:relative;
-	height: 100%;
-	width: 100%;
-	overflow: hidden;
-	display: flex;
-	border: 1px solid white;
 }
 
 .dev-mode-video {

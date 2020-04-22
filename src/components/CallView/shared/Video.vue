@@ -23,7 +23,10 @@
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass">
-		<video v-if="!placeholderForPromoted" v-show="model.attributes.videoAvailable && sharedData.videoEnabled" ref="video" />
+		<video v-if="!placeholderForPromoted"
+			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
+			ref="video"
+			:class="{'picture-grid': isGrid}" />
 		<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 			<Avatar v-if="model.attributes.userId"
 				:size="avatarSize"
@@ -41,7 +44,7 @@
 		<div class="nameIndicator">
 			{{ participantName }}
 		</div>
-		<div class="mediaIndicator">
+		<div v-if="isGrid" class="mediaIndicator">
 			<button v-show="!connectionStateFailedNoRestart"
 				v-tooltip="audioButtonTooltip"
 				class="muteIndicator forced-white"
@@ -122,6 +125,7 @@ export default {
 				'not-connected': !this.placeholderForPromoted && this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED,
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
+				'video-container-grid': this.isGrid,
 			}
 		},
 
@@ -293,11 +297,23 @@ export default {
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
+.video-container-grid {
+	position:relative;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+	border: 1px solid white;
+}
+
+.avatar-container {
+	margin: auto;
+}
+
 .mediaIndicator {
 	position: absolute;
-	width: 100%;
-	bottom: 44px;
-	left: 0;
+	bottom: 12px;
+	right: 20px;
 	background-size: 22px;
 	text-align: center;
 }
@@ -344,5 +360,21 @@ export default {
 
 .iceFailedIndicator {
 	opacity: .8 !important;
+}
+
+.picture-grid {
+	/* Make video to at least 100% wide and tall */
+	min-width: 100%;
+	min-height: 100%;
+
+	/* Setting width & height to auto prevents the browser from stretching or squishing the video */
+	width: auto;
+	height: auto;
+
+	/* Center the video */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
 }
 </style>

@@ -19,8 +19,13 @@
   -->
 
 <template>
-	<div id="localVideoContainer" class="videoContainer videoView" :class="{ speaking: localMediaModel.attributes.speaking }">
-		<video v-show="localMediaModel.attributes.videoEnabled" id="localVideo" ref="video" />
+	<div id="localVideoContainer"
+		class="videoContainer videoView"
+		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid }">
+		<video v-show="localMediaModel.attributes.videoEnabled"
+			id="localVideo"
+			ref="video"
+			:class="{ 'picture-grid': isGrid }" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
 			<Avatar v-if="userId"
 				:size="avatarSize"
@@ -69,6 +74,10 @@ export default {
 			required: true,
 		},
 		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
+		isGrid: {
 			type: Boolean,
 			default: false,
 		},
@@ -178,4 +187,34 @@ export default {
 @import '../../../assets/avatar.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
+
+.video-container-grid {
+	position:relative;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+	border: 1px solid white;
+}
+
+.picture-grid {
+	/* Make video to at least 100% wide and tall */
+	min-width: 100%;
+	min-height: 100%;
+
+	/* Setting width & height to auto prevents the browser from stretching or squishing the video */
+	width: auto;
+	height: auto;
+
+	/* Center the video */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%) !important;
+}
+
+.avatar-container {
+	margin: auto;
+}
+
 </style>
