@@ -313,6 +313,9 @@
     "Join conversations at any time, any where, on any device." : "Придружете се на разговор во секое време, каде и да било, на кој било уред.",
     "Only moderators can enter the conversation when the lobby is enabled" : "Само модератори можат да влезат во разговор кога лобито е овозможено",
     "Invalid start time format" : "Погрешен формат за време на почеток",
-    "Who can start a call?" : "Кој може да започне повик?"
+    "Who can start a call?" : "Кој може да започне повик?",
+    "Loading contacts" : "Вчитување на контакти",
+    "Select participants" : "Избери учесници",
+    "Contacts loading" : "Вчитување на контакти"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

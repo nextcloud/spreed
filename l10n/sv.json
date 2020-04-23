@@ -455,6 +455,9 @@
     "{email} tried to requested the password to access {file}" : "{email} försökte begära lösenordet för åtkomst till {file}",
     "Someone tried to requested the password to access {file}" : "Någon försökte begära lösenordet för att komma åt {file}",
     "Start calls" : "Starta samtal",
-    "Who can start a call?" : "Vem kan starta ett samtal?"
+    "Who can start a call?" : "Vem kan starta ett samtal?",
+    "Loading contacts" : "Laddar kontakter",
+    "Select participants" : "Välj deltagare",
+    "Contacts loading" : "Laddar kontakter"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

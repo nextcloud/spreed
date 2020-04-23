@@ -359,6 +359,8 @@ OC.L10N.register(
     "Say hi to your friends and colleagues!" : "Begrüßen Sie Ihre Freunde und Kollegen!",
     "Link to a conversation" : "Zu einer Unterhaltung verlinken",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Der von Ihnen verwendete Browser wird von Nextcloud Talk nicht vollständig unterstützt. Bitte verwenden Sie die neueste Version von Mozilla Firefox, Microsoft Edge, Google Chrome oder Apple Safari.",
+    "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud ist im Wartungsmodus, bitte laden Sie die Seite neu",
+    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk wurde aktualisiert, bitte laden Sie die Seite neu.",
     "Error while sharing file" : "Fehler beim Teilen der Datei",
     "Error while uploading file" : "Fehler beim Hochladen der Datei",
     "Sending signaling message has failed." : "Das Senden der Signalisierungsnachricht ist fehlgeschlagen.",

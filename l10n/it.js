@@ -470,8 +470,8 @@ OC.L10N.register(
     "Someone tried to requested the password to access {file}" : "Qualcuno ha provato a richiedere la password per accedere a {file}",
     "Start calls" : "Inizia chiamate",
     "Who can start a call?" : "Chi può iniziare una chiamata?",
-    "Loading contacts" : "Caricamento contatti",
-    "Select participants" : "Seleziona partecipanti",
+    "Loading contacts" : "Caricamento dei contatti",
+    "Select participants" : "Seleziona dei partecipanti",
     "Contacts loading" : "Caricamento dei contatti"
 },
 "nplurals=2; plural=(n != 1);");
