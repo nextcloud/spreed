@@ -467,6 +467,9 @@ OC.L10N.register(
     "{email} tried to requested the password to access {file}" : "{email}, {file} dosyasına erişme parolasını istemeyi denedi",
     "Someone tried to requested the password to access {file}" : "Birisi {file} dosyasına erişme parolasını istemeyi denedi",
     "Start calls" : "Görüşmeleri başlat",
-    "Who can start a call?" : "Kimler görüşme başlatabilir?"
+    "Who can start a call?" : "Kimler görüşme başlatabilir?",
+    "Loading contacts" : "Kişiler yükleniyor",
+    "Select participants" : "Katılımcıları seçin",
+    "Contacts loading" : "Kişiler yükleniyor"
 },
 "nplurals=2; plural=(n > 1);");

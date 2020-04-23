@@ -357,6 +357,8 @@
     "Say hi to your friends and colleagues!" : "Diga oi para seus amigos e colegas!",
     "Link to a conversation" : "Link para uma conversa",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "O navegador que você está usando não é totalmente suportado pelo Nextcloud Talk. Use a versão mais recente do Mozilla Firefox, Microsoft Edge, Google Chrome ou Apple Safari.",
+    "Nextcloud is in maintenance mode, please reload the page" : "O Nextcloud está no modo de manutenção, recarregue a página",
+    "Nextcloud Talk was updated, please reload the page" : "O Nextcloud Talk foi atualizado, recarregue a página",
     "Error while sharing file" : "Erro ao compartilhar arquivo",
     "Error while uploading file" : "Erro ao enviar arquivos",
     "Sending signaling message has failed." : "Erro no envio da mensagem de sinalização.",
