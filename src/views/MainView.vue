@@ -44,7 +44,7 @@ export default {
 	},
 	data() {
 		return {
-			isGrid: true,
+			isGrid: false,
 		}
 	},
 

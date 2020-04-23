@@ -47,7 +47,7 @@ export default {
 	props: {
 		isGrid: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 	},
 }

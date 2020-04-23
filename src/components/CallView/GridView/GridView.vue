@@ -21,12 +21,11 @@
 
 <template>
 	<div class="wrapper">
-		<EmptyCallView v-if="videosCount <= 1" />
 		<div
-			v-else
 			class="grid"
 			:style="gridStyle">
 			<template v-if="!devMode">
+				<EmptyCallView v-if="videos.length === 0" class="video" :is-grid="true" />
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
 						:key="callParticipantModel.attributes.peerId"
@@ -196,6 +195,10 @@ export default {
 			if (this.devMode) {
 				return this.videos.length
 			} else {
+				// Count the emptycontent as a grid element
+				if (this.videos.length === 0) {
+					return 2
+				}
 				// Add the local video to the count
 				return this.videos.length + 1
 			}
