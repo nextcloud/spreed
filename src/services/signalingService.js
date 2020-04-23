@@ -33,8 +33,8 @@ const fetchSignalingSettings = async(token) => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings')
 }
 
-const pullSignalingMessages = async(token) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token)
+const pullSignalingMessages = async(token, options) => {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token, options)
 }
 
 const getWelcomeMessage = async(serverId) => {
