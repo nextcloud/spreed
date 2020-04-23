@@ -472,6 +472,6 @@ OC.L10N.register(
     "Who can start a call?" : "Quen pode iniciar unha chamada?",
     "Loading contacts" : "Cargando contactos",
     "Select participants" : "Seleccionar participantes",
-    "Contacts loading" : "Cargando contactos"
+    "Contacts loading" : "Carga de contactos"
 },
 "nplurals=2; plural=(n != 1);");
