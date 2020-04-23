@@ -711,6 +711,32 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $message
+	 * @param string $referenceId
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSendsMessageWithReferenceIdToRoom($user, $message, $referenceId, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier],
+			new TableNode([['message', $message], ['referenceId', $referenceId]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$messages[$message] = $response['id'];
+		}
+
+		Assert::assertStringStartsWith($response['referenceId'], $referenceId);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sends reply "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
@@ -769,6 +795,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
+		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
 
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $messages, 'Message count does not match');
@@ -777,7 +804,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents) {
+		Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents, $includeReferenceId) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -790,6 +817,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			];
 			if ($includeParents) {
 				$data['parentMessage'] = $message['parent']['message'] ?? '';
+			}
+			if ($includeReferenceId) {
+				$data['referenceId'] = $message['referenceId'];
 			}
 			return $data;
 		}, $messages));

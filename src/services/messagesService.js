@@ -63,13 +63,14 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
 /**
  * Posts a new messageto the server.
  *
- * @param {object} param0 The message object that is destructured;
- * @param {string} token The conversation token;
- * @param {string} message The message object;
- * @param {Number} parent The id of the message to be replied to.
+ * @param {object} param0 The message object that is destructured
+ * @param {string} token The conversation token
+ * @param {string} message The message object
+ * @param {string} referenceId A reference id to identify the message later again
+ * @param {Number} parent The id of the message to be replied to
  */
-const postNewMessage = async function({ token, message, actorDisplayName, parent }) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName, replyTo: parent })
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }) {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName, referenceId, replyTo: parent })
 	return response
 }
 
