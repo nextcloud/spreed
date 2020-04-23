@@ -303,6 +303,7 @@ export default {
 	width: 100%;
 	overflow: hidden;
 	display: flex;
+	flex-direction: column;
 	border: 1px solid white;
 }
 
