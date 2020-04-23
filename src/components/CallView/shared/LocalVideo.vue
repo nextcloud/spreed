@@ -207,11 +207,11 @@ export default {
 	width: auto;
 	height: auto;
 
-	/* Center the video */
+	/* Center the video and flip horizontally */
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%,-50%) !important;
+	transform: translate(-50%,-50%) rotateY(180deg) !important;
 }
 
 .avatar-container {
