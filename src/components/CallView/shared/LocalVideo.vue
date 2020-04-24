@@ -27,8 +27,8 @@
 			ref="video"
 			:class="{ 'picture-grid': isGrid }" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
-			<VideoBackground v-if="isGrid" :display-name="displayName" />
-			<Avatar v-if="userId && !isGrid"
+			<VideoBackground v-if="isGrid" :display-name="displayName" :user="userId" />
+			<Avatar v-if="userId"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
@@ -196,7 +196,6 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid black;
 }
 
 .picture-grid {

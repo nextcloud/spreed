@@ -23,35 +23,60 @@
 	<div
 		:style="{'background-color': backgroundColor }"
 		class="video-background">
-		<h3>{{ displayName[0] }}</h3>
-		<p>{{ displayName }}</p>
+		<img
+			v-if="hasPicture"
+			:src="backgroundImage"
+			class="video-background__picture">
 	</div>
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
+
 export default {
 	name: 'VideoBackground',
 
 	props: {
 		displayName: {
 			type: String,
-			default: '?',
+			default: null,
 		},
+		user: {
+			type: String,
+			default: '',
+		},
+	},
+
+	data() {
+		return {
+			hasPicture: false,
+		}
 	},
 
 	computed: {
 		backgroundColor() {
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
-			if (!this.$options.propsData.displayName) {
+			if (!this.displayName) {
 				return `var(--color-text-maxcontrast)`
 			} else {
 				const color = this.displayName.toRgb()
-				return `rgba(${color.r}, ${color.g}, ${color.b}, 1)`
+				return `rgb(${color.r}, ${color.g}, ${color.b})`
 			}
-
+		},
+		backgroundImage() {
+			return `/avatar/${this.user}/500`
 		},
 	},
+
+	async beforeMount() {
+		const response = await axios.get(generateUrl(`avatar/${this.user}/1`))
+		if (response.headers[`x-nc-iscustomavatar`] === '1') {
+			this.hasPicture = true
+		}
+	},
+
 	methods: {
 	},
 }
@@ -64,6 +89,22 @@ export default {
 	top: 0;
 	height: 100%;
 	width: 100%;
+	&__picture {
+		filter: blur(20px);
+		/* Make pic to at least 100% wide and tall */
+		min-width: calc(100% + 20px);
+		min-height: calc(100% + 20px);
+
+		/* Setting width & height to auto prevents the browser from stretching or squishing the pic */
+		width: auto;
+		height: auto;
+
+		/* Center the video */
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%)
+	}
 
 	h3 {
 		color: white;
@@ -73,13 +114,6 @@ export default {
 		font-size: 50px;
 		font-weight: 500;
 		text-transform: uppercase;
-	}
-	p {
-		color: white;
-		position: absolute;
-		left: 24px;
-		bottom: 24px;
-		font-size: 20px;
 	}
 }
 </style>

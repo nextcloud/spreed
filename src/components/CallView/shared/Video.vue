@@ -22,51 +22,59 @@
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
-		:class="containerClass">
+		:class="containerClass"
+		@mouseover="mouseOver = true"
+		@mouseleave="mouseOver= false">
 		<video v-if="!placeholderForPromoted"
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
 			ref="video"
 			:class="{'picture-grid': isGrid}" />
-		<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-			<VideoBackground v-if="isGrid" :display-name="model.attributes.name" />
-			<Avatar v-if="model.attributes.userId && !isGrid"
-				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:user="model.attributes.userId"
-				:display-name="model.attributes.name"
-				:class="avatarClass" />
-			<div v-if="!model.attributes.userId"
-				:class="guestAvatarClass"
-				class="avatar guest">
-				{{ firstLetterOfGuestName }}
+		<transition name="fade">
+			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
+				<VideoBackground v-if="isGrid" :display-name="model.attributes.name" :user="model.attributes.userId" />
+				<Avatar v-if="model.attributes.userId"
+					:size="avatarSize"
+					:disable-menu="true"
+					:disable-tooltip="true"
+					:user="model.attributes.userId"
+					:display-name="model.attributes.name"
+					:class="avatarClass" />
+				<div v-if="!model.attributes.userId"
+					:class="guestAvatarClass"
+					class="avatar guest">
+					{{ firstLetterOfGuestName }}
+				</div>
 			</div>
-		</div>
-		<div class="nameIndicator">
-			{{ participantName }}
-		</div>
-		<div v-if="isGrid" class="mediaIndicator">
-			<button v-show="!connectionStateFailedNoRestart"
-				v-tooltip="audioButtonTooltip"
-				class="muteIndicator forced-white"
-				:class="audioButtonClass"
-				:disabled="!model.attributes.audioAvailable || !selfIsModerator"
-				@click="forceMute" />
-			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
-				v-tooltip="videoButtonTooltip"
-				class="hideRemoteVideo forced-white"
-				:class="videoButtonClass"
-				@click="toggleVideo" />
-			<button v-show="!connectionStateFailedNoRestart"
-				v-tooltip="t('spreed', 'Show screen')"
-				class="screensharingIndicator forced-white icon-screen"
-				:class="screenSharingButtonClass"
-				@click="switchToScreen" />
-			<button v-show="connectionStateFailedNoRestart"
-				class="iceFailedIndicator forced-white icon-error"
-				:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-				disabled="true" />
-		</div>
+		</transition>
+		<transition name="fade">
+			<div v-if="mouseOver" class="bottom-bar">
+				<div class="bottom-bar__nameIndicator">
+					{{ participantName }}
+				</div>
+				<div v-if="isGrid" class="bottom-bar__mediaIndicator">
+					<button v-show="!connectionStateFailedNoRestart"
+						v-tooltip="audioButtonTooltip"
+						class="muteIndicator forced-white"
+						:class="audioButtonClass"
+						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
+						@click="forceMute" />
+					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
+						v-tooltip="videoButtonTooltip"
+						class="hideRemoteVideo forced-white"
+						:class="videoButtonClass"
+						@click="toggleVideo" />
+					<button v-show="!connectionStateFailedNoRestart"
+						v-tooltip="t('spreed', 'Show screen')"
+						class="screensharingIndicator forced-white icon-screen"
+						:class="screenSharingButtonClass"
+						@click="switchToScreen" />
+					<button v-show="connectionStateFailedNoRestart"
+						class="iceFailedIndicator forced-white icon-error"
+						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
+						disabled="true" />
+				</div>
+			</div>
+		</transition>
 	</div>
 </template>
 
@@ -118,7 +126,11 @@ export default {
 			default: false,
 		},
 	},
-
+	data() {
+		return {
+			mouseOver: false,
+		}
+	},
 	computed: {
 
 		containerClass() {
@@ -306,19 +318,30 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid black;
 }
 
 .avatar-container {
 	margin: auto;
 }
-
-.mediaIndicator {
+.bottom-bar {
 	position: absolute;
 	bottom: 12px;
+	height: var(--clickable-area);
+	width: 100%;
+	&__nameIndicator {
+	color: white;
+	position: absolute;
+	left: 24px;
+	bottom: 0;
+	font-size: 20px;
+	}
+	&__mediaIndicator {
+	position: absolute;
+	bottom: 0;
 	right: 20px;
 	background-size: 22px;
 	text-align: center;
+	}
 }
 
 .constrained-layout .mediaIndicator {
