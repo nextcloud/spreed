@@ -6,12 +6,14 @@
 				:is-in-call="showChatInSidebar"
 				:is-grid="isGrid"
 				@changeView="handleChangeView" />
-			<ChatView v-if="!showChatInSidebar" :token="token" />
-			<template v-else>
-				<CallView
-					:is-grid="isGrid"
-					:token="token" />
-			</template>
+			<transition name="fade">
+				<ChatView v-if="!showChatInSidebar" :token="token" />
+				<template v-else>
+					<CallView
+						:is-grid="isGrid"
+						:token="token" />
+				</template>
+			</transition>
 		</template>
 	</div>
 </template>
@@ -118,6 +120,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/variables.scss';
+
 .main-view {
 	height: 100%;
 	width: 100%;
