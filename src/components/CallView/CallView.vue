@@ -26,9 +26,7 @@
 				v-bind="$attrs"
 				:dev-mode="false"
 				:dummies="2" />
-		</transition>
-		<transition name="fade">
-			<PromotedView v-if="!isGrid" v-bind="$attrs" />
+			<PromotedView v-else v-bind="$attrs" />
 		</transition>
 	</div>
 </template>
