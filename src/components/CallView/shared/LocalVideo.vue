@@ -40,11 +40,15 @@
 				{{ firstLetterOfGuestName }}
 			</div>
 		</div>
-		<LocalMediaControls ref="localMediaControls"
-			:model="localMediaModel"
-			:local-call-participant-model="localCallParticipantModel"
-			:screen-sharing-button-hidden="useConstrainedLayout"
-			@switchScreenToId="$emit('switchScreenToId', $event)" />
+		<transition name="fade">
+			<LocalMediaControls
+				v-show="showVideoOverlay"
+				ref="localMediaControls"
+				:model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:screen-sharing-button-hidden="useConstrainedLayout"
+				@switchScreenToId="$emit('switchScreenToId', $event)" />
+		</transition>
 	</div>
 </template>
 
@@ -82,6 +86,10 @@ export default {
 		useConstrainedLayout: {
 			type: Boolean,
 			default: false,
+		},
+		showVideoOverlay: {
+			type: Boolean,
+			default: true,
 		},
 	},
 
@@ -185,6 +193,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
 @import '../../../assets/avatar.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);

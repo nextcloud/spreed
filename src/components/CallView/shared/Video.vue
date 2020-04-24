@@ -22,9 +22,7 @@
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
-		:class="containerClass"
-		@mouseover="mouseOver = true"
-		@mouseleave="mouseOver= false">
+		:class="containerClass">
 		<video v-if="!placeholderForPromoted"
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
 			ref="video"
@@ -47,7 +45,7 @@
 			</div>
 		</transition>
 		<transition name="fade">
-			<div v-if="mouseOver" class="bottom-bar">
+			<div v-show="showVideoOverlay" class="bottom-bar">
 				<div class="bottom-bar__nameIndicator">
 					{{ participantName }}
 				</div>
@@ -124,6 +122,10 @@ export default {
 		useConstrainedLayout: {
 			type: Boolean,
 			default: false,
+		},
+		showVideoOverlay: {
+			type: Boolean,
+			default: true,
 		},
 	},
 	data() {
@@ -308,6 +310,7 @@ export default {
 }
 
 @import '../../../assets/avatar.scss';
+@import '../../../assets/variables.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 

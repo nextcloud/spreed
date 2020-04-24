@@ -27,6 +27,10 @@ const video = {
 			type: Boolean,
 			default: false,
 		},
+		showBottomBar: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	computed: {

@@ -23,13 +23,16 @@
 	<div class="wrapper">
 		<div
 			class="grid"
-			:style="gridStyle">
+			:style="gridStyle"
+			@mousemove="handleMovement"
+			@keydown="handleMovement">
 			<template v-if="!devMode">
 				<EmptyCallView v-if="videos.length === 0" class="video" :is-grid="true" />
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
 						:key="callParticipantModel.attributes.peerId"
 						class="video"
+						:show-bottom-bar="showVideoOverlay"
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
@@ -39,6 +42,7 @@
 					class="video"
 					:is-grid="true"
 					:local-media-model="localMediaModel"
+					:show-bottom-bar="showVideoOverlay"
 					:local-call-participant-model="localCallParticipantModel"
 					:use-constrained-layout="false"
 					@switchScreenToId="1" />
@@ -175,6 +179,11 @@ export default {
 			numberOfPages: 0,
 			// The current page
 			currentPage: 0,
+			// Videos controls and name
+			showVideoOverlay: true,
+			// Timer for the videos bottom bar
+			showVideoOverlayTimer: null,
+
 		}
 	},
 
@@ -474,6 +483,17 @@ export default {
 				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage - 1)
 			}
 			this.currentPage--
+		},
+		handleMovement() {
+			// TODO: debounce this
+			this.setTimerForUiControls()
+		},
+		setTimerForUiControls() {
+			if (this.showVideoOverlayTimer !== null) {
+				clearTimeout(this.showVideoOverlayTimer)
+			}
+			this.showVideoOverlay = true
+			this.showVideoOverlayTimer = setTimeout(() => { this.showVideoOverlay = false }, 5000)
 		},
 	},
 }
