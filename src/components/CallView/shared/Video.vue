@@ -374,10 +374,10 @@ export default {
 	width: auto;
 	height: auto;
 
-	/* Center the video and flip horizontally */
+	/* Center the video */
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%,-50%) rotateY(180deg) !important;
+	transform: translate(-50%,-50%) !important;
 }
 </style>
