@@ -36,7 +36,7 @@
 		<Popover v-if="isInCall"
 			class="top-bar__button"
 			trigger="manual"
-			:open="showLayoutHint"
+			:open="showLayoutHint && !hintDismissed"
 			@auto-hide="showLayoutHint=false">
 			<Actions slot="trigger">
 				<ActionButton v-if="isInCall"
@@ -50,7 +50,7 @@
 				<div class="hint__actions">
 					<button
 						class="error"
-						@click="showLayoutHint=false">
+						@click="showLayoutHint=false, hintDismissed=true">
 						{{ t('spreed', 'Dismiss') }}
 					</button>
 					<button
@@ -103,6 +103,7 @@ export default {
 	data() {
 		return {
 			showLayoutHint: false,
+			hintDismissed: false,
 		}
 	},
 
@@ -152,7 +153,7 @@ export default {
 		},
 
 		layoutHintText() {
-			return t('Spreed', `The videos in this call don'd fit in your window: consider maximising it or switching to 'promoted view' for a better experience`)
+			return t('Spreed', `The videos in this call don't fit in your window: consider maximising it or switching to 'promoted view' for a better experience`)
 		},
 	},
 
