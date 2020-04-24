@@ -356,6 +356,7 @@ OC.L10N.register(
     "Link to a conversation" : "Lier à une conversation",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Le navigateur que vous utilisez n'est pas entièrement pris en charge par Nextcloud Talk. Veuillez utiliser la dernière version de Mozilla Firefox, Microsoft Edge, Google Chrome ou Apple Safari.\n ",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud est en maintenance, veuillez actualiser la page",
+    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk a été mis à jour, veuillez actualiser la page",
     "Error while sharing file" : "Erreur lors du partage du fichier",
     "Error while uploading file" : "Erreur lors de l'envoi du fichier",
     "Sending signaling message has failed." : "L'envoi du message de signalement a échoué.",
