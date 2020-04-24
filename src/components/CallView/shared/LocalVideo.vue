@@ -27,13 +27,14 @@
 			ref="video"
 			:class="{ 'picture-grid': isGrid }" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
-			<Avatar v-if="userId"
+			<VideoBackground v-if="isGrid" :display-name="displayName" />
+			<Avatar v-if="userId && !isGrid"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
 				:user="userId"
 				:display-name="displayName" />
-			<div v-else
+			<div v-if="!userId"
 				:class="avatarSizeClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
@@ -54,6 +55,8 @@ import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
 import { showInfo } from '@nextcloud/dialogs'
+import video from './video.js'
+import VideoBackground from './VideoBackground'
 
 export default {
 
@@ -62,7 +65,10 @@ export default {
 	components: {
 		Avatar,
 		LocalMediaControls,
+		VideoBackground,
 	},
+
+	mixins: [video],
 
 	props: {
 		localMediaModel: {
@@ -74,10 +80,6 @@ export default {
 			required: true,
 		},
 		useConstrainedLayout: {
-			type: Boolean,
-			default: false,
-		},
-		isGrid: {
 			type: Boolean,
 			default: false,
 		},
@@ -116,7 +118,6 @@ export default {
 		avatarSizeClass() {
 			return 'avatar-' + this.avatarSize + 'px'
 		},
-
 	},
 
 	watch: {
@@ -195,7 +196,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid white;
+	border: 1px solid black;
 }
 
 .picture-grid {

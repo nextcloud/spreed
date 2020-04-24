@@ -28,14 +28,15 @@
 			ref="video"
 			:class="{'picture-grid': isGrid}" />
 		<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-			<Avatar v-if="model.attributes.userId"
+			<VideoBackground v-if="isGrid" :display-name="model.attributes.name" />
+			<Avatar v-if="model.attributes.userId && !isGrid"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
 				:user="model.attributes.userId"
 				:display-name="model.attributes.name"
 				:class="avatarClass" />
-			<div v-else
+			<div v-if="!model.attributes.userId"
 				:class="guestAvatarClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
@@ -77,6 +78,8 @@ import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantMod
 import { PARTICIPANT } from '../../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
+import video from './video.js'
+import VideoBackground from './VideoBackground'
 
 export default {
 
@@ -84,11 +87,14 @@ export default {
 
 	components: {
 		Avatar,
+		VideoBackground,
 	},
 
 	directives: {
 		tooltip: Tooltip,
 	},
+
+	mixins: [video],
 
 	props: {
 		token: {
@@ -108,10 +114,6 @@ export default {
 			required: true,
 		},
 		useConstrainedLayout: {
-			type: Boolean,
-			default: false,
-		},
-		isGrid: {
 			type: Boolean,
 			default: false,
 		},
@@ -304,7 +306,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid white;
+	border: 1px solid black;
 }
 
 .avatar-container {
