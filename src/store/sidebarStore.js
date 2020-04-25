@@ -29,7 +29,7 @@ const getters = {
 	getSidebarStatus: (state) => () => {
 		return state.show
 	},
-	isRenamingConversation: (state) => () => {
+	isRenamingConversation: (state) => {
 		return state.isRenamingConversation
 	},
 }

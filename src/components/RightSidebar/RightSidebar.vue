@@ -108,7 +108,6 @@ export default {
 	data() {
 		return {
 			contactsLoading: false,
-			lobbyTimerLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
 		}
@@ -149,36 +148,6 @@ export default {
 			}
 
 			return this.conversation.isFavorite
-		},
-
-		lobbyTimer() {
-			// A timestamp of 0 means that there is no lobby, but it would be
-			// interpreted as the Unix epoch by the DateTimePicker.
-			if (this.conversation.lobbyTimer === 0) {
-				return undefined
-			}
-
-			// PHP timestamp is second-based; JavaScript timestamp is
-			// millisecond based.
-			return this.conversation.lobbyTimer * 1000
-		},
-
-		dateTimePickerAttrs() {
-			return {
-				format: 'YYYY-MM-DD HH:mm',
-				firstDayOfWeek: window.firstDay + 1, // Provided by server
-				lang: {
-					days: window.dayNamesShort, // Provided by server
-					months: window.monthNamesShort, // Provided by server
-				},
-				// Do not update the value until the confirm button has been
-				// pressed. Otherwise it would not be possible to set a lobby
-				// for today, because as soon as the day is selected the lobby
-				// timer would be set, but as no time was set at that point the
-				// lobby timer would be set to today at 00:00, which would
-				// disable the lobby due to being in the past.
-				confirm: true,
-			}
 		},
 
 		displaySearchBox() {
