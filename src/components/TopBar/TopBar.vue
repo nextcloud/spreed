@@ -22,7 +22,6 @@
 <template>
 	<div class="top-bar">
 		<CallButton />
-		</Actions>
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
 			class="top-bar__button"
@@ -69,10 +68,8 @@
 				@click="handleRenameConversation">
 				{{ t('spreed', 'Rename conversation') }}
 			</ActionButton>
-			<ActionText
-				v-if="canFullModerate"
-				icon="icon-shared"
-				:title="t('spreed', 'Guests')" />
+			<ActionSeparator
+				v-if="canFullModerate" />
 			<ActionCheckbox
 				v-if="canFullModerate"
 				:checked="isSharedPublicly"
@@ -105,10 +102,8 @@
 				@submit="handleSetNewPassword">
 				{{ t('spreed', 'Enter a password') }}
 			</ActionInput>
-			<ActionText
-				v-if="canFullModerate"
-				icon="icon-lobby"
-				:title="t('spreed', 'Webinar')" />
+			<ActionSeparator
+				v-if="canFullModerate" />
 			<ActionCheckbox
 				v-if="canFullModerate"
 				:checked="hasLobbyEnabled"
@@ -125,6 +120,7 @@
 				@change="setLobbyTimer">
 				{{ t('spreed', 'Start time (optional)') }}
 			</ActionInput>
+			<ActionSeparator />
 			<ActionButton
 				v-shortkey="['f']"
 				:icon="iconFullscreen"
@@ -134,6 +130,7 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 		</Actions>
+		<CallButton class="top-bar__button" />
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
@@ -153,7 +150,7 @@ import { EventBus } from '../../services/EventBus'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import {
 	setConversationPassword,
@@ -168,10 +165,10 @@ export default {
 		Actions,
 		ActionCheckbox,
 		ActionInput,
-		ActionText,
 		ActionLink,
 		CallButton,
 		Popover,
+		ActionSeparator,
 	},
 
 	props: {
@@ -460,6 +457,7 @@ export default {
 	justify-content: flex-end;
 	padding: 0 6px;
 	&__button {
+		margin: 0 2px;
 		align-self: center;
 	}
 

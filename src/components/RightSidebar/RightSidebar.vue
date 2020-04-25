@@ -29,7 +29,7 @@
 		@update:starred="onFavoriteChange"
 		@update:title="handleUpdateTitle"
 		@submit-title="handleSubmitTitle"
-		@dismiss-editing="isRenamingConversation = false"
+		@dismiss-editing="dismissEditing"
 		@close="handleClose">
 		<AppSidebarTab
 			v-if="showChatInSidebar"
@@ -220,6 +220,7 @@ export default {
 	methods: {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
+			this.dismissEditing()
 		},
 
 		async onFavoriteChange() {
@@ -251,10 +252,14 @@ export default {
 			const name = event.target[0].value.trim()
 			try {
 				await setConversationName(this.token, name)
-				this.$store.dispatch('isRenamingConversation', false)
+				this.dismissEditing()
 			} catch (exception) {
 				console.debug(exception)
 			}
+		},
+
+		dismissEditing() {
+			this.$store.dispatch('isRenamingConversation', false)
 		},
 
 	},
