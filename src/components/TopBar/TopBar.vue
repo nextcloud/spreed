@@ -22,15 +22,6 @@
 <template>
 	<div class="top-bar">
 		<CallButton />
-		<Actions class="top-bar__button">
-			<ActionButton
-				v-shortkey="['f']"
-				:icon="iconFullscreen"
-				:aria-label="t('spreed', 'Toggle fullscreen')"
-				@shortkey.native="toggleFullscreen"
-				@click="toggleFullscreen">
-				{{ labelFullscreen }}
-			</ActionButton>
 		</Actions>
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
@@ -134,6 +125,14 @@
 				@change="setLobbyTimer">
 				{{ t('spreed', 'Start time (optional)') }}
 			</ActionInput>
+			<ActionButton
+				v-shortkey="['f']"
+				:icon="iconFullscreen"
+				:aria-label="t('spreed', 'Toggle fullscreen')"
+				@shortkey.native="toggleFullscreen"
+				@click="toggleFullscreen">
+				{{ labelFullscreen }}
+			</ActionButton>
 		</Actions>
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
