@@ -142,6 +142,7 @@ export default {
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
+				'video-container-grid--speaking': this.isSpeaking,
 			}
 		},
 
@@ -236,6 +237,9 @@ export default {
 				'screen-visible': this.sharedData.screenVisible,
 			}
 		},
+		isSpeaking() {
+			return this.model.attributes.speaking
+		},
 
 	},
 
@@ -321,6 +325,11 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	&--speaking {
+		box-shadow: inset 0 0 4px 4px white;
+		border: 2px solid white;
+		box-sizing: border-box;
+	}
 }
 
 .avatar-container {
