@@ -109,8 +109,6 @@ export default {
 		return {
 			contactsLoading: false,
 			lobbyTimerLoading: false,
-			// Changes the conversation title into an input field for renaming
-			isRenamingConversation: false,
 			// The conversation name (while editing)
 			conversationName: '',
 		}
@@ -214,6 +212,9 @@ export default {
 				return this.conversation.displayName
 			}
 		},
+		isRenamingConversation() {
+			return this.$store.getters.isRenamingConversation
+		},
 	},
 
 	methods: {
@@ -234,7 +235,7 @@ export default {
 		handleRenameConversation() {
 			// Copy the current conversation's title into the renaming title
 			this.conversationName = this.title
-			this.isRenamingConversation = true
+			this.$store.dispatch('isRenamingConversation', true)
 		},
 
 		/**
@@ -250,7 +251,7 @@ export default {
 			const name = event.target[0].value.trim()
 			try {
 				await setConversationName(this.token, name)
-				this.isRenamingConversation = false
+				this.$store.dispatch('isRenamingConversation', false)
 			} catch (exception) {
 				console.debug(exception)
 			}

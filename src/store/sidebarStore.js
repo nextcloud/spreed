@@ -22,11 +22,15 @@
 
 const state = {
 	show: false,
+	isRenamingConversation: false,
 }
 
 const getters = {
 	getSidebarStatus: (state) => () => {
 		return state.show
+	},
+	isRenamingConversation: (state) => () => {
+		return state.isRenamingConversation
 	},
 }
 
@@ -47,6 +51,18 @@ const mutations = {
 	hideSidebar(state) {
 		state.show = false
 	},
+	/**
+	 * Renaming state of the conversation
+	 * @param {object} state current store state;
+	 * @param {boolean} boolean the state of the renaming action;
+	 */
+	isRenamingConversation(state, boolean) {
+		if (boolean) {
+			state.isRenamingConversation = true
+		} else if (!boolean) {
+			state.isRenamingConversation = false
+		}
+	},
 }
 
 const actions = {
@@ -66,6 +82,16 @@ const actions = {
 	 */
 	hideSidebar(context) {
 		context.commit('hideSidebar')
+	},
+	/**
+	 * Renaming state of the conversation
+	 * @param {object} context default store context;
+	 * @param {boolean} boolean the state of the renaming action;
+	 */
+	isRenamingConversation(context, boolean) {
+		if (boolean) {
+			context.commit('isRenamingConversation', boolean)
+		}
 	},
 }
 
