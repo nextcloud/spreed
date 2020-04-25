@@ -21,7 +21,7 @@
  */
 
 const state = {
-	show: true,
+	show: false,
 }
 
 const getters = {
