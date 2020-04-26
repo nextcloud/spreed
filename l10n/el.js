@@ -443,7 +443,7 @@ OC.L10N.register(
     "Never notify" : "Χωρίς ειδοποίηση",
     "{participantName}'s screen" : "Οθόνη {participantName}'s ",
     "Guest's screen" : "Η οθόνη του επισκέπτη",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Προσκληθήκατε σε δωμάτιο <strong>συνομιλίας</strong> ή είχατε <strong>κλήση</strong>",
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Προσκληθήκατε σε δωμάτιο <strong>συνομιλίας</strong> ή είχατε μία <strong>κλήση</strong>",
     "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Το Microsoft Edge και Safari μπορούν να χρησιμοποιηθούν για κλήσεις βίντεο και ήχου",
     "* One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "* Οι συνομιλίες ένας προς ένα είναι σταθερές και δεν μπορούν πλέον να μετατραπούν σε ομαδικές συνομιλίες τυχαία. Επίσης, όταν ένας από τους συμμετέχοντες αποχωρήσει από τη συζήτηση, αυτή δεν διαγράφεται αυτόματα πλέον. Μόνο εάν και οι δύο συμμετέχοντες αποχωρήσουν, διαγράφεται από το διακομιστή",
     "* You can now notify all participants by posting \"@all\" into the chat" : "* Μπορείτε να ενημερώσετε όλους τους συμμετέχοντες γράφοντας \"@all\" στο chat",
