@@ -43,6 +43,12 @@
 		background-image: url(icon-color-path('user', 'actions', 'fff', 1, true));
 	}
 
+	&.in-call {
+		.app-navigation-toggle {
+			color: #fff;
+		}
+	}
+
 	.forced-white {
 		&.icon-menu-people {
 			background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
