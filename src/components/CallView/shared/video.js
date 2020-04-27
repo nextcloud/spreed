@@ -22,6 +22,12 @@
 
 const video = {
 
+	data() {
+		return {
+			videoStyle: {},
+			incomingStreamAspectRatio: null,
+		}
+	},
 	props: {
 		isGrid: {
 			type: Boolean,
@@ -31,10 +37,34 @@ const video = {
 			type: Boolean,
 			default: true,
 		},
+		videoContainerAspectRatio: {
+			type: Number,
+		},
 	},
 
-	computed: {
+	created() {
+		this.getIncomingStreamAspectRatio()
+	},
 
+	watch: {
+		videoContainerAspectRatio() {
+			this.getVideoStyle()
+		},
+	},
+
+	methods: {
+		getVideoStyle() {
+			if (this.videoContainerAspectRatio >= this.incomingStreamAspectRatio) {
+				this.pictureRules = { width: '100%', height: 'auto' }
+			} else {
+				this.pictureRules = { width: 'auto', height: '100%' }
+			}
+		},
+		getIncomingStreamAspectRatio() {
+			const incomingStreamWidth = this.$refs.video.videoWidth
+			const incomingStreamHeight = this.$refs.video.videoHeight
+			this.incomingStreamAspectRatio = incomingStreamWidth / incomingStreamHeight
+		},
 	},
 }
 

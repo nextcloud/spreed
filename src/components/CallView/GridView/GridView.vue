@@ -36,6 +36,7 @@
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
+						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:shared-data="{videoEnabled: true}" />
 				</template>
 				<LocalVideo ref="localVideo"
@@ -43,6 +44,7 @@
 					:is-grid="true"
 					:local-media-model="localMediaModel"
 					:show-bottom-bar="showVideoOverlay"
+					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
 					:use-constrained-layout="false"
 					@switchScreenToId="1" />
@@ -283,6 +285,10 @@ export default {
 
 		mainView() {
 			return document.getElementsByClassName('main-view')[0]
+		},
+		// Current aspect ratio of each video component
+		videoContainerAspectRatio() {
+			return (this.gridWidth / this.columns) / (this.gridHeight / this.rows)
 		},
 	},
 

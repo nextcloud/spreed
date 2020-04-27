@@ -26,7 +26,8 @@
 		<video v-if="!placeholderForPromoted"
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
 			ref="video"
-			:class="{'picture-grid': isGrid}" />
+			:class="{'picture-grid': isGrid,}"
+			:style="{ videoStyle }" />
 		<transition name="fade">
 			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 				<VideoBackground v-if="isGrid" :display-name="model.attributes.name" :user="model.attributes.userId" />
@@ -243,7 +244,6 @@ export default {
 		isSpeaking() {
 			return this.model.attributes.speaking
 		},
-
 	},
 
 	watch: {
@@ -404,18 +404,11 @@ export default {
 }
 
 .picture-grid {
-	/* Make video to at least 100% wide and tall */
-	min-width: 100%;
-	min-height: 100%;
-
-	/* Setting width & height to auto prevents the browser from stretching or squishing the video */
-	width: auto;
-	height: auto;
-
 	/* Center the video */
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%,-50%) !important;
 }
+
 </style>

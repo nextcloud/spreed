@@ -59,10 +59,10 @@ export default {
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
 			if (!this.displayName) {
-				return `var(--color-text-maxcontrast)`
+				return `darken(var(--color-text-maxcontrast), 10%)`
 			} else {
 				const color = this.displayName.toRgb()
-				return `rgb(${color.r}, ${color.g}, ${color.b})`
+				return `darken(rgb(${color.r}, ${color.g}, ${color.b}), 10%)`
 			}
 		},
 		backgroundImage() {

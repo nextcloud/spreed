@@ -202,7 +202,7 @@ export default {
 		},
 
 		enableFullscreen() {
-			const fullscreenElem = document.getElementById('content')
+			const fullscreenElem = document.getElementById('content-vue')
 
 			if (fullscreenElem.requestFullscreen) {
 				fullscreenElem.requestFullscreen()
