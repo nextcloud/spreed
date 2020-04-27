@@ -1250,7 +1250,7 @@ class Room {
 		$query->update('talk_participants')
 			->set('last_ping', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->in('session_id', $query->createNamedParameter($sessionIds), IQueryBuilder::PARAM_STR_ARRAY));
+			->andWhere($query->expr()->in('session_id', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 
 		$query->execute();
 	}
