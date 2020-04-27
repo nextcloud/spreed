@@ -65,7 +65,7 @@ const getters = {
 			}
 		}
 		return {
-			participant: state.userId,
+			userId: state.userId,
 		}
 	},
 }

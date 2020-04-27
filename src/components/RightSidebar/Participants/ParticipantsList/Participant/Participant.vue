@@ -224,7 +224,7 @@ export default {
 				}
 			} else {
 				data = {
-					participant: this.computedId,
+					userId: this.computedId,
 				}
 			}
 			return data
