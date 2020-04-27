@@ -29,7 +29,8 @@
 			html: true
 		}"
 		:disabled="startCallButtonDisabled || loading || blockCalls"
-		class="top-bar__button primary"
+		class="top-bar__button"
+		:class="{'primary': !(conversation.hasCall && !isBlockedByLobby),'success': conversation.hasCall && !isBlockedByLobby}"
 		@click="joinCall">
 		<span
 			class="icon"
@@ -188,6 +189,16 @@ export default {
 
 	&.icon-incoming-call {
 		animation: pulse 2s infinite;
+	}
+}
+
+.success {
+	color: white;
+	background-color: #35CC00;
+	border: 1px solid #35CC00;
+	&:hover {
+		background-color: #3BE100;
+		border: 1px solid #3BE100 !important;
 	}
 }
 
