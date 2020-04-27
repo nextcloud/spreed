@@ -44,12 +44,15 @@
 				</div>
 			</div>
 		</transition>
-		<transition name="fade">
-			<div v-show="showVideoOverlay" class="bottom-bar">
-				<div class="bottom-bar__nameIndicator">
+
+		<div class="bottom-bar">
+			<transition name="fade">
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay" class="bottom-bar__nameIndicator">
 					{{ participantName }}
 				</div>
-				<div v-if="isGrid" class="bottom-bar__mediaIndicator">
+			</transition>
+			<transition name="fade">
+				<div v-if="isGrid" v-show="showVideoOverlay" class="bottom-bar__mediaIndicator">
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="audioButtonTooltip"
 						class="muteIndicator forced-white"
@@ -71,8 +74,8 @@
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
 						disabled="true" />
 				</div>
-			</div>
-		</transition>
+			</transition>
+		</div>
 	</div>
 </template>
 
