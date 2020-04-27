@@ -222,6 +222,7 @@ OC.L10N.register(
     "Select conversation" : "בחירת דיון",
     "Join a conversation or start a new one" : "ניתן להצטרף לדיון או להתחיל באחד חדש.",
     "Link to a conversation" : "קישור לדיון",
+    "Error while sharing file" : "שגיאה בשיתוף הקובץ",
     "Access to microphone & camera is only possible with HTTPS" : "גישה למיקרופון ולמצלמה אפשרית רק עם HTTPS",
     "Please move your setup to HTTPS" : "נא להעביר את התצורה שלך ל־HTTPS",
     "Access to microphone & camera was denied" : "הגישה למיקרופון ולמצלמה נדחתה",
