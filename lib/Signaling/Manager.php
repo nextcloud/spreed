@@ -27,16 +27,21 @@ use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IConfig;
 
 class Manager {
 
+	/** @var IConfig */
+	protected $serverConfig;
 	/** @var Config */
 	protected $talkConfig;
 	/** @var ICache */
 	private $cache;
 
-	public function __construct(Config $talkConfig,
+	public function __construct(IConfig $serverConfig,
+								Config $talkConfig,
 								ICacheFactory $cacheFactory) {
+		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 	}
@@ -81,11 +86,19 @@ class Manager {
 			return $servers[$serverId];
 		}
 
-		$randomServerId = random_int(0, count($servers) - 1);
+		$serverIdToAssign = random_int(0, count($servers) - 1);
+		$hardcodedServers = $this->serverConfig->getSystemValue('talk_hardcoded_hpb', []);
+		if (isset($hardcodedServers[$room->getToken()])) {
+			$hardcodedServerId = $hardcodedServers[$room->getToken()];
+			if (isset($servers[$hardcodedServerId])) {
+				$serverIdToAssign = $hardcodedServerId;
+			}
+		}
+
 		$serverId = $this->cache->get($room->getToken());
 		if ($serverId === null) {
-			$this->cache->set($room->getToken(), $randomServerId);
-			$serverId = $randomServerId;
+			$this->cache->set($room->getToken(), $serverIdToAssign);
+			$serverId = $serverIdToAssign;
 			$room->setAssignedSignalingServer($serverId);
 		}
 
