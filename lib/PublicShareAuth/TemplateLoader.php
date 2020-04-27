@@ -23,7 +23,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShareAuth;
 
+use OCA\Talk\Config;
+use OCA\Talk\TInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Share\IShare;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -37,11 +41,23 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
+	use TInitialState;
+
+	public function __construct(IInitialStateService $initialStateService,
+								Config $talkConfig,
+								IConfig $serverConfig) {
+		$this->initialStateService = $initialStateService;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
+	}
+
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = function(GenericEvent $event) {
+		$listener = static function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
-			self::loadRequestPasswordByTalkUi($share);
+			/** @var self $templateLoader */
+			$templateLoader = \OC::$server->query(self::class);
+			$templateLoader->loadRequestPasswordByTalkUi($share);
 		};
 		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
 	}
@@ -58,7 +74,7 @@ class TemplateLoader {
 	 *
 	 * @param IShare $share
 	 */
-	public static function loadRequestPasswordByTalkUi(IShare $share): void {
+	public function loadRequestPasswordByTalkUi(IShare $share): void {
 		if (!$share->getSendPasswordByTalk()) {
 			return;
 		}
@@ -66,8 +82,8 @@ class TemplateLoader {
 		Util::addStyle('spreed', 'merged-share-auth');
 		Util::addScript('spreed', 'talk-public-share-auth-sidebar');
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+
+		$this->publishInitialStateForGuest();
 	}
 
 }

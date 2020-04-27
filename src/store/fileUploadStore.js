@@ -23,10 +23,11 @@
 import Vue from 'vue'
 import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
 import { findUniquePath } from '../utils/fileUpload'
 
 const state = {
-	attachmentFolder: '/Talk',
+	attachmentFolder: loadState('talk', 'attachment_folder'),
 	uploads: {
 	},
 }

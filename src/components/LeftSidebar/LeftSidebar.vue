@@ -206,7 +206,6 @@ export default {
 	},
 
 	mounted() {
-		this.$store.commit('setAttachmentFolder', loadState('talk', 'attachment_folder'))
 		this.attachmentFolderLoading = false
 	},
 

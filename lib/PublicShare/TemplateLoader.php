@@ -24,8 +24,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShare;
 
+use OCA\Talk\Config;
+use OCA\Talk\TInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
+use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Share\IShare;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -39,11 +43,23 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
+	use TInitialState;
+
+	public function __construct(IInitialStateService $initialStateService,
+								Config $talkConfig,
+								IConfig $serverConfig) {
+		$this->initialStateService = $initialStateService;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
+	}
+
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
-			self::loadTalkSidebarUi($share);
+			/** @var self $templateLoader */
+			$templateLoader = \OC::$server->query(self::class);
+			$templateLoader->loadTalkSidebarUi($share);
 		});
 	}
 
@@ -55,10 +71,9 @@ class TemplateLoader {
 	 *
 	 * @param IShare $share
 	 */
-	public static function loadTalkSidebarUi(IShare $share): void {
-		$config = \OC::$server->getConfig();
-		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
-			$config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+	public function loadTalkSidebarUi(IShare $share): void {
+		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
+			$this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
 			return;
 		}
 
@@ -69,8 +84,7 @@ class TemplateLoader {
 		Util::addStyle('spreed', 'merged-public-share');
 		Util::addScript('spreed', 'talk-public-share-sidebar');
 
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => "app", 'class' => 'nc-enable-screensharing-extension']);
+		$this->publishInitialStateForGuest();
 	}
 
 }
