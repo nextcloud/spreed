@@ -270,6 +270,7 @@
     "%s invited you to a group conversation: %s" : "Používateľ %s vás prizval ku skupinovému rozhovoru: %s",
     "{email} requested the password to access {file}" : "Používateľ {email} požiadal o heslo pre prístup k {file}",
     "Someone requested the password to access {file}" : "Niekto požiadal o heslo pre prístup k {file}",
+    "Limit app usage to groups." : "Obmedziť používanie aplikácie na skupiny.",
     "Join conversations at any time, any where, on any device." : "Pripojte sa ku rozhovorom kedykoľvek, kdekoľvek, na hocijakom zariadení."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
