@@ -146,9 +146,9 @@ export default {
 		},
 		changeViewIconClass() {
 			if (this.isGrid) {
-				return 'icon-promoted-view-white'
+				return 'forced-white icon-promoted-view'
 			} else {
-				return 'icon-toggle-pictures-white'
+				return 'forced-white icon-grid-view'
 			}
 		},
 

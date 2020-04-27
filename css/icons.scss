@@ -50,6 +50,12 @@
 		&.icon-fullscreen {
 			background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
 		}
+		&.icon-promoted-view {
+			background-image: url(icon-color-path('promoted-view', 'spreed', 'fff', 1));
+		}
+		&.icon-grid-view {
+			background-image: url(icon-color-path('toggle-pictures', 'actions', 'fff', 1, true));
+		}
 		&.icon-audio {
 			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
 		}
@@ -67,9 +73,6 @@
 		}
 		&.icon-screen-off {
 			background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
-		}
-		&.icon-promoted-view{
-			background-image: url(icon-color-path('promoted-view', 'actions', 'fff', 1, true));
 		}
 	}
 
