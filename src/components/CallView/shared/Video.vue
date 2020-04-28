@@ -26,7 +26,7 @@
 		<video v-if="!placeholderForPromoted"
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
 			ref="video"
-			:class="{'picture-grid': isGrid,}"
+			:class="{'picture-grid': isGrid }"
 			:style="{ videoStyle }" />
 		<transition name="fade">
 			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
@@ -77,6 +77,7 @@
 				</div>
 			</transition>
 		</div>
+		<div v-if="isSpeaking" class="speaking-shadow" />
 	</div>
 </template>
 
@@ -328,11 +329,6 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	&--speaking {
-		box-shadow: inset 0 0 4px 4px white;
-		border: 2px solid white;
-		box-sizing: border-box;
-	}
 }
 
 .avatar-container {
@@ -409,6 +405,15 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%,-50%) !important;
+}
+
+.speaking-shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	box-shadow: inset 0 0 8px 4px white;
 }
 
 </style>
