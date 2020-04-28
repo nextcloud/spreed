@@ -21,7 +21,7 @@
  */
 
 const state = {
-	show: false,
+	show: true,
 	isRenamingConversation: false,
 }
 

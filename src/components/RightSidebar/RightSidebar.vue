@@ -190,6 +190,7 @@ export default {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 			this.dismissEditing()
+			localStorage.setItem('sidebarOpen', 'false')
 		},
 
 		async onFavoriteChange() {

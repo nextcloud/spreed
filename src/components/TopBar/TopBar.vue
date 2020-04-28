@@ -21,7 +21,6 @@
 
 <template>
 	<div class="top-bar">
-		<CallButton />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
 			class="top-bar__button"
@@ -361,6 +360,7 @@ export default {
 	methods: {
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
+			localStorage.setItem('sidebarOpen', 'true')
 		},
 
 		fullScreenChanged() {
