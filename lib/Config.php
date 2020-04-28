@@ -251,7 +251,8 @@ class Config {
 		if ($numSignalingServers === 0) {
 			return self::SIGNALING_INTERNAL;
 		}
-		if ($numSignalingServers === 1) {
+		if ($numSignalingServers === 1
+			&& $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
 			return self::SIGNALING_EXTERNAL;
 		}
 

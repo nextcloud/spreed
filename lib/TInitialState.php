@@ -55,7 +55,9 @@ trait TInitialState {
 		);
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
-		if ($signalingMode !== 'internal' && !$this->memcacheFactory->isAvailable()) {
+		if ($signalingMode !== 'internal'
+			&& !$this->memcacheFactory->isAvailable()
+			&& $this->serverConfig->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
 			throw new HintException(
 				'External signaling is only supported with a distributed cache'
 			);
