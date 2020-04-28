@@ -32,7 +32,7 @@
 					<Video
 						:key="callParticipantModel.attributes.peerId"
 						class="video"
-						:show-bottom-bar="showVideoOverlay"
+						:show-video-overlay="showVideoOverlay"
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
@@ -43,7 +43,7 @@
 					class="video"
 					:is-grid="true"
 					:local-media-model="localMediaModel"
-					:show-bottom-bar="showVideoOverlay"
+					:show-video-overlay="showVideoOverlay"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
 					:use-constrained-layout="false"

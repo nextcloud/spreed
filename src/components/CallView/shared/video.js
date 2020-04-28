@@ -35,7 +35,7 @@ const video = {
 			type: Boolean,
 			default: false,
 		},
-		showBottomBar: {
+		showVideoOverlay: {
 			type: Boolean,
 			default: true,
 		},
