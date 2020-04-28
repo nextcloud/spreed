@@ -27,7 +27,7 @@
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
 			ref="video"
 			:class="{'picture-grid': isGrid }"
-			:style="{ videoStyle }" />
+			:style="videoStyle" />
 		<transition name="fade">
 			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 				<VideoBackground v-if="isGrid" :display-name="model.attributes.name" :user="model.attributes.userId" />
@@ -244,6 +244,9 @@ export default {
 		},
 		isSpeaking() {
 			return this.model.attributes.speaking
+		},
+		hasVideoStream() {
+			return !this.placeholderForPromoted && this.model.attributes.videoAvailable && this.sharedData.videoEnabled && this.model.attributes.stream
 		},
 	},
 
