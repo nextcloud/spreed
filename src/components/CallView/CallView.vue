@@ -399,8 +399,11 @@ export default {
 	z-index: 0;
 	max-height: 100%;
 	/* default filter for slightly better look */
-	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
-	filter: contrast(1.1) saturate(1.1) sepia(.1);
+	/* Disabled for now as it causes a huuuuge performance drop.
+	 CPU usage is more than halved without this.
+	 -webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
+	 filter: contrast(1.1) saturate(1.1) sepia(.1);
+	 */
 	vertical-align: top; /* fix white line below video */
 }
 
