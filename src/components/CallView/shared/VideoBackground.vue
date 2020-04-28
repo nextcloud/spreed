@@ -27,6 +27,7 @@
 			v-if="hasPicture"
 			:src="backgroundImage"
 			class="video-background__picture">
+		<div class="darken" />
 	</div>
 </template>
 
@@ -59,10 +60,10 @@ export default {
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
 			if (!this.displayName) {
-				return `darken(var(--color-text-maxcontrast), 10%)`
+				return `var(--color-text-maxcontrast)`
 			} else {
 				const color = this.displayName.toRgb()
-				return `darken(rgb(${color.r}, ${color.g}, ${color.b}), 10%)`
+				return `rgb(${color.r}, ${color.g}, ${color.b})`
 			}
 		},
 		backgroundImage() {
@@ -114,6 +115,16 @@ export default {
 		font-size: 50px;
 		font-weight: 500;
 		text-transform: uppercase;
+	}
+
+	.darken {
+		background-color: black;
+		opacity: 12%;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
 	}
 }
 </style>
