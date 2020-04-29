@@ -164,6 +164,13 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * Determines which element's size will be considered when building the grid
+		 */
+		boundariesElementClass: {
+			type: String,
+			required: true,
+		},
 	},
 
 	data() {
@@ -283,8 +290,8 @@ export default {
 			return this.$store.getters.getSidebarStatus()
 		},
 
-		mainView() {
-			return document.getElementsByClassName('main-view')[0]
+		boundariesElement() {
+			return document.getElementsByClassName(this.boundariesElementClass)[0]
 		},
 		// Current aspect ratio of each video component
 		videoContainerAspectRatio() {
@@ -349,8 +356,8 @@ export default {
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
-			this.gridWidth = this.mainView.clientWidth
-			this.gridHeight = this.mainView.clientHeight
+			this.gridWidth = this.boundariesElement.clientWidth
+			this.gridHeight = this.boundariesElement.clientHeight
 			// TODO: properly handle resizes when not on first page:
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
