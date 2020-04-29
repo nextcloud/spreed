@@ -72,10 +72,15 @@ export default {
 	},
 
 	async beforeMount() {
-		const response = await axios.get(generateUrl(`avatar/${this.user}/1`))
-		if (response.headers[`x-nc-iscustomavatar`] === '1') {
-			this.hasPicture = true
+		try {
+			const response = await axios.get(generateUrl(`avatar/${this.user}/1`))
+			if (response.headers[`x-nc-iscustomavatar`] === '1') {
+				this.hasPicture = true
+			}
+		} catch (exception) {
+			console.debug(exception)
 		}
+
 	},
 
 	methods: {

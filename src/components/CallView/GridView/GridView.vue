@@ -27,7 +27,7 @@
 			@mousemove="handleMovement"
 			@keydown="handleMovement">
 			<template v-if="!devMode">
-				<EmptyCallView v-if="videos.length === 0" class="video" :is-grid="true" />
+				<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
 						:key="callParticipantModel.attributes.peerId"
@@ -36,12 +36,14 @@
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
+						:fit-video="false"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:shared-data="{videoEnabled: true}" />
 				</template>
 				<LocalVideo ref="localVideo"
 					class="video"
 					:is-grid="true"
+					:fit-video="true"
 					:local-media-model="localMediaModel"
 					:show-video-overlay="showVideoOverlay"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
@@ -85,8 +87,9 @@
 			@click="handleClickPrevious">
 			Previous
 		</button>
+		<!-- page indicator (disabled) -->
 		<div
-			v-if="numberOfPages !== 0 && hasPagination"
+			v-if="numberOfPages !== 0 && hasPagination && false"
 			class="pages-indicator">
 			<div v-for="(page, index) in numberOfPages"
 				:key="index"
@@ -170,6 +173,13 @@ export default {
 		boundariesElementClass: {
 			type: String,
 			required: true,
+		},
+		/**
+		 * To be set to true if the grid is used in the promoted view component.
+		 */
+		isStripe: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -270,9 +280,10 @@ export default {
 			}
 		},
 
-		isLastPage() {
-			return !this.hasNextPage
-		},
+		// TODO: rebuild the grid to have optimal for last page
+		// isLastPage() {
+		// return !this.hasNextPage
+		// },
 
 		// Computed css to reactively style the grid
 		gridStyle() {
@@ -310,9 +321,11 @@ export default {
 				this.currentPage = 0
 			}
 		},
+		// TODO: rebuild the grid to have optimal for last page
 		// Exception for when navigating in and away from the last page of the
 		// grid
-		 isLastPage(newValue, oldValue) {
+		/**
+		isLastPage(newValue, oldValue) {
 			 if (this.hasPagination) {
 				 // If navigating into last page, make grid for last page
 				if (newValue && this.currentPage !== 0) {
@@ -323,6 +336,8 @@ export default {
 				}
 			 }
 		 },
+		 */
+
 		 sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
@@ -465,13 +480,13 @@ export default {
 		// The last grid page is very likely not to have the same number of
 		// elements as the previous pages so the grid needs to be tweaked
 		// accordingly
-		makeGridForLastPage() {
-			this.columns = this.columnsMax
-			this.rows = this.rowsMax
-			// The displayed videos for the last page have already been set
-			// in `handleClickNext`
-			this.shrinkGrid(this.displayedVideos.length)
-		},
+		// makeGridForLastPage() {
+		// this.columns = this.columnsMax
+		// this.rows = this.rowsMax
+		// // The displayed videos for the last page have already been set
+		// // in `handleClickNext`
+		// this.shrinkGrid(this.displayedVideos.length)
+		// },
 
 		// Slice the `videos` array to display the next set of videos
 		handleClickNext() {

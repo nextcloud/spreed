@@ -25,7 +25,8 @@
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
-			:class="{ 'picture-grid': isGrid }" />
+			:class="videoClass"
+			class="video" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
 			<VideoBackground v-if="isGrid" :display-name="displayName" :user="userId" />
 			<Avatar v-if="userId"
@@ -207,20 +208,19 @@ export default {
 	flex-direction: column;
 }
 
-.picture-grid {
-	/* Make video to at least 100% wide and tall */
-	min-width: 100%;
-	min-height: 100%;
+.video {
+	height: 100%;
+	width: 100%;
+}
 
-	/* Setting width & height to auto prevents the browser from stretching or squishing the video */
-	width: auto;
-	height: auto;
+.video--fit {
+	/* Fit the frame */
+	object-fit: contain;
+}
 
-	/* Center the video and flip horizontally */
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%,-50%) rotateY(180deg) !important;
+.video--fill {
+	/* Fill the frame */
+	object-fit: cover;
 }
 
 .avatar-container {

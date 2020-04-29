@@ -28,6 +28,15 @@ const call = {
 			screens: [],
 			localMediaModel: localMediaModel,
 			localCallParticipantModel: localCallParticipantModel,
+			sharedDatas: {},
+			speakingUnwatchers: {},
+			screenUnwatchers: {},
+			speakers: [],
+			// callParticipantModelsWithScreen: [],
+			localSharedData: {
+				screenVisible: true,
+			},
+			callParticipantCollection: callParticipantCollection,
 		}
 	},
 
@@ -129,6 +138,59 @@ const call = {
 					this.speakers.splice(firstInactiveSpeakerIndex, 0, speaker)
 				}
 			}
+		},
+
+		_setScreenAvailable(id, screen) {
+			if (screen) {
+				this.screens.unshift(id)
+
+				return
+			}
+
+			const index = this.screens.indexOf(id)
+			if (index !== -1) {
+				this.screens.splice(index, 1)
+			}
+		},
+
+		_setPromotedParticipant() {
+			Object.values(this.sharedDatas).forEach(sharedData => {
+				sharedData.promoted = false
+			})
+
+			if (!this.screenSharingActive && this.speakers.length) {
+				this.sharedDatas[this.speakers[0].id].promoted = true
+			}
+		},
+
+		_switchScreenToId(id) {
+			const index = this.screens.indexOf(id)
+			if (index === -1) {
+				return
+			}
+
+			this.screens.splice(index, 1)
+			this.screens.unshift(id)
+		},
+
+		_setScreenVisible() {
+			this.localSharedData.screenVisible = false
+
+			Object.values(this.sharedDatas).forEach(sharedData => {
+				sharedData.screenVisible = false
+			})
+
+			if (!this.screens.length) {
+				return
+			}
+
+			if (this.screens[0] === this.localCallParticipantModel.attributes.peerId) {
+				this.localSharedData.screenVisible = true
+
+				return
+			}
+
+			this.sharedDatas[this.screens[0]].screenVisible = true
 		},
 	},
 
