@@ -115,7 +115,7 @@ class Executor {
 			if ($command->getApp() !== '') {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
-				if ($command->getCommand() === 'help') {
+				if ($command->getCommand() === 'help' || strpos($command->getScript(),'alias:') !== FALSE )  {
 					continue;
 				}
 				$response = $this->execHelpSingleCommand($room, $message, $command->getCommand());
@@ -132,9 +132,9 @@ class Executor {
 						$tempHelp = substr($tempHelp, 0, strpos($tempHelp, "\n"));
 					}
 				}
-				$helps[] = $tempHelp;
+				$helps[] = $command->getCommand() .' -> ' . $tempHelp;
 			} else {
-				$helps[] = $response;
+				$helps[] = $command->getCommand() .' -> ' . $response;
 			}
 		}
 
