@@ -120,7 +120,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/variables.scss';
 
 .main-view {
 	height: 100%;
