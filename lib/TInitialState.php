@@ -49,6 +49,11 @@ trait TInitialState {
 			'talk', 'prefer_h264',
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
 		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'signaling_mode',
+			$this->talkConfig->getSignalingMode()
+		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {

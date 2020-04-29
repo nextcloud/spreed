@@ -52,7 +52,7 @@ import {
 import { PARTICIPANT } from './constants'
 import {
 	connectSignaling,
-	getSignalingSync,
+	signalingKill,
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
@@ -215,10 +215,7 @@ export default {
 			if (this.token) {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
-				const signaling = getSignalingSync()
-				if (signaling) {
-					signaling.disconnect()
-				}
+				signalingKill()
 				leaveConversationSync(this.token)
 			}
 		})
