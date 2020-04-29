@@ -37,6 +37,9 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	this._localMediaModel = localMediaModel
 	this._callParticipantCollection = callParticipantCollection
 
+	this._gracePeriodAfterSpeakingTimeout = null
+	this._speakingOrInGracePeriodAfterSpeaking = false
+
 	// By default the constraints used when getting the video try to get the
 	// highest quality
 	this._currentQuality = this.QUALITY.HIGH
@@ -58,6 +61,8 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	this._handleLocalVideoAvailableChangeBound = this._handleLocalVideoAvailableChange.bind(this)
 	this._handleAddParticipantBound = this._handleAddParticipant.bind(this)
 	this._handleRemoveParticipantBound = this._handleRemoveParticipant.bind(this)
+	this._handleLocalAudioEnabledChangeBound = this._handleLocalAudioEnabledChange.bind(this)
+	this._handleLocalSpeakingChangeBound = this._handleLocalSpeakingChange.bind(this)
 	this._adjustVideoQualityIfNeededBound = this._adjustVideoQualityIfNeeded.bind(this)
 
 	this._localMediaModel.on('change:videoAvailable', this._handleLocalVideoAvailableChangeBound)
@@ -92,7 +97,8 @@ SentVideoQualityThrottler.prototype = {
 
 	_startListeningToChanges: function() {
 		this._localMediaModel.on('change:videoEnabled', this._adjustVideoQualityIfNeededBound)
-		this._localMediaModel.on('change:audioEnabled', this._adjustVideoQualityIfNeededBound)
+		this._localMediaModel.on('change:audioEnabled', this._handleLocalAudioEnabledChangeBound)
+		this._localMediaModel.on('change:speaking', this._handleLocalSpeakingChangeBound)
 
 		this._callParticipantCollection.on('add', this._handleAddParticipantBound)
 		this._callParticipantCollection.on('remove', this._handleRemoveParticipantBound)
@@ -102,12 +108,16 @@ SentVideoQualityThrottler.prototype = {
 			callParticipantModel.on('change:audioAvailable', this._adjustVideoQualityIfNeededBound)
 		})
 
+		this._handleLocalSpeakingChange()
+		this._handleLocalAudioEnabledChange()
+
 		this._adjustVideoQualityIfNeeded()
 	},
 
 	_stopListeningToChanges: function() {
 		this._localMediaModel.off('change:videoEnabled', this._adjustVideoQualityIfNeededBound)
-		this._localMediaModel.off('change:audioEnabled', this._adjustVideoQualityIfNeededBound)
+		this._localMediaModel.off('change:audioEnabled', this._handleLocalAudioEnabledChangeBound)
+		this._localMediaModel.off('change:speaking', this._handleLocalSpeakingChangeBound)
 
 		this._callParticipantCollection.off('add', this._handleAddParticipantBound)
 		this._callParticipantCollection.off('remove', this._handleRemoveParticipantBound)
@@ -132,6 +142,38 @@ SentVideoQualityThrottler.prototype = {
 		this._adjustVideoQualityIfNeeded()
 	},
 
+	_handleLocalAudioEnabledChange: function() {
+		if (this._localMediaModel.get('audioEnabled')) {
+			return
+		}
+
+		window.clearTimeout(this._gracePeriodAfterSpeakingTimeout)
+		this._gracePeriodAfterSpeakingTimeout = null
+
+		this._speakingOrInGracePeriodAfterSpeaking = false
+
+		this._adjustVideoQualityIfNeeded()
+	},
+
+	_handleLocalSpeakingChange: function() {
+		if (this._localMediaModel.get('speaking')) {
+			window.clearTimeout(this._gracePeriodAfterSpeakingTimeout)
+			this._gracePeriodAfterSpeakingTimeout = null
+
+			this._speakingOrInGracePeriodAfterSpeaking = true
+
+			this._adjustVideoQualityIfNeeded()
+
+			return
+		}
+
+		this._gracePeriodAfterSpeakingTimeout = window.setTimeout(() => {
+			this._speakingOrInGracePeriodAfterSpeaking = false
+
+			this._adjustVideoQualityIfNeeded()
+		}, 5000)
+	},
+
 	_adjustVideoQualityIfNeeded: function() {
 		if (!this._localMediaModel.get('videoAvailable') || !this._localMediaModel.get('videoEnabled')) {
 			return
@@ -146,7 +188,7 @@ SentVideoQualityThrottler.prototype = {
 	},
 
 	_getQualityForState: function() {
-		if (this._localMediaModel.get('audioEnabled')) {
+		if (this._speakingOrInGracePeriodAfterSpeaking) {
 			return this.QUALITY.HIGH
 		}
 
