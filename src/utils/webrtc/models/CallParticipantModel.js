@@ -52,6 +52,8 @@ export default function CallParticipantModel(options) {
 		screen: null,
 	}
 
+	this._handlers = []
+
 	this.set('peerId', options.peerId)
 
 	this._webRtc = options.webRtc
@@ -81,6 +83,42 @@ CallParticipantModel.prototype = {
 
 	set: function(key, value) {
 		this.attributes[key] = value
+
+		this._trigger('change:' + key, [value])
+	},
+
+	on: function(event, handler) {
+		if (!this._handlers.hasOwnProperty(event)) {
+			this._handlers[event] = [handler]
+		} else {
+			this._handlers[event].push(handler)
+		}
+	},
+
+	off: function(event, handler) {
+		const index = this._handlers[event].indexOf(handler)
+		if (index !== -1) {
+			this._handlers[event].splice(index, 1)
+		}
+	},
+
+	_trigger: function(event, args) {
+		let handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		if (!args) {
+			args = []
+		}
+
+		args.unshift(this)
+
+		handlers = handlers.slice(0)
+		for (let i = 0; i < handlers.length; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
 	},
 
 	_handlePeerStreamAdded: function(peer) {
