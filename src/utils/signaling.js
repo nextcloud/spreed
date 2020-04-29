@@ -584,8 +584,8 @@ Signaling.Standalone.prototype.reconnect = function() {
 }
 
 Signaling.Standalone.prototype.connect = function() {
-
-	if (this.signalingConnectionWarning === null) {
+	if (this.signalingConnectionError === null
+		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
 			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
 				timeout: 0,
@@ -645,7 +645,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
 		}
-		if (this.signalingConnectionError !== null) {
+		if (event.code === 1001 && this.signalingConnectionError !== null) {
 			this.signalingConnectionError.hideToast()
 			this.signalingConnectionError = null
 		}
