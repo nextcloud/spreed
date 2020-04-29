@@ -170,7 +170,6 @@ export {
 	localMediaModel,
 
 	connectSignaling,
-	getSignaling,
 
 	signalingJoinConversation,
 	signalingJoinCall,

@@ -37,6 +37,7 @@
 
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
+import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
 import { PARTICIPANT } from './constants'
@@ -47,7 +48,6 @@ import {
 	leaveConversationSync,
 } from './services/participantsService'
 import {
-	getSignaling,
 	signalingKill,
 } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
@@ -140,8 +140,7 @@ export default {
 			// used), although that should not be a problem given that only the
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
-			const signaling = await getSignaling()
-			if (signaling.url) {
+			if (loadState('talk', 'signaling_mode') !== 'internal') {
 				EventBus.$on('shouldRefreshConversations', this.fetchCurrentConversation)
 			} else {
 				// The "shouldRefreshConversations" event is triggered only when
