@@ -96,9 +96,14 @@ CallParticipantModel.prototype = {
 	},
 
 	off: function(event, handler) {
-		const index = this._handlers[event].indexOf(handler)
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
 		if (index !== -1) {
-			this._handlers[event].splice(index, 1)
+			handlers.splice(index, 1)
 		}
 	},
 
