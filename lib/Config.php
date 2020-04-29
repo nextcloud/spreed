@@ -30,6 +30,9 @@ use OCP\Security\ISecureRandom;
 
 class Config {
 
+	public const SIGNALING_INTERNAL = 'internal';
+	public const SIGNALING_EXTERNAL = 'external';
+
 	/** @var IConfig */
 	protected $config;
 	/** @var ITimeFactory */
@@ -249,6 +252,13 @@ class Config {
 			'password' => $password,
 			'protocols' => $server['protocols'],
 		);
+	}
+
+	public function getSignalingMode(): string {
+		if (empty($this->getSignalingServers())) {
+			return self::SIGNALING_INTERNAL;
+		}
+		return self::SIGNALING_EXTERNAL;
 	}
 
 	/**
