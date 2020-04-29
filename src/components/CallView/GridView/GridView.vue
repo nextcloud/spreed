@@ -580,7 +580,7 @@ export default {
 	right: 50%;
 	top: 4px;
 	display: flex;
-	background-color: var(--color-bakground-hover);
+	background-color: var(--color-background-hover);
 	height: 44px;
 	padding: 0 22px;
 	border-radius: 22px;
