@@ -129,6 +129,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "אירעה שגיאה בעת התחלת שיתוף המסך.",
     "Your screen" : "המסך שלך",
     "Show screen" : "הצגת מסך",
+    "Drop your files to upload" : "יש לגרור לכאן קבצים כדי להעלות",
     "Favorite" : "סימון כמועדף",
     "Conversation, " : "דיון,",
     "Conversation settings" : "הגדרות דיון",
