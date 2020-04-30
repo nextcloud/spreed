@@ -48,17 +48,17 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	this._speakingOrInGracePeriodAfterSpeaking = false
 
 	this._availableVideosThreshold = {}
-	this._availableVideosThreshold[this.QUALITY.THUMBNAIL] = 15
-	this._availableVideosThreshold[this.QUALITY.VERY_LOW] = 10
-	this._availableVideosThreshold[this.QUALITY.LOW] = 7
-	this._availableVideosThreshold[this.QUALITY.MEDIUM] = 4
+	this._availableVideosThreshold[QUALITY.THUMBNAIL] = 15
+	this._availableVideosThreshold[QUALITY.VERY_LOW] = 10
+	this._availableVideosThreshold[QUALITY.LOW] = 7
+	this._availableVideosThreshold[QUALITY.MEDIUM] = 4
 	// QUALITY.HIGH otherwise
 
 	this._availableAudiosThreshold = {}
-	this._availableAudiosThreshold[this.QUALITY.THUMBNAIL] = 40
-	this._availableAudiosThreshold[this.QUALITY.VERY_LOW] = 30
-	this._availableAudiosThreshold[this.QUALITY.LOW] = 20
-	this._availableAudiosThreshold[this.QUALITY.MEDIUM] = 10
+	this._availableAudiosThreshold[QUALITY.THUMBNAIL] = 40
+	this._availableAudiosThreshold[QUALITY.VERY_LOW] = 30
+	this._availableAudiosThreshold[QUALITY.LOW] = 20
+	this._availableAudiosThreshold[QUALITY.MEDIUM] = 10
 	// QUALITY.HIGH otherwise
 
 	this._handleLocalVideoAvailableChangeBound = this._handleLocalVideoAvailableChange.bind(this)
@@ -75,8 +75,6 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	}
 }
 SentVideoQualityThrottler.prototype = {
-
-	QUALITY: QUALITY,
 
 	destroy: function() {
 		this._localMediaModel.off('change:videoAvailable', this._handleLocalVideoAvailableChangeBound)
@@ -182,7 +180,7 @@ SentVideoQualityThrottler.prototype = {
 
 	_getQualityForState: function() {
 		if (this._speakingOrInGracePeriodAfterSpeaking) {
-			return this.QUALITY.HIGH
+			return QUALITY.HIGH
 		}
 
 		let availableVideosCount = 0
@@ -196,14 +194,14 @@ SentVideoQualityThrottler.prototype = {
 			}
 		})
 
-		for (let i = this.QUALITY.THUMBNAIL; i < this.QUALITY.HIGH; i++) {
+		for (let i = QUALITY.THUMBNAIL; i < QUALITY.HIGH; i++) {
 			if (availableVideosCount >= this._availableVideosThreshold[i]
 				|| availableAudiosCount >= this._availableAudiosThreshold[i]) {
 				return i
 			}
 		}
 
-		return this.QUALITY.HIGH
+		return QUALITY.HIGH
 	},
 
 }
