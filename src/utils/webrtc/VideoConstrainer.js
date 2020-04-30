@@ -98,6 +98,8 @@ VideoConstrainer.prototype = {
 			await this._applyRoughResolutionConstraints(localVideoTrack, resolutionConstraints)
 
 			const frameRateConstraints = {
+				width: constraints.width,
+				height: constraints.height,
 				frameRate: constraints.frameRate,
 			}
 
