@@ -73,15 +73,77 @@ VideoConstrainer.prototype = {
 			return
 		}
 
+		await this._applyRoughConstraints(localVideoTracks[0], quality)
+
+		// Quality may not actually match the default constraints, but it is the
+		// best that can be done.
+		this._currentQuality = quality
+	},
+
+	_applyRoughConstraints: async function(localVideoTrack, quality) {
 		const constraints = this._getConstraintsForQuality(quality)
 
 		try {
-			await localVideoTracks[0].applyConstraints(constraints)
+			await localVideoTrack.applyConstraints(constraints)
+
 			console.debug('Changed quality to ' + quality)
-			this._currentQuality = quality
 		} catch (error) {
 			console.warn('Failed to set quality ' + quality, error)
-			throw error
+
+			const resolutionConstraints = {
+				width: constraints.width,
+				height: constraints.height,
+			}
+
+			await this._applyRoughResolutionConstraints(localVideoTrack, resolutionConstraints)
+
+			const frameRateConstraints = {
+				frameRate: constraints.frameRate,
+			}
+
+			try {
+				await this._applyRoughFrameRateConstraints(localVideoTrack, frameRateConstraints)
+			} catch (error) {
+				// Frame rate could not be changed, but at least resolution
+				// was. Do not fail in that case and settle for this little
+				// victory.
+			}
+
+			console.debug('Changed quality to ' + quality)
+		}
+	},
+
+	_applyRoughResolutionConstraints: async function(localVideoTrack, constraints) {
+		try {
+			await localVideoTrack.applyConstraints(constraints)
+
+			console.debug('Changed resolution', constraints)
+		} catch (error) {
+			console.warn('Failed to set resolution', constraints, error)
+
+			if (!this._increaseMaxResolution(constraints)) {
+				console.warn('Resolution range can not be further increased')
+				throw error
+			}
+
+			this._applyRoughResolutionConstraints(localVideoTrack, constraints)
+		}
+	},
+
+	_applyRoughFrameRateConstraints: async function(localVideoTrack, constraints) {
+		try {
+			await localVideoTrack.applyConstraints(constraints)
+
+			console.debug('Changed frame rate', constraints)
+		} catch (error) {
+			console.warn('Failed to set frame rate', constraints, error)
+
+			if (!this._increaseMaxFrameRate(constraints)) {
+				console.warn('Frame rate range can not be further increased')
+				throw error
+			}
+
+			this._applyRoughFrameRateConstraints(localVideoTrack, constraints)
 		}
 	},
 
@@ -169,6 +231,36 @@ VideoConstrainer.prototype = {
 				max: 1,
 			},
 		}
+	},
+
+	_increaseMaxResolution: function(constraints) {
+		let changed = false
+
+		if (constraints.width && constraints.width.max) {
+			const previousWidthMax = constraints.width.max
+			constraints.width.max = Math.min(Math.round(constraints.width.max * 1.5), 1920)
+			changed = previousWidthMax !== constraints.width.max
+		}
+
+		if (constraints.height && constraints.height.max) {
+			const previousHeightMax = constraints.height.max
+			constraints.height.max = Math.min(Math.round(constraints.height.max * 1.5), 1080)
+			changed = previousHeightMax !== constraints.height.max
+		}
+
+		return changed
+	},
+
+	_increaseMaxFrameRate: function(constraints) {
+		let changed = false
+
+		if (constraints.frameRate && constraints.frameRate.max) {
+			const previousFrameRateMax = constraints.frameRate.max
+			constraints.frameRate.max = Math.min(Math.round(constraints.frameRate.max * 1.5), 60)
+			changed = previousFrameRateMax !== constraints.frameRate.max
+		}
+
+		return changed
 	},
 
 }
