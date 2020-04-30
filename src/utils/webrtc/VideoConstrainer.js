@@ -121,7 +121,7 @@ VideoConstrainer.prototype = {
 		} catch (error) {
 			console.warn('Failed to set resolution', constraints, error)
 
-			if (!this._increaseMaxResolution(constraints)) {
+			if (!this._increaseMaxResolution(constraints) && !this._decreaseMinResolution(constraints)) {
 				console.warn('Resolution range can not be further increased')
 				throw error
 			}
@@ -138,7 +138,7 @@ VideoConstrainer.prototype = {
 		} catch (error) {
 			console.warn('Failed to set frame rate', constraints, error)
 
-			if (!this._increaseMaxFrameRate(constraints)) {
+			if (!this._increaseMaxFrameRate(constraints) && !this._decreaseMinFrameRate(constraints)) {
 				console.warn('Frame rate range can not be further increased')
 				throw error
 			}
@@ -251,6 +251,24 @@ VideoConstrainer.prototype = {
 		return changed
 	},
 
+	_decreaseMinResolution: function(constraints) {
+		let changed = false
+
+		if (constraints.width && constraints.width.min) {
+			const previousWidthMin = constraints.width.min
+			constraints.width.min = Math.min(Math.round(constraints.width.min / 1.5), 64)
+			changed = previousWidthMin !== constraints.width.min
+		}
+
+		if (constraints.height && constraints.height.min) {
+			const previousHeightMin = constraints.height.min
+			constraints.height.min = Math.min(Math.round(constraints.height.min / 1.5), 64)
+			changed = previousHeightMin !== constraints.height.min
+		}
+
+		return changed
+	},
+
 	_increaseMaxFrameRate: function(constraints) {
 		let changed = false
 
@@ -258,6 +276,18 @@ VideoConstrainer.prototype = {
 			const previousFrameRateMax = constraints.frameRate.max
 			constraints.frameRate.max = Math.min(Math.round(constraints.frameRate.max * 1.5), 60)
 			changed = previousFrameRateMax !== constraints.frameRate.max
+		}
+
+		return changed
+	},
+
+	_decreaseMinFrameRate: function(constraints) {
+		let changed = false
+
+		if (constraints.frameRate && constraints.frameRate.min) {
+			const previousFrameRateMin = constraints.frameRate.max
+			constraints.frameRate.min = Math.min(Math.round(constraints.frameRate.min / 1.5), 1)
+			changed = previousFrameRateMin !== constraints.frameRate.min
 		}
 
 		return changed
