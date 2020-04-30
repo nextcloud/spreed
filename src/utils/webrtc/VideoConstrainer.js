@@ -51,7 +51,7 @@ function VideoConstrainer(localMediaModel) {
 }
 VideoConstrainer.prototype = {
 
-	applyConstraints: function(quality) {
+	applyConstraints: async function(quality) {
 		if (quality === this._currentQuality) {
 			return
 		}
@@ -75,12 +75,14 @@ VideoConstrainer.prototype = {
 
 		const constraints = this._getConstraintsForQuality(quality)
 
-		localVideoTracks[0].applyConstraints(constraints).then(() => {
+		try {
+			await localVideoTracks[0].applyConstraints(constraints)
 			console.debug('Changed quality to ' + quality)
 			this._currentQuality = quality
-		}).catch(error => {
+		} catch (error) {
 			console.warn('Failed to set quality ' + quality, error)
-		})
+			throw error
+		}
 	},
 
 	_getConstraintsForQuality: function(quality) {
