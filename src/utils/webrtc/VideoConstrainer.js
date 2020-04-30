@@ -88,12 +88,18 @@ VideoConstrainer.prototype = {
 	_getConstraintsForQuality: function(quality) {
 		if (quality === QUALITY.HIGH) {
 			return {
-				video: true,
-				// The frame rate needs to be explicitly set; otherwise the
-				// browser may keep the previous stream when changing to a laxer
-				// constraint.
+				width: {
+					ideal: 720,
+					min: 640,
+				},
+				height: {
+					ideal: 540,
+					min: 480,
+				},
 				frameRate: {
 					max: 30,
+					ideal: 30,
+					min: 20,
 				},
 			}
 		}
@@ -102,12 +108,18 @@ VideoConstrainer.prototype = {
 			return {
 				width: {
 					max: 640,
+					ideal: 560,
+					min: 480,
 				},
 				height: {
 					max: 480,
+					ideal: 420,
+					min: 320,
 				},
 				frameRate: {
 					max: 24,
+					ideal: 24,
+					min: 15,
 				},
 			}
 		}
@@ -116,12 +128,18 @@ VideoConstrainer.prototype = {
 			return {
 				width: {
 					max: 480,
+					ideal: 360,
+					min: 320,
 				},
 				height: {
 					max: 320,
+					ideal: 270,
+					min: 240,
 				},
 				frameRate: {
 					max: 15,
+					ideal: 15,
+					min: 8,
 				},
 			}
 		}
