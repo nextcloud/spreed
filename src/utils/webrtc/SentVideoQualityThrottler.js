@@ -19,6 +19,11 @@
  *
  */
 
+import {
+	QUALITY,
+	VideoConstrainer,
+} from './VideoConstrainer'
+
 /**
  * Helper to adjust the quality of the sent video based on the current call
  * state.
@@ -37,12 +42,10 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	this._localMediaModel = localMediaModel
 	this._callParticipantCollection = callParticipantCollection
 
+	this._videoConstrainer = new VideoConstrainer(localMediaModel)
+
 	this._gracePeriodAfterSpeakingTimeout = null
 	this._speakingOrInGracePeriodAfterSpeaking = false
-
-	// By default the constraints used when getting the video try to get the
-	// highest quality
-	this._currentQuality = this.QUALITY.HIGH
 
 	this._availableVideosThreshold = {}
 	this._availableVideosThreshold[this.QUALITY.THUMBNAIL] = 15
@@ -73,13 +76,7 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 }
 SentVideoQualityThrottler.prototype = {
 
-	QUALITY: {
-		THUMBNAIL: 0,
-		VERY_LOW: 1,
-		LOW: 2,
-		MEDIUM: 3,
-		HIGH: 4,
-	},
+	QUALITY: QUALITY,
 
 	destroy: function() {
 		this._localMediaModel.off('change:videoAvailable', this._handleLocalVideoAvailableChangeBound)
@@ -180,11 +177,7 @@ SentVideoQualityThrottler.prototype = {
 		}
 
 		const quality = this._getQualityForState()
-		if (quality === this._currentQuality) {
-			return
-		}
-
-		this._applyConstraints(quality)
+		this._videoConstrainer.applyConstraints(quality)
 	},
 
 	_getQualityForState: function() {
@@ -211,102 +204,6 @@ SentVideoQualityThrottler.prototype = {
 		}
 
 		return this.QUALITY.HIGH
-	},
-
-	_applyConstraints: function(quality) {
-		const localStream = this._localMediaModel.get('localStream')
-		if (!localStream) {
-			console.warn('No local stream to adjust its video quality found')
-			return
-		}
-
-		const localVideoTracks = localStream.getVideoTracks()
-		if (localVideoTracks.length === 0) {
-			console.warn('No local video track to adjust its quality found')
-			return
-		}
-
-		if (localVideoTracks.length > 1) {
-			console.warn('More than one local video track to adjust its quality found: ' + localVideoTracks.length)
-			return
-		}
-
-		const constraints = this._getConstraintsForQuality(quality)
-
-		localVideoTracks[0].applyConstraints(constraints).then(() => {
-			console.debug('Changed quality to ' + quality)
-			this._currentQuality = quality
-		}).catch(error => {
-			console.warn('Failed to set quality ' + quality, error)
-		})
-	},
-
-	_getConstraintsForQuality: function(quality) {
-		if (quality === this.QUALITY.HIGH) {
-			return {
-				video: true,
-				// The frame rate needs to be explicitly set; otherwise the
-				// browser may keep the previous stream when changing to a laxer
-				// constraint.
-				frameRate: {
-					max: 30,
-				},
-			}
-		}
-
-		if (quality === this.QUALITY.MEDIUM) {
-			return {
-				width: {
-					max: 640,
-				},
-				height: {
-					max: 480,
-				},
-				frameRate: {
-					max: 24,
-				},
-			}
-		}
-
-		if (quality === this.QUALITY.LOW) {
-			return {
-				width: {
-					max: 480,
-				},
-				height: {
-					max: 320,
-				},
-				frameRate: {
-					max: 15,
-				},
-			}
-		}
-
-		if (quality === this.QUALITY.VERY_LOW) {
-			return {
-				width: {
-					max: 320,
-				},
-				height: {
-					max: 240,
-				},
-				frameRate: {
-					max: 8,
-				},
-			}
-		}
-
-		return {
-			width: {
-				max: 320,
-			},
-			height: {
-				max: 240,
-			},
-			frameRate: {
-				max: 1,
-			},
-		}
 	},
 
 }
