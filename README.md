@@ -57,10 +57,12 @@ Still a call creates a load on the members' browsers (decoding streams) and on t
 
 To make sure a call can sustain the largest number of participants, make sure that:
 * each participant has a fast upload and download
-* each participant has a fast enough system (desktop/laptop browser, mobile device browsers will run out of computing power quickly) or uses the Android/iOS app. Best use a desktop browser like Firefox or Chrome. The WebRTC implementation in other browsers is often sub-par. On a laptop, plug in the power - this often results in better CPU performance.
+* each participant has a fast enough system,this means
+    * On a desktop/laptop system, use a browser like Firefix or Chrome. The WebRTC implementation in other browsers is often sub-par. On a laptop, plug in the power - this often results in better CPU performance.
+    * On mobile device, use the Android/iOS app because mobile browsers will run out of computing power quickly
 * each participant disables video
 
-With this setup, 20 users should be doable in a typical setup.
+With this setup, 20 users should be possible in a typical setup.
 
 ### Scaling beyond 5-20 users in a call
 
