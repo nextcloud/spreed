@@ -1,19 +1,19 @@
 # Nextcloud Talk
 
-**Video- & audio-conferencing app for Nextcloud**
+**A Video & audio conferencing app for Nextcloud**
 
 ![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png)
 
 ## Why is this so awesome?
 
-* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.
-* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
+* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat, allowing you to share files from your Nextcloud and mentioning other participants.
+* 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.
 * 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
-* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.
+* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck, with more to come.
 * 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* 🙋 [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
+* 🙋 [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds.
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
@@ -23,8 +23,8 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 |---|---|
 | Firefox | ✔️ 52 or later |
 | Chrome/Chromium | ✔️ 49 or later |
-| Edge | ⚠️ latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
-| Safari | ⚠️ 12 or later <br> ❌ No screensharing support <br> 🖥 Viewing screens of others works |
+| Edge | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
+| Safari | ⚠️ 12 or later <br> ❌ No screensharing support <br> 🖥 Viewing screens of others' work |
 
 
 ## Installing for Production
@@ -37,30 +37,30 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 ## Scalability 
 
-Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to each other participant and receives one stream per other participant. This grows bandwidth usage with the number of participants.
+Talk works peer to peer, that is, each participant sends an end-to-end encrypted stream to every other participant and receives one stream per other participant. Bandwidth usage grows with the number of participants.
 
-A single video stream currently uses about 1 mbit/sec and the total required bandwidth can be calculated as follows:
+A single video stream currently uses about 1 Mbit/sec and the total required bandwidth can be calculated as follows:
 
 ```
-1 mbit/s * (participants - 1)
+1 Mbit/s * (participants - 1)
 ```
 
 ![](https://github.com/nextcloud/spreed/raw/e419b79819963a631ce811ffed432853ec4723c2/docs/HPB-P2P.svg.png)
 
-This means that in a call with 5 participants, each has to send and receive about 4 mbit/sec. Given the asymetric nature of most typical broadband connections, it is sending video that quickly becomes the bottleneck. Moreover, decoding all those video streams put a big strain on the system of each participant.
+This means that in a call with 5 participants, each has to send and receive about 4 Mbit/sec. Given the asymetric nature of most typical broadband connections, it's sending video that quickly becomes the bottleneck. Moreover, decoding all those video streams puts a big strain on the system of each participant.
 
-To limit and CPU bandwidth usage, participants can disable video. This will drop the bandwidth use to audio only (about 50 kbit/sec), about 1/20th of the bandwidth of video, and eliminates most decoding work. When all participants are on a fast network, a call with 20 people without video could be doable.
+To limit and CPU bandwidth usage, participants can disable video. This will drop the bandwidth use to audio only, about 50 kbit/sec (about 1/20th of the bandwidth of video), eliminating most decoding work. When all participants are on a fast network, a call with 20 people without video could be doable.
 
-Still a call creates a load on the members' browsers (decoding streams) and on the server as it handles signaling. This, for example, has consequences also for the devices that support calls. Mobile device browsers will sooner run out of compute capacity and cause issues to the call. While we continously work to optimize Talk for performance, there is still work to be done so it is not unlikely that the bottleneck will be there for the time being. We very much welcome help in optimization of calls!
+Still, a call creates a load on the participants' browsers (decoding streams) and on the server as it handles signaling. This, for example, also has consequences for devices that support calls. Mobile device browsers will sooner run out of compute capacity and cause issues to the call. While we continously work to optimize Talk for performance, there is still work to be done so it is not unlikely that the bottleneck will be there for the time being. We very much welcome help in optimization of calls!
 
 ### How to have the maximum number of participants in a call
 
 To make sure a call can sustain the largest number of participants, make sure that:
-* each participant has a fast upload and download
-* each participant has a fast enough system, this means
-    * on a desktop/laptop system, a browser like Firefix or Chrome should be used. The WebRTC implementation in other browsers is often sub-par. On a laptop, the power cord should be plugged in - this often results in better CPU performance.
+* each participant has a fast upload and download.
+* each participant has a fast enough system. This means:
+    * on a desktop/laptop system, a browser like Firefox or Chrome should be used. The WebRTC implementation in other browsers is often sub-par. On a laptop, the power cord should be plugged in - this often results in better CPU performance.
     * on mobile devices, the Android/iOS apps should be used because mobile browsers will run out of computing power quickly.
-* all participants disable their video streams
+* all participants disable their video streams.
 
 With this setup, 20 users should be possible in a typical setup.
 
@@ -70,21 +70,21 @@ Nextcloud offers a partner product, the Talk High Performance Back-end, which de
 
 The HPB also takes care of signaling, decreasing the load of many calls on the Talk server and optional SIP integration so users can dial in to calls by phone.
 
-If you need to use Talk in an enterprise environment, [contact our sales team](https://nextcloud.com/enterprise/buy/) for access to the high performance back-end. See our website for more details and [pricing](https://nextcloud.com/talk/#scalability).
+If you need to use Talk in an enterprise environment, [contact our sales team](https://nextcloud.com/enterprise/buy/) for access to the Talk High Performance Back-end. See our website for more details and [pricing](https://nextcloud.com/talk/#scalability).
 
-## Development setup
+## Development Setup
 
 1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
-2. Run `make dev-setup` to install the dependencies;
-3. Run `make build-js`
+2. Run `make dev-setup` to install the dependencies.
+3. Run `make build-js`.
 4. Then activate it through the apps management. :tada:
-5. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`
+5. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`.
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
 ### API documentation
 
-The API documentation is available at https://nextcloud-talk.readthedocs.io/en/latest/
+The API documentation is available [here](https://nextcloud-talk.readthedocs.io/en/latest/).
 
 ### Milestones and Branches
 
@@ -108,7 +108,7 @@ You can always pick a task of any of the milestones and we will help you to get 
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
 * Re-enable camera: `sudo modprobe uvcvideo`
-* Send fake-stream (audio and video) in firefox:
+* Send fake-stream (audio and video) in Firefox:
   1. Open `about:config`
   2. Search for `fake`
   3. Toggle `media.navigator.streams.fake` to **true**
