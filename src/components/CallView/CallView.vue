@@ -322,6 +322,14 @@ export default {
 			this.sharedDatas[this.screens[0]].screenVisible = true
 		},
 
+		visibilityChanged(isVisible, entry, peerId) {
+			if (isVisible) {
+				this.sharedDatas[peerId].videoEnabled = true
+			} else {
+				this.sharedDatas[peerId].videoEnabled = false
+			}
+		},
+
 	},
 
 }
