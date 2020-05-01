@@ -1,6 +1,6 @@
 # Nextcloud Talk
 
-**A Video & audio conferencing app for Nextcloud**
+**A video & audio conferencing app for Nextcloud**
 
 ![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png)
 
