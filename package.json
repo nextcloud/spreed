@@ -37,7 +37,7 @@
 		"nextcloud-vue-collections": "^0.7.2",
 		"sdp-transform": "^2.14.0",
 		"url-parse": "^1.4.7",
-		"util": "^0.12.2",
+		"util": "^0.12.3",
 		"vue": "^2.6.11",
 		"vue-at": "^2.5.0-beta.2",
 		"vue-browser-detect-plugin": "^0.1.8",
