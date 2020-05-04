@@ -201,11 +201,11 @@ export default {
 
 .success {
 	color: white;
-	background-color: #35CC00;
-	border: 1px solid #35CC00;
+	background-color: var(--color-success);
+	border: 1px solid var(--color-success);
 	&:hover {
-		background-color: #3BE100;
-		border: 1px solid #3BE100 !important;
+		background-color: var(--color-success);
+		border: 1px solid var(--color-success) !important;
 	}
 }
 
