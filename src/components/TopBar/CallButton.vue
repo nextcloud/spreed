@@ -30,7 +30,7 @@
 		}"
 		:disabled="startCallButtonDisabled || loading || blockCalls"
 		class="top-bar__button"
-		:class="{'primary': !(conversation.hasCall && !isBlockedByLobby),'success': conversation.hasCall && !isBlockedByLobby}"
+		:class="startCallButtonClasses"
 		@click="joinCall">
 		<span
 			class="icon"
@@ -141,6 +141,13 @@ export default {
 			}
 
 			return 'icon-start-call'
+		},
+
+		startCallButtonClasses() {
+			return {
+				primary: !this.conversation.hasCall && !this.isBlockedByLobby,
+				success: this.conversation.hasCall && !this.isBlockedByLobby,
+			}
 		},
 
 		showStartCallButton() {
