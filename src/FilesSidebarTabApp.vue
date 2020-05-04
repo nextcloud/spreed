@@ -57,10 +57,10 @@ import {
 } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
 import {
-	getSignaling,
-	getSignalingSync,
+	signalingKill,
 } from './utils/webrtc/index'
 import { getCurrentUser } from '@nextcloud/auth'
+import { loadState } from '@nextcloud/initial-state'
 import Axios from '@nextcloud/axios'
 import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
@@ -152,10 +152,7 @@ export default {
 			if (this.token) {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
-				const signaling = getSignalingSync()
-				if (signaling) {
-					signaling.disconnect()
-				}
+				signalingKill()
 				leaveConversationSync(this.token)
 			}
 		})
@@ -187,8 +184,7 @@ export default {
 			// used), although that should not be a problem given that only the
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
-			const signaling = await getSignaling()
-			if (signaling.url) {
+			if (loadState('talk', 'signaling_mode') !== 'internal') {
 				EventBus.$on('shouldRefreshConversations', OCA.Talk.fetchCurrentConversationWrapper)
 			} else {
 				// The "shouldRefreshConversations" event is triggered only when
