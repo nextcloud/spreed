@@ -150,6 +150,14 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
+			if (this.isMimeTypeOfTextApp(this.mimetype)) {
+				// The Text app fails to load when not all fileinfo data is given.
+				// So we have to query the folder to get all the necessary details.
+				OCA.Viewer.open({
+					path: this.internalAbsolutePath,
+				})
+				return
+			}
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: this.internalAbsolutePath,
@@ -160,6 +168,36 @@ export default {
 					},
 				],
 			})
+		},
+
+		isMimeTypeOfTextApp(mimetype) {
+			// keep in sync with https://github.com/nextcloud/text/blob/master/src/helpers/mime.js
+			return [
+				'text/markdown',
+
+				'text/plain',
+				'application/cmd',
+				'application/x-empty',
+				'application/x-msdos-program',
+				'application/epub+zip',
+				'application/javascript',
+				'application/json',
+				'application/x-perl',
+				'application/x-php',
+				'application/x-tex',
+				'application/xml',
+				'application/yaml',
+				'text/css',
+				'text/csv',
+				'text/html',
+				'text/x-c',
+				'text/x-c++src',
+				'text/x-h',
+				'text/x-java-source',
+				'text/x-ldif',
+				'text/x-python',
+				'text/x-shellscript',
+			].indexOf(mimetype) !== -1
 		},
 	},
 }
