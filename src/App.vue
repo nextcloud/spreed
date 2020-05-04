@@ -375,11 +375,11 @@ export default {
 		 * @returns {string} The conversation's name
 		 */
 		getConversationName(token) {
-			if (!this.$store.getters.conversation(this.token)) {
+			if (!this.$store.getters.conversation(token)) {
 				return ''
 			}
 
-			return this.$store.getters.conversation(this.token).displayName
+			return this.$store.getters.conversation(token).displayName
 		},
 
 		async fetchSingleConversation(token) {
