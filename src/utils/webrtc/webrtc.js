@@ -533,7 +533,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 					.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
 					.replace('{linkend}', ' ↗</a>'),
 				{
-					timeout: 30,
+					timeout: 0,
 					isHTML: true,
 				}
 			)
@@ -788,7 +788,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			// FIXME emit an event and handle it as needed instead of
 			// calling UI code from here.
 			localStreamRequestedTimeoutNotification = showError(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
-				timeout: 10,
+				timeout: 0,
 			})
 		}, 10000)
 	})
@@ -834,7 +834,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 
 		showError(message, {
-			timeout: 15,
+			timeout: 0,
 		})
 	})
 
