@@ -203,8 +203,10 @@ export default {
 	color: white;
 	background-color: var(--color-success);
 	border: 1px solid var(--color-success);
-	&:hover {
-		background-color: var(--color-success);
+
+	&:hover,
+	&:focus,
+	&:active {
 		border: 1px solid var(--color-success) !important;
 	}
 }
