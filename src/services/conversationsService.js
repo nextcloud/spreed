@@ -44,7 +44,7 @@ const fetchConversations = async function() {
 	} catch (error) {
 		if (error.response.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: -1,
+				timeout: 0,
 			})
 		}
 		throw error
@@ -68,7 +68,7 @@ const fetchConversation = async function(token) {
 	} catch (error) {
 		if (error.response.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: -1,
+				timeout: 0,
 			})
 		}
 		throw error
@@ -85,7 +85,7 @@ const checkTalkVersionHash = function(response) {
 		talkCacheBusterHash = newTalkCacheBusterHash
 
 		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
-			timeout: -1,
+			timeout: 0,
 		})
 	}
 }
