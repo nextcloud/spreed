@@ -141,6 +141,7 @@ OC.L10N.register(
     "Contacts" : "אנשי קשר",
     "Loading" : "בטעינה",
     "Groups" : "קבוצות",
+    "Circles" : "מעגלים",
     "Contacts and groups" : "אנשי קשר וקבוצות",
     "Contacts and circles" : "אנשי קשר ומעגלים",
     "Groups and circles" : "קבוצות ומעגלים",
