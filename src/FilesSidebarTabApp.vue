@@ -56,9 +56,7 @@ import {
 	leaveConversationSync,
 } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
-import {
-	signalingKill,
-} from './utils/webrtc/index'
+import { signalingKill } from './utils/webrtc/index'
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import Axios from '@nextcloud/axios'
