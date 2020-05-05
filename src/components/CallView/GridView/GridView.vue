@@ -393,9 +393,16 @@ export default {
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
 			// grid looks at any given moment. We do this based on `gridWidthm`,
-			// `gridHeight`, `minWidth` and `minHeight`
-			this.columns = this.columnsMax
-			this.rows = this.rowsMax
+			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
+			// context of the promoted view, we se 1 row directly and we remove 1 column
+			// (one of the participants will be in the promoted video slot)
+			if (this.isStripe) {
+				this.columns = this.columnsMax - 1
+				this.rows = 1
+			} else {
+				this.columns = this.columnsMax
+				this.rows = this.rowsMax
+			}
 			// This values would already work if the grid is entirely populated with
 			// video elements. However, if we'd have only a couple of videos to display
 			// and a very big screen, we'd now have a lot of columns and rows, and our

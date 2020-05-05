@@ -43,7 +43,7 @@
 					:token="token"
 					:min-height="250"
 					boundaries-element-class="videos-stripe"
-					:has-pagination="true" />
+					:has-pagination="false" />
 			</div>
 			<!--
 			</div>
