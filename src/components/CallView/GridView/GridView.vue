@@ -402,7 +402,7 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
-			console.log('Columns: ' + this.columns + ', rows: ' + this.rows)
+			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
 			if (this.videosCap !== 0) {
 				this.shrinkGrid(this.videosCap)
 			} else {
