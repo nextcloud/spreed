@@ -30,6 +30,7 @@
 				<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
+						v-if="!isStripe || !!!sharedDatas[callParticipantModel.attributes.peerId].promoted"
 						:key="callParticipantModel.attributes.peerId"
 						class="video"
 						:show-video-overlay="showVideoOverlay"
@@ -401,6 +402,7 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
+			console.log('Columns: ' + this.columns + ', rows: ' + this.rows)
 			if (this.videosCap !== 0) {
 				this.shrinkGrid(this.videosCap)
 			} else {
