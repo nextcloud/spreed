@@ -29,7 +29,8 @@
 			html: true
 		}"
 		:disabled="startCallButtonDisabled || loading || blockCalls"
-		class="top-bar__button primary"
+		class="top-bar__button"
+		:class="startCallButtonClasses"
 		@click="joinCall">
 		<span
 			class="icon"
@@ -142,6 +143,13 @@ export default {
 			return 'icon-start-call'
 		},
 
+		startCallButtonClasses() {
+			return {
+				primary: !this.conversation.hasCall && !this.isBlockedByLobby,
+				success: this.conversation.hasCall && !this.isBlockedByLobby,
+			}
+		},
+
 		showStartCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
@@ -188,6 +196,18 @@ export default {
 
 	&.icon-incoming-call {
 		animation: pulse 2s infinite;
+	}
+}
+
+.success {
+	color: white;
+	background-color: var(--color-success);
+	border: 1px solid var(--color-success);
+
+	&:hover,
+	&:focus,
+	&:active {
+		border: 1px solid var(--color-success) !important;
 	}
 }
 

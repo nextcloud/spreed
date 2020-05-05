@@ -70,7 +70,7 @@
 		}
 		&.icon-promoted-view{
 			background-image: url(icon-color-path('promoted-view', 'actions', 'fff', 1, true));
-		} 
+		}
 	}
 
 	.icon-favorite {
@@ -83,13 +83,16 @@
 		@include icon-color('video', 'actions', 'E9322D', 1, true);
 	}
 
-	.icon-start-call,
+	.icon-start-call {
+		background-image: url(icon-color-path('video', 'actions', $color-primary-text, 1, true));
+	}
+
 	.icon-incoming-call {
-		@include icon-color('video', 'actions', $color-primary-text, 1, true);
+		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
 	}
 
 	.icon-leave-call {
-		@include icon-color('video-off', 'actions', $color-primary-text, 1, true);
+		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
 	}
 
 	.icon-delete-critical {
