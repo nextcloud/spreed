@@ -27,6 +27,7 @@ import { showError } from '@nextcloud/dialogs'
 
 let talkCacheBusterHash = null
 let maintenanceWarning = null
+let updateWarning = null
 
 /**
  * Fetches the conversations from the server.
@@ -34,12 +35,14 @@ let maintenanceWarning = null
 const fetchConversations = async function() {
 	try {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
-		checkTalkVersionHash(response)
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
 			maintenanceWarning = null
 		}
+
+		checkTalkVersionHash(response)
+
 		return response
 	} catch (error) {
 		if (error.response && error.response.status === 503 && !maintenanceWarning) {
@@ -58,12 +61,14 @@ const fetchConversations = async function() {
 const fetchConversation = async function(token) {
 	try {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
-		checkTalkVersionHash(response)
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
 			maintenanceWarning = null
 		}
+
+		checkTalkVersionHash(response)
+
 		return response
 	} catch (error) {
 		if (error.response && error.response.status === 503 && !maintenanceWarning) {
@@ -77,7 +82,7 @@ const fetchConversation = async function(token) {
 
 const checkTalkVersionHash = function(response) {
 	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
-	if (!newTalkCacheBusterHash) {
+	if (!newTalkCacheBusterHash || updateWarning) {
 		return
 	}
 
@@ -88,7 +93,7 @@ const checkTalkVersionHash = function(response) {
 		console.debug('Updating Talk Hash: ', newTalkCacheBusterHash)
 		talkCacheBusterHash = newTalkCacheBusterHash
 
-		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+		updateWarning = showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
 			timeout: -1,
 		})
 	}
