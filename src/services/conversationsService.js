@@ -77,6 +77,10 @@ const fetchConversation = async function(token) {
 
 const checkTalkVersionHash = function(response) {
 	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
+	if (!newTalkCacheBusterHash) {
+		return
+	}
+
 	if (talkCacheBusterHash === null) {
 		console.debug('Setting initial Talk Hash: ', newTalkCacheBusterHash)
 		talkCacheBusterHash = newTalkCacheBusterHash
