@@ -453,7 +453,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
-			} else if (error.response.status === 404 || error.response.status === 403) {
+			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
 				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
 			} else if (token) {
