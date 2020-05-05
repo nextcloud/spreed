@@ -251,7 +251,7 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms', 'r')
-			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		if ($participant !== null) {
 			// Non guest user
