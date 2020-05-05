@@ -116,6 +116,8 @@ export default {
 			 * or down at each iteration of the debounceHandleScroll method.
 			 */
 			previousScrollTopValue: null,
+
+			pollingErrorTimeout: 1,
 		}
 	},
 
@@ -437,6 +439,8 @@ export default {
 			// Make the request
 			try {
 				const messages = await request({ token, lastKnownMessageId })
+				this.pollingErrorTimeout = 1
+
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					if (message.actorType === 'guests') {
@@ -454,21 +458,38 @@ export default {
 				if (this.isSticky) {
 					this.scrollToBottom()
 				}
-				// Recursive call
-				this.getNewMessages()
 			} catch (exception) {
-				if (exception.response) {
-					/**
-					 * Recursively call the same method if no new messages are returned
-					 */
-					if (exception.response.status === 304) {
-						this.getNewMessages()
-					}
-				}
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
+					return
 				}
+
+				if (exception.response && exception.response.status === 304) {
+					// 304 - Not modified
+					// This is not an error, so reset error timeout and poll again
+					this.pollingErrorTimeout = 1
+					setTimeout(() => {
+						this.getNewMessages()
+					}, 500)
+					return
+				}
+
+				if (this.pollingErrorTimeout < 30) {
+					// Delay longer after each error
+					this.pollingErrorTimeout += 5
+				}
+
+				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
+
+				setTimeout(() => {
+					this.getNewMessages()
+				}, this.pollingErrorTimeout * 1000)
+				return
 			}
+
+			setTimeout(() => {
+				this.getNewMessages()
+			}, 500)
 		},
 
 		/**
