@@ -82,6 +82,14 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<command>OCA\Talk\Command\Signaling\Add</command>
 		<command>OCA\Talk\Command\Signaling\Delete</command>
 		<command>OCA\Talk\Command\Signaling\ListCommand</command>
+		<command>OCA\Talk\Command\Room\Create</command>
+		<command>OCA\Talk\Command\Room\Delete</command>
+		<command>OCA\Talk\Command\Room\Add</command>
+		<command>OCA\Talk\Command\Room\Remove</command>
+		<command>OCA\Talk\Command\Room\Promote</command>
+		<command>OCA\Talk\Command\Room\Demote</command>
+		<command>OCA\Talk\Command\Room\Update</command>
+		<command>OCA\Talk\Command\Room\ListCommand</command>
 	</commands>
 
 	<settings>
