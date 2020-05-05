@@ -119,8 +119,8 @@ export default {
 			/** Fetches the conversations from the server and then adds them one by one
 			 * to the store.
 			 */
-			const conversations = await fetchConversations()
 			try {
+				const conversations = await fetchConversations()
 				this.initialisedConversations = true
 				this.$store.dispatch('purgeConversationsStore')
 				conversations.data.ocs.data.forEach(conversation => {
