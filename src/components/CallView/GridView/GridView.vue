@@ -21,6 +21,19 @@
 
 <template>
 	<div class="wrapper">
+		<div class="dev-mode__data">
+			<p>GRID INFO</p>
+			<p>Videos (total): {{ videosCount }}</p>
+			<p>Displayed videos: {{ displayedVideos.length }}</p>
+			<p>Max per page: ~{{ videosCap }}</p>
+			<p>Grid width: {{ gridWidth }}</p>
+			<p>Grid height: {{ gridHeight }}</p>
+			<p>Min video width: {{ minWidth }} </p>
+			<p>Min video Height: {{ minHeight }} </p>
+			<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
+			<p>Number of pages: {{ numberOfPages }}</p>
+			<p>Current page: {{ currentPage }}</p>
+		</div>
 		<div
 			class="grid"
 			:style="gridStyle"
@@ -601,15 +614,16 @@ export default {
 
 .dev-mode__data {
 	font-family: monospace;
-	position: absolute;
+	position: fixed;
 	color: #00FF41;
 	left: 20px;
-	bottom: 20px;
+	bottom: 50%;
 	padding: 20px;
 	background: rgba(0,0,0,0.8);
 	border: 1px solid #00FF41;
 	width: 212px;
 	font-size: 12px;
+	z-index: 999999999999999;
 	& p {
 		text-overflow: ellipsis;
 		overflow: hidden;
