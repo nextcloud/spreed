@@ -38,19 +38,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Promote extends Base {
 	use TRoomCommand;
 
-	/** @var IConfig */
-	private $config;
-
 	/** @var IUserManager */
 	public $userManager;
 
 	/** @var Manager */
 	public $manager;
 
-	public function __construct(IConfig $config, IUserManager $userManager, Manager $manager) {
+	public function __construct(IUserManager $userManager, Manager $manager) {
 		parent::__construct();
 
-		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
 	}

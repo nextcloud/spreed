@@ -34,16 +34,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListCommand extends Base {
-	/** @var IConfig */
-	private $config;
-
 	/** @var Manager */
 	public $manager;
 
-	public function __construct(IConfig $config, Manager $manager) {
+	public function __construct(Manager $manager) {
 		parent::__construct();
 
-		$this->config = $config;
 		$this->manager = $manager;
 	}
 
