@@ -1,11 +1,10 @@
-
 <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="notes">
             <rect id="rect2" fill="#0082C9" fill-rule="nonzero" x="0" y="-5.2587998e-06" width="32" height="32"></rect>
             <g id="Shape">
-                <path d="M4,24 L20,24 L20,21.3333333 L4,21.3333333 L4,24 Z M4,8 L4,10.6666667 L28,10.6666667 L28,8 L4,8 Z M4,17.3333333 L28,17.3333333 L28,14.6666667 L4,14.6666667 L4,17.3333333 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+                <path d="M8,24 L20,24 L20,21.3333333 L8,21.3333333 L8,24 Z M8,8 L8,10.6666667 L24,10.6666667 L24,8 L8,8 Z M8,17.3333333 L24,17.3333333 L24,14.6666667 L8,14.6666667 L8,17.3333333 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
                 <polygon points="0 0 32 0 32 32 0 32"></polygon>
             </g>
         </g>
