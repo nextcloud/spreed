@@ -30,14 +30,14 @@
 				<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 				<template v-for="callParticipantModel in displayedVideos">
 					<Video
-						v-if="!isStripe || !!!sharedDatas[callParticipantModel.attributes.peerId].promoted"
 						:key="callParticipantModel.attributes.peerId"
 						class="video"
 						:show-video-overlay="showVideoOverlay"
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
-						:fit-video="!isStripe"
+						:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
+						:fit-video="false"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:shared-data="{videoEnabled: true}" />
 				</template>

@@ -24,13 +24,15 @@
 		class="videoContainer"
 		:class="containerClass">
 		<video v-if="!placeholderForPromoted"
-			v-show="model.attributes.videoAvailable && sharedData.videoEnabled"
+			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !hideVideo"
 			ref="video"
 			:class="videoClass"
 			class="video" />
 		<transition name="fade">
-			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-				<VideoBackground v-if="isGrid" :display-name="model.attributes.name" :user="model.attributes.userId" />
+			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || isPromoted" class="avatar-container">
+				<VideoBackground v-if="isGrid"
+					:display-name="model.attributes.name"
+					:user="model.attributes.userId" />
 				<Avatar v-if="model.attributes.userId"
 					:size="avatarSize"
 					:disable-menu="true"
@@ -132,6 +134,10 @@ export default {
 		showVideoOverlay: {
 			type: Boolean,
 			default: true,
+		},
+		hideVideo: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	data() {
