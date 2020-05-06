@@ -56,28 +56,30 @@
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 
-			<ActionSeparator />
+			<template v-if="!isMyNotesConversation">
+				<ActionSeparator />
 
-			<ActionText
-				:title="t('spreed', 'Chat notifications')" />
-			<ActionButton
-				:class="{'forced-active': isNotifyAlways}"
-				icon="icon-sound"
-				@click.prevent.exact="setNotificationLevel(1)">
-				{{ t('spreed', 'All messages') }}
-			</ActionButton>
-			<ActionButton
-				:class="{'forced-active': isNotifyMention}"
-				icon="icon-user"
-				@click.prevent.exact="setNotificationLevel(2)">
-				{{ t('spreed', '@-mentions only') }}
-			</ActionButton>
-			<ActionButton
-				:class="{'forced-active': isNotifyNever}"
-				icon="icon-sound-off"
-				@click.prevent.exact="setNotificationLevel(3)">
-				{{ t('spreed', 'Off') }}
-			</ActionButton>
+				<ActionText
+					:title="t('spreed', 'Chat notifications')" />
+				<ActionButton
+					:class="{'forced-active': isNotifyAlways}"
+					icon="icon-sound"
+					@click.prevent.exact="setNotificationLevel(1)">
+					{{ t('spreed', 'All messages') }}
+				</ActionButton>
+				<ActionButton
+					:class="{'forced-active': isNotifyMention}"
+					icon="icon-user"
+					@click.prevent.exact="setNotificationLevel(2)">
+					{{ t('spreed', '@-mentions only') }}
+				</ActionButton>
+				<ActionButton
+					:class="{'forced-active': isNotifyNever}"
+					icon="icon-sound-off"
+					@click.prevent.exact="setNotificationLevel(3)">
+					{{ t('spreed', 'Off') }}
+				</ActionButton>
+			</template>
 
 			<ActionSeparator />
 
@@ -144,6 +146,9 @@ export default {
 	computed: {
 		counterShouldBePrimary() {
 			return this.item.unreadMention || (this.item.unreadMessages && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)
+		},
+		isMyNotesConversation() {
+			return this.item.type === CONVERSATION.TYPE.NOTES
 		},
 		linkToConversation() {
 			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
