@@ -548,14 +548,14 @@ export default {
 		// Slice the `videos` array to display the previous set of videos
 		handleClickPrevious() {
 			const currentFirstDisplayedElement = this.displayedVideos[0]
-			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement)
+			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement) - 1
 			console.debug(currentFirstDisplayedElement)
 			console.debug(lastElementOfPreviousPage)
 			if (this.devMode) {
 				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
-				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage - 1)
+				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns + 1, lastElementOfPreviousPage - 1)
 			}
 			this.currentPage--
 		},
