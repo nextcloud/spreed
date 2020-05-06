@@ -26,12 +26,53 @@ export default function LocalCallParticipantModel() {
 		guestName: null,
 	}
 
+	this._handlers = []
+
 }
 
 LocalCallParticipantModel.prototype = {
 
 	set: function(key, value) {
 		this.attributes[key] = value
+	},
+
+	on: function(event, handler) {
+		if (!this._handlers.hasOwnProperty(event)) {
+			this._handlers[event] = [handler]
+		} else {
+			this._handlers[event].push(handler)
+		}
+	},
+
+	off: function(event, handler) {
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
+		if (index !== -1) {
+			handlers.splice(index, 1)
+		}
+	},
+
+	_trigger: function(event, args) {
+		let handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		if (!args) {
+			args = []
+		}
+
+		args.unshift(this)
+
+		handlers = handlers.slice(0)
+		for (let i = 0; i < handlers.length; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
 	},
 
 	setWebRtc: function(webRtc) {
