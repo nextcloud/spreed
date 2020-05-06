@@ -115,7 +115,7 @@ class Executor {
 			if ($command->getApp() !== '') {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
-				if ($command->getCommand() === 'help') {
+				if ($command->getCommand() === 'help' || strpos($command->getScript(),'alias:') !== false) {
 					continue;
 				}
 				$response = $this->execHelpSingleCommand($room, $message, $command->getCommand());
