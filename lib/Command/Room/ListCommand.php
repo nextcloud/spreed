@@ -63,7 +63,7 @@ class ListCommand extends Base {
 
 		$result = [];
 		foreach ($this->manager->getRoomsForParticipant($userId) as $room) {
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if (!in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 				continue;
 			}
 

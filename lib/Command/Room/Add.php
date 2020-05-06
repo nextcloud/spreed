@@ -28,6 +28,7 @@ use Exception;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\IConfig;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
@@ -74,6 +75,11 @@ class Add extends Base {
 			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			$output->writeln('<error>Room not found.</error>');
+			return 1;
+		}
+
+		if (!in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			$output->writeln('<error>Room is no group call.</error>');
 			return 1;
 		}
 
