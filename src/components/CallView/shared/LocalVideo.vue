@@ -43,7 +43,6 @@
 		</div>
 		<transition name="fade">
 			<LocalMediaControls
-				v-show="showVideoOverlay"
 				ref="localMediaControls"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
@@ -87,10 +86,6 @@ export default {
 		useConstrainedLayout: {
 			type: Boolean,
 			default: false,
-		},
-		showVideoOverlay: {
-			type: Boolean,
-			default: true,
 		},
 	},
 

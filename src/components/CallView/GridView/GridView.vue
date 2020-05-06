@@ -46,7 +46,6 @@
 					:is-grid="true"
 					:fit-video="true"
 					:local-media-model="localMediaModel"
-					:show-video-overlay="showVideoOverlay"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
 					:use-constrained-layout="false"
