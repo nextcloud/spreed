@@ -29,7 +29,7 @@
 			:class="videoClass"
 			class="video" />
 		<transition name="fade">
-			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || isPromoted" class="avatar-container">
+			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 				<VideoBackground v-if="isGrid"
 					:display-name="model.attributes.name"
 					:user="model.attributes.userId" />
