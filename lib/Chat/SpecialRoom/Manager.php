@@ -70,9 +70,8 @@ class Manager {
 	}
 
 	public function createNotesIfNeeded(string $userId): void {
-		$room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
-
 		if ($this->getNotesForUser($userId) === 0) {
+			$room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
 			$this->setNotesConversationAsFavorite($room, $userId);
 			$this->addNotesWelcomeMessages($room, $userId);
 		}

@@ -577,9 +577,17 @@ class Manager {
 
 		if ($row === false) {
 			$room = $this->createRoom($type, $userId);
-			$room->addUsers(['userId' => $userId]);
-			if ($type === ROOM::CHANGELOG_CONVERSATION) {
+			if ($type === ROOM::NOTES_CONVERSATION) {
+				$room->addUsers([
+					'userId' => $userId,
+					'participantType' => Participant::OWNER,
+				]);
 				$room->setReadOnly(Room::READ_ONLY);
+			} else {
+				$room->addUsers(['userId' => $userId]);
+				if ($type === ROOM::CHANGELOG_CONVERSATION) {
+					$room->setReadOnly(Room::READ_ONLY);
+				}
 			}
 			return $room;
 		}
