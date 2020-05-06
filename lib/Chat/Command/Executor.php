@@ -132,9 +132,9 @@ class Executor {
 						$tempHelp = substr($tempHelp, 0, strpos($tempHelp, "\n"));
 					}
 				}
-				$helps[] = $command->getCommand() .' -> ' . $tempHelp;
+				$helps[] = $tempHelp;
 			} else {
-				$helps[] = $command->getCommand() .' -> ' . $response;
+				$helps[] = $response;
 			}
 		}
 
