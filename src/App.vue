@@ -419,7 +419,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#content-vue {
+.content {
 	height: 100%;
 
 	&.in-call {
@@ -430,7 +430,7 @@ export default {
 	}
 }
 
-#app-content-vue {
+.app-content {
 	min-width: 0;
 	flex: 1 1 100%;
 }

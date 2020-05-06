@@ -102,7 +102,6 @@
 
 <script>
 import debounce from 'debounce'
-import call from '../../../mixins/call'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
@@ -117,8 +116,6 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 	},
-
-	mixins: [call],
 
 	props: {
 		/**
@@ -176,11 +173,31 @@ export default {
 			required: true,
 		},
 		/**
-		 * To be set to true if the grid is used in the promoted view component.
+		 * To be set to true when the grid is in the promoted view.
 		 */
 		isStripe: {
 			type: Boolean,
 			default: false,
+		},
+		callParticipantModels: {
+			type: Array,
+			required: true,
+		},
+		localMediaModel: {
+			type: Object,
+			required: true,
+		},
+		localCallParticipantModel: {
+			type: Object,
+			required: true,
+		},
+		token: {
+			type: String,
+			required: true,
+		},
+		sharedDatas: {
+			type: Object,
+			required: true,
 		},
 	},
 
@@ -338,14 +355,30 @@ export default {
 			 }
 		 },
 		 */
-
+		isStripe() {
+			this.gridWidth = this.boundariesElement.clientWidth
+			this.gridHeight = this.boundariesElement.clientHeight
+			this.makeGrid()
+			if (this.hasPagination) {
+				this.setNumberOfPages()
+				// Set the current page to 0
+				// TODO: add support for keeping position in the videos array when resizing
+				this.currentPage = 0
+			}
+		},
 		 sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
 		},
 	},
 
-	beforeMount() {
+	// bind event handlers to the `handleResize` method
+	mounted() {
+		window.addEventListener('resize', this.handleResize)
+		subscribe('navigation-toggled', this.handleResize)
+		this.handleResize()
+		this.gridWidth = this.boundariesElement.clientWidth
+		this.gridHeight = this.boundariesElement.clientHeight
 		// First build of the grid when mounting the component
 		this.makeGrid()
 		if (this.hasPagination) {
@@ -354,13 +387,6 @@ export default {
 			// TODO: add support for keeping position in the videos array when resizing
 			this.currentPage = 0
 		}
-	},
-
-	// bind event handlers to the `handleResize` method
-	mounted() {
-		window.addEventListener('resize', this.handleResize)
-		subscribe('navigation-toggled', this.handleResize)
-		this.handleResize()
 
 	},
 	beforeDestroy() {
@@ -409,7 +435,6 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
-			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
 			if (this.videosCap !== 0) {
 				this.shrinkGrid(this.videosCap)
 			} else {
@@ -423,17 +448,21 @@ export default {
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
 			}
 			// Send event to display hint in the topbar component if there's an
-			// overflow of videos
+			// overflow of videos (only if in full-grid mode, not stripe)
 			if (this.hasVideoOverflow) {
-				EventBus.$emit('toggleLayoutHint', true)
-			} else {
+				if (!this.isStripe) {
+					EventBus.$emit('toggleLayoutHint', true)
+				} else {
 				// Remove the hint if user resizes
-				EventBus.$emit('toggleLayoutHint', false)
+					EventBus.$emit('toggleLayoutHint', false)
+				}
 			}
+
 		},
 
 		// Fine tune the number of rows and columns of the grid
 		shrinkGrid(numberOfVideos) {
+			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
 			// No need to shrink more if 1 row and 1 column
 			if (this.rows === 1 && this.columns === 1) {
 				return
