@@ -423,7 +423,7 @@ export default {
 	width: 100%;
 	top: 0;
 	left: 0;
-	box-shadow: inset 0 0 8px 4px white;
+	box-shadow: inset 0 0 4px 4px white;
 }
 
 </style>
