@@ -184,7 +184,8 @@ export default {
 				return ''
 			}
 
-			if (this.shortLastChatMessageAuthor === '') {
+			if (this.shortLastChatMessageAuthor === ''
+				|| this.item.type === CONVERSATION.TYPE.NOTES) {
 				return this.simpleLastChatMessage
 			}
 
@@ -197,8 +198,7 @@ export default {
 			}
 
 			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.item.type === CONVERSATION.TYPE.CHANGELOG
-				|| this.item.type === CONVERSATION.TYPE.NOTES) {
+				|| this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 				return this.simpleLastChatMessage
 			}
 
