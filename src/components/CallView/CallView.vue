@@ -418,7 +418,7 @@ export default {
 /* Force regular rules on "big speaker video" when screensharing is enabled. */
 .participants-1.screensharing .videoContainer,
 .participants-2.screensharing .videoContainer {
-	position: relative;
+	position: absolute;
 	width: 100%;
 	-webkit-box-flex: auto;
 	-moz-box-flex: auto;
