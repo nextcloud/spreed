@@ -90,7 +90,7 @@
 				icon="icon-delete-critical"
 				class="critical"
 				@click.prevent.exact="deleteConversation">
-				{{ t('spreed', 'Delete conversation') }}
+				{{ labelDeleteConversation }}
 			</ActionButton>
 		</template>
 	</AppContentListItem>
@@ -165,6 +165,12 @@ export default {
 		},
 		isNotifyNever() {
 			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
+		},
+		labelDeleteConversation() {
+			if (this.item.type === CONVERSATION.TYPE.NOTES) {
+				return t('spreed', 'Delete my notes')
+			}
+			return t('spreed', 'Delete conversation')
 		},
 		canDeleteConversation() {
 			return this.item.canDeleteConversation

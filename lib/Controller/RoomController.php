@@ -490,6 +490,11 @@ class RoomController extends AEnvironmentAwareController {
 				&& $currentParticipant->hasModeratorPermissions(false);
 			$roomData['canLeaveConversation'] = !$roomData['canDeleteConversation']
 				|| ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getNumberOfParticipants() > 1);
+
+			if ($room->getType() === Room::NOTES_CONVERSATION) {
+				$roomData['canDeleteConversation'] = true;
+				$roomData['canLeaveConversation'] = false;
+			}
 		}
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
