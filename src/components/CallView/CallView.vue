@@ -41,6 +41,7 @@
 					v-bind="$attrs"
 					:is-stripe="!isGrid"
 					:token="token"
+					:fit-video="true"
 					boundaries-element-class="grid"
 					:has-pagination="false"
 					:call-participant-models="callParticipantModels"

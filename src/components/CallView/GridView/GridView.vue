@@ -37,7 +37,7 @@
 						:token="token"
 						:model="callParticipantModel"
 						:is-grid="true"
-						:fit-video="false"
+						:fit-video="!isStripe"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:shared-data="{videoEnabled: true}" />
 				</template>
