@@ -24,7 +24,7 @@
 		<div class="dev-mode__data">
 			<p>GRID INFO</p>
 			<p>Videos (total): {{ videosCount }}</p>
-			<p>Displayed videos: {{ displayedVideos.length }}</p>
+			<p>Displayed videos n: {{ displayedVideos.length }}</p>
 			<p>Max per page: ~{{ videosCap }}</p>
 			<p>Grid width: {{ gridWidth }}</p>
 			<p>Grid height: {{ gridHeight }}</p>
@@ -434,13 +434,8 @@ export default {
 			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
 			// context of the promoted view, we se 1 row directly and we remove 1 column
 			// (one of the participants will be in the promoted video slot)
-			if (this.isStripe) {
-				this.columns = this.columnsMax - 1
-				this.rows = 1
-			} else {
-				this.columns = this.columnsMax
-				this.rows = this.rowsMax
-			}
+			this.columns = this.columnsMax
+			this.rows = this.rowsMax
 			// This values would already work if the grid is entirely populated with
 			// video elements. However, if we'd have only a couple of videos to display
 			// and a very big screen, we'd now have a lot of columns and rows, and our
@@ -554,6 +549,8 @@ export default {
 		handleClickPrevious() {
 			const currentFirstDisplayedElement = this.displayedVideos[0]
 			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement)
+			console.debug(currentFirstDisplayedElement)
+			console.debug(lastElementOfPreviousPage)
 			if (this.devMode) {
 				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
 			} else {
