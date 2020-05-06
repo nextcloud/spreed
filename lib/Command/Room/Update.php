@@ -73,12 +73,12 @@ class Update extends Base {
 				'readonly',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Modifies the room to be a room with read-only (value 1) or read-write (value 0) access'
+				'Modifies the room to be read-only (value 1) or read-write (value 0)'
 			)->addOption(
 				'password',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Sets a new password for the room; pass a empty value to remove password protection'
+				'Sets a new password for the room; pass an empty value to remove password protection'
 			);
 	}
 
