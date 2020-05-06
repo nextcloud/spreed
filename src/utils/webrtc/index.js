@@ -24,6 +24,7 @@ import initWebRtc from './webrtc'
 import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
+import SentVideoQualityThrottler from './SentVideoQualityThrottler'
 import { PARTICIPANT } from '../../constants'
 import { EventBus } from '../../services/EventBus'
 
@@ -32,6 +33,7 @@ let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
+let sentVideoQualityThrottler = null
 
 let pendingConnectSignaling = null
 
@@ -125,6 +127,8 @@ async function signalingJoinCall(token) {
 
 	currentToken = token
 
+	sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
+
 	return new Promise((resolve, reject) => {
 		startedCall = resolve
 
@@ -139,6 +143,9 @@ async function signalingJoinCall(token) {
  * @returns {Promise<void>}
  */
 async function signalingLeaveCall(token) {
+	sentVideoQualityThrottler.destroy()
+	sentVideoQualityThrottler = null
+
 	await getSignaling()
 	await signaling.leaveCall(token)
 }

@@ -76,6 +76,18 @@ LocalMediaModel.prototype = {
 		}
 	},
 
+	off: function(event, handler) {
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
+		if (index !== -1) {
+			handlers.splice(index, 1)
+		}
+	},
+
 	_trigger: function(event, args) {
 		let handlers = this._handlers[event]
 		if (!handlers) {
