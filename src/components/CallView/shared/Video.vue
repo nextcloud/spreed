@@ -46,7 +46,8 @@
 			</div>
 		</transition>
 
-		<div class="bottom-bar">
+		<div class="bottom-bar"
+			:class="{'bottom-bar--video-on' : hasVideoStream}">
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay" class="bottom-bar__nameIndicator">
 					{{ participantName }}
@@ -339,22 +340,26 @@ export default {
 }
 .bottom-bar {
 	position: absolute;
-	bottom: 12px;
-	height: var(--clickable-area);
+	bottom: 0;
+	height: 40px;
 	width: 100%;
+	padding: 0px 20px 12px 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	&--video-on {
+		text-shadow: 0px 0 4px rgba(0, 0, 0,.8);
+	}
 	&__nameIndicator {
 	color: white;
-	position: absolute;
-	left: 24px;
-	bottom: 0;
+	position: relative;
 	font-size: 20px;
 	}
 	&__mediaIndicator {
-	position: absolute;
-	bottom: 0;
-	right: 20px;
+	position: relative;
 	background-size: 22px;
 	text-align: center;
+	margin-top: -8px;
 	}
 }
 
@@ -423,7 +428,7 @@ export default {
 	width: 100%;
 	top: 0;
 	left: 0;
-	box-shadow: inset 0 0 4px 4px white;
+	box-shadow: inset 0 0 2px 2px white;
 }
 
 </style>
