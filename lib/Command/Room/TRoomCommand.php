@@ -184,9 +184,13 @@ trait TRoomCommand
 		$participants = [];
 		foreach ($userIds as $userId) {
 			try {
-				$participants[] = $room->getParticipant($userId);
+				$participant = $room->getParticipant($userId);
 			} catch (ParticipantNotFoundException $e) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
+			}
+
+			if ($participant->getParticipantType() !== Participant::OWNER) {
+				$participants[] = $participant;
 			}
 		}
 
