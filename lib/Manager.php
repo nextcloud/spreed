@@ -558,9 +558,10 @@ class Manager {
 	 *
 	 * @param string $userId
 	 * @param int type
+	 * @param bool $createIfMissing
 	 * @return Room
 	 */
-	public function getSpecialRoom(string $userId, int $type): Room {
+	public function getSpecialRoom(string $userId, int $type, bool $createIfMissing = true): Room {
 		if ($type !== Room::CHANGELOG_CONVERSATION && $type !== Room::NOTES_CONVERSATION) {
 			throw new \OutOfBoundsException('Unsupported type');
 		}
@@ -576,6 +577,9 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			if (!$createIfMissing) {
+				throw new RoomNotFoundException('Conversation does not exist');
+			}
 			$room = $this->createRoom($type, $userId);
 			if ($type === ROOM::NOTES_CONVERSATION) {
 				$room->addUsers([

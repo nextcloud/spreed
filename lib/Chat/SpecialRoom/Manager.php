@@ -58,11 +58,11 @@ class Manager {
 	}
 
 	public function getNotesForUser(string $userId): int {
-		return (int) $this->config->getUserValue($userId, 'spreed', 'notes', 0);
+		return (int) $this->config->getUserValue($userId, 'spreed', 'notes', '2');
 	}
 
 	public function getChangelogForUser(string $userId): int {
-		return (int) $this->config->getUserValue($userId, 'spreed', 'changelog', 0);
+		return (int) $this->config->getUserValue($userId, 'spreed', 'changelog', '0');
 	}
 
 	public function userHasNewChangelog(string $userId): bool {
@@ -70,7 +70,7 @@ class Manager {
 	}
 
 	public function createNotesIfNeeded(string $userId): void {
-		if ($this->getNotesForUser($userId) === 0) {
+		if ($this->getNotesForUser($userId) === 2) {
 			$room = $this->roomManager->getSpecialRoom($userId, Room::NOTES_CONVERSATION);
 			$this->setNotesConversationAsFavorite($room, $userId);
 			$this->addNotesWelcomeMessages($room, $userId);
@@ -100,10 +100,11 @@ class Manager {
 
 	public function getNotesWelcomeMessages(): array {
 		return [
-			$this->l->t('Welcome to your notes!'),
-			$this->l->t('Forward any messages to save'),
-			$this->l->t('Never forget to buy milk again'),
-			$this->l->t('View on any device')
+			$this->l->t(
+				"Welcome to your notes!\n"
+				. "\nYou can use this conversation to share notes between your different devices."
+				. " When you deleted it, you can recreate it via the settings."
+			)
 		];
 	}
 
