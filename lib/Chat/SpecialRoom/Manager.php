@@ -101,7 +101,7 @@ class Manager {
 	public function getNotesWelcomeMessages(): array {
 		return [
 			$this->l->t(
-				"Welcome to your notes!\n"
+				"Welcome to your notes!"
 				. "\nYou can use this conversation to share notes between your different devices."
 				. " When you deleted it, you can recreate it via the settings."
 			)
