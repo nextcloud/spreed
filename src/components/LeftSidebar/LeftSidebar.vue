@@ -298,9 +298,10 @@ export default {
 				})
 		},
 
-		toggleMyNotes() {
+		async toggleMyNotes() {
 			this.myNotesEnabled = !this.myNotesEnabled
-			toggleMyNotes(this.myNotesEnabled)
+			await toggleMyNotes(this.myNotesEnabled)
+			EventBus.$emit('shouldRefreshConversations')
 		},
 	},
 }
