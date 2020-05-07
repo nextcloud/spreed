@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div :class="{'wrapper-stripe': isStripe, 'wrapper': !isStripe}">
 		<button v-if="hasPreviousPage"
 			class="grid-navigation icon-view-previous"
 			@click="handleClickPrevious" />
@@ -573,7 +573,15 @@ export default {
 .wrapper {
 	height: 100%;
 	width: 100%;
+}
+
+.wrapper-stripe {
+	height: 20%;
+	width: 100%;
 	display: flex;
+	position: relative;
+	bottom: 0;
+	left: 0;
 }
 
 .grid {

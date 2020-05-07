@@ -36,19 +36,17 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
-			<div class="grid-wrapper" :style="{'height': gridHeight}">
-				<GridView
-					v-bind="$attrs"
-					:is-stripe="!isGrid"
-					:token="token"
-					:fit-video="true"
-					:has-pagination="true"
-					boundaries-element-class="grid"
-					:call-participant-models="callParticipantModels"
-					:local-media-model="localMediaModel"
-					:local-call-participant-model="localCallParticipantModel"
-					:shared-datas="sharedDatas" />
-			</div>
+			<GridView
+				v-bind="$attrs"
+				:is-stripe="!isGrid"
+				:token="token"
+				:fit-video="true"
+				:has-pagination="true"
+				boundaries-element-class="grid"
+				:call-participant-models="callParticipantModels"
+				:local-media-model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:shared-datas="sharedDatas" />
 			<!--
 			</div>
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
@@ -166,14 +164,6 @@ export default {
 			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
 			return callViewClass
-		},
-		// Changes depending upon tswitching between promoted and gridview
-		gridHeight() {
-			if (this.isGrid) {
-				return '100%'
-			} else {
-				return '250px'
-			}
 		},
 	},
 	watch: {
@@ -388,15 +378,6 @@ export default {
 	-webkit-align-items: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
-}
-
-.grid-wrapper {
-	position: relative;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	display: block;
-	height: 250px;
 }
 
 .video__promoted {
