@@ -32,17 +32,13 @@ use OCP\IUserSession;
 
 class Capabilities implements IPublicCapability {
 
-	/** @var IConfig */
-	protected $serverConfig;
 	/** @var Config */
 	protected $talkConfig;
 	/** @var IUserSession */
 	protected $userSession;
 
-	public function __construct(IConfig $serverConfig,
-								Config $talkConfig,
+	public function __construct(Config $talkConfig,
 								IUserSession $userSession) {
-		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->userSession = $userSession;
 	}
@@ -97,6 +93,8 @@ class Capabilities implements IPublicCapability {
 		];
 
 		if ($user instanceof IUser) {
+			$capabilities['spreed']['features'][] = 'notes';
+
 			$capabilities['spreed']['config']['attachments'] = [
 				'allowed' => true,
 				'folder' => $this->talkConfig->getAttachmentFolder($user->getUID()),
