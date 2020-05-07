@@ -21,69 +21,59 @@
 
 <template>
 	<div :class="{'wrapper-stripe': isStripe, 'wrapper': !isStripe}">
-		<button v-if="hasPreviousPage"
-			class="grid-navigation icon-view-previous"
-			@click="handleClickPrevious" />
-		<div class="dev-mode__data">
-			<p>GRID INFO</p>
-			<p>Videos (total): {{ videosCount }}</p>
-			<p>Displayed videos n: {{ displayedVideos.length }}</p>
-			<p>Max per page: ~{{ videosCap }}</p>
-			<p>Grid width: {{ gridWidth }}</p>
-			<p>Grid height: {{ gridHeight }}</p>
-			<p>Min video width: {{ minWidth }} </p>
-			<p>Min video Height: {{ minHeight }} </p>
-			<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
-			<p>Number of pages: {{ numberOfPages }}</p>
-			<p>Current page: {{ currentPage }}</p>
-		</div>
-		<div
-			class="grid"
-			:style="gridStyle"
-			@mousemove="handleMovement"
-			@keydown="handleMovement">
-			<template v-if="!devMode">
-				<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
-				<template v-for="callParticipantModel in displayedVideos">
-					<Video
-						:key="callParticipantModel.attributes.peerId"
+		<div :class="{'pagination-wrapper': isStripe}">
+			<button v-if="hasPreviousPage && gridWidth > 0"
+				class="grid-navigation icon-view-previous"
+				@click="handleClickPrevious" />
+			<div
+				class="grid"
+				:style="gridStyle"
+				@mousemove="handleMovement"
+				@keydown="handleMovement">
+				<template v-if="!devMode">
+					<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
+					<template v-for="callParticipantModel in displayedVideos">
+						<Video
+							:key="callParticipantModel.attributes.peerId"
+							class="video"
+							:show-video-overlay="showVideoOverlay"
+							:token="token"
+							:model="callParticipantModel"
+							:is-grid="true"
+							:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
+							:fit-video="false"
+							:video-container-aspect-ratio="videoContainerAspectRatio"
+							:shared-data="{videoEnabled: true}" />
+					</template>
+					<LocalVideo
+						v-if="!isStripe"
+						ref="localVideo"
 						class="video"
-						:show-video-overlay="showVideoOverlay"
-						:token="token"
-						:model="callParticipantModel"
 						:is-grid="true"
-						:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
-						:fit-video="false"
+						:fit-video="true"
+						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
-						:shared-data="{videoEnabled: true}" />
+						:local-call-participant-model="localCallParticipantModel"
+						:use-constrained-layout="false"
+						@switchScreenToId="1" />
 				</template>
-				<LocalVideo
-					v-if="!isStripe"
-					ref="localVideo"
-					class="video"
-					:is-grid="true"
-					:fit-video="true"
-					:local-media-model="localMediaModel"
-					:video-container-aspect-ratio="videoContainerAspectRatio"
-					:local-call-participant-model="localCallParticipantModel"
-					:use-constrained-layout="false"
-					@switchScreenToId="1" />
-			</template>
-			<!-- Grid developer mode -->
-			<template v-else>
-				<div
-					v-for="video in displayedVideos"
-					:key="video"
-					class="dev-mode-video video"
-					v-text="video" />
-				<h1 class="dev-mode__title">
-					Dev mode on ;-)
-				</h1>
-			</template>
+				<!-- Grid developer mode -->
+				<template v-else>
+					<div
+						v-for="video in displayedVideos"
+						:key="video"
+						class="dev-mode-video video"
+						v-text="video" />
+					<h1 class="dev-mode__title">
+						Dev mode on ;-)
+					</h1>
+				</template>
+			</div>
+			<button v-if="hasNextPage && gridWidth > 0"
+				class="grid-navigation icon-view-next"
+				@click="handleClickNext" />
 		</div>
-		<button v-if="hasNextPage"
-			class="grid-navigation icon-view-next"
-			@click="handleClickNext" />
+
 		<LocalVideo
 			v-if="isStripe"
 			ref="localVideo"
@@ -103,6 +93,19 @@
 				:key="index"
 				class="pages-indicator__dot"
 				:class="{'pages-indicator__dot--active': index === currentPage }" />
+		</div>
+		<div class="dev-mode__data">
+			<p>GRID INFO</p>
+			<p>Videos (total): {{ videosCount }}</p>
+			<p>Displayed videos n: {{ displayedVideos.length }}</p>
+			<p>Max per page: ~{{ videosCap }}</p>
+			<p>Grid width: {{ gridWidth }}</p>
+			<p>Grid height: {{ gridHeight }}</p>
+			<p>Min video width: {{ minWidth }} </p>
+			<p>Min video Height: {{ minHeight }} </p>
+			<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
+			<p>Number of pages: {{ numberOfPages }}</p>
+			<p>Current page: {{ currentPage }}</p>
 		</div>
 	</div>
 </template>
@@ -576,7 +579,7 @@ export default {
 }
 
 .wrapper-stripe {
-	height: 20%;
+	height: 250px;
 	width: 100%;
 	display: flex;
 	position: relative;
@@ -592,6 +595,11 @@ export default {
 
 .local-video-stripe {
 	width: 300px;
+}
+
+.pagination-wrapper {
+	width: calc(100% - 300px);
+	display: flex;
 }
 
 .dev-mode-video {

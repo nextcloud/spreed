@@ -210,7 +210,7 @@ export default {
 .video-container-stripe {
 	position:relative;
 	height: 100%;
-	width: 300px !important;
+	flex: 0 0 300px;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
