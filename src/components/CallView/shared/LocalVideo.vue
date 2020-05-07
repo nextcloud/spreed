@@ -21,7 +21,7 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid }">
+		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid, 'video-container-stripe': isStripe }">
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
@@ -84,6 +84,10 @@ export default {
 			required: true,
 		},
 		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
+		isStripe: {
 			type: Boolean,
 			default: false,
 		},
@@ -198,6 +202,15 @@ export default {
 	position:relative;
 	height: 100%;
 	width: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.video-container-stripe {
+	position:relative;
+	height: 100%;
+	width: 300px !important;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;

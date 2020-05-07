@@ -21,6 +21,9 @@
 
 <template>
 	<div class="wrapper">
+		<button v-if="hasPreviousPage"
+			class="grid-navigation icon-view-previous"
+			@click="handleClickPrevious" />
 		<div class="dev-mode__data">
 			<p>GRID INFO</p>
 			<p>Videos (total): {{ videosCount }}</p>
@@ -54,7 +57,9 @@
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:shared-data="{videoEnabled: true}" />
 				</template>
-				<LocalVideo ref="localVideo"
+				<LocalVideo
+					v-if="!isStripe"
+					ref="localVideo"
 					class="video"
 					:is-grid="true"
 					:fit-video="true"
@@ -74,32 +79,22 @@
 				<h1 class="dev-mode__title">
 					Dev mode on ;-)
 				</h1>
-				<div class="dev-mode__data">
-					<p>GRID INFO</p>
-					<p>Videos (total): {{ videosCount }}</p>
-					<p>Displayed videos: {{ displayedVideos.length }}</p>
-					<p>Max per page: ~{{ videosCap }}</p>
-					<p>Grid width: {{ gridWidth }}</p>
-					<p>Grid height: {{ gridHeight }}</p>
-					<p>Min video width: {{ minWidth }} </p>
-					<p>Min video Height: {{ minHeight }} </p>
-					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
-					<p>Number of pages: {{ numberOfPages }}</p>
-					<p>Current page: {{ currentPage }}</p>
-				</div>
 			</template>
-		<!-- Grid pagination -->
 		</div>
 		<button v-if="hasNextPage"
-			class="grid-navigation next"
-			@click="handleClickNext">
-			Next
-		</button>
-		<button v-if="hasPreviousPage"
-			class="grid-navigation previous"
-			@click="handleClickPrevious">
-			Previous
-		</button>
+			class="grid-navigation icon-view-next"
+			@click="handleClickNext" />
+		<LocalVideo
+			v-if="isStripe"
+			ref="localVideo"
+			class="video"
+			:fit-video="true"
+			:is-stripe="true"
+			:local-media-model="localMediaModel"
+			:video-container-aspect-ratio="videoContainerAspectRatio"
+			:local-call-participant-model="localCallParticipantModel"
+			:use-constrained-layout="false"
+			@switchScreenToId="1" />
 		<!-- page indicator (disabled) -->
 		<div
 			v-if="numberOfPages !== 0 && hasPagination && false"
@@ -232,7 +227,6 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
-
 		}
 	},
 
@@ -579,12 +573,17 @@ export default {
 .wrapper {
 	height: 100%;
 	width: 100%;
+	display: flex;
 }
 
 .grid {
 	display: grid;
 	height: 100%;
 	width: 100%;
+}
+
+.local-video-stripe {
+	width: 300px;
 }
 
 .dev-mode-video {
@@ -632,17 +631,18 @@ export default {
 }
 
 .grid-navigation {
-	position: absolute;
-	top: 50%;
-	margin-top: -17px
-
-}
-
-.next {
-	right: 20px;
-}
-.previous {
-	left: 20px;
+	width: 44px;
+	height: 100%;
+	height: 100%;
+	border-radius: 0;
+	background-color: var(--color-primary);
+	margin: 0;
+	color: white;
+	&hover,
+	&focus {
+		background-color: var(--color-primary-hover);
+		border: 1px solid white;
+	}
 }
 
 .pages-indicator {

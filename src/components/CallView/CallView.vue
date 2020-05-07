@@ -36,7 +36,7 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
-			<div class="grid" :style="{'height': gridHeight}">
+			<div class="grid-wrapper" :style="{'height': gridHeight}">
 				<GridView
 					v-bind="$attrs"
 					:is-stripe="!isGrid"
@@ -167,6 +167,7 @@ export default {
 
 			return callViewClass
 		},
+		// Changes depending upon tswitching between promoted and gridview
 		gridHeight() {
 			if (this.isGrid) {
 				return '100%'
@@ -389,7 +390,7 @@ export default {
 	flex-direction: column;
 }
 
-.grid {
+.grid-wrapper {
 	position: relative;
 	bottom: 0;
 	left: 0;
