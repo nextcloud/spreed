@@ -13,6 +13,7 @@ OC.L10N.register(
     "Limit to groups" : "Обмежити групами",
     "Everyone" : "Всі",
     "Save changes" : "Зберегти зміни",
+    "Saving …" : "Збереження ..",
     "Saved!" : "Збережено!",
     "None" : "Відсутній",
     "User" : "Користувач",
