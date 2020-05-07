@@ -247,7 +247,7 @@ export default {
 
 		// Number of video components (includes localvideo if not in dev mode)
 		videosCount() {
-			if (this.devMode) {
+			if (this.devMode || this.isStripe) {
 				return this.videos.length
 			} else {
 				// Count the emptycontent as a grid element
@@ -445,7 +445,7 @@ export default {
 				this.shrinkGrid(this.videosCount)
 			}
 			// Once the grid is done, populate it with video components
-			if (this.devMode) {
+			if (this.devMode || this.isStripe) {
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
@@ -534,7 +534,7 @@ export default {
 		handleClickNext() {
 			const currentLastDisplayedElement = this.displayedVideos[this.displayedVideos.length - 1]
 			const firstElementOfNextPage = this.videos.indexOf(currentLastDisplayedElement) + 1
-			if (this.devMode) {
+			if (this.devMode || this.isStripe) {
 				this.displayedVideos = this.videos.slice(firstElementOfNextPage, firstElementOfNextPage + this.rows * this.columns)
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
@@ -548,7 +548,7 @@ export default {
 			const lastElementOfPreviousPage = this.videos.indexOf(currentFirstDisplayedElement) - 1
 			console.debug(currentFirstDisplayedElement)
 			console.debug(lastElementOfPreviousPage)
-			if (this.devMode) {
+			if (this.devMode || this.isStripe) {
 				this.displayedVideos = this.videos.slice(lastElementOfPreviousPage - this.rows * this.columns, lastElementOfPreviousPage)
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
