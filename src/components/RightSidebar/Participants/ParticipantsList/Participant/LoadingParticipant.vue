@@ -35,34 +35,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	.participant-loading {
-		$icon-size: 32px;
+.participant-loading {
+	$icon-size: 32px;
+	height: 44px;
+	list-style-type: none;
+	padding-left: 4px;
+	margin: 5px 0;
 
-		height: 44px;
-		list-style-type: none;
-		padding-left: 4px;
-		margin: 5px 0;
+	.icon-container {
+		width: $icon-size;
+		height: $icon-size;
+		margin-top: 2px;
+		display: inline-block;
+		background-color: var(--color-background-dark);
+		border-radius: 50%;
+	}
 
-		.icon-container {
-			width: $icon-size;
-			height: $icon-size;
-			margin-top: 2px;
-			display: inline-block;
+	.placeholder {
+		width: 175px;
+		height: $icon-size;
+		display: inline-block;
+
+		.username {
 			background-color: var(--color-background-dark);
-			border-radius: 50%;
-		}
-
-		.placeholder {
-			width: 175px;
-			height: $icon-size;
-			display: inline-block;
-
-			.username {
-				background-color: var(--color-background-dark);
-				height: $icon-size / 2;
-				margin-top: $icon-size / 4;
-				margin-left: 2px;
-			}
+			height: $icon-size / 2;
+			margin-top: $icon-size / 4;
+			margin-left: 2px;
 		}
 	}
+}
 </style>

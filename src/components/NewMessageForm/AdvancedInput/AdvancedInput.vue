@@ -351,10 +351,10 @@ export default {
 
 .new-message-form__advancedinput {
 	overflow: visible;
-	margin-left: 6px !important;
 	width: 100%;
 	border:none;
 	margin: 0;
+	margin-left: 6px !important;
 	word-break: break-word;
 	white-space: pre-wrap;
 }

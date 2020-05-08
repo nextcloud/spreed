@@ -411,7 +411,7 @@ export default {
 	position: absolute;
 	right: 20px;
 	bottom: 12px;
-	}
+}
 
 .nameIndicator button {
 	background-color: transparent;
@@ -419,15 +419,12 @@ export default {
 	margin: 0;
 	width: 44px;
 	height: 44px;
+	background-size: 24px;
 }
 
 .nameIndicator #screensharing-menu button {
 	width: 100%;
 	height: auto;
-}
-
-.nameIndicator button {
-	background-size: 24px;
 }
 
 .nameIndicator button.audio-disabled,
@@ -467,7 +464,7 @@ export default {
 	position: absolute;
 
 	width: 3px;
-	right: 0px;
+	right: 0;
 
 	/* The button height is 44px; the volume indicator button is 36px at
 	* maximum, but its value will be changed based on the current volume; the

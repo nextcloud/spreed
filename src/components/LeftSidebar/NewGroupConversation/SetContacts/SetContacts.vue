@@ -160,7 +160,7 @@ export default {
 		font-size: 16px;
 		padding-left: 28px;
 		line-height: 34px;
-		box-shadow: 0px 10px 5px var(--color-main-background);
+		box-shadow: 0 10px 5px var(--color-main-background);
 		z-index: 1;
 	}
 	&__icon {
@@ -192,19 +192,21 @@ export default {
 }
 
 .zoom-enter-active {
-  animation: zoom-in var(--animation-quick);
+	animation: zoom-in var(--animation-quick);
 }
+
 .zoom-leave-active {
-  animation: zoom-in var(--animation-quick) reverse;
-  will-change: transform;
+	animation: zoom-in var(--animation-quick) reverse;
+	will-change: transform;
 }
+
 @keyframes zoom-in {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+	0% {
+		transform: scale(0);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 </style>

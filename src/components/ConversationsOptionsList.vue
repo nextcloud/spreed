@@ -82,6 +82,7 @@ export default {
 .ellipsis {
 	text-overflow: ellipsis;
 }
+
 .contacts-list {
 	overflow: visible;
 	display: block;

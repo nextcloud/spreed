@@ -250,6 +250,7 @@ export default {
 		overflow-y: auto;
 	}
 }
+
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;

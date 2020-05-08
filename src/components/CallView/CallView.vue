@@ -483,9 +483,11 @@ export default {
 	margin-left: auto;
 	margin-right: auto;
 }
+
 .videoContainer.promoted ::v-deep .avatar-container {
 	top: 30%;
 }
+
 .videoContainer.promoted ::v-deep .avatar-container + .nameIndicator {
 	display: none;
 }
@@ -523,18 +525,21 @@ export default {
 	top: initial;
 	left: initial;
 }
+
 @media only screen and (max-width: 768px) {
 	.participants-1 .videoView,
 	.participants-2 .videoView {
 		max-height: 35%;
 	}
 }
+
 .constrained-layout.participants-1 .videoView,
 .constrained-layout.participants-2 .videoView {
 	/* Do not force the width to 200px, as otherwise the video is too tall and
 	 * overlaps too much with the promoted video. */
 	min-width: initial;
 }
+
 .participants-1 .videoView ::v-deep video,
 .participants-2 .videoView ::v-deep video {
 	position: absolute;

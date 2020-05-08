@@ -352,28 +352,29 @@ export default {
 .avatar-container {
 	margin: auto;
 }
+
 .bottom-bar {
 	position: absolute;
 	bottom: 0;
 	height: 40px;
 	width: 100%;
-	padding: 0px 20px 12px 24px;
+	padding: 0 20px 12px 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-end;
 	&--video-on {
-		text-shadow: 0px 0 4px rgba(0, 0, 0,.8);
+		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
 	}
 	&__nameIndicator {
-	color: white;
-	position: relative;
-	font-size: 20px;
+		color: white;
+		position: relative;
+		font-size: 20px;
 	}
 	&__mediaIndicator {
-	position: relative;
-	background-size: 22px;
-	text-align: center;
-	margin-top: -8px;
+		position: relative;
+		background-size: 22px;
+		text-align: center;
+		margin-top: -8px;
 	}
 }
 

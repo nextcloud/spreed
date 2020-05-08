@@ -17,6 +17,3 @@ export default {
 	name: 'WelcomeView',
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

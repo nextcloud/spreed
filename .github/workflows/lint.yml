@@ -28,12 +28,12 @@ jobs:
       - name: Lint
         run: "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;"
 
-  eslint:
+  node:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-versions: ['12.x']
+        node-versions: [12.x]
 
     name: eslint node${{ matrix.node-versions }}
     steps:
@@ -55,20 +55,19 @@ jobs:
 
     strategy:
       matrix:
-        node-versions: ['12.x']
+        node-versions: [12.x]
 
     name: stylelint node${{ matrix.node-versions }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
-      - name: Set up Node
+      - name: Set up node ${{ matrix.node-versions }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-versions }}
+          node-versions: ${{ matrix.node-versions }}
 
-      - name: Install stylelint 11.0
-        run: npm i -g stylelint@11.0.0
+      - name: Install dependencies
+        run: npm ci
 
       - name: Lint
-        run: $(which stylelint) -f verbose css
+        run: npm run stylelint

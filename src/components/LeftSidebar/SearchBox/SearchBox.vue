@@ -129,18 +129,19 @@ export default {
 	z-index: 1;
 	display: flex;
 	justify-content: center;
+
 	&__input {
 		align-self: center;
 		width: 100%;
-		margin: 0px;
+		margin: 0;
 	}
 }
 
 .abort-search {
 	margin-left: -28px;
-    z-index: 1;
-    border: none;
-    background-color: transparent
+	z-index: 1;
+	border: none;
+	background-color: transparent
 }
 
 </style>
