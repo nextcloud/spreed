@@ -51,12 +51,13 @@
 			</div>
 		</Popover>
 		<!-- sidebar toggle -->
-		<Actions class="top-bar__button">
+		<Actions
+			v-shortkey="['f']"
+			class="top-bar__button"
+			@shortkey.native="toggleFullscreen">
 			<ActionButton
-				v-shortkey="['f']"
 				:icon="iconFullscreen"
 				:aria-label="t('spreed', 'Toggle fullscreen')"
-				@shortkey.native="toggleFullscreen"
 				@click="toggleFullscreen">
 				{{ labelFullscreen }}
 			</ActionButton>
