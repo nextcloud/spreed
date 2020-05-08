@@ -27,4 +27,5 @@ module.exports = {
 		'string-quotes': 'single',
 	},
 	plugins: ['stylelint-scss'],
+	ignoreFiles: ['css/At.scss'],
 }
