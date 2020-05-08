@@ -38,14 +38,13 @@
 				{{ layoutHintText }}
 				<div class="hint__actions">
 					<button
-						class="error"
 						@click="showLayoutHint=false, hintDismissed=true">
 						{{ t('spreed', 'Dismiss') }}
 					</button>
 					<button
 						class="primary"
 						@click="changeView">
-						{{ t('spreed', 'Use promoted-view') }}
+						{{ t('spreed', 'Use promoted view') }}
 					</button>
 				</div>
 			</div>
@@ -228,9 +227,9 @@ export default {
 
 		changeViewText() {
 			if (this.isGrid) {
-				return t('spreed', 'Switch to promoted view')
+				return t('spreed', 'Promoted view')
 			} else {
-				return t('spreed', 'Switch to grid view')
+				return t('spreed', 'Grid view')
 			}
 		},
 		changeViewIconClass() {
@@ -242,7 +241,7 @@ export default {
 		},
 
 		layoutHintText() {
-			return t('Spreed', `The videos in this call don't fit in your window: consider maximising it or switching to 'promoted view' for a better experience`)
+			return t('Spreed', `The amount of videos don't fit in the window. Maximize or switch to 'promoted view' for a better experience.`)
 		},
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
