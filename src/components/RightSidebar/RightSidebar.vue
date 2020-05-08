@@ -22,7 +22,7 @@
 
 <template>
 	<AppSidebar
-		v-if="opened"
+		v-show="opened"
 		:title="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
@@ -188,10 +188,16 @@ export default {
 		},
 	},
 
+	watch: {
+		conversation() {
+			this.conversationName = this.$store.getters.conversation(this.token).displayName
+		},
+	},
+
 	methods: {
 		handleClose() {
-			this.$store.dispatch('hideSidebar')
 			this.dismissEditing()
+			this.$store.dispatch('hideSidebar')
 			localStorage.setItem('sidebarOpen', 'false')
 		},
 
