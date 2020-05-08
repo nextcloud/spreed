@@ -22,8 +22,8 @@
 <template>
 	<div class="wrapper" :style="wrapperStyle">
 		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
-			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe"
-				class="grid-navigation icon-view-previous"
+			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+				class="grid-navigation grid-navigation__previous npm install icon-play-previous"
 				@click="handleClickPrevious" />
 			<div
 				ref="grid"
@@ -71,8 +71,8 @@
 					</h1>
 				</template>
 			</div>
-			<button v-if="hasNextPage && gridWidth > 0 && isStripe"
-				class="grid-navigation icon-view-next"
+			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+				class="grid-navigation grid-navigation__next icon-play-next"
 				@click="handleClickNext" />
 		</div>
 		<LocalVideo
@@ -562,6 +562,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .wrapper {
 	width: 100%;
 	display: flex;
@@ -583,7 +584,7 @@ export default {
 
 .pagination-wrapper {
 	width: calc(100% - 300px);
-	display: flex;
+	position:relative
 }
 
 .dev-mode-video {
@@ -631,17 +632,25 @@ export default {
 }
 
 .grid-navigation {
+	position: absolute;
 	width: 44px;
-	height: 100%;
-	height: 100%;
-	border-radius: 0;
-	background-color: var(--color-primary);
-	margin: 0;
-	color: white;
-	&hover,
-	&focus {
-		background-color: var(--color-primary-hover);
+	height: 44px;
+	background-color: white;
+	opacity: 0.6 !important;
+	top: 8px;
+	z-index: 2;
+	box-shadow: 0 0 4px var(--color-box-shadow);
+	&:hover,
+	&:focus {
+		background-color: var(var(--color-primary-element-light));
 		border: 1px solid white;
+		opacity: 1 !important;
+	}
+	&__previous {
+		left: 12px;
+	}
+	&__next {
+		right: 12px;
 	}
 }
 
