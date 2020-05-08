@@ -79,6 +79,7 @@ import At from 'vue-at'
 import VueAtReparenter from '../../../mixins/vueAtReparenter'
 import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
+import { fetchClipboardContent } from '../../../utils/clipboard'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
 import escapeHtml from 'escape-html'
@@ -228,9 +229,16 @@ export default {
 	methods: {
 		onPaste(e) {
 			e.preventDefault()
-			const text = e.clipboardData.getData('text/plain')
-			const div = document.createElement('div').innerText = escapeHtml(text)
-			document.execCommand('insertHtml', false, div)
+
+			const content = fetchClipboardContent(e)
+
+			if (content.kind === 'file') {
+				this.$emit('files-pasted', content.files)
+			} else if (content.kind === 'text') {
+				const text = content.text
+				const div = document.createElement('div').innerText = escapeHtml(text)
+				document.execCommand('insertHtml', false, div)
+			}
 		},
 
 		/**
