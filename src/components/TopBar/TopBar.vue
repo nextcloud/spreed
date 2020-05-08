@@ -220,7 +220,7 @@ export default {
 		},
 
 		showOpenSidebarButton() {
-			return !this.$store.getters.getSidebarStatus()
+			return !this.$store.getters.getSidebarStatus
 		},
 
 		changeViewText() {
@@ -467,8 +467,8 @@ export default {
 			}
 		},
 		handleRenameConversation() {
-			this.$store.dispatch('showSidebar')
 			this.$store.dispatch('isRenamingConversation', true)
+			this.$store.dispatch('showSidebar')
 		},
 	},
 }

@@ -110,12 +110,14 @@ export default {
 			contactsLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
+			// Sidebar status before starting editing operation
+			sidebarOpenBeforeEditingName: '',
 		}
 	},
 
 	computed: {
 		show() {
-			return this.$store.getters.getSidebarStatus()
+			return this.$store.getters.getSidebarStatus
 		},
 		opened() {
 			return !!this.token && !this.isInLobby && this.show
@@ -201,12 +203,6 @@ export default {
 			}
 
 			this.conversation.isFavorite = !this.conversation.isFavorite
-		},
-
-		handleRenameConversation() {
-			// Copy the current conversation's title into the renaming title
-			this.conversationName = this.title
-			this.$store.dispatch('isRenamingConversation', true)
 		},
 
 		/**

@@ -23,10 +23,12 @@
 const state = {
 	show: true,
 	isRenamingConversation: false,
+	sidebarOpenBeforeEditing: null,
+
 }
 
 const getters = {
-	getSidebarStatus: (state) => () => {
+	getSidebarStatus: (state) => {
 		return state.show
 	},
 	isRenamingConversation: (state) => {
@@ -58,9 +60,13 @@ const mutations = {
 	 */
 	isRenamingConversation(state, boolean) {
 		if (boolean) {
+			// Record sidebar status before starting editing process
+			state.sidebarOpenBeforeEditing = state.show
 			state.isRenamingConversation = true
-		} else if (!boolean) {
+		} else {
 			state.isRenamingConversation = false
+			// Go back to the previous sidebar state
+			state.show = state.sidebarOpenBeforeEditing
 		}
 	},
 }
@@ -89,9 +95,7 @@ const actions = {
 	 * @param {boolean} boolean the state of the renaming action;
 	 */
 	isRenamingConversation(context, boolean) {
-		if (boolean) {
-			context.commit('isRenamingConversation', boolean)
-		}
+		context.commit('isRenamingConversation', boolean)
 	},
 }
 
