@@ -58,9 +58,10 @@ class Create extends Base {
 				'name',
 				InputArgument::REQUIRED,
 				'The name of the room to create'
-			)->addArgument(
+			)->addOption(
 				'user',
-				InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Invites the given users to the room to create'
 			)->addOption(
 				'group',
@@ -102,7 +103,7 @@ class Create extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$name = $input->getArgument('name');
-		$users = $input->getArgument('user');
+		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
 		$circles = $input->getOption('circle');
 		$public = $input->getOption('public');

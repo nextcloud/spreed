@@ -60,9 +60,10 @@ class Add extends Base {
 				'token',
 				InputArgument::REQUIRED,
 				'Token of the room to add users to'
-			)->addArgument(
+			)->addOption(
 				'user',
-				InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Invites the given users to the room'
 			)->addOption(
 				'group',
@@ -79,7 +80,7 @@ class Add extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$token = $input->getArgument('token');
-		$users = $input->getArgument('user');
+		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
 		$circles = $input->getOption('circle');
 
