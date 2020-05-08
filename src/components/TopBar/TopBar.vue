@@ -52,82 +52,85 @@
 		</Popover>
 		<!-- sidebar toggle -->
 		<Actions
-			v-if="isFileConversation || (conversationHasSettings && showModerationMenu)"
-			class="top-bar__button">
+			v-shortkey="['f']"
+			class="top-bar__button"
+			@shortkey.native="toggleFullscreen">
 			<ActionButton
-				v-shortkey="['f']"
 				:icon="iconFullscreen"
 				:aria-label="t('spreed', 'Toggle fullscreen')"
-				@shortkey.native="toggleFullscreen"
 				@click="toggleFullscreen">
 				{{ labelFullscreen }}
 			</ActionButton>
-			<ActionSeparator />
+			<ActionSeparator
+				v-if="canFullModerate" />
 			<ActionLink
 				v-if="isFileConversation"
 				icon="icon-text"
 				:href="linkToFile">
 				{{ t('spreed', 'Go to file') }}
 			</ActionLink>
+			<template
+				v-if="canFullModerate">
+				<ActionButton
+					v-if="canModerate"
+					:close-after-click="true"
+					icon="icon-rename"
+					@click="handleRenameConversation">
+					{{ t('spreed', 'Rename conversation') }}
+				</ActionButton>
+				<ActionSeparator
+					v-if="canFullModerate" />
+				<ActionCheckbox
+					v-if="canFullModerate"
+					:checked="isSharedPublicly"
+					@change="toggleGuests">
+					{{ t('spreed', 'Share link') }}
+				</ActionCheckbox>
+			</template>
 			<ActionButton
-				v-if="canModerate"
-				:close-after-click="true"
-				icon="icon-rename"
-				@click="handleRenameConversation">
-				{{ t('spreed', 'Rename conversation') }}
-			</ActionButton>
-			<ActionSeparator
-				v-if="canFullModerate" />
-			<ActionCheckbox
-				v-if="canFullModerate"
-				:checked="isSharedPublicly"
-				@change="toggleGuests">
-				{{ t('spreed', 'Share link') }}
-			</ActionCheckbox>
-			<ActionButton
-				v-if="canFullModerate"
 				icon="icon-clippy"
 				:close-after-click="true"
 				@click="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 			<!-- password -->
-			<ActionCheckbox
-				v-if="canFullModerate && isSharedPublicly"
-				class="share-link-password-checkbox"
-				:checked="isPasswordProtected"
-				@check="handlePasswordEnable"
-				@uncheck="handlePasswordDisable">
-				{{ t('spreed', 'Password protection') }}
-			</ActionCheckbox>
-			<ActionInput
-				v-show="isEditingPassword"
-				class="share-link-password"
-				icon="icon-password"
-				type="password"
-				:value.sync="password"
-				autocomplete="new-password"
-				@submit="handleSetNewPassword">
-				{{ t('spreed', 'Enter a password') }}
-			</ActionInput>
-			<ActionSeparator
-				v-if="canFullModerate" />
-			<ActionCheckbox
-				v-if="canFullModerate"
-				:checked="hasLobbyEnabled"
-				@change="toggleLobby">
-				{{ t('spreed', 'Enable lobby') }}
-			</ActionCheckbox>
-			<ActionInput
-				v-if="canFullModerate && hasLobbyEnabled"
-				icon="icon-calendar-dark"
-				type="datetime-local"
-				v-bind="dateTimePickerAttrs"
-				:value="lobbyTimer"
-				:disabled="lobbyTimerLoading"
-				@change="setLobbyTimer">
-				{{ t('spreed', 'Start time (optional)') }}
-			</ActionInput>
+			<template
+				v-if="canFullModerate">
+				<ActionCheckbox
+					v-if="isSharedPublicly"
+					class="share-link-password-checkbox"
+					:checked="isPasswordProtected"
+					@check="handlePasswordEnable"
+					@uncheck="handlePasswordDisable">
+					{{ t('spreed', 'Password protection') }}
+				</ActionCheckbox>
+				<ActionInput
+					v-show="isEditingPassword"
+					class="share-link-password"
+					icon="icon-password"
+					type="password"
+					:value.sync="password"
+					autocomplete="new-password"
+					@submit="handleSetNewPassword">
+					{{ t('spreed', 'Enter a password') }}
+				</ActionInput>
+				<ActionSeparator />
+				<ActionCheckbox
+					:checked="hasLobbyEnabled"
+					@change="toggleLobby">
+					{{ t('spreed', 'Enable lobby') }}
+				</ActionCheckbox>
+				<ActionInput
+					v-if="hasLobbyEnabled"
+					icon="icon-calendar-dark"
+					type="datetime-local"
+					v-bind="dateTimePickerAttrs"
+					:value="lobbyTimer"
+					:disabled="lobbyTimerLoading"
+					@change="setLobbyTimer">
+					{{ t('spreed', 'Start time (optional)') }}
+				</ActionInput>
+			</template>
 		</Actions>
 		<CallButton class="top-bar__button" />
 		<Actions v-if="showOpenSidebarButton"
