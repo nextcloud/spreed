@@ -85,7 +85,7 @@
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
 			<ActionButton
-				v-if="canFullModerate && isSharedPublicly"
+				v-if="canFullModerate"
 				icon="icon-clippy"
 				:close-after-click="true"
 				@click="handleCopyLink">
