@@ -55,6 +55,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Натисніть ⌘-C щоб скопіювати.",
     "Press Ctrl-C to copy." : "Натисніть Ctrl-C щоб скопіювати.",
     "Share" : "Поділитися",
+    "Password required" : "Зазначте пароль",
     "Cancel" : "Скасувати",
     "Change password" : "Змінити пароль",
     "Rename" : "Перейменувати",
