@@ -62,14 +62,26 @@ class Add extends Base {
 				'Token of the room to add users to'
 			)->addArgument(
 				'user',
-				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+				InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
 				'Invites the given users to the room'
+			)->addOption(
+				'group',
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+				'Invites all members of the given groups to the room'
+			)->addOption(
+				'circle',
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+				'Invites all members of the given circles to the room'
 			);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$token = $input->getArgument('token');
 		$users = $input->getArgument('user');
+		$groups = $input->getOption('group');
+		$circles = $input->getOption('circle');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -85,6 +97,8 @@ class Add extends Base {
 
 		try {
 			$this->addRoomParticipants($room, $users);
+			$this->addRoomParticipantsByGroup($room, $groups);
+			$this->addRoomParticipantsByCircle($room, $circles);
 		} catch (Exception $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;

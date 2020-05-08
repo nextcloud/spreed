@@ -60,8 +60,18 @@ class Create extends Base {
 				'The name of the room to create'
 			)->addArgument(
 				'user',
-				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+				InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
 				'Invites the given users to the room to create'
+			)->addOption(
+				'group',
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+				'Invites all members of the given group to the room to create'
+			)->addOption(
+				'circle',
+				null,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+				'Invites all members of the given circle to the room to create'
 			)->addOption(
 				'public',
 				null,
@@ -88,10 +98,12 @@ class Create extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$name = $input->getArgument('name');
 		$users = $input->getArgument('user');
-		$moderators = $input->getOption('moderator');
+		$groups = $input->getOption('group');
+		$circles = $input->getOption('circle');
 		$public = $input->getOption('public');
 		$readonly = $input->getOption('readonly');
-		$password = (string) $input->getOption('password');
+		$password = $input->getOption('password');
+		$moderators = $input->getOption('moderator');
 
 		$name = trim($name);
 		if (!$this->validateRoomName($name)) {
@@ -106,6 +118,8 @@ class Create extends Base {
 			$this->setRoomPassword($room, $password);
 
 			$this->addRoomParticipants($room, $users);
+			$this->addRoomParticipantsByGroup($room, $groups);
+			$this->addRoomParticipantsByCircle($room, $circles);
 			$this->addRoomModerators($room, $moderators);
 		} catch (Exception $e) {
 			$room->deleteRoom();

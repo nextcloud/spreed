@@ -25,9 +25,12 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
+use OCA\Circles\Api\v1\Circles;
+use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\IUser;
 
 trait TRoomCommand
 {
@@ -122,11 +125,82 @@ trait TRoomCommand
 
 	/**
 	 * @param Room     $room
+	 * @param string[] $groupIds
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function addRoomParticipantsByGroup(Room $room, array $groupIds): void {
+		if (!$groupIds) {
+			return;
+		}
+
+		$groupManager = \OC::$server->getGroupManager();
+
+		$users = [];
+		foreach ($groupIds as $groupId) {
+			$group = $groupManager->get($groupId);
+			if ($group === null) {
+				throw new InvalidArgumentException(sprintf("Group '%s' not found.", $groupId));
+			}
+
+			$groupUsers = array_map(function (IUser $user) {
+				return $user->getUID();
+			}, $group->getUsers());
+
+			$users = array_merge($users, array_values($groupUsers));
+		}
+
+		$this->addRoomParticipants($room, $users);
+	}
+
+	/**
+	 * @param Room     $room
+	 * @param string[] $circleIds
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function addRoomParticipantsByCircle(Room $room, array $circleIds): void {
+		if (!$circleIds) {
+			return;
+		}
+
+		if (!\OC::$server->getAppManager()->isEnabledForUser('circles')) {
+			throw new InvalidArgumentException("App 'circles' is not enabled.");
+		}
+
+		$users = [];
+		foreach ($circleIds as $circleId) {
+			try {
+				$circle = Circles::detailsCircle($circleId);
+			} catch (\Exception $e) {
+				throw new InvalidArgumentException(sprintf("Circle '%s' not found.", $circleId));
+			}
+
+			$circleUsers = array_filter($circle->getMembers(), function (Member $member) {
+				if (($member->getType() !== Member::TYPE_USER) || ($member->getUserId() === '')) {
+					return false;
+				}
+
+				return in_array($member->getStatus(), [Member::STATUS_INVITED, Member::STATUS_MEMBER], true);
+			});
+
+			$users = array_merge($users, $circleUsers);
+		}
+
+		$this->addRoomParticipants($room, $users);
+	}
+
+	/**
+	 * @param Room     $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
 	 */
 	protected function addRoomParticipants(Room $room, array $userIds): void {
+		if (!$userIds) {
+			return;
+		}
+
 		$userManager = \OC::$server->getUserManager();
 
 		$participants = [];
@@ -136,14 +210,23 @@ trait TRoomCommand
 				throw new InvalidArgumentException(sprintf("User '%s' not found.", $userId));
 			}
 
+			if (isset($participants[$user->getUID()])) {
+				// nothing to do, user is going to be a participant already
+				continue;
+			}
+
 			try {
 				$room->getParticipant($user->getUID());
-				// nothing to do, user already is a participant
+
+				// nothing to do, user is a participant already
+				continue;
 			} catch (ParticipantNotFoundException $e) {
-				$participants[] = [
-					'userId' => $user->getUID(),
-				];
+				// we expect the user not to be a participant yet
 			}
+
+			$participants[$user->getUID()] = [
+				'userId' => $user->getUID(),
+			];
 		}
 
 		\call_user_func_array([$room, 'addUsers'], $participants);
