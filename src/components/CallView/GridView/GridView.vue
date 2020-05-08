@@ -41,6 +41,7 @@
 							:token="token"
 							:model="callParticipantModel"
 							:is-grid="true"
+							:show-talking-highlight="!isStripe"
 							:is-stripe="isStripe"
 							:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:fit-video="false"
@@ -95,7 +96,7 @@
 				class="pages-indicator__dot"
 				:class="{'pages-indicator__dot--active': index === currentPage }" />
 		</div>
-		<div class="dev-mode__data">
+		<div v-if="devMode" class="dev-mode__data">
 			<p>GRID INFO</p>
 			<p>Videos (total): {{ videosCount }}</p>
 			<p>Displayed videos n: {{ displayedVideos.length }}</p>

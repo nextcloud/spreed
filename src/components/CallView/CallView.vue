@@ -31,6 +31,7 @@
 						:token="token"
 						:model="callParticipantModel"
 						:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
 						:is-grid="true"
 						:fit-video="true"
 						@switchScreenToId="_switchScreenToId" />
