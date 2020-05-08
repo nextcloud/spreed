@@ -121,14 +121,19 @@ class Create extends Base {
 
 		try {
 			$this->setRoomReadOnly($room, $readonly);
-			$this->setRoomPassword($room, $password);
+
+			if ($password !== null) {
+				$this->setRoomPassword($room, $password);
+			}
 
 			$this->addRoomParticipants($room, $users);
 			$this->addRoomParticipantsByGroup($room, $groups);
 			$this->addRoomParticipantsByCircle($room, $circles);
 			$this->addRoomModerators($room, $moderators);
 
-			$this->setRoomOwner($room, $owner);
+			if ($owner !== null) {
+				$this->setRoomOwner($room, $owner);
+			}
 		} catch (Exception $e) {
 			$room->deleteRoom();
 
