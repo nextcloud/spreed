@@ -1,14 +1,19 @@
 <template>
-	<div class="mainView">
+	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :force-white-icons="showChatInSidebar" />
-
-			<ChatView v-if="!showChatInSidebar" :token="token" />
-			<template v-else>
-				<CallView
-					:token="token" />
-			</template>
+			<TopBar
+				:is-in-call="showChatInSidebar"
+				:is-grid="isGrid"
+				@changeView="handleChangeView" />
+			<transition name="fade">
+				<ChatView v-if="!showChatInSidebar" :token="token" />
+				<template v-else>
+					<CallView
+						:is-grid="isGrid"
+						:token="token" />
+				</template>
+			</transition>
 		</template>
 	</div>
 </template>
@@ -24,11 +29,12 @@ import isInLobby from '../mixins/isInLobby'
 export default {
 	name: 'MainView',
 	components: {
-		CallView,
 		ChatView,
 		LobbyScreen,
 		TopBar,
+		CallView,
 	},
+
 	mixins: [
 		isInLobby,
 	],
@@ -37,6 +43,11 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+	data() {
+		return {
+			isGrid: false,
+		}
 	},
 
 	computed: {
@@ -78,6 +89,12 @@ export default {
 		},
 	},
 
+	methods: {
+		handleChangeView() {
+			this.isGrid = !this.isGrid
+		},
+	},
+
 	// FIXME reactivate once Signaling is done correctly per conversation again.
 	/*
 	watch: {
@@ -94,8 +111,8 @@ export default {
 	methods: {
 		loadSignalingSettings(token) {
 			console.debug('Loading signaling settings for ' + this.token)
-			// FIXME reset the settings so we can check it later on if loading is finished
 			this.signaling.loadSettings(token)
+			// FIXME reset the settings so we can check it later on if loading is finished
 		},
 	},
 	*/
@@ -103,8 +120,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mainView {
+
+.main-view {
 	height: 100%;
+	width: 100%;
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;

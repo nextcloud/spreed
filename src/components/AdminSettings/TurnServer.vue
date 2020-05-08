@@ -107,6 +107,14 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			testing: false,
+			testingError: false,
+			testingSuccess: false,
+		}
+	},
+
 	computed: {
 		testIconClasses() {
 			return {
@@ -126,14 +134,6 @@ export default {
 			}
 			return t('spreed', 'Test this server')
 		},
-	},
-
-	data() {
-		return {
-			testing: false,
-			testingError: false,
-			testingSuccess: false,
-		}
 	},
 
 	mounted() {

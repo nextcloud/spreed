@@ -32,6 +32,36 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 		</Actions>
+		<!-- Call layout switcher -->
+		<Popover v-if="isInCall"
+			class="top-bar__button"
+			trigger="manual"
+			:open="showLayoutHint && !hintDismissed"
+			@auto-hide="showLayoutHint=false">
+			<Actions slot="trigger">
+				<ActionButton v-if="isInCall"
+					:icon="changeViewIconClass"
+					@click="changeView">
+					{{ changeViewText }}
+				</actionbutton>
+			</Actions>
+			<div class="hint">
+				{{ layoutHintText }}
+				<div class="hint__actions">
+					<button
+						class="error"
+						@click="showLayoutHint=false, hintDismissed=true">
+						{{ t('spreed', 'Dismiss') }}
+					</button>
+					<button
+						class="primary"
+						@click="changeView">
+						{{ t('spreed', 'Use promoted-view') }}
+					</button>
+				</div>
+			</div>
+		</Popover>
+		<!-- sidebar toggle -->
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
@@ -44,8 +74,10 @@
 
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import CallButton from './CallButton'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'TopBar',
@@ -54,13 +86,25 @@ export default {
 		ActionButton,
 		Actions,
 		CallButton,
+		Popover,
 	},
 
 	props: {
-		forceWhiteIcons: {
+		isInCall: {
 			type: Boolean,
-			default: false,
+			required: true,
 		},
+		isGrid: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			showLayoutHint: false,
+			hintDismissed: false,
+		}
 	},
 
 	computed: {
@@ -69,7 +113,7 @@ export default {
 		},
 
 		iconFullscreen() {
-			if (this.forceWhiteIcons) {
+			if (this.isInCall) {
 				return 'forced-white icon-fullscreen'
 			}
 			return 'icon-fullscreen'
@@ -83,7 +127,7 @@ export default {
 		},
 
 		iconMenuPeople() {
-			if (this.forceWhiteIcons) {
+			if (this.isInCall) {
 				return 'forced-white icon-menu-people'
 			}
 			return 'icon-menu-people'
@@ -92,6 +136,25 @@ export default {
 		showOpenSidebarButton() {
 			return !this.$store.getters.getSidebarStatus()
 		},
+
+		changeViewText() {
+			if (this.isGrid) {
+				return t('spreed', 'Switch to promoted view')
+			} else {
+				return t('spreed', 'Switch to grid view')
+			}
+		},
+		changeViewIconClass() {
+			if (this.isGrid) {
+				return 'forced-white icon-promoted-view'
+			} else {
+				return 'forced-white icon-grid-view'
+			}
+		},
+
+		layoutHintText() {
+			return t('Spreed', `The videos in this call don't fit in your window: consider maximising it or switching to 'promoted view' for a better experience`)
+		},
 	},
 
 	mounted() {
@@ -99,6 +162,10 @@ export default {
 		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+		// Add call layout hint listener
+		EventBus.$on('toggleLayoutHint', (display) => {
+			this.showLayoutHint = display
+		})
 	},
 
 	beforeDestroy() {
@@ -106,6 +173,10 @@ export default {
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+		// Remove call layout hint listener
+		EventBus.$off('toggleLayoutHint', (display) => {
+			this.showLayoutHint = display
+		})
 	},
 
 	methods: {
@@ -131,7 +202,7 @@ export default {
 		},
 
 		enableFullscreen() {
-			const fullscreenElem = document.getElementById('content')
+			const fullscreenElem = document.getElementById('content-vue')
 
 			if (fullscreenElem.requestFullscreen) {
 				fullscreenElem.requestFullscreen()
@@ -155,6 +226,11 @@ export default {
 				document.msExitFullscreen()
 			}
 		},
+
+		changeView() {
+			this.$emit('changeView')
+			this.showLayoutHint = false
+		},
 	},
 }
 </script>
@@ -176,5 +252,15 @@ export default {
 		align-self: center;
 	}
 
+}
+
+.hint {
+	padding: 4px;
+	text-align: left;
+	&__actions{
+		display: flex;
+		justify-content: space-between;
+		padding-top:4px;
+	}
 }
 </style>

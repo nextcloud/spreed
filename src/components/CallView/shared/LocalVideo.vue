@@ -19,26 +19,36 @@
   -->
 
 <template>
-	<div id="localVideoContainer" class="videoContainer videoView" :class="{ speaking: localMediaModel.attributes.speaking }">
-		<video v-show="localMediaModel.attributes.videoEnabled" id="localVideo" ref="video" />
+	<div id="localVideoContainer"
+		class="videoContainer videoView"
+		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid, 'video-container-stripe': isStripe }">
+		<video v-show="localMediaModel.attributes.videoEnabled"
+			id="localVideo"
+			ref="video"
+			:class="videoClass"
+			class="video" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
+			<VideoBackground v-if="isGrid || isStripe" :display-name="displayName" :user="userId" />
 			<Avatar v-if="userId"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
 				:user="userId"
 				:display-name="displayName" />
-			<div v-else
+			<div v-if="!userId"
 				:class="avatarSizeClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
 			</div>
 		</div>
-		<LocalMediaControls ref="localMediaControls"
-			:model="localMediaModel"
-			:local-call-participant-model="localCallParticipantModel"
-			:screen-sharing-button-hidden="useConstrainedLayout"
-			@switchScreenToId="$emit('switchScreenToId', $event)" />
+		<transition name="fade">
+			<LocalMediaControls
+				ref="localMediaControls"
+				:model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:screen-sharing-button-hidden="useConstrainedLayout"
+				@switchScreenToId="$emit('switchScreenToId', $event)" />
+		</transition>
 	</div>
 </template>
 
@@ -49,6 +59,8 @@ import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
 import { showInfo } from '@nextcloud/dialogs'
+import video from './video.js'
+import VideoBackground from './VideoBackground'
 
 export default {
 
@@ -57,7 +69,10 @@ export default {
 	components: {
 		Avatar,
 		LocalMediaControls,
+		VideoBackground,
 	},
+
+	mixins: [video],
 
 	props: {
 		localMediaModel: {
@@ -69,6 +84,10 @@ export default {
 			required: true,
 		},
 		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
+		isStripe: {
 			type: Boolean,
 			default: false,
 		},
@@ -107,7 +126,6 @@ export default {
 		avatarSizeClass() {
 			return 'avatar-' + this.avatarSize + 'px'
 		},
-
 	},
 
 	watch: {
@@ -175,7 +193,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/avatar.scss';
+@import '../../../assets/variables.scss';
+@import '../../../assets/avatar.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
+
+.video-container-grid {
+	position:relative;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.video-container-stripe {
+	position:relative;
+	height: 100%;
+	flex: 0 0 300px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.video {
+	height: 100%;
+	width: 100%;
+}
+
+.video--fit {
+	/* Fit the frame */
+	object-fit: contain;
+}
+
+.video--fill {
+	/* Fill the frame */
+	object-fit: cover;
+}
+
+.avatar-container {
+	margin: auto;
+}
+
 </style>

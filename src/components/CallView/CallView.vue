@@ -1,5 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019, Daniel Calviño Sánchez (danxuliu@gmail.com)
+  - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
+  -
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -10,18 +12,43 @@
   -
   - This program is distributed in the hope that it will be useful,
   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   - GNU Affero General Public License for more details.
   -
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
-  -
-  -->
+-->
 
 <template>
 	<div id="call-container" :class="callViewClass">
-		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive" />
+		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
+			<div v-if="!isGrid" ref="videoContainer" class="video__promoted">
+				<template v-for="callParticipantModel in reversedCallParticipantModels">
+					<Video
+						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+						:key="callParticipantModel.attributes.peerId"
+						:token="token"
+						:model="callParticipantModel"
+						:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
+						:is-grid="true"
+						:fit-video="true"
+						@switchScreenToId="_switchScreenToId" />
+				</template>
+			</div>
+			<GridView
+				v-bind="$attrs"
+				:is-stripe="!isGrid"
+				:token="token"
+				:fit-video="true"
+				:has-pagination="true"
+				:call-participant-models="callParticipantModels"
+				:local-media-model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:shared-datas="sharedDatas" />
+			<!--
+			</div>
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
 				<Video
 					:key="callParticipantModel.attributes.peerId"
@@ -44,81 +71,67 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:use-constrained-layout="useConstrainedLayout"
 				@switchScreenToId="_switchScreenToId" />
-		</div>
-		<div id="screens">
-			<Screen v-if="localMediaModel.attributes.localScreen"
-				:local-media-model="localMediaModel"
-				:shared-data="localSharedData" />
-			<Screen v-for="callParticipantModel in callParticipantModelsWithScreen"
-				:key="'screen-' + callParticipantModel.attributes.peerId"
-				:call-participant-model="callParticipantModel"
-				:shared-data="sharedDatas[callParticipantModel.attributes.peerId]" />
+				-->
+
+			<div id="screens">
+				<Screen v-if="localMediaModel.attributes.localScreen"
+					:local-media-model="localMediaModel"
+					:shared-data="localSharedData" />
+				<Screen v-for="callParticipantModel in callParticipantModelsWithScreen"
+					:key="'screen-' + callParticipantModel.attributes.peerId"
+					:call-participant-model="callParticipantModel"
+					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]" />
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import EmptyCallView from './EmptyCallView'
-import LocalVideo from './LocalVideo'
-import Screen from './Screen'
-import Video from './Video'
-
+import GridView from './GridView/GridView'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import EmptyCallView from './shared/EmptyCallView'
+import Screen from './shared/Screen'
+import Video from './shared/Video'
 
 export default {
-
 	name: 'CallView',
 
 	components: {
+		GridView,
 		EmptyCallView,
-		LocalVideo,
 		Screen,
 		Video,
 	},
 
 	props: {
+		isGrid: {
+			type: Boolean,
+			default: false,
+		},
 		token: {
 			type: String,
 			required: true,
-		},
-
-		useConstrainedLayout: {
-			type: Boolean,
-			default: false,
 		},
 	},
 
 	data() {
 		return {
-			speakers: [],
-			speakingUnwatchers: {},
 			screens: [],
+			localMediaModel: localMediaModel,
+			localCallParticipantModel: localCallParticipantModel,
+			sharedDatas: {},
+			speakingUnwatchers: {},
 			screenUnwatchers: {},
+			speakers: [],
 			// callParticipantModelsWithScreen: [],
 			localSharedData: {
 				screenVisible: true,
 			},
-			sharedDatas: {},
-
-			localMediaModel: localMediaModel,
-			localCallParticipantModel: localCallParticipantModel,
 			callParticipantCollection: callParticipantCollection,
+			videoContainerAspectRatio: 0,
 		}
 	},
-
 	computed: {
-
-		callViewClass() {
-			const callViewClass = {
-				'incall': this.remoteParticipantsCount > 0,
-				'screensharing': this.screenSharingActive,
-				'constrained-layout': this.useConstrainedLayout,
-			}
-			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
-
-			return callViewClass
-		},
-
 		callParticipantModels() {
 			return callParticipantCollection.callParticipantModels
 		},
@@ -142,13 +155,20 @@ export default {
 		screenSharingActive() {
 			return this.screens.length > 0
 		},
+		callViewClass() {
+			const callViewClass = {
+				'incall': this.remoteParticipantsCount > 0,
+				'screensharing': this.screenSharingActive,
+				'constrained-layout': this.useConstrainedLayout,
+			}
+			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
+			return callViewClass
+		},
 	},
-
 	watch: {
-
 		localScreen: function(localScreen) {
-			this._setScreenAvailable(this.localCallParticipantModel.attributes.peerId, localScreen)
+			this._setScreenAvailable(localCallParticipantModel.attributes.peerId, localScreen)
 		},
 
 		callParticipantModels: function(models) {
@@ -166,17 +186,13 @@ export default {
 		'screens': function() {
 			this._setScreenVisible()
 		},
-
 	},
-
 	created() {
 		// Ensure that data is properly initialized before mounting the
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
 	},
-
 	methods: {
-
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
 		 *
@@ -321,12 +337,26 @@ export default {
 			this.sharedDatas[this.screens[0]].screenVisible = true
 		},
 
+		// Get the aspect ratio of the incoming stream
+		getVideoContainerAspectRatio() {
+			const videoContainerWidth = this.$refs.videoContainer.clientWidth
+			const VideoContainerHeight = this.$refs.videoContainer.clientHeight
+			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
+		},
 	},
-
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables.scss';
+
+.call-view {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: black,
+}
+
 #call-container {
 	width: 100%;
 	height: 100%;
@@ -347,6 +377,14 @@ export default {
 	justify-content: space-around;
 	-webkit-align-items: flex-end;
 	align-items: flex-end;
+	flex-direction: column;
+}
+
+.video__promoted {
+	position:relative;
+	height: 100%;
+	width: 100%;
+	display: block;
 }
 
 #videos.hidden {
@@ -362,9 +400,8 @@ export default {
 /* Force regular rules on "big speaker video" when screensharing is enabled. */
 .participants-1.screensharing .videoContainer,
 .participants-2.screensharing .videoContainer {
-	position: relative;
+	position: absolute;
 	width: 100%;
-	padding: 0 2%;
 	-webkit-box-flex: auto;
 	-moz-box-flex: auto;
 	-webkit-flex: auto;
@@ -397,7 +434,6 @@ export default {
 
 ::v-deep video {
 	z-index: 0;
-	max-height: 100%;
 	/* default filter for slightly better look */
 	/* Disabled for now as it causes a huuuuge performance drop.
 	 CPU usage is more than halved without this.
@@ -427,16 +463,6 @@ export default {
 	}
 }
 
-#videos .videoContainer:not(.promoted) ::v-deep video {
-	max-height: 200px;
-	max-width: 100%;
-	background-color: transparent;
-	border-radius: var(--border-radius) var(--border-radius) 0 0;
-	box-shadow: 0 0 15px var(--color-box-shadow);
-	bottom: 44px;
-	position: relative;
-}
-
 .constrained-layout #videos .videoContainer:not(.promoted) ::v-deep video {
 	/* Make the unpromoted videos smaller to not overlap too much the promoted
 	 * video */
@@ -450,13 +476,6 @@ export default {
 .participants-1 #videos .videoContainer ::v-deep video,
 .participants-2 #videos .videoContainer ::v-deep video {
 	padding: 0;
-}
-
-.videoContainer ::v-deep .avatar-container {
-	position: absolute;
-	bottom: 44px;
-	left: 0;
-	width: 100%;
 }
 
 .videoContainer ::v-deep .avatar-container .avatardiv {
@@ -490,15 +509,6 @@ export default {
 	left: 0;
 	top: 0;
 	z-index: 1;
-}
-.videoContainer.promoted ::v-deep video,
-.participants-2 .videoContainer:not(.videoView) ::v-deep video {
-	position: absolute;
-	width: initial;
-	height: 100%;
-	left: 50%;
-	top: 50%;
-	transform: translateY(-50%) translateX(-50%);
 }
 
 /* own video */

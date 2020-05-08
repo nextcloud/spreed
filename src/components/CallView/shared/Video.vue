@@ -23,46 +23,64 @@
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass">
-		<video v-if="!placeholderForPromoted" v-show="model.attributes.videoAvailable && sharedData.videoEnabled" ref="video" />
-		<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-			<Avatar v-if="model.attributes.userId"
-				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:user="model.attributes.userId"
-				:display-name="model.attributes.name"
-				:class="avatarClass" />
-			<div v-else
-				:class="guestAvatarClass"
-				class="avatar guest">
-				{{ firstLetterOfGuestName }}
+		<video v-if="!placeholderForPromoted"
+			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !hideVideo"
+			ref="video"
+			:class="videoClass"
+			class="video" />
+		<transition name="fade">
+			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
+				<VideoBackground v-if="isGrid"
+					:display-name="model.attributes.name"
+					:user="model.attributes.userId" />
+				<Avatar v-if="model.attributes.userId"
+					:size="avatarSize"
+					:disable-menu="true"
+					:disable-tooltip="true"
+					:user="model.attributes.userId"
+					:display-name="model.attributes.name"
+					:class="avatarClass" />
+				<div v-if="!model.attributes.userId"
+					:class="guestAvatarClass"
+					class="avatar guest">
+					{{ firstLetterOfGuestName }}
+				</div>
 			</div>
+		</transition>
+
+		<div class="bottom-bar"
+			:class="{'bottom-bar--video-on' : hasVideoStream}">
+			<transition name="fade">
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay" class="bottom-bar__nameIndicator">
+					{{ participantName }}
+				</div>
+			</transition>
+			<transition name="fade">
+				<div v-if="isGrid" v-show="showVideoOverlay" class="bottom-bar__mediaIndicator">
+					<button v-show="!connectionStateFailedNoRestart"
+						v-tooltip="audioButtonTooltip"
+						class="muteIndicator forced-white"
+						:class="audioButtonClass"
+						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
+						@click="forceMute" />
+					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
+						v-tooltip="videoButtonTooltip"
+						class="hideRemoteVideo forced-white"
+						:class="videoButtonClass"
+						@click="toggleVideo" />
+					<button v-show="!connectionStateFailedNoRestart"
+						v-tooltip="t('spreed', 'Show screen')"
+						class="screensharingIndicator forced-white icon-screen"
+						:class="screenSharingButtonClass"
+						@click="switchToScreen" />
+					<button v-show="connectionStateFailedNoRestart"
+						class="iceFailedIndicator forced-white icon-error"
+						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
+						disabled="true" />
+				</div>
+			</transition>
 		</div>
-		<div class="nameIndicator">
-			{{ participantName }}
-		</div>
-		<div class="mediaIndicator">
-			<button v-show="!connectionStateFailedNoRestart"
-				v-tooltip="audioButtonTooltip"
-				class="muteIndicator forced-white"
-				:class="audioButtonClass"
-				:disabled="!model.attributes.audioAvailable || !selfIsModerator"
-				@click="forceMute" />
-			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
-				v-tooltip="videoButtonTooltip"
-				class="hideRemoteVideo forced-white"
-				:class="videoButtonClass"
-				@click="toggleVideo" />
-			<button v-show="!connectionStateFailedNoRestart"
-				v-tooltip="t('spreed', 'Show screen')"
-				class="screensharingIndicator forced-white icon-screen"
-				:class="screenSharingButtonClass"
-				@click="switchToScreen" />
-			<button v-show="connectionStateFailedNoRestart"
-				class="iceFailedIndicator forced-white icon-error"
-				:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-				disabled="true" />
-		</div>
+		<div v-if="isSpeaking && showTalkingHighlight" class="speaking-shadow" />
 	</div>
 </template>
 
@@ -70,10 +88,12 @@
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel'
-import { PARTICIPANT } from '../../constants'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
+import { PARTICIPANT } from '../../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
+import video from './video.js'
+import VideoBackground from './VideoBackground'
 
 export default {
 
@@ -81,11 +101,14 @@ export default {
 
 	components: {
 		Avatar,
+		VideoBackground,
 	},
 
 	directives: {
 		tooltip: Tooltip,
 	},
+
+	mixins: [video],
 
 	props: {
 		token: {
@@ -108,8 +131,28 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		showVideoOverlay: {
+			type: Boolean,
+			default: true,
+		},
+		hideVideo: {
+			type: Boolean,
+			default: false,
+		},
+		isStripe: {
+			type: Boolean,
+			default: false,
+		},
+		showTalkingHighlight: {
+			type: Boolean,
+			default: true,
+		},
 	},
-
+	data() {
+		return {
+			mouseOver: false,
+		}
+	},
 	computed: {
 
 		containerClass() {
@@ -117,7 +160,9 @@ export default {
 				'videoContainer-dummy': this.placeholderForPromoted,
 				'not-connected': !this.placeholderForPromoted && this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED,
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
-				'promoted': !this.placeholderForPromoted && this.sharedData.promoted,
+				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
+				'video-container-grid': this.isGrid,
+				'video-container-grid--speaking': this.isSpeaking,
 			}
 		},
 
@@ -212,7 +257,12 @@ export default {
 				'screen-visible': this.sharedData.screenVisible,
 			}
 		},
-
+		isSpeaking() {
+			return this.model.attributes.speaking
+		},
+		hasVideoStream() {
+			return !this.placeholderForPromoted && this.model.attributes.videoAvailable && this.sharedData.videoEnabled && this.model.attributes.stream
+		},
 	},
 
 	watch: {
@@ -285,17 +335,46 @@ export default {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 
-@import '../../assets/avatar.scss';
+@import '../../../assets/avatar.scss';
+@import '../../../assets/variables.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
-.mediaIndicator {
-	position: absolute;
+.video-container-grid {
+	position:relative;
+	height: 100%;
 	width: 100%;
-	bottom: 44px;
-	left: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.avatar-container {
+	margin: auto;
+}
+.bottom-bar {
+	position: absolute;
+	bottom: 0;
+	height: 40px;
+	width: 100%;
+	padding: 0px 20px 12px 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	&--video-on {
+		text-shadow: 0px 0 4px rgba(0, 0, 0,.8);
+	}
+	&__nameIndicator {
+	color: white;
+	position: relative;
+	font-size: 20px;
+	}
+	&__mediaIndicator {
+	position: relative;
 	background-size: 22px;
 	text-align: center;
+	margin-top: -8px;
+	}
 }
 
 .constrained-layout .mediaIndicator {
@@ -341,4 +420,29 @@ export default {
 .iceFailedIndicator {
 	opacity: .8 !important;
 }
+
+.video {
+	height: 100%;
+	width: 100%;
+}
+
+.video--fit {
+	/* Fit the frame */
+	object-fit: contain;
+}
+
+.video--fill {
+	/* Fill the frame */
+	object-fit: cover;
+}
+
+.speaking-shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	box-shadow: inset 0 0 0 2px white;
+}
+
 </style>

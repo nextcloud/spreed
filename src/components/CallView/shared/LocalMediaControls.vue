@@ -86,7 +86,7 @@
 <script>
 import escapeHtml from 'escape-html'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner'
+import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 
 export default {
 
@@ -406,6 +406,12 @@ export default {
 	border-top-color: #fff;
 	border-bottom-color: transparent;
 }
+
+.nameIndicator {
+	position: absolute;
+	right: 20px;
+	bottom: 12px;
+	}
 
 .nameIndicator button {
 	background-color: transparent;

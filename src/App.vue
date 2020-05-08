@@ -419,7 +419,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#content {
+.content {
 	height: 100%;
 
 	&.in-call {
@@ -428,5 +428,10 @@ export default {
 			color: #FFFFFF;
 		}
 	}
+}
+
+.app-content {
+	min-width: 0;
+	flex: 1 1 100%;
 }
 </style>
