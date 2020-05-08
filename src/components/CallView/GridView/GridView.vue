@@ -363,13 +363,8 @@ export default {
 		isStripe() {
 			console.debug('isStripe: ', this.isStripe)
 			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			this.$nextTick(() => {
-				this.gridWidth = this.$refs.grid.clientWidth
-				this.gridHeight = this.$refs.grid.clientHeight
-			})
-
 			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
-			this.makeGrid()
+			this.$nextTick(this.makeGrid)
 			if (this.hasPagination) {
 				this.setNumberOfPages()
 				// Set the current page to 0
@@ -399,8 +394,6 @@ export default {
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
-			this.gridWidth = this.$refs.grid.clientWidth
-			this.gridHeight = this.$refs.grid.clientHeight
 			// TODO: properly handle resizes when not on first page:
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
@@ -417,6 +410,8 @@ export default {
 		// Find the right size if the grid in rows and columns (we already know
 		// the size in px).
 		makeGrid() {
+			this.gridWidth = this.$refs.grid.clientWidth
+			this.gridHeight = this.$refs.grid.clientHeight
 			// prevent making grid if no videos
 			console.debug(this.videos.length)
 			if (this.videos.length === 0) {
@@ -579,6 +574,7 @@ export default {
 	position: relative;
 	bottom: 0;
 	left: 0;
+	flex: 1 0 auto;
 }
 
 .grid {
