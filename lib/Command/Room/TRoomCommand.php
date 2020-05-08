@@ -124,6 +124,35 @@ trait TRoomCommand
 	}
 
 	/**
+	 * @param Room   $room
+	 * @param string $userId
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function setRoomOwner(Room $room, string $userId): void {
+		try {
+			$participant = $room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
+		}
+
+		$room->setParticipantType($participant, Participant::OWNER);
+	}
+
+	/**
+	 * @param Room $room
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function unsetRoomOwner(Room $room): void {
+		foreach ($room->getParticipants() as $participant) {
+			if ($participant->getParticipantType() === Participant::OWNER) {
+				$room->setParticipantType($participant, Participant::USER);
+			}
+		}
+	}
+
+	/**
 	 * @param Room     $room
 	 * @param string[] $groupIds
 	 *

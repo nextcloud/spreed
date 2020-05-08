@@ -80,6 +80,11 @@ class Update extends Base {
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Sets a new password for the room; pass an empty value to remove password protection'
+			)->addOption(
+				'owner',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Sets the given user as owner of the room; pass an empty value to remove the owner'
 			);
 	}
 
@@ -89,6 +94,7 @@ class Update extends Base {
 		$public = $input->getOption('public');
 		$readOnly = $input->getOption('readonly');
 		$password = $input->getOption('password');
+		$owner = $input->getOption('owner');
 
 		if (!in_array($public, [null, '0', '1'], true)) {
 			$output->writeln('<error>Invalid value for option "--public" given.</error>');
@@ -127,6 +133,14 @@ class Update extends Base {
 
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);
+			}
+
+			if ($owner !== null) {
+				if ($owner !== '') {
+					$this->setRoomOwner($room, $owner);
+				} else {
+					$this->unsetRoomOwner($room);
+				}
 			}
 		} catch (Exception $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

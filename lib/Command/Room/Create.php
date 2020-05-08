@@ -88,6 +88,11 @@ class Create extends Base {
 				InputOption::VALUE_REQUIRED,
 				'Protects the room to create with the given password'
 			)->addOption(
+				'owner',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Sets the given user as owner of the room to create'
+			)->addOption(
 				'moderator',
 				null,
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -103,6 +108,7 @@ class Create extends Base {
 		$public = $input->getOption('public');
 		$readonly = $input->getOption('readonly');
 		$password = $input->getOption('password');
+		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
 
 		$name = trim($name);
@@ -121,6 +127,8 @@ class Create extends Base {
 			$this->addRoomParticipantsByGroup($room, $groups);
 			$this->addRoomParticipantsByCircle($room, $circles);
 			$this->addRoomModerators($room, $moderators);
+
+			$this->setRoomOwner($room, $owner);
 		} catch (Exception $e) {
 			$room->deleteRoom();
 
