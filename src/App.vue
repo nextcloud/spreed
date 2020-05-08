@@ -311,6 +311,12 @@ export default {
 	mounted() {
 		// see browserCheck mixin
 		this.checkBrowser()
+		// Check sidebar status in previous sessions
+		if (localStorage.getItem('sidebarOpen') === 'false') {
+			this.$store.dispatch('hideSidebar')
+		} else if (localStorage.getItem('sidebarOpen') === 'true') {
+			this.$store.dispatch('showSidebar')
+		}
 	},
 
 	methods: {

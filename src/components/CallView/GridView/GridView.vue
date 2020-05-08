@@ -320,7 +320,7 @@ export default {
 		},
 
 		sidebarStatus() {
-			return this.$store.getters.getSidebarStatus()
+			return this.$store.getters.getSidebarStatus
 		},
 		// Current aspect ratio of each video component
 		videoContainerAspectRatio() {
