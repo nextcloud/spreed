@@ -25,6 +25,7 @@ nav:
       - 'Call management': 'call.md'
       - 'Chat management': 'chat.md'
       - 'Webinar management': 'webinar.md'
+      - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'
       - 'Internal signaling API': 'internal-signaling.md'
       - 'External signaling API': 'standalone-signaling-api-v1.md'
