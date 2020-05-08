@@ -234,6 +234,10 @@ export default {
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 1500;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .slide-right-leave-active,
@@ -252,12 +256,6 @@ export default {
 .slide-right-leave-to {
 	min-width: 0 !important;
 	max-width: 0 !important;
-}
-
-#talk-sidebar {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
 }
 
 #talk-sidebar > .emptycontent {
@@ -308,10 +306,10 @@ export default {
 }
 
 #talk-sidebar #call-container ::v-deep .videoContainer {
-        /* The video container has some small padding to prevent the video from
-         * reaching the edges, but it also uses "width: 100%", so the padding should
-         * be included in the full width of the element. */
-        box-sizing: border-box;
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
 }
 
 #talk-sidebar #call-container ::v-deep .videoContainer.promoted video {

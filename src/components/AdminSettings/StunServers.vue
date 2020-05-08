@@ -149,6 +149,7 @@ export default {
 	display: flex;
 	align-items: center;
 }
+
 .icon {
 	display: inline-block;
 	width: 44px;

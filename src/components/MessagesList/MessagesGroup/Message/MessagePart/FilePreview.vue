@@ -246,7 +246,7 @@ export default {
 
 	&:not(.is-viewer-available) {
 		strong:after {
-			content: " ↗";
+			content: ' ↗';
 		}
 	}
 }

@@ -270,6 +270,7 @@ export default {
 	margin-top: 0 !important;
 	right: 54px !important;
 }
+
 ::v-deep .app-sidebar__close {
 	top: 6px !important;
 	right: 6px !important;

@@ -596,13 +596,12 @@ export default {
 	vertical-align: middle;
 	padding-top: 80px;
 }
+
 .dev-mode__title {
 	position: absolute;
-	top: 44px;
 	left: 44px;
 	color: #00FF41;
 	z-index: 100;
-	font-size: 30px;
 	line-height: 120px;
 	font-weight: 900;
 	font-size: 100px !important;
@@ -628,6 +627,7 @@ export default {
 		white-space: nowrap;
 	}
 }
+
 .video:last-child {
 	grid-column-end: -1;
 }
@@ -641,6 +641,7 @@ export default {
 	top: 8px;
 	z-index: 2;
 	box-shadow: 0 0 4px var(--color-box-shadow);
+
 	&:hover,
 	&:focus {
 		background-color: var(var(--color-primary-element-light));
@@ -671,8 +672,9 @@ export default {
 		border-radius: 4px;
 		background-color: white;
 		opacity: 80%;
-		box-shadow: 0px 0px 4px black;
-	&--active {
+		box-shadow: 0 0 4px black;
+
+		&--active {
 			opacity: 100%;
 		}
 	}
