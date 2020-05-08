@@ -27,7 +27,6 @@ namespace OCA\Talk\Command\Room;
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Talk\Manager;
-use OCP\IConfig;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
