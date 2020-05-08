@@ -21,6 +21,7 @@
 
 <template>
 	<div class="top-bar">
+		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
 			class="top-bar__button"
@@ -76,7 +77,7 @@
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
 			<ActionButton
-				v-if="canFullModerate"
+				v-if="canFullModerate && isSharedPublicly"
 				icon="icon-clippy"
 				:close-after-click="true"
 				@click="handleCopyLink">
@@ -129,7 +130,6 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 		</Actions>
-		<CallButton class="top-bar__button" />
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
