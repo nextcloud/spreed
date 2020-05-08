@@ -28,7 +28,7 @@
 			:class="videoClass"
 			class="video" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
-			<VideoBackground v-if="isGrid" :display-name="displayName" :user="userId" />
+			<VideoBackground v-if="isGrid || isStripe" :display-name="displayName" :user="userId" />
 			<Avatar v-if="userId"
 				:size="avatarSize"
 				:disable-menu="true"

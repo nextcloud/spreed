@@ -20,12 +20,13 @@
 -->
 
 <template>
-	<div :class="{'wrapper-stripe': isStripe, 'wrapper': !isStripe}">
-		<div :class="{'pagination-wrapper': isStripe}">
-			<button v-if="hasPreviousPage && gridWidth > 0"
+	<div class="wrapper" :style="wrapperStyle">
+		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
+			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe"
 				class="grid-navigation icon-view-previous"
 				@click="handleClickPrevious" />
 			<div
+				ref="grid"
 				class="grid"
 				:style="gridStyle"
 				@mousemove="handleMovement"
@@ -69,11 +70,10 @@
 					</h1>
 				</template>
 			</div>
-			<button v-if="hasNextPage && gridWidth > 0"
+			<button v-if="hasNextPage && gridWidth > 0 && isStripe"
 				class="grid-navigation icon-view-next"
 				@click="handleClickNext" />
 		</div>
-
 		<LocalVideo
 			v-if="isStripe"
 			ref="localVideo"
@@ -174,13 +174,6 @@ export default {
 		hasPagination: {
 			type: Boolean,
 			default: false,
-		},
-		/**
-		 * Determines which element's size will be considered when building the grid
-		 */
-		boundariesElementClass: {
-			type: String,
-			required: true,
 		},
 		/**
 		 * To be set to true when the grid is in the promoted view.
@@ -327,13 +320,16 @@ export default {
 		sidebarStatus() {
 			return this.$store.getters.getSidebarStatus()
 		},
-
-		boundariesElement() {
-			return document.getElementsByClassName(this.boundariesElementClass)[0]
-		},
 		// Current aspect ratio of each video component
 		videoContainerAspectRatio() {
 			return (this.gridWidth / this.columns) / (this.gridHeight / this.rows)
+		},
+		wrapperStyle() {
+			if (this.isStripe) {
+				return 'height: 250px'
+			} else {
+				return 'height: 100%'
+			}
 		},
 	},
 
@@ -365,8 +361,14 @@ export default {
 		 },
 		 */
 		isStripe() {
-			this.gridWidth = this.boundariesElement.clientWidth
-			this.gridHeight = this.boundariesElement.clientHeight
+			console.debug('isStripe: ', this.isStripe)
+			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
+			this.$nextTick(() => {
+				this.gridWidth = this.$refs.grid.clientWidth
+				this.gridHeight = this.$refs.grid.clientHeight
+			})
+
+			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
 			this.makeGrid()
 			if (this.hasPagination) {
 				this.setNumberOfPages()
@@ -385,18 +387,8 @@ export default {
 	mounted() {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
-		this.handleResize()
-		this.gridWidth = this.boundariesElement.clientWidth
-		this.gridHeight = this.boundariesElement.clientHeight
-		// First build of the grid when mounting the component
-		this.makeGrid()
-		if (this.hasPagination) {
-			this.setNumberOfPages()
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
-		}
-
+		this.gridWidth = this.$refs.grid.clientWidth
+		this.gridHeight = this.$refs.grid.clientHeight
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.handleResize)
@@ -407,8 +399,8 @@ export default {
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
-			this.gridWidth = this.boundariesElement.clientWidth
-			this.gridHeight = this.boundariesElement.clientHeight
+			this.gridWidth = this.$refs.grid.clientWidth
+			this.gridHeight = this.$refs.grid.clientHeight
 			// TODO: properly handle resizes when not on first page:
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
@@ -425,6 +417,12 @@ export default {
 		// Find the right size if the grid in rows and columns (we already know
 		// the size in px).
 		makeGrid() {
+			// prevent making grid if no videos
+			console.debug(this.videos.length)
+			if (this.videos.length === 0) {
+				return
+			}
+			console.debug('makeGrid')
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
 			// grid looks at any given moment. We do this based on `gridWidthm`,
@@ -465,7 +463,8 @@ export default {
 		},
 
 		// Fine tune the number of rows and columns of the grid
-		shrinkGrid(numberOfVideos) {
+		async shrinkGrid(numberOfVideos) {
+			console.debug('shrinkGrid')
 			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
 			// No need to shrink more if 1 row and 1 column
 			if (this.rows === 1 && this.columns === 1) {
@@ -488,6 +487,7 @@ export default {
 				// Deltas with target aspect ratio
 				const deltaAspectRatioWithOneCoulumnLess = Math.abs(aspectRatioWithOneCoulumnLess - this.targetAspectRatio)
 				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
+				console.debug('deltaAspectRatioWithOneCoulumnLess: ', deltaAspectRatioWithOneCoulumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
 				// Compare the deltas to find out whether we need to remove a column or a row
 				if (deltaAspectRatioWithOneCoulumnLess <= deltaAspectRatioWithOneRowLess) {
 					if (this.columns >= 2) {
@@ -574,12 +574,6 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-	height: 100%;
-	width: 100%;
-}
-
-.wrapper-stripe {
-	height: 250px;
 	width: 100%;
 	display: flex;
 	position: relative;

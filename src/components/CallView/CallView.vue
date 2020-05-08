@@ -42,7 +42,6 @@
 				:token="token"
 				:fit-video="true"
 				:has-pagination="true"
-				boundaries-element-class="grid"
 				:call-participant-models="callParticipantModels"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
