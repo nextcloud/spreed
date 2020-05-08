@@ -36,7 +36,7 @@
 					<template v-for="callParticipantModel in displayedVideos">
 						<Video
 							:key="callParticipantModel.attributes.peerId"
-							class="video"
+							:class="{'video': !isStripe}"
 							:show-video-overlay="showVideoOverlay"
 							:token="token"
 							:model="callParticipantModel"
