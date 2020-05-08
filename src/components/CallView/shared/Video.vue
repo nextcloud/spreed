@@ -80,7 +80,7 @@
 				</div>
 			</transition>
 		</div>
-		<div v-if="isSpeaking" class="speaking-shadow" />
+		<div v-if="isSpeaking && !isStripe" class="speaking-shadow" />
 	</div>
 </template>
 
@@ -136,6 +136,10 @@ export default {
 			default: true,
 		},
 		hideVideo: {
+			type: Boolean,
+			default: false,
+		},
+		isStripe: {
 			type: Boolean,
 			default: false,
 		},

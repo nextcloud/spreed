@@ -41,6 +41,7 @@
 							:token="token"
 							:model="callParticipantModel"
 							:is-grid="true"
+							:is-stripe="isStripe"
 							:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
