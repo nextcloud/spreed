@@ -21,7 +21,6 @@
 
 <template>
 	<div class="top-bar">
-		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
 			class="top-bar__button"
@@ -55,6 +54,15 @@
 		<Actions
 			v-if="isFileConversation || (conversationHasSettings && showModerationMenu)"
 			class="top-bar__button">
+			<ActionButton
+				v-shortkey="['f']"
+				:icon="iconFullscreen"
+				:aria-label="t('spreed', 'Toggle fullscreen')"
+				@shortkey.native="toggleFullscreen"
+				@click="toggleFullscreen">
+				{{ labelFullscreen }}
+			</ActionButton>
+			<ActionSeparator />
 			<ActionLink
 				v-if="isFileConversation"
 				icon="icon-text"
@@ -120,16 +128,8 @@
 				@change="setLobbyTimer">
 				{{ t('spreed', 'Start time (optional)') }}
 			</ActionInput>
-			<ActionSeparator />
-			<ActionButton
-				v-shortkey="['f']"
-				:icon="iconFullscreen"
-				:aria-label="t('spreed', 'Toggle fullscreen')"
-				@shortkey.native="toggleFullscreen"
-				@click="toggleFullscreen">
-				{{ labelFullscreen }}
-			</ActionButton>
 		</Actions>
+		<CallButton class="top-bar__button" />
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
