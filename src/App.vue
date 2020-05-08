@@ -434,6 +434,15 @@ export default {
 			color: #FFFFFF;
 		}
 	}
+
+	// Fix fullscreen black bar on top
+	&:fullscreen {
+		padding-top: 0;
+
+		::v-deep .app-sidebar {
+			height: 100vh;
+		}
+	}
 }
 
 .app-content {
