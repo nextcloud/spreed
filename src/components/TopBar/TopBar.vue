@@ -21,6 +21,7 @@
 
 <template>
 	<div class="top-bar">
+		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
 			class="top-bar__button"
@@ -53,6 +54,7 @@
 		<Actions
 			v-shortkey="['f']"
 			class="top-bar__button"
+			menuAlign="right"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
@@ -131,7 +133,6 @@
 				</ActionInput>
 			</template>
 		</Actions>
-		<CallButton class="top-bar__button" />
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true">
