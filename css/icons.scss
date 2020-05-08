@@ -44,7 +44,8 @@
 	}
 
 	&.in-call {
-		.app-navigation-toggle {
+		.app-navigation-toggle,
+		.action-item__menutoggle {
 			color: #fff;
 		}
 	}
