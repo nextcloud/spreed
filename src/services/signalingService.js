@@ -24,13 +24,14 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Fetches the signaling settings for a conversation
  * @param {string} token The token of the conversation to be signaled.
+ * @param {object} options options
  */
-const fetchSignalingSettings = async(token) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings', {
+const fetchSignalingSettings = async({ token }, options) => {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings', Object.assign(options, {
 		params: {
 			token,
 		},
-	})
+	}))
 }
 
 const pullSignalingMessages = async(token, options) => {
