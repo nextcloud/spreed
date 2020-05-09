@@ -19,20 +19,20 @@
     "Today" : "Bu gün",
     "Yesterday" : "Dünən",
     "guest" : "Qonaq",
+    "Settings" : "Quraşdırmalar",
+    "Edit" : "Dəyişiklik et",
     "Share link" : "Linki yayımla",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
-    "Settings" : "Quraşdırmalar",
-    "Edit" : "Dəyişiklik et",
     "The password is wrong. Try again." : "Şifrə yalnışdır. Yenidən cəhd edin.",
     "Password" : "Şifrə",
     "Android app" : "Android proqramı",
     "iOS app" : "iOS proqramı",
-    "Share" : "Paylaş",
     "Cancel" : "Dayandır",
     "Change password" : "Şifrəni dəyiş",
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
+    "Share" : "Paylaş",
     "Favorited" : "İstəkləndi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

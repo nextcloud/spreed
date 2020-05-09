@@ -14,16 +14,16 @@
     "Back" : "பின்னுக்கு",
     "Close" : "மூடுக",
     "Today" : "இன்று",
+    "Settings" : "அமைப்புகள்",
+    "Edit" : "தொகுக்க",
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
-    "Settings" : "அமைப்புகள்",
-    "Edit" : "தொகுக்க",
     "Password" : "கடவுச்சொல்",
-    "Share" : "பகிர்வு",
     "Cancel" : "இரத்து செய்க",
     "Change password" : "கடவுச்சொல்லை மாற்றுக",
     "Rename" : "பெயர்மாற்றம்",
+    "Share" : "பகிர்வு",
     "Error while sharing" : "பகிரும் போதான வழு"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
