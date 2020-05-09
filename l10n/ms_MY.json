@@ -12,20 +12,20 @@
     "Close" : "Tutup",
     "Today" : "Hari ini",
     "Yesterday" : "Semalam",
+    "Settings" : "Tetapan",
+    "Edit" : "Sunting",
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
-    "Settings" : "Tetapan",
-    "Edit" : "Sunting",
     "Password" : "Kata laluan",
     "Copied!" : "Disalin!",
     "Not supported!" : "Tidak menyokong!",
     "Press ⌘-C to copy." : "Tekan ⌘-C untuk menyalin.",
     "Press Ctrl-C to copy." : "Tekan Ctrl-C untuk menyalin.",
-    "Share" : "Kongsi",
     "Cancel" : "Batal",
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
-    "Send" : "Hantar"
+    "Send" : "Hantar",
+    "Share" : "Kongsi"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
