@@ -142,6 +142,7 @@ OC.L10N.register(
     "Settings" : "Thiết lập",
     "Edit" : "Chỉnh sửa",
     "Start call" : "Bắt đầu cuộc gọi",
+    "Dismiss" : "Bỏ qua",
     "Rename conversation" : "Đổi tên cuộc đàm thoại",
     "Share link" : "Chia sẽ liên kết",
     "Password protection" : "Password protection",
