@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "spreed",
+    {
+    "Save changes" : "O'zgarishlarni saqlang",
+    "Saved!" : "Saqlangan!",
+    "Users" : "Foydalanuvchilar",
+    "Name" : "Ism...",
+    "Saved" : "Saqlangan",
+    "Contacts" : "Kontaktlar",
+    "Loading" : "Yuklanmoqda",
+    "Groups" : "Guruhlar",
+    "Error" : "Xato",
+    "Password protect" : "Parol himoyalangan",
+    "Settings" : "Sozlamalar",
+    "Dismiss" : "Tashlab qo'ymang",
+    "Share link" : "Ulanishni ulashing",
+    "Password" : "Parol",
+    "Copy" : "Nusxalash",
+    "Copied!" : "Nusxa olindi!",
+    "Not supported!" : "Qo'llab-quvvatlanmaydi!",
+    "Press ⌘-C to copy." : "Ko'chirib olish uchun ⌘-C tugmasini bosing.",
+    "Press Ctrl-C to copy." : "Nusxalash uchun Ctrl-C tugmalarini bosing.",
+    "Cancel" : "Bekor qilish",
+    "Rename" : "Nomni o'zgartiring",
+    "Send" : "Yuborish",
+    "Error while sharing" : "Almashish paytida xatolik yuz berdi"
+},
+"nplurals=1; plural=0;");
