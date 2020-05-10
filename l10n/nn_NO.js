@@ -22,6 +22,7 @@ OC.L10N.register(
     "Chat" : "Lynmelding",
     "Settings" : "Instillingar",
     "Edit" : "Endra",
+    "Dismiss" : "Forkast",
     "Share link" : "Del lenkje",
     "Password protection" : "Password protection",
     "Enter a password" : "Skriv inn eit passord",
