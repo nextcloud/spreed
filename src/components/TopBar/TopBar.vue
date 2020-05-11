@@ -345,7 +345,7 @@ export default {
 			return this.$store.getters.selectedVideoPeerId !== null
 		},
 		followSpeakerLabel() {
-			return t('spreed', `Show speaker`)
+			return t('spreed', `Automatic switching`)
 		},
 
 	},

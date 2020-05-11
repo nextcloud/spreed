@@ -472,7 +472,7 @@ export default {
 	width: 100%;
 	top: 0;
 	left: 0;
-	box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.9);
+	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 }
 
