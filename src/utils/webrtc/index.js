@@ -77,6 +77,10 @@ async function connectSignaling(token) {
 	}
 
 	if (signaling && signaling.settings.server !== settings.server) {
+		if (webRtc) {
+			webRtc.disconnect()
+			webRtc = null
+		}
 		signaling.disconnect()
 		signaling = null
 
