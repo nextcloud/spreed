@@ -183,7 +183,7 @@ export default {
 		},
 
 		firstLetterOfGuestName() {
-			const customName = this.participantName !== t('spreed', 'Guest') ? this.participantName : '?'
+			const customName = this.participantName && this.participantName !== t('spreed', 'Guest') ? this.participantName : '?'
 			return customName.charAt(0)
 		},
 
@@ -194,7 +194,10 @@ export default {
 		participantName() {
 			let participantName = this.model.attributes.name
 
-			if (!this.model.attributes.userId) {
+			// The name is undefined and not shown until a connection is made
+			// for registered users, so do not fall back to the guest name in
+			// the store either until the connection was made.
+			if (!this.model.attributes.userId && !participantName && participantName !== undefined) {
 				participantName = this.$store.getters.getGuestName(
 					this.$store.getters.getToken(),
 					this.sessionHash,
