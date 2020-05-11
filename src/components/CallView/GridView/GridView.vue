@@ -46,7 +46,8 @@
 							:hide-video="isStripe && sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
-							:shared-data="{videoEnabled: true}" />
+							:shared-data="{videoEnabled: true}"
+							@click.native="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
 					<LocalVideo
 						v-if="!isStripe"
@@ -587,6 +588,11 @@ export default {
 			}
 			this.showVideoOverlay = true
 			this.showVideoOverlayTimer = setTimeout(() => { this.showVideoOverlay = false }, 5000)
+		},
+
+		handleClickVideo(event, peerId) {
+			console.debug('selected-video peer id', peerId)
+			this.$emit('select-video', peerId)
 		},
 	},
 }

@@ -46,7 +46,8 @@
 				:call-participant-models="callParticipantModels"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
-				:shared-datas="sharedDatas" />
+				:shared-datas="sharedDatas"
+				@select-video="handleSelectVideo" />
 			<!--
 			</div>
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
@@ -342,6 +343,9 @@ export default {
 			const videoContainerWidth = this.$refs.videoContainer.clientWidth
 			const VideoContainerHeight = this.$refs.videoContainer.clientHeight
 			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
+		},
+		handleSelectVideo() {
+
 		},
 	},
 }
