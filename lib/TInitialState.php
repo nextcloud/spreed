@@ -55,7 +55,7 @@ trait TInitialState {
 		);
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
-		if ($signalingMode !== 'internal'
+		if ($signalingMode !== Config::SIGNALING_INTERNAL
 			&& !$this->memcacheFactory->isAvailable()
 			&& $this->serverConfig->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
 			throw new HintException(
