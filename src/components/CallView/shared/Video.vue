@@ -33,6 +33,7 @@
 		<transition name="fade">
 			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
 				<VideoBackground v-if="isGrid"
+					:show-promoted-placeholder="isPromoted && isStripe"
 					:display-name="model.attributes.name"
 					:user="model.attributes.userId" />
 				<Avatar v-if="model.attributes.userId"
@@ -83,7 +84,7 @@
 			</transition>
 		</div>
 		<div v-if="isSpeaking && showTalkingHighlight" class="speaking-shadow" />
-		<div v-if="mouseover" class="hover-shadow" />
+		<div v-if="mouseover || (isStripe && isPromoted)" class="hover-shadow" />
 	</div>
 </template>
 
@@ -150,6 +151,7 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		// Is the current promoted participant
 		isPromoted: {
 			type: Boolean,
 			default: false,

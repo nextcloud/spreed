@@ -22,12 +22,14 @@
 <template>
 	<div
 		:style="{'background-color': backgroundColor }"
-		class="video-background">
+		class="video-back">
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
 			class="video-background__picture">
 		<div class="darken" />
+		<div v-if="showPromotedPlaceholder"
+			class="mdi-voice" />
 	</div>
 </template>
 
@@ -46,6 +48,10 @@ export default {
 		user: {
 			type: String,
 			default: '',
+		},
+		showPromotedPlaceholder: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

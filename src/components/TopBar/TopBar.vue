@@ -25,7 +25,7 @@
 			class="top-bar__button primary"
 			@click="handlefollowSpeaker">
 			<span
-				class="icon-user-white" />
+				class="mdi mdi-voice" />
 			{{ followSpeakerLabel }}
 		</button>
 		<CallButton class="top-bar__button" />
@@ -423,6 +423,7 @@ export default {
 
 		changeView() {
 			this.$store.dispatch('isGrid', !this.isGrid)
+			this.$store.dispatch('selectedVideoPeerId', null)
 			this.showLayoutHint = false
 		},
 		async toggleGuests() {
