@@ -469,7 +469,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		peer.nickInterval = setInterval(function() {
 			let payload
 			if (signaling.settings.userId === null) {
-				payload = localStorage.getItem('nick')
+				payload = store.getters.getDisplayName()
 			} else {
 				payload = {
 					'name': store.getters.getDisplayName(),
@@ -494,7 +494,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			webrtc.emit('audioOn')
 		}
 		if (signaling.settings.userId === null) {
-			const currentGuestNick = localStorage.getItem('nick')
+			const currentGuestNick = store.getters.getDisplayName()
 			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
 		}
 
