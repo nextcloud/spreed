@@ -140,7 +140,6 @@ export default {
 			},
 			callParticipantCollection: callParticipantCollection,
 			videoContainerAspectRatio: 0,
-			selectedVideoPeerId: null,
 		}
 	},
 	computed: {
@@ -179,6 +178,9 @@ export default {
 		},
 		isGrid() {
 			return this.$store.getters.isGrid
+		},
+		selectedVideoPeerId() {
+			return this.$store.getters.selectedVideoPeerId
 		},
 		hasSelectedVideo() {
 			return this.selectedVideoPeerId !== null
@@ -363,7 +365,7 @@ export default {
 		},
 		handleSelectVideo(peerId) {
 			this.$store.dispatch('isGrid', false)
-			this.selectedVideoPeerId = peerId
+			this.$store.dispatch('selectedVideoPeerId', peerId)
 		},
 	},
 }

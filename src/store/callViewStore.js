@@ -22,11 +22,15 @@
 
 const state = {
 	isGrid: false,
+	selectedVideoPeerId: null,
 }
 
 const getters = {
 	isGrid: (state) => {
 		return state.isGrid
+	},
+	selectedVideoPeerId: (state) => {
+		return state.selectedVideoPeerId
 	},
 }
 
@@ -35,11 +39,17 @@ const mutations = {
 	isGrid(state, value) {
 		state.isGrid = value
 	},
+	selectedVideoPeerId(state, value) {
+		state.selectedVideoPeerId = value
+	},
 }
 
 const actions = {
 	isGrid(context, value) {
 		context.commit('isGrid', value)
+	},
+	selectedVideoPeerId(context, value) {
+		context.commit('selectedVideoPeerId', value)
 	},
 }
 
