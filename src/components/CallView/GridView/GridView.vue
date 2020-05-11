@@ -470,6 +470,9 @@ export default {
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
 			if (numberOfVideos < this.slots) {
+				const previousColumns = this.columns
+				const previousRows = this.rows
+
 				// Current video dimensions
 				const videoWidth = this.gridWidth / this.columns
 				const videoHeight = this.gridHeight / this.rows
@@ -507,7 +510,10 @@ export default {
 						return
 					}
 				}
-				this.shrinkGrid(numberOfVideos)
+
+				if (previousColumns !== this.columns || previousRows !== this.rows) {
+					this.shrinkGrid(numberOfVideos)
+				}
 			}
 		},
 
