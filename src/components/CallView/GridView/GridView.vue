@@ -419,10 +419,11 @@ export default {
 			if (this.videos.length === 0) {
 				return
 			}
+
 			console.debug('makeGrid')
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
-			// grid looks at any given moment. We do this based on `gridWidthm`,
+			// grid looks at any given moment. We do this based on `gridWidth`,
 			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
 			// context of the promoted view, we se 1 row directly and we remove 1 column
 			// (one of the participants will be in the promoted video slot)
@@ -463,31 +464,36 @@ export default {
 		async shrinkGrid(numberOfVideos) {
 			console.debug('shrinkGrid')
 			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
+
 			// No need to shrink more if 1 row and 1 column
 			if (this.rows === 1 && this.columns === 1) {
 				return
 			}
 
+			let currentColumns = this.columns
+			let currentRows = this.rows
+			let currentSlots = currentColumns * currentRows
+
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
-			if (numberOfVideos < this.slots) {
-				const previousColumns = this.columns
-				const previousRows = this.rows
+			while (numberOfVideos < currentSlots) {
+				const previousColumns = currentColumns
+				const previousRows = currentRows
 
-				if (previousRows === 1) {
+				if (currentRows === 1) {
 					// When we have more slots then videos, but only 1 row
 					// we already know the number of columns we are going to have
-					this.columns = numberOfVideos
-					return
+					currentColumns = numberOfVideos
+					break
 				}
 
 				// Current video dimensions
-				const videoWidth = this.gridWidth / this.columns
-				const videoHeight = this.gridHeight / this.rows
+				const videoWidth = this.gridWidth / currentColumns
+				const videoHeight = this.gridHeight / currentRows
 
 				// Hypothetical width/height with one column/row less than current
-				const videoWidthWithOneColumnLess = this.gridWidth / (this.columns - 1)
-				const videoHeightWithOneRowLess = this.gridHeight / (this.rows - 1)
+				const videoWidthWithOneColumnLess = this.gridWidth / (currentColumns - 1)
+				const videoHeightWithOneRowLess = this.gridHeight / (currentRows - 1)
 
 				// Hypothetical aspect ratio with one column/row less than current
 				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
@@ -500,31 +506,40 @@ export default {
 				console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
 				// Compare the deltas to find out whether we need to remove a column or a row
 				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
-					if (this.columns >= 2) {
-						this.columns--
+					if (currentColumns >= 2) {
+						currentColumns--
 					}
+
+					currentSlots = currentColumns * currentRows
+
 					// Check that there are still enough slots available
-					if (numberOfVideos > this.slots) {
+					if (numberOfVideos > currentSlots) {
 						// If not, revert the changes and break the loop
-						this.columns++
-						return
+						currentColumns++
+						break
 					}
 				} else {
-					if (this.rows >= 2) {
-						this.rows--
+					if (currentRows >= 2) {
+						currentRows--
 					}
+
+					currentSlots = currentColumns * currentRows
+
 					// Check that there are still enough slots available
-					if (numberOfVideos > this.slots) {
+					if (numberOfVideos > currentSlots) {
 						// If not, revert the changes and break the loop
-						this.rows++
-						return
+						currentRows++
+						break
 					}
 				}
 
-				if (previousColumns !== this.columns || previousRows !== this.rows) {
-					this.shrinkGrid(numberOfVideos)
+				if (previousColumns === currentColumns && previousRows === currentRows) {
+					break
 				}
 			}
+
+			this.columns = currentColumns
+			this.rows = currentRows
 		},
 
 		// Set the current number of pages
