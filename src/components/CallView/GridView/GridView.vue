@@ -336,8 +336,8 @@ export default {
 	},
 
 	watch: {
-		// If the video array changes, rebuild the grid
-		videos() {
+		// If the video array size changes, rebuild the grid
+		videosCount() {
 			this.makeGrid()
 			if (this.hasPagination) {
 				this.setNumberOfPages()
