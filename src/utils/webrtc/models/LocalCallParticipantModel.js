@@ -19,6 +19,8 @@
  *
  */
 
+import store from '../../../store/index.js'
+
 export default function LocalCallParticipantModel() {
 
 	this.attributes = {
@@ -80,6 +82,7 @@ LocalCallParticipantModel.prototype = {
 	setWebRtc: function(webRtc) {
 		if (this._webRtc) {
 			this._webRtc.off('forcedMute', this._handleForcedMuteBound)
+			this._unwatchDisplayNameChange()
 		}
 
 		this._webRtc = webRtc
@@ -88,6 +91,7 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', null)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
+		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
 	setGuestName: function(guestName) {
