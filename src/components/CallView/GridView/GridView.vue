@@ -473,6 +473,13 @@ export default {
 				const previousColumns = this.columns
 				const previousRows = this.rows
 
+				if (previousRows === 1) {
+					// When we have more slots then videos, but only 1 row
+					// we already know the number of columns we are going to have
+					this.columns = numberOfVideos
+					return
+				}
+
 				// Current video dimensions
 				const videoWidth = this.gridWidth / this.columns
 				const videoHeight = this.gridHeight / this.rows
