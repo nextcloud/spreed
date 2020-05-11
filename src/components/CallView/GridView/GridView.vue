@@ -467,6 +467,7 @@ export default {
 			if (this.rows === 1 && this.columns === 1) {
 				return
 			}
+
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
 			if (numberOfVideos < this.slots) {
@@ -483,17 +484,19 @@ export default {
 				// Current video dimensions
 				const videoWidth = this.gridWidth / this.columns
 				const videoHeight = this.gridHeight / this.rows
-				// Hypothetical width with one column less than current
+
+				// Hypothetical width/height with one column/row less than current
 				const videoWidthWithOneColumnLess = this.gridWidth / (this.columns - 1)
-				// Hypothetical height with one row less than current
 				const videoHeightWithOneRowLess = this.gridHeight / (this.rows - 1)
-				// Hypothetical aspect ratio with one column less than current
+
+				// Hypothetical aspect ratio with one column/row less than current
 				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
-				// Hypothetical aspect ratio with one row less than current
 				const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
+
 				// Deltas with target aspect ratio
 				const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - this.targetAspectRatio)
 				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
+
 				console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
 				// Compare the deltas to find out whether we need to remove a column or a row
 				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
