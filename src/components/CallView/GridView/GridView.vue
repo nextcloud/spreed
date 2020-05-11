@@ -374,7 +374,7 @@ export default {
 				this.currentPage = 0
 			}
 		},
-		 sidebarStatus() {
+		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
 		},
@@ -472,25 +472,25 @@ export default {
 			if (numberOfVideos < this.slots) {
 				// Current video dimensions
 				const videoWidth = this.gridWidth / this.columns
-				const videoHeigth = this.gridHeight / this.rows
-				// Hypotetical width with one column less than current
+				const videoHeight = this.gridHeight / this.rows
+				// Hypothetical width with one column less than current
 				const videoWidthWithOneColumnLess = this.gridWidth / (this.columns - 1)
-				// Hypotetical height with one row less than current
+				// Hypothetical height with one row less than current
 				const videoHeightWithOneRowLess = this.gridHeight / (this.rows - 1)
-				// Hypotetical aspect ratio with one column less than current
-				const aspectRatioWithOneCoulumnLess = videoWidthWithOneColumnLess / videoHeigth
-				// Hypotetical aspect ratio with one row less than current
+				// Hypothetical aspect ratio with one column less than current
+				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
+				// Hypothetical aspect ratio with one row less than current
 				const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
 				// Deltas with target aspect ratio
-				const deltaAspectRatioWithOneCoulumnLess = Math.abs(aspectRatioWithOneCoulumnLess - this.targetAspectRatio)
+				const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - this.targetAspectRatio)
 				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
-				console.debug('deltaAspectRatioWithOneCoulumnLess: ', deltaAspectRatioWithOneCoulumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
+				console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
 				// Compare the deltas to find out whether we need to remove a column or a row
-				if (deltaAspectRatioWithOneCoulumnLess <= deltaAspectRatioWithOneRowLess) {
+				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
 					if (this.columns >= 2) {
 						this.columns--
 					}
-					// Ceck that there are still enough slots available
+					// Check that there are still enough slots available
 					if (numberOfVideos > this.slots) {
 						// If not, revert the changes and break the loop
 						this.columns++
@@ -500,9 +500,9 @@ export default {
 					if (this.rows >= 2) {
 						this.rows--
 					}
-					// Ceck that there are still enough slots available
+					// Check that there are still enough slots available
 					if (numberOfVideos > this.slots) {
-					// If not, revert the changes and break the loop
+						// If not, revert the changes and break the loop
 						this.rows++
 						return
 					}
