@@ -105,10 +105,6 @@ export default {
 	},
 
 	props: {
-		isGrid: {
-			type: Boolean,
-			default: false,
-		},
 		token: {
 			type: String,
 			required: true,
@@ -165,6 +161,9 @@ export default {
 			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
 			return callViewClass
+		},
+		isGrid() {
+			return this.$store.getters.isGrid
 		},
 	},
 	watch: {

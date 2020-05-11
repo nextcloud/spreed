@@ -3,14 +3,11 @@
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
 			<TopBar
-				:is-in-call="showChatInSidebar"
-				:is-grid="isGrid"
-				@changeView="handleChangeView" />
+				:is-in-call="showChatInSidebar" />
 			<transition name="fade">
 				<ChatView v-if="!showChatInSidebar" :token="token" />
 				<template v-else>
 					<CallView
-						:is-grid="isGrid"
 						:token="token" />
 				</template>
 			</transition>
@@ -43,11 +40,6 @@ export default {
 			type: String,
 			required: true,
 		},
-	},
-	data() {
-		return {
-			isGrid: false,
-		}
 	},
 
 	computed: {
@@ -89,11 +81,6 @@ export default {
 		},
 	},
 
-	methods: {
-		handleChangeView() {
-			this.isGrid = !this.isGrid
-		},
-	},
 }
 </script>
 

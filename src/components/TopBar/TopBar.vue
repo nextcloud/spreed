@@ -54,7 +54,7 @@
 		<Actions
 			v-shortkey="['f']"
 			class="top-bar__button"
-			menuAlign="right"
+			menu-align="right"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
@@ -175,10 +175,6 @@ export default {
 
 	props: {
 		isInCall: {
-			type: Boolean,
-			required: true,
-		},
-		isGrid: {
 			type: Boolean,
 			required: true,
 		},
@@ -335,6 +331,9 @@ export default {
 				confirm: true,
 			}
 		},
+		isGrid() {
+			return this.$store.getters.isGrid
+		},
 
 	},
 
@@ -410,7 +409,7 @@ export default {
 		},
 
 		changeView() {
-			this.$emit('changeView')
+			this.$store.dispatch('isGrid', !this.isGrid)
 			this.showLayoutHint = false
 		},
 		async toggleGuests() {
