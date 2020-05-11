@@ -184,6 +184,7 @@ OC.L10N.register(
     "Loading" : "Hleð inn",
     "Groups" : "Hópar",
     "Circles" : "Hringir",
+    "Invalid path selected" : "Ógild slóð valin",
     "Error" : "Villa",
     "Password protect" : "Verja með lykilorði",
     "Back" : "Til baka",
