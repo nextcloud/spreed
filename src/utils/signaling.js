@@ -66,6 +66,7 @@ function Base(settings) {
 	this.currentRoomToken = null
 	this.currentCallToken = null
 	this.currentCallFlags = null
+	this.nextcloudSessionId = null
 	this.handlers = {}
 	this.features = {}
 	this._sendVideoIfAvailable = true
@@ -166,6 +167,7 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 	if (this.currentRoomToken) {
 		this.leaveRoom(this.currentRoomToken)
 		this.currentRoomToken = null
+		this.nextcloudSessionId = null
 	}
 }
 
@@ -185,6 +187,7 @@ Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 	return new Promise((resolve, reject) => {
 		console.debug('Joined')
 		this.currentRoomToken = token
+		this.nextcloudSessionId = sessionId
 		this._trigger('joinRoom', [token])
 		resolve()
 		if (this.currentCallToken === token) {
@@ -214,6 +217,7 @@ Signaling.Base.prototype.leaveRoom = function(token) {
 				// We left the current room.
 				if (token === this.currentRoomToken) {
 					this.currentRoomToken = null
+					this.nextcloudSessionId = null
 				}
 			})
 		})
@@ -619,6 +623,7 @@ Signaling.Standalone.prototype.connect = function() {
 				this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid])
 				this.joinedUsers = {}
 				this.currentRoomToken = null
+				this.nextcloudSessionId = null
 			} else {
 				// TODO(fancycode): Only fetch properties of room that was modified.
 				EventBus.$emit('shouldRefreshConversations')
@@ -835,8 +840,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	}
 
 	this._trigger('connect')
-	if (!resumedSession && this.currentRoomToken) {
-		this.joinRoom(this.currentRoomToken)
+	if (!resumedSession && this.currentRoomToken && this.nextcloudSessionId) {
+		this.joinRoom(this.currentRoomToken, this.nextcloudSessionId)
 	}
 }
 
@@ -868,6 +873,7 @@ Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
 		// callback, leading to two entries for anonymous participants.
 		console.info('Not connected to signaling server yet, defer joining room', token)
 		this.currentRoomToken = token
+		this.nextcloudSessionId = sessionId
 		return this._pendingJoinRoomPromise
 	}
 
