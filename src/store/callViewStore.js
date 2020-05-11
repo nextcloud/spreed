@@ -25,7 +25,7 @@ const state = {
 }
 
 const getters = {
-	isGrid: (state) => () => {
+	isGrid: (state) => {
 		return state.isGrid
 	},
 }
@@ -38,7 +38,6 @@ const mutations = {
 }
 
 const actions = {
-
 	isGrid(context, value) {
 		context.commit('isGrid', value)
 	},

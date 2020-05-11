@@ -23,7 +23,7 @@
 	<div id="call-container" :class="callViewClass">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
-			<div v-if="!isGrid" ref="videoContainer" class="video__promoted">
+			<div v-if="!isGrid && !hasSelectedVideo" ref="videoContainer" class="video__promoted">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
@@ -31,6 +31,20 @@
 						:token="token"
 						:model="callParticipantModel"
 						:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
+						:is-grid="true"
+						:fit-video="true"
+						@switchScreenToId="_switchScreenToId" />
+				</template>
+			</div>
+			<div v-if="!isGrid && hasSelectedVideo" ref="videoContainer" class="video__promoted">
+				<template v-for="callParticipantModel in reversedCallParticipantModels">
+					<Video
+						v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
+						:key="callParticipantModel.attributes.selectedVideoPeerId"
+						:token="token"
+						:model="callParticipantModel"
+						:shared-data="sharedDatas[selectedVideoPeerId]"
 						:show-talking-highlight="false"
 						:is-grid="true"
 						:fit-video="true"
@@ -126,6 +140,7 @@ export default {
 			},
 			callParticipantCollection: callParticipantCollection,
 			videoContainerAspectRatio: 0,
+			selectedVideoPeerId: null,
 		}
 	},
 	computed: {
@@ -164,6 +179,9 @@ export default {
 		},
 		isGrid() {
 			return this.$store.getters.isGrid
+		},
+		hasSelectedVideo() {
+			return this.selectedVideoPeerId !== null
 		},
 	},
 	watch: {
@@ -343,8 +361,9 @@ export default {
 			const VideoContainerHeight = this.$refs.videoContainer.clientHeight
 			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
 		},
-		handleSelectVideo() {
-
+		handleSelectVideo(peerId) {
+			this.$store.dispatch('isGrid', false)
+			this.selectedVideoPeerId = peerId
 		},
 	},
 }
