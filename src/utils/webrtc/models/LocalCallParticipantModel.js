@@ -19,6 +19,8 @@
  *
  */
 
+import store from '../../../store/index.js'
+
 export default function LocalCallParticipantModel() {
 
 	this.attributes = {
@@ -76,10 +78,16 @@ LocalCallParticipantModel.prototype = {
 	},
 
 	setWebRtc: function(webRtc) {
+		if (this._webRtc) {
+			this._unwatchDisplayNameChange()
+		}
+
 		this._webRtc = webRtc
 
 		this.set('peerId', this._webRtc.connection.getSessionId())
 		this.set('guestName', null)
+
+		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
 	setGuestName: function(guestName) {
