@@ -86,7 +86,12 @@ class Manager {
 			return $servers[$serverId];
 		}
 
-		$serverIdToAssign = random_int(0, count($servers) - 1);
+		try {
+			$serverIdToAssign = random_int(0, count($servers) - 1);
+		} catch (\Exception $e) {
+			$serverIdToAssign = 0;
+		}
+
 		$hardcodedServers = $this->serverConfig->getSystemValue('talk_hardcoded_hpb', []);
 		if (isset($hardcodedServers[$room->getToken()])) {
 			$hardcodedServerId = $hardcodedServers[$room->getToken()];
