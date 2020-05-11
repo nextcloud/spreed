@@ -36,7 +36,7 @@ import { EventBus } from './EventBus'
  */
 const joinConversation = async(token) => {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
 		EventBus.$emit('joinedConversation')
@@ -56,7 +56,7 @@ const leaveConversation = async function(token) {
 		// FIXME Signaling should not be synchronous
 		await signalingLeaveConversation(token)
 
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
 		return response
 	} catch (error) {
 		console.debug(error)
