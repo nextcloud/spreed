@@ -22,7 +22,9 @@
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
-		:class="containerClass">
+		:class="containerClass"
+		@mouseover="showShadow"
+		@mouseleave="hideShadow">
 		<video v-if="!placeholderForPromoted"
 			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !hideVideo"
 			ref="video"
@@ -81,6 +83,7 @@
 			</transition>
 		</div>
 		<div v-if="isSpeaking && showTalkingHighlight" class="speaking-shadow" />
+		<div v-if="mouseover" class="hover-shadow" />
 	</div>
 </template>
 
@@ -147,10 +150,15 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		isPromoted: {
+			type: Boolean,
+			default: false,
+		},
 	},
+
 	data() {
 		return {
-			mouseOver: false,
+			mouseover: false,
 		}
 	},
 	computed: {
@@ -327,7 +335,16 @@ export default {
 				this.$emit('switchScreenToId', this.model.attributes.peerId)
 			}
 		},
-
+		showShadow() {
+			if (!this.isPromoted) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (!this.isPromoted) {
+				this.mouseover = false
+			}
+		},
 	},
 
 }
@@ -447,6 +464,16 @@ export default {
 	top: 0;
 	left: 0;
 	box-shadow: inset 0 0 0 2px white;
+}
+
+.hover-shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.9);
+	cursor: pointer;
 }
 
 </style>

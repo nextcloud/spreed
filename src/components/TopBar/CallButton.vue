@@ -184,6 +184,8 @@ export default {
 
 		async leaveCall() {
 			console.info('Leaving call')
+			// Remove selected participant
+			this.$store.dispatch('selectedVideoPeerId', null)
 			this.loading = true
 			// Open navigarion
 			emit('toggle-navigation', {

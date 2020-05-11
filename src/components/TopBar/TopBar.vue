@@ -21,6 +21,13 @@
 
 <template>
 	<div class="top-bar">
+		<button v-if="hasSelectedVideo && !isGrid"
+			class="top-bar__button primary"
+			@click="handlefollowSpeaker">
+			<span
+				class="icon-user-white" />
+			{{ followSpeakerLabel }}
+		</button>
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
@@ -334,6 +341,12 @@ export default {
 		isGrid() {
 			return this.$store.getters.isGrid
 		},
+		hasSelectedVideo() {
+			return this.$store.getters.selectedVideoPeerId !== null
+		},
+		followSpeakerLabel() {
+			return t('spreed', `Show speaker`)
+		},
 
 	},
 
@@ -471,6 +484,9 @@ export default {
 		handleRenameConversation() {
 			this.$store.dispatch('isRenamingConversation', true)
 			this.$store.dispatch('showSidebar')
+		},
+		handlefollowSpeaker() {
+			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 	},
 }

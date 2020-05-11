@@ -37,7 +37,6 @@
 						<Video
 							:key="callParticipantModel.attributes.peerId"
 							:class="{'video': !isStripe}"
-							class="clickable"
 							:show-video-overlay="showVideoOverlay"
 							:token="token"
 							:model="callParticipantModel"
@@ -715,14 +714,6 @@ export default {
 		&--active {
 			opacity: 100%;
 		}
-	}
-}
-
-.clickable {
-	cursor: pointer;
-	&:hover,
-	&:focus {
-		box-shadow: inset 0 0 4px 4px white;
 	}
 }
 
