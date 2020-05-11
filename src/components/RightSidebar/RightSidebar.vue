@@ -190,7 +190,7 @@ export default {
 
 	watch: {
 		conversation() {
-			this.conversationName = this.$store.getters.conversation(this.token).displayName
+			this.conversationName = this.conversation.displayName
 		},
 	},
 
