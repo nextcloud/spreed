@@ -29,6 +29,8 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
+import SHA1 from 'crypto-js/sha1'
+import Hex from 'crypto-js/enc-hex'
 
 export default {
 
@@ -64,11 +66,31 @@ export default {
 				return t('spreed', 'Your screen')
 			}
 
-			if (this.callParticipantModel.attributes.name) {
-				return t('spreed', "{participantName}'s screen", { participantName: this.callParticipantModel.attributes.name })
+			if (this.remoteParticipantName) {
+				return t('spreed', "{participantName}'s screen", { participantName: this.remoteParticipantName })
 			}
 
-			return t('spreed', "Guest's screen")
+			return null
+		},
+
+		remoteSessionHash() {
+			return Hex.stringify(SHA1(this.callParticipantModel.attributes.peerId))
+		},
+
+		remoteParticipantName() {
+			let remoteParticipantName = this.callParticipantModel.attributes.name
+
+			// The name is undefined and not shown until a connection is made
+			// for registered users, so do not fall back to the guest name in
+			// the store either until the connection was made.
+			if (!this.callParticipantModel.attributes.userId && !remoteParticipantName && remoteParticipantName !== undefined) {
+				remoteParticipantName = this.$store.getters.getGuestName(
+					this.$store.getters.getToken(),
+					this.remoteSessionHash,
+				)
+			}
+
+			return remoteParticipantName
 		},
 
 	},
