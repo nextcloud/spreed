@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -26,8 +27,6 @@ namespace OCA\Talk\Share\Helper;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCP\IUser;
-use OCP\IUserManager;
 use OCP\Share\IShare;
 
 /**
@@ -74,5 +73,4 @@ class DeletedShareAPIController {
 
 		return $result;
 	}
-
 }

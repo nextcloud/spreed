@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,10 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-
 class Webinary {
-
 	public const LOBBY_NONE = 0;
 	public const LOBBY_NON_MODERATORS = 1;
-
 }

@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class ParticipantListContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -91,7 +90,7 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	 * @Then I see that the number of participants shown in the list is :numberOfParticipants
 	 */
 	public function iSeeThatTheNumberOfParticipantsShownInTheListIs($numberOfParticipants) {
-		$numberOfParticipantsMatchCallback = function() use ($numberOfParticipants) {
+		$numberOfParticipantsMatchCallback = function () use ($numberOfParticipants) {
 			try {
 				return count($this->participantsListItems()) === intval($numberOfParticipants);
 			} catch (NoSuchElementException $exception) {
@@ -128,5 +127,4 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 			PHPUnit_Framework_Assert::fail("Participant $participantName is still marked as a moderator after $timeout seconds but it should be a normal participant instead");
 		}
 	}
-
 }

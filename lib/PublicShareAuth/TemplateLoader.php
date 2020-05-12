@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -41,7 +42,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * Talk UI as needed.
  */
 class TemplateLoader {
-
 	use TInitialState;
 
 	public function __construct(IInitialStateService $initialStateService,
@@ -55,7 +55,7 @@ class TemplateLoader {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(GenericEvent $event) {
+		$listener = static function (GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
 			/** @var self $templateLoader */
@@ -88,5 +88,4 @@ class TemplateLoader {
 
 		$this->publishInitialStateForGuest();
 	}
-
 }

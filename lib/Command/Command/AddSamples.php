@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -32,7 +33,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AddSamples extends Base {
-
 	use TRenderCommand;
 
 	/** @var CommandService */
@@ -73,7 +73,7 @@ class AddSamples extends Base {
 		$chmod = fileperms($appPath . '/sample-commands/calc.sh');
 		if (!($chmod & 0x0040 || $chmod & 0x0008 || $chmod & 0x0001)) {
 			$output->writeln('<error>sample-commands/calc.sh is not executable</error>');
-		} else if (!shell_exec('which bc')) {
+		} elseif (!shell_exec('which bc')) {
 			$output->writeln('<error>Can not add calculator command, because Basic calculator package (bc - https://www.gnu.org/software/bc/) is missing</error>');
 		} else {
 			$this->installCommand(

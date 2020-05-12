@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -39,9 +40,6 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
-use OCP\ICache;
-use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -216,7 +214,7 @@ class SignalingController extends OCSController {
 
 		$response = [];
 		$messages = json_decode($messages, true);
-		foreach($messages as $message) {
+		foreach ($messages as $message) {
 			$ev = $message['ev'];
 			switch ($ev) {
 				case 'message':
@@ -281,7 +279,7 @@ class SignalingController extends OCSController {
 			// Query all messages and send them to the user
 			$data = $this->messages->getAndDeleteMessages($sessionId);
 			$messageCount = count($data);
-			$data = array_filter($data, function($message) {
+			$data = array_filter($data, function ($message) {
 				return $message['data'] !== 'refresh-participant-list';
 			});
 
@@ -525,10 +523,10 @@ class SignalingController extends OCSController {
 
 		if ($action === 'join') {
 			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
-		} else if ($action === 'leave') {
+		} elseif ($action === 'leave') {
 			if (!empty($userId)) {
 				$room->leaveRoom($userId, $sessionId);
-			} else if ($participant instanceof Participant) {
+			} elseif ($participant instanceof Participant) {
 				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			}
 		}
@@ -589,5 +587,4 @@ class SignalingController extends OCSController {
 		];
 		return new DataResponse($response);
 	}
-
 }

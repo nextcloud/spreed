@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -62,5 +63,4 @@ abstract class AEnvironmentAwareController extends OCSController {
 	public function getParticipant(): ?Participant {
 		return $this->participant;
 	}
-
 }

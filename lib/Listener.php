@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
@@ -22,8 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
-use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;

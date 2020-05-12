@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -43,7 +44,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * needed.
  */
 class TemplateLoader {
-
 	use TInitialState;
 
 	public function __construct(IInitialStateService $initialStateService,
@@ -57,7 +57,7 @@ class TemplateLoader {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function(GenericEvent $event) {
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function (GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
 			/** @var self $templateLoader */
@@ -89,5 +89,4 @@ class TemplateLoader {
 
 		$this->publishInitialStateForGuest();
 	}
-
 }

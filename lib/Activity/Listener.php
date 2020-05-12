@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
@@ -64,14 +65,14 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(ModifyParticipantEvent $event) {
+		$listener = static function (ModifyParticipantEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->setActive($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateCallActivity($event->getRoom());
@@ -81,7 +82,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener, -100);
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener, -100);
 
-		$listener = static function(AddParticipantsEvent $event) {
+		$listener = static function (AddParticipantsEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());

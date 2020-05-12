@@ -21,14 +21,12 @@
 
 namespace OCA\Talk\Tests\php\Activity\Provider;
 
-
 use OCA\Talk\Activity\Provider\Base;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
-use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Julius Härtl <jus@bitgrid.net>
@@ -23,7 +24,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Settings;
-
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;

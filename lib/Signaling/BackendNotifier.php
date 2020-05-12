@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joachim Bauch <bauch@struktur.de>
@@ -100,7 +101,7 @@ class BackendNotifier {
 		$url = $signaling['server'] . $url;
 		if (strpos($url, 'wss://') === 0) {
 			$url = 'https://' . substr($url, 6);
-		} else if (strpos($url, 'ws://') === 0) {
+		} elseif (strpos($url, 'ws://') === 0) {
 			$url = 'http://' . substr($url, 5);
 		}
 		$body = json_encode($data);
@@ -328,5 +329,4 @@ class BackendNotifier {
 			],
 		]);
 	}
-
 }

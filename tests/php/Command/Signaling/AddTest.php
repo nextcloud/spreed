@@ -55,10 +55,10 @@ class AddTest extends TestCase {
 
 	public function testServerEmptyString() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return '';
-				} else if ($arg === 'secret') {
+				} elseif ($arg === 'secret') {
 					return 'my-test-secret';
 				}
 				throw new \Exception();
@@ -77,10 +77,10 @@ class AddTest extends TestCase {
 
 	public function testSecretEmptyString() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'wss://signaling.test.com';
-				} else if ($arg === 'secret') {
+				} elseif ($arg === 'secret') {
 					return '';
 				}
 				throw new \Exception();
@@ -99,10 +99,10 @@ class AddTest extends TestCase {
 
 	public function testAddServerToEmptyList() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'wss://signaling.test.com';
-				} else if ($arg === 'secret') {
+				} elseif ($arg === 'secret') {
 					return 'my-test-secret';
 				}
 				throw new \Exception();
@@ -138,10 +138,10 @@ class AddTest extends TestCase {
 
 	public function testAddServerToNonEmptyList() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'wss://signaling2.test.com';
-				} else if ($arg === 'secret') {
+				} elseif ($arg === 'secret') {
 					return 'my-test-secret';
 				}
 				throw new \Exception();

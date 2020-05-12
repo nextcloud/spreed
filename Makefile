@@ -61,6 +61,8 @@ appstore:
 	--exclude=babel.config.js \
 	--exclude=/build \
 	--exclude=check-vuejs-builds.sh \
+	--exclude=composer.json \
+	--exclude=composer.lock \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
@@ -76,12 +78,14 @@ appstore:
 	--exclude=node_modules \
 	--exclude=package.json \
 	--exclude=package-lock.json \
+	--exclude=.php_cs.dist \
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
 	--exclude=src \
 	--exclude=.stylelintignore \
 	--exclude=.stylelintrc \
 	--exclude=tests \
+	--exclude=vendor \
 	--exclude=webpack.*.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \

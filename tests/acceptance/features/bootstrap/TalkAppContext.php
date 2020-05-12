@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class TalkAppContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -162,5 +161,4 @@ class TalkAppContext implements Context, ActorAwareInterface {
 		$this->iOpenTheTalkApp();
 		$this->iSeeThatTheCurrentPageIsTheTalkApp();
 	}
-
 }

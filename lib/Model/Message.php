@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,12 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
-use OCP\IUser;
 
 class Message {
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
@@ -123,5 +124,4 @@ class Version2000Date20170707093535 extends SimpleMigrationStep {
 
 		return $schema;
 	}
-
 }

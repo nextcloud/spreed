@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,14 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Collaboration\Resources;
 
-use OCA\Talk\Collaboration\Collaborators\RoomPlugin;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
 use OCP\IURLGenerator;

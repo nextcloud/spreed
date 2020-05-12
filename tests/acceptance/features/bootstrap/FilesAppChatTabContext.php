@@ -25,7 +25,6 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 class FilesAppChatTabContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 	use ChatAncestorSetter;
 
@@ -97,5 +96,4 @@ class FilesAppChatTabContext implements Context, ActorAwareInterface {
 			PHPUnit_Framework_Assert::fail("The chat was not shown yet in the chat tab after $timeout seconds");
 		}
 	}
-
 }

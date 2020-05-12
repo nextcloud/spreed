@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
-
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Room;
@@ -39,7 +39,7 @@ class RestrictStartingCalls {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->checkStartCallPermissions($event);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -27,9 +28,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
-use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
-use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -40,7 +39,6 @@ use OCA\Talk\Room;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
-
 	public static function register(IEventDispatcher $dispatcher): void {
 		self::registerInternalSignaling($dispatcher);
 		self::registerExternalSignaling($dispatcher);
@@ -53,7 +51,7 @@ class Listener {
 	}
 
 	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			if (!self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -68,7 +66,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, $listener);
 
-		$listener = static function(ParticipantEvent $event) {
+		$listener = static function (ParticipantEvent $event) {
 			if (!self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -92,7 +90,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
 
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			$room = $event->getRoom();
 			if (!self::isUsingInternalSignaling()) {
 				return;
@@ -112,7 +110,7 @@ class Listener {
 	}
 
 	protected static function registerExternalSignaling(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function(AddParticipantsEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function (AddParticipantsEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -122,7 +120,7 @@ class Listener {
 
 			$notifier->roomInvited($event->getRoom(), $event->getParticipants());
 		});
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -141,7 +139,7 @@ class Listener {
 		// "participantsModified" once the clients no longer expect a
 		// "roomModified" message for participant type changes.
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function (ModifyParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -158,7 +156,7 @@ class Listener {
 			}
 			$notifier->participantsModified($event->getRoom(), $sessionIds);
 		});
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function(RoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -170,7 +168,7 @@ class Listener {
 			$participants = $room->getParticipantsLegacy();
 			$notifier->roomDeleted($room, $participants);
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function(RemoveUserEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function (RemoveUserEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -180,7 +178,7 @@ class Listener {
 
 			$notifier->roomsDisinvited($event->getRoom(), [$event->getUser()->getUID()]);
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, static function(RemoveParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, static function (RemoveParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -191,7 +189,7 @@ class Listener {
 			$notifier->roomSessionsRemoved($event->getRoom(), [$event->getParticipant()->getSessionId()]);
 		});
 
-		$listener = static function(ModifyParticipantEvent $event) {
+		$listener = static function (ModifyParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -208,7 +206,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
 
-		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, static function(RoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -221,7 +219,7 @@ class Listener {
 			$sessionIds = [];
 			$notifier->participantsModified($event->getRoom(), $sessionIds);
 		});
-		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, static function (ModifyParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -231,7 +229,7 @@ class Listener {
 
 			$notifier->participantsModified($event->getRoom(), [$event->getParticipant()->getSessionId()]);
 		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND , static function(ChatParticipantEvent $event) {
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND , static function (ChatParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -248,7 +246,7 @@ class Listener {
 			];
 			$notifier->sendRoomMessage($room, $message);
 		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, static function(ChatEvent $event) {
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, static function (ChatEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}

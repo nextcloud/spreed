@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-
 use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -38,7 +38,6 @@ use OCP\Mail\IMailer;
 use OCP\Util;
 
 class GuestManager {
-
 	public const EVENT_BEFORE_EMAIL_INVITE = self::class . '::preInviteByEmail';
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';

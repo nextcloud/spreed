@@ -44,7 +44,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @BeforeScenario
 	 */
 	public function initializeChatAncestors() {
-		$this->chatAncestorsByActor = array();
+		$this->chatAncestorsByActor = [];
 		$this->chatAncestor = null;
 	}
 
@@ -461,5 +461,4 @@ class ChatContext implements Context, ActorAwareInterface {
 	public function iSeeThatTheMessageContainsAFormattedFilePreview($number) {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedFilePreviewInChatMessage($this->chatAncestor, $number), 10));
 	}
-
 }

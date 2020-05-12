@@ -27,7 +27,6 @@ use OCA\Talk\Chat\Command\ShellExecutor;
 use Test\TestCase;
 
 class ShellExecutorTest extends TestCase {
-
 	public function dataExecShellRun(): array {
 		return [
 			['admin', 'token', 'echo {ARGUMENTS}', '$PATH', '$PATH'],
@@ -71,7 +70,6 @@ class ShellExecutorTest extends TestCase {
 	public function testExecShellRun(?string $actorId, string $roomToken, string $cmd, string $arguments, string $output): void {
 		$executor = new ShellExecutor();
 		$this->assertSame($output, $executor->execShell($cmd, $arguments, $roomToken, $actorId));
-
 	}
 
 	public function dataExecShell(): array {

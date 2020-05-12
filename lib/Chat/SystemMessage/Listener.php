@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Chat\SystemMessage;
-
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
@@ -65,7 +65,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
@@ -76,7 +76,7 @@ class Listener {
 				$listener->sendSystemMessage($room, 'call_started');
 			}
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 
 			if ($event->getParticipant()->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
@@ -90,14 +90,14 @@ class Listener {
 			$listener->sendSystemMessage($room, 'call_left', [], $event->getParticipant());
 		});
 
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, static function(RoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, static function (RoomEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
 			$listener->sendSystemMessage($room, 'conversation_created');
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, static function(ModifyRoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, static function (ModifyRoomEvent $event) {
 			if ($event->getOldValue() === '' ||
 				$event->getNewValue() === '') {
 				return;
@@ -112,7 +112,7 @@ class Listener {
 				'oldName' => $event->getOldValue(),
 			]);
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, static function(ModifyRoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
@@ -123,20 +123,20 @@ class Listener {
 				$listener->sendSystemMessage($room, 'password_removed');
 			}
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, static function(ModifyRoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 
 			if ($event->getNewValue() === Room::PUBLIC_CALL) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guests_allowed');
-			} else if ($event->getNewValue() === Room::GROUP_CALL) {
+			} elseif ($event->getNewValue() === Room::GROUP_CALL) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guests_disallowed');
 			}
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, static function(ModifyRoomEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 
 			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
@@ -148,11 +148,11 @@ class Listener {
 
 			if ($event->getNewValue() === Room::READ_ONLY) {
 				$listener->sendSystemMessage($room, 'read_only');
-			} else if ($event->getNewValue() === Room::READ_WRITE) {
+			} elseif ($event->getNewValue() === Room::READ_WRITE) {
 				$listener->sendSystemMessage($room, 'read_only_off');
 			}
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, static function(ModifyLobbyEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, static function (ModifyLobbyEvent $event) {
 			if ($event->getNewValue() === $event->getOldValue()) {
 				return;
 			}
@@ -164,14 +164,14 @@ class Listener {
 
 			if ($event->isTimerReached()) {
 				$listener->sendSystemMessage($room, 'lobby_timer_reached');
-			} else if ($event->getNewValue() === Webinary::LOBBY_NONE) {
+			} elseif ($event->getNewValue() === Webinary::LOBBY_NONE) {
 				$listener->sendSystemMessage($room, 'lobby_none');
-			} else if ($event->getNewValue() === Webinary::LOBBY_NON_MODERATORS) {
+			} elseif ($event->getNewValue() === Webinary::LOBBY_NON_MODERATORS) {
 				$listener->sendSystemMessage($room, 'lobby_non_moderators');
 			}
 		});
 
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function(AddParticipantsEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function (AddParticipantsEvent $event) {
 			$participants = $event->getParticipants();
 			$user = \OC::$server->getUserSession()->getUser();
 			$userId = $user instanceof IUser ? $user->getUID() : null;
@@ -192,7 +192,7 @@ class Listener {
 				}
 			}
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function(RemoveUserEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function (RemoveUserEvent $event) {
 			$room = $event->getRoom();
 
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
@@ -203,28 +203,28 @@ class Listener {
 			$listener = \OC::$server->query(self::class);
 			$listener->sendSystemMessage($room, 'user_removed', ['user' => $event->getUser()->getUID()]);
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function(ModifyParticipantEvent $event) {
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 
 			if ($event->getNewValue() === Participant::MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $event->getParticipant()->getUser()]);
-			} else if ($event->getNewValue() === Participant::USER) {
+			} elseif ($event->getNewValue() === Participant::USER) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getParticipant()->getUser()]);
-			} else if ($event->getNewValue() === Participant::GUEST_MODERATOR) {
+			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
-			} else if ($event->getNewValue() === Participant::GUEST) {
+			} elseif ($event->getNewValue() === Participant::GUEST) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
 			}
 		});
-		$listener = function(GenericEvent $event) {
+		$listener = function (GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getSubject();
 

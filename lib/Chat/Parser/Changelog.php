@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -31,7 +32,6 @@ class Changelog {
 	 * @throws \OutOfBoundsException
 	 */
 	public function parseMessage(Message $chatMessage): void {
-
 		if ($chatMessage->getActorType() !== 'guests' ||
 			$chatMessage->getActorId() !== 'changelog') {
 			throw new \OutOfBoundsException('Not a changelog');

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Command;
 
-
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\CommandEvent;
 use OCA\Talk\Model\Command;
@@ -35,7 +35,6 @@ use OCP\IL10N;
 use OCP\ILogger;
 
 class Executor {
-
 	public const EVENT_APP_EXECUTE = self::class . '::execApp';
 
 	public const PLACEHOLDER_ROOM = '{ROOM}';
@@ -87,9 +86,9 @@ class Executor {
 
 		if ($command->getApp() === '' && $command->getCommand() === 'help') {
 			$output = $this->execHelp($room, $message, $arguments);
-		} else if ($command->getApp() !== '') {
+		} elseif ($command->getApp() !== '') {
 			$output = $this->execApp($room, $message, $command, $arguments);
-		} else  {
+		} else {
 			$output = $this->execShell($room, $message, $command, $arguments);
 		}
 

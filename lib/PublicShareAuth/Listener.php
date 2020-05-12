@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -45,19 +46,18 @@ use OCP\EventDispatcher\IEventDispatcher;
  * different room events.
  */
 class Listener {
-
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(JoinRoomUserEvent $event) {
+		$listener = static function (JoinRoomUserEvent $event) {
 			self::preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
-		$listener = static function(JoinRoomGuestEvent $event) {
+		$listener = static function (JoinRoomGuestEvent $event) {
 			self::preventExtraGuestsFromJoining($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
 
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			self::destroyRoomOnParticipantLeave($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
@@ -130,5 +130,4 @@ class Listener {
 
 		$room->deleteRoom();
 	}
-
 }

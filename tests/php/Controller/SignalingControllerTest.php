@@ -44,10 +44,8 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomInputSignalingController extends SignalingController {
-
 	private $inputStream;
 
 	public function setInputStream($data) {
@@ -57,7 +55,6 @@ class CustomInputSignalingController extends SignalingController {
 	protected function getInputStream(): string {
 		return $this->inputStream;
 	}
-
 }
 
 /**
@@ -658,7 +655,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent() {
-		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function(SignalingEvent $event) {
+		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function (SignalingEvent $event) {
 			$room = $event->getRoom();
 			$event->setSession([
 				'foo' => 'bar',
@@ -939,5 +936,4 @@ class SignalingControllerTest extends \Test\TestCase {
 		$participant = $room->getParticipant($this->userId);
 		$this->assertEquals($newSessionId, $participant->getSessionId());
 	}
-
 }

@@ -76,12 +76,12 @@ class SystemMessageTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->will($this->returnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
 		$this->l->expects($this->any())
 			->method('n')
-			->will($this->returnCallback(function($singular, $plural, $count, $parameters = []) {
+			->will($this->returnCallback(function ($singular, $plural, $count, $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
 				return vsprintf(str_replace('%n', $count, $text), $parameters);
 			}));
@@ -656,7 +656,6 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareThrows() {
-
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
@@ -928,7 +927,7 @@ class SystemMessageTest extends TestCase {
 
 		$parser->expects($this->any())
 			->method('getUser')
-			->willReturnCallback(function($user) {
+			->willReturnCallback(function ($user) {
 				return ['data' => $user];
 			});
 

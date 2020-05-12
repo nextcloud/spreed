@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -114,7 +115,7 @@ class UserMention {
 					'name' => $chatMessage->getRoom()->getDisplayName($chatMessage->getParticipant()->getUser()),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
 				];
-			} else if ($mention['type'] === 'guest') {
+			} elseif ($mention['type'] === 'guest') {
 				try {
 					$displayName = $this->guestManager->getNameBySessionHash(substr($mention['id'], strlen('guest/')));
 				} catch (ParticipantNotFoundException $e) {

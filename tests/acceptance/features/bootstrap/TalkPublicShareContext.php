@@ -22,7 +22,6 @@
  */
 
 class TalkPublicShareContext extends PublicShareContext {
-
 	use ChatAncestorSetter;
 
 	/**
@@ -73,5 +72,4 @@ class TalkPublicShareContext extends PublicShareContext {
 		} catch (NoSuchElementException $exception) {
 		}
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Settings\Admin;
-
 
 use OCA\Talk\Config;
 use OCA\Talk\Model\Command;
@@ -83,7 +83,7 @@ class AdminSettings implements ISettings {
 	protected function initCommands(): void {
 		$commands = $this->commandService->findAll();
 
-		$result = array_map(function(Command $command) {
+		$result = array_map(function (Command $command) {
 			return $command->asArray();
 		}, $commands);
 
@@ -124,5 +124,4 @@ class AdminSettings implements ISettings {
 	public function getPriority(): int {
 		return 0;
 	}
-
 }
