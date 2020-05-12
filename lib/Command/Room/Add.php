@@ -38,16 +38,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 	use TRoomCommand;
 
-	/** @var IUserManager */
-	public $userManager;
-
 	/** @var Manager */
 	public $manager;
 
-	public function __construct(IUserManager $userManager, Manager $manager) {
+	public function __construct(Manager $manager) {
 		parent::__construct();
 
-		$this->userManager = $userManager;
 		$this->manager = $manager;
 	}
 
