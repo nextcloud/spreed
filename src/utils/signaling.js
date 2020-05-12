@@ -31,7 +31,7 @@ import { rejoinConversation } from '../services/participantsService'
 import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import {
 	showError,
 	showWarning,
@@ -253,7 +253,7 @@ Signaling.Base.prototype.joinCall = function(token, flags) {
 				// Server maintenance, lobby kicked in, or room not found.
 				// We first redirect to the conversation again and that
 				// will then show the proper error message to the user.
-				OC.redirect(OC.generateUrl('call/' + token))
+				OC.redirect(generateUrl('call/' + token))
 			})
 	})
 }
