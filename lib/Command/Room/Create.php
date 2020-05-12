@@ -24,10 +24,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use Exception;
+use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Manager;
-use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -109,7 +108,7 @@ class Create extends Base {
 
 		$name = trim($name);
 		if (!$this->validateRoomName($name)) {
-			$output->writeln("<error>Invalid room name.</error>");
+			$output->writeln('<error>Invalid room name.</error>');
 			return 1;
 		}
 
@@ -130,7 +129,7 @@ class Create extends Base {
 			if ($owner !== null) {
 				$this->setRoomOwner($room, $owner);
 			}
-		} catch (Exception $e) {
+		} catch (InvalidArgumentException $e) {
 			$room->deleteRoom();
 
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

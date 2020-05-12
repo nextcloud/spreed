@@ -24,12 +24,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use Exception;
+use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -95,7 +94,7 @@ class Add extends Base {
 			$this->addRoomParticipants($room, $users);
 			$this->addRoomParticipantsByGroup($room, $groups);
 			$this->addRoomParticipantsByCircle($room, $circles);
-		} catch (Exception $e) {
+		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
