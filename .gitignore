@@ -1,20 +1,21 @@
 # Exclude npm stuff
-build
-node_modules
+/build
+/node_modules
+
+# PHP Code Sniffer
+/vendor
+/.php_cs.cache
 
 # Local docs
 /site
 
 # Karma/jasmine coverage data
-coverage
-tests/php/coverage-html
-tests/php/clover.xml
-tests/php/.phpunit.result.cache
-tests/integration/vendor
-tests/integration/output
+/coverage
+/tests/php/coverage-html
+/tests/php/clover.xml
+/tests/php/.phpunit.result.cache
+/tests/integration/vendor
+/tests/integration/output
 
-js
-
-# PHP Coding Style
-vendor/
-.php_cs.cache
+# Compiled javascript
+/js

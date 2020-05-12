@@ -79,11 +79,13 @@ appstore:
 	--exclude=package.json \
 	--exclude=package-lock.json \
 	--exclude=.php_cs.dist \
+	--exclude=.php_cs.cache \
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
 	--exclude=src \
 	--exclude=.stylelintignore \
-	--exclude=.stylelintrc \
+	--exclude=stylelint.config.js \
+	--exclude=.tx \
 	--exclude=tests \
 	--exclude=vendor \
 	--exclude=webpack.*.js \
