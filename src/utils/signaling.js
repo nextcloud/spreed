@@ -789,7 +789,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 	} else {
 		// Already reconnected with a new session.
 		this._forceReconnect = false
-		const url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend'
+		const url = generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'backend'
 		msg = {
 			'type': 'hello',
 			'hello': {

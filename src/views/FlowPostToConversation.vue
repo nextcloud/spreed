@@ -17,6 +17,7 @@
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 import { FLOW, CONVERSATION } from '../constants'
 
 export default {
@@ -76,7 +77,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {
 					return room.readOnly === CONVERSATION.STATE.READ_WRITE
 				})
