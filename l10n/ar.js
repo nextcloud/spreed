@@ -53,6 +53,7 @@ OC.L10N.register(
     "Grid view" : "عرض شبكي",
     "The password is wrong. Try again." : "كلمة المرور خاطئة. حاول مرة أخرى.",
     "Password" : "الكلمة السرية",
+    "Join conversations at any time, anywhere, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز",
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
     "Copy" : "أنسخ",
@@ -70,6 +71,7 @@ OC.L10N.register(
     "Send" : "أرسل",
     "Share" : "شارك",
     "Error while sharing" : "حصل خطأ عند عملية المشاركة",
-    "Favorited" : "المفضلة"
+    "Favorited" : "المفضلة",
+    "Join conversations at any time, any where, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
