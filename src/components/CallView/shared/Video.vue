@@ -155,6 +155,12 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		// True when this component is used in the big video slot in the
+		// promoted view
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -342,12 +348,12 @@ export default {
 			}
 		},
 		showShadow() {
-			if (this.isStripe && (!this.isSelected || this.mouseover)) {
+			if (!this.isBig && ((!this.isSelected || !this.isStripe) || this.mouseover)) {
 				this.mouseover = true
 			}
 		},
 		hideShadow() {
-			if (this.isStripe && (!this.isSelected || this.mouseover)) {
+			if (!this.isBig && ((!this.isSelected || !this.isStripe) || this.mouseover)) {
 				this.mouseover = false
 			}
 		},

@@ -35,7 +35,7 @@
 						:show-talking-highlight="false"
 						:is-grid="true"
 						:fit-video="true"
-						:is-promoted="true"
+						:is-big="true"
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
@@ -50,7 +50,7 @@
 						:shared-data="sharedDatas[selectedVideoPeerId]"
 						:show-talking-highlight="false"
 						:is-grid="true"
-						:is-promoted="true"
+						:is-big="true"
 						:fit-video="true"
 						@switchScreenToId="_switchScreenToId" />
 				</template>
