@@ -60,7 +60,7 @@
 		<div class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideoStream}">
 			<transition name="fade">
-				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected"
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
 					class="bottom-bar__nameIndicator"
 					:class="{'bottom-bar__nameIndicator--promoted': isSpeaking || isSelected}">
 					{{ participantName }}
@@ -91,7 +91,7 @@
 				</div>
 			</transition>
 		</div>
-		<div v-if="isSpeaking && !isStripe" class="speaking-shadow" />
+		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
 		<div v-if="mouseover" class="hover-shadow" />
 	</div>
 </template>
