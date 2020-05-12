@@ -136,6 +136,8 @@ trait TRoomCommand
 			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 		}
 
+		$this->unsetRoomOwner($room);
+
 		$room->setParticipantType($participant, Participant::OWNER);
 	}
 
