@@ -336,8 +336,8 @@ export default {
 	},
 
 	watch: {
-		// If the video array changes, rebuild the grid
-		videos() {
+		// If the video array size changes, rebuild the grid
+		videosCount() {
 			this.makeGrid()
 			if (this.hasPagination) {
 				this.setNumberOfPages()
@@ -374,7 +374,7 @@ export default {
 				this.currentPage = 0
 			}
 		},
-		 sidebarStatus() {
+		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
 		},
@@ -419,10 +419,11 @@ export default {
 			if (this.videos.length === 0) {
 				return
 			}
+
 			console.debug('makeGrid')
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
-			// grid looks at any given moment. We do this based on `gridWidthm`,
+			// grid looks at any given moment. We do this based on `gridWidth`,
 			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
 			// context of the promoted view, we se 1 row directly and we remove 1 column
 			// (one of the participants will be in the promoted video slot)
@@ -463,52 +464,82 @@ export default {
 		async shrinkGrid(numberOfVideos) {
 			console.debug('shrinkGrid')
 			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
+
 			// No need to shrink more if 1 row and 1 column
 			if (this.rows === 1 && this.columns === 1) {
 				return
 			}
+
+			let currentColumns = this.columns
+			let currentRows = this.rows
+			let currentSlots = currentColumns * currentRows
+
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
-			if (numberOfVideos < this.slots) {
+			while (numberOfVideos < currentSlots) {
+				const previousColumns = currentColumns
+				const previousRows = currentRows
+
+				if (currentRows === 1) {
+					// When we have more slots then videos, but only 1 row
+					// we already know the number of columns we are going to have
+					currentColumns = numberOfVideos
+					break
+				}
+
 				// Current video dimensions
-				const videoWidth = this.gridWidth / this.columns
-				const videoHeigth = this.gridHeight / this.rows
-				// Hypotetical width with one column less than current
-				const videoWidthWithOneColumnLess = this.gridWidth / (this.columns - 1)
-				// Hypotetical height with one row less than current
-				const videoHeightWithOneRowLess = this.gridHeight / (this.rows - 1)
-				// Hypotetical aspect ratio with one column less than current
-				const aspectRatioWithOneCoulumnLess = videoWidthWithOneColumnLess / videoHeigth
-				// Hypotetical aspect ratio with one row less than current
+				const videoWidth = this.gridWidth / currentColumns
+				const videoHeight = this.gridHeight / currentRows
+
+				// Hypothetical width/height with one column/row less than current
+				const videoWidthWithOneColumnLess = this.gridWidth / (currentColumns - 1)
+				const videoHeightWithOneRowLess = this.gridHeight / (currentRows - 1)
+
+				// Hypothetical aspect ratio with one column/row less than current
+				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
 				const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
+
 				// Deltas with target aspect ratio
-				const deltaAspectRatioWithOneCoulumnLess = Math.abs(aspectRatioWithOneCoulumnLess - this.targetAspectRatio)
+				const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - this.targetAspectRatio)
 				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
-				console.debug('deltaAspectRatioWithOneCoulumnLess: ', deltaAspectRatioWithOneCoulumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
+
+				console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
 				// Compare the deltas to find out whether we need to remove a column or a row
-				if (deltaAspectRatioWithOneCoulumnLess <= deltaAspectRatioWithOneRowLess) {
-					if (this.columns >= 2) {
-						this.columns--
+				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
+					if (currentColumns >= 2) {
+						currentColumns--
 					}
-					// Ceck that there are still enough slots available
-					if (numberOfVideos > this.slots) {
+
+					currentSlots = currentColumns * currentRows
+
+					// Check that there are still enough slots available
+					if (numberOfVideos > currentSlots) {
 						// If not, revert the changes and break the loop
-						this.columns++
-						return
+						currentColumns++
+						break
 					}
 				} else {
-					if (this.rows >= 2) {
-						this.rows--
+					if (currentRows >= 2) {
+						currentRows--
 					}
-					// Ceck that there are still enough slots available
-					if (numberOfVideos > this.slots) {
-					// If not, revert the changes and break the loop
-						this.rows++
-						return
+
+					currentSlots = currentColumns * currentRows
+
+					// Check that there are still enough slots available
+					if (numberOfVideos > currentSlots) {
+						// If not, revert the changes and break the loop
+						currentRows++
+						break
 					}
 				}
-				this.shrinkGrid(numberOfVideos)
+
+				if (previousColumns === currentColumns && previousRows === currentRows) {
+					break
+				}
 			}
+
+			this.columns = currentColumns
+			this.rows = currentRows
 		},
 
 		// Set the current number of pages
