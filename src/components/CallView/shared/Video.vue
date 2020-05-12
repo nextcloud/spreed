@@ -200,7 +200,11 @@ export default {
 		},
 
 		isSelectable() {
-			return !this.showPlaceholderForPromoted && !this.isBig
+			if (this.isStripe) {
+				return !this.isSelected
+			} else {
+				return true
+			}
 		},
 
 		containerClass() {
