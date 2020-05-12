@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
@@ -137,9 +138,9 @@ export default {
 		async copyLinkToConversation() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
 	},

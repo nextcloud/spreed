@@ -85,6 +85,7 @@
 
 <script>
 import escapeHtml from 'escape-html'
+import { showMessage } from '@nextcloud/dialogs'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 
@@ -297,9 +298,9 @@ export default {
 		toggleScreenSharingMenu() {
 			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
 				if (window.location.protocol === 'https:') {
-					OCP.Toast.message(t('spreed', 'Screen sharing is not supported by your browser.'))
+					showMessage(t('spreed', 'Screen sharing is not supported by your browser.'))
 				} else {
-					OCP.Toast.message(t('spreed', 'Screen sharing requires the page to be loaded through HTTPS.'))
+					showMessage(t('spreed', 'Screen sharing requires the page to be loaded through HTTPS.'))
 				}
 				return
 			}
@@ -353,14 +354,14 @@ export default {
 
 				switch (err.name) {
 				case 'HTTPS_REQUIRED':
-					OCP.Toast.message(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
+					showMessage(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
 					break
 				case 'PERMISSION_DENIED':
 				case 'NotAllowedError':
 				case 'CEF_GETSCREENMEDIA_CANCELED': // Experimental, may go away in the future.
 					break
 				case 'FF52_REQUIRED':
-					OCP.Toast.message(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
+					showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
 					break
 				case 'EXTENSION_UNAVAILABLE':
 					if (window.chrome) { // Chrome
@@ -371,13 +372,13 @@ export default {
 						const text = t('spreed', 'Screensharing extension is required to share your screen.')
 						const element = '<a href="' + extensionURL + '" target="_blank">' + escapeHtml(text) + '</a>'
 
-						OCP.Toast.message(element, { isHTML: true })
+						showMessage(element, { isHTML: true })
 					} else {
-						OCP.Toast.message(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
+						showMessage(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
 					}
 					break
 				default:
-					OCP.Toast.message(t('spreed', 'An error occurred while starting screensharing.'))
+					showMessage(t('spreed', 'An error occurred while starting screensharing.'))
 					break
 				}
 			})

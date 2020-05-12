@@ -55,6 +55,7 @@
 
 <script>
 import debounce from 'debounce'
+import { showError } from '@nextcloud/dialogs'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble'
@@ -132,7 +133,7 @@ export default {
 				}
 			} catch (exception) {
 				console.error(exception)
-				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+				showError(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 		visibilityChanged(isVisible) {
