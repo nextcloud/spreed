@@ -24,7 +24,7 @@
 		<button v-if="hasSelectedVideo && !isGrid"
 			class="top-bar__button primary"
 			@click="handlefollowSpeaker">
-			<Crown :size="16" color="ffffff" />
+			<AccountCircle :size="16" color="ffffff" />
 			{{ followSpeakerLabel }}
 		</button>
 		<CallButton class="top-bar__button" />
@@ -164,7 +164,7 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
-import Crown from 'vue-material-design-icons/Crown'
+import AccountCircle from 'vue-material-design-icons/AccountCircle'
 
 export default {
 	name: 'TopBar',
@@ -178,7 +178,7 @@ export default {
 		CallButton,
 		Popover,
 		ActionSeparator,
-		Crown,
+		AccountCircle,
 	},
 
 	props: {

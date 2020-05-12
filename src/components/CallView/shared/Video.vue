@@ -27,7 +27,7 @@
 		@mouseleave="hideShadow">
 		<transition name="fade">
 			<video
-				v-show="hasVideoStream"
+				v-show="hasVideoStream && !showPlaceholderForPromoted"
 				ref="video"
 				:class="videoClass"
 				class="video" />
@@ -52,7 +52,7 @@
 					</div>
 				</template>
 				<div v-if="showPlaceholderForPromoted" class="avatar-container">
-					<Crown fill-color="#FFFFFF" :size="36" />
+					<AccountCircle fill-color="#FFFFFF" :size="36" />
 				</div>
 			</div>
 		</transition>
@@ -106,7 +106,7 @@ import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
-import Crown from 'vue-material-design-icons/Crown'
+import AccountCircle from 'vue-material-design-icons/AccountCircle'
 
 export default {
 
@@ -115,7 +115,7 @@ export default {
 	components: {
 		Avatar,
 		VideoBackground,
-		Crown,
+		AccountCircle,
 	},
 
 	directives: {
