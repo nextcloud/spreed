@@ -65,6 +65,7 @@ class RoomTest extends TestCase {
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,
 			Webinary::LOBBY_NONE,
+			null,
 			'foobar',
 			'Test',
 			'passy',

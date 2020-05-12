@@ -56,8 +56,6 @@ class SignalingController extends OCSController {
 
 	/** @var Config */
 	private $talkConfig;
-	/** @var IConfig */
-	private $serverConfig;
 	/** @var \OCA\Talk\Signaling\Manager */
 	private $signalingManager;
 	/** @var TalkSession */
@@ -82,7 +80,6 @@ class SignalingController extends OCSController {
 	public function __construct(string $appName,
 								IRequest $request,
 								Config $talkConfig,
-								IConfig $serverConfig,
 								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
 								Manager $manager,
@@ -95,7 +92,6 @@ class SignalingController extends OCSController {
 								?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->talkConfig = $talkConfig;
-		$this->serverConfig = $serverConfig;
 		$this->signalingManager = $signalingManager;
 		$this->session = $session;
 		$this->dbConnection = $connection;
