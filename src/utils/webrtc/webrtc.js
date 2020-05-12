@@ -928,5 +928,24 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 	})
 
+	webrtc.on('disconnected', function() {
+		if (ownPeer) {
+			webrtc.removePeers(ownPeer.id)
+			ownPeer.end()
+			ownPeer = null
+		}
+
+		if (ownScreenPeer) {
+			ownScreenPeer.end()
+			ownScreenPeer = null
+		}
+
+		selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
+
+		usersChanged(signaling, [], previousUsersInRoom)
+		usersInCallMapping = {}
+		previousUsersInRoom = []
+	})
+
 	return webrtc
 }

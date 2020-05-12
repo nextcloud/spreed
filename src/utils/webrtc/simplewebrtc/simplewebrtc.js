@@ -265,8 +265,7 @@ SimpleWebRTC.prototype.leaveCall = function() {
 }
 
 SimpleWebRTC.prototype.disconnect = function() {
-	this.connection.disconnect()
-	delete this.connection
+	this.emit('disconnected')
 }
 
 SimpleWebRTC.prototype.handlePeerStreamAdded = function(peer) {

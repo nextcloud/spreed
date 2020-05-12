@@ -34,6 +34,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICache;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -140,6 +141,11 @@ class Manager {
 			]));
 		}
 
+		$assignedSignalingServer = $row['assigned_hpb'];
+		if ($assignedSignalingServer !== null) {
+			$assignedSignalingServer = (int) $assignedSignalingServer;
+		}
+
 		return new Room(
 			$this,
 			$this->db,
@@ -151,6 +157,7 @@ class Manager {
 			(int) $row['type'],
 			(int) $row['read_only'],
 			(int) $row['lobby_state'],
+			$assignedSignalingServer,
 			(string) $row['token'],
 			(string) $row['name'],
 			(string) $row['password'],
@@ -199,6 +206,23 @@ class Manager {
 		} catch (NotFoundException $e) {
 			return null;
 		}
+	}
+
+	public function resetAssignedSignalingServers(ICache $cache): void {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->isNotNull('assigned_hpb'));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			if (!$room->hasActiveSessions()) {
+				$room->setAssignedSignalingServer(null);
+				$cache->remove($room->getToken());
+			}
+		}
+		$result->closeCursor();
 	}
 
 	/**

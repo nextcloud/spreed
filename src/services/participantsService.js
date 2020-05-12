@@ -26,7 +26,7 @@ import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
 } from '../utils/webrtc/index'
-import { EventBus } from '../services/EventBus'
+import { EventBus } from './EventBus'
 
 /**
  * Joins the current user to a conversation specified with
@@ -36,16 +36,24 @@ import { EventBus } from '../services/EventBus'
  */
 const joinConversation = async(token) => {
 	try {
-		await signalingJoinConversation(token)
-
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
+		// FIXME Signaling should not be synchronous
+		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
 		EventBus.$emit('joinedConversation')
-
-		// FIXME Signaling should not handle joining a conversation
-		// const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
-		// return response
+		return response
 	} catch (error) {
 		console.debug(error)
 	}
+}
+
+/**
+ * Joins the current user to a conversation specified with
+ * the token.
+ *
+ * @param {string} token The conversation token;
+ */
+const rejoinConversation = async(token) => {
+	return axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
 }
 
 /**
@@ -55,11 +63,11 @@ const joinConversation = async(token) => {
  */
 const leaveConversation = async function(token) {
 	try {
+		// FIXME Signaling should not be synchronous
 		await signalingLeaveConversation(token)
 
-		// FIXME Signaling should not handle leaving a conversation
-		// const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
-		// return response
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
+		return response
 	} catch (error) {
 		console.debug(error)
 	}
@@ -150,6 +158,7 @@ const setGuestUserName = async(token, userName) => {
 
 export {
 	joinConversation,
+	rejoinConversation,
 	leaveConversation,
 	leaveConversationSync,
 	addParticipant,

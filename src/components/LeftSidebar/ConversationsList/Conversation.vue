@@ -103,7 +103,7 @@ import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import ConversationIcon from './../../ConversationIcon'
-import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
+import { removeCurrentUserFromConversation } from '../../../services/participantsService'
 import {
 	deleteConversation,
 	setNotificationLevel,
@@ -284,10 +284,6 @@ export default {
 			} catch (error) {
 				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
 			}
-		},
-		async joinConversation() {
-			await joinConversation(this.item.token)
-			this.$store.dispatch('markConversationRead', this.item.token)
 		},
 		/**
 		 * Deletes the conversation.

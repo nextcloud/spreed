@@ -77,6 +77,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	private $secureRandom;
 	/** @var ITimeFactory|MockObject */
 	private $timeFactory;
+	/** @var \OCA\Talk\Signaling\Manager|MockObject */
+	private $signalingManager;
 	/** @var CustomBackendNotifier */
 	private $controller;
 
@@ -115,6 +117,11 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 			],
 		]));
+
+		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
+		$this->signalingManager->expects($this->any())
+			->method('getSignalingServerForConversation')
+			->willReturn(['server' => $this->baseUrl]);
 
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->timeFactory);
 		$this->recreateBackendNotifier();
@@ -158,7 +165,8 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->config,
 			$this->createMock(ILogger::class),
 			$this->createMock(IClientService::class),
-			$this->secureRandom
+			$this->secureRandom,
+			$this->signalingManager
 		);
 	}
 

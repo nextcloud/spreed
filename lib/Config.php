@@ -32,6 +32,7 @@ class Config {
 
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
+	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
 	/** @var IConfig */
 	protected $config;
@@ -92,49 +93,6 @@ class Config {
 
 	public function getAttachmentFolder(string $userId): string {
 		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
-	}
-
-	public function getSettings(?string $userId): array {
-		$stun = [];
-		$stunServer = $this->getStunServer();
-		if ($stunServer) {
-			$stun[] = [
-				'url' => 'stun:' . $stunServer,
-			];
-		}
-		$turn = [];
-		$turnSettings = $this->getTurnSettings();
-		if (!empty($turnSettings['server'])) {
-			$protocols = explode(',', $turnSettings['protocols']);
-			foreach ($protocols as $proto) {
-				$turn[] = [
-					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'username' => $turnSettings['username'],
-					'credential' => $turnSettings['password'],
-				];
-			}
-		}
-
-		$signaling = [];
-		$servers = $this->getSignalingServers();
-		if (!empty($servers)) {
-			try {
-				$signaling = $servers[random_int(0, count($servers) - 1)];
-			} catch (\Exception $e) {
-				$signaling = $servers[0];
-			}
-			$signaling = $signaling['server'];
-		}
-
-		return [
-			'userId' => $userId,
-			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
-			'server' => $signaling,
-			'ticket' => $this->getSignalingTicket($userId),
-			'stunservers' => $stun,
-			'turnservers' => $turn,
-		];
 	}
 
 	/**
@@ -278,10 +236,27 @@ class Config {
 	}
 
 	public function getSignalingMode(): string {
-		if (empty($this->getSignalingServers())) {
+		$validModes = [
+			self::SIGNALING_INTERNAL,
+			self::SIGNALING_EXTERNAL,
+			self::SIGNALING_CLUSTER_CONVERSATION,
+		];
+
+		$mode = $this->config->getAppValue('spreed', 'signaling_mode', null);
+		if ($mode === self::SIGNALING_INTERNAL) {
 			return self::SIGNALING_INTERNAL;
 		}
-		return self::SIGNALING_EXTERNAL;
+
+		$numSignalingServers = count($this->getSignalingServers());
+		if ($numSignalingServers === 0) {
+			return self::SIGNALING_INTERNAL;
+		}
+		if ($numSignalingServers === 1
+			&& $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
+			return self::SIGNALING_EXTERNAL;
+		}
+
+		return \in_array($mode, $validModes, true) ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**

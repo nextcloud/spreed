@@ -45,6 +45,7 @@ use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\ILogger;
@@ -95,6 +96,7 @@ class PageController extends Controller {
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
 								IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								IRootFolder $rootFolder,
 								Config $talkConfig,
 								IConfig $serverConfig) {
@@ -110,6 +112,7 @@ class PageController extends Controller {
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->rootFolder = $rootFolder;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
