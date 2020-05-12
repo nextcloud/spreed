@@ -48,6 +48,9 @@
 					class="avatar guest">
 					{{ firstLetterOfGuestName }}
 				</div>
+				<div v-if="isSelected">
+					<Crown fill-color="#FFFFFF" :size="48" />
+				</div>
 			</div>
 		</transition>
 
@@ -98,6 +101,7 @@ import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
+import Crown from 'vue-material-design-icons/Crown'
 
 export default {
 
@@ -106,6 +110,7 @@ export default {
 	components: {
 		Avatar,
 		VideoBackground,
+		Crown,
 	},
 
 	directives: {
