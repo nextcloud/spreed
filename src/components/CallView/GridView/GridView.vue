@@ -23,8 +23,10 @@
 	<div class="wrapper" :style="wrapperStyle">
 		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
 			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
-				class="grid-navigation grid-navigation__previous npm install icon-play-previous"
-				@click="handleClickPrevious" />
+				class="grid-navigation grid-navigation__previous"
+				@click="handleClickPrevious">
+				<ChevronLeft :size="24" />
+			</button>
 			<div
 				ref="grid"
 				class="grid"
@@ -74,8 +76,10 @@
 				</template>
 			</div>
 			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
-				class="grid-navigation grid-navigation__next icon-play-next"
-				@click="handleClickNext" />
+				class="grid-navigation grid-navigation__next"
+				@click="handleClickNext">
+				<ChevronRight :size="24" />
+			</button>
 		</div>
 		<LocalVideo
 			v-if="isStripe"
@@ -120,6 +124,8 @@ import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
+import ChevronRight from 'vue-material-design-icons/ChevronRight'
+import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 
 export default {
 	name: 'GridView',
@@ -128,6 +134,8 @@ export default {
 		Video,
 		LocalVideo,
 		EmptyCallView,
+		ChevronRight,
+		ChevronLeft,
 	},
 
 	props: {
@@ -683,9 +691,11 @@ export default {
 	height: 44px;
 	background-color: white;
 	opacity: 0.6 !important;
-	top: 8px;
+	top: 12px;
 	z-index: 2;
 	box-shadow: 0 0 4px var(--color-box-shadow);
+	padding: 0;
+	margin: 0;
 
 	&:hover,
 	&:focus {

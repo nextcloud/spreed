@@ -51,7 +51,7 @@
 						{{ firstLetterOfGuestName }}
 					</div>
 				</template>
-				<div v-if="isSelected" class="avatar-container">
+				<div v-if="isSelected && isStripe" class="avatar-container">
 					<Crown fill-color="#FFFFFF" :size="36" />
 				</div>
 			</div>
