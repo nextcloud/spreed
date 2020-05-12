@@ -91,11 +91,11 @@ export default {
 		}, 30000)
 
 		EventBus.$on('routeChange', this.onRouteChange)
-		EventBus.$on('shouldRefreshConversations', this.fetchConversations)
+		EventBus.$on('shouldRefreshConversations', this.debounceFetchConversations)
 	},
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
-		EventBus.$off('shouldRefreshConversations', this.fetchConversations)
+		EventBus.$off('shouldRefreshConversations', this.debounceFetchConversations)
 	},
 	methods: {
 		onRouteChange({ from, to }) {
@@ -114,6 +114,12 @@ export default {
 
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
+
+		debounceFetchConversations: debounce(function() {
+			if (!this.isFetchingConversations) {
+				this.fetchConversations()
+			}
+		}, 3000),
 
 		async fetchConversations() {
 			this.isFetchingConversations = true
