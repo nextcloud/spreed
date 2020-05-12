@@ -205,7 +205,7 @@ const setConversationPassword = async function(token, password) {
  * @param {string} name the name to be set
  */
 const setConversationName = async function(token, name) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}`, {
 		roomName: name,
 	})
 	return response
