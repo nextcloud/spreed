@@ -54,7 +54,7 @@
 		<Actions
 			v-shortkey="['f']"
 			class="top-bar__button"
-			menuAlign="right"
+			menu-align="right"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
@@ -144,6 +144,7 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -464,9 +465,9 @@ export default {
 		async handleCopyLink() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
 		handleRenameConversation() {

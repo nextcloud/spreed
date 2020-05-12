@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
@@ -280,9 +281,9 @@ export default {
 		async copyLinkToConversation() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
 		/**
@@ -322,7 +323,7 @@ export default {
 				this.$store.dispatch('deleteConversation', this.item)
 			} catch (error) {
 				if (error.response && error.response.status === 400) {
-					OCP.Toast.error(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
+					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
 					console.debug(`error while removing yourself from conversation ${error}`)
 				}

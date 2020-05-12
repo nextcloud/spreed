@@ -112,10 +112,10 @@
 
 </style>
 <script>
-/* global OC */
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 export default {
 	name: 'RoomSelector',
@@ -158,7 +158,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
 				this.rooms = response.data.ocs.data
 				this.loading = false
 			})
