@@ -174,6 +174,9 @@ OC.L10N.register(
     "Signaling server URL" : "Seinalizazio zerbitzariaren URLa",
     "Validate SSL certificate" : "Balioztatu SSL ziurtagiria",
     "Delete this server" : "Ezabatu zerbitzari hau",
+    "Status: Checking connection" : "Egoera: konexioa egiaztatzen",
+    "OK: Running version: {version}" : "OK: {version} bertsioa exekutatzen",
+    "Error: Unknown error occurred" : "Errorea: errore ezezaguna gertatu da",
     "Signaling servers" : "Seinalizazio zerbitzariak",
     "Saved" : "Gordeta",
     "Add a new server" : "Gehitu zerbitzari berria",
@@ -427,6 +430,7 @@ OC.L10N.register(
     "Who can start a call?" : "Nork hasi dezake dei bat?",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzaria suebaki baten atzean dauden parte-hartzaileen trafikoan proxy lanak egiteko erabiltzen da.",
     "Join conversations at any time, any where, on any device." : "Batu elkarrizketetara edonoiz, edonondik, edozein gailutatik.",
+    "Loading contacts" : "Kontaktuak kargatzen",
     "Select participants" : "Hautatu parte-hartzaileak",
     "Contacts loading" : "Kontaktuak kargatzen"
 },
