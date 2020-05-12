@@ -96,8 +96,20 @@ export default {
 	height: 100%;
 	width: 100%;
 	&__picture {
-		/* Fill the frame */
-		object-fit: cover;
+		filter: blur(20px);
+		/* Make pic to at least 100% wide and tall */
+		min-width: calc(100% + 20px);
+		min-height: calc(100% + 20px);
+
+		/* Setting width & height to auto prevents the browser from stretching or squishing the pic */
+		width: auto;
+		height: auto;
+
+		/* Center the video */
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%)
 	}
 
 	h3 {
