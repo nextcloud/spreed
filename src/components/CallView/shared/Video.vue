@@ -31,24 +31,24 @@
 			:class="videoClass"
 			class="video" />
 		<transition name="fade">
-			<div v-if="!model.attributes.videoAvailable || !sharedData.videoEnabled || isSelected" class="avatar-container">
-				<VideoBackground v-if="isGrid && !isSelected"
+			<div class="avatar-container">
+				<VideoBackground v-if="!isSelected && (!sharedData.videoEnabled || !model.attributes.videoAvailable)"
 					:display-name="model.attributes.name"
 					:user="model.attributes.userId" />
-				<Avatar v-if="model.attributes.userId && !isSelected"
+				<Avatar v-if="model.attributes.userId && !isSelected && (!sharedData.videoEnabled || !model.attributes.videoAvailable)"
 					:size="avatarSize"
 					:disable-menu="true"
 					:disable-tooltip="true"
 					:user="model.attributes.userId"
 					:display-name="model.attributes.name"
 					:class="avatarClass" />
-				<div v-if="!model.attributes.userId && !isSelected"
+				<div v-if="!model.attributes.userId && !isSelected && (!sharedData.videoEnabled || !model.attributes.videoAvailable)"
 					:class="guestAvatarClass"
 					class="avatar guest">
 					{{ firstLetterOfGuestName }}
 				</div>
 				<div v-if="isSelected">
-					<Crown fill-color="#FFFFFF" :size="48" />
+					<Crown fill-color="#FFFFFF" :size="36" />
 				</div>
 			</div>
 		</transition>
