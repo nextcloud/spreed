@@ -44,6 +44,7 @@ import LoadingHint from '../../LoadingHint'
 import { fetchConversations } from '../../../services/conversationsService'
 import { joinConversation, leaveConversation } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
+import debounce from 'debounce'
 
 export default {
 	name: 'ConversationsList',
@@ -62,6 +63,7 @@ export default {
 	data() {
 		return {
 			initialisedConversations: false,
+			isFetchingConversations: false,
 		}
 	},
 
@@ -83,7 +85,9 @@ export default {
 	mounted() {
 		/** Refreshes the conversations every 30 seconds */
 		window.setInterval(() => {
-			this.fetchConversations()
+			if (!this.isFetchingConversations) {
+				this.fetchConversations()
+			}
 		}, 30000)
 
 		EventBus.$on('routeChange', this.onRouteChange)
@@ -110,8 +114,12 @@ export default {
 
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
+
 		async fetchConversations() {
-			/** Fetches the conversations from the server and then adds them one by one
+			this.isFetchingConversations = true
+
+			/**
+			 * Fetches the conversations from the server and then adds them one by one
 			 * to the store.
 			 */
 			try {
@@ -131,8 +139,10 @@ export default {
 				EventBus.$emit('conversationsReceived', {
 					singleConversation: false,
 				})
+				this.isFetchingConversations = false
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
+				this.isFetchingConversations = false
 			}
 		},
 		// Emit the click event so the search text in the leftsidebar can be reset.
