@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -39,7 +40,6 @@ use OCP\AppFramework\Db\Entity;
  * @method int getEnabled()
  */
 class Command extends Entity {
-
 	public const RESPONSE_NONE = 0;
 	public const RESPONSE_USER = 1;
 	public const RESPONSE_ALL = 2;

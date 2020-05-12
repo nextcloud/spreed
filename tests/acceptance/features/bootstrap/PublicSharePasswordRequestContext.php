@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class PublicSharePasswordRequestContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 	use ChatAncestorSetter;
 
@@ -77,5 +76,4 @@ class PublicSharePasswordRequestContext implements Context, ActorAwareInterface 
 		} catch (NoSuchElementException $exception) {
 		}
 	}
-
 }

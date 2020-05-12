@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -377,7 +378,7 @@ class UserMentionTest extends \Test\TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 
@@ -417,7 +418,7 @@ class UserMentionTest extends \Test\TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 
@@ -457,7 +458,7 @@ class UserMentionTest extends \Test\TestCase {
 			->willReturn('Name');
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 
@@ -477,5 +478,4 @@ class UserMentionTest extends \Test\TestCase {
 		$this->assertEquals('Mention to {mention-guest1}, and again {mention-guest1}', $chatMessage->getMessage());
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
-
 }

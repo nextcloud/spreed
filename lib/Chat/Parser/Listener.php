@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -28,9 +29,8 @@ use OCA\Talk\Events\ChatMessageEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
-
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
@@ -42,7 +42,7 @@ class Listener {
 			$parser->parseMessage($message);
 		}, -100);
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
@@ -59,7 +59,7 @@ class Listener {
 			}
 		}, -75);
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'system') {
@@ -77,7 +77,7 @@ class Listener {
 			}
 		});
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
 			if ($chatMessage->getMessageType() !== 'command') {

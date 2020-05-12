@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -461,7 +462,6 @@ class Room {
 	 * @return bool
 	 */
 	public function setActiveSince(\DateTime $since, bool $isGuest): bool {
-
 		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
 			$query = $this->db->getQueryBuilder();
 			$query->update('talk_rooms')
@@ -758,7 +758,6 @@ class Room {
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_USER_REMOVE, $event);
-
 	}
 
 	/**

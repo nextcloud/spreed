@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -30,7 +31,6 @@ use OCA\Talk\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
-use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share\IShare;
 
@@ -174,5 +174,4 @@ class ShareAPIController {
 
 		return true;
 	}
-
 }

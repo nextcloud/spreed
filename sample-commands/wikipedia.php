@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -83,4 +84,4 @@ if ($maxArticles < $numArticles) {
 	$response .= '* and ' . ($numArticles - $maxArticles) ." more articles found\n";
 }
 
-echo ($response);
+echo($response);

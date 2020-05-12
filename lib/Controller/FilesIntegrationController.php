@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -263,5 +264,4 @@ class FilesIntegrationController extends OCSController {
 		$file = array_shift($fileById);
 		return $file->getName();
 	}
-
 }

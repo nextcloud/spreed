@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class FilesAppRoomSharingContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -34,5 +33,4 @@ class FilesAppRoomSharingContext implements Context, ActorAwareInterface {
 		PHPUnit_Framework_Assert::assertEquals(
 				$this->actor->find(FilesAppSharingContext::sharedByLabel(), 10)->getText(), "Shared with you and the conversation $conversationName by $sharedByName");
 	}
-
 }

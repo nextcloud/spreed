@@ -55,19 +55,19 @@ class AddTest extends TestCase {
 
 	public function testServerEmptyString() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return '';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();
@@ -83,19 +83,19 @@ class AddTest extends TestCase {
 
 	public function testSecretEmpty() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return '';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();
@@ -111,19 +111,19 @@ class AddTest extends TestCase {
 
 	public function testGenerateSecret() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return null;
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return true;
 				}
 				throw new \Exception();
@@ -161,19 +161,19 @@ class AddTest extends TestCase {
 
 	public function testSecretAndGenerateSecretOptions() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return true;
 				}
 				throw new \Exception();
@@ -189,19 +189,19 @@ class AddTest extends TestCase {
 
 	public function testInvalidProtocolsString() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'invalid-protocol';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();
@@ -217,19 +217,19 @@ class AddTest extends TestCase {
 
 	public function testAddServerToEmptyList() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();
@@ -259,19 +259,19 @@ class AddTest extends TestCase {
 
 	public function testAddServerToNonEmptyList() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn2.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret-2';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();
@@ -312,19 +312,19 @@ class AddTest extends TestCase {
 
 	public function testServerSanitization() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'https://turn.test.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
-				} else if ($arg === 'generate-secret') {
+				} elseif ($arg === 'generate-secret') {
 					return false;
 				}
 				throw new \Exception();

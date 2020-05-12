@@ -29,7 +29,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConfigTest extends TestCase {
-
 	public function testGetStunServer() {
 		$servers = [
 			'stun1.example.com:443',
@@ -244,5 +243,4 @@ class ConfigTest extends TestCase {
 			self::invokePrivate($helper, 'getWebSocketDomainForSignalingServer', [$url])
 		);
 	}
-
 }

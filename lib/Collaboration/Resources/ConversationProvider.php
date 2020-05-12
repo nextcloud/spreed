@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -59,9 +60,9 @@ class ConversationProvider implements IProvider {
 			$iconURL = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
 			/**
 			 * Disabled for now, because it would show a square avatar
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$iconURL = $this->urlGenerator->linkToRouteAbsolute('core.avatar.getAvatar', ['userId' => 'admin', 'size' => 32]);
-			}
+			 * if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			 * $iconURL = $this->urlGenerator->linkToRouteAbsolute('core.avatar.getAvatar', ['userId' => 'admin', 'size' => 32]);
+			 * }
 			 */
 
 			return [

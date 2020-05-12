@@ -34,7 +34,6 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\ILogger;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Test\TestCase;
 
 class ExecutorTest extends TestCase {
@@ -174,6 +173,5 @@ class ExecutorTest extends TestCase {
 			->willReturn($output);
 
 		$this->assertSame($output, $this->executor->execShell($room, $message, $command, $arguments));
-
 	}
 }

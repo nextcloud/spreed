@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class ConversationInfoContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -260,5 +259,4 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 
 		$this->actor->find(self::roomModerationButton(), 10)->click();
 	}
-
 }

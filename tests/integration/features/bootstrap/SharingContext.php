@@ -493,7 +493,7 @@ class SharingContext implements Context {
 	public function transferingOwnershipFromTo(string $user1, string $user2) {
 		$args = ['files:transfer-ownership', $user1, $user2];
 
-		$args = array_map(function($arg) {
+		$args = array_map(function ($arg) {
 			return escapeshellarg($arg);
 		}, $args);
 		$args[] = '--no-ansi';
@@ -576,7 +576,7 @@ class SharingContext implements Context {
 			$returnedShare = (array) $returnedShare;
 			$returnedShare = $returnedShare['element'];
 			if (is_array($returnedShare)) {
-				usort($returnedShare, static function($share1, $share2) {
+				usort($returnedShare, static function ($share1, $share2) {
 					return (int) $share1->id - (int) $share2->id;
 				});
 			}
@@ -712,7 +712,7 @@ class SharingContext implements Context {
 	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, TableNode $table = null) {
 		$response = json_decode($this->response->getBody());
 
-		$fileForPath = array_filter($response->files, function($file) use ($path) {
+		$fileForPath = array_filter($response->files, function ($file) use ($path) {
 			$filePath = $file->path . (substr($file->path, -1) === '/'? '': '/');
 			return ($filePath . $file->name) === $path;
 		});
@@ -759,7 +759,7 @@ class SharingContext implements Context {
 
 		if ($body instanceof TableNode) {
 			foreach ($body->getRowsHash() as $key => $value) {
-				if ($key === 'expireDate' && $value !== 'invalid date'){
+				if ($key === 'expireDate' && $value !== 'invalid date') {
 					$value = date('Y-m-d', strtotime($value));
 				}
 				$parameters[] = $key . '=' . $value;
@@ -792,7 +792,7 @@ class SharingContext implements Context {
 		];
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
-			if (array_key_exists('expireDate', $fd)){
+			if (array_key_exists('expireDate', $fd)) {
 				$fd['expireDate'] = date('Y-m-d', strtotime($fd['expireDate']));
 			}
 			$options['form_params'] = $fd;
@@ -934,7 +934,7 @@ class SharingContext implements Context {
 	 * @param string $contentExpected
 	 * @param \SimpleXMLElement $returnedShare
 	 */
-	private function assertFieldIsInReturnedShare(string $field, string $contentExpected, \SimpleXMLElement $returnedShare){
+	private function assertFieldIsInReturnedShare(string $field, string $contentExpected, \SimpleXMLElement $returnedShare) {
 		if ($contentExpected === 'IGNORE') {
 			return;
 		}
@@ -943,17 +943,17 @@ class SharingContext implements Context {
 			\PHPUnit\Framework\Assert::fail("$field was not found in response");
 		}
 
-		if ($field === 'expiration' && !empty($contentExpected)){
+		if ($field === 'expiration' && !empty($contentExpected)) {
 			$contentExpected = date('Y-m-d', strtotime($contentExpected)) . " 00:00:00";
 		}
 
 		if ($contentExpected === 'A_NUMBER') {
 			\PHPUnit\Framework\Assert::assertTrue(is_numeric((string)$returnedShare->$field), "Field '$field' is not a number: " . $returnedShare->$field);
-		} else if ($contentExpected === 'A_TOKEN') {
+		} elseif ($contentExpected === 'A_TOKEN') {
 			// A token is composed by 15 characters from
 			// ISecureRandom::CHAR_HUMAN_READABLE.
 			\PHPUnit\Framework\Assert::assertRegExp('/^[abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789]{15}$/', (string)$returnedShare->$field, "Field '$field' is not a token");
-		} else if (strpos($contentExpected, 'REGEXP ') === 0) {
+		} elseif (strpos($contentExpected, 'REGEXP ') === 0) {
 			\PHPUnit\Framework\Assert::assertRegExp(substr($contentExpected, strlen('REGEXP ')), (string)$returnedShare->$field, "Field '$field' does not match");
 		} else {
 			\PHPUnit\Framework\Assert::assertEquals($contentExpected, (string)$returnedShare->$field, "Field '$field' does not match");
@@ -1006,5 +1006,4 @@ class SharingContext implements Context {
 		}
 		return $sharees;
 	}
-
 }

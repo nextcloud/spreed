@@ -52,7 +52,7 @@ class CommandController extends OCSController {
 	public function index(): DataResponse {
 		$commands = $this->commandService->findAll();
 
-		$result = array_map(function(Command $command) {
+		$result = array_map(function (Command $command) {
 			return $command->asArray();
 		}, $commands);
 

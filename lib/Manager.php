@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-
 use OCA\Talk\Chat\Changelog;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\CreateRoomTokenEvent;
@@ -44,7 +44,6 @@ use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
 class Manager {
-
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
 	/** @var IDBConnection */
@@ -826,7 +825,6 @@ class Manager {
 	 * @throws \OutOfBoundsException
 	 */
 	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
-
 		$event = new CreateRoomTokenEvent($entropy, $chars);
 		$this->dispatcher->dispatch(self::EVENT_TOKEN_GENERATE, $event);
 		try {

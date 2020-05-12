@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Notification;
-
 
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
@@ -256,9 +256,9 @@ class Notifier implements INotifier {
 		if ($notification->getSubject() === 'chat') {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$subject = $l->t('{user} sent you a private message');
-			} else if ($richSubjectUser) {
+			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} sent a message in conversation {call}');
-			} else if (!$isGuest) {
+			} elseif (!$isGuest) {
 				$subject = $l->t('A deleted user sent a message in conversation {call}');
 			} else {
 				try {
@@ -268,12 +268,12 @@ class Notifier implements INotifier {
 					$subject = $l->t('A guest sent a message in conversation {call}');
 				}
 			}
-		} else if ($notification->getSubject() === 'reply') {
+		} elseif ($notification->getSubject() === 'reply') {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$subject = $l->t('{user} replied to your private message');
-			} else if ($richSubjectUser) {
+			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} replied to your message in conversation {call}');
-			} else if (!$isGuest) {
+			} elseif (!$isGuest) {
 				$subject = $l->t('A deleted user replied to your message in conversation {call}');
 			} else {
 				try {
@@ -283,11 +283,11 @@ class Notifier implements INotifier {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
 				}
 			}
-		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		} elseif ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
-		} else if ($richSubjectUser) {
+		} elseif ($richSubjectUser) {
 			$subject = $l->t('{user} mentioned you in conversation {call}');
-		} else if (!$isGuest) {
+		} elseif (!$isGuest) {
 			$subject = $l->t('A deleted user mentioned you in conversation {call}');
 		} else {
 			try {
@@ -398,8 +398,7 @@ class Notifier implements INotifier {
 						],
 					]
 				);
-
-		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		} elseif (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
 			if ($room->hasSessionsInCall()) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
@@ -478,8 +477,7 @@ class Notifier implements INotifier {
 			} else {
 				throw new AlreadyProcessedException();
 			}
-
-		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		} elseif (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			if ($this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall()) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 				$subject = $l->t('A group call has started in {call}');
@@ -500,7 +498,6 @@ class Notifier implements INotifier {
 						],
 					]
 				);
-
 		} else {
 			throw new AlreadyProcessedException();
 		}
@@ -555,13 +552,13 @@ class Notifier implements INotifier {
 			$notification
 				->setParsedSubject(str_replace(['{email}', '{file}'], [$sharedWith, $file['name']], $subject))
 				->setRichSubject($subject, [
-						'email' => [
-							'type' => 'email',
-							'id' => $sharedWith,
-							'name' => $sharedWith,
-						],
-						'file' => $file,
-					]
+					'email' => [
+						'type' => 'email',
+						'id' => $sharedWith,
+						'name' => $sharedWith,
+					],
+					'file' => $file,
+				]
 				);
 		} else {
 			if ($callIsActive) {

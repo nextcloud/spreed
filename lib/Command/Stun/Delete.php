@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Denis Mosolov <denismosolov@gmail.com>
@@ -61,7 +62,7 @@ class Delete extends Base {
 		}
 		$count = count($servers);
 		// remove all occurrences of $server
-		$servers = array_filter($servers, function($s) use ($server) {
+		$servers = array_filter($servers, function ($s) use ($server) {
 			return $s !== $server;
 		});
 		$servers = array_values($servers); // reindex

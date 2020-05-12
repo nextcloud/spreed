@@ -50,7 +50,6 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function resetSpreed() {
-
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')->execute();
 

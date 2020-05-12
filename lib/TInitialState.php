@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk;
-
 
 use OC\HintException;
 use OC\User\NoUserException;
@@ -70,7 +70,6 @@ trait TInitialState {
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
-
 		$this->publishInitialStateShared();
 
 		$this->initialStateService->provideInitialState(
@@ -103,7 +102,6 @@ trait TInitialState {
 	}
 
 	protected function publishInitialStateForGuest(): void {
-
 		$this->publishInitialStateShared();
 
 		$this->initialStateService->provideInitialState(

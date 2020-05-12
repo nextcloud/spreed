@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -23,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
-use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatMessageEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
@@ -40,7 +40,6 @@ use OCP\IUserManager;
  * Helper class to get a rich message from a plain text message.
  */
 class MessageParser {
-
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
 	/** @var IEventDispatcher */
@@ -83,7 +82,7 @@ class MessageParser {
 		if ($comment->getActorType() === 'users') {
 			$user = $this->userManager->get($comment->getActorId());
 			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
-		} else if ($comment->getActorType() === 'guests') {
+		} elseif ($comment->getActorType() === 'guests') {
 			if (isset($guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {
@@ -93,7 +92,7 @@ class MessageParser {
 				}
 				$this->guestNames[$comment->getActorId()] = $displayName;
 			}
-		} else if ($comment->getActorType() === 'bots') {
+		} elseif ($comment->getActorType() === 'bots') {
 			$displayName = $comment->getActorId() . '-bot';
 		}
 

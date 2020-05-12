@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -57,7 +58,6 @@ use OCP\IGroupManager;
 use OCP\IConfig;
 
 class RoomController extends AEnvironmentAwareController {
-
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
 
 	/** @var string|null */
@@ -277,7 +277,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
-			} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			} elseif ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
 				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
@@ -320,7 +320,7 @@ class RoomController extends AEnvironmentAwareController {
 		$cleanGuests = false;
 		$participantList = [];
 		$participants = $room->getParticipants();
-		uasort($participants, function(Participant $participant1, Participant $participant2) {
+		uasort($participants, function (Participant $participant1, Participant $participant2) {
 			return $participant2->getLastPing() - $participant1->getLastPing();
 		});
 
@@ -448,7 +448,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
-			} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			} elseif ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
 				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
@@ -542,7 +542,6 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
-
 		if ($roomType !== Room::ONE_TO_ONE_CALL) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
@@ -780,7 +779,6 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setNotificationLevel(int $level): DataResponse {
-
 		if (!$this->participant->setNotificationLevel($level)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -899,7 +897,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->room->addUsers([
 				'userId' => $newUser->getUID(),
 			]);
-		} else if ($source === 'groups') {
+		} elseif ($source === 'groups') {
 			$group = $this->groupManager->get($newParticipant);
 			if (!$group instanceof IGroup) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -921,7 +919,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
-		} else if ($source === 'circles') {
+		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
@@ -959,7 +957,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
-		} else if ($source === 'emails') {
+		} elseif ($source === 'emails') {
 			$data = [];
 			if ($this->room->setType(Room::PUBLIC_CALL)) {
 				$data = ['type' => $this->room->getType()];
@@ -1032,7 +1030,7 @@ class RoomController extends AEnvironmentAwareController {
 				&& $room->getNumberOfModerators() === 1) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
-		} else if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
+		} elseif ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
 			$room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
 			return new DataResponse();

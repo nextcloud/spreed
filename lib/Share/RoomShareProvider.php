@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -103,7 +104,7 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(ParticipantEvent $event)  {
+		$listener = static function (ParticipantEvent $event) {
 			$room = $event->getRoom();
 
 			if ($event->getParticipant()->getParticipantType() === Participant::USER_SELF_JOINED) {
@@ -114,7 +115,7 @@ class RoomShareProvider implements IShareProvider {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
 
-		$listener = static function(RemoveUserEvent $event) {
+		$listener = static function (RemoveUserEvent $event) {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
@@ -123,7 +124,7 @@ class RoomShareProvider implements IShareProvider {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
-		$listener = static function(RoomEvent $event) {
+		$listener = static function (RoomEvent $event) {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
@@ -414,7 +415,7 @@ class RoomShareProvider implements IShareProvider {
 					'permissions' => $qb->createNamedParameter(0),
 					'stime' => $qb->createNamedParameter($share->getShareTime()->getTimestamp()),
 				])->execute();
-		} else if ($data['permissions'] !== 0) {
+		} elseif ($data['permissions'] !== 0) {
 			// Already a userroom share. Update it.
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->update('share')
@@ -795,7 +796,9 @@ class RoomShareProvider implements IShareProvider {
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
 			}
 
-			$rooms = array_map(function(Room $room) { return $room->getToken(); }, $rooms);
+			$rooms = array_map(function (Room $room) {
+				return $room->getToken();
+			}, $rooms);
 
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
@@ -838,7 +841,7 @@ class RoomShareProvider implements IShareProvider {
 		$pathSections = explode('/', $data['path'], 2);
 		// FIXME: would not detect rare md5'd home storage case properly
 		if ($pathSections[0] !== 'files'
-			&& in_array(explode(':', $data['storage_string_id'], 2)[0], array('home', 'object'))) {
+			&& in_array(explode(':', $data['storage_string_id'], 2)[0], ['home', 'object'])) {
 			return false;
 		}
 		return true;
@@ -948,7 +951,7 @@ class RoomShareProvider implements IShareProvider {
 		$cursor = $qb->execute();
 
 		$users = [];
-		while($row = $cursor->fetch()) {
+		while ($row = $cursor->fetch()) {
 			$type = (int)$row['share_type'];
 			if ($type === IShare::TYPE_ROOM) {
 				$roomToken = $row['share_with'];
@@ -963,7 +966,7 @@ class RoomShareProvider implements IShareProvider {
 					$users[$uid] = $users[$uid] ?? [];
 					$users[$uid][$row['id']] = $row;
 				}
-			} else if ($type === self::SHARE_TYPE_USERROOM && $currentAccess === true) {
+			} elseif ($type === self::SHARE_TYPE_USERROOM && $currentAccess === true) {
 				$uid = $row['share_with'];
 				$users[$uid] = $users[$uid] ?? [];
 				$users[$uid][$row['id']] = $row;
@@ -1070,7 +1073,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$cursor = $qb->execute();
 		$ids = [];
-		while($row = $cursor->fetch()) {
+		while ($row = $cursor->fetch()) {
 			$ids[] = (int)$row['id'];
 		}
 		$cursor->closeCursor();
@@ -1107,7 +1110,7 @@ class RoomShareProvider implements IShareProvider {
 
 			$cursor = $qb->execute();
 			$ids = [];
-			while($row = $cursor->fetch()) {
+			while ($row = $cursor->fetch()) {
 				$ids[] = (int)$row['id'];
 			}
 			$cursor->closeCursor();
@@ -1144,7 +1147,7 @@ class RoomShareProvider implements IShareProvider {
 			);
 
 		$cursor = $qb->execute();
-		while($data = $cursor->fetch()) {
+		while ($data = $cursor->fetch()) {
 			$share = $this->createShareObject($data);
 
 			yield $share;

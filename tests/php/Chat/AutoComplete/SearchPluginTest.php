@@ -61,7 +61,7 @@ class SearchPluginTest extends \Test\TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 	}
@@ -129,16 +129,16 @@ class SearchPluginTest extends \Test\TestCase {
 		$plugin->expects($this->once())
 			->method('searchUsers')
 			->with('fo', ['123', 'foo', 'bar'], $result)
-			->willReturnCallback(function($search, $users, $result) {
-				array_map(function($user) {
+			->willReturnCallback(function ($search, $users, $result) {
+				array_map(function ($user) {
 					$this->assertIsString($user);
 				}, $users);
 			});
 		$plugin->expects($this->once())
 			->method('searchGuests')
 			->with('fo', $this->anything(), $result)
-			->willReturnCallback(function($search, $guests, $result) {
-				array_map(function($guest) {
+			->willReturnCallback(function ($search, $guests, $result) {
+				array_map(function ($guest) {
 					$this->assertIsString($guest);
 					$this->assertSame(40, strlen($guest));
 				}, $guests);
@@ -175,7 +175,7 @@ class SearchPluginTest extends \Test\TestCase {
 	public function testSearchUsers($search, array $userIds, array $userNames, array $expected, array $expectedExact) {
 		$result = $this->createMock(ISearchResult::class);
 
-		$userMap = array_map(function($userData) {
+		$userMap = array_map(function ($userData) {
 			return [$userData['uid'], $this->createUserMock($userData)];
 		}, $userNames);
 
@@ -190,7 +190,7 @@ class SearchPluginTest extends \Test\TestCase {
 		$plugin = $this->getPlugin(['createResult']);
 		$plugin->expects($this->any())
 			->method('createResult')
-			->willReturnCallback(function($type, $uid, $name) {
+			->willReturnCallback(function ($type, $uid, $name) {
 				return [$uid => $name];
 			});
 
@@ -229,7 +229,7 @@ class SearchPluginTest extends \Test\TestCase {
 		$plugin = $this->getPlugin(['createGuestResult']);
 		$plugin->expects($this->any())
 			->method('createGuestResult')
-			->willReturnCallback(function($hash, $name) {
+			->willReturnCallback(function ($hash, $name) {
 				return [$hash => $name];
 			});
 

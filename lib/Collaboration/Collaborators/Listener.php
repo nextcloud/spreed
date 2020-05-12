@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
@@ -57,8 +58,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-
-		$dispatcher->addListener(IManager::class . '::filterResults', static function(AutoCompleteEvent $event) {
+		$dispatcher->addListener(IManager::class . '::filterResults', static function (AutoCompleteEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 

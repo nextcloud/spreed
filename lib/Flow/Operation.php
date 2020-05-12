@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -127,7 +128,7 @@ class Operation implements IOperation {
 				$entity = $ruleMatcher->getEntity();
 
 				$message = $this->prepareText($entity, $eventName);
-				if($message === '') {
+				if ($message === '') {
 					continue;
 				}
 
@@ -154,10 +155,10 @@ class Operation implements IOperation {
 
 	protected function prepareText(IEntity $entity, string $eventName) {
 		$message = $eventName;
-		if($entity instanceof IDisplayText) {
+		if ($entity instanceof IDisplayText) {
 			$message = trim($entity->getDisplayText(3));
 		}
-		if($entity instanceof IUrl && $message !== '') {
+		if ($entity instanceof IUrl && $message !== '') {
 			$message .= ' ' . $entity->getUrl();
 		}
 		return $message;
@@ -190,7 +191,7 @@ class Operation implements IOperation {
 		 */
 
 		$opConfig = \json_decode($raw, true);
-		if(!is_array($opConfig) || empty($opConfig)) {
+		if (!is_array($opConfig) || empty($opConfig)) {
 			throw new UnexpectedValueException('Cannot decode operation details');
 		}
 
@@ -201,11 +202,11 @@ class Operation implements IOperation {
 	}
 
 	protected function validateOperationConfig(int $mode, string $token, string $uid): void {
-		if(!in_array($mode, self::MESSAGE_MODES)) {
+		if (!in_array($mode, self::MESSAGE_MODES)) {
 			throw new UnexpectedValueException('Invalid mode');
 		}
 
-		if(empty($token)) {
+		if (empty($token)) {
 			throw new UnexpectedValueException('Invalid token');
 		}
 
@@ -215,7 +216,7 @@ class Operation implements IOperation {
 			throw new UnexpectedValueException('Room not found', $e->getCode(), $e);
 		}
 
-		if($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
+		if ($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
 			try {
 				$participant = $this->getParticipant($uid, $room);
 				if (!$participant->hasModeratorPermissions(false)) {
@@ -232,7 +233,7 @@ class Operation implements IOperation {
 	 */
 	protected function getUser(): IUser {
 		$user = $this->session->getUser();
-		if($user === null) {
+		if ($user === null) {
 			throw new UnexpectedValueException('User not logged in');
 		}
 		return $user;

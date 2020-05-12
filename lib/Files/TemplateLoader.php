@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -43,7 +44,6 @@ use OCP\Util;
  * Helper class to add the Talk UI to the sidebar of the Files app.
  */
 class TemplateLoader implements IEventListener {
-
 	use TInitialState;
 
 	/** @var IAppManager */
@@ -102,5 +102,4 @@ class TemplateLoader implements IEventListener {
 			$this->publishInitialStateForGuest();
 		}
 	}
-
 }

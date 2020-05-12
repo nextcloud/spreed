@@ -134,7 +134,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$rooms = $this->getDataFromResponse($this->response);
 
-		$rooms = array_filter($rooms, function($room) {
+		$rooms = array_filter($rooms, function ($room) {
 			return $room['type'] !== 4;
 		});
 
@@ -144,8 +144,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
-			$participantNames = array_map(function($participant) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
+			$participantNames = array_map(function ($participant) {
 				return $participant['name'];
 			}, $room['participants']);
 
@@ -200,7 +200,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$rooms = $this->getDataFromResponse($this->response);
 
-		$rooms = array_filter($rooms, function($room) {
+		$rooms = array_filter($rooms, function ($room) {
 			return $room['type'] !== 4;
 		});
 
@@ -534,7 +534,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyStateString, $statusCode) {
 		if ($lobbyStateString === 'no lobby') {
 			$lobbyState = 0;
-		} else if ($lobbyStateString === 'non moderators') {
+		} elseif ($lobbyStateString === 'non moderators') {
 			$lobbyState = 1;
 		} else {
 			Assert::fail('Invalid lobby state');
@@ -776,7 +776,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$actual = $this->getDataFromResponse($this->response);
 		$messages = [];
-		array_map(function(array $message) use (&$messages) {
+		array_map(function (array $message) use (&$messages) {
 			// Filter out system messages
 			if ($message['systemMessage'] === '') {
 				$messages[] = $message;
@@ -804,7 +804,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents, $includeReferenceId) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -838,7 +838,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$messages = $this->getDataFromResponse($this->response);
-		$messages = array_filter($messages, function(array $message) {
+		$messages = array_filter($messages, function (array $message) {
 			return $message['systemMessage'] !== '';
 		});
 
@@ -854,7 +854,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function($message) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($message) {
 			return [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
@@ -1176,13 +1176,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = ['cookies'  => $this->getUserCookieJar($this->currentUser)];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} else if (strpos($this->currentUser, 'guest') !== 0) {
+		} elseif (strpos($this->currentUser, 'guest') !== 0) {
 			$options['auth'] = [$this->currentUser, '123456'];
 		}
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
 			$options['form_params'] = $fd;
-		} else if (is_array($body)) {
+		} elseif (is_array($body)) {
 			$options['form_params'] = $body;
 		}
 

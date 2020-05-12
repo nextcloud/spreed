@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Chat\AutoComplete;
-
 
 use OCA\Talk\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
@@ -62,9 +62,9 @@ class Sorter implements ISorter {
 				$context['itemId'],
 				'comment',
 				$type,
-				array_map(function($suggestion) {
+				array_map(function ($suggestion) {
 					return $suggestion['value']['shareWith'];
-			}, $byType));
+				}, $byType));
 
 			$search = $context['search'];
 
@@ -75,7 +75,7 @@ class Sorter implements ISorter {
 						if (stripos($b['label'], $search) !== 0) {
 							return -1;
 						}
-					} else if (stripos($b['label'], $search) === 0) {
+					} elseif (stripos($b['label'], $search) === 0) {
 						return 1;
 					}
 				}

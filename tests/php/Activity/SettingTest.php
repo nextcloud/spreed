@@ -26,7 +26,6 @@ use OCP\Activity\ISetting;
 use Test\TestCase;
 
 class SettingTest extends TestCase {
-
 	public function dataSettings() {
 		return [
 			[Setting::class],

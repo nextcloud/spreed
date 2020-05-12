@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
@@ -21,7 +22,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\Talk\Activity;
-
 
 use OCP\Activity\ISetting;
 use OCP\IL10N;
@@ -93,4 +93,3 @@ class Setting implements ISetting {
 		return false;
 	}
 }
-

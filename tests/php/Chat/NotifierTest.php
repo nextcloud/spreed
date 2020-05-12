@@ -61,7 +61,7 @@ class NotifierTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->userManager
 			->method('userExists')
-			->willReturnCallback(function($userId) {
+			->willReturnCallback(function ($userId) {
 				return $userId !== 'unknownUser';
 			});
 
@@ -84,7 +84,7 @@ class NotifierTest extends TestCase {
 		$mentionMatches = [];
 		preg_match_all('/@([a-zA-Z0-9]+)/', $message, $mentionMatches);
 
-		$mentions = array_map(function($mentionMatch) {
+		$mentions = array_map(function ($mentionMatch) {
 			return [ 'type' => 'user', 'id' => $mentionMatch ];
 		}, $mentionMatches[1]);
 
@@ -551,5 +551,4 @@ class NotifierTest extends TestCase {
 
 		$this->notifier->removePendingNotificationsForRoom($room);
 	}
-
 }

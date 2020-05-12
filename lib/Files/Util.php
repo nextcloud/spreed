@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -116,7 +117,7 @@ class Util {
 			return null;
 		}
 
-		$nodes = array_filter($nodes, function($node) {
+		$nodes = array_filter($nodes, function ($node) {
 			return $node->getType() === FileInfo::TYPE_FILE;
 		});
 
@@ -244,7 +245,7 @@ class Util {
 			return null;
 		}
 
-		$nodes = array_filter($nodes, function(Node $node) {
+		$nodes = array_filter($nodes, function (Node $node) {
 			return $node->getType() === FileInfo::TYPE_FILE;
 		});
 		if (empty($nodes)) {
@@ -263,5 +264,4 @@ class Util {
 
 		return null;
 	}
-
 }

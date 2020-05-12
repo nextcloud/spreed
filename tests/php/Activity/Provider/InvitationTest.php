@@ -21,7 +21,6 @@
 
 namespace OCA\Talk\Tests\php\Activity\Provider;
 
-
 use OCA\Talk\Activity\Provider\Invitation;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -146,7 +145,7 @@ class InvitationTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 
@@ -221,5 +220,4 @@ class InvitationTest extends TestCase {
 
 		$provider->parse($lang, $event);
 	}
-
 }

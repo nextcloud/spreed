@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Denis Mosolov <denismosolov@gmail.com>
@@ -27,7 +28,6 @@ namespace OCA\Talk\Command\Stun;
 use OCP\IConfig;
 use OC\Core\Command\Base;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListCommand extends Base {

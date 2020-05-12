@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
@@ -29,7 +30,6 @@ use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class Config {
-
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
@@ -154,7 +154,7 @@ class Config {
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static function($server) {
+			$servers = array_filter($servers, static function ($server) {
 				return $server !== 'stun.nextcloud.com:443';
 			});
 		}
@@ -227,12 +227,12 @@ class Config {
 		$username = $timestamp . ':' . $rnd;
 		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
-		return array(
+		return [
 			'server' => $server['server'],
 			'username' => $username,
 			'password' => $password,
 			'protocols' => $server['protocols'],
-		);
+		];
 	}
 
 	public function getSignalingMode(): string {
@@ -349,5 +349,4 @@ class Config {
 		$hash = hash_hmac('sha256', $data, $secret);
 		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
-
 }

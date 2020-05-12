@@ -121,7 +121,7 @@ class NotifierTest extends \Test\TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->will($this->returnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
 
@@ -231,7 +231,7 @@ class NotifierTest extends \Test\TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->will($this->returnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
 
@@ -589,7 +589,7 @@ class NotifierTest extends \Test\TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->will($this->returnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
 
@@ -641,7 +641,7 @@ class NotifierTest extends \Test\TestCase {
 				->method('get')
 				->with($subjectParameters['userId'])
 				->willReturn($user);
-		} else if ($subjectParameters['userType'] === 'users' && $deletedUser) {
+		} elseif ($subjectParameters['userType'] === 'users' && $deletedUser) {
 			$user->expects($this->never())
 				->method('getDisplayName');
 			$this->userManager->expects($this->at(1))
@@ -774,7 +774,7 @@ class NotifierTest extends \Test\TestCase {
 		if ($validRoom === null) {
 			$this->manager->expects($this->never())
 				->method('getRoomByToken');
-		} else if ($validRoom === true) {
+		} elseif ($validRoom === true) {
 			$room = $this->createMock(Room::class);
 			$room->expects($this->never())
 				->method('getType');
@@ -785,7 +785,7 @@ class NotifierTest extends \Test\TestCase {
 				->method('getRoomByToken')
 				->with('roomToken')
 				->willReturn($room);
-		} else if ($validRoom === false) {
+		} elseif ($validRoom === false) {
 			$n->expects($this->exactly(2))
 				->method('getObjectId')
 				->willReturn('roomToken');

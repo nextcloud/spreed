@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
@@ -30,7 +31,6 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 
 class FeaturePolicyListener implements IEventListener {
-
 	public function handle(Event $event): void {
 		if (!($event instanceof AddFeaturePolicyEvent)) {
 			return;
@@ -41,5 +41,4 @@ class FeaturePolicyListener implements IEventListener {
 		$policy->addAllowedMicrophoneDomain('\'self\'');
 		$event->addPolicy($policy);
 	}
-
 }

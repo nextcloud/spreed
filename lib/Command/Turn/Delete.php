@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Denis Mosolov <denismosolov@gmail.com>
@@ -68,7 +69,7 @@ class Delete extends Base {
 
 		$count = count($servers);
 		// remove all occurrences which math $server and $protocols
-		$servers = array_filter($servers, function($s) use ($server, $protocols) {
+		$servers = array_filter($servers, function ($s) use ($server, $protocols) {
 			return $s['server'] !== $server || $s['protocols'] !== $protocols;
 		});
 		$servers = array_values($servers); // reindex

@@ -27,10 +27,7 @@ use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Controller\ChatController;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -104,7 +101,7 @@ class ChatControllerTest extends TestCase {
 
 		// Verifies that the difference of the given DateTime and now is at most
 		// five seconds, and that it uses the UTC time zone.
-		$this->newMessageDateTimeConstraint = $this->callback(function(\DateTime $dateTime) {
+		$this->newMessageDateTimeConstraint = $this->callback(function (\DateTime $dateTime) {
 			return abs((new \DateTime())->getTimestamp() - $dateTime->getTimestamp()) <= 5 &&
 				(new \DateTimeZone('UTC'))->getName() === $dateTime->getTimezone()->getName();
 		});
@@ -610,7 +607,7 @@ class ChatControllerTest extends TestCase {
 				[$this->room, $participant, $comment2, $this->l],
 				[$this->room, $participant, $comment1, $this->l]
 			)
-			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -676,7 +673,7 @@ class ChatControllerTest extends TestCase {
 				[$this->room, $participant, $comment2, $this->l],
 				[$this->room, $participant, $comment1, $this->l]
 			)
-			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -745,7 +742,7 @@ class ChatControllerTest extends TestCase {
 				[$this->room, $participant, $comment2, $this->l],
 				[$this->room, $participant, $comment1, $this->l]
 			)
-			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -822,7 +819,7 @@ class ChatControllerTest extends TestCase {
 				[$this->room, $participant, $comment3, $this->l],
 				[$this->room, $participant, $comment4, $this->l]
 			)
-			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -935,7 +932,7 @@ class ChatControllerTest extends TestCase {
 				]], [
 					['id' => 'foo', 'label' => 'Foo Bar', 'source' => 'users'],
 					['id' => 'foobar', 'label' => 'FooBar', 'source' => 'users'],
-			]],
+				]],
 		];
 	}
 
