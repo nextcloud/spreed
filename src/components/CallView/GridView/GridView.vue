@@ -45,6 +45,7 @@
 							:is-grid="true"
 							:show-talking-highlight="!isStripe"
 							:is-stripe="isStripe"
+							:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:is-selected="isSelected(callParticipantModel)"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
@@ -603,12 +604,7 @@ export default {
 			this.$emit('select-video', peerId)
 		},
 		isSelected(callParticipantModel) {
-			if (this.$store.getters.selectedVideoPeerId === null) {
-				return this.sharedDatas[callParticipantModel.attributes.peerId].promoted
-			} else {
-				return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
-			}
-
+			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
 		},
 	},
 }

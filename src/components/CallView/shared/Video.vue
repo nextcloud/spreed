@@ -27,31 +27,31 @@
 		@mouseleave="hideShadow">
 		<transition name="fade">
 			<video
-				v-show="hasVideoStream && !(isStripe && isSelected)"
+				v-show="hasVideoStream"
 				ref="video"
 				:class="videoClass"
 				class="video" />
 		</transition>
 		<transition name="fade">
 			<div class="avatar-container">
-				<template v-if="!hasVideoStream && (!isSelected || !isStripe)">
+				<template v-if="showBackgroundandAvatar">
 					<VideoBackground
 						:display-name="model.attributes.name"
 						:user="model.attributes.userId" />
-					<Avatar v-if="model.attributes.userId && !isSelected"
+					<Avatar v-if="model.attributes.userId"
 						:size="avatarSize"
 						:disable-menu="true"
 						:disable-tooltip="true"
 						:user="model.attributes.userId"
 						:display-name="model.attributes.name"
 						:class="avatarClass" />
-					<div v-if="!model.attributes.userId && !isSelected"
+					<div v-if="!model.attributes.userId"
 						:class="guestAvatarClass"
 						class="avatar guest">
 						{{ firstLetterOfGuestName }}
 					</div>
 				</template>
-				<div v-if="isSelected && isStripe" class="avatar-container">
+				<div v-if="showPlaceholderForPromoted" class="avatar-container">
 					<Crown fill-color="#FFFFFF" :size="36" />
 				</div>
 			</div>
@@ -62,7 +62,7 @@
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected"
 					class="bottom-bar__nameIndicator"
-					:class="{'bottom-bar__nameIndicator--selected': isSelected}">
+					:class="{'bottom-bar__nameIndicator--promoted': isSpeaking || isSelected}">
 					{{ participantName }}
 				</div>
 			</transition>
@@ -154,7 +154,12 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		// Is the current promoted participant
+		// The current promoted participant
+		isPromoted: {
+			type: Boolean,
+			default: false,
+		},
+		// Is the current selected participant
 		isSelected: {
 			type: Boolean,
 			default: false,
@@ -173,6 +178,30 @@ export default {
 		}
 	},
 	computed: {
+
+		showBackgroundandAvatar() {
+			if (this.isStripe) {
+				return !this.hasVideoStream && !(this.isSelected || this.isPromoted)
+			} else {
+				return !this.hasVideoStream
+			}
+		},
+
+		showPlaceholderForPromoted() {
+			if (this.isStripe) {
+				if (this.$store.getters.selectedVideoPeerId !== null) {
+					return this.isSelected
+				} else {
+					return this.isPromoted
+				}
+			} else {
+				return false
+			}
+		},
+
+		isSelectable() {
+			return !this.showPlaceholderForPromoted && !this.isBig
+		},
 
 		containerClass() {
 			return {
@@ -308,9 +337,6 @@ export default {
 	methods: {
 
 		_setStream(stream) {
-			if (this.placeholderForPromoted) {
-				return
-			}
 
 			if (!stream) {
 				// Do not clear the srcObject of the video element, just leave
@@ -352,12 +378,12 @@ export default {
 			}
 		},
 		showShadow() {
-			if (!this.isBig && ((!this.isSelected || !this.isStripe) || this.mouseover)) {
+			if (this.isSelectable) {
 				this.mouseover = true
 			}
 		},
 		hideShadow() {
-			if (!this.isBig && ((!this.isSelected || !this.isStripe) || this.mouseover)) {
+			if (this.isSelectable) {
 				this.mouseover = false
 			}
 		},
@@ -405,7 +431,7 @@ export default {
 		color: white;
 		position: relative;
 		font-size: 20px;
-		&--selected {
+		&--promoted {
 			font-weight: bold;
 		}
 	}
