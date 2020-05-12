@@ -41,5 +41,5 @@ const fetchClipboardContent = function(event) {
 }
 
 export {
-	fetchClipboardContent
+	fetchClipboardContent,
 }

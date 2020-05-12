@@ -54,7 +54,7 @@
 		<Actions
 			v-shortkey="['f']"
 			class="top-bar__button"
-			menuAlign="right"
+			menu-align="right"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
