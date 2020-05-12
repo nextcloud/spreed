@@ -27,6 +27,7 @@
  */
 
 import { pullSignalingMessages } from '../services/signalingService'
+import { rejoinConversation } from '../services/participantsService'
 import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
@@ -695,9 +696,18 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 			// Mark this session as "no longer in the call".
 			this.leaveCall(this.currentCallToken, true)
 		}
-		this.sendBye()
-	}
-	if (this.socket) {
+
+		rejoinConversation(this.currentRoomToken)
+			.then(response => {
+				this.nextcloudSessionId = response.data.ocs.data.sessionId
+
+				this.sendBye()
+				if (this.socket) {
+					// Trigger reconnect.
+					this.socket.close()
+				}
+			})
+	} else if (this.socket) {
 		// Trigger reconnect.
 		this.socket.close()
 	}

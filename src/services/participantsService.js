@@ -47,6 +47,16 @@ const joinConversation = async(token) => {
 }
 
 /**
+ * Joins the current user to a conversation specified with
+ * the token.
+ *
+ * @param {string} token The conversation token;
+ */
+const rejoinConversation = async(token) => {
+	return axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
+}
+
+/**
  * Leaves the conversation specified with the token.
  *
  * @param {string} token The conversation token;
@@ -148,6 +158,7 @@ const setGuestUserName = async(token, userName) => {
 
 export {
 	joinConversation,
+	rejoinConversation,
 	leaveConversation,
 	leaveConversationSync,
 	addParticipant,
