@@ -25,25 +25,24 @@
 		:class="containerClass"
 		@mouseover="showShadow"
 		@mouseleave="hideShadow">
-		<video v-if="!placeholderForPromoted"
-			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !hideVideo"
+		<video
+			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !(isStripe && isSelected)"
 			ref="video"
 			:class="videoClass"
 			class="video" />
 		<transition name="fade">
-			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-				<VideoBackground v-if="isGrid"
-					:show-promoted-placeholder="isPromoted && isStripe"
+			<div v-if="!model.attributes.videoAvailable || !sharedData.videoEnabled || isSelected" class="avatar-container">
+				<VideoBackground v-if="isGrid && !isSelected"
 					:display-name="model.attributes.name"
 					:user="model.attributes.userId" />
-				<Avatar v-if="model.attributes.userId"
+				<Avatar v-if="model.attributes.userId && !isSelected"
 					:size="avatarSize"
 					:disable-menu="true"
 					:disable-tooltip="true"
 					:user="model.attributes.userId"
 					:display-name="model.attributes.name"
 					:class="avatarClass" />
-				<div v-if="!model.attributes.userId"
+				<div v-if="!model.attributes.userId && !isSelected"
 					:class="guestAvatarClass"
 					class="avatar guest">
 					{{ firstLetterOfGuestName }}
@@ -57,7 +56,9 @@
 		<div class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideoStream}">
 			<transition name="fade">
-				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay" class="bottom-bar__nameIndicator">
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected"
+					class="bottom-bar__nameIndicator"
+					:class="{'bottom-bar__nameIndicator--selected': isSelected}">
 					{{ participantName }}
 				</div>
 			</transition>
@@ -86,8 +87,8 @@
 				</div>
 			</transition>
 		</div>
-		<div v-if="isSpeaking && showTalkingHighlight" class="speaking-shadow" />
-		<div v-if="mouseover || (isStripe && isPromoted)" class="hover-shadow" />
+		<div v-if="isSpeaking && !isStripe" class="speaking-shadow" />
+		<div v-if="mouseover" class="hover-shadow" />
 	</div>
 </template>
 
@@ -144,20 +145,13 @@ export default {
 			type: Boolean,
 			default: true,
 		},
-		hideVideo: {
-			type: Boolean,
-			default: false,
-		},
+		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
 			default: false,
 		},
-		showTalkingHighlight: {
-			type: Boolean,
-			default: true,
-		},
 		// Is the current promoted participant
-		isPromoted: {
+		isSelected: {
 			type: Boolean,
 			default: false,
 		},
@@ -288,6 +282,11 @@ export default {
 		'model.attributes.stream': function(stream) {
 			this._setStream(stream)
 		},
+		isSelected(bool) {
+			if (bool) {
+				this.mouseover = false
+			}
+		},
 
 	},
 
@@ -343,12 +342,12 @@ export default {
 			}
 		},
 		showShadow() {
-			if (!this.isPromoted) {
+			if (this.isStripe && (!this.isSelected || this.mouseover)) {
 				this.mouseover = true
 			}
 		},
 		hideShadow() {
-			if (!this.isPromoted) {
+			if (this.isStripe && (!this.isSelected || this.mouseover)) {
 				this.mouseover = false
 			}
 		},
@@ -396,6 +395,9 @@ export default {
 		color: white;
 		position: relative;
 		font-size: 20px;
+		&--selected {
+			font-weight: bold;
+		}
 	}
 	&__mediaIndicator {
 		position: relative;

@@ -28,8 +28,6 @@
 			:src="backgroundImage"
 			class="video-background__picture">
 		<div class="darken" />
-		<div v-if="showPromotedPlaceholder"
-			class="mdi-voice" />
 	</div>
 </template>
 
@@ -48,10 +46,6 @@ export default {
 		user: {
 			type: String,
 			default: '',
-		},
-		showPromotedPlaceholder: {
-			type: Boolean,
-			default: false,
 		},
 	},
 
@@ -79,7 +73,7 @@ export default {
 
 	async beforeMount() {
 		try {
-			const response = await axios.get(generateUrl(`avatar/${this.user}/1`))
+			const response = await axios.get(generateUrl(`avatar/${this.user}/500`))
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
 				this.hasPicture = true
 			}

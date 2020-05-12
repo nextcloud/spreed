@@ -23,6 +23,7 @@
 	<div id="call-container" :class="callViewClass">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
+			<!-- Promoted "autopilot" mode -->
 			<div v-if="!isGrid && !hasSelectedVideo" ref="videoContainer" class="video__promoted">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
@@ -38,6 +39,7 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
+			<!-- Selected override mode -->
 			<div v-if="!isGrid && hasSelectedVideo" ref="videoContainer" class="video__promoted">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
@@ -53,6 +55,7 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
+			<!-- Stripe or fullscreen grid depending on `isGrid` -->
 			<GridView
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
