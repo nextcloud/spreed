@@ -25,7 +25,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -51,7 +51,7 @@ steps:
     image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -82,7 +82,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -113,7 +113,7 @@ steps:
     image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -144,7 +144,7 @@ steps:
     image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -189,7 +189,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -234,7 +234,7 @@ steps:
     image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
@@ -279,7 +279,7 @@ trigger:
 #    image: nextcloudci/php7.2:php7.2-13
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      DATABASEHOST: pgsql
 #    commands:
 #      - bash tests/drone-run-php-tests.sh || exit 0
@@ -322,7 +322,7 @@ trigger:
 #    image: nextcloudci/php7.3:php7.3-5
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      DATABASEHOST: pgsql
 #    commands:
 #      - bash tests/drone-run-php-tests.sh || exit 0
@@ -365,7 +365,7 @@ trigger:
 #    image: nextcloudci/php7.4:2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      DATABASEHOST: pgsql
 #    commands:
 #      - bash tests/drone-run-php-tests.sh || exit 0
@@ -408,7 +408,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -443,7 +443,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -478,7 +478,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -513,7 +513,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -548,7 +548,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -593,7 +593,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -638,7 +638,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -683,7 +683,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -728,7 +728,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: pgsql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -771,7 +771,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: pgsql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -814,7 +814,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: pgsql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -857,7 +857,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable19
       DATABASEHOST: pgsql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -900,7 +900,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: app-files
 #    commands:
@@ -940,7 +940,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: chat
 #    commands:
@@ -982,7 +982,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: conversation
 #    commands:
@@ -1024,7 +1024,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: conversation-public
 #    commands:
@@ -1066,7 +1066,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: lobby
 #    commands:
@@ -1106,7 +1106,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: public-share
 #    commands:
@@ -1148,7 +1148,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: public-share-auth
 #    commands:
@@ -1190,7 +1190,7 @@ trigger:
 #    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
 #    environment:
 #      APP_NAME: spreed
-#      CORE_BRANCH: master
+#      CORE_BRANCH: stable19
 #      SELENIUM_HOST: selenium
 #      TESTS_ACCEPTANCE: room-shares
 #    commands:
