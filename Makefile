@@ -55,6 +55,7 @@ appstore:
 	rm -rf $(build_dir)
 	mkdir -p $(sign_dir)
 	rsync -a \
+	--exclude=babel.config.js \
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
