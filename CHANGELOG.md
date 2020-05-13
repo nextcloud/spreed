@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.9 – 2020-05-13
+### Changed
+- Reduce CPU usage when doing a video call
+  [#3414](https://github.com/nextcloud/spreed/pull/3414)
+- Automatic scaling of video quality to allow bigger video calls to further reduce required CPU and bandwidth
+  [#3468](https://github.com/nextcloud/spreed/pull/3468)
+- Notify users when talk was updated in the background and a reload is necessary
+  [#3373](https://github.com/nextcloud/spreed/pull/3373)
+- Improve the layout of the video stripe when the videos don't fit anymore
+  [#3433](https://github.com/nextcloud/spreed/pull/3433)
+  
+### Fixed
+- Guest names not shown in video calls with the HPB
+  [#3502](https://github.com/nextcloud/spreed/pull/3502)
+- Don't mark the tab "unread" for own messages and messages you read already
+  [#3378](https://github.com/nextcloud/spreed/pull/3378)
+- Try harder to connect with microphone when camera is not readable
+  [#3494](https://github.com/nextcloud/spreed/pull/3494)
+- Fix multiple issues when the connection was interrupted
+  [#3405](https://github.com/nextcloud/spreed/pull/3405)
+  [#3461](https://github.com/nextcloud/spreed/pull/3461)
+  [#3467](https://github.com/nextcloud/spreed/pull/3467)
+  [#3466](https://github.com/nextcloud/spreed/pull/3466)
+  [#3452](https://github.com/nextcloud/spreed/pull/3452)
+- Fix a type error while pinging the sessions with the HPB
+  [#3375](https://github.com/nextcloud/spreed/pull/3375)
+
 ## 8.0.8 – 2020-04-20
 ### Changed
 - Show a warning to users when they use an unsupported browser already when chatting

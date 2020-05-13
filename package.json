@@ -1,7 +1,7 @@
 {
 	"name": "talk",
 	"description": "",
-	"version": "8.0.8",
+	"version": "8.0.9",
 	"author": "Joas Schilling <coding@schilljs.com>",
 	"license": "agpl",
 	"private": true,
