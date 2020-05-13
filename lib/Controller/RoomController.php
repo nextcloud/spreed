@@ -122,6 +122,10 @@ class RoomController extends AEnvironmentAwareController {
 			'X-Nextcloud-Talk-Hash' => sha1(
 				$this->config->getSystemValueString('version') . '#' .
 				$this->config->getAppValue('spreed', 'installed_version', '') . '#' .
+				$this->config->getAppValue('spreed', 'stun_servers', '') . '#' .
+				$this->config->getAppValue('spreed', 'turn_servers', '') . '#' .
+				$this->config->getAppValue('spreed', 'signaling_servers', '') . '#' .
+				$this->config->getAppValue('spreed', 'allowed_groups', '') . '#' .
 				$this->config->getAppValue('theming', 'cachebuster', '1')
 		)];
 	}
