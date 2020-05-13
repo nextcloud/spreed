@@ -23,7 +23,8 @@
 	<div id="call-container" :class="callViewClass">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
-			<div v-if="!isGrid" ref="videoContainer" class="video__promoted">
+			<!-- Promoted "autopilot" mode -->
+			<div v-if="!isGrid && !hasSelectedVideo" ref="videoContainer" class="video__promoted">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
@@ -34,9 +35,27 @@
 						:show-talking-highlight="false"
 						:is-grid="true"
 						:fit-video="true"
+						:is-big="true"
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
+			<!-- Selected override mode -->
+			<div v-if="!isGrid && hasSelectedVideo" ref="videoContainer" class="video__promoted">
+				<template v-for="callParticipantModel in reversedCallParticipantModels">
+					<Video
+						v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
+						:key="callParticipantModel.attributes.selectedVideoPeerId"
+						:token="token"
+						:model="callParticipantModel"
+						:shared-data="sharedDatas[selectedVideoPeerId]"
+						:show-talking-highlight="false"
+						:is-grid="true"
+						:is-big="true"
+						:fit-video="true"
+						@switchScreenToId="_switchScreenToId" />
+				</template>
+			</div>
+			<!-- Stripe or fullscreen grid depending on `isGrid` -->
 			<GridView
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
@@ -46,7 +65,8 @@
 				:call-participant-models="callParticipantModels"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
-				:shared-datas="sharedDatas" />
+				:shared-datas="sharedDatas"
+				@select-video="handleSelectVideo" />
 			<!--
 			</div>
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
@@ -104,10 +124,6 @@ export default {
 	},
 
 	props: {
-		isGrid: {
-			type: Boolean,
-			default: false,
-		},
 		token: {
 			type: String,
 			required: true,
@@ -164,6 +180,15 @@ export default {
 			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
 			return callViewClass
+		},
+		isGrid() {
+			return this.$store.getters.isGrid
+		},
+		selectedVideoPeerId() {
+			return this.$store.getters.selectedVideoPeerId
+		},
+		hasSelectedVideo() {
+			return this.$store.getters.selectedVideoPeerId !== null
 		},
 	},
 	watch: {
@@ -342,6 +367,10 @@ export default {
 			const videoContainerWidth = this.$refs.videoContainer.clientWidth
 			const VideoContainerHeight = this.$refs.videoContainer.clientHeight
 			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
+		},
+		handleSelectVideo(peerId) {
+			this.$store.dispatch('isGrid', false)
+			this.$store.dispatch('selectedVideoPeerId', peerId)
 		},
 	},
 }

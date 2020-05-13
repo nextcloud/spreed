@@ -20,14 +20,15 @@
 -->
 
 <template>
-	<div
-		:style="{'background-color': backgroundColor }"
-		class="video-background">
+	<div class="video-backgroundbackground">
+		<div class="darken" />
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
 			class="video-background__picture">
-		<div class="darken" />
+		<div v-if="!hasPicture"
+			:style="{'background-color': backgroundColor }"
+			class="video-background" />
 	</div>
 </template>
 
@@ -67,13 +68,13 @@ export default {
 			}
 		},
 		backgroundImage() {
-			return `/avatar/${this.user}/500`
+			return generateUrl(`avatar/${this.user}/300`)
 		},
 	},
 
 	async beforeMount() {
 		try {
-			const response = await axios.get(generateUrl(`avatar/${this.user}/1`))
+			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
 				this.hasPicture = true
 			}
@@ -98,8 +99,8 @@ export default {
 	&__picture {
 		filter: blur(20px);
 		/* Make pic to at least 100% wide and tall */
-		min-width: calc(100% + 20px);
-		min-height: calc(100% + 20px);
+		min-width: 105%;
+		min-height: 105%;
 
 		/* Setting width & height to auto prevents the browser from stretching or squishing the pic */
 		width: auto;
@@ -121,15 +122,16 @@ export default {
 		font-weight: 500;
 		text-transform: uppercase;
 	}
-
-	.darken {
-		background-color: black;
-		opacity: 12%;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-	}
 }
+
+.darken {
+	background-color: black;
+	opacity: 12%;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
 </style>

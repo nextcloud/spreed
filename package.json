@@ -43,6 +43,7 @@
 		"vue-browser-detect-plugin": "^0.1.8",
 		"vue-clipboard2": "^0.3.1",
 		"vue-fragment": "^1.5.1",
+		"vue-material-design-icons": "^4.6.0",
 		"vue-observe-visibility": "^0.4.6",
 		"vue-prevent-unload": "^0.2.3",
 		"vue-router": "^3.1.6",

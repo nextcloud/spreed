@@ -22,28 +22,37 @@
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
 		class="videoContainer"
-		:class="containerClass">
-		<video v-if="!placeholderForPromoted"
-			v-show="model.attributes.videoAvailable && sharedData.videoEnabled && !hideVideo"
-			ref="video"
-			:class="videoClass"
-			class="video" />
+		:class="containerClass"
+		@mouseover="showShadow"
+		@mouseleave="hideShadow">
 		<transition name="fade">
-			<div v-if="!placeholderForPromoted" v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled" class="avatar-container">
-				<VideoBackground v-if="isGrid"
-					:display-name="model.attributes.name"
-					:user="model.attributes.userId" />
-				<Avatar v-if="model.attributes.userId"
-					:size="avatarSize"
-					:disable-menu="true"
-					:disable-tooltip="true"
-					:user="model.attributes.userId"
-					:display-name="model.attributes.name"
-					:class="avatarClass" />
-				<div v-if="!model.attributes.userId"
-					:class="guestAvatarClass"
-					class="avatar guest">
-					{{ firstLetterOfGuestName }}
+			<video
+				v-show="hasVideoStream && !showPlaceholderForPromoted"
+				ref="video"
+				:class="videoClass"
+				class="video" />
+		</transition>
+		<transition name="fade">
+			<div class="avatar-container">
+				<template v-if="showBackgroundandAvatar">
+					<VideoBackground
+						:display-name="model.attributes.name"
+						:user="model.attributes.userId" />
+					<Avatar v-if="model.attributes.userId"
+						:size="avatarSize"
+						:disable-menu="true"
+						:disable-tooltip="true"
+						:user="model.attributes.userId"
+						:display-name="model.attributes.name"
+						:class="avatarClass" />
+					<div v-if="!model.attributes.userId"
+						:class="guestAvatarClass"
+						class="avatar guest">
+						{{ firstLetterOfGuestName }}
+					</div>
+				</template>
+				<div v-if="showPlaceholderForPromoted" class="avatar-container">
+					<AccountCircle fill-color="#FFFFFF" :size="36" />
 				</div>
 			</div>
 		</transition>
@@ -51,7 +60,9 @@
 		<div class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideoStream}">
 			<transition name="fade">
-				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay" class="bottom-bar__nameIndicator">
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
+					class="bottom-bar__nameIndicator"
+					:class="{'bottom-bar__nameIndicator--promoted': isSpeaking || isSelected}">
 					{{ participantName }}
 				</div>
 			</transition>
@@ -80,7 +91,8 @@
 				</div>
 			</transition>
 		</div>
-		<div v-if="isSpeaking && showTalkingHighlight" class="speaking-shadow" />
+		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
+		<div v-if="mouseover" class="hover-shadow" />
 	</div>
 </template>
 
@@ -94,6 +106,7 @@ import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
+import AccountCircle from 'vue-material-design-icons/AccountCircle'
 
 export default {
 
@@ -102,6 +115,7 @@ export default {
 	components: {
 		Avatar,
 		VideoBackground,
+		AccountCircle,
 	},
 
 	directives: {
@@ -135,25 +149,63 @@ export default {
 			type: Boolean,
 			default: true,
 		},
-		hideVideo: {
-			type: Boolean,
-			default: false,
-		},
+		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
 			default: false,
 		},
-		showTalkingHighlight: {
+		// The current promoted participant
+		isPromoted: {
 			type: Boolean,
-			default: true,
+			default: false,
+		},
+		// Is the current selected participant
+		isSelected: {
+			type: Boolean,
+			default: false,
+		},
+		// True when this component is used in the big video slot in the
+		// promoted view
+		isBig: {
+			type: Boolean,
+			default: false,
 		},
 	},
+
 	data() {
 		return {
-			mouseOver: false,
+			mouseover: false,
 		}
 	},
 	computed: {
+
+		showBackgroundandAvatar() {
+			if (this.isStripe) {
+				return !this.hasVideoStream && !(this.isSelected || this.isPromoted)
+			} else {
+				return !this.hasVideoStream
+			}
+		},
+
+		showPlaceholderForPromoted() {
+			if (this.isStripe) {
+				if (this.$store.getters.selectedVideoPeerId !== null) {
+					return this.isSelected
+				} else {
+					return this.isPromoted
+				}
+			} else {
+				return false
+			}
+		},
+
+		isSelectable() {
+			if (this.isStripe) {
+				return !this.isSelected
+			} else {
+				return true
+			}
+		},
 
 		containerClass() {
 			return {
@@ -264,7 +316,7 @@ export default {
 			return this.model.attributes.speaking
 		},
 		hasVideoStream() {
-			return !this.placeholderForPromoted && this.model.attributes.videoAvailable && this.sharedData.videoEnabled && this.model.attributes.stream
+			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && this.model.attributes.stream
 		},
 	},
 
@@ -272,6 +324,11 @@ export default {
 
 		'model.attributes.stream': function(stream) {
 			this._setStream(stream)
+		},
+		isSelected(bool) {
+			if (bool) {
+				this.mouseover = false
+			}
 		},
 
 	},
@@ -284,9 +341,6 @@ export default {
 	methods: {
 
 		_setStream(stream) {
-			if (this.placeholderForPromoted) {
-				return
-			}
 
 			if (!stream) {
 				// Do not clear the srcObject of the video element, just leave
@@ -327,7 +381,16 @@ export default {
 				this.$emit('switchScreenToId', this.model.attributes.peerId)
 			}
 		},
-
+		showShadow() {
+			if (this.isSelectable) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (this.isSelectable) {
+				this.mouseover = false
+			}
+		},
 	},
 
 }
@@ -372,6 +435,9 @@ export default {
 		color: white;
 		position: relative;
 		font-size: 20px;
+		&--promoted {
+			font-weight: bold;
+		}
 	}
 	&__mediaIndicator {
 		position: relative;
@@ -447,6 +513,16 @@ export default {
 	top: 0;
 	left: 0;
 	box-shadow: inset 0 0 0 2px white;
+}
+
+.hover-shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	box-shadow: inset 0 0 0 3px white;
+	cursor: pointer;
 }
 
 </style>

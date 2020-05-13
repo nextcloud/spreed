@@ -21,6 +21,12 @@
 
 <template>
 	<div class="top-bar">
+		<button v-if="hasSelectedVideo && !isGrid"
+			class="top-bar__button primary"
+			@click="handlefollowSpeaker">
+			<AccountCircle :size="16" color="ffffff" />
+			{{ followSpeakerLabel }}
+		</button>
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
@@ -159,6 +165,7 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
+import AccountCircle from 'vue-material-design-icons/AccountCircle'
 
 export default {
 	name: 'TopBar',
@@ -172,14 +179,11 @@ export default {
 		CallButton,
 		Popover,
 		ActionSeparator,
+		AccountCircle,
 	},
 
 	props: {
 		isInCall: {
-			type: Boolean,
-			required: true,
-		},
-		isGrid: {
 			type: Boolean,
 			required: true,
 		},
@@ -336,6 +340,15 @@ export default {
 				confirm: true,
 			}
 		},
+		isGrid() {
+			return this.$store.getters.isGrid
+		},
+		hasSelectedVideo() {
+			return this.$store.getters.selectedVideoPeerId !== null
+		},
+		followSpeakerLabel() {
+			return t('spreed', `Follow promoted`)
+		},
 
 	},
 
@@ -411,7 +424,8 @@ export default {
 		},
 
 		changeView() {
-			this.$emit('changeView')
+			this.$store.dispatch('isGrid', !this.isGrid)
+			this.$store.dispatch('selectedVideoPeerId', null)
 			this.showLayoutHint = false
 		},
 		async toggleGuests() {
@@ -474,6 +488,9 @@ export default {
 			this.$store.dispatch('isRenamingConversation', true)
 			this.$store.dispatch('showSidebar')
 		},
+		handlefollowSpeaker() {
+			this.$store.dispatch('selectedVideoPeerId', null)
+		},
 	},
 }
 </script>
@@ -494,6 +511,14 @@ export default {
 	&__button {
 		margin: 0 2px;
 		align-self: center;
+		display: flex;
+		align-items: center;
+		svg {
+			margin-right: 4px !important;
+		}
+		.icon {
+			margin-right: 4px !important;
+		}
 	}
 
 }
