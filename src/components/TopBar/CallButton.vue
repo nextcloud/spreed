@@ -24,7 +24,7 @@
 		v-tooltip="{
 			placement: 'auto',
 			trigger: 'hover',
-			content: callButtonTooltipText,
+			content: startCallToolTip,
 			autoHide: false,
 			html: true
 		}"
@@ -130,6 +130,18 @@ export default {
 			}
 
 			return t('spreed', 'Start call')
+		},
+
+		startCallToolTip() {
+			if (this.callButtonTooltipText) {
+				return this.callButtonTooltipText
+			}
+
+			if (!this.conversation.canStartCall && !this.conversation.hasCall) {
+				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
+			}
+
+			return ''
 		},
 
 		startCallIcon() {
