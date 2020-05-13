@@ -67,7 +67,7 @@ class RemoveTest extends TestCase {
 			->method('getRoomByToken');
 
 		$this->expectException(ConsoleRuntimeException::class);
-		$this->expectExceptionMessage('Not enough arguments (missing: "token, user").');
+		$this->expectExceptionMessage('Not enough arguments (missing: "token, participant").');
 
 		$tester = new CommandTester($this->command);
 		$tester->execute([]);
@@ -78,7 +78,7 @@ class RemoveTest extends TestCase {
 			->method('getRoomByToken');
 
 		$this->expectException(ConsoleRuntimeException::class);
-		$this->expectExceptionMessage('Not enough arguments (missing: "user").');
+		$this->expectExceptionMessage('Not enough arguments (missing: "participant").');
 
 		$tester = new CommandTester($this->command);
 		$tester->execute([
@@ -113,7 +113,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-room',
-					'user' => ['user1'],
+					'participant' => ['user1'],
 				],
 				RoomMockContainer::prepareRoomData([]),
 				RoomMockContainer::prepareRoomData([
@@ -125,7 +125,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-room',
-					'user' => ['user1', 'user2'],
+					'participant' => ['user1', 'user2'],
 				],
 				RoomMockContainer::prepareRoomData([
 					'participants' => [
@@ -170,7 +170,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-invalid',
-					'user' => [''],
+					'participant' => [''],
 				],
 				"Room not found.\n",
 				RoomMockContainer::prepareRoomData([]),
@@ -178,7 +178,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-room',
-					'user' => [''],
+					'participant' => [''],
 				],
 				"Room is no group call.\n",
 				RoomMockContainer::prepareRoomData([
@@ -188,7 +188,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-room',
-					'user' => ['user1','invalid']
+					'participant' => ['user1','invalid']
 				],
 				"User 'user1' is no participant.\n",
 				RoomMockContainer::prepareRoomData([]),
@@ -196,7 +196,7 @@ class RemoveTest extends TestCase {
 			[
 				[
 					'token' => '__test-room',
-					'user' => ['user1','invalid']
+					'participant' => ['user1','invalid']
 				],
 				"User 'invalid' is no participant.\n",
 				RoomMockContainer::prepareRoomData([
