@@ -55,15 +55,15 @@ class Remove extends Base {
 				InputArgument::REQUIRED,
 				'Token of the room to remove users from'
 			)->addArgument(
-				'user',
+				'participant',
 				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-				'Removes the given users from the room'
+				'Removes the given participants from the room'
 			);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$token = $input->getArgument('token');
-		$users = $input->getArgument('user');
+		$users = $input->getArgument('participant');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
