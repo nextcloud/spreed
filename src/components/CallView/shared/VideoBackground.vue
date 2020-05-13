@@ -68,7 +68,7 @@ export default {
 			}
 		},
 		backgroundImage() {
-			return `/avatar/${this.user}/300`
+			return generateUrl(`avatar/${this.user}/300`)
 		},
 	},
 
