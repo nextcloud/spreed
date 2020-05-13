@@ -1,6 +1,58 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.0-beta1 – 2020-05-13
+### Added
+- Added a grid view for calls and made the promoted view more usable in huge calls
+  [#1056](https://github.com/nextcloud/spreed/pull/1056)
+- Allow to use multiple High-performance backends in parallel for different conversations
+  [#3292](https://github.com/nextcloud/spreed/pull/3292)
+- Allow which video is shown big in the promoted view
+  [#3497](https://github.com/nextcloud/spreed/pull/3497)
+- Open files with the viewer apps registered in Nextcloud
+  [#2778](https://github.com/nextcloud/spreed/pull/2778)
+- Allow to upload and drag'n'drop files into the chat
+  [#2891](https://github.com/nextcloud/spreed/pull/2891)
+  [#3045](https://github.com/nextcloud/spreed/pull/3045)
+- Allow pasting images/screenshot directly into the chat
+  [#3399](https://github.com/nextcloud/spreed/pull/3399)
+- Allow selecting a directory for shared files
+  [#2876](https://github.com/nextcloud/spreed/pull/2876)
+  [#2983](https://github.com/nextcloud/spreed/pull/2983)
+- Allow to limit creating public and group conversations to a group
+  [#3095](https://github.com/nextcloud/spreed/pull/3095)
+- Added OCC commands to do basic administrations of conversations
+  [#3465](https://github.com/nextcloud/spreed/pull/3465)
+- Allow guests to set their name while waiting in the lobby
+  [#3133](https://github.com/nextcloud/spreed/pull/3133)
+- Allow moderators to turn off the microphone of participants
+  [#3015](https://github.com/nextcloud/spreed/pull/3015)
+
+### Changed
+- Reduce CPU usage when doing a video call
+  [#3413](https://github.com/nextcloud/spreed/pull/3413)
+- Automatic scaling of video quality to allow bigger video calls to further reduce required CPU and bandwidth
+  [#3419](https://github.com/nextcloud/spreed/pull/3419)
+- Notify users when talk was updated in the background and a reload is necessary
+  [#3336](https://github.com/nextcloud/spreed/pull/3336)
+- Adjust color of leave and join buttons to common styles
+  [#3398](https://github.com/nextcloud/spreed/pull/3398)
+  [#3348](https://github.com/nextcloud/spreed/pull/3348)
+
+### Fixed
+- Try harder to connect with microphone when camera is not readable
+  [#3474](https://github.com/nextcloud/spreed/pull/3474)
+- Fix multiple issues when the connection was interrupted
+  [#3383](https://github.com/nextcloud/spreed/pull/3383)
+  [#3457](https://github.com/nextcloud/spreed/pull/3457)
+  [#3460](https://github.com/nextcloud/spreed/pull/3460)
+  [#3456](https://github.com/nextcloud/spreed/pull/3456)
+  [#3402](https://github.com/nextcloud/spreed/pull/3402)
+
+### Known issues
+- The grid view still has some glitches on specific window sizes
+- The call view in the sidebar on the files app and public shares is completely overlapped by your own video
+
 ## 8.0.9 – 2020-05-13
 ### Changed
 - Reduce CPU usage when doing a video call
