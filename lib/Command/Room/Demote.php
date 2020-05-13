@@ -83,7 +83,7 @@ class Demote extends Base {
 			return 1;
 		}
 
-		$output->writeln('<info>Users successfully remove from room.</info>');
+		$output->writeln('<info>Participants successfully demoted to regular users.</info>');
 		return 0;
 	}
 }

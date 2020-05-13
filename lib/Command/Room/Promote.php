@@ -83,7 +83,7 @@ class Promote extends Base {
 			return 1;
 		}
 
-		$output->writeln('<info>Users successfully added to room.</info>');
+		$output->writeln('<info>Participants successfully promoted to moderators.</info>');
 		return 0;
 	}
 }

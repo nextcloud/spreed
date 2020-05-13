@@ -83,7 +83,7 @@ class Remove extends Base {
 			return 1;
 		}
 
-		$output->writeln('<info>Users successfully remove from room.</info>');
+		$output->writeln('<info>Users successfully removed from room.</info>');
 		return 0;
 	}
 }
