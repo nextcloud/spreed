@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper" :style="wrapperStyle">
 		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
-			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+			<button v-if="hasPreviousPage && showNavigation"
 				class="grid-navigation grid-navigation__previous"
 				@click="handleClickPrevious">
 				<ChevronLeft :size="24" />
@@ -76,7 +76,7 @@
 					</h1>
 				</template>
 			</div>
-			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+			<button v-if="hasNextPage && showNavigation"
 				class="grid-navigation grid-navigation__next"
 				@click="handleClickNext">
 				<ChevronRight :size="24" />
@@ -345,8 +345,13 @@ export default {
 				return 'height: 100%'
 			}
 		},
+		// Hides the stripe when there are no more videos
 		showStripe() {
 			return !(this.isStripe && this.videosCount === 0)
+		},
+		// Determines when to show the stripe navigation buttons
+		showNavigation() {
+			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
 		},
 	},
 
