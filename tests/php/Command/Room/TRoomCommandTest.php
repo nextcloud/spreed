@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Daniel Rudolf <nextcloud.com@daniel-rudolf.de>
@@ -30,8 +31,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
-trait TRoomCommandTest
-{
+trait TRoomCommandTest {
 	/** @var IUser[] */
 	private $userMocks;
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Daniel Rudolf <nextcloud.com@daniel-rudolf.de>
@@ -32,8 +33,7 @@ use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class RoomMockContainer
-{
+class RoomMockContainer {
 	/** @var TestCase */
 	private $testCase;
 
@@ -52,8 +52,7 @@ class RoomMockContainer
 	/** @var array[] */
 	private $participantData = [];
 
-	public function __construct(TestCase $testCase)
-	{
+	public function __construct(TestCase $testCase) {
 		$this->testCase = $testCase;
 	}
 

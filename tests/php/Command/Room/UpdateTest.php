@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Daniel Rudolf <nextcloud.com@daniel-rudolf.de>
@@ -94,8 +95,7 @@ class UpdateTest extends TestCase {
 		$this->assertEquals($expectedRoomData, $this->roomMockContainer->getRoomData());
 	}
 
-	public function validProvider(): array
-	{
+	public function validProvider(): array {
 		return [
 			[
 				[
