@@ -55,10 +55,10 @@ class DeleteTest extends TestCase {
 
 	public function testDeleteIfEmpty() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn.example.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
@@ -83,10 +83,10 @@ class DeleteTest extends TestCase {
 
 	public function testDelete() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn2.example.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();
@@ -123,10 +123,10 @@ class DeleteTest extends TestCase {
 
 	public function testNothingToDelete() {
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
 					return 'turn4.example.com';
-				} else if ($arg === 'protocols') {
+				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
 				}
 				throw new \Exception();

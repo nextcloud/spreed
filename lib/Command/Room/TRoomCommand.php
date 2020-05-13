@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Daniel Rudolf <nextcloud.com@daniel-rudolf.de>
@@ -32,8 +33,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IUser;
 
-trait TRoomCommand
-{
+trait TRoomCommand {
 	/**
 	 * @param Room   $room
 	 * @param string $name

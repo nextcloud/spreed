@@ -19,56 +19,84 @@
  *
  */
 
+import Axios from '@nextcloud/axios'
+import CancelableRequest from '../cancelableRequest'
 import Signaling from '../signaling'
 import initWebRtc from './webrtc'
 import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
+import SentVideoQualityThrottler from './SentVideoQualityThrottler'
 import { PARTICIPANT } from '../../constants'
-import { EventBus } from '../../services/EventBus'
+import { fetchSignalingSettings } from '../../services/signalingService'
 
-let signaling = null
 let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
+let sentVideoQualityThrottler = null
 
-let pendingConnectSignaling = null
+let cancelFetchSignalingSettings = null
+let signaling = null
+let tokensInSignaling = {}
 
-async function connectSignaling() {
-	if (signaling) {
+async function getSignalingSettings(token) {
+	// If getSignalingSettings is called again while a previous one was still
+	// being executed the previous one is cancelled.
+	if (cancelFetchSignalingSettings) {
+		cancelFetchSignalingSettings('canceled')
+		cancelFetchSignalingSettings = null
+	}
+
+	const { request, cancel } = CancelableRequest(fetchSignalingSettings)
+	cancelFetchSignalingSettings = cancel
+
+	let settings = null
+	try {
+		const response = await request({ token })
+		settings = response.data.ocs.data
+
+		settings.token = token
+
+		cancelFetchSignalingSettings = null
+	} catch (exception) {
+		if (Axios.isCancel(exception)) {
+			console.debug('Getting the signaling settings for ' + token + ' was cancelled by a newer getSignalingSettings')
+		} else {
+			console.warn('Failed to get the signaling settings for ' + token)
+		}
+	}
+
+	return settings
+}
+
+async function connectSignaling(token) {
+	const settings = await getSignalingSettings(token)
+	if (!settings) {
 		return
 	}
 
-	if (pendingConnectSignaling) {
-		return pendingConnectSignaling
+	if (signaling && signaling.settings.server !== settings.server) {
+		if (webRtc) {
+			webRtc.disconnect()
+			webRtc = null
+		}
+		signaling.disconnect()
+		signaling = null
+
+		tokensInSignaling = {}
 	}
 
-	pendingConnectSignaling = new Promise((resolve, reject) => {
-		Signaling.loadSettings(null).then(() => {
-			signaling = Signaling.createConnection()
+	if (!signaling) {
+		signaling = Signaling.createConnection(settings)
+	}
 
-			EventBus.$emit('signalingConnectionEstablished')
-
-			pendingConnectSignaling = null
-
-			resolve()
-		})
-	})
-
-	return pendingConnectSignaling
+	tokensInSignaling[token] = true
 }
 
-async function getSignaling() {
-	await connectSignaling()
-
-	return signaling
-}
-
-let currentToken = null
 let startedCall = null
 
-function startCall(configuration) {
+function startCall(signaling, token, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
@@ -79,25 +107,27 @@ function startCall(configuration) {
 		}
 	}
 
-	signaling.joinCall(currentToken, flags)
+	signaling.joinCall(token, flags)
 
 	startedCall()
 }
 
-function setupWebRtc() {
+function setupWebRtc(token) {
 	if (webRtc) {
 		return
 	}
 
-	webRtc = initWebRtc(signaling, callParticipantCollection)
+	const _signaling = signaling
+
+	webRtc = initWebRtc(_signaling, callParticipantCollection)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
-	webRtc.on('localMediaStarted', function(configuration) {
-		startCall(configuration)
+	webRtc.on('localMediaStarted', (configuration) => {
+		startCall(_signaling, token, configuration)
 	})
-	webRtc.on('localMediaError', function() {
-		startCall(null)
+	webRtc.on('localMediaError', () => {
+		startCall(_signaling, token, null)
 	})
 }
 
@@ -105,11 +135,14 @@ function setupWebRtc() {
  * Join the given conversation on the respective signaling server with the given sessionId
  *
  * @param {string} token Conversation to join
+ * @param {string} sessionId Session id to join with
  * @returns {Promise<void>}
  */
-async function signalingJoinConversation(token) {
-	await getSignaling()
-	await signaling.joinRoom(token)
+async function signalingJoinConversation(token, sessionId) {
+	await connectSignaling(token)
+	if (tokensInSignaling[token]) {
+		await signaling.joinRoom(token, sessionId)
+	}
 }
 
 /**
@@ -119,17 +152,17 @@ async function signalingJoinConversation(token) {
  * @returns {Promise<void>}
  */
 async function signalingJoinCall(token) {
-	await connectSignaling()
+	if (tokensInSignaling[token]) {
+		setupWebRtc(token)
 
-	setupWebRtc()
+		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
 
-	currentToken = token
+		return new Promise((resolve, reject) => {
+			startedCall = resolve
 
-	return new Promise((resolve, reject) => {
-		startedCall = resolve
-
-		webRtc.startMedia(token)
-	})
+			webRtc.startMedia(token)
+		})
+	}
 }
 
 /**
@@ -139,8 +172,12 @@ async function signalingJoinCall(token) {
  * @returns {Promise<void>}
  */
 async function signalingLeaveCall(token) {
-	await getSignaling()
-	await signaling.leaveCall(token)
+	sentVideoQualityThrottler.destroy()
+	sentVideoQualityThrottler = null
+
+	if (tokensInSignaling[token]) {
+		await signaling.leaveCall(token)
+	}
 }
 
 /**
@@ -150,8 +187,9 @@ async function signalingLeaveCall(token) {
  * @returns {Promise<void>}
  */
 async function signalingLeaveConversation(token) {
-	await getSignaling()
-	await signaling.leaveRoom(token)
+	if (tokensInSignaling[token]) {
+		await signaling.leaveRoom(token)
+	}
 }
 
 /**
@@ -168,8 +206,6 @@ export {
 	callParticipantCollection,
 	localCallParticipantModel,
 	localMediaModel,
-
-	connectSignaling,
 
 	signalingJoinConversation,
 	signalingJoinCall,

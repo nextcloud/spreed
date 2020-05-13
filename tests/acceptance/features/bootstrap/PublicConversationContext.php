@@ -25,7 +25,6 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 class PublicConversationContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 	use ChatAncestorSetter;
 
@@ -135,5 +134,4 @@ class PublicConversationContext implements Context, ActorAwareInterface {
 		// it needs to be checked too that the chat view is shown.
 		$this->chatContext->iSeeThatTheChatIsShownInTheMainView();
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -315,7 +316,6 @@ class ChatManagerTest extends TestCase {
 	}
 
 	public function testDeleteMessages() {
-
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
@@ -331,5 +331,4 @@ class ChatManagerTest extends TestCase {
 
 		$this->chatManager->deleteMessages($chat);
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -44,7 +45,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
-use OCP\Files\NotPermittedException;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\ILogger;
@@ -53,10 +54,8 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
-use OCP\Util;
 
 class PageController extends Controller {
-
 	use TInitialState;
 
 	/** @var string|null */
@@ -95,6 +94,7 @@ class PageController extends Controller {
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
 								IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								IRootFolder $rootFolder,
 								Config $talkConfig,
 								IConfig $serverConfig) {
@@ -110,6 +110,7 @@ class PageController extends Controller {
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->rootFolder = $rootFolder;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;

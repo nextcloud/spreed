@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -68,5 +69,4 @@ class GuestController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
-
 }

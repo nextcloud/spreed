@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -128,7 +129,6 @@ class ChatController extends AEnvironmentAwareController {
 	 *         found".
 	 */
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0): DataResponse {
-
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$sessionId = $this->session->getSessionForRoom($this->room->getToken());
@@ -360,10 +360,10 @@ class ChatController extends AEnvironmentAwareController {
 			 * So when you are still there, it will just have a wrong read
 			 * marker for the time until your next request starts, while it will
 			 * not update the value, when you actually left the chat already.
-			if ($setReadMarker === 1 && $lookIntoFuture) {
-				$this->participant->setLastReadMessage((int) $newLastKnown->getId());
-			}
-			*/
+			 * if ($setReadMarker === 1 && $lookIntoFuture) {
+			 * $this->participant->setLastReadMessage((int) $newLastKnown->getId());
+			 * }
+			 */
 		}
 
 		return $response;

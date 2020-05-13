@@ -15,16 +15,16 @@ OC.L10N.register(
     "Close" : "ياپ",
     "Reply" : "جاۋاب قايتۇر",
     "Today" : "بۈگۈن",
+    "Settings" : "تەڭشەكلەر",
+    "Edit" : "تەھرىر",
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
-    "Settings" : "تەڭشەكلەر",
-    "Edit" : "تەھرىر",
     "Password" : "ئىم",
-    "Share" : "ھەمبەھىر",
     "Cancel" : "ۋاز كەچ",
     "Change password" : "ئىم ئۆزگەرت",
     "Rename" : "ئات ئۆزگەرت",
-    "Send" : "يوللا"
+    "Send" : "يوللا",
+    "Share" : "ھەمبەھىر"
 },
 "nplurals=1; plural=0;");

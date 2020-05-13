@@ -1,14 +1,16 @@
 <template>
-	<div class="mainView">
+	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :force-white-icons="showChatInSidebar" />
-
-			<ChatView v-if="!showChatInSidebar" :token="token" />
-			<template v-else>
-				<CallView
-					:token="token" />
-			</template>
+			<TopBar
+				:is-in-call="showChatInSidebar" />
+			<transition name="fade">
+				<ChatView v-if="!showChatInSidebar" :token="token" />
+				<template v-else>
+					<CallView
+						:token="token" />
+				</template>
+			</transition>
 		</template>
 	</div>
 </template>
@@ -24,11 +26,12 @@ import isInLobby from '../mixins/isInLobby'
 export default {
 	name: 'MainView',
 	components: {
-		CallView,
 		ChatView,
 		LobbyScreen,
 		TopBar,
+		CallView,
 	},
+
 	mixins: [
 		isInLobby,
 	],
@@ -78,33 +81,14 @@ export default {
 		},
 	},
 
-	// FIXME reactivate once Signaling is done correctly per conversation again.
-	/*
-	watch: {
-		token: function(token) {
-			this.loadSignalingSettings(token)
-		},
-	},
-
-	mounted() {
-		this.signaling = Signaling
-		this.loadSignalingSettings(this.token)
-	},
-
-	methods: {
-		loadSignalingSettings(token) {
-			console.debug('Loading signaling settings for ' + this.token)
-			// FIXME reset the settings so we can check it later on if loading is finished
-			this.signaling.loadSettings(token)
-		},
-	},
-	*/
 }
 </script>
 
 <style lang="scss" scoped>
-.mainView {
+
+.main-view {
 	height: 100%;
+	width: 100%;
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;

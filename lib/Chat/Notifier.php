@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -207,7 +208,6 @@ class Notifier {
 	 * @param string $userId
 	 */
 	public function markMentionNotificationsRead(Room $chat, ?string $userId): void {
-
 		if ($userId === null || $userId === '') {
 			return;
 		}

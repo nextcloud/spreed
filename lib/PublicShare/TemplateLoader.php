@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -28,6 +29,7 @@ use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Share\IShare;
@@ -42,19 +44,20 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * needed.
  */
 class TemplateLoader {
-
 	use TInitialState;
 
 	public function __construct(IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		$this->initialStateService = $initialStateService;
 		$this->talkConfig = $talkConfig;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->serverConfig = $serverConfig;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function(GenericEvent $event) {
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function (GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
 			/** @var self $templateLoader */
@@ -86,5 +89,4 @@ class TemplateLoader {
 
 		$this->publishInitialStateForGuest();
 	}
-
 }

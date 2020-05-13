@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -29,7 +30,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Add extends Base {
-
 	use TRenderCommand;
 
 	/** @var CommandService */
@@ -115,6 +115,5 @@ class Add extends Base {
 
 		$output->writeln('');
 		$output->writeln("<comment>If you think your command makes sense for other users as well, feel free to share it in the following github issue:\n https://github.com/nextcloud/spreed/issues/1566</comment>");
-
 	}
 }

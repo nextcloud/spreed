@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
@@ -24,5 +25,4 @@ declare(strict_types=1);
 namespace OCA\Talk\Exceptions;
 
 class UnauthorizedException extends \Exception {
-
 }

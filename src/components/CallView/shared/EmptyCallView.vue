@@ -19,7 +19,8 @@
   -->
 
 <template>
-	<div class="emptycontent">
+	<div class="emptycontent"
+		:class="{'emptycontent-grid': isGrid}">
 		<div :class="iconClass" />
 		<h2>
 			{{ title }}
@@ -36,12 +37,20 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
-import { CONVERSATION, PARTICIPANT } from '../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
 export default {
 
 	name: 'EmptyCallView',
+
+	props: {
+		isGrid: {
+			type: Boolean,
+			default: false,
+		},
+	},
 
 	computed: {
 
@@ -129,12 +138,35 @@ export default {
 		async copyLinkToConversation() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
 	},
 
 }
 </script>
+
+<style lang="scss">
+.emptycontent {
+	margin-top: 0;
+	position: absolute;
+	top: 30vh;
+}
+
+.emptycontent-grid {
+	top: 0;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin-top: auto;
+	align-content: center;
+	justify-content: center;
+	button {
+		margin: 4px auto;
+	}
+}
+</style>

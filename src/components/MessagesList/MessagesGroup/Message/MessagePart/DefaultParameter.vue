@@ -56,6 +56,6 @@ export default {
 
 <style lang="scss" scoped>
 .external:after {
-	content: " ↗";
+	content: ' ↗';
 }
 </style>

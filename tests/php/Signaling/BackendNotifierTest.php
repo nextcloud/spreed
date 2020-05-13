@@ -43,10 +43,8 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomBackendNotifier extends BackendNotifier {
-
 	private $requests = [];
 
 	public function getRequests(): array {
@@ -63,7 +61,6 @@ class CustomBackendNotifier extends BackendNotifier {
 			'params' => $params,
 		];
 	}
-
 }
 
 /**
@@ -77,6 +74,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	private $secureRandom;
 	/** @var ITimeFactory|MockObject */
 	private $timeFactory;
+	/** @var \OCA\Talk\Signaling\Manager|MockObject */
+	private $signalingManager;
 	/** @var CustomBackendNotifier */
 	private $controller;
 
@@ -116,6 +115,11 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		]));
 
+		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
+		$this->signalingManager->expects($this->any())
+			->method('getSignalingServerForConversation')
+			->willReturn(['server' => $this->baseUrl]);
+
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->timeFactory);
 		$this->recreateBackendNotifier();
 
@@ -124,7 +128,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->app->register();
 
 		$this->originalBackendNotifier = $this->app->getContainer()->query(BackendNotifier::class);
-		$this->app->getContainer()->registerService(BackendNotifier::class, function() {
+		$this->app->getContainer()->registerService(BackendNotifier::class, function () {
 			return $this->controller;
 		});
 
@@ -147,7 +151,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	public function tearDown(): void {
 		$config = \OC::$server->getConfig();
 		$config->deleteAppValue('spreed', 'signaling_servers');
-		$this->app->getContainer()->registerService(BackendNotifier::class, function() {
+		$this->app->getContainer()->registerService(BackendNotifier::class, function () {
 			return $this->originalBackendNotifier;
 		});
 		parent::tearDown();
@@ -158,7 +162,8 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->config,
 			$this->createMock(ILogger::class),
 			$this->createMock(IClientService::class),
-			$this->secureRandom
+			$this->secureRandom,
+			$this->signalingManager
 		);
 	}
 
@@ -188,7 +193,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 
@@ -227,7 +232,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->removeUser($testUser, Room::PARTICIPANT_REMOVED);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -255,7 +260,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setName('Test room');
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -280,7 +285,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setPassword('password');
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -305,7 +310,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setType(Room::GROUP_CALL);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -330,7 +335,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setReadOnly(Room::READ_ONLY);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -355,7 +360,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -383,7 +388,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->deleteRoom();
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -407,7 +412,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->changeInCall($participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -441,7 +446,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->changeInCall($guestParticipant, Participant::FLAG_IN_CALL);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -478,7 +483,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -507,7 +512,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomPropertiesEvent(): void {
-		$listener = static function(SignalingRoomPropertiesEvent $event) {
+		$listener = static function (SignalingRoomPropertiesEvent $event) {
 			$room = $event->getRoom();
 			$event->setProperty('foo', 'bar');
 			$event->setProperty('room', $room->getToken());
@@ -520,7 +525,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setName('Test room');
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 
@@ -554,7 +559,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setParticipantType($participant, Participant::MODERATOR);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -588,7 +593,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setParticipantType($guestParticipant, Participant::GUEST_MODERATOR);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -630,7 +635,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setParticipantType($notJoinedParticipant, Participant::MODERATOR);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -667,7 +672,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setParticipantType($participant, Participant::USER);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -712,7 +717,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->setParticipantType($guestParticipant, Participant::GUEST);
 
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
+		$bodies = array_map(function ($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
 		$this->assertContains([
@@ -752,5 +757,4 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		], $bodies);
 	}
-
 }

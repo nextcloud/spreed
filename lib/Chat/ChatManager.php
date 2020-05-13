@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -45,7 +46,6 @@ use OCP\IUser;
  * pending notifications are removed if the messages are deleted.
  */
 class ChatManager {
-
 	public const EVENT_BEFORE_SYSTEM_MESSAGE_SEND = self::class . '::preSendSystemMessage';
 	public const EVENT_AFTER_SYSTEM_MESSAGE_SEND = self::class . '::postSendSystemMessage';
 	public const EVENT_BEFORE_MESSAGE_SEND = self::class . '::preSendMessage';

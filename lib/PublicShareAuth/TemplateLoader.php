@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -26,6 +27,7 @@ namespace OCA\Talk\PublicShareAuth;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Share\IShare;
@@ -40,19 +42,20 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * Talk UI as needed.
  */
 class TemplateLoader {
-
 	use TInitialState;
 
 	public function __construct(IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(GenericEvent $event) {
+		$listener = static function (GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
 			/** @var self $templateLoader */
@@ -85,5 +88,4 @@ class TemplateLoader {
 
 		$this->publishInitialStateForGuest();
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -25,13 +26,11 @@ namespace OCA\Talk\Command\Command;
 use OCA\Talk\Model\Command;
 use OC\Core\Command\Base;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 trait TRenderCommand {
-
 	protected function renderCommands(string $outputFormat, OutputInterface $output, array $commands, bool $showHelp = false): void {
-		$result = array_map(function(Command $command) {
+		$result = array_map(function (Command $command) {
 			return $command->asArray();
 		}, $commands);
 

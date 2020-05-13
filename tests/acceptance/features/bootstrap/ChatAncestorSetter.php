@@ -21,7 +21,6 @@
  *
  */
 
-use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
@@ -62,5 +61,4 @@ trait ChatAncestorSetter {
 	private function setChatAncestorForActor($chatAncestor, Actor $actor) {
 		$this->chatContext->setChatAncestorForActor($chatAncestor, $actor);
 	}
-
 }

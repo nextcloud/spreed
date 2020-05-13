@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
@@ -158,7 +159,6 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 * @since 13.0.0
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
-
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
 			return;
@@ -210,7 +210,6 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 * @param int[] $roomIdMap
 	 */
 	protected function copyParticipants(array $roomIdMap): void {
-
 		$insert = $this->connection->getQueryBuilder();
 		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
 			$insert->insert('talk_participants')
@@ -256,14 +255,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			$insert->execute();
 		}
 		$result->closeCursor();
-
 	}
 
 	/**
 	 * @param int[] $roomIdMap
 	 */
 	protected function fixNotifications(array $roomIdMap): void {
-
 		$update = $this->connection->getQueryBuilder();
 		$update->update('notifications')
 			->set('object_id', $update->createParameter('newId'))
@@ -301,14 +298,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			$update->execute();
 		}
 		$result->closeCursor();
-
 	}
 
 	/**
 	 * @param int[] $roomIdMap
 	 */
 	protected function fixActivities(array $roomIdMap): void {
-
 		$update = $this->connection->getQueryBuilder();
 		$update->update('activity')
 			->set('object_id', $update->createParameter('newId'))
@@ -363,14 +358,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			$update->execute();
 		}
 		$result->closeCursor();
-
 	}
 
 	/**
 	 * @param int[] $roomIdMap
 	 */
 	protected function fixActivityMails(array $roomIdMap): void {
-
 		$update = $this->connection->getQueryBuilder();
 		$update->update('activity_mq')
 			->set('amq_subjectparams', $update->createParameter('subjectParams'))

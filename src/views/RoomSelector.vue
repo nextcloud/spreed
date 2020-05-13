@@ -54,6 +54,7 @@
 		height: 50vh;
 		position: relative;
 	}
+
 	#modal-content {
 		position: absolute;
 		width: calc(100% - 40px);
@@ -62,50 +63,59 @@
 		flex-direction: column;
 		padding: 20px;
 	}
+
 	#room-list {
 		overflow-y: auto;
 		flex: 0 1 auto;
 	}
+
 	li {
 		padding: 6px;
 		border: 1px solid transparent;
 		display: flex;
 	}
+
 	li:hover, li:focus {
 		background-color: var(--color-background-dark);
 	}
+
 	li.selected {
 		box-shadow: inset 4px 0 var(--color-primary-element);
 	}
+
 	.avatar.icon {
 		border-radius: 50%;
 		width: 32px;
 		height: 32px;
 		background-color: var(--color-background-darker);
 	}
+
 	li > span {
 		padding: 5px;
 	}
+
 	li > span,
 	.avatar {
 		vertical-align: middle;
 
 	}
+
 	#modal-buttons {
 		overflow: hidden;
 		height: 44px;
 		flex-shrink: 0;
 	}
+
 	#modal-buttons .primary {
 		float: right;
 	}
 
 </style>
 <script>
-/* global OC */
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 export default {
 	name: 'RoomSelector',
@@ -148,7 +158,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
 				this.rooms = response.data.ocs.data
 				this.loading = false
 			})

@@ -51,7 +51,6 @@ import {
 } from './services/participantsService'
 import { PARTICIPANT } from './constants'
 import {
-	connectSignaling,
 	signalingKill,
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
@@ -201,10 +200,6 @@ export default {
 			joinConversation(this.$route.params.token)
 		}
 
-		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
-		// FIXME This was just added as a quick hack because of timing
-		connectSignaling()
-
 		window.addEventListener('resize', this.onResize)
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
@@ -311,6 +306,12 @@ export default {
 	mounted() {
 		// see browserCheck mixin
 		this.checkBrowser()
+		// Check sidebar status in previous sessions
+		if (localStorage.getItem('sidebarOpen') === 'false') {
+			this.$store.dispatch('hideSidebar')
+		} else if (localStorage.getItem('sidebarOpen') === 'true') {
+			this.$store.dispatch('showSidebar')
+		}
 	},
 
 	methods: {
@@ -375,11 +376,11 @@ export default {
 		 * @returns {string} The conversation's name
 		 */
 		getConversationName(token) {
-			if (!this.$store.getters.conversation(this.token)) {
+			if (!this.$store.getters.conversation(token)) {
 				return ''
 			}
 
-			return this.$store.getters.conversation(this.token).displayName
+			return this.$store.getters.conversation(token).displayName
 		},
 
 		async fetchSingleConversation(token) {
@@ -419,7 +420,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#content {
+.content {
 	height: 100%;
 
 	&.in-call {
@@ -428,5 +429,19 @@ export default {
 			color: #FFFFFF;
 		}
 	}
+
+	// Fix fullscreen black bar on top
+	&:fullscreen {
+		padding-top: 0;
+
+		::v-deep .app-sidebar {
+			height: 100vh;
+		}
+	}
+}
+
+.app-content {
+	min-width: 0;
+	flex: 1 1 100%;
 }
 </style>

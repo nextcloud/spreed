@@ -64,7 +64,8 @@
 						v-model="text"
 						:token="token"
 						@update:contentEditable="contentEditableToParsed"
-						@submit="handleSubmit" />
+						@submit="handleSubmit"
+						@files-pasted="handleFiles" />
 				</div>
 				<button
 					type="submit"
@@ -283,6 +284,16 @@ export default {
 
 		handleFileInput(event) {
 			const files = Object.values(event.target.files)
+
+			this.handleFiles(files)
+		},
+
+		/**
+		 * Handles files pasting event.
+		 *
+		 * @param {File[] | FileList} files pasted files list
+		 */
+		handleFiles(files) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files

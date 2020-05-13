@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
@@ -22,13 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
-
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
-use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
@@ -106,71 +104,71 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You created the conversation');
 			}
-		} else if ($message === 'conversation_renamed') {
+		} elseif ($message === 'conversation_renamed') {
 			$parsedMessage = $this->l->t('{actor} renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
 			}
-		} else if ($message === 'call_started') {
+		} elseif ($message === 'call_started') {
 			$parsedMessage = $this->l->t('{actor} started a call');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You started a call');
 			}
-		} else if ($message === 'call_joined') {
+		} elseif ($message === 'call_joined') {
 			$parsedMessage = $this->l->t('{actor} joined the call');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You joined the call');
 			}
-		} else if ($message === 'call_left') {
+		} elseif ($message === 'call_left') {
 			$parsedMessage = $this->l->t('{actor} left the call');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You left the call');
 			}
-		} else if ($message === 'call_ended') {
+		} elseif ($message === 'call_ended') {
 			[$parsedMessage, $parsedParameters] = $this->parseCall($parameters);
-		} else if ($message === 'read_only_off') {
+		} elseif ($message === 'read_only_off') {
 			$parsedMessage = $this->l->t('{actor} unlocked the conversation');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You unlocked the conversation');
 			}
-		} else if ($message === 'read_only') {
+		} elseif ($message === 'read_only') {
 			$parsedMessage = $this->l->t('{actor} locked the conversation');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You locked the conversation');
 			}
-		} else if ($message === 'lobby_timer_reached') {
+		} elseif ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');
-		} else if ($message === 'lobby_none') {
+		} elseif ($message === 'lobby_none') {
 			$parsedMessage = $this->l->t('{actor} opened the conversation to everyone');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You opened the conversation to everyone');
 			}
-		} else if ($message === 'lobby_non_moderators') {
+		} elseif ($message === 'lobby_non_moderators') {
 			$parsedMessage = $this->l->t('{actor} restricted the conversation to moderators');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You restricted the conversation to moderators');
 			}
-		} else if ($message === 'guests_allowed') {
+		} elseif ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You allowed guests');
 			}
-		} else if ($message === 'guests_disallowed') {
+		} elseif ($message === 'guests_disallowed') {
 			$parsedMessage = $this->l->t('{actor} disallowed guests');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You disallowed guests');
 			}
-		} else if ($message === 'password_set') {
+		} elseif ($message === 'password_set') {
 			$parsedMessage = $this->l->t('{actor} set a password');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You set a password');
 			}
-		} else if ($message === 'password_removed') {
+		} elseif ($message === 'password_removed') {
 			$parsedMessage = $this->l->t('{actor} removed the password');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You removed the password');
 			}
-		} else if ($message === 'user_added') {
+		} elseif ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} added {user}');
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
@@ -179,12 +177,12 @@ class SystemMessage {
 				} else {
 					$parsedMessage = $this->l->t('{actor} joined the conversation');
 				}
-			} else if ($currentUserIsActor) {
+			} elseif ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 			}
-		} else if ($message === 'user_removed') {
+		} elseif ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
 				if ($currentUserIsActor) {
@@ -196,43 +194,43 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+				} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 				}
 			}
-		} else if ($message === 'moderator_promoted') {
+		} elseif ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
-		} else if ($message === 'moderator_demoted') {
+		} elseif ($message === 'moderator_demoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
-		} else if ($message === 'guest_moderator_promoted') {
+		} elseif ($message === 'guest_moderator_promoted') {
 			$parsedParameters['user'] = $this->getGuest($parameters['session']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
+			} elseif ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
-		} else if ($message === 'guest_moderator_demoted') {
+		} elseif ($message === 'guest_moderator_demoted') {
 			$parsedParameters['user'] = $this->getGuest($parameters['session']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
+			} elseif ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
-		} else if ($message === 'file_shared') {
+		} elseif ($message === 'file_shared') {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($participant, $parameters['share']);
 				$parsedMessage = '{file}';

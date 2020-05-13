@@ -44,10 +44,8 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomInputSignalingController extends SignalingController {
-
 	private $inputStream;
 
 	public function setInputStream($data) {
@@ -57,7 +55,6 @@ class CustomInputSignalingController extends SignalingController {
 	protected function getInputStream(): string {
 		return $this->inputStream;
 	}
-
 }
 
 /**
@@ -69,6 +66,8 @@ class SignalingControllerTest extends \Test\TestCase {
 	private $config;
 	/** @var TalkSession|MockObject */
 	private $session;
+	/** @var \OCA\Talk\Signaling\Manager|MockObject */
+	private $signalingManager;
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var IDBConnection|MockObject */
@@ -107,6 +106,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
+		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
@@ -121,6 +121,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			'spreed',
 			$this->createMock(\OCP\IRequest::class),
 			$this->config,
+			$this->signalingManager,
 			$this->session,
 			$this->manager,
 			$this->dbConnection,
@@ -654,7 +655,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent() {
-		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function(SignalingEvent $event) {
+		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function (SignalingEvent $event) {
 			$room = $event->getRoom();
 			$event->setSession([
 				'foo' => 'bar',
@@ -935,5 +936,4 @@ class SignalingControllerTest extends \Test\TestCase {
 		$participant = $room->getParticipant($this->userId);
 		$this->assertEquals($newSessionId, $participant->getSessionId());
 	}
-
 }

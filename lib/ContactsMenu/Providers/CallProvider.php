@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright 2017 Ivan Sein <ivan@nextcloud.com>
@@ -72,7 +73,7 @@ class CallProvider implements IProvider {
 		}
 
 		$user = $this->userManager->get($uid);
-		if(!$user instanceof IUser) {
+		if (!$user instanceof IUser) {
 			// No valid user object
 			return;
 		}
@@ -88,5 +89,4 @@ class CallProvider implements IProvider {
 		$action = $this->actionFactory->newLinkAction($iconUrl, $talkAction, $callUrl);
 		$entry->addAction($action);
 	}
-
 }

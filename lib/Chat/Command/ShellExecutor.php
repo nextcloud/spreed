@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,9 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Command;
 
-
 class ShellExecutor {
-
 	public const PLACEHOLDER_ROOM = '{ROOM}';
 	public const PLACEHOLDER_USER = '{USER}';
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';

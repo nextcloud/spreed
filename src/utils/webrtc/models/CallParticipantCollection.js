@@ -25,13 +25,52 @@ export default function CallParticipantCollection() {
 
 	this.callParticipantModels = []
 
+	this._handlers = []
+
 }
 
 CallParticipantCollection.prototype = {
 
+	on: function(event, handler) {
+		if (!this._handlers.hasOwnProperty(event)) {
+			this._handlers[event] = [handler]
+		} else {
+			this._handlers[event].push(handler)
+		}
+	},
+
+	off: function(event, handler) {
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
+		if (index !== -1) {
+			handlers.splice(index, 1)
+		}
+	},
+
+	_trigger: function(event, args) {
+		let handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		args.unshift(this)
+
+		handlers = handlers.slice(0)
+		for (let i = 0; i < handlers.length; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
+	},
+
 	add: function(options) {
 		const callParticipantModel = new CallParticipantModel(options)
 		this.callParticipantModels.push(callParticipantModel)
+
+		this._trigger('add', [callParticipantModel])
 
 		return callParticipantModel
 	},
@@ -47,7 +86,11 @@ CallParticipantCollection.prototype = {
 			return callParticipantModel.attributes.peerId === peerId
 		})
 		if (index !== -1) {
+			const callParticipantModel = this.callParticipantModels[index]
+
 			this.callParticipantModels.splice(index, 1)
+
+			this._trigger('remove', [callParticipantModel])
 		}
 	},
 

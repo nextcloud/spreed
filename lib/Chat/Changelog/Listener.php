@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -27,9 +28,8 @@ use OCA\Talk\Events\UserEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
-
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function(UserEvent $event) {
+		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function (UserEvent $event) {
 			$userId = $event->getUserId();
 
 			/** @var Listener $listener */

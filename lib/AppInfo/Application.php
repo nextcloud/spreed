@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
@@ -62,10 +63,8 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 
-
 class Application extends App {
-
-	const APP_ID = 'spreed';
+	public const APP_ID = 'spreed';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
@@ -139,7 +138,7 @@ class Application extends App {
 	}
 
 	protected function registerNavigationLink(IServerContainer $server): void {
-		$server->getNavigationManager()->add(function() use ($server) {
+		$server->getNavigationManager()->add(function () use ($server) {
 			/** @var Config $config */
 			$config = $server->query(Config::class);
 			$user = $server->getUserSession()->getUser();
@@ -155,7 +154,7 @@ class Application extends App {
 	}
 
 	protected function registerRoomActivityHooks(IEventDispatcher $dispatcher): void {
-		$listener = function(ChatEvent $event) {
+		$listener = function (ChatEvent $event) {
 			$room = $event->getRoom();
 			/** @var ITimeFactory $timeFactory */
 			$timeFactory = $this->getContainer()->query(ITimeFactory::class);
@@ -167,7 +166,7 @@ class Application extends App {
 	}
 
 	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
-		$listener = function(RoomEvent $event) {
+		$listener = function (RoomEvent $event) {
 			/** @var ChatManager $chatManager */
 			$chatManager = $this->getContainer()->query(ChatManager::class);
 			$chatManager->deleteMessages($event->getRoom());

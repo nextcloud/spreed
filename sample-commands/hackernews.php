@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -65,10 +66,10 @@ foreach ($stories as $storyId) {
 $page = 'news';
 if ($mode === 'new') {
 	$page = 'newest';
-} else if ($mode === 'best') {
+} elseif ($mode === 'best') {
 	$page = 'best';
 }
 
 $response .= "Find more at https://news.ycombinator.com/$page";
 
-echo ($response);
+echo($response);

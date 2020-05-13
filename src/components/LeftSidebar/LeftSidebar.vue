@@ -112,7 +112,7 @@ import { setAttachmentFolder } from '../../services/settingsService'
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 
 export default {
 
@@ -279,7 +279,7 @@ export default {
 						this.$store.commit('setAttachmentFolder', path)
 						await setAttachmentFolder(path)
 					} catch (exception) {
-						OCP.Toast.error(t('spreed', 'Error while setting attachment folder'))
+						showError(t('spreed', 'Error while setting attachment folder'))
 						this.$store.commit('setAttachmentFolder', oldFolder)
 					}
 					this.attachmentFolderLoading = false

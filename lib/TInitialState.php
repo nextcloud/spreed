@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
@@ -22,11 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-
+use OC\HintException;
 use OC\User\NoUserException;
 use OCP\App\IAppManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IUser;
@@ -40,6 +42,8 @@ trait TInitialState {
 	protected $serverConfig;
 	/** @var IInitialStateService */
 	protected $initialStateService;
+	/** @var ICacheFactory */
+	protected $memcacheFactory;
 
 	protected function publishInitialStateShared(): void {
 		// Needed to enable the screensharing extension in Chromium < 72.
@@ -50,6 +54,15 @@ trait TInitialState {
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
 		);
 
+		$signalingMode = $this->talkConfig->getSignalingMode();
+		if ($signalingMode !== Config::SIGNALING_INTERNAL
+			&& !$this->memcacheFactory->isAvailable()
+			&& $this->serverConfig->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
+			throw new HintException(
+				'External signaling is only supported with a distributed cache'
+			);
+		}
+
 		$this->initialStateService->provideInitialState(
 			'talk', 'signaling_mode',
 			$this->talkConfig->getSignalingMode()
@@ -57,7 +70,6 @@ trait TInitialState {
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
-
 		$this->publishInitialStateShared();
 
 		$this->initialStateService->provideInitialState(
@@ -90,7 +102,6 @@ trait TInitialState {
 	}
 
 	protected function publishInitialStateForGuest(): void {
-
 		$this->publishInitialStateShared();
 
 		$this->initialStateService->provideInitialState(

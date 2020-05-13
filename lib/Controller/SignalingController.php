@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
@@ -52,7 +53,9 @@ class SignalingController extends OCSController {
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
 	/** @var Config */
-	private $config;
+	private $talkConfig;
+	/** @var \OCA\Talk\Signaling\Manager */
+	private $signalingManager;
 	/** @var TalkSession */
 	private $session;
 	/** @var Manager */
@@ -74,7 +77,8 @@ class SignalingController extends OCSController {
 
 	public function __construct(string $appName,
 								IRequest $request,
-								Config $config,
+								Config $talkConfig,
+								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
 								Manager $manager,
 								IDBConnection $connection,
@@ -85,7 +89,8 @@ class SignalingController extends OCSController {
 								IClientService $clientService,
 								?string $UserId) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
+		$this->talkConfig = $talkConfig;
+		$this->signalingManager = $signalingManager;
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
@@ -100,13 +105,55 @@ class SignalingController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
-	 * Only available for logged in users because guests can not use the apps
-	 * right now.
-	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getSettings(): DataResponse {
-		return new DataResponse($this->config->getSettings($this->userId));
+	public function getSettings(string $token = ''): DataResponse {
+		try {
+			if ($token !== '') {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			} else {
+				// FIXME Soft-fail for legacy support in mobile apps
+				$room = null;
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$stun = [];
+		$stunServer = $this->talkConfig->getStunServer();
+		if ($stunServer) {
+			$stun[] = [
+				'url' => 'stun:' . $stunServer,
+			];
+		}
+
+		$turn = [];
+		$turnSettings = $this->talkConfig->getTurnSettings();
+		if (!empty($turnSettings['server'])) {
+			$protocols = explode(',', $turnSettings['protocols']);
+			foreach ($protocols as $proto) {
+				$turn[] = [
+					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'username' => $turnSettings['username'],
+					'credential' => $turnSettings['password'],
+				];
+			}
+		}
+
+		$signalingMode = $this->talkConfig->getSignalingMode();
+		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
+
+		return new DataResponse([
+			'signalingMode' => $signalingMode,
+			'userId' => $this->userId,
+			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
+			'server' => $signaling,
+			'ticket' => $this->talkConfig->getSignalingTicket($this->userId),
+			'stunservers' => $stun,
+			'turnservers' => $turn,
+		]);
 	}
 
 	/**
@@ -117,7 +164,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getWelcomeMessage(int $serverId): DataResponse {
-		$signalingServers = $this->config->getSignalingServers();
+		$signalingServers = $this->talkConfig->getSignalingServers();
 		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -161,14 +208,13 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function signaling(string $token, string $messages): DataResponse {
-		$signaling = $this->config->getSignalingServers();
-		if (!empty($signaling)) {
+		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 
 		$response = [];
 		$messages = json_decode($messages, true);
-		foreach($messages as $message) {
+		foreach ($messages as $message) {
 			$ev = $message['ev'];
 			switch ($ev) {
 				case 'message':
@@ -207,8 +253,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pullMessages(string $token): DataResponse {
-		$signaling = $this->config->getSignalingServers();
-		if (!empty($signaling)) {
+		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -234,7 +279,7 @@ class SignalingController extends OCSController {
 			// Query all messages and send them to the user
 			$data = $this->messages->getAndDeleteMessages($sessionId);
 			$messageCount = count($data);
-			$data = array_filter($data, function($message) {
+			$data = array_filter($data, function ($message) {
 				return $message['data'] !== 'refresh-participant-list';
 			});
 
@@ -332,7 +377,7 @@ class SignalingController extends OCSController {
 		if (empty($checksum)) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
+		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getSignalingSecret());
 		return hash_equals($hash, strtolower($checksum));
 	}
 
@@ -394,7 +439,7 @@ class SignalingController extends OCSController {
 	private function backendAuth(array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
-		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
+		if (!$this->talkConfig->validateSignalingTicket($userId, $params['ticket'])) {
 			return new DataResponse([
 				'type' => 'error',
 				'error' => [
@@ -478,10 +523,10 @@ class SignalingController extends OCSController {
 
 		if ($action === 'join') {
 			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
-		} else if ($action === 'leave') {
+		} elseif ($action === 'leave') {
 			if (!empty($userId)) {
 				$room->leaveRoom($userId, $sessionId);
-			} else if ($participant instanceof Participant) {
+			} elseif ($participant instanceof Participant) {
 				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			}
 		}
@@ -542,5 +587,4 @@ class SignalingController extends OCSController {
 		];
 		return new DataResponse($response);
 	}
-
 }

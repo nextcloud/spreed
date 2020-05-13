@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -61,7 +62,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function(JoinRoomUserEvent $event) {
+		$listener = static function (JoinRoomUserEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
@@ -74,14 +75,14 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
-		$listener = static function(JoinRoomGuestEvent $event) {
+		$listener = static function (JoinRoomGuestEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
 			try {
 				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());
 			} catch (UnauthorizedException $e) {
-				$event->setCancelJoin( true);
+				$event->setCancelJoin(true);
 			}
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
@@ -171,5 +172,4 @@ class Listener {
 
 		throw new UnauthorizedException('Guests are not allowed in this room');
 	}
-
 }

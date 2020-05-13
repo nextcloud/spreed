@@ -29,7 +29,8 @@
 			html: true
 		}"
 		:disabled="startCallButtonDisabled || loading || blockCalls"
-		class="top-bar__button primary"
+		class="top-bar__button"
+		:class="startCallButtonClasses"
 		@click="joinCall">
 		<span
 			class="icon"
@@ -51,6 +52,7 @@
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { emit } from '@nextcloud/event-bus'
 
 export default {
 	name: 'CallButton',
@@ -142,6 +144,13 @@ export default {
 			return 'icon-start-call'
 		},
 
+		startCallButtonClasses() {
+			return {
+				primary: !this.conversation.hasCall && !this.isBlockedByLobby,
+				success: this.conversation.hasCall && !this.isBlockedByLobby,
+			}
+		},
+
 		showStartCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
@@ -161,6 +170,10 @@ export default {
 		async joinCall() {
 			console.info('Joining call')
 			this.loading = true
+			// Close navigation
+			emit('toggle-navigation', {
+				open: false,
+			})
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
@@ -171,7 +184,13 @@ export default {
 
 		async leaveCall() {
 			console.info('Leaving call')
+			// Remove selected participant
+			this.$store.dispatch('selectedVideoPeerId', null)
 			this.loading = true
+			// Open navigarion
+			emit('toggle-navigation', {
+				open: true,
+			})
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
@@ -188,6 +207,18 @@ export default {
 
 	&.icon-incoming-call {
 		animation: pulse 2s infinite;
+	}
+}
+
+.success {
+	color: white;
+	background-color: var(--color-success);
+	border: 1px solid var(--color-success);
+
+	&:hover,
+	&:focus,
+	&:active {
+		border: 1px solid var(--color-success) !important;
 	}
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  *
@@ -32,6 +33,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IUser;
@@ -42,7 +44,6 @@ use OCP\Util;
  * Helper class to add the Talk UI to the sidebar of the Files app.
  */
 class TemplateLoader implements IEventListener {
-
 	use TInitialState;
 
 	/** @var IAppManager */
@@ -53,12 +54,14 @@ class TemplateLoader implements IEventListener {
 	private $userSession;
 
 	public function __construct(IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig,
 								IAppManager $appManager,
 								IRootFolder $rootFolder,
 								IUserSession $userSession) {
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->appManager = $appManager;
@@ -99,5 +102,4 @@ class TemplateLoader implements IEventListener {
 			$this->publishInitialStateForGuest();
 		}
 	}
-
 }

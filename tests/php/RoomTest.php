@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Peter Edens <petere@conceiva.com>
@@ -34,21 +35,19 @@ use OCP\Security\ISecureRandom;
 use Test\TestCase;
 
 class RoomTest extends TestCase {
-
 	public function testVerifyPassword() {
 		$dispatcher = new EventDispatcher(
 			new \Symfony\Component\EventDispatcher\EventDispatcher(),
 			\OC::$server,
 			$this->createMock(ILogger::class)
 		);
-		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function(VerifyRoomPasswordEvent $event) {
+		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function (VerifyRoomPasswordEvent $event) {
 			$password = $event->getPassword();
 
 			if ($password === '1234') {
 				$event->setIsPasswordValid(true);
 				$event->setRedirectUrl('');
-			}
-			else {
+			} else {
 				$event->setIsPasswordValid(false);
 				$event->setRedirectUrl('https://test');
 			}
@@ -65,6 +64,7 @@ class RoomTest extends TestCase {
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,
 			Webinary::LOBBY_NONE,
+			null,
 			'foobar',
 			'Test',
 			'passy',

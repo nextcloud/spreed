@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class ConversationListContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 	use ChatAncestorSetter;
 
@@ -176,7 +175,7 @@ class ConversationListContext implements Context, ActorAwareInterface {
 		// It is assumed that the search input is empty, so no backspace or
 		// delete keys are sent to remove the previous content like done in the
 		// Selenium2 driver for Mink.
-		$webDriverElement->postValue(array('value' => array($value)));
+		$webDriverElement->postValue(['value' => [$value]]);
 	}
 
 	/**
@@ -275,5 +274,4 @@ class ConversationListContext implements Context, ActorAwareInterface {
 			PHPUnit_Framework_Assert::fail("The $conversation conversation is still active after $timeout seconds");
 		}
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -241,7 +242,7 @@ class RoomPluginTest extends \Test\TestCase {
 			->method('addResultSet')
 			->with(
 				$this->callback(
-					function(SearchResultType $searchResultType) {
+					function (SearchResultType $searchResultType) {
 						return $searchResultType->getLabel() === 'rooms';
 					}
 				),
@@ -253,5 +254,4 @@ class RoomPluginTest extends \Test\TestCase {
 
 		$this->assertSame($expectedHasMoreResults, $hasMoreResults);
 	}
-
 }

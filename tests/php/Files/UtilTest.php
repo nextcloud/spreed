@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -35,7 +36,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class UtilTest extends TestCase {
-
 	public function createNodeMock(string $type, bool $instanceOfGroupFolderStorage = false) {
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
@@ -68,7 +68,7 @@ class UtilTest extends TestCase {
 			['28', 'admin6', [
 				$this->createNodeMock(FileInfo::TYPE_FOLDER),
 				$this->createNodeMock(FileInfo::TYPE_FILE, true)
-		], 1],
+			], 1],
 		];
 	}
 
@@ -81,7 +81,6 @@ class UtilTest extends TestCase {
 	 * @param bool|int $hasReturn
 	 */
 	public function testGetGroupFolderNode(string $fileId, string $userId, array $nodes, $return): void {
-
 		$userFolder = $this->createMock(Folder::class);
 		$userFolder->expects($this->once())
 			->method('getById')

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-
 use OCA\Talk\Chat\Changelog;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\CreateRoomTokenEvent;
@@ -34,6 +34,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICache;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -43,7 +44,6 @@ use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
 class Manager {
-
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
 	/** @var IDBConnection */
@@ -140,6 +140,11 @@ class Manager {
 			]));
 		}
 
+		$assignedSignalingServer = $row['assigned_hpb'];
+		if ($assignedSignalingServer !== null) {
+			$assignedSignalingServer = (int) $assignedSignalingServer;
+		}
+
 		return new Room(
 			$this,
 			$this->db,
@@ -151,6 +156,7 @@ class Manager {
 			(int) $row['type'],
 			(int) $row['read_only'],
 			(int) $row['lobby_state'],
+			$assignedSignalingServer,
 			(string) $row['token'],
 			(string) $row['name'],
 			(string) $row['password'],
@@ -199,6 +205,23 @@ class Manager {
 		} catch (NotFoundException $e) {
 			return null;
 		}
+	}
+
+	public function resetAssignedSignalingServers(ICache $cache): void {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->isNotNull('assigned_hpb'));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			if (!$room->hasActiveSessions()) {
+				$room->setAssignedSignalingServer(null);
+				$cache->remove($room->getToken());
+			}
+		}
+		$result->closeCursor();
 	}
 
 	/**
@@ -251,7 +274,7 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms', 'r')
-			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		if ($participant !== null) {
 			// Non guest user
@@ -802,7 +825,6 @@ class Manager {
 	 * @throws \OutOfBoundsException
 	 */
 	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
-
 		$event = new CreateRoomTokenEvent($entropy, $chars);
 		$this->dispatcher->dispatch(self::EVENT_TOKEN_GENERATE, $event);
 		try {

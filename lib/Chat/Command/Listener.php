@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -22,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Command;
 
-
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Command;
@@ -44,7 +44,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, static function(ChatParticipantEvent $event) {
+		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, static function (ChatParticipantEvent $event) {
 			$message = $event->getComment();
 			$participant = $event->getParticipant();
 

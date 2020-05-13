@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Joas Schilling <coding@schilljs.com>
@@ -31,7 +32,6 @@ use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
 class ClearResourceAccessCache implements IRepairStep {
-
 	protected const INVALIDATIONS = 1;
 
 	/** @var IConfig */
