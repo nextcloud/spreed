@@ -29,9 +29,12 @@ use InvalidArgumentException;
 use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\IGroup;
 use OCP\IUser;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 
 trait TRoomCommand {
 	/**
@@ -336,5 +339,37 @@ trait TRoomCommand {
 		foreach ($participants as $participant) {
 			$room->setParticipantType($participant, Participant::USER);
 		}
+	}
+
+	protected function completeTokenValues(CompletionContext $context): array {
+		/** @var Manager $roomManager */
+		$roomManager = \OC::$server->query(Manager::class);
+		return array_map(function (Room $room) {
+			return $room->getToken();
+		}, $roomManager->searchRoomsByToken($context->getCurrentWord()));
+	}
+
+	protected function completeUserValues(CompletionContext $context): array {
+		$userManager = \OC::$server->getUserManager();
+		return array_map(function (IUser $user) {
+			return $user->getUID();
+		}, $userManager->search($context->getCurrentWord()));
+	}
+
+	protected function completeGroupValues(CompletionContext $context): array {
+		$groupManager = \OC::$server->getGroupManager();
+		return array_map(function (IGroup $group) {
+			return $group->getGID();
+		}, $groupManager->search($context->getCurrentWord()));
+	}
+
+	protected function completeCircleValues(CompletionContext $context): array {
+		// TODO: implement me!
+		return [];
+	}
+
+	protected function completeParticipantValues(CompletionContext $context): array {
+		// TODO: implement me!
+		return [];
 	}
 }

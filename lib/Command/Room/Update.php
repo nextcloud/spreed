@@ -30,6 +30,7 @@ use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -144,5 +145,27 @@ class Update extends Base {
 
 		$output->writeln('<info>Room successfully updated.</info>');
 		return 0;
+	}
+
+	public function completeOptionValues($optionName, CompletionContext $context) {
+		switch ($optionName) {
+			case 'public':
+			case 'readonly':
+				return ['1', '0'];
+
+			case 'owner':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeOptionValues($optionName, $context);
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

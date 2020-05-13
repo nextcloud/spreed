@@ -28,6 +28,7 @@ namespace OCA\Talk\Command\Room;
 use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Manager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -139,5 +140,24 @@ class Create extends Base {
 
 		$output->writeln('<info>Room successfully created.</info>');
 		return 0;
+	}
+
+	public function completeOptionValues($optionName, CompletionContext $context) {
+		switch ($optionName) {
+			case 'user':
+				return $this->completeUserValues($context);
+
+			case 'group':
+				return $this->completeGroupValues($context);
+
+			case 'circle':
+				return $this->completeCircleValues($context);
+
+			case 'owner':
+			case 'moderator':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeOptionValues($optionName, $context);
 	}
 }

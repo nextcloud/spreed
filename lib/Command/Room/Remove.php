@@ -30,6 +30,7 @@ use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -86,5 +87,17 @@ class Remove extends Base {
 
 		$output->writeln('<info>Users successfully removed from room.</info>');
 		return 0;
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+
+			case 'participant':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

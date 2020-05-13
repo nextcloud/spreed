@@ -30,6 +30,7 @@ use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -102,5 +103,29 @@ class Add extends Base {
 
 		$output->writeln('<info>Users successfully added to room.</info>');
 		return 0;
+	}
+
+	public function completeOptionValues($optionName, CompletionContext $context) {
+		switch ($optionName) {
+			case 'user':
+				return $this->completeUserValues($context);
+
+			case 'group':
+				return $this->completeGroupValues($context);
+
+			case 'circle':
+				return $this->completeCircleValues($context);
+		}
+
+		return parent::completeOptionValues($optionName, $context);
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }
