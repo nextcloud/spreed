@@ -236,12 +236,21 @@ class BaseTest extends TestCase {
 			->method('getDisplayName')
 			->with('user')
 			->willReturn($expectedName);
+		$room->expects($this->once())
+			->method('getToken')
+			->willReturn('token');
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('spreed.Page.showCall', ['token' => 'token'])
+			->willReturn('url');
 
 		$this->assertEquals([
 			'type' => 'call',
 			'id' => $id,
 			'name' => $expectedName,
 			'call-type' => $expectedType,
+			'link' => 'url',
 		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 
