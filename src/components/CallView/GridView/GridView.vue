@@ -33,7 +33,7 @@
 				:style="gridStyle"
 				@mousemove="handleMovement"
 				@keydown="handleMovement">
-				<template v-if="!devMode">
+				<template v-if="!devMode && (!isStripe || showStripe)">
 					<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 					<template v-for="callParticipantModel in displayedVideos">
 						<Video
@@ -65,7 +65,7 @@
 						@switchScreenToId="1" />
 				</template>
 				<!-- Grid developer mode -->
-				<template v-else>
+				<template v-if="devMode">
 					<div
 						v-for="video in displayedVideos"
 						:key="video"
@@ -250,17 +250,19 @@ export default {
 			}
 		},
 
-		// Number of video components (includes localvideo if not in dev mode)
+		// Number of video components (includes localvideo and emptycontent)
 		videosCount() {
-			if (this.devMode || this.isStripe) {
+			// No need to include localvideo or emptycontent here
+			if (this.isStripe || this.devMode) {
 				return this.videos.length
 			} else {
 				// Count the emptycontent as a grid element
 				if (this.videos.length === 0) {
 					return 2
+				} else {
+					// Add the local video to the count
+					return this.videos.length + 1
 				}
-				// Add the local video to the count
-				return this.videos.length + 1
 			}
 		},
 
@@ -342,6 +344,9 @@ export default {
 			} else {
 				return 'height: 100%'
 			}
+		},
+		showStripe() {
+			return !(this.isStripe && this.videosCount === 0)
 		},
 	},
 
