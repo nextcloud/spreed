@@ -182,7 +182,7 @@ export default {
 			if (!this.fetchingParticipants) {
 				this.cancelableGetParticipants()
 			}
-		}, 250),
+		}, 2000),
 
 		async fetchSearchResults() {
 			try {
