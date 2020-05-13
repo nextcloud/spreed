@@ -652,6 +652,12 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 					}
 
 					if (statsReport.bytesReceived > 0) {
+						if (mediaType === 'video' && statsReport.bytesReceived < 2000) {
+							// A video with less than 2000 bytes is an empty single frame of the MCU
+							// console.debug('Participant is registered with with video but didn\'t send a lot of data, so we assume the video is disabled for now.')
+							result = true
+							return
+						}
 						webrtc.emit('unmute', {
 							id: peer.id,
 							name: mediaType,
