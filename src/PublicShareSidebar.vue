@@ -34,8 +34,7 @@
 			<template v-else>
 				<CallView v-if="isInCall"
 					:token="token"
-					:is-sidebar="true"
-					:use-constrained-layout="true" />
+					:is-sidebar="true" />
 				<PreventUnload :when="isInCall" />
 				<CallButton class="call-button" />
 				<ChatView :token="token" />

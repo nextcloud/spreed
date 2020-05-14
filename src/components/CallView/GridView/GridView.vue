@@ -61,7 +61,6 @@
 						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
-						:use-constrained-layout="false"
 						@switchScreenToId="1" />
 				</template>
 				<!-- Grid developer mode -->
@@ -91,7 +90,6 @@
 			:local-media-model="localMediaModel"
 			:video-container-aspect-ratio="videoContainerAspectRatio"
 			:local-call-participant-model="localCallParticipantModel"
-			:use-constrained-layout="false"
 			@switchScreenToId="1" />
 		<!-- page indicator (disabled) -->
 		<div
