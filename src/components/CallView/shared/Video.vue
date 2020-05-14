@@ -58,7 +58,7 @@
 		</transition>
 
 		<div class="bottom-bar"
-			:class="{'bottom-bar--video-on' : hasVideoStream}">
+			:class="{'bottom-bar--video-on' : hasVideoStream, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
 					class="bottom-bar__nameIndicator"
@@ -67,7 +67,10 @@
 				</div>
 			</transition>
 			<transition name="fade">
-				<div v-if="isGrid" v-show="showVideoOverlay" class="bottom-bar__mediaIndicator">
+				<div
+					v-if="isGrid"
+					v-show="showVideoOverlay"
+					class="bottom-bar__mediaIndicator">
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="audioButtonTooltip"
 						class="muteIndicator forced-white"
@@ -215,6 +218,7 @@ export default {
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
+				'video-container-big': this.isBig,
 			}
 		},
 
@@ -407,7 +411,7 @@ export default {
 @include avatar-mixin(128px);
 
 .video-container-grid {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -415,6 +419,11 @@ export default {
 	flex-direction: column;
 }
 
+.video-container-big {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
 .avatar-container {
 	margin: auto;
 }
@@ -428,6 +437,9 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-end;
+	&--big {
+		justify-content: flex-start;
+	}
 	&--video-on {
 		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
 	}
@@ -443,7 +455,7 @@ export default {
 		position: relative;
 		background-size: 22px;
 		text-align: center;
-		margin-top: -8px;
+		margin: 0 0 -7px 8px;
 	}
 }
 
