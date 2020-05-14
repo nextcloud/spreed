@@ -57,7 +57,8 @@
 			</div>
 		</transition>
 
-		<div class="bottom-bar"
+		<div v-if="!isSidebar"
+			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideoStream, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
@@ -170,6 +171,11 @@ export default {
 		// True when this component is used in the big video slot in the
 		// promoted view
 		isBig: {
+			type: Boolean,
+			default: false,
+		},
+		// True when this component is used as main video in the sidebar
+		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
