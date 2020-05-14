@@ -55,6 +55,7 @@
 
 <script>
 import Command from '../../components/AdminSettings/Command'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'Commands',
@@ -78,7 +79,7 @@ export default {
 	},
 
 	mounted() {
-		this.commands = OCP.InitialState.loadState('talk', 'commands')
+		this.commands = loadState('talk', 'commands')
 	},
 }
 </script>
