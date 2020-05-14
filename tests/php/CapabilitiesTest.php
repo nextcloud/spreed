@@ -65,9 +65,9 @@ class CapabilitiesTest extends TestCase {
 			->method('isDisabledForUser');
 
 		$this->serverConfig->expects($this->once())
-			->method('getSystemValueString')
-			->with('version', '0.0.0')
-			->willReturn('16.0.1');
+			->method('getAppValue')
+			->with('spreed', 'has_reference_id', 'no')
+			->willReturn('no');
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
@@ -97,14 +97,13 @@ class CapabilitiesTest extends TestCase {
 					'chat-replies',
 					'circles-support',
 					'force-mute',
-					'chat-reference-id',
 				],
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
 					],
 					'chat' => [
-						'max-length' => 1000,
+						'max-length' => 32000,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -157,9 +156,9 @@ class CapabilitiesTest extends TestCase {
 			->willReturn($isNotAllowed);
 
 		$this->serverConfig->expects($this->once())
-			->method('getSystemValueString')
-			->with('version', '0.0.0')
-			->willReturn('16.0.2');
+			->method('getAppValue')
+			->with('spreed', 'has_reference_id', 'no')
+			->willReturn('yes');
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
@@ -223,9 +222,6 @@ class CapabilitiesTest extends TestCase {
 			->method('isDisabledForUser')
 			->with($user)
 			->willReturn(true);
-
-		$this->serverConfig->expects($this->never())
-			->method('getSystemValueString');
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([], $capabilities->getCapabilities());
