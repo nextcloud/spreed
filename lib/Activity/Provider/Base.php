@@ -126,6 +126,7 @@ abstract class Base implements IProvider {
 			'type' => 'call',
 			'id' => $room->getId(),
 			'name' => $room->getDisplayName($userId),
+			'link' => $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 			'call-type' => $stringType,
 		];
 	}
