@@ -218,6 +218,7 @@ export default {
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
+				'video-container-big': this.isBig,
 			}
 		},
 
@@ -410,7 +411,7 @@ export default {
 @include avatar-mixin(128px);
 
 .video-container-grid {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -418,6 +419,11 @@ export default {
 	flex-direction: column;
 }
 
+.video-container-big {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
 .avatar-container {
 	margin: auto;
 }
