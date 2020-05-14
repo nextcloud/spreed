@@ -81,6 +81,7 @@
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
 export default {
@@ -105,7 +106,7 @@ export default {
 	},
 
 	beforeMount() {
-		const state = OCP.InitialState.loadState('talk', 'signaling_servers')
+		const state = loadState('talk', 'signaling_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.hideWarning = state.hideWarning
