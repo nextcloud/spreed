@@ -69,7 +69,7 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo" />
-			<!-- Local video if the conversation is 1to1 -->
+			<!-- Local video if the conversation is 1to1 or if sidebar -->
 			<LocalVideo
 				v-if="isOneToOneView"
 				ref="localVideo"
@@ -189,7 +189,7 @@ export default {
 			return this.callParticipantModels.length === 1
 		},
 		isOneToOneView() {
-			return this.isOneToOne && !this.isGrid
+			return (this.isOneToOne && !this.isGrid) || this.isSidebar
 		},
 		showGrid() {
 			return !this.isOneToOneView && !this.isSidebar
@@ -436,11 +436,6 @@ export default {
 	display: none;
 }
 
-#videos .emptycontent {
-	height: 50%;
-	transform: translateY(-50%)
-}
-
 .videoContainer.hidden,
 .participants-1.screensharing .videoContainer.hidden,
 .participants-2.screensharing .videoContainer.hidden {
@@ -516,10 +511,6 @@ export default {
 
 .videoContainer.promoted ::v-deep .mediaIndicator {
 	display: none !important;
-}
-
-.participants-1:not(.screensharing) ~ #emptycontent {
-	display: block !important;
 }
 
 @media only screen and (max-width: 768px) {
