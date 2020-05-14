@@ -57,6 +57,7 @@
 			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
 			<GridView
+				v-if="showGrid"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
 				:token="token"
@@ -67,32 +68,18 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo" />
-			<!--
-			</div>
-			<template v-for="callParticipantModel in reversedCallParticipantModels">
-				<Video
-					:key="callParticipantModel.attributes.peerId"
-					:token="token"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					@switchScreenToId="_switchScreenToId" />
-				<Video
-					:key="'placeholder' + callParticipantModel.attributes.peerId"
-					:token="token"
-					:placeholder-for-promoted="true"
-					:model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-					:use-constrained-layout="useConstrainedLayout"
-					@switchScreenToId="_switchScreenToId" />
-			</template>
-			<LocalVideo ref="localVideo"
+			<!-- Local video if the conversation is 1to1 -->
+			<LocalVideo
+				v-if="isOneToOneView"
+				ref="localVideo"
+				class="local-video"
+				:fit-video="true"
+				:is-stripe="true"
 				:local-media-model="localMediaModel"
+				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
-				:use-constrained-layout="useConstrainedLayout"
-				@switchScreenToId="_switchScreenToId" />
-				-->
-
+				:use-constrained-layout="false"
+				@switchScreenToId="1" />
 			<div id="screens">
 				<Screen v-if="localMediaModel.attributes.localScreen"
 					:local-media-model="localMediaModel"
@@ -112,6 +99,7 @@ import { localMediaModel, localCallParticipantModel, callParticipantCollection }
 import EmptyCallView from './shared/EmptyCallView'
 import Screen from './shared/Screen'
 import Video from './shared/Video'
+import LocalVideo from './shared/LocalVideo'
 
 export default {
 	name: 'CallView',
@@ -121,6 +109,7 @@ export default {
 		EmptyCallView,
 		Screen,
 		Video,
+		LocalVideo,
 	},
 
 	props: {
@@ -189,6 +178,15 @@ export default {
 		},
 		hasSelectedVideo() {
 			return this.$store.getters.selectedVideoPeerId !== null
+		},
+		isOneToOne() {
+			return this.callParticipantModels.length === 1
+		},
+		isOneToOneView() {
+			return this.isOneToOne && !this.isGrid
+		},
+		showGrid() {
+			return !this.isOneToOneView
 		},
 	},
 	watch: {
@@ -416,6 +414,14 @@ export default {
 	display: block;
 }
 
+.local-video {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 300px;
+	height: 250px;
+}
+
 #videos.hidden {
 	display: none;
 }
@@ -423,23 +429,6 @@ export default {
 #videos .emptycontent {
 	height: 50%;
 	transform: translateY(-50%)
-}
-
-.videoContainer,
-/* Force regular rules on "big speaker video" when screensharing is enabled. */
-.participants-1.screensharing .videoContainer,
-.participants-2.screensharing .videoContainer {
-	position: absolute;
-	width: 100%;
-	-webkit-box-flex: auto;
-	-moz-box-flex: auto;
-	-webkit-flex: auto;
-	-ms-flex: auto;
-	flex: auto;
-	z-index: 2;
-	display: flex;
-	justify-content: center;
-	align-items: flex-end;
 }
 
 .videoContainer.hidden,
@@ -527,32 +516,6 @@ export default {
 
 .participants-1:not(.screensharing) ~ #emptycontent {
 	display: block !important;
-}
-
-/* big speaker video */
-.participants-1 .videoContainer,
-.participants-2 .videoContainer,
-.videoContainer.promoted {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	left: 0;
-	top: 0;
-	z-index: 1;
-}
-
-/* own video */
-.participants-1 .videoView,
-.participants-2 .videoView {
-	position: absolute;
-	width: 22%;
-	min-width: 200px;
-	overflow:visible;
-	right: 0;
-	bottom: 0;
-	top: initial;
-	left: initial;
 }
 
 @media only screen and (max-width: 768px) {
