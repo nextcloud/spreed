@@ -343,6 +343,10 @@ export default {
 				return 'height: 100%'
 			}
 		},
+		// Determines when to show the stripe navigation buttons
+		showNavigation() {
+			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
+		},
 	},
 
 	watch: {
@@ -394,8 +398,13 @@ export default {
 	mounted() {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
-		this.gridWidth = this.$refs.grid.clientWidth
-		this.gridHeight = this.$refs.grid.clientHeight
+		this.makeGrid()
+		if (this.hasPagination) {
+			this.setNumberOfPages()
+			// Set the current page to 0
+			// TODO: add support for keeping position in the videos array when resizing
+			this.currentPage = 0
+		}
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.handleResize)
