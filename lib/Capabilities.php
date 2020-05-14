@@ -54,59 +54,57 @@ class Capabilities implements IPublicCapability {
 			return [];
 		}
 
-		$maxChatLength = 1000;
-		if (version_compare($this->serverConfig->getSystemValueString('version', '0.0.0'), '16.0.2', '>=')) {
-			$maxChatLength = ChatManager::MAX_CHAT_LENGTH;
-		}
-
-		$attachments = [
-			'allowed' => $user instanceof IUser,
+		$capabilities = [
+			'features' => [
+				'audio',
+				'video',
+				'chat-v2',
+				'conversation-v2',
+				'guest-signaling',
+				'empty-group-room',
+				'guest-display-names',
+				'multi-room-users',
+				'favorites',
+				'last-room-activity',
+				'no-ping',
+				'system-messages',
+				'mention-flag',
+				'in-call-flags',
+				'notification-levels',
+				'invite-groups-and-mails',
+				'locked-one-to-one-rooms',
+				'read-only-rooms',
+				'chat-read-marker',
+				'webinary-lobby',
+				'start-call-flag',
+				'chat-replies',
+				'circles-support',
+				'force-mute',
+			],
+			'config' => [
+				'attachments' => [
+					'allowed' => $user instanceof IUser,
+				],
+				'chat' => [
+					'max-length' => ChatManager::MAX_CHAT_LENGTH,
+				],
+				'conversations' => [],
+			],
 		];
+
 		if ($user instanceof IUser) {
-			$attachments['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
+			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 		}
 
-		$conversations = [
-			'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
-		];
+		$capabilities['config']['conversations']['can-create'] = $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user);
+
+
+		if ($this->serverConfig->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
+			$capabilities['features'][] = 'chat-reference-id';
+		}
 
 		return [
-			'spreed' => [
-				'features' => [
-					'audio',
-					'video',
-					'chat-v2',
-					'conversation-v2',
-					'guest-signaling',
-					'empty-group-room',
-					'guest-display-names',
-					'multi-room-users',
-					'favorites',
-					'last-room-activity',
-					'no-ping',
-					'system-messages',
-					'mention-flag',
-					'in-call-flags',
-					'notification-levels',
-					'invite-groups-and-mails',
-					'locked-one-to-one-rooms',
-					'read-only-rooms',
-					'chat-read-marker',
-					'webinary-lobby',
-					'start-call-flag',
-					'chat-replies',
-					'circles-support',
-					'force-mute',
-					'chat-reference-id',
-				],
-				'config' => [
-					'attachments' => $attachments,
-					'chat' => [
-						'max-length' => $maxChatLength,
-					],
-					'conversations' => $conversations,
-				],
-			],
+			'spreed' => $capabilities,
 		];
 	}
 }
