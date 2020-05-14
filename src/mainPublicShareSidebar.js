@@ -86,6 +86,15 @@ function addTalkSidebarTrigger() {
 	talkSidebarTriggerElement.addEventListener('click', () => {
 		sidebarState.isOpen = !sidebarState.isOpen
 	})
+
+	// The ".header-right" element may not exist in the public share page if
+	// there are no header actions.
+	if (!document.querySelector('.header-right')) {
+		const headerRightElement = document.createElement('div')
+		headerRightElement.setAttribute('class', 'header-right')
+		document.querySelector('#header').append(headerRightElement)
+	}
+
 	document.querySelector('.header-right').append(talkSidebarTriggerElement)
 }
 
