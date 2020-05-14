@@ -1,22 +1,3 @@
-#kind: pipeline
-#name: check-builds
-#
-#steps:
-#  - name: check-vuejs-builds
-#    image: nextcloudci/node:node-7
-#    commands:
-#      - make npm-init
-#      - ./check-vuejs-builds.sh
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
 kind: pipeline
 name: compatibility
 
