@@ -60,7 +60,6 @@ appstore:
 	rsync -a \
 	--exclude=babel.config.js \
 	--exclude=/build \
-	--exclude=check-vuejs-builds.sh \
 	--exclude=composer.json \
 	--exclude=composer.lock \
 	--exclude=docs \
@@ -81,7 +80,6 @@ appstore:
 	--exclude=.php_cs.dist \
 	--exclude=.php_cs.cache \
 	--exclude=README.md \
-	--exclude=run-*lint.sh \
 	--exclude=src \
 	--exclude=.stylelintignore \
 	--exclude=stylelint.config.js \
