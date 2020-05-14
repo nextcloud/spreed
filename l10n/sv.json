@@ -146,7 +146,7 @@
     "Limit creating conversations" : "Begränsa att skapa konversationer",
     "Limit starting a call" : "Begränsa att starta ett samtal",
     "Limit starting calls" : "Begränsa att starta samtal",
-    "When a call has started, everyone with access to the conversation can join the call." : "När ett samtal har startat kan alla som har tillgång till konversationen gå med i samtalet.",
+    "When a call has started, everyone with access to the conversation can join the call." : "När ett samtal har startat kan alla som har åtkomst till konversationen gå med i samtalet.",
     "Everyone" : "Alla",
     "Users and moderators" : "Användare och moderatorer",
     "Moderators only" : "Endast moderatorer",
