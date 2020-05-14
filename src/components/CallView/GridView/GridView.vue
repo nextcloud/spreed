@@ -345,9 +345,9 @@ export default {
 				return 'height: 100%'
 			}
 		},
-		// Hides the stripe when there are no more videos
+		// Hides the stripe when there are less or equal to 1 videos
 		showStripe() {
-			return !(this.isStripe && this.videosCount === 0)
+			return !(this.isStripe && this.videosCount <= 1)
 		},
 		// Determines when to show the stripe navigation buttons
 		showNavigation() {
