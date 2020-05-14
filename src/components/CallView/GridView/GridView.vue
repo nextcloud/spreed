@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper" :style="wrapperStyle">
 		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
-			<button v-if="hasPreviousPage && showNavigation"
+			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
 				class="grid-navigation grid-navigation__previous"
 				@click="handleClickPrevious">
 				<ChevronLeft :size="24" />
@@ -33,7 +33,7 @@
 				:style="gridStyle"
 				@mousemove="handleMovement"
 				@keydown="handleMovement">
-				<template v-if="!devMode && (!isStripe || showStripe)">
+				<template v-if="!devMode">
 					<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 					<template v-for="callParticipantModel in displayedVideos">
 						<Video
@@ -50,7 +50,7 @@
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
 							:shared-data="{videoEnabled: true}"
-							@click.native.exact="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+							@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
 					<LocalVideo
 						v-if="!isStripe"
@@ -65,7 +65,7 @@
 						@switchScreenToId="1" />
 				</template>
 				<!-- Grid developer mode -->
-				<template v-if="devMode">
+				<template v-else>
 					<div
 						v-for="video in displayedVideos"
 						:key="video"
@@ -76,7 +76,7 @@
 					</h1>
 				</template>
 			</div>
-			<button v-if="hasNextPage && showNavigation"
+			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
 				class="grid-navigation grid-navigation__next"
 				@click="handleClickNext">
 				<ChevronRight :size="24" />
@@ -250,19 +250,17 @@ export default {
 			}
 		},
 
-		// Number of video components (includes localvideo and emptycontent)
+		// Number of video components (includes localvideo if not in dev mode)
 		videosCount() {
-			// No need to include localvideo or emptycontent here
-			if (this.isStripe || this.devMode) {
+			if (this.devMode || this.isStripe) {
 				return this.videos.length
 			} else {
 				// Count the emptycontent as a grid element
 				if (this.videos.length === 0) {
 					return 2
-				} else {
-					// Add the local video to the count
-					return this.videos.length + 1
 				}
+				// Add the local video to the count
+				return this.videos.length + 1
 			}
 		},
 
@@ -344,14 +342,6 @@ export default {
 			} else {
 				return 'height: 100%'
 			}
-		},
-		// Hides the stripe when there are less or equal to 1 videos
-		showStripe() {
-			return !(this.isStripe && this.videosCount <= 1)
-		},
-		// Determines when to show the stripe navigation buttons
-		showNavigation() {
-			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
 		},
 	},
 
