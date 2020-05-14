@@ -46,11 +46,14 @@
 	&.in-call {
 		.app-navigation-toggle,
 		.action-item__menutoggle {
-			color: #fff;
+			color: #ffffff;
+			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
 	}
 
 	.forced-white {
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+
 		&.icon-menu-people {
 			background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
 		}
