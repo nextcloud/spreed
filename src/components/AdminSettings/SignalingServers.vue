@@ -25,18 +25,24 @@
 		<h2>
 			{{ t('spreed', 'Signaling servers') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading"
+			<a v-else-if="!loading && showAddServerButton"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
 				class="icon icon-add"
 				@click="newServer">
 				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
 			</a>
-			<span v-else class="icon icon-loading-small" />
+			<span v-else-if="loading" class="icon icon-loading-small" />
 		</h2>
 
 		<p class="settings-hint">
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
 			<span v-if="!servers.length">{{ t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}</span>
+		</p>
+
+		<p
+			v-if="!isCacheConfigured"
+			class="settings-hint warning">
+			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
@@ -83,6 +89,7 @@ import SignalingServer from '../../components/AdminSettings/SignalingServer'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
+import { SIGNALING } from '../../constants'
 
 export default {
 	name: 'SignalingServers',
@@ -102,7 +109,15 @@ export default {
 			hideWarning: false,
 			loading: false,
 			saved: false,
+			isCacheConfigured: loadState('talk', 'has_cache_configured'),
+			isClusteredMode: loadState('talk', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
 		}
+	},
+
+	computed: {
+		showAddServerButton() {
+			return this.isClusteredMode || this.servers.length === 0
+		},
 	},
 
 	beforeMount() {

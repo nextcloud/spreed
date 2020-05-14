@@ -29,6 +29,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
@@ -43,15 +44,19 @@ class AdminSettings implements ISettings {
 	private $commandService;
 	/** @var IInitialStateService */
 	private $initialStateService;
+	/** @var ICacheFactory */
+	private $memcacheFactory;
 
 	public function __construct(Config $talkConfig,
 								IConfig $serverConfig,
 								CommandService $commandService,
-								IInitialStateService $initialStateService) {
+								IInitialStateService $initialStateService,
+								ICacheFactory $memcacheFactory) {
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->commandService = $commandService;
 		$this->initialStateService = $initialStateService;
+		$this->memcacheFactory = $memcacheFactory;
 	}
 
 	/**
@@ -100,6 +105,8 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initSignalingServers(): void {
+		$this->initialStateService->provideInitialState('talk', 'has_cache_configured', $this->memcacheFactory->isAvailable());
+		$this->initialStateService->provideInitialState('talk', 'signaling_mode', $this->talkConfig->getSignalingMode(false));
 		$this->initialStateService->provideInitialState('talk', 'signaling_servers', [
 			'servers' => $this->talkConfig->getSignalingServers(),
 			'secret' => $this->talkConfig->getSignalingSecret(),
