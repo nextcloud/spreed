@@ -26,6 +26,7 @@ namespace OCA\Talk\Tests\php\Settings\Admin;
 use OCA\Talk\Config;
 use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -40,7 +41,9 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $commandService;
 	/** @var IInitialStateService|MockObject */
 	protected $initialState;
-	/** @var StunServer */
+	/** @var ICacheFactory|MockObject */
+	protected $cacheFactory;
+	/** @var AdminSettings */
 	protected $admin;
 
 	public function setUp(): void {
@@ -50,13 +53,9 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialStateService::class);
+		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 
-		$this->admin = new AdminSettings(
-			$this->talkConfig,
-			$this->serverConfig,
-			$this->commandService,
-			$this->initialState
-		);
+		$this->admin = $this->getAdminSettings();
 	}
 
 	/**
@@ -69,7 +68,8 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->talkConfig,
 				$this->serverConfig,
 				$this->commandService,
-				$this->initialState
+				$this->initialState,
+				$this->cacheFactory
 			);
 		}
 
@@ -79,6 +79,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->serverConfig,
 				$this->commandService,
 				$this->initialState,
+				$this->cacheFactory,
 			])
 			->onlyMethods($methods)
 			->getMock();

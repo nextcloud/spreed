@@ -55,11 +55,11 @@ trait TInitialState {
 		);
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
-		if ($signalingMode !== Config::SIGNALING_INTERNAL
+		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
 			&& !$this->memcacheFactory->isAvailable()
 			&& $this->serverConfig->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
 			throw new HintException(
-				'External signaling is only supported with a distributed cache'
+				'High Performance Back-end clustering is only supported with a distributed cache!'
 			);
 		}
 
