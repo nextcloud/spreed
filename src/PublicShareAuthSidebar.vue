@@ -28,7 +28,7 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
-				<CallView :token="token" />
+				<CallView :token="token" :is-sidebar="true" />
 				<ChatView :token="token" />
 			</template>
 		</aside>

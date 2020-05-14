@@ -27,7 +27,7 @@
 			ref="video"
 			:class="videoClass"
 			class="video" />
-		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
+		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe" :display-name="displayName" :user="userId" />
 			<Avatar v-if="userId"
 				:size="avatarSize"
@@ -46,7 +46,7 @@
 				ref="localMediaControls"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
-				:screen-sharing-button-hidden="useConstrainedLayout"
+				:screen-sharing-button-hidden="isSidebar"
 				@switchScreenToId="$emit('switchScreenToId', $event)" />
 		</transition>
 	</div>
@@ -88,6 +88,10 @@ export default {
 			default: false,
 		},
 		isStripe: {
+			type: Boolean,
+			default: false,
+		},
+		isSidebar: {
 			type: Boolean,
 			default: false,
 		},

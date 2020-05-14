@@ -36,6 +36,7 @@
 						:is-grid="true"
 						:fit-video="true"
 						:is-big="true"
+						:is-sidebar="isSidebar"
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
@@ -73,14 +74,16 @@
 				v-if="isOneToOneView"
 				ref="localVideo"
 				class="local-video"
+				:class="{ 'local-video--sidebar': isSidebar }"
 				:fit-video="true"
 				:is-stripe="true"
 				:local-media-model="localMediaModel"
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:use-constrained-layout="false"
+				:is-sidebar="isSidebar"
 				@switchScreenToId="1" />
-			<div id="screens">
+			<div v-if="!isSidebar" id="screens">
 				<Screen v-if="localMediaModel.attributes.localScreen"
 					:local-media-model="localMediaModel"
 					:shared-data="localSharedData" />
@@ -116,6 +119,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+		// Determines wether this component is used in the sidebar
+		isSidebar: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -186,7 +194,7 @@ export default {
 			return this.isOneToOne && !this.isGrid
 		},
 		showGrid() {
-			return !this.isOneToOneView
+			return !this.isOneToOneView && !this.isSidebar
 		},
 	},
 	watch: {
@@ -420,6 +428,10 @@ export default {
 	bottom: 0;
 	width: 300px;
 	height: 250px;
+	&--sidebar {
+		width: 150px;
+		height: 100px;
+	}
 }
 
 #videos.hidden {
