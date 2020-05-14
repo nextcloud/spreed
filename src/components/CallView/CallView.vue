@@ -36,6 +36,7 @@
 						:is-grid="true"
 						:fit-video="true"
 						:is-big="true"
+						:is-sidebar="isSidebar"
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
@@ -68,19 +69,20 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo" />
-			<!-- Local video if the conversation is 1to1 -->
+			<!-- Local video if the conversation is 1to1 or if sidebar -->
 			<LocalVideo
 				v-if="isOneToOneView"
 				ref="localVideo"
 				class="local-video"
+				:class="{ 'local-video--sidebar': isSidebar }"
 				:fit-video="true"
 				:is-stripe="true"
 				:local-media-model="localMediaModel"
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
-				:use-constrained-layout="false"
+				:is-sidebar="isSidebar"
 				@switchScreenToId="1" />
-			<div id="screens">
+			<div v-if="!isSidebar" id="screens">
 				<Screen v-if="localMediaModel.attributes.localScreen"
 					:local-media-model="localMediaModel"
 					:shared-data="localSharedData" />
@@ -116,6 +118,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+		// Determines wether this component is used in the sidebar
+		isSidebar: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -164,7 +171,6 @@ export default {
 			const callViewClass = {
 				'incall': this.remoteParticipantsCount > 0,
 				'screensharing': this.screenSharingActive,
-				'constrained-layout': this.useConstrainedLayout,
 			}
 			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
@@ -183,10 +189,10 @@ export default {
 			return this.callParticipantModels.length === 1
 		},
 		isOneToOneView() {
-			return this.isOneToOne && !this.isGrid
+			return (this.isOneToOne && !this.isGrid) || this.isSidebar
 		},
 		showGrid() {
-			return !this.isOneToOneView
+			return !this.isOneToOneView && !this.isSidebar
 		},
 	},
 	watch: {
@@ -420,15 +426,14 @@ export default {
 	bottom: 0;
 	width: 300px;
 	height: 250px;
+	&--sidebar {
+		width: 150px;
+		height: 100px;
+	}
 }
 
 #videos.hidden {
 	display: none;
-}
-
-#videos .emptycontent {
-	height: 50%;
-	transform: translateY(-50%)
 }
 
 .videoContainer.hidden,
@@ -481,12 +486,6 @@ export default {
 	}
 }
 
-.constrained-layout #videos .videoContainer:not(.promoted) ::v-deep video {
-	/* Make the unpromoted videos smaller to not overlap too much the promoted
-	 * video */
-	max-height: 100px;
-}
-
 #videos .videoContainer ::v-deep .avatardiv {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }
@@ -514,22 +513,11 @@ export default {
 	display: none !important;
 }
 
-.participants-1:not(.screensharing) ~ #emptycontent {
-	display: block !important;
-}
-
 @media only screen and (max-width: 768px) {
 	.participants-1 .videoView,
 	.participants-2 .videoView {
 		max-height: 35%;
 	}
-}
-
-.constrained-layout.participants-1 .videoView,
-.constrained-layout.participants-2 .videoView {
-	/* Do not force the width to 200px, as otherwise the video is too tall and
-	 * overlaps too much with the promoted video. */
-	min-width: initial;
 }
 
 .participants-1 .videoView ::v-deep video,
@@ -547,12 +535,6 @@ export default {
 	height: calc(100% - 200px);
 	top: 0;
 	background-color: transparent;
-}
-
-.constrained-layout.screensharing #screens {
-	/* The row with the participants is shorter in the constrained layout to
-	 * make room for the promoted video and the shared screens. */
-	height: calc(100% - 100px);
 }
 
 .screensharing .screenContainer {
@@ -577,13 +559,6 @@ export default {
 	text-overflow: ellipsis;
 }
 
-.constrained-layout ::v-deep .nameIndicator {
-	/* Reduce padding to bring the name closer to the bottom */
-	padding: 3px;
-	/* Use default font size, as it takes too much space otherwise */
-	font-size: initial;
-}
-
 ::v-deep .videoView .nameIndicator {
 	padding: 0;
 	overflow: visible;
@@ -604,11 +579,6 @@ export default {
 /* ellipsize name in 1on1 calls */
 .participants-2 ::v-deep .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	padding: 12px 35%;
-}
-
-.constrained-layout.participants-2 ::v-deep .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
-	/* Reduce padding to bring the name closer to the bottom */
-	padding: 3px 35%;
 }
 
 #videos .videoContainer.speaking:not(.videoView) ::v-deep .nameIndicator,
