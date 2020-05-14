@@ -58,6 +58,7 @@
 <script>
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import TurnServer from '../../components/AdminSettings/TurnServer'
+import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
 export default {
@@ -88,7 +89,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.servers = OCP.InitialState.loadState('talk', 'turn_servers')
+		this.servers = loadState('talk', 'turn_servers')
 	},
 
 	methods: {
