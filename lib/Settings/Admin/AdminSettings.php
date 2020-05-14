@@ -32,6 +32,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
@@ -46,17 +48,21 @@ class AdminSettings implements ISettings {
 	private $initialStateService;
 	/** @var ICacheFactory */
 	private $memcacheFactory;
+	/** @var IUser */
+	private $currentUser;
 
 	public function __construct(Config $talkConfig,
 								IConfig $serverConfig,
 								CommandService $commandService,
 								IInitialStateService $initialStateService,
-								ICacheFactory $memcacheFactory) {
+								ICacheFactory $memcacheFactory,
+								IUserSession $userSession) {
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->commandService = $commandService;
 		$this->initialStateService = $initialStateService;
 		$this->memcacheFactory = $memcacheFactory;
+		$this->currentUser = $userSession->getUser();
 	}
 
 	/**
@@ -69,6 +75,7 @@ class AdminSettings implements ISettings {
 		$this->initStunServers();
 		$this->initTurnServers();
 		$this->initSignalingServers();
+		$this->initRequestSignalingServerTrial();
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}
@@ -111,6 +118,16 @@ class AdminSettings implements ISettings {
 			'servers' => $this->talkConfig->getSignalingServers(),
 			'secret' => $this->talkConfig->getSignalingSecret(),
 			'hideWarning' => $this->talkConfig->getHideSignalingWarning(),
+		]);
+	}
+
+	protected function initRequestSignalingServerTrial(): void {
+		$this->initialStateService->provideInitialState('talk', 'hosted_signaling_server_prefill', [
+			'url' => $this->serverConfig->getSystemValueString('overwrite.cli.url'),
+			'fullName' => $this->currentUser->getDisplayName(),
+			'email' => $this->currentUser->getEMailAddress() ?: '',
+			'language' => $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'lang', 'en_US'),
+			'country' => $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'locale', 'en_US'),
 		]);
 	}
 

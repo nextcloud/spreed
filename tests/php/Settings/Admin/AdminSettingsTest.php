@@ -29,6 +29,7 @@ use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
+use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class AdminSettingsTest extends \Test\TestCase {
@@ -45,6 +46,8 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $cacheFactory;
 	/** @var AdminSettings */
 	protected $admin;
+	/** @var IUserSession|MockObject  */
+	protected $userSession;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -54,6 +57,7 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialStateService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->userSession = $this->createMock(IUserSession::class);
 
 		$this->admin = $this->getAdminSettings();
 	}
@@ -69,7 +73,8 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->serverConfig,
 				$this->commandService,
 				$this->initialState,
-				$this->cacheFactory
+				$this->cacheFactory,
+				$this->userSession
 			);
 		}
 
@@ -80,6 +85,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
+				$this->userSession,
 			])
 			->onlyMethods($methods)
 			->getMock();
@@ -102,7 +108,8 @@ class AdminSettingsTest extends \Test\TestCase {
 			'initCommands',
 			'initStunServers',
 			'initTurnServers',
-			'initSignalingServers'
+			'initSignalingServers',
+			'initRequestSignalingServerTrial',
 		]);
 
 		$admin->expects($this->once())
@@ -117,6 +124,8 @@ class AdminSettingsTest extends \Test\TestCase {
 			->method('initTurnServers');
 		$admin->expects($this->once())
 			->method('initSignalingServers');
+		$admin->expects($this->once())
+			->method('initRequestSignalingServerTrial');
 
 		$form = $admin->getForm();
 		$this->assertSame('settings/admin-settings', $form->getTemplateName());
