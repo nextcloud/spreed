@@ -145,10 +145,6 @@ export default {
 			type: Object,
 			required: true,
 		},
-		useConstrainedLayout: {
-			type: Boolean,
-			default: false,
-		},
 		showVideoOverlay: {
 			type: Boolean,
 			default: true,
@@ -229,7 +225,7 @@ export default {
 		},
 
 		avatarSize() {
-			return (this.useConstrainedLayout && !this.sharedData.promoted) ? 64 : 128
+			return !this.sharedData.promoted ? 64 : 128
 		},
 
 		avatarClass() {
@@ -463,11 +459,6 @@ export default {
 		text-align: center;
 		margin: 0 0 -7px 8px;
 	}
-}
-
-.constrained-layout .mediaIndicator {
-	/* Move the media indicator closer to the bottom */
-	bottom: 16px;
 }
 
 .muteIndicator,
