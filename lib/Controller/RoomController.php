@@ -1159,13 +1159,25 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $token
 	 * @param string $password
+	 * @param bool $force
 	 * @return DataResponse
 	 */
-	public function joinRoom(string $token, string $password = ''): DataResponse {
+	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($force === false && $this->userId !== null) {
+			try {
+				$participant = $room->getParticipant($this->userId);
+				if ($participant->getSessionId() !== '0') {
+					return new DataResponse([], Http::STATUS_CONFLICT);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				// All fine, carry on
+			}
 		}
 
 		$user = $this->userManager->get($this->userId);
