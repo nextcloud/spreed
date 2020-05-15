@@ -31,8 +31,11 @@ import {
 	leaveCall,
 } from '../services/callsService'
 import { PARTICIPANT } from '../constants'
+import { EventBus } from '../services/EventBus'
 
 const state = {
+	forceCallFlag: {
+	},
 	participants: {
 	},
 }
@@ -76,15 +79,49 @@ const mutations = {
 	/**
 	 * Adds a message to the store.
 	 * @param {object} state current store state;
-	 * @param {object} token the token of the conversation;
+	 * @param {string} token the token of the conversation;
 	 * @param {object} participant the participant;
 	 */
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
 			Vue.set(state.participants, token, [])
 		}
+		if (participant.sessionId !== '0') {
+			if (state.forceCallFlag[token] && state.forceCallFlag[token][participant.sessionId]) {
+				participant.flags = state.forceCallFlag[token][participant.sessionId]
+			}
+		}
 		state.participants[token].push(participant)
 	},
+
+	/**
+	 * Adds a message to the store.
+	 * @param {object} state current store state;
+	 * @param {string} token the token of the conversation;
+	 * @param {string} sessionId the participant;
+	 * @param {string} flags the participant;
+	 */
+	forceCallState(state, { token, sessionId, flags }) {
+		if (!state.forceCallFlag[token]) {
+			Vue.set(state.forceCallFlag, token, [])
+		}
+		Vue.set(state.forceCallFlag[token], sessionId, flags)
+	},
+
+	/**
+	 * Adds a message to the store.
+	 * @param {object} state current store state;
+	 * @param {string} token the token of the conversation;
+	 * @param {string} sessionId the participant;
+	 * @param {string} flags the participant;
+	 */
+	removeForceCallState(state, { token, sessionId }) {
+		if (!state.forceCallFlag[token]) {
+			Vue.set(state.forceCallFlag, token, [])
+		}
+		Vue.unset(state.forceCallFlag[token], sessionId)
+	},
+
 	updateParticipant(state, { token, index, updatedData }) {
 		if (state.participants[token] && state.participants[token][index]) {
 			state.participants[token][index] = Object.assign(state.participants[token][index], updatedData)
@@ -212,12 +249,29 @@ const actions = {
 			return
 		}
 
+		const participant = getters.getParticipant(token, index)
+
 		await joinCall(token, flags)
 
 		const updatedData = {
 			inCall: flags,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+
+		if (participant.sessionId !== '0') {
+			commit('forceCallState', {
+				token,
+				sessionId: participant.sessionId,
+				flags,
+			})
+
+			EventBus.$once('Signaling::joinCall', () => {
+				commit('removeForceCallState', {
+					token,
+					sessionId: participant.sessionId,
+				})
+			})
+		}
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier }) {
@@ -226,12 +280,29 @@ const actions = {
 			return
 		}
 
+		const participant = getters.getParticipant(token, index)
+
 		await leaveCall(token)
 
 		const updatedData = {
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+
+		if (participant.sessionId !== '0') {
+			commit('forceCallState', {
+				token,
+				sessionId: participant.sessionId,
+				flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			})
+
+			EventBus.$once('Signaling::leaveCall', () => {
+				commit('removeForceCallState', {
+					token,
+					sessionId: participant.sessionId,
+				})
+			})
+		}
 	},
 }
 
