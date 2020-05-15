@@ -185,6 +185,23 @@ Feature: chat/reply
       | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     |
       | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
 
+  Scenario: getting parent and quote works
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant2" sends reply "Message 2-1" on message "Message 2" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" starting with "Message 1" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               |
+      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     |
+    Then user "participant1" sees the following messages in room "group room" starting with "Message 2" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               |
+      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     |
+
 
 
   Scenario: user can not reply when not in the room
