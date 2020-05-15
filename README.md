@@ -71,6 +71,8 @@ Nextcloud offers a partner product, the Talk High Performance Back-end, which de
 
 The HPB also takes care of signaling, decreasing the load of many calls on the Talk server and optional SIP integration so users can dial in to calls by phone.
 
+⚠️ **Important:** When using a HPB, your Nextcloud instance must have distributed caching enabled. See the [Nextcloud server documentation](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/caching_configuration.html) for more details.
+
 If you need to use Talk in an enterprise environment, [contact our sales team](https://nextcloud.com/enterprise/buy/) for access to the Talk High Performance Back-end. See our website for more details and [pricing](https://nextcloud.com/talk/#scalability).
 
 ## Development Setup
