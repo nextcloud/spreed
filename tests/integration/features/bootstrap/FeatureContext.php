@@ -740,6 +740,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
 		$this->assertStatusCode($this->response, $statusCode);
 
+		$this->compareDataResponse($formData);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $knwonMessage
+	 * @param string $statusCode
+	 * @param TableNode|null $formData
+	 */
+	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knwonMessage, $statusCode, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$messages[$knwonMessage]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$this->compareDataResponse($formData);
+	}
+
+	/**
+	 * @param TableNode|null $formData
+	 */
+	protected function compareDataResponse(TableNode $formData = null) {
 		$actual = $this->getDataFromResponse($this->response);
 		$messages = [];
 		array_map(function(array $message) use (&$messages) {

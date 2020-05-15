@@ -302,7 +302,7 @@ class ChatController extends AEnvironmentAwareController {
 			$commentKey = $commentIdToIndex[$commentId];
 
 			// Parent is already parsed in the message list
-			if (!empty($commentIdToIndex[$parentId])) {
+			if (isset($commentIdToIndex[$parentId])) {
 				$parentKey = $commentIdToIndex[$parentId];
 				$messages[$commentKey]['parent'] = $messages[$parentKey];
 
