@@ -141,7 +141,8 @@ class Operation implements IOperation {
 					$participant->getUser(),
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
-					null
+					null,
+					''
 				);
 			} catch (UnexpectedValueException $e) {
 				continue;
