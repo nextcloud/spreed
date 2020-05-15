@@ -47,6 +47,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `referenceId` | string | A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
+        `parent` | array | **Optional:** See `Parent data` below
+
+#### Parent data
+
+* When deleted:
+
+    field | type | Description
+    ------|------|------------
+    `id` | int | ID of the parent comment
+    `deleted` | bool | `true` when the parent is deleted
+
+* Regular message:
+
+    Full message array as shown above, but `parent` will never be set for a parent message.
+
 
 ## Sending a new chat message
 
