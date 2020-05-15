@@ -138,6 +138,7 @@ import {
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import PasswordProtect from './PasswordProtect/PasswordProtect'
+import { PARTICIPANT } from '../../../constants'
 
 export default {
 
@@ -187,6 +188,27 @@ export default {
 		},
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
+		},
+
+		participant() {
+			if (typeof this.token === 'undefined') {
+				return {
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				}
+			}
+
+			const participantIndex = this.$store.getters.getParticipantIndex(this.$store.getters.getToken(), this.$store.getters.getParticipantIdentifier())
+			if (participantIndex !== -1) {
+				return this.$store.getters.getParticipant(this.token, participantIndex)
+			}
+
+			return {
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}
+		},
+
+		isInCall() {
+			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 	},
 
@@ -258,8 +280,12 @@ export default {
 				}
 			}
 			this.success = true
-			// Push the newly created conversation's route.
-			this.pushNewRoute()
+
+			if (!this.isInCall) {
+				// Push the newly created conversation's route.
+				this.pushNewRoute()
+			}
+
 			// Close the modal right away if the conversation is public.
 			if (!this.isPublic) {
 				this.closeModal()
