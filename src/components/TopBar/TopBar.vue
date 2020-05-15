@@ -69,7 +69,7 @@
 				{{ labelFullscreen }}
 			</ActionButton>
 			<ActionSeparator
-				v-if="canFullModerate" />
+				v-if="showModerationOptions" />
 			<ActionLink
 				v-if="isFileConversation"
 				icon="icon-text"
@@ -77,9 +77,8 @@
 				{{ t('spreed', 'Go to file') }}
 			</ActionLink>
 			<template
-				v-if="canFullModerate">
+				v-if="showModerationOptions">
 				<ActionButton
-					v-if="canModerate"
 					:close-after-click="true"
 					icon="icon-rename"
 					@click="handleRenameConversation">
@@ -95,6 +94,7 @@
 				</ActionCheckbox>
 			</template>
 			<ActionButton
+				v-if="!isOneToOneConversation"
 				icon="icon-clippy"
 				:close-after-click="true"
 				@click="handleCopyLink">
@@ -102,7 +102,7 @@
 			</ActionButton>
 			<!-- password -->
 			<template
-				v-if="canFullModerate">
+				v-if="showModerationOptions">
 				<ActionCheckbox
 					v-if="isSharedPublicly"
 					class="share-link-password-checkbox"
@@ -252,6 +252,9 @@ export default {
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
+		isOneToOneConversation() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
 		linkToFile() {
 			if (this.isFileConversation) {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
@@ -269,10 +272,10 @@ export default {
 		},
 
 		canModerate() {
-			return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
-		showModerationMenu() {
-			return this.canModerate && (this.canFullModerate || this.isSharedPublicly)
+		showModerationOptions() {
+			return !this.isOneToOneConversation && this.canModerate
 		},
 		token() {
 			return this.$store.getters.getToken()
