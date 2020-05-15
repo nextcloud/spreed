@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
   [#1056](https://github.com/nextcloud/spreed/pull/1056)
 - Allow to use multiple High-performance backends in parallel for different conversations
   [#3292](https://github.com/nextcloud/spreed/pull/3292)
-- Allow which video is shown big in the promoted view
+- Allow selecting which video is shown big in the promoted view
   [#3497](https://github.com/nextcloud/spreed/pull/3497)
 - Open files with the viewer apps registered in Nextcloud
   [#2778](https://github.com/nextcloud/spreed/pull/2778)

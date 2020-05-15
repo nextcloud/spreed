@@ -98,6 +98,10 @@ class Manager {
 			$this->l->t('- You can now directly reply to messages giving the other users more context what your message is about'),
 			$this->l->t('- Searching for conversations and participants will now also filter your existing conversations, making it much easier to find previous conversations'),
 			$this->l->t('- You can now add custom user groups to conversations when the circles app is installed'),
+			$this->l->t('New in Talk 9'),
+			$this->l->t('- Check out the new grid and call view'),
+			$this->l->t('- You can now upload and drag\'n\'drop files directly from your device into the chat'),
+			$this->l->t('- Shared files are now opened directly inside the chat view with the viewer apps'),
 		];
 	}
 }
