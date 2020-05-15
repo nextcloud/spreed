@@ -21,7 +21,7 @@
 <template>
 	<div
 		class="chatView"
-		@dragover.prevent="isDraggingOver = true"
+		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="isDraggingOver = false"
 		@drop.prevent="handleDropFiles">
 		<transition name="slide" mode="out-in">
@@ -100,7 +100,17 @@ export default {
 
 	methods: {
 
+		handleDragOver(event) {
+			if (event.dataTransfer.types.includes('Files')) {
+				this.isDraggingOver = true
+			}
+		},
+
 		handleDropFiles(event) {
+			if (!this.isDraggingOver) {
+				return
+			}
+
 			// Restore non dragover state
 			this.isDraggingOver = false
 			// Stop the executin if the user is a guest
