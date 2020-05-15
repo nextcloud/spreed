@@ -1159,7 +1159,11 @@ class RoomController extends AEnvironmentAwareController {
 				try {
 					$participant = $room->getParticipant($this->userId);
 					if ($participant->getSessionId() !== '0') {
-						return new DataResponse([], Http::STATUS_CONFLICT);
+						return new DataResponse([
+							'sessionId' => $participant->getSessionId(),
+							'inCall' => $participant->getInCallFlags(),
+							'lastPing' => $participant->getLastPing(),
+						], Http::STATUS_CONFLICT);
 					}
 				} catch (ParticipantNotFoundException $e) {
 					// All fine, carry on
@@ -1169,7 +1173,11 @@ class RoomController extends AEnvironmentAwareController {
 				try {
 					$participant = $room->getParticipantBySession($session);
 					if ($participant->getSessionId() !== '0') {
-						return new DataResponse([], Http::STATUS_CONFLICT);
+						return new DataResponse([
+							'sessionId' => $participant->getSessionId(),
+							'inCall' => $participant->getInCallFlags(),
+							'lastPing' => $participant->getLastPing(),
+						], Http::STATUS_CONFLICT);
 					}
 				} catch (ParticipantNotFoundException $e) {
 					// All fine, carry on
