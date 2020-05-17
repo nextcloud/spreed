@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "a conversation" : "розмова",
     "(Duration %s)" : "(Тривалість %s)",
+    "Talk" : "Розмови",
     "Guest" : "Гість",
     "{actor} started a call" : "{actor} розпочав розмову",
     "You started a call" : "Ви почали розмову",
