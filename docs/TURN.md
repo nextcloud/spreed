@@ -100,6 +100,18 @@ simple-log
 
 - The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine. Also make sure to set the [`--external-ip` option](https://github.com/coturn/coturn/wiki/turnserver#options) when your TURN server is in a private network.
 
+#### 6. Testing the TURN server
+
+When the TURN server is set in the Talk settings a basic test against the TURN server is performed. You can perform a deeper test by forcing your browser to send the media of a call only through the TURN server:
+
+- Join a call
+- Open your browser console
+- Type `OCA.Talk.SimpleWebRTC.webrtc.config.peerConnectionConfig.iceTransportPolicy = 'relay'` in the console and press Enter
+- Leave the call
+- Join the call again
+
+Now, in that browser, the media sent to and received from other participants in the call should go through the TURN server. If the call works then the TURN server should work.
+
 ### What else
 Nextcloud Talk´s WebRTC handling is still mostly based on the one from the [Spreed.ME](https://www.spreed.me/) WebRTC solution. For this reason, all guides about how to configure coTURN for it, applies to Nextcloud Talk too.
 
