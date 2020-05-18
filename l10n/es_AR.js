@@ -51,6 +51,7 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Send message" : "Enviar mensaje",
+    "Searching …" : "Buscando ...",
     "No results" : "Sin resultados",
     "Participants" : "Participantes",
     "Chat" : "Chat",
