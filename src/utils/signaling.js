@@ -930,21 +930,43 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 Signaling.Standalone.prototype.joinCall = function(token, flags) {
 	if (this.signalingRoomJoined !== token) {
 		console.debug('Not joined room yet, not joining call', token)
-		this.pendingJoinCall = {
-			token: token,
-			flags: flags,
+
+		if (this.pendingJoinCall && this.pendingJoinCall.token === token) {
+			return this.pendingJoinCall.promise
+		} else if (this.pendingJoinCall && this.pendingJoinCall.token !== token) {
+			this.pendingJoinCall.reject(new Error('Pending join call canceled for ' + this.pendingJoinCall.token))
 		}
-		return
+
+		const promise = new Promise((resolve, reject) => {
+			this.pendingJoinCall = {
+				token: token,
+				flags: flags,
+				resolve: resolve,
+				reject: reject,
+			}
+		})
+
+		this.pendingJoinCall.promise = promise
+
+		return this.pendingJoinCall.promise
 	}
 
-	Signaling.Base.prototype.joinCall.apply(this, arguments)
+	return Signaling.Base.prototype.joinCall.apply(this, arguments)
 }
 
 Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	console.debug('Joined', data, token)
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
-		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags)
+		const pendingJoinCallResolve = this.pendingJoinCall.resolve
+		const pendingJoinCallReject = this.pendingJoinCall.reject
+
+		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags).then(() => {
+			pendingJoinCallResolve()
+		}).catch(error => {
+			pendingJoinCallReject(error)
+		})
+
 		this.pendingJoinCall = null
 	}
 	if (this.roomCollection) {
