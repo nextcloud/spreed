@@ -423,8 +423,32 @@ export default {
 .content {
 	height: 100%;
 
+	::v-deep .app-content:hover {
+		.action-item--single {
+			background-color: rgba(0, 0, 0, .1) !important;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, .2) !important;
+			}
+		}
+	}
+
+	::v-deep .app-navigation-toggle {
+		top: 10px;
+		right: -10px;
+		border-radius: var(--border-radius-pill);
+	}
+
 	&.in-call {
-		::v-deep #app-navigation-toggle:before {
+		&:hover ::v-deep .app-navigation-toggle {
+			background-color: rgba(0, 0, 0, .1) !important;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, .2) !important;
+			}
+		}
+
+		::v-deep .app-navigation-toggle:before {
 			/* Force white handle when inside a call */
 			color: #FFFFFF;
 		}
