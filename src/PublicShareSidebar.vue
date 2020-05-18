@@ -32,7 +32,9 @@
 				</button>
 			</div>
 			<template v-else>
-				<CallView v-if="isInCall" :token="token" :use-constrained-layout="true" />
+				<CallView v-if="isInCall"
+					:token="token"
+					:is-sidebar="true" />
 				<PreventUnload :when="isInCall" />
 				<CallButton class="call-button" />
 				<ChatView :token="token" />

@@ -57,7 +57,8 @@
 			</div>
 		</transition>
 
-		<div class="bottom-bar"
+		<div v-if="!isSidebar"
+			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideoStream, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
@@ -144,10 +145,6 @@ export default {
 			type: Object,
 			required: true,
 		},
-		useConstrainedLayout: {
-			type: Boolean,
-			default: false,
-		},
 		showVideoOverlay: {
 			type: Boolean,
 			default: true,
@@ -170,6 +167,11 @@ export default {
 		// True when this component is used in the big video slot in the
 		// promoted view
 		isBig: {
+			type: Boolean,
+			default: false,
+		},
+		// True when this component is used as main video in the sidebar
+		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
@@ -223,7 +225,7 @@ export default {
 		},
 
 		avatarSize() {
-			return (this.useConstrainedLayout && !this.sharedData.promoted) ? 64 : 128
+			return !this.sharedData.promoted ? 64 : 128
 		},
 
 		avatarClass() {
@@ -424,6 +426,7 @@ export default {
 	height: 100%;
 	width: 100%;
 }
+
 .avatar-container {
 	margin: auto;
 }
@@ -457,11 +460,6 @@ export default {
 		text-align: center;
 		margin: 0 0 -7px 8px;
 	}
-}
-
-.constrained-layout .mediaIndicator {
-	/* Move the media indicator closer to the bottom */
-	bottom: 16px;
 }
 
 .muteIndicator,

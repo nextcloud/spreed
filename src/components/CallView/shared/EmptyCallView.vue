@@ -19,9 +19,8 @@
   -->
 
 <template>
-	<div class="emptycontent"
-		:class="{'emptycontent-grid': isGrid}">
-		<div :class="iconClass" />
+	<div class="empty-call-view">
+		<div class="icon" :class="iconClass" />
 		<h2>
 			{{ title }}
 		</h2>
@@ -149,22 +148,23 @@ export default {
 </script>
 
 <style lang="scss">
-.emptycontent {
-	margin-top: 0;
-	position: absolute;
-	top: 30vh;
-}
 
-.emptycontent-grid {
-	top: 0;
+.empty-call-view {
 	height: 100%;
 	width: 100%;
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	margin-top: auto;
 	align-content: center;
 	justify-content: center;
+	color: var(--color-text-maxcontrast);
+	text-align: center;
+	.icon {
+		background-size: 64px;
+		height: 64px;
+		width: 64px;
+		margin: 0 auto 15px;
+	}
 	button {
 		margin: 4px auto;
 	}

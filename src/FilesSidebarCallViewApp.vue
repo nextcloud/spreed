@@ -25,7 +25,7 @@
 		<CallView
 			v-show="isInCall"
 			:token="token"
-			:use-constrained-layout="true" />
+			:is-sidebar="true" />
 		<PreventUnload :when="isInCall" />
 	</div>
 </template>
