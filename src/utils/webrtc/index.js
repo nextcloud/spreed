@@ -96,6 +96,7 @@ async function connectSignaling(token) {
 
 let pendingJoinCallToken = null
 let startedCall = null
+let failedToStartCall = null
 
 function startCall(signaling, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
@@ -108,9 +109,11 @@ function startCall(signaling, configuration) {
 		}
 	}
 
-	signaling.joinCall(pendingJoinCallToken, flags)
-
-	startedCall()
+	signaling.joinCall(pendingJoinCallToken, flags).then(() => {
+		startedCall()
+	}).catch(error => {
+		failedToStartCall(error)
+	})
 }
 
 function setupWebRtc() {
@@ -162,6 +165,7 @@ async function signalingJoinCall(token) {
 
 		return new Promise((resolve, reject) => {
 			startedCall = resolve
+			failedToStartCall = reject
 
 			webRtc.startMedia(token)
 		})
