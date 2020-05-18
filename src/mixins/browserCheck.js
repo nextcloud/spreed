@@ -21,10 +21,12 @@
  */
 
 import { showError } from '@nextcloud/dialogs'
+import UAParser from 'ua-parser-js'
 
 const browserCheck = {
 	methods: {
 		checkBrowser() {
+			console.info('Detected browser ' + this.browser.name + ' ' + this.browser.version)
 			if (!this.isFullySupported) {
 				showError(
 					this.unsupportedWarning,
@@ -35,18 +37,39 @@ const browserCheck = {
 		},
 	},
 	computed: {
+		browser() {
+			const parser = new UAParser()
+			return parser.getBrowser()
+		},
+
+		isFirefox() {
+			return this.browser.name === 'Firefox'
+		},
+		isChrome() {
+			return this.browser.name === 'Chrome' || this.browser.name === 'Chromium'
+		},
+		isSafari() {
+			return this.browser.name === 'Safari' || this.browser.name === 'Mobile Safari'
+		},
+		isEdge() {
+			return this.browser.name === 'Edge'
+		},
+		isIE() {
+			return this.browser.name === 'IE' || this.browser.name === 'IEMobile'
+		},
+
 		isFullySupported() {
-			return (this.$browserDetect.isFirefox && this.$browserDetect.meta.version >= 52)
-			|| (this.$browserDetect.isChrome && this.$browserDetect.meta.version >= 49)
-			|| (this.$browserDetect.isSafari && this.$browserDetect.meta.version >= 12)
-			|| this.$browserDetect.isEdge
+			return (this.isFirefox && this.browser.version >= 52)
+			|| (this.isChrome && this.browser.version >= 49)
+			|| (this.isSafari && this.browser.version >= 12)
+			|| this.isEdge
 		},
 		// Disable the call button and show the tooltip
 		blockCalls() {
-			return (this.$browserDetect.isFirefox && this.$browserDetect.meta.version < 52)
-			|| (this.$browserDetect.isChrome && this.$browserDetect.meta.version < 49)
-			|| (this.$browserDetect.isSafari && this.$browserDetect.meta.version < 12)
-			|| this.$browserDetect.isIE
+			return (this.isFirefox && this.browser.version < 52)
+			|| (this.isChrome && this.browser.version < 49)
+			|| (this.isSafari && this.browser.version < 12)
+			|| this.isIE
 		},
 		// Used both in the toast and in the call button tooltip
 		unsupportedWarning() {

@@ -37,15 +37,11 @@ import router from './router/router'
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 
-// Plugins
-import browserDetect from 'vue-browser-detect-plugin'
-
 // Directives
 import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
-Vue.use(browserDetect)
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -62,7 +58,6 @@ Vue.prototype.t = translate
 Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
-Vue.use(browserDetect)
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
