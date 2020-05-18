@@ -37,6 +37,7 @@
 				type="text"
 				name="hosted_hpb_nextcloud_url"
 				placeholder="https://cloud.example.org/"
+				:disabled="loading"
 				:aria-label="t('spreed', 'URL of this Nextcloud instance')">
 			<h4>{{ t('spreed', 'Full name of the user requesting the trail') }}</h4>
 			<input
@@ -44,6 +45,7 @@
 				type="text"
 				name="full_name"
 				placeholder="Jane Doe"
+				:disabled="loading"
 				:aria-label="t('spreed', 'Name of the user requesting the trail')">
 			<h4>{{ t('spreed', 'E-mail of the user') }}</h4>
 			<input
@@ -51,6 +53,7 @@
 				type="text"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
+				:disabled="loading"
 				:aria-label="t('spreed', 'E-mail of the user')">
 			<h4>{{ t('spreed', 'Language') }}</h4>
 			<input
@@ -58,6 +61,7 @@
 				type="text"
 				name="hosted_hpb_language"
 				placeholder="de"
+				:disabled="loading"
 				:aria-label="t('spreed', 'Language')">
 			<h4>{{ t('spreed', 'Country') }}</h4>
 			<input
@@ -65,13 +69,18 @@
 				type="text"
 				name="hosted_hpb_country"
 				placeholder="US"
+				:disabled="loading"
 				:aria-label="t('spreed', 'Country')">
 			<br>
 			<button class="button primary"
-				:disabled="!hostedHPBFilled"
+				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trail') }}
 			</button>
+			<p v-if="requestError !== ''"
+				class="warning">
+				{{ requestError }}
+			</p>
 		</div>
 		<p class="settings-hint additional-top-margin" v-html="disclaimerHint" />
 	</div>
@@ -92,6 +101,8 @@ export default {
 			hostedHPBEmail: '',
 			hostedHPBLanguage: '',
 			hostedHPBCountry: '',
+			requestError: '',
+			loading: false,
 		}
 	},
 
@@ -120,8 +131,27 @@ export default {
 	},
 
 	methods: {
-		requestHPBTrail() {
-			console.log('abc')
+		async requestHPBTrial() {
+			this.requestError = ''
+			this.loading = true
+			try {
+				const res = await axios.post(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver', 2) + 'requesttrial', {
+					url: this.hostedHPBNextcloudUrl,
+					name: this.hostedHPBFullName,
+					email: this.hostedHPBEmail,
+					language: this.hostedHPBLanguage,
+					country: this.hostedHPBCountry,
+				})
+
+				// TODO all fine
+
+
+
+			} catch (err) {
+				this.requestError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The trial could not be requested. Please try again later.')
+			} finally {
+				this.loading = false
+			}
 		},
 	},
 }

@@ -441,5 +441,17 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+
+		/**
+		 * HostedSignalingServer
+		 */
+		[
+			'name' => 'HostedSignalingServer#requestTrial',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/requesttrial',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
