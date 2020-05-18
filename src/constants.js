@@ -17,6 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+export const SIGNALING = {
+	MODE: {
+		INTERNAL: 'internal',
+		EXTERNAL: 'external',
+		CLUSTER_CONVERSATION: 'conversation_cluster',
+	},
+}
 export const CONVERSATION = {
 	START_CALL: {
 		EVERYONE: 0,
