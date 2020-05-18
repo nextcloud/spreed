@@ -29,9 +29,6 @@ import store from './store'
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 
-// plugins
-import browserDetect from 'vue-browser-detect-plugin'
-
 // Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueShortKey from 'vue-shortkey'
@@ -54,7 +51,6 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
-Vue.use(browserDetect)
 
 function adjustLayout() {
 	document.querySelector('#app-content').append(document.querySelector('footer'))
