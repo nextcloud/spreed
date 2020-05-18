@@ -93,7 +93,7 @@ class Config {
 			}
 		}
 
-		$signaling = [];
+		$signaling = '';
 		$servers = $this->getSignalingServers();
 		if (!empty($servers)) {
 			try {
@@ -106,7 +106,7 @@ class Config {
 
 		return [
 			'userId' => $userId,
-			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
+			'hideWarning' => $signaling || $this->getHideSignalingWarning(),
 			'server' => $signaling,
 			'ticket' => $this->getSignalingTicket($userId),
 			'stunservers' => $stun,
