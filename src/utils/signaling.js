@@ -1074,7 +1074,6 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 	case 'update':
 		this._trigger('usersChanged', [data.event.update.users || []])
 		this._trigger('participantListChanged')
-		EventBus.$emit('shouldRefreshConversations')
 		break
 	default:
 		console.error('Unknown room participant event', data)

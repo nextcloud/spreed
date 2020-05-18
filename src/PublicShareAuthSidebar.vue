@@ -140,6 +140,7 @@ export default {
 			// a call) is currently used.
 			if (loadState('talk', 'signaling_mode') !== 'internal') {
 				EventBus.$on('shouldRefreshConversations', this.fetchCurrentConversation)
+				EventBus.$on('Signaling::participantListChanged', this.fetchCurrentConversation)
 			} else {
 				// The "shouldRefreshConversations" event is triggered only when
 				// the external signaling server is used; when the internal
