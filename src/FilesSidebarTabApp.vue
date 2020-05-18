@@ -184,6 +184,7 @@ export default {
 			// a call) is currently used.
 			if (loadState('talk', 'signaling_mode') !== 'internal') {
 				EventBus.$on('shouldRefreshConversations', OCA.Talk.fetchCurrentConversationWrapper)
+				EventBus.$on('Signaling::participantListChanged', OCA.Talk.fetchCurrentConversationWrapper)
 			} else {
 				// The "shouldRefreshConversations" event is triggered only when
 				// the external signaling server is used; when the internal
@@ -195,6 +196,7 @@ export default {
 
 		leaveConversation() {
 			EventBus.$off('shouldRefreshConversations', OCA.Talk.fetchCurrentConversationWrapper)
+			EventBus.$off('Signaling::participantListChanged', OCA.Talk.fetchCurrentConversationWrapper)
 			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
 
 			// Remove the conversation to ensure that the old data is not used
