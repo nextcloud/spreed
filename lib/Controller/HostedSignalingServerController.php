@@ -121,6 +121,78 @@ class HostedSignalingServerController extends OCSController {
 					return new DataResponse([
 						'message' => $this->l10n->t('There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it\'s URL.')
 					], Http::STATUS_INTERNAL_SERVER_ERROR);
+				case Http::STATUS_BAD_REQUEST:
+					$body = $response->getBody()->getContents();
+					if ($body) {
+						$parsedBody = json_decode($body, true);
+						if (json_last_error() !== JSON_ERROR_NONE) {
+							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+							return new DataResponse([
+								'message' => $this->l10n->t('Something unexpected happened.')
+							], Http::STATUS_INTERNAL_SERVER_ERROR);
+						}
+						if ($parsedBody['reason']) {
+							$message = '';
+							switch($parsedBody['reason']) {
+								case 'invalid_content_type':
+									$log = 'The content type is invalid.';
+									break;
+								case 'invalid_json':
+									$log = 'The JSON is invalid.';
+									break;
+								case 'missing_url':
+									$log = 'The URL is missing.';
+									break;
+								case 'missing_name':
+									$log = 'The name is missing.';
+									break;
+								case 'missing_email':
+									$log = 'The email address is missing';
+									break;
+								case 'missing_language':
+									$log = 'The language code is missing.';
+									break;
+								case 'missing_country':
+									$log = 'The country code is missing.';
+									break;
+								case 'invalid_url':
+									$message = $this->l10n->t('The URL is invalid.');
+									$log = 'The entered URL is invalid.';
+									break;
+								case 'https_required':
+									$message = $this->l10n->t('An HTTPS URL is required.');
+									$log = 'An HTTPS URL is required.';
+									break;
+								case 'invalid_email':
+									$message = $this->l10n->t('The email address is invalid.');
+									$log = 'The email address is invalid.';
+									break;
+								case 'invalid_language':
+									$message = $this->l10n->t('The language is invalid.');
+									$log = 'The language is invalid.';
+									break;
+								case 'invalid_country':
+									$message = $this->l10n->t('The country is invalid.');
+									$log = 'The country is invalid.';
+									break;
+							}
+							// user error
+							if ($message !== '') {
+								$this->logger->warning('Requesting hosted signaling server trial failed: bad request - reason: ' . $parsedBody['reason'] . ' ' . $log);
+								return new DataResponse([
+									'message' => $message
+								], Http::STATUS_BAD_REQUEST);
+							}
+							$this->logger->error('Requesting hosted signaling server trial failed: bad request - reason: ' . $parsedBody['reason'] . ' ' . $log);
+							return new DataResponse([
+								'message' => $this->l10n->t('There is a problem with the request of the trial. Please check your logs for further information.')
+							], Http::STATUS_BAD_REQUEST);
+						}
+					}
+
+					return new DataResponse([
+						'message' => $this->l10n->t('Something unexpected happened.')
+					], Http::STATUS_BAD_REQUEST);
 				case Http::STATUS_TOO_MANY_REQUESTS:
 					$body = $response->getBody()->getContents();
 					$this->logger->error('Requesting hosted signaling server trial failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
@@ -169,7 +241,25 @@ class HostedSignalingServerController extends OCSController {
 
 		// will contain the URL that can be used to query information on the account
 		$statusUrl = $response->getHeader('Location');
-		// TODO handle it
+
+		$body = $response->getBody();
+		$data = json_decode($body, true);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			return new DataResponse([
+				'message' => $this->l10n->t('Something unexpected happened.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		if (!isset($data['account_id'])) {
+			$this->logger->error('Requesting hosted signaling server trial failed: no account ID transfered - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			return new DataResponse([
+				'message' => $this->l10n->t('Something unexpected happened.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-id', $data['account_id']);
 		return new DataResponse([]);
 	}
 }
