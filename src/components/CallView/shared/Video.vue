@@ -450,6 +450,7 @@ export default {
 		color: white;
 		position: relative;
 		font-size: 20px;
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		&--promoted {
 			font-weight: bold;
 		}
