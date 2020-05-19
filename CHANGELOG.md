@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.0-RC1 – 2020-05-19
+### Changed
+- Prevent configuring multiple High-performance Back-ends unless Clustering is enabled
+  [#3605](https://github.com/nextcloud/spreed/pull/3605)
+- Improve the video call layout in one-to-one calls
+  [#3569](https://github.com/nextcloud/spreed/pull/3569)
+
+### Fixed
+- Fix call view in the sidebars for Files and public shares
+  [#3571](https://github.com/nextcloud/spreed/pull/3571)
+- Fix browser and version detection
+  [#3607](https://github.com/nextcloud/spreed/pull/3607)
+  [#3613](https://github.com/nextcloud/spreed/pull/3613)
+- Fix flow message not being posted
+  [#3585](https://github.com/nextcloud/spreed/pull/3585)
+- Make icons and buttons better visible in the call view
+  [#3612](https://github.com/nextcloud/spreed/pull/3612)
+
+### Known issues
+- The grid view still has some glitches on specific window sizes
+- The promoted view cuts off screenshares when the aspect ratio does not fit in the call view
+- The promoted view cuts off videos weirdly when very few users are in the call
+- The video selection feature has been temporarily disabled
+
 ## 9.0.0-beta1 – 2020-05-13
 ### Added
 - Added a grid view for calls and made the promoted view more usable in huge calls
@@ -48,10 +72,6 @@ All notable changes to this project will be documented in this file.
   [#3460](https://github.com/nextcloud/spreed/pull/3460)
   [#3456](https://github.com/nextcloud/spreed/pull/3456)
   [#3402](https://github.com/nextcloud/spreed/pull/3402)
-
-### Known issues
-- The grid view still has some glitches on specific window sizes
-- The call view in the sidebar on the files app and public shares is completely overlapped by your own video
 
 ## 8.0.9 – 2020-05-13
 ### Changed
