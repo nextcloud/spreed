@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 9.0.0-RC1 – 2020-05-19
+## 9.0.0-rc.1 – 2020-05-19
 ### Changed
 - Prevent configuring multiple High-performance Back-ends unless Clustering is enabled
   [#3605](https://github.com/nextcloud/spreed/pull/3605)
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - The promoted view cuts off videos weirdly when very few users are in the call
 - The video selection feature has been temporarily disabled
 
-## 9.0.0-beta1 – 2020-05-13
+## 9.0.0-beta.1 – 2020-05-13
 ### Added
 - Added a grid view for calls and made the promoted view more usable in huge calls
   [#1056](https://github.com/nextcloud/spreed/pull/1056)
