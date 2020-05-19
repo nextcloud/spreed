@@ -453,5 +453,13 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+		[
+			'name' => 'HostedSignalingServer#auth',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/auth',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];

@@ -30,9 +30,11 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\Security\ISecureRandom;
 
 class HostedSignalingServerController extends OCSController {
 
@@ -40,6 +42,10 @@ class HostedSignalingServerController extends OCSController {
 	protected $clientService;
 	/** @var IL10N */
 	protected $l10n;
+	/** @var IConfig */
+	protected $config;
+	/** @var ISecureRandom */
+	protected $secureRandom;
 	/** @var ILogger */
 	protected $logger;
 
@@ -47,27 +53,53 @@ class HostedSignalingServerController extends OCSController {
 								IRequest $request,
 								IClientService $clientService,
 								IL10N $l10n,
+								IConfig $config,
+								ISecureRandom $secureRandom,
 								ILogger $logger) {
 		parent::__construct($appName, $request);
 		$this->clientService = $clientService;
 		$this->l10n = $l10n;
+		$this->config = $config;
+		$this->secureRandom = $secureRandom;
 		$this->logger = $logger;
+	}
+
+	/**
+	 * @PublicPage
+	 */
+	public function auth(): DataResponse {
+		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
+		// reset nonce after one request
+		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+
+		if ($storedNonce !== '') {
+			return new DataResponse([
+				'nonce' => $storedNonce,
+			]);
+		}
+
+		return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 	}
 
 	public function requestTrial(string $url, string $name, string $email, string $language, string $country): DataResponse {
 		$client = $this->clientService->newClient();
 
 		try {
-			// TODO change URL
-			$response = $client->post('https://api.spreed.eu' . '/v1/account/register', [
-				'body' => [
+			$nonce = $this->secureRandom->generate(32);
+			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+			$apiServer = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
+			$response = $client->post($apiServer . '/v1/account', [
+				'json' => [
 					'url' => $url,
 					'name' => $name,
 					'email' => $email,
 					'language' => $language,
 					'country' => $country,
 				],
-				'timeout' => 5, // TODO specify sane timeout
+				'headers' => [
+					'X-Account-Service-Nonce' => $nonce,
+				],
+				'timeout' => 10,
 			]);
 		} catch(ClientException $e) {
 			$response = $e->getResponse();
