@@ -26,7 +26,7 @@ import UAParser from 'ua-parser-js'
 const browserCheck = {
 	methods: {
 		checkBrowser() {
-			console.info('Detected browser ' + this.browser.name + ' ' + this.browser.version)
+			console.info('Detected browser ' + this.browser.name + ' ' + this.majorVersion + ' (' + this.browser.version + ')')
 			if (!this.isFullySupported) {
 				showError(
 					this.unsupportedWarning,
@@ -58,17 +58,21 @@ const browserCheck = {
 			return this.browser.name === 'IE' || this.browser.name === 'IEMobile'
 		},
 
+		majorVersion() {
+			return parseInt(this.browser.version.split('.')[0], 10)
+		},
+
 		isFullySupported() {
-			return (this.isFirefox && this.browser.version >= 52)
-			|| (this.isChrome && this.browser.version >= 49)
-			|| (this.isSafari && this.browser.version >= 12)
+			return (this.isFirefox && this.majorVersion >= 52)
+			|| (this.isChrome && this.majorVersion >= 49)
+			|| (this.isSafari && this.majorVersion >= 12)
 			|| this.isEdge
 		},
 		// Disable the call button and show the tooltip
 		blockCalls() {
-			return (this.isFirefox && this.browser.version < 52)
-			|| (this.isChrome && this.browser.version < 49)
-			|| (this.isSafari && this.browser.version < 12)
+			return (this.isFirefox && this.majorVersion < 52)
+			|| (this.isChrome && this.majorVersion < 49)
+			|| (this.isSafari && this.majorVersion < 12)
 			|| this.isIE
 		},
 		// Used both in the toast and in the call button tooltip
