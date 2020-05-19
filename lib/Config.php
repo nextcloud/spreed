@@ -235,7 +235,7 @@ class Config {
 		];
 	}
 
-	public function getSignalingMode(): string {
+	public function getSignalingMode($cleanExternalSignaling = true): string {
 		$validModes = [
 			self::SIGNALING_INTERNAL,
 			self::SIGNALING_EXTERNAL,
@@ -252,6 +252,7 @@ class Config {
 			return self::SIGNALING_INTERNAL;
 		}
 		if ($numSignalingServers === 1
+			&& $cleanExternalSignaling
 			&& $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
 			return self::SIGNALING_EXTERNAL;
 		}
