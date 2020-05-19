@@ -45,7 +45,7 @@ A single video stream currently uses about 1 Mbit/sec and the total required ban
 1 Mbit/s * (participants - 1)
 ```
 
-![](https://github.com/nextcloud/spreed/raw/e419b79819963a631ce811ffed432853ec4723c2/docs/HPB-P2P.svg.png)
+![](https://github.com/nextcloud/spreed/raw/e419b79819963a631ce811ffed432853ec4723c2/docs/HPB-P2P.png)
 
 This means that in a call with 5 participants, each has to send and receive about 4 Mbit/sec. Given the asymetric nature of most typical broadband connections, it's sending video that quickly becomes the bottleneck. Moreover, decoding all those video streams puts a big strain on the system of each participant.
 
