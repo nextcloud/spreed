@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import debounce from 'debounce'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Content from '@nextcloud/vue/dist/Components/Content'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar'
@@ -73,6 +74,7 @@ export default {
 			savedLastMessageMap: {},
 			defaultPageTitle: false,
 			loading: false,
+			isRefreshingCurrentConversation: false,
 		}
 	},
 
@@ -180,9 +182,9 @@ export default {
 
 	beforeDestroy() {
 		if (!getCurrentUser()) {
-			EventBus.$off('shouldRefreshConversations', this.refreshCurrentConversation)
+			EventBus.$off('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
 		}
-		EventBus.$off('Signaling::participantListChanged', this.refreshCurrentConversation)
+		EventBus.$off('Signaling::participantListChanged', this.debounceRefreshCurrentConversation)
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 
@@ -191,9 +193,9 @@ export default {
 			EventBus.$once('joinedConversation', () => {
 				this.fixmeDelayedSetupOfGuestUsers()
 			})
-			EventBus.$on('shouldRefreshConversations', this.refreshCurrentConversation)
+			EventBus.$on('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
 		}
-		EventBus.$on('Signaling::participantListChanged', this.refreshCurrentConversation)
+		EventBus.$on('Signaling::participantListChanged', this.debounceRefreshCurrentConversation)
 
 		if (this.$route.name === 'conversation') {
 			// Update current token in the token store
@@ -331,6 +333,12 @@ export default {
 			this.fetchSingleConversation(this.token)
 		},
 
+		debounceRefreshCurrentConversation: debounce(function() {
+			if (!this.isRefreshingCurrentConversation) {
+				this.refreshCurrentConversation()
+			}
+		}, 3000),
+
 		changeWindowVisibility() {
 			this.$store.dispatch('setWindowVisibility', !document.hidden)
 			if (this.windowIsVisible) {
@@ -386,6 +394,8 @@ export default {
 		},
 
 		async fetchSingleConversation(token) {
+			this.isRefreshingCurrentConversation = true
+
 			try {
 				/**
 				 * Fetches the conversations from the server and then adds them one by one
@@ -408,6 +418,8 @@ export default {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push('/apps/spreed/not-found')
 				this.$store.dispatch('hideSidebar')
+			} finally {
+				this.isRefreshingCurrentConversation = false
 			}
 		},
 		// Upon pressing ctrl+f, focus the search box in the left sidebar
