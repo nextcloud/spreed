@@ -536,7 +536,7 @@ export default {
 	justify-content: space-between;
 	align-items: flex-end;
 	&--big {
-		justify-content: flex-start;
+		justify-content: center;
 	}
 	&--video-on {
 		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
