@@ -39,30 +39,33 @@
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</transition>
-		<transition name="fade">
-			<div class="avatar-container">
-				<template v-if="showBackgroundAndAvatar">
-					<VideoBackground
-						:display-name="model.attributes.name"
-						:user="model.attributes.userId" />
-					<Avatar v-if="model.attributes.userId"
-						:size="avatarSize"
-						:disable-menu="true"
-						:disable-tooltip="true"
-						:user="model.attributes.userId"
-						:display-name="model.attributes.name"
-						:class="avatarClass" />
-					<div v-if="!model.attributes.userId"
-						:class="guestAvatarClass"
-						class="avatar guest">
-						{{ firstLetterOfGuestName }}
-					</div>
-				</template>
-				<div v-if="showPlaceholderForPromoted" class="avatar-container">
-					<AccountCircle fill-color="#FFFFFF" :size="36" />
+		<transition-group name="fade">
+			<div
+				v-if="showBackgroundAndAvatar"
+				:key="'backgroundAvatar'"
+				class="avatar-container">
+				<VideoBackground
+					:display-name="model.attributes.name"
+					:user="model.attributes.userId" />
+				<Avatar v-if="model.attributes.userId"
+					:size="avatarSize"
+					:disable-menu="true"
+					:disable-tooltip="true"
+					:user="model.attributes.userId"
+					:display-name="model.attributes.name"
+					:class="avatarClass" />
+				<div v-if="!model.attributes.userId"
+					:class="guestAvatarClass"
+					class="avatar guest">
+					{{ firstLetterOfGuestName }}
 				</div>
 			</div>
-		</transition>
+			<div v-if="showPlaceholderForPromoted"
+				:key="'placeholderForPromoted'"
+				class="placeholder-for-promoted">
+				<AccountCircle fill-color="#FFFFFF" :size="36" />
+			</div>
+		</transition-group>
 
 		<div v-if="!isSidebar"
 			class="bottom-bar"
@@ -490,7 +493,22 @@ export default {
 }
 
 .avatar-container {
-	margin: auto;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.placeholder-for-promoted {
+	background: radial-gradient(146.1% 146.1% at 50% 50%, #333333 0%, #858585 100%);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .bottom-bar {
