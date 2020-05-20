@@ -161,7 +161,7 @@ export default {
 		},
 		targetAspectRatio: {
 			type: Number,
-			default: 1.5,
+			default: 1,
 		},
 		/**
 		 * Developer mode: If enabled it allows to debug the grid using dummy
@@ -496,13 +496,6 @@ export default {
 			while (numberOfVideos < currentSlots) {
 				const previousColumns = currentColumns
 				const previousRows = currentRows
-
-				if (currentRows === 1) {
-					// When we have more slots then videos, but only 1 row
-					// we already know the number of columns we are going to have
-					currentColumns = numberOfVideos
-					break
-				}
 
 				// Current video dimensions
 				const videoWidth = this.gridWidth / currentColumns

@@ -77,6 +77,7 @@
 				:fit-video="true"
 				:has-pagination="true"
 				:call-participant-models="callParticipantModels"
+				:target-aspect-ratio="gridTargetAspectRatio"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
@@ -208,6 +209,14 @@ export default {
 		},
 		showLocalScreen() {
 			return this.hasLocalScreen
+		},
+
+		gridTargetAspectRatio() {
+			if (this.isStripe) {
+				return 1
+			} else {
+				return 1.5
+			}
 		},
 
 	},
