@@ -321,6 +321,10 @@ export default {
 			return this.sharedScreen !== null
 		},
 
+		isSharedScreenPromoted() {
+			return this.sharedData.screenVisible
+		},
+
 		showSharedScreen() {
 			// Big screen
 			if (this.isBig) {
@@ -328,8 +332,13 @@ export default {
 				return this.hasSharedScreen
 			// Stripe
 			} else if (this.isStripe) {
-				// Show the shared screen if not selected or promoted
-				return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasSharedScreen
+				if (this.isSharedScreenPromoted) {
+					return false
+				} else {
+					// Show the shared screen if not selected or promoted
+					return !((this.isSelected) ? this.isSelected : this.isPromoted) && this.hasSharedScreen
+				}
+
 			// Grid
 			} else {
 				// Alwais show shared screen if there's one
