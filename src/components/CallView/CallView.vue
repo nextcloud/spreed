@@ -62,10 +62,9 @@
 					:local-media-model="localMediaModel"
 					:shared-data="localSharedData"
 					:is-big="true" />
-				<Screen v-for="callParticipantModel in callParticipantModelsWithScreen"
-					:key="'screen-' + callParticipantModel.attributes.peerId"
-					:call-participant-model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+				<Screen
+					:call-participant-model="shownScreenModel"
+					:shared-data="sharedDatas[shownScreenModel.attributes.peerId]"
 					:is-big="true" />
 			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
@@ -162,6 +161,10 @@ export default {
 
 		callParticipantModelsWithScreen() {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
+		},
+
+		shownScreenModel() {
+			return this.callParticipantModelsWithScreen.filter(model => this.sharedDatas[model.attributes.peerId].screenVisible)[0]
 		},
 
 		localScreen() {
