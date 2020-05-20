@@ -69,7 +69,7 @@
 					:is-big="true" />
 			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
-			<GridView
+			<Grid
 				v-if="showGrid"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import GridView from './GridView/GridView'
+import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
@@ -111,7 +111,7 @@ export default {
 	name: 'CallView',
 
 	components: {
-		GridView,
+		Grid,
 		EmptyCallView,
 		Video,
 		LocalVideo,
