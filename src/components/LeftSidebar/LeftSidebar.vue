@@ -299,4 +299,12 @@ export default {
 	border-bottom: 1px solid var(--color-border-dark);
 }
 
+// Override vue overflow rules for <ul> elements within app-navigation
+.left-sidebar__list {
+	height: 100% !important;
+	width: 100% !important;
+	overflow-y: auto !important;
+	overflow-x: hidden !important;
+}
+
 </style>
