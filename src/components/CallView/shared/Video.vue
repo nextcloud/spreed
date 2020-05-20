@@ -103,7 +103,7 @@
 			</transition>
 		</div>
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
-		<div v-if="mouseover" class="hover-shadow" />
+		<div v-if="mouseover && !isBig" class="hover-shadow" />
 	</div>
 </template>
 
