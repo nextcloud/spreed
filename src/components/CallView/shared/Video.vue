@@ -356,18 +356,28 @@ export default {
 			if (this.hasSharedScreen) {
 				return !this.showSharedScreen && this.hasVideo
 			} else {
-				return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+				if (this.isStripe) {
+					return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+				} else {
+					return this.hasVideo
+				}
+
 			}
 		},
 
 		showPlaceholderForPromoted() {
-			if (this.showVideo || this.showSharedScreen) {
-				return false
-			} else if (this.$store.getters.selectedVideoPeerId !== null) {
-				return this.isSelected
+			if (this.isStripe) {
+				if (this.showVideo || this.showSharedScreen) {
+					return false
+				} else if (this.$store.getters.selectedVideoPeerId !== null) {
+					return this.isSelected
+				} else {
+					return this.isPromoted
+				}
 			} else {
-				return this.isPromoted
+				return false
 			}
+
 		},
 
 		showBackgroundAndAvatar() {
