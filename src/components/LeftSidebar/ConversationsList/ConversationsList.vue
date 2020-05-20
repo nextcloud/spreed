@@ -160,7 +160,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// Override vue overflow rules for <ul> elements within app-navigation
 .conversations {
-	overflow: visible;
+	overflow: visible !important;
 }
 </style>
