@@ -57,7 +57,7 @@
 						ref="localVideo"
 						class="video"
 						:is-grid="true"
-						:fit-video="true"
+						:fit-video="isStripe"
 						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
