@@ -24,7 +24,8 @@
 		class="videoContainer"
 		:class="containerClass"
 		@mouseover="showShadow"
-		@mouseleave="hideShadow">
+		@mouseleave="hideShadow"
+		@click="handleClickVideo">
 		<transition name="fade">
 			<video
 				v-show="showVideo"
@@ -461,6 +462,10 @@ export default {
 			if (this.isSelectable) {
 				this.mouseover = false
 			}
+		},
+
+		handleClickVideo() {
+			this.$emit('click-video')
 		},
 	},
 

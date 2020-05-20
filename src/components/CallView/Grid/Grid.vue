@@ -50,7 +50,7 @@
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
 							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-							@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+							@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
 					<LocalVideo
 						v-if="!isStripe"
