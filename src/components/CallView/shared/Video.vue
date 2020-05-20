@@ -20,21 +20,28 @@
 
 <template>
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
-		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + model.attributes.peerId + '_video_incoming'"
+		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass"
 		@mouseover="showShadow"
 		@mouseleave="hideShadow">
 		<transition name="fade">
 			<video
-				v-show="hasVideoStream && !showPlaceholderForPromoted"
+				v-show="showVideo"
 				ref="video"
 				:class="videoClass"
 				class="video" />
 		</transition>
 		<transition name="fade">
+			<Screen
+				v-if="showSharedScreen"
+				:is-big="isBig"
+				:call-participant-model="model"
+				:shared-data="sharedData" />
+		</transition>
+		<transition name="fade">
 			<div class="avatar-container">
-				<template v-if="showBackgroundandAvatar">
+				<template v-if="showBackgroundAndAvatar">
 					<VideoBackground
 						:display-name="model.attributes.name"
 						:user="model.attributes.userId" />
@@ -59,7 +66,7 @@
 
 		<div v-if="!isSidebar"
 			class="bottom-bar"
-			:class="{'bottom-bar--video-on' : hasVideoStream, 'bottom-bar--big': isBig }">
+			:class="{'bottom-bar--video-on' : hasVideo, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
 					class="bottom-bar__nameIndicator"
@@ -111,6 +118,7 @@ import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
 import AccountCircle from 'vue-material-design-icons/AccountCircle'
+import Screen from './Screen'
 
 export default {
 
@@ -120,6 +128,7 @@ export default {
 		Avatar,
 		VideoBackground,
 		AccountCircle,
+		Screen,
 	},
 
 	directives: {
@@ -180,29 +189,11 @@ export default {
 	data() {
 		return {
 			mouseover: false,
+			sharedScreen: null,
 		}
 	},
+
 	computed: {
-
-		showBackgroundandAvatar() {
-			if (this.isStripe) {
-				return !this.hasVideoStream && !(this.isSelected || this.isPromoted)
-			} else {
-				return !this.hasVideoStream
-			}
-		},
-
-		showPlaceholderForPromoted() {
-			if (this.isStripe) {
-				if (this.$store.getters.selectedVideoPeerId !== null) {
-					return this.isSelected
-				} else {
-					return this.isPromoted
-				}
-			} else {
-				return false
-			}
-		},
 
 		isSelectable() {
 			if (this.isStripe) {
@@ -246,7 +237,7 @@ export default {
 		},
 
 		sessionHash() {
-			return Hex.stringify(SHA1(this.model.attributes.peerId))
+			return Hex.stringify(SHA1(this.peerId))
 		},
 
 		participantName() {
@@ -321,8 +312,61 @@ export default {
 		isSpeaking() {
 			return this.model.attributes.speaking
 		},
-		hasVideoStream() {
-			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && this.model.attributes.stream
+
+		hasVideo() {
+			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
+		},
+
+		hasSharedScreen() {
+			return this.sharedScreen !== null
+		},
+
+		showSharedScreen() {
+			// Big screen
+			if (this.isBig) {
+				// Alwais show shared screen if there's one
+				return this.hasSharedScreen
+			// Stripe
+			} else if (this.isStripe) {
+				// Show the shared screen if not selected or promoted
+				return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasSharedScreen
+			// Grid
+			} else {
+				// Alwais show shared screen if there's one
+				return this.hasSharedScreen
+			}
+		},
+
+		showVideo() {
+			// Screenshare have higher priority so return false if screenshare
+			// is shown
+			if (this.hasSharedScreen) {
+				return !this.showSharedScreen && this.hasVideo
+			} else {
+				return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+			}
+		},
+
+		showPlaceholderForPromoted() {
+			if (this.showVideo || this.showSharedScreen) {
+				return false
+			} else if (this.$store.getters.selectedVideoPeerId !== null) {
+				return this.isSelected
+			} else {
+				return this.isPromoted
+			}
+		},
+
+		showBackgroundAndAvatar() {
+			if (this.showSharedScreen || this.showVideo || this.showPlaceholderForPromoted) {
+				return false
+			} else {
+				return true
+			}
+		},
+
+		peerId() {
+			return this.model.attributes.peerId
 		},
 	},
 
@@ -331,6 +375,15 @@ export default {
 		'model.attributes.stream': function(stream) {
 			this._setStream(stream)
 		},
+
+		'model.attributes.screen': function(sharedScreen) {
+			if (sharedScreen) {
+				this.sharedScreen = sharedScreen
+			} else {
+				this.sharedScreen = null
+			}
+		},
+
 		isSelected(bool) {
 			if (bool) {
 				this.mouseover = false
@@ -384,7 +437,7 @@ export default {
 
 		switchToScreen() {
 			if (!this.sharedData.screenVisible) {
-				this.$emit('switchScreenToId', this.model.attributes.peerId)
+				this.$emit('switchScreenToId', this.peerId)
 			}
 		},
 		showShadow() {
