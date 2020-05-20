@@ -37,6 +37,7 @@ OC.L10N.register(
     "User" : "Користувач",
     "Disabled" : "Вимкнено",
     "Users" : "Користувачі",
+    "Beta" : "Бета",
     "Name" : "Ім'я",
     "General settings" : "Загальні налаштування",
     "Off" : "Вимкнути",
