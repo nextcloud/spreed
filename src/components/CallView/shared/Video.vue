@@ -105,6 +105,11 @@
 						disabled="true" />
 				</div>
 			</transition>
+			<button v-if="hasSelectedVideo && isBig"
+				class="bottom-bar__button"
+				@click="handlefollowSpeaker">
+				{{ followSpeakerLabel }}
+			</button>
 		</div>
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
 		<div v-if="mouseover && !isBig" class="hover-shadow" />
@@ -220,7 +225,7 @@ export default {
 		},
 
 		avatarSize() {
-			return !this.sharedData.promoted ? 64 : 128
+			return this.isBig ? 128 : 128
 		},
 
 		avatarClass() {
@@ -321,6 +326,10 @@ export default {
 			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
 		},
 
+		hasSelectedVideo() {
+			return this.$store.getters.selectedVideoPeerId !== null
+		},
+
 		hasSharedScreen() {
 			return this.sharedScreen !== null
 		},
@@ -390,6 +399,10 @@ export default {
 
 		peerId() {
 			return this.model.attributes.peerId
+		},
+
+		followSpeakerLabel() {
+			return t('spreed', `Stop following`)
 		},
 	},
 
@@ -477,6 +490,10 @@ export default {
 		handleClickVideo() {
 			this.$emit('click-video')
 		},
+
+		handlefollowSpeaker() {
+			this.$store.dispatch('selectedVideoPeerId', null)
+		},
 	},
 
 }
@@ -529,14 +546,15 @@ export default {
 .bottom-bar {
 	position: absolute;
 	bottom: 0;
-	height: 40px;
 	width: 100%;
 	padding: 0 20px 12px 24px;
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-end;
+	align-items: center;
+	height: 40px;
 	&--big {
 		justify-content: center;
+		height: 48px;
 	}
 	&--video-on {
 		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
@@ -554,7 +572,16 @@ export default {
 		position: relative;
 		background-size: 22px;
 		text-align: center;
-		margin: 0 0 -7px 8px;
+		margin: 0 8px;
+	}
+	&__button {
+		opacity: 0.8;
+		border: none;
+		&:hover,
+		&:focus {
+			opacity: 1;
+			border: none;
+		}
 	}
 }
 
