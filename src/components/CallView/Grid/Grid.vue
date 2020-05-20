@@ -49,7 +49,7 @@
 							:is-selected="isSelected(callParticipantModel)"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
-							:shared-data="{videoEnabled: true}"
+							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 							@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
 					<LocalVideo
@@ -127,7 +127,7 @@ import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 
 export default {
-	name: 'GridView',
+	name: 'Grid',
 
 	components: {
 		Video,
