@@ -129,6 +129,9 @@ class AdminSettings implements ISettings {
 			'language' => $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'lang', 'en_US'),
 			'country' => $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'locale', 'en_US'),
 		]);
+		$this->initialStateService->provideInitialState('talk', 'hosted_signaling_server_trial_data',
+			json_decode($this->serverConfig->getAppValue('spreed', 'hosted-signaling-server-account', "[]"), true) ?? []
+		);
 	}
 
 	/**

@@ -30,7 +30,7 @@
 			{{ t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically.') }}
 		</p>
 
-		<div>
+		<div v-if="!trailAccount.status">
 			<h4>{{ t('spreed', 'URL of this Nextcloud instance') }}</h4>
 			<input
 				v-model="hostedHPBNextcloudUrl"
@@ -81,8 +81,32 @@
 				class="warning">
 				{{ requestError }}
 			</p>
+
+			<p class="settings-hint additional-top-margin" v-html="disclaimerHint" />
 		</div>
-		<p class="settings-hint additional-top-margin" v-html="disclaimerHint" />
+		<div v-else>
+			<p class="settings-hint additional-top-margin">
+				{{ t('spreed', 'You can see the current status of your hosted signaling server in the following table.') }}
+			</p>
+			<table>
+				<tr>
+					<td>{{ t('spreed', 'Status') }}</td>
+					<td>{{ translatedStatus }}</td>
+				</tr>
+				<tr>
+					<td>{{ t('spreed', 'Created at') }}</td>
+					<td>{{ createdDate }}</td>
+				</tr>
+				<tr>
+					<td>{{ t('spreed', 'Expires at') }}</td>
+					<td>{{ expiryDate }}</td>
+				</tr>
+				<tr v-if="trailAccount.limits">
+					<td>{{ t('spreed', 'Limits') }}</td>
+					<td>{{ n('spreed', '%n user', '%n users', trailAccount.limits.users) }}</td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </template>
 
@@ -90,6 +114,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import moment from '@nextcloud/moment'
 
 export default {
 	name: 'HostedSignalingServer',
@@ -103,6 +128,8 @@ export default {
 			hostedHPBCountry: '',
 			requestError: '',
 			loading: false,
+
+			trailAccount: [],
 		}
 	},
 
@@ -119,6 +146,28 @@ export default {
 				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://www.spreed.eu/nextcloud-talk-high-performance-backend/">')
 				.replace('{linkend}', ' ↗</a>')
 		},
+		translatedStatus() {
+			switch (this.trailAccount.status) {
+			case 'pending':
+				return t('spreed', 'Pending')
+			case 'error':
+				return t('spreed', 'Error')
+			case 'blocked':
+				return t('spreed', 'Blocked')
+			case 'active':
+				return t('spreed', 'Active')
+			case 'expired':
+				return t('spreed', 'Expired')
+			}
+
+			return ''
+		},
+		expiryDate() {
+			return moment(this.trailAccount.expires).format('L')
+		},
+		createdDate() {
+			return moment(this.trailAccount.created).format('L')
+		},
 	},
 
 	beforeMount() {
@@ -128,6 +177,8 @@ export default {
 		this.hostedHPBEmail = state.email
 		this.hostedHPBLanguage = state.language
 		this.hostedHPBCountry = state.country
+
+		this.trailAccount = loadState('talk', 'hosted_signaling_server_trial_data')
 	},
 
 	methods: {
@@ -143,10 +194,7 @@ export default {
 					country: this.hostedHPBCountry,
 				})
 
-				// TODO all fine
-
-
-
+				this.trailAccount = res.data.ocs.data
 			} catch (err) {
 				this.requestError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The trial could not be requested. Please try again later.')
 			} finally {
@@ -160,6 +208,19 @@ export default {
 <style lang="scss" scoped>
 .additional-top-margin {
 	margin-top: 10px;
+}
+
+td {
+	padding: 5px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+tr:last-child td {
+	border-bottom: none;
+}
+
+tr :first-child {
+	opacity: .5;
 }
 
 </style>

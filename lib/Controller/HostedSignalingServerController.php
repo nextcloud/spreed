@@ -83,11 +83,11 @@ class HostedSignalingServerController extends OCSController {
 
 	public function requestTrial(string $url, string $name, string $email, string $language, string $country): DataResponse {
 		$client = $this->clientService->newClient();
+		$apiServer = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
 
 		try {
 			$nonce = $this->secureRandom->generate(32);
 			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
-			$apiServer = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
 			$response = $client->post($apiServer . '/v1/account', [
 				'json' => [
 					'url' => $url,
@@ -239,9 +239,6 @@ class HostedSignalingServerController extends OCSController {
 			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		// will contain the URL that can be used to query information on the account
-		$statusUrl = $response->getHeader('Location');
-
 		$body = $response->getBody();
 		$data = json_decode($body, true);
 
@@ -260,6 +257,167 @@ class HostedSignalingServerController extends OCSController {
 		}
 
 		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-id', $data['account_id']);
-		return new DataResponse([]);
+
+		$data = [
+			'account_id' => $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id')
+		];
+
+		// account is now properly requested
+
+		// fetch account details
+
+		try {
+			$nonce = $this->secureRandom->generate(32);
+			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+			$response = $client->get($apiServer . '/v1/account/' . $data['account_id'], [
+				'headers' => [
+					'X-Account-Service-Nonce' => $nonce,
+				],
+				'timeout' => 10,
+			]);
+		} catch(ClientException $e) {
+			$response = $e->getResponse();
+
+			if ($response === null) {
+				$this->logger->logException($e, [
+					'app' => 'spreed',
+					'message' => 'Trial requested but failed to get account information',
+				]);
+				return new DataResponse([
+					'message' => $this->l10n->t('Trial requested but failed to get account information. Please check back later.')
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
+			$status = $response->getStatusCode();
+
+			switch ($status) {
+				case Http::STATUS_UNAUTHORIZED:
+					// TODO log it
+					return new DataResponse([
+						'message' => $this->l10n->t('There is a problem with the authentication of this request. Maybe the account was deleted.') // TODO deleted?
+					], Http::STATUS_INTERNAL_SERVER_ERROR);
+				case Http::STATUS_BAD_REQUEST:
+					$body = $response->getBody()->getContents();
+					if ($body) {
+						$parsedBody = json_decode($body, true);
+						if (json_last_error() !== JSON_ERROR_NONE) {
+							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+							return new DataResponse([
+								'message' => $this->l10n->t('Something unexpected happened.')
+							], Http::STATUS_INTERNAL_SERVER_ERROR);
+						}
+						if ($parsedBody['reason']) {
+							switch($parsedBody['reason']) {
+								case 'missing_account_id':
+									$log = 'The account ID is missing.';
+									break;
+								default:
+									$body = $response->getBody()->getContents();
+									$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+									return new DataResponse([
+										'message' => $this->l10n->t('Failed to fetch account information because the trial server behaved wrongly. Please check back later.')
+									], Http::STATUS_INTERNAL_SERVER_ERROR);
+							}
+							$this->logger->error('Getting the account information failed: bad request - reason: ' . $parsedBody['reason'] . ' ' . $log);
+							return new DataResponse([
+								'message' => $this->l10n->t('There is a problem with fetching the account information. Please check your logs for further information.')
+							], Http::STATUS_BAD_REQUEST);
+						}
+					}
+
+					return new DataResponse([
+						'message' => $this->l10n->t('Something unexpected happened.')
+					], Http::STATUS_BAD_REQUEST);
+				case Http::STATUS_TOO_MANY_REQUESTS:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Getting the account information failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					return new DataResponse([
+						'message' => $this->l10n->t('Too many requests are send from your servers address. Please try again later.')
+					], Http::STATUS_TOO_MANY_REQUESTS);
+				case Http::STATUS_NOT_FOUND:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Getting the account information failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					return new DataResponse([
+						'message' => $this->l10n->t('There is no such account registered.')
+					], Http::STATUS_CONFLICT);
+				case Http::STATUS_INTERNAL_SERVER_ERROR:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Getting the account information failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					return new DataResponse([
+						'message' => $this->l10n->t('Something unexpected happened. Please try again later.')
+					], Http::STATUS_INTERNAL_SERVER_ERROR);
+				default:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					return new DataResponse([
+						'message' => $this->l10n->t('Failed to fetch account information because the trial server behaved wrongly. Please check back later.')
+					], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'app' => 'spreed',
+				'message' => 'Failed to request hosted signaling server trial',
+			]);
+
+			return new DataResponse([
+				'message' => $this->l10n->t('Failed to fetch account information because the trial server is unreachable. Please check back later.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$status = $response->getStatusCode();
+
+		if ($status !== Http::STATUS_OK) {
+			$body = $response->getBody();
+			$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			return new DataResponse([
+				'message' => $this->l10n->t('Something unexpected happened.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$body = $response->getBody();
+		$data = json_decode($body, true);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			return new DataResponse([
+				'message' => $this->l10n->t('Something unexpected happened.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		return $this->sanitizeAndCacheAccountData($data);
+	}
+
+	protected function sanitizeAndCacheAccountData(array $data): DataResponse {
+		if (!isset($data['status'])
+			|| !isset($data['created'])
+			|| ($data['status'] === 'active' && (
+				!isset($data['signaling'])
+				|| !isset($data['signaling']['url'])
+				|| !isset($data['signaling']['secret'])
+				)
+			)
+			|| !isset($data['owner'])
+			|| !isset($data['owner']['url'])
+			|| !isset($data['owner']['name'])
+			|| !isset($data['owner']['email'])
+			|| !isset($data['owner']['language'])
+			|| !isset($data['owner']['country'])
+			|| ($data['status'] === 'active' && (
+				!isset($data['limits'])
+				|| !isset($data['limits']['users'])
+				)
+			)
+			|| (in_array($data['status'], ['error', 'blocked']) && !isset($data['reason']))
+			|| !in_array($data['status'], ['error', 'blocked', 'pending', 'active', 'expired'])
+		) {
+			$this->logger->error('Getting the account information failed: response is missing mandatory field - data: ' . json_encode($data), ['app' => 'spreed']);
+			return new DataResponse([
+				'message' => $this->l10n->t('Something unexpected happened.')
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$this->config->setAppValue('spreed', 'hosted-signaling-server-account', json_encode($data));
+
+		return new DataResponse($data);
 	}
 }
