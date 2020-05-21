@@ -35,6 +35,7 @@ use OCP\IGroup;
 use OCP\IUser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
 
 trait TRoomCommand {
 	/**
@@ -327,15 +328,29 @@ trait TRoomCommand {
 	}
 
 	protected function completeParticipantValues(CompletionContext $context): array {
+		$definition = new InputDefinition();
+
+		if ($this->getApplication() !== null) {
+			$definition->addArguments($this->getApplication()->getDefinition()->getArguments());
+			$definition->addOptions($this->getApplication()->getDefinition()->getOptions());
+		}
+
+		$definition->addArguments($this->getDefinition()->getArguments());
+		$definition->addOptions($this->getDefinition()->getOptions());
+
+		$input = new ArgvInput($context->getWords(), $definition);
+		if ($input->hasArgument('token')) {
+			$token = $input->getArgument('token');
+		} elseif ($input->hasOption('token')) {
+			$token = $input->getOption('token');
+		} else {
+			return [];
+		}
+
 		/** @var Manager $roomManager */
 		$roomManager = \OC::$server->query(Manager::class);
 
-		// drop `./occ talk:room:*`, but re-prepend command name for ArgvInput
-		$args = array_merge([$context->getWordAtIndex(0)], array_slice($context->getWords(), 2));
-		$input = new ArgvInput($args, $this->getDefinition());
-
 		try {
-			$token = $input->getArgument('token');
 			$room = $roomManager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			return [];
