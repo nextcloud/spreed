@@ -65,11 +65,6 @@ class Create extends Base {
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Invites all members of the given group to the room to create'
 			)->addOption(
-				'circle',
-				null,
-				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-				'Invites all members of the given circle to the room to create'
-			)->addOption(
 				'public',
 				null,
 				InputOption::VALUE_NONE,
@@ -101,7 +96,6 @@ class Create extends Base {
 		$name = $input->getArgument('name');
 		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
-		$circles = $input->getOption('circle');
 		$public = $input->getOption('public');
 		$readonly = $input->getOption('readonly');
 		$password = $input->getOption('password');
@@ -125,7 +119,6 @@ class Create extends Base {
 
 			$this->addRoomParticipants($room, $users);
 			$this->addRoomParticipantsByGroup($room, $groups);
-			$this->addRoomParticipantsByCircle($room, $circles);
 			$this->addRoomModerators($room, $moderators);
 
 			if ($owner !== null) {
@@ -149,9 +142,6 @@ class Create extends Base {
 
 			case 'group':
 				return $this->completeGroupValues($context);
-
-			case 'circle':
-				return $this->completeCircleValues($context);
 
 			case 'owner':
 			case 'moderator':

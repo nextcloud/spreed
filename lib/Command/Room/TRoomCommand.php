@@ -26,8 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
-use OCA\Circles\Api\v1\Circles;
-use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
@@ -189,43 +187,6 @@ trait TRoomCommand {
 
 	/**
 	 * @param Room     $room
-	 * @param string[] $circleIds
-	 *
-	 * @throws InvalidArgumentException
-	 */
-	protected function addRoomParticipantsByCircle(Room $room, array $circleIds): void {
-		if (!$circleIds) {
-			return;
-		}
-
-		if (!\OC::$server->getAppManager()->isEnabledForUser('circles')) {
-			throw new InvalidArgumentException("App 'circles' is not enabled.");
-		}
-
-		$users = [];
-		foreach ($circleIds as $circleId) {
-			try {
-				$circle = Circles::detailsCircle($circleId);
-			} catch (\Exception $e) {
-				throw new InvalidArgumentException(sprintf("Circle '%s' not found.", $circleId));
-			}
-
-			$circleUsers = array_filter($circle->getMembers(), function (Member $member) {
-				if (($member->getType() !== Member::TYPE_USER) || ($member->getUserId() === '')) {
-					return false;
-				}
-
-				return in_array($member->getStatus(), [Member::STATUS_INVITED, Member::STATUS_MEMBER], true);
-			});
-
-			$users = array_merge($users, $circleUsers);
-		}
-
-		$this->addRoomParticipants($room, $users);
-	}
-
-	/**
-	 * @param Room     $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
@@ -361,11 +322,6 @@ trait TRoomCommand {
 		return array_map(function (IGroup $group) {
 			return $group->getGID();
 		}, $groupManager->search($context->getCurrentWord()));
-	}
-
-	protected function completeCircleValues(CompletionContext $context): array {
-		// TODO: implement me!
-		return [];
 	}
 
 	protected function completeParticipantValues(CompletionContext $context): array {

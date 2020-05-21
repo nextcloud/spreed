@@ -66,11 +66,6 @@ class Add extends Base {
 				null,
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Invites all members of the given groups to the room'
-			)->addOption(
-				'circle',
-				null,
-				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-				'Invites all members of the given circles to the room'
 			);
 	}
 
@@ -78,7 +73,6 @@ class Add extends Base {
 		$token = $input->getArgument('token');
 		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
-		$circles = $input->getOption('circle');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -95,7 +89,6 @@ class Add extends Base {
 		try {
 			$this->addRoomParticipants($room, $users);
 			$this->addRoomParticipantsByGroup($room, $groups);
-			$this->addRoomParticipantsByCircle($room, $circles);
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
@@ -112,9 +105,6 @@ class Add extends Base {
 
 			case 'group':
 				return $this->completeGroupValues($context);
-
-			case 'circle':
-				return $this->completeCircleValues($context);
 		}
 
 		return parent::completeOptionValues($optionName, $context);
