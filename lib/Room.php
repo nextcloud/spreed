@@ -1016,6 +1016,41 @@ class Room {
 	}
 
 	/**
+	 * @param string $searchUserId
+	 * @param int $limit
+	 * @param int $offset
+	 * @return Participant[]
+	 */
+	public function searchParticipants(string $searchUserId = '', int $limit = null, int $offset = null): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId())));
+
+		if ($searchUserId !== '') {
+			$query->where($query->expr()->iLike('user_id', $query->createNamedParameter(
+				'%' . $this->db->escapeLikeParameter($searchUserId) . '%'
+			)));
+		}
+
+		$query->setMaxResults($limit)
+			->setFirstResult($offset);
+		$result = $query->execute();
+
+		$participants = [];
+		while ($row = $result->fetch()) {
+			$participants[] = $this->manager->createParticipantObject($this, $row);
+		}
+		$result->closeCursor();
+
+		uasort($participants, function (Participant $a, Participant $b) {
+			return strcasecmp($a->getUser(), $b->getUser());
+		});
+
+		return $participants;
+	}
+
+	/**
 	 * @return Participant[]
 	 */
 	public function getParticipantsInCall(): array {
