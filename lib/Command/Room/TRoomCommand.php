@@ -27,12 +27,14 @@ namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IGroup;
 use OCP\IUser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Input\ArgvInput;
 
 trait TRoomCommand {
 	/**
@@ -325,7 +327,22 @@ trait TRoomCommand {
 	}
 
 	protected function completeParticipantValues(CompletionContext $context): array {
-		// TODO: implement me!
-		return [];
+		/** @var Manager $roomManager */
+		$roomManager = \OC::$server->query(Manager::class);
+
+		// drop `./occ talk:room:*`, but re-prepend command name for ArgvInput
+		$args = array_merge([$context->getWordAtIndex(0)], array_slice($context->getWords(), 2));
+		$input = new ArgvInput($args, $this->getDefinition());
+
+		try {
+			$token = $input->getArgument('token');
+			$room = $roomManager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			return [];
+		}
+
+		return array_map(function (Participant $participant) {
+			return $participant->getUser();
+		}, $room->searchParticipants($context->getCurrentWord()));
 	}
 }
