@@ -201,7 +201,6 @@ export default {
 	data() {
 		return {
 			mouseover: false,
-			sharedScreen: null,
 		}
 	},
 
@@ -334,11 +333,11 @@ export default {
 		},
 
 		hasSharedScreen() {
-			return this.sharedScreen !== null
+			return this.model.attributes.screen
 		},
 
 		isSharedScreenPromoted() {
-			return this.sharedData.screenVisible
+			return this.sharedData.screenVisible && (!this.hasSelectedVideo || this.isSelected)
 		},
 
 		showSharedScreen() {
@@ -366,7 +365,7 @@ export default {
 			// Screenshare have higher priority so return false if screenshare
 			// is shown
 			if (this.hasSharedScreen) {
-				return !this.showSharedScreen && this.hasVideo
+				return !this.showSharedScreen && this.hasVideo && !this.isSelected
 			} else {
 				if (this.isStripe) {
 					return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
@@ -413,14 +412,6 @@ export default {
 
 		'model.attributes.stream': function(stream) {
 			this._setStream(stream)
-		},
-
-		'model.attributes.screen': function(sharedScreen) {
-			if (sharedScreen) {
-				this.sharedScreen = sharedScreen
-			} else {
-				this.sharedScreen = null
-			}
 		},
 
 		isSelected(bool) {
