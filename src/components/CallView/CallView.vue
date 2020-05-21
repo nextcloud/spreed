@@ -57,15 +57,21 @@
 				</template>
 			</div>
 			<!-- Screens -->
-			<div v-if="!isSidebar && screens.length !== 0" id="screens">
-				<Screen v-if="localMediaModel.attributes.localScreen"
+			<div v-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
+				<!-- local screen -->
+				<Screen v-show="showLocalScreen"
 					:local-media-model="localMediaModel"
 					:shared-data="localSharedData"
 					:is-big="true" />
-				<Screen
-					:call-participant-model="shownScreenModel"
-					:shared-data="sharedDatas[shownScreenModel.attributes.peerId]"
-					:is-big="true" />
+				<!-- remote screen -->
+				<template v-for="callParticipantModel in reversedCallParticipantModels">
+					<Screen
+						v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
+						:key="'screen-' + callParticipantModel.attributes.peerId"
+						:call-participant-model="callParticipantModel"
+						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+						:is-big="true" />
+				</template>
 			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
 			<Grid
@@ -163,10 +169,6 @@ export default {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
 		},
 
-		shownScreenModel() {
-			return this.callParticipantModelsWithScreen.filter(model => this.sharedDatas[model.attributes.peerId].screenVisible)[0]
-		},
-
 		localScreen() {
 			return localMediaModel.attributes.localScreen
 		},
@@ -196,22 +198,55 @@ export default {
 		},
 
 		showGrid() {
-			return !this.isOneToOneView && !this.isSidebar
+			return (!this.isOneToOneView || this.showLocalScreen) && !this.isSidebar
 		},
 
 		hasLocalScreen() {
 			return this.localMediaModel.attributes.localScreen
 		},
 
+		hasRemoteScreen() {
+			return this.callParticipantModelsWithScreen.length > 0
+		},
+
 		showSelected() {
-			return !this.isGrid && this.hasSelectedVideo && this.screens.length === 0
+			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showRemoteScreen
 		},
 
 		showPromoted() {
-			return !this.isGrid && !this.hasSelectedVideo && this.screens.length === 0
+			return !this.isGrid && !this.hasSelectedVideo && !this.screenSharingActive
 		},
+
 		showLocalScreen() {
-			return this.hasLocalScreen
+			return !this.hasSelectedVideo && this.screenSharingActive && this.screens[0] === localCallParticipantModel.attributes.peerId
+		},
+
+		showRemoteScreen() {
+			return this.shownRemoteScreenPeerId !== null
+		},
+
+		shownRemoteScreenPeerId() {
+			if (!this.screenSharingActive) {
+				return null
+			}
+
+			if (!this.hasRemoteScreen) {
+				return null
+			}
+
+			if (this.showLocalScreen) {
+				return null
+			}
+
+			if (!this.hasSelectedVideo) {
+				return this.screens[0]
+			}
+
+			if (this.screens.includes(this.selectedVideoPeerId)) {
+				return this.selectedVideoPeerId
+			}
+
+			return null
 		},
 
 		gridTargetAspectRatio() {
@@ -221,7 +256,6 @@ export default {
 				return 1.2
 			}
 		},
-
 	},
 	watch: {
 		localScreen: function(localScreen) {
