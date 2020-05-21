@@ -64,15 +64,15 @@
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
-				<AccountCircle fill-color="#FFFFFF" :size="36" />
+				<AccountCircle v-if="isPromoted && !isSelected" fill-color="#FFFFFF" :size="36" />
+				<LockCheck v-if="isSelected" fill-color="#FFFFFF" :size="36" />
 			</div>
 		</transition-group>
-
 		<div v-if="!isSidebar"
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasVideo, 'bottom-bar--big': isBig }">
 			<transition name="fade">
-				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isSpeaking"
+				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isPromoted || isSpeaking"
 					class="bottom-bar__nameIndicator"
 					:class="{'bottom-bar__nameIndicator--promoted': isSpeaking || isSelected}">
 					{{ participantName }}
@@ -127,6 +127,8 @@ import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
 import AccountCircle from 'vue-material-design-icons/AccountCircle'
+import LockCheck from 'vue-material-design-icons/LockCheck'
+
 import Screen from './Screen'
 
 export default {
@@ -138,6 +140,7 @@ export default {
 		VideoBackground,
 		AccountCircle,
 		Screen,
+		LockCheck,
 	},
 
 	directives: {
