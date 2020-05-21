@@ -232,18 +232,19 @@ class Manager {
 	 */
 	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.*')
-			->from('talk_rooms', 'r')
+		$query->select('*')
+			->from('talk_rooms')
 			->setMaxResults(1);
 
 		if ($searchToken !== '') {
-			$query->where($query->expr()->iLike('r.token', $query->createNamedParameter(
-				$this->db->escapeLikeParameter($searchToken) . '%'
+			$query->where($query->expr()->iLike('token', $query->createNamedParameter(
+				'%' . $this->db->escapeLikeParameter($searchToken) . '%'
 			)));
 		}
 
 		$query->setMaxResults($limit)
-			->setFirstResult($offset);
+			->setFirstResult($offset)
+			->orderBy('token', 'ASC');
 		$result = $query->execute();
 
 		$rooms = [];
