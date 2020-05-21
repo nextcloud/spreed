@@ -83,8 +83,8 @@ export default {
 	text-overflow: ellipsis;
 }
 
+// Override vue overflow rules for <ul> elements within app-navigation
 .contacts-list {
-	overflow: visible;
-	display: block;
+	overflow: visible !important;
 }
 </style>
