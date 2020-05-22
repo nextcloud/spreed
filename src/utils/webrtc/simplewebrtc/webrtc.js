@@ -88,7 +88,7 @@ function WebRTC(opts) {
 	})
 	this.on('unshareScreen', function(message) {
 		// End peers we were receiving the screensharing stream from.
-		const peers = self.getPeers(message.from, 'screen')
+		const peers = self.getPeers(message.id, 'screen')
 		peers.forEach(function(peer) {
 			if (!peer.sharemyscreen) {
 				peer.end()
