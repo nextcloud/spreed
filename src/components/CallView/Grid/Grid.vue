@@ -444,6 +444,9 @@ export default {
 			// prevent making grid if no videos
 			console.debug(this.videos.length)
 			if (this.videos.length === 0) {
+				this.columns = 0
+				this.rows = 0
+				this.displayedVideos = []
 				return
 			}
 
