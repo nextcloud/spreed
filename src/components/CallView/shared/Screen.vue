@@ -19,11 +19,11 @@
   -->
 
 <template>
-	<div v-show="sharedData.screenVisible" :id="screenContainerId" class="screenContainer">
-		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)" ref="screen" />
-		<div class="nameIndicator">
-			{{ name }}
-		</div>
+	<div :id="screenContainerId" class="screenContainer">
+		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
+			ref="screen"
+			class="screen"
+			:class="screenClass" />
 	</div>
 </template>
 
@@ -49,6 +49,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -59,18 +63,6 @@ export default {
 			}
 
 			return 'container_' + this.callParticipantModel.attributes.peerId + '_screen_incoming'
-		},
-
-		name() {
-			if (this.localMediaModel) {
-				return t('spreed', 'Your screen')
-			}
-
-			if (this.remoteParticipantName) {
-				return t('spreed', "{participantName}'s screen", { participantName: this.remoteParticipantName })
-			}
-
-			return null
 		},
 
 		remoteSessionHash() {
@@ -91,6 +83,13 @@ export default {
 			}
 
 			return remoteParticipantName
+		},
+		screenClass() {
+			if (this.isBig) {
+				return 'screen--fit'
+			} else {
+				return 'screen--fill'
+			}
 		},
 
 	},
@@ -132,3 +131,21 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+
+.screen {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	&--fit {
+		object-fit: contain;
+	}
+	&--fill {
+		object-fit: cover;
+	}
+}
+
+</style>

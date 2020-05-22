@@ -20,11 +20,11 @@
 -->
 
 <template>
-	<div id="call-container" :class="callViewClass">
+	<div id="call-container">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
 			<!-- Promoted "autopilot" mode -->
-			<div v-if="!isGrid && !hasSelectedVideo" ref="videoContainer" class="video__promoted">
+			<div v-if="showPromoted" ref="videoContainer" class="video__promoted autopilot">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
@@ -41,7 +41,7 @@
 				</template>
 			</div>
 			<!-- Selected override mode -->
-			<div v-if="!isGrid && hasSelectedVideo" ref="videoContainer" class="video__promoted">
+			<div v-if="showSelected" ref="videoContainer" class="video__promoted override">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
@@ -56,8 +56,25 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
+			<!-- Screens -->
+			<div v-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
+				<!-- local screen -->
+				<Screen v-show="showLocalScreen"
+					:local-media-model="localMediaModel"
+					:shared-data="localSharedData"
+					:is-big="true" />
+				<!-- remote screen -->
+				<template v-for="callParticipantModel in reversedCallParticipantModels">
+					<Screen
+						v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
+						:key="'screen-' + callParticipantModel.attributes.peerId"
+						:call-participant-model="callParticipantModel"
+						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+						:is-big="true" />
+				</template>
+			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
-			<GridView
+			<Grid
 				v-if="showGrid"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
@@ -65,6 +82,7 @@
 				:fit-video="true"
 				:has-pagination="true"
 				:call-participant-models="callParticipantModels"
+				:target-aspect-ratio="gridTargetAspectRatio"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
@@ -82,36 +100,27 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
 				@switchScreenToId="1" />
-			<div v-if="!isSidebar" id="screens">
-				<Screen v-if="localMediaModel.attributes.localScreen"
-					:local-media-model="localMediaModel"
-					:shared-data="localSharedData" />
-				<Screen v-for="callParticipantModel in callParticipantModelsWithScreen"
-					:key="'screen-' + callParticipantModel.attributes.peerId"
-					:call-participant-model="callParticipantModel"
-					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]" />
-			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import GridView from './GridView/GridView'
+import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 import EmptyCallView from './shared/EmptyCallView'
-import Screen from './shared/Screen'
 import Video from './shared/Video'
 import LocalVideo from './shared/LocalVideo'
+import Screen from './shared/Screen'
 
 export default {
 	name: 'CallView',
 
 	components: {
-		GridView,
+		Grid,
 		EmptyCallView,
-		Screen,
 		Video,
 		LocalVideo,
+		Screen,
 	},
 
 	props: {
@@ -167,32 +176,85 @@ export default {
 		screenSharingActive() {
 			return this.screens.length > 0
 		},
-		callViewClass() {
-			const callViewClass = {
-				'incall': this.remoteParticipantsCount > 0,
-				'screensharing': this.screenSharingActive,
-			}
-			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
-			return callViewClass
-		},
 		isGrid() {
 			return this.$store.getters.isGrid
 		},
+
 		selectedVideoPeerId() {
 			return this.$store.getters.selectedVideoPeerId
 		},
+
 		hasSelectedVideo() {
 			return this.$store.getters.selectedVideoPeerId !== null
 		},
+
 		isOneToOne() {
 			return this.callParticipantModels.length === 1
 		},
+
 		isOneToOneView() {
 			return (this.isOneToOne && !this.isGrid) || this.isSidebar
 		},
+
 		showGrid() {
-			return !this.isOneToOneView && !this.isSidebar
+			return (!this.isOneToOneView || this.showLocalScreen) && !this.isSidebar
+		},
+
+		hasLocalScreen() {
+			return this.localMediaModel.attributes.localScreen
+		},
+
+		hasRemoteScreen() {
+			return this.callParticipantModelsWithScreen.length > 0
+		},
+
+		showSelected() {
+			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showRemoteScreen
+		},
+
+		showPromoted() {
+			return !this.isGrid && !this.hasSelectedVideo && !this.screenSharingActive
+		},
+
+		showLocalScreen() {
+			return !this.hasSelectedVideo && this.screenSharingActive && this.screens[0] === localCallParticipantModel.attributes.peerId
+		},
+
+		showRemoteScreen() {
+			return this.shownRemoteScreenPeerId !== null
+		},
+
+		shownRemoteScreenPeerId() {
+			if (!this.screenSharingActive) {
+				return null
+			}
+
+			if (!this.hasRemoteScreen) {
+				return null
+			}
+
+			if (this.showLocalScreen) {
+				return null
+			}
+
+			if (!this.hasSelectedVideo) {
+				return this.screens[0]
+			}
+
+			if (this.screens.includes(this.selectedVideoPeerId)) {
+				return this.selectedVideoPeerId
+			}
+
+			return null
+		},
+
+		gridTargetAspectRatio() {
+			if (this.isStripe) {
+				return 1
+			} else {
+				return 1.2
+			}
 		},
 	},
 	watch: {
@@ -436,25 +498,6 @@ export default {
 	display: none;
 }
 
-.videoContainer.hidden,
-.participants-1.screensharing .videoContainer.hidden,
-.participants-2.screensharing .videoContainer.hidden {
-	display: none;
-}
-
-.screensharing .videoContainer {
-	max-height: 200px;
-}
-
-.constrained-layout.screensharing .videoContainer {
-	max-height: 100px;
-
-	/* Avatars slightly overflow the container; although they overlap the shared
-	 * screen it is not too bad and it is better than compressing even further
-	 * the shared screen. */
-	overflow: visible;
-}
-
 ::v-deep video {
 	z-index: 0;
 	/* default filter for slightly better look */
@@ -464,18 +507,6 @@ export default {
 	 filter: contrast(1.1) saturate(1.1) sepia(.1);
 	 */
 	vertical-align: top; /* fix white line below video */
-}
-
-.screensharing .videoContainer ::v-deep video {
-	max-height: 200px;
-	background-color: transparent;
-	box-shadow: none;
-}
-
-#screens ::v-deep video {
-	width: 100%;
-	-webkit-filter: none;
-	filter: none;
 }
 
 #videos .videoContainer.not-connected ::v-deep {
@@ -529,15 +560,7 @@ export default {
 	right: 0;
 }
 
-.screensharing #screens {
-	position: absolute;
-	width: 100%;
-	height: calc(100% - 200px);
-	top: 0;
-	background-color: transparent;
-}
-
-.screensharing .screenContainer {
+#screens {
 	position: relative;
 	width: 100%;
 	height: 100%;

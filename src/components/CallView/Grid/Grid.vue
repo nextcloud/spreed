@@ -49,15 +49,15 @@
 							:is-selected="isSelected(callParticipantModel)"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
-							:shared-data="{videoEnabled: true}"
-							@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+							@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
 					<LocalVideo
 						v-if="!isStripe"
 						ref="localVideo"
 						class="video"
 						:is-grid="true"
-						:fit-video="true"
+						:fit-video="isStripe"
 						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
@@ -127,7 +127,7 @@ import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 
 export default {
-	name: 'GridView',
+	name: 'Grid',
 
 	components: {
 		Video,
@@ -161,7 +161,7 @@ export default {
 		},
 		targetAspectRatio: {
 			type: Number,
-			default: 1.5,
+			default: 1,
 		},
 		/**
 		 * Developer mode: If enabled it allows to debug the grid using dummy
@@ -496,13 +496,6 @@ export default {
 			while (numberOfVideos < currentSlots) {
 				const previousColumns = currentColumns
 				const previousRows = currentRows
-
-				if (currentRows === 1) {
-					// When we have more slots then videos, but only 1 row
-					// we already know the number of columns we are going to have
-					currentColumns = numberOfVideos
-					break
-				}
 
 				// Current video dimensions
 				const videoWidth = this.gridWidth / currentColumns

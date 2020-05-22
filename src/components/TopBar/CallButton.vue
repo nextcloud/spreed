@@ -208,6 +208,8 @@ export default {
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 			})
 			this.loading = false
+			// Go back to promoted view upon leaving a call
+			this.$store.dispatch('isGrid', false)
 		},
 	},
 }
