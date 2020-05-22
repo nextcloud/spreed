@@ -717,6 +717,10 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			return
 		}
 
+		if (peer.type === 'screen') {
+			return
+		}
+
 		startPeerCheckMedia(peer, peer.stream)
 	})
 
