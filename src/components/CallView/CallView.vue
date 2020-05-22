@@ -253,7 +253,7 @@ export default {
 			if (this.isStripe) {
 				return 1
 			} else {
-				return 1.2
+				return 1.5
 			}
 		},
 	},
