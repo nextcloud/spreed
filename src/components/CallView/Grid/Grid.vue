@@ -317,9 +317,19 @@ export default {
 
 		// Computed css to reactively style the grid
 		gridStyle() {
+			let columns = this.columns
+			let rows = this.rows
+
+			// If there are no other videos the empty call view is shown above
+			// the local video.
+			if (this.videos.length === 0 && !this.isStripe) {
+				columns = 1
+				rows = 2
+			}
+
 			return {
-				gridTemplateColumns: `repeat(${this.columns}, minmax(${this.minWidth}px, 1fr))`,
-				gridTemplateRows: `repeat(${this.rows}, minmax(${this.minHeight}px, 1fr))` }
+				gridTemplateColumns: `repeat(${columns}, minmax(${this.minWidth}px, 1fr))`,
+				gridTemplateRows: `repeat(${rows}, minmax(${this.minHeight}px, 1fr))` }
 		},
 
 		// Check if there's an overflow of videos (videos that don't fit in the grid)
