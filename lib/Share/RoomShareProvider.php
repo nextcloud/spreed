@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share;
 
+use OC\Files\Cache\Cache;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -309,6 +310,14 @@ class RoomShareProvider implements IShareProvider {
 		$share->setNodeType($data['item_type']);
 
 		$share->setProviderId($this->identifier());
+
+		if (isset($data['f_permissions'])) {
+			$entryData = $data;
+			$entryData['permissions'] = $entryData['f_permissions'];
+			$entryData['parent'] = $entryData['f_parent'];
+			$share->setNodeCacheEntry(Cache::cacheEntryFromData($entryData,
+				\OC::$server->getMimeTypeLoader()));
+		}
 
 		return $share;
 	}
