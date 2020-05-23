@@ -51,7 +51,6 @@
     "Screensharing extension is required to share your screen." : "ეკრანების გასაზიარებლად საჭიროა გაფართოება.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "ეკრანის გასაზიარებლად გამოიყენეთ სხვა ბრაუზერი, Firefox-ი ან Chrome-ი.",
     "An error occurred while starting screensharing." : "ეკრანის გაზიარებისას წარმოიშვა შეცდომა.",
-    "Your screen" : "თქვენი ეკრანი",
     "Show screen" : "ეკრანის ჩვენება",
     "Favorite" : "რჩეული",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
@@ -127,6 +126,7 @@
     "No Camera" : "კამერა არაა",
     "Screensharing is not supported by your browser." : "თქვენი ბრაუზერი ეკრანის გაზიარებას არ უჭერს მხარს.",
     "Favorited" : "დამატებულია რჩეულებში",
+    "Your screen" : "თქვენი ეკრანი",
     "{participantName}'s screen" : "{participantName} მომხმარებლის ეკრანი",
     "Guest's screen" : "სტუმრის ეკრანი"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
