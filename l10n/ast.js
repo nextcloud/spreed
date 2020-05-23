@@ -33,7 +33,6 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Ríquese la estensión de compartición de pantalla pa compartir la to pantalla",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Usa un restolador distintu como Firefox o Chrome pa compartir la to pantalla, por favor.",
     "An error occurred while starting screensharing." : "Asocedió un fallu entrín s'aniciaba la compartición de pantalla.",
-    "Your screen" : "La to pantalla",
     "Favorite" : "Marcar como favoritu",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
@@ -90,6 +89,7 @@ OC.L10N.register(
     "Share screen" : "Compartir pantalla",
     "Screensharing is not supported by your browser." : "El to restolador nun sofita la compartición de pantalla.",
     "Favorited" : "Favoritos",
+    "Your screen" : "La to pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
     "Guest's screen" : "Pantalla de convidáu/ada"
 },

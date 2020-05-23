@@ -108,7 +108,6 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Cần có tiện ích mở rộng để chia sẻ màn hình của bạn.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn.",
     "An error occurred while starting screensharing." : "Đã xảy ra lỗi khi bắt đầu chia sẻ màn hình.",
-    "Your screen" : "Màn hình của bạn",
     "Show screen" : "Hiện màn hình",
     "Favorite" : "Ưa thích",
     "Leave conversation" : "Rời khỏi cuộc đàm thoại",
@@ -200,6 +199,7 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Chia sẽ màn hình không được hỗ trợ bởi trình duyệt của bạn.",
     "Add participant …" : "Thêm người tham gia …",
     "Favorited" : "Được ưa thích",
+    "Your screen" : "Màn hình của bạn",
     "{participantName}'s screen" : "Màn hình của {participantName}",
     "Guest's screen" : "Màn hình Khách",
     "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị."

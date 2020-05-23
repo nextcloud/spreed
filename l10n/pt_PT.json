@@ -51,7 +51,6 @@
     "Screensharing extension is required to share your screen." : "Extensão de partilha de ecrã é necessária para partilhar o seu ecrã.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use um browser diferente como o Firefox ou o Chrome para partilhar o seu ecrã.",
     "An error occurred while starting screensharing." : "Ocorreu um erro enquanto iniciava a partilha de ecrã.",
-    "Your screen" : "O seu ecrã",
     "Show screen" : "Mostrar ecrã",
     "Favorite" : "Favorito",
     "Leave conversation" : "Sair da conversação",
@@ -130,6 +129,7 @@
     "No Camera" : "Sem Câmera",
     "Screensharing is not supported by your browser." : "O seu browser não suporta partilha de ecrã",
     "Favorited" : "Nos Favoritos",
+    "Your screen" : "O seu ecrã",
     "{participantName}'s screen" : "Ecrã de {participantName}",
     "Guest's screen" : "Ecrã do convidado",
     "Limit app usage to groups." : "Limitar o uso da aplicação a grupos."
