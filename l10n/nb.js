@@ -63,7 +63,6 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Utvidelsen for skjermdeling kreves for å dele skjermen din.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Bruk en annen nettleser som Firefox eller Chrome for å dele skjermen din.",
     "An error occurred while starting screensharing." : "En feil inntraff under oppstart av skjermdeling.",
-    "Your screen" : "Din skjerm",
     "Show screen" : "Vis skjerm",
     "Favorite" : "Merk som favoritt",
     "Leave conversation" : "Forlat samtale",
@@ -154,6 +153,7 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Skjermdeling støttes ikke av din nettleser.",
     "Add participant …" : "Legg til deltager…",
     "Favorited" : "Favorisert",
+    "Your screen" : "Din skjerm",
     "{participantName}'s screen" : "{participantName}'s skjerm",
     "Guest's screen" : "Gjestens skjerm"
 },
