@@ -60,7 +60,6 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
-    "Your screen" : "Tu pantalla",
     "Show screen" : "Mostrar pantalla",
     "Favorite" : "Hacer favorito",
     "Leave conversation" : "Dejar la conversación",
@@ -147,6 +146,7 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Compartir pantalla no está soportado por tu navegador. ",
     "Add participant …" : "Agregar participante ...",
     "Favorited" : "Marcado como favorito",
+    "Your screen" : "Tu pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
     "Guest's screen" : "Pantalla del invitado"
 },

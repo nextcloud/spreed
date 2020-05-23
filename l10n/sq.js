@@ -31,7 +31,6 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Zgjerim i ndarja së Ekranit është i nevojshëm për të ndarë ekranin tuaj.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ju lutem përdorni një browser tjetër si Firefox ose Chrome për të ndarë ekranin tuaj.",
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
-    "Your screen" : "Ekrani juaj",
     "Favorite" : "I/E Preferuar",
     "Leave conversation" : "Largohuni nga biseda",
     "Delete conversation" : "Fshijeni bisedën",
@@ -96,6 +95,7 @@ OC.L10N.register(
     "Share screen" : "Ndaje ekranin",
     "Screensharing is not supported by your browser." : "Ndarja e erkaneve nuk është e mbështetur nga shfletuesi juaj ",
     "Favorited" : "U kalua e parapëlqyer",
+    "Your screen" : "Ekrani juaj",
     "{participantName}'s screen" : "Ekrani i {participantName}",
     "Guest's screen" : "Ekrani i të ftuarit"
 },
