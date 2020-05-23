@@ -163,8 +163,11 @@ export default {
 				path: this.internalAbsolutePath,
 				list: [
 					{
+						fileid: parseInt(this.id, 10),
 						filename: this.internalAbsolutePath,
 						basename: this.name,
+						mime: this.mimetype,
+						hasPreview: this.previewAvailable === 'yes',
 					},
 				],
 			})
