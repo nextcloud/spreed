@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Guest" : "ضيف",
+    "You created the conversation" : "أنشأتَ المحادثة",
     "You left the call" : "لقد قمت بمغادرة المكالمة",
     "Click the button below to join." : "اضغط على الزر للانضمام.",
     "Conversation not found" : "المحادثة غير موجودة",

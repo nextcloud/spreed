@@ -86,7 +86,7 @@ OC.L10N.register(
     "Edit" : "Editar",
     "Dismiss" : "Dispensar",
     "Rename conversation" : "Renomear conversação",
-    "Share link" : "Partilhar ligação",
+    "Share link" : "Partilhar hiperligação",
     "Password protection" : "Protegido por palavra-passe",
     "Enter a password" : "Insira uma palavra-passe",
     "Grid view" : "Vista em grelha",
