@@ -35,6 +35,18 @@
 				class="new-message-form">
 				<div
 					class="new-message-form__button">
+					<EmojiPicker @select="addEmoji">
+						<button
+							type="button"
+							class="new-message-form__icon new-message-form__button"
+							:aria-label="t('spreed', 'Add emoji')"
+							:aria-haspopup="true">
+							🙂
+						</button>
+					</EmojiPicker>
+				</div>
+				<div
+					class="new-message-form__button">
 					<Actions
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button"
@@ -84,6 +96,7 @@ import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
@@ -103,6 +116,7 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
+		EmojiPicker,
 	},
 	data: function() {
 		return {
@@ -250,6 +264,16 @@ export default {
 			// Uploads and shares the files
 			processFiles(files, this.token, uploadId)
 		},
+
+		/**
+		 * Add selected emoji to text input area
+		 *
+		 * @param {Emoji} emoji Emoji object
+		 */
+		addEmoji(emoji) {
+			this.text += emoji
+		},
+
 	},
 }
 </script>
@@ -286,6 +310,17 @@ export default {
 			background-color: transparent;
 			border: none;
 		}
+
+		// put a grey round background when popover is opened
+		// or hover-focused
+		&__icon:hover,
+		&__icon:focus,
+		&__icon:active {
+			opacity: $opacity_full;
+			// good looking on dark AND white bg
+			background-color: $icon-focus-bg;
+		}
+
 	}
 }
 </style>
