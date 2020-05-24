@@ -150,6 +150,12 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
+			// The Viewer expects a file to be set in the sidebar if the sidebar
+			// is open.
+			if (this.$store.getters.getSidebarStatus) {
+				OCA.Files.Sidebar.state.file = this.internalAbsolutePath
+			}
+
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: this.internalAbsolutePath,
