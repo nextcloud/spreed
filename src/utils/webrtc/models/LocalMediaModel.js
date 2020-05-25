@@ -181,7 +181,7 @@ LocalMediaModel.prototype = {
 	_setInitialMediaState: function(configuration) {
 		if (configuration.audio !== false) {
 			this.set('audioAvailable', true)
-			if (!localStorage.getItem('audioDisabled_' + this.get('token')) || this.get('audioEnabled')) {
+			if (localStorage.getItem('audioEnabled_' + this.get('token')) || this.get('audioEnabled')) {
 				this.enableAudio()
 			} else {
 				this.disableAudio()
@@ -193,7 +193,7 @@ LocalMediaModel.prototype = {
 
 		if (configuration.video !== false) {
 			this.set('videoAvailable', true)
-			if (!localStorage.getItem('videoDisabled_' + this.get('token')) || this.get('videoEnabled')) {
+			if (localStorage.getItem('videoEnabled_' + this.get('token')) || this.get('videoEnabled')) {
 				this.enableVideo()
 			} else {
 				this.disableVideo()
@@ -298,7 +298,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('audioDisabled_' + this.get('token'))
+		localStorage.setItem('audioEnabled_' + this.get('token'), 'true')
 		if (!this.get('audioAvailable')) {
 			return
 		}
@@ -311,7 +311,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('audioDisabled_' + this.get('token'), 'true')
+		localStorage.removeItem('audioEnabled_' + this.get('token'))
 		if (!this.get('audioAvailable')) {
 			// Ensure that the audio will be disabled once available.
 			this.set('audioEnabled', false)
@@ -327,7 +327,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('videoDisabled_' + this.get('token'))
+		localStorage.setItem('videoEnabled_' + this.get('token'), 'true')
 		if (!this.get('videoAvailable')) {
 			return
 		}
@@ -340,7 +340,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('videoDisabled_' + this.get('token'), 'true')
+		localStorage.removeItem('videoEnabled_' + this.get('token'))
 		if (!this.get('videoAvailable')) {
 			// Ensure that the video will be disabled once available.
 			this.set('videoEnabled', false)
