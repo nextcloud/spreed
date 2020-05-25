@@ -1,36 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 9.0.0-rc.1 – 2020-05-19
-### Changed
-- Prevent configuring multiple High-performance Back-ends unless Clustering is enabled
-  [#3605](https://github.com/nextcloud/spreed/pull/3605)
-- Improve the video call layout in one-to-one calls
-  [#3569](https://github.com/nextcloud/spreed/pull/3569)
-
-### Fixed
-- Fix call view in the sidebars for Files and public shares
-  [#3571](https://github.com/nextcloud/spreed/pull/3571)
-- Fix browser and version detection
-  [#3607](https://github.com/nextcloud/spreed/pull/3607)
-  [#3613](https://github.com/nextcloud/spreed/pull/3613)
-- Fix flow message not being posted
-  [#3585](https://github.com/nextcloud/spreed/pull/3585)
-- Make icons and buttons better visible in the call view
-  [#3612](https://github.com/nextcloud/spreed/pull/3612)
-
-### Known issues
-- The grid view still has some glitches on specific window sizes
-- The promoted view cuts off screenshares when the aspect ratio does not fit in the call view
-- The promoted view cuts off videos weirdly when very few users are in the call
-- The video selection feature has been temporarily disabled
-
-## 9.0.0-beta.1 – 2020-05-13
+## 9.0.0 – 2020-05-26
 ### Added
-- Added a grid view for calls and made the promoted view more usable in huge calls
+- Added a grid view for calls and made the promoted view more usable in huge calls as well as one-to-one calls
   [#1056](https://github.com/nextcloud/spreed/pull/1056)
+  [#3569](https://github.com/nextcloud/spreed/pull/3569)
 - Allow to use multiple High-performance backends in parallel for different conversations
   [#3292](https://github.com/nextcloud/spreed/pull/3292)
+  [#3605](https://github.com/nextcloud/spreed/pull/3605)
 - Allow selecting which video is shown big in the promoted view
   [#3497](https://github.com/nextcloud/spreed/pull/3497)
 - Open files with the viewer apps registered in Nextcloud
