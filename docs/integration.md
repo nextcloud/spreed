@@ -13,7 +13,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `fileId` | int | File id for which the conversation should be given
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the item was not found
         + `404 Not Found` When the found item is not a file
@@ -37,7 +37,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `shareToken` | string | Share token for which the conversation should be given
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the share was not found
         + `404 Not Found` When the user can not access the share
@@ -60,7 +60,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `shareToken` | string | Share token for which the conversation should be given
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the share was not found
         + `404 Not Found` When "Request password via Talk" is not active for the share

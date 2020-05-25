@@ -77,7 +77,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `referenceId` | string | A reference string to be able to identify the message again in a "get messages" request, should be a random sha256 (only available with `chat-reference-id` capability)
 
 * Response:
-    - Header:
+    - Status code:
         + `201 Created`
         + `400 Bad Request` In case of any other error
         + `403 Forbidden` When the conversation is read-only
@@ -99,7 +99,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `lastReadMessage` | int | The last read message ID
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant,
         or the participant is a guest.
