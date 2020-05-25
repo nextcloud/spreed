@@ -40,3 +40,9 @@ title: Constants
 ## Webinary lobby states
 * `0` no lobby
 * `1` lobby for non moderators
+
+
+## Signaling modes
+* `internal` No external signaling server is used
+* `external` A single external signaling server is used
+* `conversation_cluster` A external signaling server is assigned per conversation
