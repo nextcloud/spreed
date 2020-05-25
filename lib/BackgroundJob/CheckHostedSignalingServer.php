@@ -29,6 +29,8 @@ use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 
 class CheckHostedSignalingServer extends TimedJob {
@@ -39,16 +41,24 @@ class CheckHostedSignalingServer extends TimedJob {
 	private $config;
 	/** @var IManager */
 	private $notificationManager;
+	/** @var IGroupManager */
+	private $groupManager;
+	/** @var IURLGenerator */
+	private $urlGenerator;
 
 	public function __construct(ITimeFactory $timeFactory,
 								HostedSignalingServerService $hostedSignalingServerService,
 								IConfig $config,
-								IManager $notificationManager) {
+								IManager $notificationManager,
+								IGroupManager $groupManager,
+								IURLGenerator $urlGenerator) {
 		parent::__construct($timeFactory);
 		$this->setInterval(3600);
 		$this->hostedSignalingServerService = $hostedSignalingServerService;
 		$this->config = $config;
 		$this->notificationManager = $notificationManager;
+		$this->groupManager = $groupManager;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	protected function run($argument): void {
@@ -65,10 +75,12 @@ class CheckHostedSignalingServer extends TimedJob {
 			// do nothing and just try again later
 			return;
 		}
-		// TODO set last checked
 
 		$oldStatus = $oldAccountInfo['status'] ?? '';
 		$newStatus = $accountInfo['status'];
+
+		$notificationSubject = null;
+		$notificationParameters = [];
 
 		// the status has changed
 		if ($oldStatus !== $newStatus) {
@@ -79,6 +91,8 @@ class CheckHostedSignalingServer extends TimedJob {
 					'servers' => [],
 					'secret' => '',
 				]));
+
+				$notificationSubject = 'removed';
 			}
 
 			if ($newStatus === 'active') {
@@ -93,9 +107,17 @@ class CheckHostedSignalingServer extends TimedJob {
 					],
 					'secret' => $accountInfo['signaling']['secret'],
 				]));
+
+				$notificationSubject = 'added';
 			}
 
-			// TODO send notification "Account has changed state from OLD to NEW"
+			if (is_null($notificationSubject)) {
+				$notificationSubject = 'changed-status';
+				$notificationParameters = [
+					'oldstatus' => $oldAccountInfo['status'],
+					'newstatus' => $accountInfo['status'],
+				];
+			}
 
 			// only credentials have changed
 		} elseif ($newStatus === 'active' && (
@@ -113,7 +135,7 @@ class CheckHostedSignalingServer extends TimedJob {
 				'secret' => $accountInfo['signaling']['secret'],
 			]));
 
-			// TODO send notification "New signaling server was configured"
+			$notificationSubject = 'added';
 		}
 
 		// store new account info
@@ -122,5 +144,24 @@ class CheckHostedSignalingServer extends TimedJob {
 		}
 
 		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-last-checked', $this->time->getTime());
+
+		if (!is_null($notificationSubject)) {
+			$notification = $this->notificationManager->createNotification();
+			$notification
+				->setApp('spreed')
+				->setDateTime(new \DateTime())
+				->setObject('hosted-signaling-server', $notificationSubject)
+				->setSubject($notificationSubject, $notificationParameters)
+				->setLink($this->urlGenerator->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'talk']) . '#signaling_server')
+				->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg')))
+			;
+
+			$users = $this->groupManager->get('admin')->getUsers();
+			foreach ($users as $user) {
+				// Now add the new notification
+				$notification->setUser($user->getUID());
+				$this->notificationManager->notify($notification);
+			}
+		}
 	}
 }
