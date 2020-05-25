@@ -94,9 +94,10 @@ async function connectSignaling(token) {
 	tokensInSignaling[token] = true
 }
 
+let pendingJoinCallToken = null
 let startedCall = null
 
-function startCall(signaling, token, configuration) {
+function startCall(signaling, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
@@ -107,12 +108,12 @@ function startCall(signaling, token, configuration) {
 		}
 	}
 
-	signaling.joinCall(token, flags)
+	signaling.joinCall(pendingJoinCallToken, flags)
 
 	startedCall()
 }
 
-function setupWebRtc(token) {
+function setupWebRtc() {
 	if (webRtc) {
 		return
 	}
@@ -124,10 +125,10 @@ function setupWebRtc(token) {
 	localMediaModel.setWebRtc(webRtc)
 
 	webRtc.on('localMediaStarted', (configuration) => {
-		startCall(_signaling, token, configuration)
+		startCall(_signaling, configuration)
 	})
 	webRtc.on('localMediaError', () => {
-		startCall(_signaling, token, null)
+		startCall(_signaling, null)
 	})
 }
 
@@ -153,7 +154,9 @@ async function signalingJoinConversation(token, sessionId) {
  */
 async function signalingJoinCall(token) {
 	if (tokensInSignaling[token]) {
-		setupWebRtc(token)
+		pendingJoinCallToken = token
+
+		setupWebRtc()
 
 		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
 
