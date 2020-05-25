@@ -13,6 +13,12 @@
         + `200 OK`
         + `401 Unauthorized` when the user is not logged in
 
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
+
     - Data:
         Array of conversations, each conversation has at least:
 
@@ -80,6 +86,12 @@
     - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
 
     - Data: See array definition in `Get user´s conversations`
 
