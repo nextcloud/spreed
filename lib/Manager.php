@@ -749,8 +749,8 @@ class Manager {
 		}
 
 		$roomName = implode(', ', $displayNames);
-		if (strlen($roomName) > 128) {
-			$roomName = substr($roomName, 120) . '…';
+		if (mb_strlen($roomName) > 64) {
+			$roomName = mb_substr($roomName, 0, 60) . '…';
 		}
 		return $roomName;
 	}
