@@ -14,7 +14,7 @@
     `value` | string | The value to set
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK` When the value was updated
         + `400 Bad Request` When the key or value was invalid
         + `401 Unauthorized` When the user is not logged in

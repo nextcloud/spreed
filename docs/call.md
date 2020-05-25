@@ -8,7 +8,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/call/{token}`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant
@@ -34,7 +34,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `flags` | int | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant
@@ -47,7 +47,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/call/{token}`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant

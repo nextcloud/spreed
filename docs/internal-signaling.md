@@ -40,7 +40,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
        `credential` | string | User password for the TURN server
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found`
 
