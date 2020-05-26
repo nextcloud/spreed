@@ -59,6 +59,7 @@
 			<ActionButton
 				:icon="iconFullscreen"
 				:aria-label="t('spreed', 'Toggle fullscreen')"
+				:close-after-click="true"
 				@click="toggleFullscreen">
 				{{ labelFullscreen }}
 			</ActionButton>
