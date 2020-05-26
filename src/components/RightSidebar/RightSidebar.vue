@@ -23,6 +23,7 @@
 <template>
 	<AppSidebar
 		v-show="opened"
+		id="app-sidebar"
 		:title="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
@@ -239,6 +240,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+/* Override style set in server for "#app-sidebar" to match the style set in
+ * nextcloud-vue for ".app-sidebar". */
+#app-sidebar {
+	display: flex;
+}
 
 /* Force scroll bars in tabs content instead of in whole sidebar. */
 ::v-deep .app-sidebar-tabs__content {

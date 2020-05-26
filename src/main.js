@@ -74,3 +74,78 @@ export default new Vue({
 	},
 	render: h => h(App),
 })
+
+window.store = store
+
+// Setup OCA.Files.Sidebar to be used by the viewer
+window.OCA.Files = {}
+
+const Sidebar = function() {
+	this.state = {
+		file: '',
+	}
+
+	store.watch(
+		(state, getters) => {
+			return getters.getSidebarStatus
+		},
+		(sidebarShown) => {
+			if (!sidebarShown) {
+				this.state.file = ''
+			}
+		}
+	)
+}
+
+const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
+	if ('ontransitionend' in sidebarElement) {
+		const resolveOnceSidebarWidthHasChanged = (event) => {
+			if (event.propertyName !== 'min-width' && event.propertyName !== 'width' && event.propertyName !== 'max-width') {
+				return
+			}
+
+			sidebarElement.removeEventListener('transitionend', resolveOnceSidebarWidthHasChanged)
+
+			resolve()
+		}
+
+		sidebarElement.addEventListener('transitionend', resolveOnceSidebarWidthHasChanged)
+	} else {
+		const animationQuickValue = getComputedStyle(document.documentElement).getPropertyValue('--animation-quick')
+
+		// The browser does not support the "ontransitionend" event, so just
+		// wait a few milliseconds more than the duration of the transition.
+		setTimeout(() => {
+			console.debug('ontransitionend is not supported; the sidebar should have been fully shown by now')
+
+			resolve()
+		}, Number.parseInt(animationQuickValue) + 200)
+	}
+}
+
+Sidebar.prototype.open = function(path) {
+	// The sidebar is already open, so this can return immediately.
+	if (this.state.file) {
+		return
+	}
+
+	store.commit('showSidebar')
+	this.state.file = path
+
+	const sidebarElement = document.getElementById('app-sidebar')
+
+	// The Viewer adjusts its width to the sidebar width once the sidebar has
+	// been opened. The sidebar opens with an animation, so a delay is needed
+	// before the width can be properly adjusted.
+	return new Promise((resolve, reject) => {
+		waitForSidebarToBeOpen(sidebarElement, resolve)
+	})
+}
+Sidebar.prototype.close = function() {
+	store.dispatch('hideSidebar')
+	this.state.file = ''
+}
+
+Object.assign(window.OCA.Files, {
+	Sidebar: new Sidebar(),
+})
