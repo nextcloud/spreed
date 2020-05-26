@@ -29,7 +29,9 @@ use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
+use OCP\IL10N;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class AdminSettingsTest extends \Test\TestCase {
@@ -48,6 +50,10 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $admin;
 	/** @var IUserSession|MockObject  */
 	protected $userSession;
+	/** @var IL10N|MockObject  */
+	protected $l10n;
+	/** @var IFactory|MockObject  */
+	protected $l10nFactory;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -58,6 +64,8 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->initialState = $this->createMock(IInitialStateService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+		$this->l10n = $this->createMock(IL10N::class);
+		$this->l10nFactory = $this->createMock(IFactory::class);
 
 		$this->admin = $this->getAdminSettings();
 	}
@@ -74,7 +82,9 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
-				$this->userSession
+				$this->userSession,
+				$this->l10n,
+				$this->l10nFactory
 			);
 		}
 
@@ -86,6 +96,8 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->initialState,
 				$this->cacheFactory,
 				$this->userSession,
+				$this->l10n,
+				$this->l10nFactory,
 			])
 			->onlyMethods($methods)
 			->getMock();

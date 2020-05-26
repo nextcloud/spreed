@@ -56,21 +56,31 @@
 				:disabled="loading"
 				:aria-label="t('spreed', 'E-mail of the user')">
 			<h4>{{ t('spreed', 'Language') }}</h4>
-			<input
+			<select
 				v-model="hostedHPBLanguage"
-				type="text"
 				name="hosted_hpb_language"
-				placeholder="de"
+				:placeholder="t('spreed', 'Language')"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Language')">
+				<option v-for="l in languages.commonlanguages" :key="l.code" :value="l.code">
+					{{ l.name }}
+				</option>
+				<optgroup label="––––––––––" />
+				<option v-for="l in languages.languages" :key="l.code" :value="l.code">
+					{{ l.name }}
+				</option>
+			</select>
 			<h4>{{ t('spreed', 'Country') }}</h4>
-			<input
+			<select
 				v-model="hostedHPBCountry"
-				type="text"
 				name="hosted_hpb_country"
-				placeholder="US"
+				:placeholder="t('spreed', 'Country')"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Country')">
+				<option v-for="c in countries" :key="c.code" :value="c.code">
+					{{ c.name }}
+				</option>
+			</select>
 			<br>
 			<button class="button primary"
 				:disabled="!hostedHPBFilled || loading"
@@ -128,8 +138,9 @@ export default {
 			hostedHPBCountry: '',
 			requestError: '',
 			loading: false,
-
 			trailAccount: [],
+			languages: [],
+			countries: [],
 		}
 	},
 
@@ -179,6 +190,10 @@ export default {
 		this.hostedHPBCountry = state.country
 
 		this.trailAccount = loadState('talk', 'hosted_signaling_server_trial_data')
+
+		const languagesAndCountries = loadState('talk', 'hosted_signaling_server_language_data')
+		this.languages = languagesAndCountries['languages'] // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
+		this.countries = languagesAndCountries['countries'] // list of {code: "France", name: "France"}
 	},
 
 	methods: {
