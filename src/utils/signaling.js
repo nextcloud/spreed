@@ -940,16 +940,6 @@ Signaling.Standalone.prototype.joinCall = function(token, flags) {
 	Signaling.Base.prototype.joinCall.apply(this, arguments)
 }
 
-Signaling.Standalone.prototype._joinCallSuccess = function(/* token */) {
-	// Update room list to fetch modified properties.
-	EventBus.$emit('shouldRefreshConversations')
-}
-
-Signaling.Standalone.prototype._leaveCallSuccess = function(/* token */) {
-	// Update room list to fetch modified properties.
-	EventBus.$emit('shouldRefreshConversations')
-}
-
 Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	console.debug('Joined', data, token)
 	this.signalingRoomJoined = token
@@ -1074,7 +1064,6 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 	case 'update':
 		this._trigger('usersChanged', [data.event.update.users || []])
 		this._trigger('participantListChanged')
-		EventBus.$emit('shouldRefreshConversations')
 		break
 	default:
 		console.error('Unknown room participant event', data)
