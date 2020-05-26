@@ -8,7 +8,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/room/{token}/participants`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
@@ -37,7 +37,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `source` | string | Source of the participant(s) as returned by the autocomplete suggestion endpoint (default is `users`)
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the source type is unknown, currently `users`, `groups`, `emails` are supported. `circles` are supported with `circles-support` capability
         + `400 Bad Request` When the conversation is a one-to-one conversation
@@ -62,7 +62,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `participant` | string | User to remove
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the participant is a moderator or owner
         + `400 Bad Request` When there are no other moderators or owners left
@@ -77,7 +77,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/room/{token}/participants/self`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the participant is a moderator or owner and there are no other moderators or owners left.
         + `404 Not Found` When the conversation could not be found for the participant
@@ -93,7 +93,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `participant` | string | Session ID of the guest to remove
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the target participant is not a guest
         + `403 Forbidden` When the current user is not a moderator or owner
@@ -111,7 +111,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the conversation has `hasPassword` set to true.
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the password is required and didn't match
         + `404 Not Found` When the conversation could not be found for the participant
@@ -128,7 +128,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/room/{token}/participants/active`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
 
@@ -144,7 +144,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `sessionId` | string or null | Guest session to promote
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the participant to promote is not a normal user (type `3`) or normal guest (type `4`)
         + `403 Forbidden` When the current user is not a moderator or owner
@@ -164,7 +164,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `sessionId` | string or null | Guest session to demote
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the participant to demote is not a moderator (type `2`) or guest moderator (type `6`)
         + `403 Forbidden` When the current participant is not a moderator or owner
@@ -183,7 +183,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `displayName` | string | The new display name
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the current user is not a guest
         + `404 Not Found` When the conversation could not be found for the participant

@@ -1,6 +1,4 @@
-# Internal signaling API
-
-See [External Signaling API](standalone-signaling-api-v1.md) for the Signaling of the High-Performance Backend.
+# Signaling API
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
@@ -12,10 +10,19 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `stunservers` | array | STUN servers
-    `turnservers` | array | TURN servers
+    `token` | string | The conversation to get the signaling settings for
+
+* Response:
+
+    field | type | Description
+    ------|------|------------
+    `signalingMode` | string | See [Signaling modes](constants.md#Signaling_modes)
+    `userId` | string | Current user id
+    `hideWarning` | string | Don't show a performance warning although internal signaling is used
     `server` | string | URL of the external signaling server
     `ticket` | string | Ticket for the external signaling server
+    `stunservers` | array | STUN servers
+    `turnservers` | array | TURN servers
 
     - STUN server
     
@@ -33,8 +40,14 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
        `credential` | string | User password for the TURN server
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found`
 
+### Internal signaling API
+
+Todo
+
 ### External signaling API
+
+See [External signaling API](standalone-signaling-api-v1.md) for the Signaling of the High-Performance Backend.

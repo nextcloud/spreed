@@ -22,7 +22,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `timer` | int/null | Timestamp when the lobby state is reset to no lobby
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation type does not support lobby (only group and public conversation atm)
         + `400 Bad Request` When the given timestamp is invalid

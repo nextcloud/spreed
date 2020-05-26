@@ -9,9 +9,15 @@
 * Endpoint: `/room`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `401 Unauthorized` when the user is not logged in
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
 
     - Data:
         Array of conversations, each conversation has at least:
@@ -61,7 +67,7 @@
     `roomName` | string | conversation name (Not available for `roomType = 1`)
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK` When the "one to one" conversation already exists
         + `201 Created` When the conversation was created
         + `400 Bad Request` When an invalid conversation type was given
@@ -77,9 +83,15 @@
 * Endpoint: `/room/{token}`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
 
     - Data: See array definition in `Get user´s conversations`
 
@@ -94,7 +106,7 @@
     `roomName` | string | New name for the conversation (1-200 characters)
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the name is too long or empty
         + `400 Bad Request` When the conversation is a one to one conversation
@@ -107,7 +119,7 @@
 * Endpoint: `/room/{token}`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation is a one-to-one conversation (Use [Remove yourself from a conversation](participant.md#Remove-yourself-from-a-conversation) instead)
         + `403 Forbidden` When the current user is not a moderator/owner
@@ -119,7 +131,7 @@
 * Endpoint: `/room/{token}/public`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation is not a group conversation
         + `403 Forbidden` When the current user is not a moderator/owner
@@ -131,7 +143,7 @@
 * Endpoint: `/room/{token}/public`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation is not a public conversation
         + `403 Forbidden` When the current user is not a moderator/owner
@@ -148,7 +160,7 @@
     `state` | int | New state for the conversation
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation type does not support read-only (only group and public conversation)
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
@@ -165,7 +177,7 @@
     `password` | string | New password for the conversation
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the conversation is not a public conversation
@@ -182,7 +194,7 @@
     `password` | string | Set a new password for the conversation
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the conversation is not a public conversation
@@ -194,7 +206,7 @@
 * Endpoint: `/room/{token}/favorite`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
@@ -205,7 +217,7 @@
 * Endpoint: `/room/{token}/favorite`
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
@@ -221,7 +233,7 @@
     `level` | int | The notification level (See [Participant notification levels](constants.md#Participant-notification-levels))
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `400 Bad Request` When the the given level is invalid
         + `401 Unauthorized` When the participant is a guest
