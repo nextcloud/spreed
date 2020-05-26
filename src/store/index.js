@@ -34,6 +34,7 @@ import windowVisibilityStore from './windowVisibilityStore'
 import fileUploadStore from './fileUploadStore'
 import newGroupConversationStore from './newGroupConversationStore'
 import callViewStore from './callViewStore'
+import talkHashStore from './talkHashStore'
 
 Vue.use(Vuex)
 
@@ -53,6 +54,7 @@ export default new Store({
 		fileUploadStore,
 		newGroupConversationStore,
 		callViewStore,
+		talkHashStore,
 	},
 
 	mutations,

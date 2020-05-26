@@ -24,10 +24,9 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
 import { showError } from '@nextcloud/dialogs'
+import store from '../store/index'
 
-let talkCacheBusterHash = null
 let maintenanceWarning = null
-let updateWarning = null
 
 /**
  * Fetches the conversations from the server.
@@ -82,21 +81,11 @@ const fetchConversation = async function(token) {
 
 const checkTalkVersionHash = function(response) {
 	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
-	if (!newTalkCacheBusterHash || updateWarning) {
+	if (!newTalkCacheBusterHash) {
 		return
 	}
 
-	if (talkCacheBusterHash === null) {
-		console.debug('Setting initial Talk Hash: ', newTalkCacheBusterHash)
-		talkCacheBusterHash = newTalkCacheBusterHash
-	} else if (talkCacheBusterHash !== newTalkCacheBusterHash) {
-		console.debug('Updating Talk Hash: ', newTalkCacheBusterHash)
-		talkCacheBusterHash = newTalkCacheBusterHash
-
-		updateWarning = showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
-			timeout: 0,
-		})
-	}
+	store.dispatch('setNextcloudTalkHash', newTalkCacheBusterHash)
 }
 
 /**
