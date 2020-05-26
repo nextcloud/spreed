@@ -23,6 +23,7 @@ OC.L10N.register(
     "Copy link" : "انسخ الرابط",
     "Mute audio" : "كتم الصوت",
     "Disable video" : "تعطيل الفيديو",
+    "Drop your files to upload" : "افلت الملفات لرفعها",
     "Favorite" : "المفضلة",
     "Leave conversation" : "غادر المحادثة",
     "Delete conversation" : "احذف المحادثة",

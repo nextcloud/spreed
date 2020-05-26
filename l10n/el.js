@@ -307,7 +307,7 @@ OC.L10N.register(
     "Today" : "Σήμερα",
     "Yesterday" : "Χθες",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Write message, @ to mention someone …" : "Γράφοντας μήνυμα προσθέστε το @ για να αναφερθήτε σε κάποιον ...",
+    "Write message, @ to mention someone …" : "Γράφοντας μήνυμα προσθέστε το @ για να αναφερθείτε σε κάποιον ...",
     "Share files to the conversation" : "Διαμοιρασμός αρχείων στην συνομιλία",
     "Upload new files" : "Μεταφόρτωση νέων αρχείων",
     "Share from Files" : "Κοινή χρήση από Αρχεία",
