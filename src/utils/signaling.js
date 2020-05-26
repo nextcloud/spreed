@@ -253,7 +253,7 @@ Signaling.Base.prototype.joinCall = function(token, flags) {
 				// Server maintenance, lobby kicked in, or room not found.
 				// We first redirect to the conversation again and that
 				// will then show the proper error message to the user.
-				OC.redirect(generateUrl('call/' + token))
+				window.location = generateUrl('call/' + token)
 			})
 	})
 }
