@@ -73,6 +73,10 @@ export default {
 	},
 
 	async beforeMount() {
+		if (!this.user) {
+			return
+		}
+
 		try {
 			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
@@ -81,7 +85,6 @@ export default {
 		} catch (exception) {
 			console.debug(exception)
 		}
-
 	},
 
 	methods: {
