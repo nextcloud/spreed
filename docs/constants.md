@@ -45,4 +45,4 @@ title: Constants
 ## Signaling modes
 * `internal` No external signaling server is used
 * `external` A single external signaling server is used
-* `conversation_cluster` A external signaling server is assigned per conversation
+* `conversation_cluster` An external signaling server is assigned per conversation
