@@ -26,7 +26,7 @@
 			v-if="hasPicture"
 			:src="backgroundImage"
 			class="video-background__picture">
-		<div v-if="!hasPicture"
+		<div v-else
 			:style="{'background-color': backgroundColor }"
 			class="video-background" />
 	</div>
