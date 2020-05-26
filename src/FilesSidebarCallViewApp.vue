@@ -35,6 +35,7 @@ import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
 import browserCheck from './mixins/browserCheck'
+import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
 
@@ -45,7 +46,10 @@ export default {
 		PreventUnload,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		talkHashCheck,
+	],
 
 	data() {
 		return {

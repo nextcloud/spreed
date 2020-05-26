@@ -56,6 +56,7 @@ import {
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
+import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
 	name: 'App',
@@ -67,7 +68,10 @@ export default {
 		RightSidebar,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		talkHashCheck,
+	],
 
 	data: function() {
 		return {
