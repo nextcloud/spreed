@@ -45,7 +45,7 @@
 
 	&.in-call {
 		.app-navigation-toggle,
-		.action-item__menutoggle {
+		.app-content .action-item__menutoggle {
 			color: #ffffff;
 			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
