@@ -25,8 +25,9 @@
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
-			class="video-background__picture">
-		<div v-if="!hasPicture"
+			class="video-background__picture"
+			alt="">
+		<div v-else
 			:style="{'background-color': backgroundColor }"
 			class="video-background" />
 	</div>
@@ -73,6 +74,10 @@ export default {
 	},
 
 	async beforeMount() {
+		if (!this.user) {
+			return
+		}
+
 		try {
 			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
@@ -81,7 +86,6 @@ export default {
 		} catch (exception) {
 			console.debug(exception)
 		}
-
 	},
 
 	methods: {
