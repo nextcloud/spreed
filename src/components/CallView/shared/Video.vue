@@ -314,10 +314,6 @@ export default {
 		peerId() {
 			return this.model.attributes.peerId
 		},
-
-		followSpeakerLabel() {
-			return t('spreed', `Stop following`)
-		},
 	},
 
 	watch: {
@@ -381,10 +377,6 @@ export default {
 
 		handleClickVideo() {
 			this.$emit('click-video')
-		},
-
-		handlefollowSpeaker() {
-			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 	},
 
