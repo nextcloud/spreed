@@ -71,6 +71,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</repair-steps>
 
 	<commands>
+		<command>OCA\Talk\Command\ActiveCalls</command>
 		<command>OCA\Talk\Command\Command\Add</command>
 		<command>OCA\Talk\Command\Command\AddSamples</command>
 		<command>OCA\Talk\Command\Command\Delete</command>
