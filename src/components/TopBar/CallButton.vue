@@ -218,6 +218,7 @@ export default {
 <style lang="scss" scoped>
 .top-bar__button .icon {
 	opacity: 1;
+	margin-right: 4px;
 
 	&.icon-incoming-call {
 		animation: pulse 2s infinite;
