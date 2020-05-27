@@ -73,6 +73,9 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+		isNextcloudTalkHashDirty() {
+			return this.$store.getters.isNextcloudTalkHashDirty
+		},
 
 		conversation() {
 			if (this.$store.getters.conversation(this.token)) {
@@ -110,6 +113,7 @@ export default {
 			return (!this.conversation.canStartCall
 					&& !this.conversation.hasCall)
 				|| this.isBlockedByLobby
+				|| this.isNextcloudTalkHashDirty
 		},
 
 		leaveCallLabel() {
@@ -133,6 +137,10 @@ export default {
 		},
 
 		startCallToolTip() {
+			if (this.isNextcloudTalkHashDirty) {
+				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call')
+			}
+
 			if (this.callButtonTooltipText) {
 				return this.callButtonTooltipText
 			}

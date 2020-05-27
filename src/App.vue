@@ -57,6 +57,8 @@ import {
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
+import talkHashCheck from './mixins/talkHashCheck'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'App',
@@ -68,7 +70,10 @@ export default {
 		RightSidebar,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		talkHashCheck,
+	],
 
 	data: function() {
 		return {
@@ -252,6 +257,13 @@ export default {
 		})
 
 		const beforeRouteChangeListener = (to, from, next) => {
+
+			if (this.isNextcloudTalkHashDirty) {
+				// Nextcloud Talk configuration changed, reload the page when changing configuration
+				window.location = generateUrl('call/' + to.params.token)
+				return
+			}
+
 			/**
 			 * This runs whenever the new route is a conversation.
 			 */

@@ -49,6 +49,7 @@ import {
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
+import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
 
@@ -59,7 +60,10 @@ export default {
 		ChatView,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		talkHashCheck,
+	],
 
 	data() {
 		return {
