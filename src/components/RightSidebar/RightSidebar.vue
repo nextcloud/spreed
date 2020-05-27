@@ -74,6 +74,7 @@ import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
+import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 import {
@@ -199,7 +200,7 @@ export default {
 		handleClose() {
 			this.dismissEditing()
 			this.$store.dispatch('hideSidebar')
-			localStorage.setItem('sidebarOpen', 'false')
+			BrowserStorage.setItem('sidebarOpen', 'false')
 		},
 
 		async onFavoriteChange() {

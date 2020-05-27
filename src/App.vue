@@ -44,6 +44,7 @@ import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router'
 import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
+import BrowserStorage from './services/BrowserStorage'
 import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
 import {
@@ -311,9 +312,9 @@ export default {
 		// see browserCheck mixin
 		this.checkBrowser()
 		// Check sidebar status in previous sessions
-		if (localStorage.getItem('sidebarOpen') === 'false') {
+		if (BrowserStorage.getItem('sidebarOpen') === 'false') {
 			this.$store.dispatch('hideSidebar')
-		} else if (localStorage.getItem('sidebarOpen') === 'true') {
+		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 			this.$store.dispatch('showSidebar')
 		}
 	},

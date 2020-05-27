@@ -151,6 +151,7 @@ import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import CallButton from './CallButton'
 import { EventBus } from '../../services/EventBus'
+import BrowserStorage from '../../services/BrowserStorage'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
@@ -366,7 +367,7 @@ export default {
 	methods: {
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
-			localStorage.setItem('sidebarOpen', 'true')
+			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
 		fullScreenChanged() {
