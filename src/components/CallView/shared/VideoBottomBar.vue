@@ -23,7 +23,7 @@
 	<div>
 		<div v-if="!isSidebar"
 			class="bottom-bar"
-			:class="{'bottom-bar--video-on' : hasVideo, 'bottom-bar--big': isBig }">
+			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
@@ -33,6 +33,7 @@
 			</transition>
 			<transition name="fade">
 				<div
+					v-if="!isScreen"
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
 					<button v-show="!connectionStateFailedNoRestart"
@@ -59,8 +60,8 @@
 			</transition>
 			<button v-if="hasSelectedVideo && isBig"
 				class="bottom-bar__button"
-				@click="handlefollowSpeaker">
-				{{ followSpeakerLabel }}
+				@click="handleStopFollowing">
+				{{ stopFollowingLabel }}
 			</button>
 		</div>
 	</div>
@@ -80,27 +81,23 @@ export default {
 	props: {
 		isSidebar: {
 			type: Boolean,
-			required: true,
-		},
-		hasVideo: {
-			type: Boolean,
-<<<<<<< HEAD
-			required: true,
-=======
 			default: false,
->>>>>>> 1ce4858d... fixup! Create VideoBottomBar component
+		},
+		hasShadow: {
+			type: Boolean,
+			default: false,
 		},
 		isBig: {
 			type: Boolean,
-			required: true,
+			default: false,
 		},
 		participantName: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		showVideoOverlay: {
 			type: Boolean,
-			required: true,
+			default: true,
 		},
 		model: {
 			type: Object,
@@ -110,9 +107,15 @@ export default {
 			type: Object,
 			required: true,
 		},
+		// True if the bottom bar is used in the screen component
+		isScreen: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
+
 		connectionStateFailedNoRestart() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
 		},
@@ -154,6 +157,7 @@ export default {
 				'screen-visible': this.sharedData.screenVisible,
 			}
 		},
+
 		showNameIndicator() {
 			return !this.model.attributes.videoAvailable || !this.sharedData.videoEnabled || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
 		},
@@ -161,15 +165,22 @@ export default {
 		boldenNameIndicator() {
 			return this.isSpeaking || this.isSelected
 		},
+
 		hasSelectedVideo() {
 			return this.$store.getters.selectedVideoPeerId !== null
+		},
+
+		stopFollowingLabel() {
+			return t('spreed', `Stop following`)
 		},
 	},
 
 	methods: {
+
 		forceMute() {
 			this.model.forceMute()
 		},
+
 		toggleVideo() {
 			this.sharedData.videoEnabled = !this.sharedData.videoEnabled
 		},
@@ -179,11 +190,16 @@ export default {
 				this.$emit('switchScreenToId', this.peerId)
 			}
 		},
+
+		handleStopFollowing() {
+			this.$store.dispatch('selectedVideoPeerId', null)
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+
 @import '../../../assets/variables.scss';
 
 .bottom-bar {
@@ -204,6 +220,7 @@ export default {
 	}
 	&__nameIndicator {
 		color: white;
+		margin-right: 4px;
 		position: relative;
 		font-size: 20px;
 		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
@@ -215,10 +232,11 @@ export default {
 		position: relative;
 		background-size: 22px;
 		text-align: center;
-		margin: 0 8px;
+		margin: 0 4px;
 	}
 	&__button {
 		opacity: 0.8;
+		margin-left: 4px;
 		border: none;
 		&:hover,
 		&:focus {
