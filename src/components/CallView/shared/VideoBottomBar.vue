@@ -171,7 +171,7 @@ export default {
 		},
 
 		stopFollowingLabel() {
-			return t('spreed', `Stop following`)
+			return t('spreed', 'Stop following')
 		},
 	},
 
