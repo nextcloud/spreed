@@ -97,6 +97,7 @@ OC.L10N.register(
     "Off" : "خاموش",
     "Saved" : "ذخیره شد",
     "Copy link" : "کپی کردن لینک",
+    "Drop your files to upload" : "برای بارگذاری، پرونده‌ها را اینجا رها کنید",
     "Favorite" : "برگزیده",
     "Leave conversation" : "ترک صحبت",
     "Delete conversation" : "مکالمه را حذف کنید",
