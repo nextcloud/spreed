@@ -270,11 +270,11 @@ export default {
 }
 
 .muteIndicator.icon-audio-off,
-.hideRemoteVideo.icon-video-off {
+.hideRemoteVideo {
 	opacity: .7;
 }
 
-.hideRemoteVideo.icon-video-off {
+.hideRemoteVideo {
 	&:hover,
 	&:focus {
 		opacity: 1;
