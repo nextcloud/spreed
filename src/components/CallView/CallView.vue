@@ -281,6 +281,14 @@ export default {
 			this._setScreenVisible()
 
 		},
+
+		'callParticipantModelsWithScreen': function(newValue, previousValue) {
+			// Everytime a new screen is shared, switch to promoted view
+			if (newValue.length > previousValue.length) {
+
+				this.$store.dispatch('isGrid', false)
+			}
+		},
 	},
 	created() {
 		// Ensure that data is properly initialized before mounting the
