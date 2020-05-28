@@ -37,6 +37,7 @@
 			<Screen
 				v-if="showSharedScreen"
 				:is-big="isBig"
+				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</transition>
@@ -67,49 +68,9 @@
 				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="36" />
 			</div>
 		</transition-group>
-		<div v-if="!isSidebar"
-			class="bottom-bar"
-			:class="{'bottom-bar--video-on' : hasVideo, 'bottom-bar--big': isBig }">
-			<transition name="fade">
-				<div v-show="!model.attributes.videoAvailable || !sharedData.videoEnabled || showVideoOverlay || isSelected || isPromoted || isSpeaking"
-					class="bottom-bar__nameIndicator"
-					:class="{'bottom-bar__nameIndicator--promoted': isSpeaking || isSelected}">
-					{{ participantName }}
-				</div>
-			</transition>
-			<transition name="fade">
-				<div
-					v-if="isGrid"
-					v-show="showVideoOverlay"
-					class="bottom-bar__mediaIndicator">
-					<button v-show="!connectionStateFailedNoRestart"
-						v-tooltip="audioButtonTooltip"
-						class="muteIndicator forced-white"
-						:class="audioButtonClass"
-						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
-						@click="forceMute" />
-					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
-						v-tooltip="videoButtonTooltip"
-						class="hideRemoteVideo forced-white"
-						:class="videoButtonClass"
-						@click="toggleVideo" />
-					<button v-show="!connectionStateFailedNoRestart"
-						v-tooltip="t('spreed', 'Show screen')"
-						class="screensharingIndicator forced-white icon-screen"
-						:class="screenSharingButtonClass"
-						@click="switchToScreen" />
-					<button v-show="connectionStateFailedNoRestart"
-						class="iceFailedIndicator forced-white icon-error"
-						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-						disabled="true" />
-				</div>
-			</transition>
-			<button v-if="hasSelectedVideo && isBig"
-				class="bottom-bar__button"
-				@click="handlefollowSpeaker">
-				{{ followSpeakerLabel }}
-			</button>
-		</div>
+		<VideoBottomBar v-bind="$props"
+			:has-shadow="hasVideo"
+			:participant-name="participantName" />
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
 		<div v-if="mouseover && !isBig" class="hover-shadow" />
 	</div>
@@ -118,15 +79,13 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
-import { PARTICIPANT } from '../../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
 import VideoBackground from './VideoBackground'
 import AccountCircle from 'vue-material-design-icons/AccountCircle'
-
+import VideoBottomBar from './VideoBottomBar'
 import Screen from './Screen'
 
 export default {
@@ -138,10 +97,7 @@ export default {
 		VideoBackground,
 		AccountCircle,
 		Screen,
-	},
-
-	directives: {
-		tooltip: Tooltip,
+		VideoBottomBar,
 	},
 
 	mixins: [video],
@@ -264,59 +220,6 @@ export default {
 			return participantName
 		},
 
-		currentParticipant() {
-			return this.$store.getters.conversation(this.token) || {
-				sessionId: '0',
-				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
-			}
-		},
-
-		selfIsModerator() {
-			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
-		},
-
-		connectionStateFailedNoRestart() {
-			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
-		},
-
-		audioButtonClass() {
-			return {
-				'icon-audio': this.model.attributes.audioAvailable && this.selfIsModerator,
-				'icon-audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
-			}
-		},
-
-		audioButtonTooltip() {
-			if (this.model.attributes.audioAvailable) {
-				return t('spreed', 'Mute')
-			}
-
-			return null
-		},
-
-		videoButtonClass() {
-			return {
-				'icon-video': this.sharedData.videoEnabled,
-				'icon-video-off': !this.sharedData.videoEnabled,
-			}
-		},
-
-		videoButtonTooltip() {
-			if (this.sharedData.videoEnabled) {
-				return t('spreed', 'Disable video')
-			}
-
-			return t('spreed', 'Enable video')
-		},
-
-		screenSharingButtonClass() {
-			return {
-				'screen-on': this.model.attributes.screen,
-				'screen-off': !this.model.attributes.screen,
-				'screen-visible': this.sharedData.screenVisible,
-			}
-		},
 		isSpeaking() {
 			return this.model.attributes.speaking
 		},
@@ -365,7 +268,11 @@ export default {
 				return !this.showSharedScreen && this.hasVideo && !this.isSelected
 			} else {
 				if (this.isStripe) {
-					return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+					if (this.hasSelectedVideo) {
+						return !this.isSelected && this.hasVideo
+					} else {
+						return !this.isPromoted && this.hasVideo
+					}
 				} else {
 					return this.hasVideo
 				}
@@ -398,10 +305,6 @@ export default {
 
 		peerId() {
 			return this.model.attributes.peerId
-		},
-
-		followSpeakerLabel() {
-			return t('spreed', `Stop following`)
 		},
 	},
 
@@ -453,20 +356,6 @@ export default {
 				this.$refs.video.style.transform = ''
 			}
 		},
-
-		forceMute() {
-			this.model.forceMute()
-		},
-
-		toggleVideo() {
-			this.sharedData.videoEnabled = !this.sharedData.videoEnabled
-		},
-
-		switchToScreen() {
-			if (!this.sharedData.screenVisible) {
-				this.$emit('switchScreenToId', this.peerId)
-			}
-		},
 		showShadow() {
 			if (this.isSelectable) {
 				this.mouseover = true
@@ -480,10 +369,6 @@ export default {
 
 		handleClickVideo() {
 			this.$emit('click-video')
-		},
-
-		handlefollowSpeaker() {
-			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 	},
 
@@ -532,87 +417,6 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-.bottom-bar {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	padding: 0 20px 12px 24px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 40px;
-	&--big {
-		justify-content: center;
-		height: 48px;
-	}
-	&--video-on {
-		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
-	}
-	&__nameIndicator {
-		color: white;
-		position: relative;
-		font-size: 20px;
-		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-		&--promoted {
-			font-weight: bold;
-		}
-	}
-	&__mediaIndicator {
-		position: relative;
-		background-size: 22px;
-		text-align: center;
-		margin: 0 8px;
-	}
-	&__button {
-		opacity: 0.8;
-		border: none;
-		&:hover,
-		&:focus {
-			opacity: 1;
-			border: none;
-		}
-	}
-}
-
-.muteIndicator,
-.hideRemoteVideo,
-.screensharingIndicator,
-.iceFailedIndicator {
-	position: relative;
-	display: inline-block;
-	background-color: transparent !important;
-	border: none;
-	width: 32px;
-	height: 32px;
-	background-size: 22px;
-
-	&.hidden {
-		display: none;
-	}
-}
-
-.muteIndicator:not(.icon-audio):not(.icon-audio-off),
-.screensharingIndicator.screen-off,
-.iceFailedIndicator.not-failed {
-	display: none;
-}
-
-.muteIndicator.icon-audio-off,
-.hideRemoteVideo.icon-video-off {
-	opacity: .7;
-}
-
-.hideRemoteVideo.icon-video-off {
-	&:hover,
-	&:focus {
-		opacity: 1;
-	}
-}
-
-.iceFailedIndicator {
-	opacity: .8 !important;
 }
 
 .video {

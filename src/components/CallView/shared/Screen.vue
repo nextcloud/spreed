@@ -24,6 +24,12 @@
 			ref="screen"
 			class="screen"
 			:class="screenClass" />
+		<VideoBottomBar v-if="isBig"
+			v-bind="$props"
+			:is-big="true"
+			:is-screen="true"
+			:model="model"
+			:participant-name="remoteParticipantName" />
 	</div>
 </template>
 
@@ -31,12 +37,21 @@
 import attachMediaStream from 'attachmediastream'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
+import VideoBottomBar from './VideoBottomBar'
 
 export default {
 
 	name: 'Screen',
 
+	components: {
+		VideoBottomBar,
+	},
+
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		localMediaModel: {
 			type: Object,
 			default: null,
@@ -56,6 +71,12 @@ export default {
 	},
 
 	computed: {
+		model() {
+			if (this.callParticipantModel) {
+				return this.callParticipantModel
+			}
+			return this.localMediaModel
+		},
 
 		screenContainerId() {
 			if (this.localMediaModel) {
@@ -70,6 +91,10 @@ export default {
 		},
 
 		remoteParticipantName() {
+			if (!this.callParticipantModel) {
+				return t('spreed', 'You')
+			}
+
 			let remoteParticipantName = this.callParticipantModel.attributes.name
 
 			// The name is undefined and not shown until a connection is made
