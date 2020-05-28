@@ -37,6 +37,7 @@
 			<Screen
 				v-if="showSharedScreen"
 				:is-big="isBig"
+				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</transition>
@@ -267,7 +268,11 @@ export default {
 				return !this.showSharedScreen && this.hasVideo && !this.isSelected
 			} else {
 				if (this.isStripe) {
-					return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+					if (this.hasSelectedVideo) {
+						return !this.isSelected && this.hasVideo
+					} else {
+						return !this.isPromoted && this.hasVideo
+					}
 				} else {
 					return this.hasVideo
 				}
