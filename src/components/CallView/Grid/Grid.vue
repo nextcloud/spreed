@@ -442,7 +442,6 @@ export default {
 			this.gridWidth = this.$refs.grid.clientWidth
 			this.gridHeight = this.$refs.grid.clientHeight
 			// prevent making grid if no videos
-			console.debug(this.videos.length)
 			if (this.videos.length === 0) {
 				this.columns = 0
 				this.rows = 0
@@ -450,7 +449,10 @@ export default {
 				return
 			}
 
-			console.debug('makeGrid')
+			if (this.devMode) {
+				console.debug('Recreating grid: videos: ', this.videos.length, 'columns: ', this.columnsMax + ', rows: ' + this.rowsMax)
+			}
+
 			// We start by assigning the max possible value to our rows and columns
 			// variables. These variables are kept in the data and represent how the
 			// grid looks at any given moment. We do this based on `gridWidth`,
@@ -492,8 +494,9 @@ export default {
 
 		// Fine tune the number of rows and columns of the grid
 		async shrinkGrid(numberOfVideos) {
-			console.debug('shrinkGrid')
-			console.debug('Columns: ' + this.columns + ', rows: ' + this.rows)
+			if (this.devMode) {
+				console.debug('Shrinking grid: columns', this.columns + ', rows: ' + this.rows)
+			}
 
 			// No need to shrink more if 1 row and 1 column
 			if (this.rows === 1 && this.columns === 1) {
@@ -526,7 +529,9 @@ export default {
 				const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - this.targetAspectRatio)
 				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
 
-				console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
+				if (this.devMode) {
+					console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
+				}
 				// Compare the deltas to find out whether we need to remove a column or a row
 				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
 					if (currentColumns >= 2) {
