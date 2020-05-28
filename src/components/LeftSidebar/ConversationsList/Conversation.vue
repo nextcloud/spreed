@@ -193,6 +193,7 @@ export default {
 					lastMessage: this.simpleLastChatMessage,
 				}, undefined, {
 					escape: false,
+					sanitize: false,
 				})
 			}
 
@@ -206,6 +207,7 @@ export default {
 				lastMessage: this.simpleLastChatMessage,
 			}, undefined, {
 				escape: false,
+				sanitize: false,
 			})
 		},
 
