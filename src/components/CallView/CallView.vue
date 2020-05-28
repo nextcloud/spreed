@@ -220,7 +220,8 @@ export default {
 		},
 
 		showLocalScreen() {
-			return !this.hasSelectedVideo && this.screenSharingActive && this.screens[0] === localCallParticipantModel.attributes.peerId
+			return this.screens.filter(screen => screen === localCallParticipantModel.attributes.peerId).length === 1
+
 		},
 
 		showRemoteScreen() {
@@ -278,6 +279,7 @@ export default {
 
 		'screens': function() {
 			this._setScreenVisible()
+
 		},
 	},
 	created() {
