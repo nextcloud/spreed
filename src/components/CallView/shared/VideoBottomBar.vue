@@ -70,6 +70,7 @@
 <script>
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { PARTICIPANT } from '../../../constants'
 
 export default {
 	name: 'VideoBottomBar',
@@ -79,6 +80,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -172,6 +177,18 @@ export default {
 
 		stopFollowingLabel() {
 			return t('spreed', 'Stop following')
+		},
+
+		currentParticipant() {
+			return this.$store.getters.conversation(this.token) || {
+				sessionId: '0',
+				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+			}
+		},
+
+		selfIsModerator() {
+			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 	},
 

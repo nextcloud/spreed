@@ -37,6 +37,7 @@
 			<Screen
 				v-if="showSharedScreen"
 				:is-big="isBig"
+				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</transition>
@@ -79,7 +80,6 @@
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
-import { PARTICIPANT } from '../../../constants'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from './video.js'
@@ -220,18 +220,6 @@ export default {
 			return participantName
 		},
 
-		currentParticipant() {
-			return this.$store.getters.conversation(this.token) || {
-				sessionId: '0',
-				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
-			}
-		},
-
-		selfIsModerator() {
-			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
-		},
-
 		isSpeaking() {
 			return this.model.attributes.speaking
 		},
@@ -280,7 +268,11 @@ export default {
 				return !this.showSharedScreen && this.hasVideo && !this.isSelected
 			} else {
 				if (this.isStripe) {
-					return !(this.isSelected ? this.isSelected : this.isPromoted) && this.hasVideo
+					if (this.hasSelectedVideo) {
+						return !this.isSelected && this.hasVideo
+					} else {
+						return !this.isPromoted && this.hasVideo
+					}
 				} else {
 					return this.hasVideo
 				}
