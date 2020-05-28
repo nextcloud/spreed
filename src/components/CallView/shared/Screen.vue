@@ -28,7 +28,7 @@
 			v-bind="$props"
 			:is-big="true"
 			:is-screen="true"
-			:model="callParticipantModel"
+			:model="model"
 			:participant-name="remoteParticipantName" />
 	</div>
 </template>
@@ -48,6 +48,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		localMediaModel: {
 			type: Object,
 			default: null,
@@ -67,6 +71,12 @@ export default {
 	},
 
 	computed: {
+		model() {
+			if (this.callParticipantModel) {
+				return this.callParticipantModel
+			}
+			return this.localMediaModel
+		},
 
 		screenContainerId() {
 			if (this.localMediaModel) {
@@ -81,6 +91,10 @@ export default {
 		},
 
 		remoteParticipantName() {
+			if (!this.callParticipantModel) {
+				return t('spreed', 'You')
+			}
+
 			let remoteParticipantName = this.callParticipantModel.attributes.name
 
 			// The name is undefined and not shown until a connection is made

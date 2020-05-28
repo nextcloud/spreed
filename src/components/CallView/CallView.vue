@@ -60,6 +60,7 @@
 			<div v-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
 				<!-- local screen -->
 				<Screen v-show="showLocalScreen"
+					:token="token"
 					:local-media-model="localMediaModel"
 					:shared-data="localSharedData"
 					:is-big="true" />
@@ -68,6 +69,7 @@
 					<Screen
 						v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
 						:key="'screen-' + callParticipantModel.attributes.peerId"
+						:token="token"
 						:call-participant-model="callParticipantModel"
 						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
 						:is-big="true" />
