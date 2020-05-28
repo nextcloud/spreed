@@ -138,7 +138,7 @@ export default {
 
 		startCallToolTip() {
 			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call')
+				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call.')
 			}
 
 			if (this.callButtonTooltipText) {
