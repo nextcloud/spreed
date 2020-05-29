@@ -32,7 +32,7 @@ import {
 } from '../utils/webrtc/index'
 import { EventBus } from './EventBus'
 import SessionStorage from './SessionStorage'
-import {PARTICIPANT} from "../constants";
+import { PARTICIPANT } from '../constants'
 
 /**
  * Joins the current user to a conversation specified with
