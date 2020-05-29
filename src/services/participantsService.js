@@ -27,6 +27,7 @@ import {
 	signalingLeaveConversation,
 } from '../utils/webrtc/index'
 import { EventBus } from './EventBus'
+import SessionStorage from './SessionStorage'
 
 /**
  * Joins the current user to a conversation specified with
@@ -35,10 +36,16 @@ import { EventBus } from './EventBus'
  * @param {string} token The conversation token;
  */
 const joinConversation = async(token) => {
+	const isReloading = SessionStorage.getItem('joined_conversation') === token
+
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`, {
+			force: isReloading,
+		})
+
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
+		SessionStorage.setItem('joined_conversation', token)
 		EventBus.$emit('joinedConversation')
 		return response
 	} catch (error) {
