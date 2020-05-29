@@ -12,6 +12,7 @@ OC.L10N.register(
     "Name" : "Nama",
     "Saved" : "Disimpan",
     "Copy link" : "Salin tautan",
+    "Drop your files to upload" : "Lepas berkas Anda untuk mengunggah",
     "Favorite" : "Favorit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Tambah ke favorit",
