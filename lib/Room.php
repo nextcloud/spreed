@@ -839,6 +839,13 @@ class Room {
 			return;
 		}
 
+		$this->leaveRoomAsParticipant($participant);
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function leaveRoomAsParticipant(Participant $participant): void {
 		$event = new ParticipantEvent($this, $participant);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
@@ -847,22 +854,22 @@ class Room {
 		$query->update('talk_participants')
 			->set('session_id', $query->createNamedParameter('0'))
 			->set('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if (!empty($sessionId)) {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		if ($participant->getSessionId() !== '0') {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
 		}
 		$query->execute();
 
 		// And kill session when leaving a self joined room
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if (!empty($sessionId)) {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		if ($participant->getSessionId() !== '0') {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
 		}
 		$query->execute();
 
