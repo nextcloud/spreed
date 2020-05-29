@@ -62,6 +62,7 @@ export default {
 		return {
 			guestUserName: '',
 			isEditingUsername: false,
+			delayHandleUserNameFromBrowserStorage: false,
 		}
 	},
 
@@ -69,9 +70,38 @@ export default {
 		actorDisplayName() {
 			return this.$store.getters.getDisplayName()
 		},
+		actorId() {
+			return this.$store.getters.getActorId()
+		},
 		token() {
 			return this.$store.getters.getToken()
 		},
+	},
+
+	watch: {
+		actorId() {
+			if (this.delayHandleUserNameFromBrowserStorage) {
+				console.debug('Saving guest name from browser storage to the session')
+				this.handleChooseUserName()
+				this.delayHandleUserNameFromBrowserStorage = false
+			}
+		},
+	},
+
+	mounted() {
+		// FIXME use @nextcloud/browser-storage or OCP when decided
+		// https://github.com/nextcloud/nextcloud-browser-storage/issues/3
+		this.guestUserName = localStorage.getItem('nick')
+		if (this.guestUserName && this.actorDisplayName !== this.guestUserName) {
+			// Browser storage has a name, so we use that.
+			if (this.actorId) {
+				console.debug('Saving guest name from browser storage to the session')
+				this.handleChooseUserName()
+			} else {
+				console.debug('Delay saving guest name from browser storage to the session')
+				this.delayHandleUserNameFromBrowserStorage = true
+			}
+		}
 	},
 
 	methods: {
@@ -85,6 +115,11 @@ export default {
 					actorDisplayName: this.guestUserName,
 				})
 				await setGuestUserName(this.token, this.guestUserName)
+				if (this.guestUserName !== '') {
+					localStorage.setItem('nick', this.guestUserName)
+				} else {
+					localStorage.removeItem('nick')
+				}
 				this.isEditingUsername = false
 			} catch (exception) {
 				this.$store.dispatch('setDisplayName', previousName)

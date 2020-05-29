@@ -120,7 +120,7 @@ export default {
 			return this.$store.getters.getGuestName(
 				this.$store.getters.getToken(),
 				this.sessionHash,
-			) || localStorage.getItem('nick') || t('spreed', 'Guest')
+			)
 		},
 
 		avatarSize() {
