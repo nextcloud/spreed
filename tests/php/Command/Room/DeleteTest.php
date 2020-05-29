@@ -49,8 +49,11 @@ class DeleteTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->registerUserManagerMock();
+		$this->registerGroupManagerMock();
+
 		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Delete($this->manager);
+		$this->command = new Delete($this->manager, $this->userManager, $this->groupManager);
 
 		$this->roomMockContainer = new RoomMockContainer($this);
 	}

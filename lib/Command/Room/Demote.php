@@ -28,7 +28,6 @@ namespace OCA\Talk\Command\Room;
 use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,15 +36,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Demote extends Base {
 	use TRoomCommand;
-
-	/** @var Manager */
-	public $manager;
-
-	public function __construct(Manager $manager) {
-		parent::__construct();
-
-		$this->manager = $manager;
-	}
 
 	protected function configure(): void {
 		$this

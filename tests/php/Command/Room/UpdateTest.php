@@ -50,8 +50,11 @@ class UpdateTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->registerUserManagerMock();
+		$this->registerGroupManagerMock();
+
 		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Update($this->manager);
+		$this->command = new Update($this->manager, $this->userManager, $this->groupManager);
 
 		$this->roomMockContainer = new RoomMockContainer($this);
 

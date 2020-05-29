@@ -32,12 +32,38 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\IUserManager;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 
 trait TRoomCommand {
+	/** @var Manager */
+	protected $manager;
+
+	/** @var IUserManager */
+	protected $userManager;
+
+	/** @var IGroupManager */
+	protected $groupManager;
+
+	/**
+	 * TRoomCommand constructor.
+	 *
+	 * @param Manager       $manager
+	 * @param IUserManager  $userManager
+	 * @param IGroupManager $groupManager
+	 */
+	public function __construct(Manager $manager, IUserManager $userManager, IGroupManager $groupManager) {
+		parent::__construct();
+
+		$this->manager = $manager;
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+	}
+
 	/**
 	 * @param Room   $room
 	 * @param string $name
@@ -169,11 +195,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		$groupManager = \OC::$server->getGroupManager();
-
 		$users = [];
 		foreach ($groupIds as $groupId) {
-			$group = $groupManager->get($groupId);
+			$group = $this->groupManager->get($groupId);
 			if ($group === null) {
 				throw new InvalidArgumentException(sprintf("Group '%s' not found.", $groupId));
 			}
@@ -199,11 +223,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		$userManager = \OC::$server->getUserManager();
-
 		$participants = [];
 		foreach ($userIds as $userId) {
-			$user = $userManager->get($userId);
+			$user = $this->userManager->get($userId);
 			if ($user === null) {
 				throw new InvalidArgumentException(sprintf("User '%s' not found.", $userId));
 			}
@@ -237,8 +259,6 @@ trait TRoomCommand {
 	 * @throws InvalidArgumentException
 	 */
 	protected function removeRoomParticipants(Room $room, array $userIds): void {
-		$userManager = \OC::$server->getUserManager();
-
 		$users = [];
 		foreach ($userIds as $userId) {
 			try {
@@ -247,7 +267,7 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			$users[] = $userManager->get($userId);
+			$users[] = $this->userManager->get($userId);
 		}
 
 		foreach ($users as $user) {
@@ -306,25 +326,21 @@ trait TRoomCommand {
 	}
 
 	protected function completeTokenValues(CompletionContext $context): array {
-		/** @var Manager $roomManager */
-		$roomManager = \OC::$server->query(Manager::class);
 		return array_map(function (Room $room) {
 			return $room->getToken();
-		}, $roomManager->searchRoomsByToken($context->getCurrentWord()));
+		}, $this->manager->searchRoomsByToken($context->getCurrentWord()));
 	}
 
 	protected function completeUserValues(CompletionContext $context): array {
-		$userManager = \OC::$server->getUserManager();
 		return array_map(function (IUser $user) {
 			return $user->getUID();
-		}, $userManager->search($context->getCurrentWord()));
+		}, $this->userManager->search($context->getCurrentWord()));
 	}
 
 	protected function completeGroupValues(CompletionContext $context): array {
-		$groupManager = \OC::$server->getGroupManager();
 		return array_map(function (IGroup $group) {
 			return $group->getGID();
-		}, $groupManager->search($context->getCurrentWord()));
+		}, $this->groupManager->search($context->getCurrentWord()));
 	}
 
 	protected function completeParticipantValues(CompletionContext $context): array {
@@ -347,11 +363,8 @@ trait TRoomCommand {
 			return [];
 		}
 
-		/** @var Manager $roomManager */
-		$roomManager = \OC::$server->query(Manager::class);
-
 		try {
-			$room = $roomManager->getRoomByToken($token);
+			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			return [];
 		}

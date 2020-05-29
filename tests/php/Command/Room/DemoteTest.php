@@ -50,13 +50,13 @@ class DemoteTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Demote($this->manager);
-
-		$this->roomMockContainer = new RoomMockContainer($this);
-
 		$this->registerUserManagerMock();
 		$this->registerGroupManagerMock();
+
+		$this->manager = $this->createMock(Manager::class);
+		$this->command = new Demote($this->manager, $this->userManager, $this->groupManager);
+
+		$this->roomMockContainer = new RoomMockContainer($this);
 
 		$this->createTestUserMocks();
 		$this->createTestGroupMocks();

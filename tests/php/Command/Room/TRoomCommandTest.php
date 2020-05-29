@@ -32,6 +32,12 @@ use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 trait TRoomCommandTest {
+	/** @var IUserManager|MockObject */
+	protected $userManager;
+
+	/** @var IGroupManager|MockObject */
+	protected $groupManager;
+
 	/** @var IUser[] */
 	private $userMocks;
 
@@ -39,13 +45,12 @@ trait TRoomCommandTest {
 	private $groupMocks;
 
 	protected function registerUserManagerMock(): void {
-		/** @var IUserManager|MockObject $userManager */
-		$userManager = $this->createMock(IUserManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 
-		$userManager->method('get')
+		$this->userManager->method('get')
 			->willReturnCallback([$this, 'getUserMock']);
 
-		$this->overwriteService(IUserManager::class, $userManager);
+		$this->overwriteService(IUserManager::class, $this->userManager);
 	}
 
 	protected function createTestUserMocks(): void {
@@ -73,13 +78,12 @@ trait TRoomCommandTest {
 	}
 
 	protected function registerGroupManagerMock(): void {
-		/** @var IGroupManager|MockObject $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 
-		$groupManager->method('get')
+		$this->groupManager->method('get')
 			->willReturnCallback([$this, 'getGroupMock']);
 
-		$this->overwriteService(IGroupManager::class, $groupManager);
+		$this->overwriteService(IGroupManager::class, $this->groupManager);
 	}
 
 	protected function createTestGroupMocks(): void {

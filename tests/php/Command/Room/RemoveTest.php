@@ -50,8 +50,11 @@ class RemoveTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->registerUserManagerMock();
+		$this->registerGroupManagerMock();
+
 		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Remove($this->manager);
+		$this->command = new Remove($this->manager, $this->userManager, $this->groupManager);
 
 		$this->roomMockContainer = new RoomMockContainer($this);
 
