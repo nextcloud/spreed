@@ -220,7 +220,8 @@ export default {
 		},
 
 		showLocalScreen() {
-			return !this.hasSelectedVideo && this.screenSharingActive && this.screens[0] === localCallParticipantModel.attributes.peerId
+			return this.screens.filter(screen => screen === localCallParticipantModel.attributes.peerId).length === 1
+
 		},
 
 		showRemoteScreen() {
@@ -278,7 +279,23 @@ export default {
 
 		'screens': function() {
 			this._setScreenVisible()
+
 		},
+
+		'callParticipantModelsWithScreen': function(newValue, previousValue) {
+			// Everytime a new screen is shared, switch to promoted view
+			if (newValue.length > previousValue.length) {
+
+				this.$store.dispatch('isGrid', false)
+			}
+		},
+		'showLocalScreen': function(showLocalScreen) {
+			// Everytime the local screen is shared, switch to promoted view
+			if (showLocalScreen) {
+				this.$store.dispatch('isGrid', false)
+			}
+		},
+
 	},
 	created() {
 		// Ensure that data is properly initialized before mounting the
