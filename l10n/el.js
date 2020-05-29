@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Παρακαλώ χρησιμοποιήστε διαφορετικό φυλλομετρητή όπως ο Firefox ή ο Chrome για να διαμοιάσετε την οθόνη σας.",
     "An error occurred while starting screensharing." : "Προυσιάστηκε σφάλμα κατά την έναρξη του διαμοιρασμού οθόνης.",
     "You have been muted by a moderator" : "Έγινε σιγή από τον συντονιστή",
+    "You" : "Εσείς",
     "Show screen" : "Εμφάνιση οθόνης",
     "Mute" : "Σιγή",
+    "Stop following" : "Διακοπή ακολούθησης",
     "You need to be logged in to upload files" : "Πρέπει είστε σε σύνδεση για ανέβασμα αρχείων",
     "This conversation is read only" : "Η συνομιλία είναι μόνο για ανάγνωση",
     "Drop your files to upload" : "Αποθέστε τα αρχεία σας για ανέβασμα",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Παρουσιάστηκε σφάλμα κατά την αλλαγή κατάστασης του λόμπι",
     "Invalid start time format" : "Εσφαλμένη μορφή ώρας έναρξης",
     "Error occurred while setting the lobby start time" : "Παρουσιάστηκε σφάλμα κατά τον ορισμό ώρας έναρξης του λόμπι",
-    "You" : "Εσείς",
     "No messages yet, start the conversation!" : "Δεν υπάρχουν μηνύματα ακόμα, ξεκινήστε την συζήτηση!",
     "New message …" : "Νέο μήνυμα …",
     "Send" : "Αποστολή",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Συμμετέχετε σε συνομιλίες πάντα και παντού από όλες τις συσκευές.",
     "Loading contacts" : "Φόρτωση επαφών",
     "Select participants" : "Επιλογή συμμετεχόντων",
-    "Contacts loading" : "Φόρτωση επαφών"
+    "Contacts loading" : "Φόρτωση επαφών",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση"
 },
 "nplurals=2; plural=(n != 1);");

@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Pre sprístupnenie vašej obrazovky, použite prosím iný prehliadač, napríklad Firefox alebo Chrome.",
     "An error occurred while starting screensharing." : "Pri pokuse o sprístupnenie obrazovky nastala chyba.",
     "You have been muted by a moderator" : "Stlmil vás moderator",
+    "You" : "Vy",
     "Show screen" : "Ukázať obrazovku",
     "Mute" : "Stlmiť",
+    "Stop following" : "Prestať sledovať",
     "You need to be logged in to upload files" : "Pre nahrávenie súborov musíte byť prihlásený",
     "This conversation is read only" : "Táto konverzácia je iba na čítanie",
     "Drop your files to upload" : "Pretiahnite sem súbory, ktoré chcete nahrať",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Pri zmene stavu čakárne sa vyskytla chyba",
     "Invalid start time format" : "Neplatný formát času začiatku",
     "Error occurred while setting the lobby start time" : "Pri nastavovaní času začiatku čakárne sa vyskytla chyba",
-    "You" : "Vy",
     "No messages yet, start the conversation!" : "Zatiaľ žiadne správy, začnite rozhovor!",
     "New message …" : "Nová správa …",
     "Send" : "Odoslať",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Pripojte sa ku rozhovorom kedykoľvek, kdekoľvek, na hocijakom zariadení.",
     "Loading contacts" : "Načítavanie kontaktov",
     "Select participants" : "Vybrať účastníkov",
-    "Contacts loading" : "Kontakty sa načítavajú"
+    "Contacts loading" : "Kontakty sa načítavajú",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Aby współdzielić ekran, użyj innej przeglądarki, takiej jak Firefox lub Chrome.",
     "An error occurred while starting screensharing." : "Wystąpił błąd podczas rozpoczynania współdzielenia ekranu.",
     "You have been muted by a moderator" : "Zostałeś wyciszony przez moderatora",
+    "You" : "Ty",
     "Show screen" : "Pokaż ekran",
     "Mute" : "Wycisz",
+    "Stop following" : "Zakończ obserwowanie",
     "You need to be logged in to upload files" : "Musisz się zalogować, aby przesyłać pliki",
     "This conversation is read only" : "Ta rozmowa jest tylko do odczytu",
     "Drop your files to upload" : "Upuść swoje pliki do wysłania",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Wystąpił błąd podczas zmiany stanu poczekalni",
     "Invalid start time format" : "Nieprawidłowy format godziny rozpoczęcia",
     "Error occurred while setting the lobby start time" : "Wystąpił błąd podczas ustawiania czasu rozpoczęcia poczekalni",
-    "You" : "Ty",
     "No messages yet, start the conversation!" : "Brak wiadomości, zacznij rozmowę!",
     "New message …" : "Nowa wiadomość…",
     "Send" : "Wyślij",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Dołącz do rozmów w dowolnym czasie i dowolnym miejscu na dowolnym urządzeniu.",
     "Loading contacts" : "Ładowanie kontaktów",
     "Select participants" : "Wybierz uczestników",
-    "Contacts loading" : "Ładowanie kontaktów"
+    "Contacts loading" : "Ładowanie kontaktów",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Usługa Nextcloud Talk została zaktualizowana, przeładuj stronę, aby rozpocząć lub dołączyć do rozmowy."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
