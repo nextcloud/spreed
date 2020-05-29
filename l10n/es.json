@@ -246,8 +246,10 @@
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use un navegador diferente como Firefox o Chrome para compartir su pantalla.",
     "An error occurred while starting screensharing." : "Ocurrió un error al inciar el compartir pantalla",
     "You have been muted by a moderator" : "Has sido silenciado por un moderador",
+    "You" : "Tú",
     "Show screen" : "Mostrar pantalla",
     "Mute" : "Silenciar",
+    "Stop following" : "Dejar de seguir",
     "You need to be logged in to upload files" : "Necesita estar conectado para subir archivos",
     "This conversation is read only" : "Esta conversación es de sólo lectura",
     "Drop your files to upload" : "Arrastra tus archivos para subir",
@@ -422,7 +424,6 @@
     "Error occurred while changing lobby state" : "Ocurrió un error al cambiar el estado de la sala",
     "Invalid start time format" : "Formato de hora de inicio inválido",
     "Error occurred while setting the lobby start time" : "Ocurrió un error al fijar la hora de inicio de la sala",
-    "You" : "Tú",
     "No messages yet, start the conversation!" : "No hay mensajes todavía, ¡empieza la conversación!",
     "New message …" : "Nuevo mensaje...",
     "Send" : "Enviar",
@@ -461,6 +462,7 @@
     "Join conversations at any time, any where, on any device." : "Únete a conversaciones en cualquier momento y en cualquier lugar con cualquier dispositivo.",
     "Loading contacts" : "Cargando contactos",
     "Select participants" : "Selecciona participantes",
-    "Contacts loading" : "Cargando contactos"
+    "Contacts loading" : "Cargando contactos",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

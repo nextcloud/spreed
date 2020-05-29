@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Gebruik een andere browser, zoals Firefox of Chrome om je scherm te delen.",
     "An error occurred while starting screensharing." : "Er trad een fout op bij starten schermdelen.",
     "You have been muted by a moderator" : "Je bent gedempt door een moderator",
+    "You" : "Jij",
     "Show screen" : "Tonen scherm",
     "Mute" : "Dempen",
+    "Stop following" : "Stop met volgen",
     "You need to be logged in to upload files" : "Je moet ingelogd zijn om bestanden te uploaden",
     "This conversation is read only" : "Dit gesprek is alleen-lezen",
     "Drop your files to upload" : "Zet uw bestanden hier neer om te uploaden",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Er is een fout opgetreden bij het wijzigen van de lobby status",
     "Invalid start time format" : "Onjuist formaat begintijd",
     "Error occurred while setting the lobby start time" : "Er trad een fout op bij het instellen van de starttijd van de lobby",
-    "You" : "Jij",
     "No messages yet, start the conversation!" : "Nog geen berichten, start de discussie!",
     "New message …" : "Nieuw bericht...",
     "Send" : "Verzend",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Doe mee met gesprekken op elk tijdstip, overal met elk apparaat.",
     "Loading contacts" : "Contactpersonen inladen",
     "Select participants" : "Selecte deelnemers",
-    "Contacts loading" : "Contactpersonen laden"
+    "Contacts loading" : "Contactpersonen laden",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen"
 },
 "nplurals=2; plural=(n != 1);");
