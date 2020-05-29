@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Utilizza un browser diverso come Firefox o Chrome per condividere il tuo schermo.",
     "An error occurred while starting screensharing." : "Si è verificato un errore durante l'avvio della condivisione dello schermo.",
     "You have been muted by a moderator" : "Sei stato silenziato da un moderatore",
+    "You" : "Tu",
     "Show screen" : "Mostra schermo",
     "Mute" : "Silenzia",
+    "Stop following" : "Smetti di seguire",
     "You need to be logged in to upload files" : "Devi aver eseguito l'accesso per caricare file",
     "This conversation is read only" : "Questa conversazione è in sola lettura",
     "Drop your files to upload" : "Rilascia i tuoi file per caricarli",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Si è verificato un errore durante la modifica dello stato dell'anticamera",
     "Invalid start time format" : "Formato dell'ora iniziale non valido",
     "Error occurred while setting the lobby start time" : "Si è verificato un errore durante l'impostazione dell'orario di inizio dell'ingresso.",
-    "You" : "Tu",
     "No messages yet, start the conversation!" : "Ancora nessun messaggio, inizia la conversazione!",
     "New message …" : "Nuovo messaggio...",
     "Send" : "Invia",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Unisciti a una conversazione in qualsiasi momento, ovunque, su qualsiasi dispositivo.",
     "Loading contacts" : "Caricamento dei contatti",
     "Select participants" : "Seleziona dei partecipanti",
-    "Contacts loading" : "Caricamento dei contatti"
+    "Contacts loading" : "Caricamento dei contatti",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk è stato aggiornato, devi ricaricare la pagina prima di poter iniziare o partecipare a una chiamata"
 },
 "nplurals=2; plural=(n != 1);");

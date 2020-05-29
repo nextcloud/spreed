@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ekranınızı paylaşabilmek için lütfen Firefox ya da Chrome gibi farklı bir tarayıcı kullanın.",
     "An error occurred while starting screensharing." : "Ekran paylaşımı başlatılırken bir sorun çıktı.",
     "You have been muted by a moderator" : "Sesiniz sorumlu tarafından kısıldı",
+    "You" : "Siz",
     "Show screen" : "Ekranı görüntüle",
     "Mute" : "Sesi kıs",
+    "Stop following" : "Takibi bırak",
     "You need to be logged in to upload files" : "Dosya yükleyebilmek için oturum açmalısınız",
     "This conversation is read only" : "Bu görüşme salt okunur",
     "Drop your files to upload" : "Yüklenecek dosyaları sürükleyip bırakın",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Giriş durumu değiştirilirken sorun çıktı",
     "Invalid start time format" : "Başlangıç zamanı biçimi geçersiz",
     "Error occurred while setting the lobby start time" : "Giriş başlangıç zamanı ayarlanırken sorun çıktı",
-    "You" : "Siz",
     "No messages yet, start the conversation!" : "Henüz bir ileti yok. Görüşmeyi başlatın!",
     "New message …" : "Yeni ileti …",
     "Send" : "Gönder",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "İstediğiniz zaman, istediğiniz yerden, istediğiniz aygıtı kullanarak görüşmeye katılın.",
     "Loading contacts" : "Kişiler yükleniyor",
     "Select participants" : "Katılımcıları seçin",
-    "Contacts loading" : "Kişiler yükleniyor"
+    "Contacts loading" : "Kişiler yükleniyor",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz"
 },
 "nplurals=2; plural=(n > 1);");

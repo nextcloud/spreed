@@ -248,8 +248,10 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor, utilize um navegador diferente, como Firefox ou Chrome para compartilhar sua tela.",
     "An error occurred while starting screensharing." : "Ocorreu um erro ao iniciar o compartilhamento de tela.",
     "You have been muted by a moderator" : "Você foi silenciado por um moderador",
+    "You" : "Você",
     "Show screen" : "Exibir tela",
     "Mute" : "Silenciar",
+    "Stop following" : "Parar de seguir",
     "You need to be logged in to upload files" : "Você precisa fazer login para enviar arquivos",
     "This conversation is read only" : "Esta conversa é somente leitura",
     "Drop your files to upload" : "Arraste seus arquivos para enviar",
@@ -424,7 +426,6 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Erro ao alterar o status do lobby",
     "Invalid start time format" : "Formato inválido do horário de início",
     "Error occurred while setting the lobby start time" : "Erro ao marcar o horário de início do lobby",
-    "You" : "Você",
     "No messages yet, start the conversation!" : "Sem mensagens, inicie o papo!",
     "New message …" : "Nova mensagem...",
     "Send" : "Enviar",
@@ -463,6 +464,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Participe de conversas a qualquer momento, lugar e dispositivo.",
     "Loading contacts" : "Carregando contatos",
     "Select participants" : "Selecionar participantes",
-    "Contacts loading" : "Carregando contatos"
+    "Contacts loading" : "Carregando contatos",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "O Nextcloud Talk foi atualizado. Recarregue a página antes de iniciar ou participar de uma chamada."
 },
 "nplurals=2; plural=(n > 1);");
