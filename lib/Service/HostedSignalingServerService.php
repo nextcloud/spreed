@@ -394,11 +394,13 @@ class HostedSignalingServerService {
 			|| !isset($data['owner']['email'])
 			|| !isset($data['owner']['language'])
 			|| !isset($data['owner']['country'])
+			/* TODO they are not yet returned
 			|| ($data['status'] === 'active' && (
 					!isset($data['limits'])
 					|| !isset($data['limits']['users'])
 				)
 			)
+			*/
 			|| (in_array($data['status'], ['error', 'blocked']) && !isset($data['reason']))
 			|| !in_array($data['status'], ['error', 'blocked', 'pending', 'active', 'expired'])
 		) {
