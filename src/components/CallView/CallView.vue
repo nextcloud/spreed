@@ -289,6 +289,13 @@ export default {
 				this.$store.dispatch('isGrid', false)
 			}
 		},
+		'showLocalScreen': function(showLocalScreen) {
+			// Everytime the local screen is shared, switch to promoted view
+			if (showLocalScreen) {
+				this.$store.dispatch('isGrid', false)
+			}
+		},
+
 	},
 	created() {
 		// Ensure that data is properly initialized before mounting the
