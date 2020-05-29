@@ -21,7 +21,11 @@
  */
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import {
+	generateUrl,
+	generateOcsUrl,
+} from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
@@ -49,8 +53,36 @@ const joinConversation = async(token) => {
 		EventBus.$emit('joinedConversation')
 		return response
 	} catch (error) {
-		console.debug(error)
+		if (error.response.status === 409) {
+			await confirmForceJoinConversation(token)
+		} else {
+			console.debug(error)
+			showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
+		}
 	}
+}
+
+const confirmForceJoinConversation = async(token) => {
+	await OC.dialogs.confirmDestructive(
+		t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+		t('spreed', 'Duplicate session'),
+		{
+			type: OC.dialogs.YES_NO_BUTTONS,
+			confirm: t('spreed', 'Join here'),
+			confirmClasses: 'error',
+			cancel: t('spreed', 'Leave this page'),
+		},
+		decision => {
+			if (!decision) {
+				// Cancel
+				window.location = generateUrl('/apps/spreed')
+			} else {
+				// Confirm
+				SessionStorage.setItem('joined_conversation', token)
+				joinConversation(token)
+			}
+		}
+	)
 }
 
 /**
