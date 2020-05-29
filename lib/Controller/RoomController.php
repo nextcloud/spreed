@@ -1169,34 +1169,34 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($force === false) {
-			if ($this->userId !== null) {
-				try {
-					$participant = $room->getParticipant($this->userId);
-					if ($participant->getSessionId() !== '0') {
-						return new DataResponse([
-							'sessionId' => $participant->getSessionId(),
-							'inCall' => $participant->getInCallFlags(),
-							'lastPing' => $participant->getLastPing(),
-						], Http::STATUS_CONFLICT);
-					}
-				} catch (ParticipantNotFoundException $e) {
-					// All fine, carry on
-				}
+		$previousSession = null;
+		if ($this->userId !== null) {
+			try {
+				$previousSession = $room->getParticipant($this->userId);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		} else {
+			$session = $this->session->getSessionForRoom($token);
+			try {
+				$previousSession = $room->getParticipantBySession($session);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		}
+
+		if ($previousSession instanceof Participant && $previousSession->getSessionId() !== '0') {
+			// Previous session was active
+			if ($force === false) {
+				return new DataResponse([
+					'sessionId' => $previousSession->getSessionId(),
+					'inCall' => $previousSession->getInCallFlags(),
+					'lastPing' => $previousSession->getLastPing(),
+				], Http::STATUS_CONFLICT);
+			}
+
+			if ($this->userId === null) {
+				$room->removeParticipantBySession($previousSession, Room::PARTICIPANT_LEFT);
 			} else {
-				$session = $this->session->getSessionForRoom($token);
-				try {
-					$participant = $room->getParticipantBySession($session);
-					if ($participant->getSessionId() !== '0') {
-						return new DataResponse([
-							'sessionId' => $participant->getSessionId(),
-							'inCall' => $participant->getInCallFlags(),
-							'lastPing' => $participant->getLastPing(),
-						], Http::STATUS_CONFLICT);
-					}
-				} catch (ParticipantNotFoundException $e) {
-					// All fine, carry on
-				}
+				$room->leaveRoomAsParticipant($previousSession);
 			}
 		}
 
@@ -1241,7 +1241,7 @@ class RoomController extends AEnvironmentAwareController {
 				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			} else {
 				$participant = $room->getParticipant($this->userId);
-				$room->leaveRoom($participant->getUser());
+				$room->leaveRoomAsParticipant($participant);
 			}
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {
