@@ -410,4 +410,124 @@ class HostedSignalingServerService {
 
 		return $data;
 	}
+
+	/**
+	 * @throws HostedSignalingServerAPIException
+	 */
+	public function deleteAccount(AccountId $accountId) {
+		try {
+			$nonce = $this->secureRandom->generate(32);
+			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+
+			$client = $this->clientService->newClient();
+			$response = $client->delete($this->apiServerUrl . '/v1/account/' . $accountId->get(), [
+				'headers' => [
+					'X-Account-Service-Nonce' => $nonce,
+				],
+				'timeout' => 10,
+			]);
+
+			// this is needed here because the delete happens in a concurrent request
+			// and thus the cached value in the config object would trigger an UPDATE
+			// instead of an INSERT if there is another request to the API server
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+		} catch (ClientException $e) {
+			$response = $e->getResponse();
+
+			if ($response === null) {
+				$this->logger->logException($e, [
+					'app' => 'spreed',
+					'message' => 'Deleting the hosted signaling server account failed',
+				]);
+
+				$message = $this->l10n->t('Deleting the hosted signaling server account failed. Please check back later.');
+				throw new HostedSignalingServerAPIException($message);
+			}
+
+			$status = $response->getStatusCode();
+
+			switch ($status) {
+				case Http::STATUS_UNAUTHORIZED:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Deleting the hosted signaling server account failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+					$message = $this->l10n->t('There is a problem with the authentication of this request. Maybe it is not reachable from the outside to verify it\'s URL.');
+					throw new HostedSignalingServerAPIException($message);
+				case Http::STATUS_BAD_REQUEST:
+					$body = $response->getBody()->getContents();
+					if ($body) {
+						$parsedBody = json_decode($body, true);
+						if (json_last_error() !== JSON_ERROR_NONE) {
+							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+							$message = $this->l10n->t('Something unexpected happened.');
+							throw new HostedSignalingServerAPIException($message);
+						}
+						if ($parsedBody['reason']) {
+							switch ($parsedBody['reason']) {
+								case 'missing_account_id':
+									$log = 'The account ID is missing.';
+									break;
+								default:
+									$body = $response->getBody()->getContents();
+									$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+									$message = $this->l10n->t('Failed to delete the account because the trial server behaved wrongly. Please check back later.');
+									throw new HostedSignalingServerAPIException($message);
+							}
+							$this->logger->error('Deleting the hosted signaling server account failed: bad request - reason: ' . $parsedBody['reason'] . ' ' . $log);
+
+							$message = $this->l10n->t('There is a problem with deleting the account. Please check your logs for further information.');
+							throw new HostedSignalingServerAPIException($message);
+						}
+					}
+
+					$message = $this->l10n->t('Something unexpected happened.');
+					throw new HostedSignalingServerAPIException($message);
+				case Http::STATUS_TOO_MANY_REQUESTS:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Deleting the hosted signaling server account failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+					$message = $this->l10n->t('Too many requests are send from your servers address. Please try again later.');
+					throw new HostedSignalingServerAPIException($message);
+				case Http::STATUS_NOT_FOUND:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Deleting the hosted signaling server account failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+					$message = $this->l10n->t('There is no such account registered.');
+					throw new HostedSignalingServerAPIException($message);
+				case Http::STATUS_INTERNAL_SERVER_ERROR:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Deleting the hosted signaling server account failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+					$message = $this->l10n->t('Something unexpected happened. Please try again later.');
+					throw new HostedSignalingServerAPIException($message);
+				default:
+					$body = $response->getBody()->getContents();
+					$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+					$message = $this->l10n->t('Failed to delete the account because the trial server behaved wrongly. Please check back later.');
+					throw new HostedSignalingServerAPIException($message);
+			}
+		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'app' => 'spreed',
+				'message' => 'Deleting the hosted signaling server account failed',
+			]);
+
+			$message = $this->l10n->t('Failed to delete the account because the trial server is unreachable. Please check back later.');
+			throw new HostedSignalingServerAPIException($message);
+		}
+
+		$status = $response->getStatusCode();
+
+		if ($status !== Http::STATUS_NO_CONTENT) {
+			$body = $response->getBody();
+			$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+
+
+			$message = $this->l10n->t('Something unexpected happened.');
+			throw new HostedSignalingServerAPIException($message);
+		}
+	}
 }

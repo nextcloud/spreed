@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
@@ -104,5 +105,34 @@ class HostedSignalingServerController extends OCSController {
 
 
 		return new DataResponse($accountInfo);
+	}
+
+	public function deleteAccount(): DataResponse {
+		$accountId = $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id');
+
+		if ($accountId === null) {
+			return new DataResponse(['message' => $this->l10n->t('No account availble to delete.')], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->hostedSignalingServerService->deleteAccount(new AccountId($accountId));
+
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account');
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-id');
+
+			// remove signaling servers if account is not active anymore
+			$this->config->setAppValue('spreed', 'signaling_mode', 'internal');
+			$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
+				'servers' => [],
+				'secret' => '',
+			]));
+
+			$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId, ['app' => 'spreed']);
+		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+
+		return new DataResponse([], Http::STATUS_NO_CONTENT);
 	}
 }

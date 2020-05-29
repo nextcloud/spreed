@@ -116,6 +116,15 @@
 					<td>{{ n('spreed', '%n user', '%n users', trailAccount.limits.users) }}</td>
 				</tr>
 			</table>
+			<p v-if="requestError !== ''"
+				class="warning">
+				{{ requestError }}
+			</p>
+			<button class="button delete"
+				:disabled="loading"
+				@click="deleteAccount">
+				{{ t('spreed', 'Delete the signaling server account') }}
+			</button>
 		</div>
 	</div>
 </template>
@@ -216,6 +225,21 @@ export default {
 				this.loading = false
 			}
 		},
+
+		async deleteAccount() {
+			this.requestError = ''
+			this.loading = true
+
+			try {
+				await axios.delete(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver', 2) + 'delete')
+
+				this.trailAccount = []
+			} catch (err) {
+				this.deleteError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The account could not be deleted. Please try again later.')
+			} finally {
+				this.loading = false
+			}
+		},
 	},
 }
 </script>
@@ -236,6 +260,17 @@ tr:last-child td {
 
 tr :first-child {
 	opacity: .5;
+}
+.delete {
+	background: var(--color-main-background);
+	border-color: var(--color-error);
+	color: var(--color-error);
+}
+.delete:hover,
+.delete:active {
+	background: var(--color-error);
+	border-color: var(--color-error) !important;
+	color: var(--color-main-background);
 }
 
 </style>

@@ -461,5 +461,13 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+		[
+			'name' => 'HostedSignalingServer#deleteAccount',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/delete',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
