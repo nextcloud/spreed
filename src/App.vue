@@ -486,7 +486,7 @@ export default {
 		padding-top: 0;
 
 		::v-deep .app-sidebar {
-			height: 100vh;
+			height: 100vh !important;
 		}
 	}
 }
