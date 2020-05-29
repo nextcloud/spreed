@@ -109,18 +109,28 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the conversation has `hasPassword` set to true.
+    `force` | bool | If set to `false` and the user has an active session already a `409 Conflict` will be returned (Default: true - to keep the old behaviour)
 
 * Response:
     - Status code:
         + `200 OK`
         + `403 Forbidden` When the password is required and didn't match
         + `404 Not Found` When the conversation could not be found for the participant
+        + `409 Conflict` When the user already has an active session in the conversation. The suggested behaviour is to ask the user whether they want to kill the old session and force join unless the last ping is older than 60 seconds or older than 40 seconds when the conflicting session is not marked as in a call.
 
-    - Data:
+    - Data in case of `200 OK`:
 
         field | type | Description
         ------|------|------------
         `sessionId` | string | 512 character long string
+
+    - Data in case of `409 Conflict`:
+
+        field | type | Description
+        ------|------|------------
+        `sessionId` | string | 512 character long string
+        `inCall` | int | Flags whether the conflicting session is in a potential call
+        `lastPing` | int | Timestamp of the last ping of the conflicting session
 
 ## Leave a conversation (not available for call and chat anymore)
 
