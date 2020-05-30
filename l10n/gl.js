@@ -342,6 +342,7 @@ OC.L10N.register(
     "Display name: " : "Nome a amosar:",
     "Edit" : "Editar",
     "Start call" : "Iniciar a chamada",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk foi actualizado, ten que volver cargar a páxina antes de poder comezar ou unirse a unha chamada.",
     "You will be able to join the call only after a moderator starts it." : "Só poderá unirse á chamada após que a inicie un moderador.",
     "Dismiss" : "Rexeitar",
     "Use promoted view" : "Usar a vista promocionada",

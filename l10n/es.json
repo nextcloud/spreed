@@ -340,6 +340,7 @@
     "Display name: " : "Nombre para mostrar:",
     "Edit" : "Editar",
     "Start call" : "Comenzar llamada",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk se ha actualizado, tienes que volver a cargar la página antes de que puedas empezar una llamada o unirte a una.",
     "You will be able to join the call only after a moderator starts it." : "Serás capaz de unirte a la conversación solo después de un moderador la inicie.",
     "Dismiss" : "Descartar",
     "Use promoted view" : "Usar la vista ampliada",

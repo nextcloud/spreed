@@ -5,6 +5,7 @@ OC.L10N.register(
     "Limit to groups" : "Batasi ke grup",
     "Everyone" : "Semua orang",
     "Save changes" : "Simpan perubahan",
+    "Saving …" : "Menyimpan ...",
     "None" : "Tidak ada",
     "User" : "Pengguna",
     "Disabled" : "Dinonaktifkan",
