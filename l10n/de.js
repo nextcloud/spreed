@@ -251,6 +251,7 @@ OC.L10N.register(
     "You" : "Du",
     "Show screen" : "Bildschirm anzeigen",
     "Mute" : "Stummschalten",
+    "Stop following" : "Nicht mehr folgen",
     "You need to be logged in to upload files" : "Sie müssen angemeldet sein, um Dateien hochzuladen",
     "This conversation is read only" : "Diese Unterhaltung ist schreibgeschützt",
     "Drop your files to upload" : "Dateien zum Hochladen hineinziehen",
@@ -341,6 +342,7 @@ OC.L10N.register(
     "Display name: " : "Anzeigename:",
     "Edit" : "Bearbeiten",
     "Start call" : "Anruf starten",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst.",
     "You will be able to join the call only after a moderator starts it." : "Du kannst dem Anruf erst beitreten, nachdem ein Moderator ihn gestartet hat.",
     "Dismiss" : "Ausblenden",
     "Use promoted view" : "Sprecheransicht verwenden",
@@ -463,6 +465,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Nimm an Gesprächen teil, zu jeder Zeit, an jedem Ort und mit jedem Gerät.",
     "Loading contacts" : "Lade Kontakte",
     "Select participants" : "Teilnehmer auswählen",
-    "Contacts loading" : "Lade Kontakte"
+    "Contacts loading" : "Lade Kontakte",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst."
 },
 "nplurals=2; plural=(n != 1);");
