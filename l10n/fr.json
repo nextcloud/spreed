@@ -249,6 +249,7 @@
     "You" : "Vous",
     "Show screen" : "Montrer l'écran",
     "Mute" : "Muet",
+    "Stop following" : "Arrêter de suivre",
     "You need to be logged in to upload files" : "Vous devez être connecté pour envoyer des fichiers",
     "This conversation is read only" : "Cette conversation est en lecture seule",
     "Drop your files to upload" : "Glissez vos fichiers pour les envoyer",
@@ -339,6 +340,7 @@
     "Display name: " : "Nom à afficher :",
     "Edit" : "Modifier",
     "Start call" : "Commencer l'appel",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel.",
     "You will be able to join the call only after a moderator starts it." : "Vous pourrez rejoindre l'appel seulement après son lancement par un modérateur.",
     "Dismiss" : "Ignorer",
     "Use promoted view" : "Utilisation de la vue promue",
@@ -461,6 +463,7 @@
     "Join conversations at any time, any where, on any device." : "Rejoignez des conversations n'importe quand, n'importe où, depuis n'importe quel appareil.",
     "Loading contacts" : "Chargement des contacts",
     "Select participants" : "Sélectionner des participants",
-    "Contacts loading" : "Chargement des contacts"
+    "Contacts loading" : "Chargement des contacts",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
