@@ -340,6 +340,7 @@
     "Display name: " : "Zobrazovaný názov:",
     "Edit" : "Upraviť",
     "Start call" : "Začať hovor",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru sa budete môcť pripojiť až potom, keď ho moderátor začne.",
     "Dismiss" : "Odmietnuť",
     "Use promoted view" : "Použiť propagované zobrazenie",
