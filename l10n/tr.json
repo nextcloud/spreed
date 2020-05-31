@@ -340,6 +340,7 @@
     "Display name: " : "Görüntülenecek ad:",
     "Edit" : "Düzenle",
     "Start call" : "Görüşmeyi başlat",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz.",
     "You will be able to join the call only after a moderator starts it." : "Görüşmeye ancak bir sorumlu görüşmeyi başlattıktan sonra katılabilirsiniz.",
     "Dismiss" : "Yok say",
     "Use promoted view" : "Sorumlu görünümü kullanılsın",
