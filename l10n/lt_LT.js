@@ -216,6 +216,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Pradedant ekrano bendrinimą, įvyko klaida.",
     "You" : "Jūs",
     "Show screen" : "Rodyti ekraną",
+    "Mute" : "Nutildyti",
     "This conversation is read only" : "Šis pokalbis yra tik skaitymui",
     "Favorite" : "Mėgstamas",
     "Conversation settings" : "Pokalbio nustatymai",
