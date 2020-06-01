@@ -20,6 +20,7 @@ OC.L10N.register(
     "Contacts" : "Kontak",
     "Loading" : "Memuat",
     "Groups" : "Grup",
+    "Invalid path selected" : "Jalur terpilih invalid",
     "Error" : "Kesalahan",
     "Password protect" : "Lindungi dengan kata sandi",
     "Back" : "Kembali",
