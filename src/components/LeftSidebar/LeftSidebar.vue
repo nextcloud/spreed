@@ -164,15 +164,15 @@ export default {
 			if (!this.searchResultsUsers.length) {
 				if (!this.searchResultsGroups.length) {
 					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Contacts, groups and circles')
+						return t('spreed', 'Users, groups and circles')
 					} else {
-						return t('spreed', 'Contacts and groups')
+						return t('spreed', 'Users and groups')
 					}
 				} else {
 					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Contacts and circles')
+						return t('spreed', 'Users and circles')
 					} else {
-						return t('spreed', 'Contacts')
+						return t('spreed', 'Users')
 					}
 				}
 			} else {
