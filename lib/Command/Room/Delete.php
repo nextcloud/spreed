@@ -27,21 +27,14 @@ namespace OCA\Talk\Command\Room;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Delete extends Base {
-	/** @var Manager */
-	public $manager;
-
-	public function __construct(Manager $manager) {
-		parent::__construct();
-
-		$this->manager = $manager;
-	}
+	use TRoomCommand;
 
 	protected function configure(): void {
 		$this
@@ -73,5 +66,14 @@ class Delete extends Base {
 
 		$output->writeln('<info>Room successfully deleted.</info>');
 		return 0;
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

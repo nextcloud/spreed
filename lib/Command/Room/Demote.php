@@ -25,31 +25,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use Exception;
+use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCP\IUserManager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Demote extends Base {
 	use TRoomCommand;
-
-	/** @var IUserManager */
-	public $userManager;
-
-	/** @var Manager */
-	public $manager;
-
-	public function __construct(IUserManager $userManager, Manager $manager) {
-		parent::__construct();
-
-		$this->userManager = $userManager;
-		$this->manager = $manager;
-	}
 
 	protected function configure(): void {
 		$this
@@ -84,12 +70,24 @@ class Demote extends Base {
 
 		try {
 			$this->removeRoomModerators($room, $users);
-		} catch (Exception $e) {
+		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
 
-		$output->writeln('<info>Users successfully remove from room.</info>');
+		$output->writeln('<info>Participants successfully demoted to regular users.</info>');
 		return 0;
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+
+			case 'participant':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }
