@@ -25,7 +25,7 @@
 		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<Caption
-				:title="t('spreed', 'Add contacts')" />
+				:title="t('spreed', 'Add users')" />
 			<ParticipantsList
 				:items="addableUsers"
 				@click="handleClickParticipant" />
@@ -76,7 +76,7 @@
 				@click="handleClickHint">
 				<div class="icon-contacts-dark set-contacts__icon" />
 				<p>
-					{{ t('spreed', 'Search for more contacts') }}
+					{{ t('spreed', 'Search for more users') }}
 				</p>
 			</div>
 		</template>
@@ -151,15 +151,15 @@ export default {
 			if (!this.addableUsers.length) {
 				if (!this.addableGroups.length) {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add contacts, groups or circles')
+						return t('spreed', 'Add usres, groups or circles')
 					} else {
-						return t('spreed', 'Add contacts or groups')
+						return t('spreed', 'Add users or groups')
 					}
 				} else {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add contacts or circles')
+						return t('spreed', 'Add users or circles')
 					} else {
-						return t('spreed', 'Add contacts')
+						return t('spreed', 'Add users')
 					}
 				}
 			} else {
