@@ -25,10 +25,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use Exception;
+use InvalidArgumentException;
 use OC\Core\Command\Base;
-use OCA\Talk\Manager;
-use OCP\IUserManager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,19 +35,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Create extends Base {
 	use TRoomCommand;
-
-	/** @var IUserManager */
-	public $userManager;
-
-	/** @var Manager */
-	public $manager;
-
-	public function __construct(IUserManager $userManager, Manager $manager) {
-		parent::__construct();
-
-		$this->userManager = $userManager;
-		$this->manager = $manager;
-	}
 
 	protected function configure(): void {
 		$this
@@ -68,11 +54,6 @@ class Create extends Base {
 				null,
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Invites all members of the given group to the room to create'
-			)->addOption(
-				'circle',
-				null,
-				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-				'Invites all members of the given circle to the room to create'
 			)->addOption(
 				'public',
 				null,
@@ -105,7 +86,6 @@ class Create extends Base {
 		$name = $input->getArgument('name');
 		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
-		$circles = $input->getOption('circle');
 		$public = $input->getOption('public');
 		$readonly = $input->getOption('readonly');
 		$password = $input->getOption('password');
@@ -114,7 +94,7 @@ class Create extends Base {
 
 		$name = trim($name);
 		if (!$this->validateRoomName($name)) {
-			$output->writeln("<error>Invalid room name.</error>");
+			$output->writeln('<error>Invalid room name.</error>');
 			return 1;
 		}
 
@@ -129,13 +109,12 @@ class Create extends Base {
 
 			$this->addRoomParticipants($room, $users);
 			$this->addRoomParticipantsByGroup($room, $groups);
-			$this->addRoomParticipantsByCircle($room, $circles);
 			$this->addRoomModerators($room, $moderators);
 
 			if ($owner !== null) {
 				$this->setRoomOwner($room, $owner);
 			}
-		} catch (Exception $e) {
+		} catch (InvalidArgumentException $e) {
 			$room->deleteRoom();
 
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
@@ -144,5 +123,21 @@ class Create extends Base {
 
 		$output->writeln('<info>Room successfully created.</info>');
 		return 0;
+	}
+
+	public function completeOptionValues($optionName, CompletionContext $context) {
+		switch ($optionName) {
+			case 'user':
+				return $this->completeUserValues($context);
+
+			case 'group':
+				return $this->completeGroupValues($context);
+
+			case 'owner':
+			case 'moderator':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeOptionValues($optionName, $context);
 	}
 }

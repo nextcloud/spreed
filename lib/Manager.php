@@ -225,6 +225,43 @@ class Manager {
 	}
 
 	/**
+	 * @param string $searchToken
+	 * @param int $limit
+	 * @param int $offset
+	 * @return Room[]
+	 */
+	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->setMaxResults(1);
+
+		if ($searchToken !== '') {
+			$query->where($query->expr()->iLike('token', $query->createNamedParameter(
+				'%' . $this->db->escapeLikeParameter($searchToken) . '%'
+			)));
+		}
+
+		$query->setMaxResults($limit)
+			->setFirstResult($offset)
+			->orderBy('token', 'ASC');
+		$result = $query->execute();
+
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
+			$rooms[] = $this->createRoomObject($row);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string $participant
 	 * @param bool $includeLastMessage
 	 * @return Room[]
