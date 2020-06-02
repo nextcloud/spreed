@@ -603,7 +603,9 @@ Signaling.Standalone.prototype.connect = function() {
 		if (typeof (data) === 'string') {
 			data = JSON.parse(data)
 		}
-		console.debug('Received', data)
+		if (OC.debug) {
+			console.debug('Received', data)
+		}
 		const id = data.id
 		if (id && this.callbacks.hasOwnProperty(id)) {
 			const cb = this.callbacks[id]
@@ -771,7 +773,9 @@ Signaling.Standalone.prototype.doSend = function(msg, callback) {
 		this.callbacks[id] = callback
 		msg['id'] = '' + id
 	}
-	console.debug('Sending', msg)
+	if (OC.debug) {
+		console.debug('Sending', msg)
+	}
 	this.socket.send(JSON.stringify(msg))
 }
 
