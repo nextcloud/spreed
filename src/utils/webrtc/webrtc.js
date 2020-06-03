@@ -530,7 +530,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		if (!showedTURNWarning && !signaling.settings.turnservers.length) {
 			showError(
 				t('spreed', 'Could not establish a connection with at least one participant. A TURN server might be needed for your scenario. Please ask your administrator to set one up following {linkstart}this documentation{linkend}.')
-					.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
+					.replace('{linkstart}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
 					.replace('{linkend}', ' ↗</a>'),
 				{
 					timeout: 0,
@@ -825,7 +825,12 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
 		let message
+		let link
 		if ((error.name === 'NotSupportedError'
+				&& error.message && error.message.indexOf('Connecting AudioNodes from AudioContexts with different sample-rate is currently not supported.') !== -1)) {
+			message = t('spreed', 'Your browser has resistFingerprinting set. This creates unstable sample-rates for audio and video which is not supported by WebRTC. You will be unable to send audio and video until the setting is turned off. See this issue for details how to fix this.')
+			link = 'https://github.com/nextcloud/spreed/issues/3323#issuecomment-617181533'
+		} else if ((error.name === 'NotSupportedError'
 				&& webrtc.capabilities.supportRTCPeerConnection)
 			|| (error.name === 'NotAllowedError'
 				&& error.message && error.message.indexOf('Only secure origins') !== -1)) {
@@ -843,8 +848,13 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			console.error('Error while accessing microphone & camera: ', error.message || error.name)
 		}
 
+		if (link) {
+			message = '<a target="_blank" rel="noreferrer nofollow" class="external" href="' + link + '">' + message + '</a>'
+		}
+
 		showError(message, {
 			timeout: 0,
+			isHTML: !!link,
 		})
 	})
 
