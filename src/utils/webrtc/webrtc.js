@@ -126,7 +126,6 @@ function checkStartPublishOwnPeer(signaling) {
 	}
 
 	if (ownPeer) {
-		webrtc.removePeers(ownPeer.id)
 		ownPeer.end()
 	}
 
@@ -699,7 +698,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	const forceReconnect = function(signaling, flags) {
 		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
 			ownPeer.end()
 			ownPeer = null
 
@@ -1163,7 +1161,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	webrtc.on('disconnected', function() {
 		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
 			ownPeer.end()
 			ownPeer = null
 
