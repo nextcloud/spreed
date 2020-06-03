@@ -342,6 +342,7 @@ OC.L10N.register(
     "Display name: " : "Εμφανιζόμενο όνομα:",
     "Edit" : "Επεξεργασία",
     "Start call" : "Έναρξη κλήσης",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση.",
     "You will be able to join the call only after a moderator starts it." : "Μπορείτε να συμμετάσχετε στην κλήση μόνο μετά την εκκίνηση από τον συντονιστή.",
     "Dismiss" : "Αποδέσμευση",
     "Use promoted view" : "Χρήση προβολής promoted",
