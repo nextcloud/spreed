@@ -179,11 +179,18 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		try {
-			$participant = $room->getParticipant($userId);
-		} catch (ParticipantNotFoundException $e) {
-			// Room does not exist
-			throw new AlreadyProcessedException();
+		if ($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call') {
+			// Skip the participant check when we generate push notifications
+			// we just looped over the participants to create the notification,
+			// they can not be removed between these 2 steps, but we can save
+			// n queries.
+		} else {
+			try {
+				$participant = $room->getParticipant($userId);
+			} catch (ParticipantNotFoundException $e) {
+				// Room does not exist
+				throw new AlreadyProcessedException();
+			}
 		}
 
 		$notification
