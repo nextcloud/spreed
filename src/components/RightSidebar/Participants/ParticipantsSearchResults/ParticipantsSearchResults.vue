@@ -151,7 +151,7 @@ export default {
 			if (!this.addableUsers.length) {
 				if (!this.addableGroups.length) {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Add usres, groups or circles')
+						return t('spreed', 'Add users, groups or circles')
 					} else {
 						return t('spreed', 'Add users or groups')
 					}
