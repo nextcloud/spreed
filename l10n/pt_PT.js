@@ -81,6 +81,7 @@ OC.L10N.register(
     "Promote to moderator" : "Promover a moderador",
     "Remove participant" : "Remover participante",
     "No results" : "Sem resultados",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Participantes",
     "Chat" : "Conversa",
     "Settings" : "Definições",

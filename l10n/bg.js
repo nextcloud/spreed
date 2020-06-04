@@ -50,6 +50,7 @@ OC.L10N.register(
     "Remove participant" : "Премахване на участник",
     "Searching …" : "Търсене ...",
     "No results" : "Няма резултати",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Участници",
     "Chat" : "Съобщения",
     "Settings" : "Настройки",

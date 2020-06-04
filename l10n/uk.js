@@ -77,7 +77,6 @@ OC.L10N.register(
     "Close" : "Закрити",
     "Search participants" : "Пошук учасників",
     "Conversation name" : "Назва розмови",
-    "Search conversations or contacts" : "Пошук розмови та контактів",
     "You are currently waiting in the lobby" : "Чекаємо на схвалення доступу",
     "Reply" : "Відповісти",
     "Today" : "Сьогодні",
@@ -90,7 +89,6 @@ OC.L10N.register(
     "guest" : "гість",
     "Searching …" : "Пошук...",
     "No results" : "Немає результатів",
-    "Search for more contacts" : "Шукати більше контактів",
     "Add participants to the conversation" : "Додати учасників до розмови",
     "Participants" : "Учасники",
     "Chat" : "Чат",
@@ -134,6 +132,8 @@ OC.L10N.register(
     "Error while sharing" : "Помилка при поширенні",
     "No Camera" : "Вимкнути камеру",
     "Favorited" : "Улюблений",
-    "Select participants" : "Виберіть учасників"
+    "Select participants" : "Виберіть учасників",
+    "Search conversations or contacts" : "Пошук розмови та контактів",
+    "Search for more contacts" : "Шукати більше контактів"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

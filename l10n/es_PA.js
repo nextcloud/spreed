@@ -74,6 +74,7 @@ OC.L10N.register(
     "Promote to moderator" : "Promover a moderador",
     "Remove participant" : "Eliminar participante",
     "No results" : "No hay resultados",
+    "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
     "Settings" : "Configuraciones ",

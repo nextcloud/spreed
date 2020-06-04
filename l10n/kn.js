@@ -18,6 +18,7 @@ OC.L10N.register(
     "Close" : "ಮುಚ್ಚು",
     "Today" : "Today",
     "guest" : "ಅತಿಥಿ",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "ಆಯ್ಕೆ",
     "Edit" : "ಸಂಪಾದಿಸು",
     "Share link" : "ಸಂಪರ್ಕ ಕೊಂಡಿಯನ್ನು  ﻿ಹಂಚಿಕೊಳ್ಳಬಹುದು",

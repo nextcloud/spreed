@@ -124,6 +124,7 @@ OC.L10N.register(
     "Remove participant" : "شرکت کننده را حذف کنید",
     "Searching …" : "جستجوکردن …",
     "No results" : "نتیجه ای یافت نشد",
+    "Add users or groups" : "کاربران یا گروه ها را اضافه کنید",
     "Participants" : "شركت كنندگان",
     "Projects" : "پروژه ها",
     "Settings" : "تنظیمات",
