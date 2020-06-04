@@ -23,6 +23,7 @@
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
+	videoBackgroundBlur: 1,
 }
 
 const getters = {
@@ -31,6 +32,9 @@ const getters = {
 	},
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
+	},
+	videoBackgroundBlur: (state) => {
+		return state.videoBackgroundBlur
 	},
 }
 
