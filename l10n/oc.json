@@ -6,7 +6,6 @@
     "Copy link" : "Copiar lo ligam",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contactes",
     "Loading" : "Loading",
     "Groups" : "Gropes",
     "Error" : "Error",
@@ -34,6 +33,7 @@
     "Rename" : "Renomenar",
     "Send" : "Mandar",
     "Share" : "Partejar",
-    "Error while sharing" : "Error al moment del partiment"
+    "Error while sharing" : "Error al moment del partiment",
+    "Contacts" : "Contactes"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

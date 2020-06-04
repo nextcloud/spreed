@@ -20,7 +20,6 @@
     "Favorite" : "Pliŝatata",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
-    "Contacts" : "Kontaktoj",
     "Loading" : "Ŝargado",
     "Groups" : "Grupoj",
     "Circles" : "Rondoj",
@@ -33,6 +32,7 @@
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",
     "No results" : "Neniu rezulto",
+    "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
     "Settings" : "Agordoj",
     "Edit" : "Modifi",
@@ -60,6 +60,7 @@
     "Send" : "Sendi",
     "Share" : "Kunhavigi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Favorited" : "Pliŝatitaj"
+    "Favorited" : "Pliŝatitaj",
+    "Contacts" : "Kontaktoj"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -11,7 +11,6 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Kontakti",
     "Loading" : "Loading",
     "Groups" : "Grupe",
     "Error" : "Greška",
@@ -20,6 +19,7 @@ OC.L10N.register(
     "Today" : "Danas",
     "Yesterday" : "Jučer",
     "guest" : "gost",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Podešavanje",
     "Edit" : "Izmjeni",
     "Share link" : "Podijelite vezu",
@@ -35,6 +35,7 @@ OC.L10N.register(
     "Send" : "Pošalji",
     "Share" : "Podjeli",
     "Error while sharing" : "Greška pri dijeljenju",
-    "Favorited" : "Favorizovano"
+    "Favorited" : "Favorizovano",
+    "Contacts" : "Kontakti"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

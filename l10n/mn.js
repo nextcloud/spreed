@@ -14,7 +14,6 @@ OC.L10N.register(
     "Favorite" : "Дуртай",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Харилцагчид",
     "Loading" : "Loading",
     "Groups" : "бүлэгүүд",
     "Circles" : "Тойрог",
@@ -45,6 +44,7 @@ OC.L10N.register(
     "Rename" : "Нэрлэнэ үү",
     "Send" : "илгээх",
     "Share" : "Түгээх",
-    "Error while sharing" : "Түгээхэд алдаа гарлаа"
+    "Error while sharing" : "Түгээхэд алдаа гарлаа",
+    "Contacts" : "Харилцагчид"
 },
 "nplurals=2; plural=(n != 1);");

@@ -12,7 +12,6 @@ OC.L10N.register(
     "Favorite" : "প্রিয়জন",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "পরিচিতজন",
     "Loading" : "Loading",
     "Groups" : "গোষ্ঠীসমূহ",
     "Error" : "সমস্যা",
@@ -36,6 +35,7 @@ OC.L10N.register(
     "Rename" : "পূনঃনামকরণ",
     "Send" : "পাঠাও",
     "Share" : "ভাগাভাগি কর",
-    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  "
+    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  ",
+    "Contacts" : "পরিচিতজন"
 },
 "nplurals=2; plural=(n != 1);");

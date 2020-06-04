@@ -30,7 +30,6 @@ OC.L10N.register(
     "Delete conversation" : "احذف المحادثة",
     "Remove from favorites" : "إزالتها مِن المفضلة",
     "Add to favorites" : "أضفه إلى المفضلة",
-    "Contacts" : "المُراسِلون",
     "Loading" : "Loading",
     "Groups" : "الفِرَق",
     "Error" : "خطأ",
@@ -43,6 +42,7 @@ OC.L10N.register(
     "Yesterday" : "البارحة",
     "Send message" : "أرسل رسالة",
     "No results" : "دون أية نتيجة",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "المشاركون",
     "Chat" : "الدردشة",
     "Projects" : "المشاريع",
@@ -74,6 +74,7 @@ OC.L10N.register(
     "Share" : "شارك",
     "Error while sharing" : "حصل خطأ عند عملية المشاركة",
     "Favorited" : "المفضلة",
-    "Join conversations at any time, any where, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز"
+    "Join conversations at any time, any where, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز",
+    "Contacts" : "المُراسِلون"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

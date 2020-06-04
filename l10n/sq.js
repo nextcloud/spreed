@@ -38,7 +38,6 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Shtoje tek të parapëlqyerat",
     "Conversations" : "Bisedat",
-    "Contacts" : "Kontaktet",
     "Loading" : "Duke ngarkuar",
     "Groups" : "Grupet",
     "Circles" : "Rrethet",
@@ -98,6 +97,7 @@ OC.L10N.register(
     "Favorited" : "U kalua e parapëlqyer",
     "Your screen" : "Ekrani juaj",
     "{participantName}'s screen" : "Ekrani i {participantName}",
-    "Guest's screen" : "Ekrani i të ftuarit"
+    "Guest's screen" : "Ekrani i të ftuarit",
+    "Contacts" : "Kontaktet"
 },
 "nplurals=2; plural=(n != 1);");

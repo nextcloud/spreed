@@ -12,7 +12,6 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Kontakter",
     "Loading" : "Loading",
     "Groups" : "Gruppen",
     "Error" : "Fehler",
@@ -44,6 +43,7 @@ OC.L10N.register(
     "Send" : "Schécken",
     "Share" : "Deelen",
     "Error while sharing" : "Feeler beim Deelen",
-    "Favorited" : "Favoriséiert"
+    "Favorited" : "Favoriséiert",
+    "Contacts" : "Kontakter"
 },
 "nplurals=2; plural=(n != 1);");

@@ -216,7 +216,6 @@ OC.L10N.register(
     "Add to favorites" : "Додаје у омиљене",
     "You need to promote a new moderator before you can leave the conversation." : "Морате унапредити новог модератора пре него што напустите разговор.",
     "Conversations" : "Разговори",
-    "Contacts" : "Контакти",
     "Loading" : "Учитавање",
     "No search results" : "Нема резултата претраге",
     "Groups" : "Групе",
@@ -356,6 +355,7 @@ OC.L10N.register(
     "Who can start a call?" : "Ко може да започне разговор",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
     "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
+    "Contacts" : "Контакти",
     "Search conversations or contacts" : "Претражи разговоре или контакте"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
