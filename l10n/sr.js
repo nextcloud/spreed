@@ -229,7 +229,6 @@ OC.L10N.register(
     "Close" : "Затвори",
     "An error occurred while performing the search" : "Грешка приликом претраге",
     "Conversation name" : "Назив разговора",
-    "Search conversations or contacts" : "Претражи разговоре или контакте",
     "You are currently waiting in the lobby" : "Тренутно чекате у лобију",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
     "Reply" : "Одговори",
@@ -246,6 +245,7 @@ OC.L10N.register(
     "Add groups" : "Додај групе",
     "Searching …" : "Тражим…",
     "No results" : "Нема резултата",
+    "Add users or groups" : "Додај кориснике или групе",
     "Add participants to the conversation" : "Додај учеснике на разговор",
     "Participants" : "Учесници",
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
@@ -355,6 +355,7 @@ OC.L10N.register(
     "Start calls" : "Почни позиве",
     "Who can start a call?" : "Ко може да започне разговор",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
-    "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја."
+    "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
+    "Search conversations or contacts" : "Претражи разговоре или контакте"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

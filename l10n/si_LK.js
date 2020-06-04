@@ -15,6 +15,7 @@ OC.L10N.register(
     "Close" : "වසන්න",
     "Today" : "අද",
     "Yesterday" : "ඊයේ",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "සැකසුම්",
     "Edit" : "සකසන්න",
     "Share link" : "Share link",

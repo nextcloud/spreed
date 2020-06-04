@@ -14,6 +14,7 @@ OC.L10N.register(
     "Close" : "Tutup",
     "Today" : "Hari ini",
     "Yesterday" : "Semalam",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Tetapan",
     "Edit" : "Sunting",
     "Share link" : "Share link",

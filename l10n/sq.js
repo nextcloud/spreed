@@ -53,6 +53,7 @@ OC.L10N.register(
     "Send message" : "Dërgo mesazh",
     "guest" : "vizitor",
     "No results" : "Asnjë rezultat",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Rregullimet",
     "Edit" : "Përpuno",
     "Dismiss" : "Hiq",

@@ -30,6 +30,7 @@ OC.L10N.register(
     "Yesterday" : "Kemarin",
     "guest" : "pengunjung",
     "No results" : "Tidak ada hasil",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Setelan",
     "Edit" : "Sunting",
     "Dismiss" : "Batal",

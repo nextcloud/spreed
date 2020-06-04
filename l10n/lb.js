@@ -23,6 +23,7 @@ OC.L10N.register(
     "Today" : "Haut",
     "Yesterday" : "Gëschter",
     "guest" : "Gaascht",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Astellungen",
     "Edit" : "Änneren",
     "Dismiss" : "Ofbriechen",

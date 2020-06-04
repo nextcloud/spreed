@@ -187,6 +187,7 @@ OC.L10N.register(
     "Promote to moderator" : "Paaugstināt par regulētāju",
     "Remove participant" : "Noņemt dalībnieku",
     "No results" : "Nav rezultātu",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Dalībnieki",
     "Chat" : "Tērzēt",
     "Projects" : "Projekti",
