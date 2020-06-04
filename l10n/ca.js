@@ -237,6 +237,7 @@ OC.L10N.register(
     "Add groups" : "Afegeix grups",
     "Searching …" : "Cercant ...",
     "No results" : "No hi ha resultats",
+    "Add users or groups" : "Afegeix usuaris o grups",
     "Add participants to the conversation" : "Afegeix participants a la conversa",
     "Participants" : "Participants",
     "Chat" : "Xat",

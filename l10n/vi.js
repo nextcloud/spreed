@@ -136,6 +136,7 @@ OC.L10N.register(
     "Promote to moderator" : "Giới thiệu người kiểm duyệt",
     "Remove participant" : "Xóa người tham gia",
     "No results" : "Không có kết quả",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Người tham gia",
     "Chat" : "Trò chuyện",
     "Projects" : "Dự án",

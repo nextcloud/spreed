@@ -19,6 +19,7 @@ OC.L10N.register(
     "Today" : "Uèi",
     "Yesterday" : "Ièr",
     "guest" : "convidat",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Paramètres",
     "Edit" : "Modificar",
     "Dismiss" : "Regetar",

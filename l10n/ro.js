@@ -30,6 +30,7 @@ OC.L10N.register(
     "Yesterday" : "Ieri",
     "guest" : "invitat",
     "No results" : "Niciun rezultat",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Setări",
     "Edit" : "Editează",
     "Dismiss" : "Elimină",
