@@ -17,7 +17,6 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Tambah ke favorit",
-    "Contacts" : "Kontak",
     "Loading" : "Memuat",
     "Groups" : "Grup",
     "Invalid path selected" : "Jalur terpilih invalid",
@@ -55,6 +54,7 @@ OC.L10N.register(
     "Send" : "Kirim",
     "Share" : "Bagikan",
     "Error while sharing" : "Kesalahan saat membagikan",
-    "Favorited" : "Difavoritkan"
+    "Favorited" : "Difavoritkan",
+    "Contacts" : "Kontak"
 },
 "nplurals=1; plural=0;");

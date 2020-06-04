@@ -10,7 +10,6 @@ OC.L10N.register(
     "Favorite" : "Favoritt",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Kontaktar",
     "Loading" : "Loading",
     "Groups" : "Grupper",
     "Error" : "Feil",
@@ -19,6 +18,7 @@ OC.L10N.register(
     "Close" : "Lukk",
     "Today" : "I dag",
     "Yesterday" : "i går",
+    "Add users or groups" : "Add users or groups",
     "Chat" : "Lynmelding",
     "Settings" : "Instillingar",
     "Edit" : "Endra",
@@ -37,6 +37,7 @@ OC.L10N.register(
     "Rename" : "Gje nytt namn",
     "Send" : "Send",
     "Share" : "Del",
-    "Error while sharing" : "Feil ved deling"
+    "Error while sharing" : "Feil ved deling",
+    "Contacts" : "Kontaktar"
 },
 "nplurals=2; plural=(n != 1);");

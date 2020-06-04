@@ -18,7 +18,6 @@ OC.L10N.register(
     "Favorite" : "Lemmik",
     "Remove from favorites" : "Eemalda lemmikutest",
     "Add to favorites" : "Lisa lemmikutesse",
-    "Contacts" : "Kontaktid",
     "Loading" : "Laadimine",
     "Groups" : "Grupid",
     "Error" : "Viga",
@@ -30,6 +29,7 @@ OC.L10N.register(
     "Yesterday" : "Eile",
     "guest" : "külaline",
     "No results" : "Vasteid ei leitud",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Seaded",
     "Edit" : "Redigeeri",
     "Dismiss" : "Jäta vahele",
@@ -52,6 +52,7 @@ OC.L10N.register(
     "Send" : "Saada",
     "Share" : "Jaga",
     "Error while sharing" : "Viga jagamisel",
-    "Favorited" : "Lemmikud"
+    "Favorited" : "Lemmikud",
+    "Contacts" : "Kontaktid"
 },
 "nplurals=2; plural=(n != 1);");

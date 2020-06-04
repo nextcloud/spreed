@@ -116,7 +116,6 @@ OC.L10N.register(
     "Remove from favorites" : "Xóa khỏi ưa thích",
     "Add to favorites" : "Thêm vào ưa thích",
     "Conversations" : "Đàm thoại",
-    "Contacts" : "Liên hệ",
     "Loading" : "Đang tải",
     "Groups" : "Nhóm",
     "Circles" : "Vòng kết nối",
@@ -203,6 +202,7 @@ OC.L10N.register(
     "Your screen" : "Màn hình của bạn",
     "{participantName}'s screen" : "Màn hình của {participantName}",
     "Guest's screen" : "Màn hình Khách",
-    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị."
+    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị.",
+    "Contacts" : "Liên hệ"
 },
 "nplurals=1; plural=0;");

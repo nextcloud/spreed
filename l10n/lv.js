@@ -169,7 +169,6 @@ OC.L10N.register(
     "Remove from favorites" : "Noņemt no favorītiem",
     "Add to favorites" : "Pievienot izlasei",
     "You need to promote a new moderator before you can leave the conversation." : "Pirms sarunas atstāšanas ir jāieceļ jauns regulētājs.",
-    "Contacts" : "Kontakti",
     "Loading" : "Ielādē",
     "Groups" : "Grupas",
     "Error" : "Kļūda",
@@ -277,6 +276,7 @@ OC.L10N.register(
     "Limit app usage to groups." : "Ierobežot lietotņu lietošanu grupās.",
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Komandas ir jauna beta funkcija programmā Nextcloud Talk. Tās ļauj palaist skriptus Nextcloud serverī. Tos var definēt ar mūsu komandrindas interfeisu. Kalkulatora skripta piemērs atrodams mūsu  <a {attributes}> dokumentācijā ↗</a>.",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
-    "Join conversations at any time, any where, on any device." : "Pievienojieties sarunām jebkurā laikā, jebkurā vietā, jebkurā ierīcē."
+    "Join conversations at any time, any where, on any device." : "Pievienojieties sarunām jebkurā laikā, jebkurā vietā, jebkurā ierīcē.",
+    "Contacts" : "Kontakti"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

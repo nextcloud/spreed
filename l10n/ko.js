@@ -72,7 +72,6 @@ OC.L10N.register(
     "Remove from favorites" : "즐겨찾기에서 제거",
     "Add to favorites" : "즐겨찾기에 추가",
     "Conversations" : "대화",
-    "Contacts" : "연락처",
     "Loading" : "불러오는 중",
     "Groups" : "그룹",
     "Circles" : "서클",
@@ -93,6 +92,7 @@ OC.L10N.register(
     "Remove participant" : "참가자 삭제",
     "Searching …" : "검색 ...",
     "No results" : "결과 없음",
+    "Add users or groups" : "사용자나 그룹 추가",
     "Participants" : "참가자",
     "Chat" : "대화",
     "Settings" : "설정",
@@ -147,6 +147,7 @@ OC.L10N.register(
     "Favorited" : "즐겨찾기에 추가됨",
     "Your screen" : "내 화면",
     "{participantName}'s screen" : "{participantName} 님의 화면",
-    "Guest's screen" : "손님의 화면"
+    "Guest's screen" : "손님의 화면",
+    "Contacts" : "연락처"
 },
 "nplurals=1; plural=0;");

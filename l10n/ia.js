@@ -16,7 +16,6 @@ OC.L10N.register(
     "Favorite" : "Favorite",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contactos",
     "Loading" : "Loading",
     "Groups" : "Gruppos",
     "Error" : "Error",
@@ -56,6 +55,7 @@ OC.L10N.register(
     "Share" : "Compartir",
     "Error while sharing" : "Error al compartir",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
-    "Favorited" : "Favorite"
+    "Favorited" : "Favorite",
+    "Contacts" : "Contactos"
 },
 "nplurals=2; plural=(n != 1);");
