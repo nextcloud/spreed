@@ -145,7 +145,6 @@
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a favoritos",
     "Conversations" : "Conversaciones",
-    "Contacts" : "Contactos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -230,6 +229,7 @@
     "{participantName}'s screen" : "Pantalla de {participantName}",
     "Guest's screen" : "Pantalla del invitado",
     "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Las conversaciones ahora pueden tener un lobby. Esto permitirá a moderadores preparar el char y llamadas para jutas, mientras usuarios e invitados esperan.",
-    "Join conversations at any time, any where, on any device." : "Únete a conversaciones en cualquier momento, en cualquier lugar, en cualquier dispositivo."
+    "Join conversations at any time, any where, on any device." : "Únete a conversaciones en cualquier momento, en cualquier lugar, en cualquier dispositivo.",
+    "Contacts" : "Contactos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -63,7 +63,6 @@ OC.L10N.register(
     "Chat notifications" : "Сповіщення чату",
     "Remove from favorites" : "Вилучено з улюбленого",
     "Add to favorites" : "Додати до обраного",
-    "Contacts" : "Контакти",
     "Loading" : "Завантаження",
     "No search results" : "Відсутні результати",
     "Groups" : "Групи",
@@ -89,6 +88,7 @@ OC.L10N.register(
     "guest" : "гість",
     "Searching …" : "Пошук...",
     "No results" : "Немає результатів",
+    "Add users or groups" : "Add users or groups",
     "Add participants to the conversation" : "Додати учасників до розмови",
     "Participants" : "Учасники",
     "Chat" : "Чат",
@@ -132,6 +132,7 @@ OC.L10N.register(
     "Error while sharing" : "Помилка при поширенні",
     "No Camera" : "Вимкнути камеру",
     "Favorited" : "Улюблений",
+    "Contacts" : "Контакти",
     "Select participants" : "Виберіть учасників",
     "Search conversations or contacts" : "Пошук розмови та контактів",
     "Search for more contacts" : "Шукати більше контактів"

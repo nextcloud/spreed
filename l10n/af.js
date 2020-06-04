@@ -14,7 +14,6 @@ OC.L10N.register(
     "Favorite" : "Gunsteling",
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
-    "Contacts" : "Kontakte",
     "Loading" : "Laai tans..",
     "Groups" : "Groepe",
     "Error" : "Fout",
@@ -47,6 +46,7 @@ OC.L10N.register(
     "Send" : "Stuur",
     "Share" : "Deel",
     "Error while sharing" : "Fout terwyl deel",
-    "Favorited" : "As gunsteling "
+    "Favorited" : "As gunsteling ",
+    "Contacts" : "Kontakte"
 },
 "nplurals=2; plural=(n != 1);");

@@ -4,7 +4,6 @@
     "Name" : "Nama",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Hubungi ",
     "Loading" : "Loading",
     "Groups" : "Kumpulan",
     "Error" : "Ralat",
@@ -27,6 +26,7 @@
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
     "Send" : "Hantar",
-    "Share" : "Kongsi"
+    "Share" : "Kongsi",
+    "Contacts" : "Hubungi "
 },"pluralForm" :"nplurals=1; plural=0;"
 }

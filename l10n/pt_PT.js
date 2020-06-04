@@ -61,7 +61,6 @@ OC.L10N.register(
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
     "Conversations" : "Conversações",
-    "Contacts" : "Contactos",
     "Loading" : "A carregar",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -135,6 +134,7 @@ OC.L10N.register(
     "Your screen" : "O seu ecrã",
     "{participantName}'s screen" : "Ecrã de {participantName}",
     "Guest's screen" : "Ecrã do convidado",
-    "Limit app usage to groups." : "Limitar o uso da aplicação a grupos."
+    "Limit app usage to groups." : "Limitar o uso da aplicação a grupos.",
+    "Contacts" : "Contactos"
 },
 "nplurals=2; plural=(n != 1);");

@@ -35,7 +35,6 @@
     "Favorite" : "Marcar como favoritu",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contautos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -90,6 +89,7 @@
     "Favorited" : "Favoritos",
     "Your screen" : "La to pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla de convidáu/ada"
+    "Guest's screen" : "Pantalla de convidáu/ada",
+    "Contacts" : "Contautos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

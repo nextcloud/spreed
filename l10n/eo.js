@@ -22,7 +22,6 @@ OC.L10N.register(
     "Favorite" : "Pliŝatata",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
-    "Contacts" : "Kontaktoj",
     "Loading" : "Ŝargado",
     "Groups" : "Grupoj",
     "Circles" : "Rondoj",
@@ -35,6 +34,7 @@ OC.L10N.register(
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",
     "No results" : "Neniu rezulto",
+    "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
     "Settings" : "Agordoj",
     "Edit" : "Modifi",
@@ -62,6 +62,7 @@ OC.L10N.register(
     "Send" : "Sendi",
     "Share" : "Kunhavigi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Favorited" : "Pliŝatitaj"
+    "Favorited" : "Pliŝatitaj",
+    "Contacts" : "Kontaktoj"
 },
 "nplurals=2; plural=(n != 1);");

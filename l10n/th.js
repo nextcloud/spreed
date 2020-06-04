@@ -13,7 +13,6 @@ OC.L10N.register(
     "Favorite" : "รายการโปรด",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "ข้อมูลผู้ติดต่อ",
     "Loading" : "Loading",
     "Groups" : "กลุ่ม",
     "Error" : "ข้อผิดพลาด",
@@ -47,6 +46,7 @@ OC.L10N.register(
     "Send" : "ส่ง",
     "Share" : "แชร์",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
-    "Favorited" : "รายการโปรด"
+    "Favorited" : "รายการโปรด",
+    "Contacts" : "ข้อมูลผู้ติดต่อ"
 },
 "nplurals=1; plural=0;");

@@ -37,7 +37,6 @@ OC.L10N.register(
     "Favorite" : "Marcar como favoritu",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contautos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -92,6 +91,7 @@ OC.L10N.register(
     "Favorited" : "Favoritos",
     "Your screen" : "La to pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla de convidáu/ada"
+    "Guest's screen" : "Pantalla de convidáu/ada",
+    "Contacts" : "Contautos"
 },
 "nplurals=2; plural=(n != 1);");

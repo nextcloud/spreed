@@ -12,7 +12,6 @@
     "Favorite" : "Дуртай",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Харилцагчид",
     "Loading" : "Loading",
     "Groups" : "бүлэгүүд",
     "Circles" : "Тойрог",
@@ -43,6 +42,7 @@
     "Rename" : "Нэрлэнэ үү",
     "Send" : "илгээх",
     "Share" : "Түгээх",
-    "Error while sharing" : "Түгээхэд алдаа гарлаа"
+    "Error while sharing" : "Түгээхэд алдаа гарлаа",
+    "Contacts" : "Харилцагчид"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

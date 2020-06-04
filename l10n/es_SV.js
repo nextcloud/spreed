@@ -68,7 +68,6 @@ OC.L10N.register(
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a tus favoritos",
     "Conversations" : "Conversaciones",
-    "Contacts" : "Contactos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -86,6 +85,7 @@ OC.L10N.register(
     "Promote to moderator" : "Promover a moderador",
     "Remove participant" : "Eliminar participante",
     "No results" : "No hay resultados",
+    "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
     "Settings" : "Configuraciones ",
@@ -148,6 +148,7 @@ OC.L10N.register(
     "Favorited" : "Marcado como favorito",
     "Your screen" : "Tu pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla del invitado"
+    "Guest's screen" : "Pantalla del invitado",
+    "Contacts" : "Contactos"
 },
 "nplurals=2; plural=(n != 1);");

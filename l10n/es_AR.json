@@ -36,7 +36,6 @@
     "Delete conversation" : "Eliminar conversación",
     "Remove from favorites" : "Eliminado de favoritos",
     "Add to favorites" : "Agregar a favoritos",
-    "Contacts" : "Contactos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -51,6 +50,7 @@
     "Send message" : "Enviar mensaje",
     "Searching …" : "Buscando ...",
     "No results" : "Sin resultados",
+    "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
     "Settings" : "Ajustes",
@@ -97,6 +97,7 @@
     "Favorited" : "Marcado como favorito",
     "Your screen" : "Su pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla del invitado"
+    "Guest's screen" : "Pantalla del invitado",
+    "Contacts" : "Contactos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

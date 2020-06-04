@@ -10,7 +10,6 @@
     "Favorite" : "প্রিয়জন",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "পরিচিতজন",
     "Loading" : "Loading",
     "Groups" : "গোষ্ঠীসমূহ",
     "Error" : "সমস্যা",
@@ -34,6 +33,7 @@
     "Rename" : "পূনঃনামকরণ",
     "Send" : "পাঠাও",
     "Share" : "ভাগাভাগি কর",
-    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  "
+    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  ",
+    "Contacts" : "পরিচিতজন"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

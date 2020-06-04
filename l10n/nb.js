@@ -71,7 +71,6 @@ OC.L10N.register(
     "Remove from favorites" : "Fjern fra favoritter",
     "Add to favorites" : "Legg til i favoritter",
     "Conversations" : "Samtaler",
-    "Contacts" : "Kontakter",
     "Loading" : "Laster",
     "Groups" : "Grupper",
     "Circles" : "Sirkler",
@@ -91,6 +90,7 @@ OC.L10N.register(
     "Promote to moderator" : "Gi moderatorstatus",
     "Remove participant" : "Fjern deltaker",
     "No results" : "Ingen resultater",
+    "Add users or groups" : "Legg til bruker eller gruppe",
     "Participants" : "Deltakere",
     "Chat" : "Sludre",
     "Projects" : "Prosjekter",
@@ -155,6 +155,7 @@ OC.L10N.register(
     "Favorited" : "Favorisert",
     "Your screen" : "Din skjerm",
     "{participantName}'s screen" : "{participantName}'s skjerm",
-    "Guest's screen" : "Gjestens skjerm"
+    "Guest's screen" : "Gjestens skjerm",
+    "Contacts" : "Kontakter"
 },
 "nplurals=2; plural=(n != 1);");

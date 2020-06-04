@@ -8,7 +8,6 @@ OC.L10N.register(
     "Favorite" : "விருப்பமான",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "தொடர்புகள்",
     "Loading" : "Loading",
     "Groups" : "குழுக்கள்",
     "Error" : "வழு",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Change password" : "கடவுச்சொல்லை மாற்றுக",
     "Rename" : "பெயர்மாற்றம்",
     "Share" : "பகிர்வு",
-    "Error while sharing" : "பகிரும் போதான வழு"
+    "Error while sharing" : "பகிரும் போதான வழு",
+    "Contacts" : "தொடர்புகள்"
 },
 "nplurals=2; plural=(n != 1);");

@@ -9,7 +9,6 @@ OC.L10N.register(
     "Saved" : "បាន​រក្សាទុក",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "ទំនាក់​ទំនង",
     "Loading" : "Loading",
     "Groups" : "ក្រុ",
     "Error" : "កំហុស",
@@ -19,6 +18,7 @@ OC.L10N.register(
     "Reply" : "ឆ្លើយតប",
     "Today" : "ថ្ងៃ​នេះ",
     "guest" : "ភ្ញៀវ",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "ការកំណត់",
     "Edit" : "កែប្រែ",
     "Share link" : "Share link",
@@ -31,6 +31,7 @@ OC.L10N.register(
     "Rename" : "ប្ដូរ​ឈ្មោះ",
     "Send" : "ផ្ញើ",
     "Share" : "ចែក​រំលែក",
-    "Error while sharing" : "កំហុស​ពេល​ចែក​រំលែក"
+    "Error while sharing" : "កំហុស​ពេល​ចែក​រំលែក",
+    "Contacts" : "ទំនាក់​ទំនង"
 },
 "nplurals=1; plural=0;");
