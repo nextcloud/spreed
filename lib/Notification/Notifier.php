@@ -73,6 +73,9 @@ class Notifier implements INotifier {
 	/** @var Definitions */
 	protected $definitions;
 
+	/** @var Room[] */
+	protected $rooms = [];
+
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
 								Config $config,
@@ -118,6 +121,38 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * @param string $objectId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	protected function getRoom(string $objectId): Room {
+		if (array_key_exists($objectId, $this->rooms)) {
+			if ($this->rooms[$objectId] === null) {
+				throw new RoomNotFoundException('Room does not exist');
+			}
+
+			return $this->rooms[$objectId];
+		}
+
+		try {
+			$room = $this->manager->getRoomByToken($objectId);
+			$this->rooms[$objectId] = $room;
+			return $room;
+		} catch (RoomNotFoundException $e) {
+			try {
+				// Before 3.2.3 the id was passed in notifications
+				$room = $this->manager->getRoomById((int) $objectId);
+				$this->rooms[$objectId] = $room;
+				return $room;
+			} catch (RoomNotFoundException $e) {
+				// Room does not exist
+				$this->rooms[$objectId] = null;
+				throw $e;
+			}
+		}
+	}
+
+	/**
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
@@ -138,15 +173,10 @@ class Notifier implements INotifier {
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
-			$room = $this->manager->getRoomByToken($notification->getObjectId());
+			$room = $this->getRoom($notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
-			try {
-				// Before 3.2.3 the id was passed in notifications
-				$room = $this->manager->getRoomById((int) $notification->getObjectId());
-			} catch (RoomNotFoundException $e) {
-				// Room does not exist
-				throw new AlreadyProcessedException();
-			}
+			// Room does not exist
+			throw new AlreadyProcessedException();
 		}
 
 		try {
