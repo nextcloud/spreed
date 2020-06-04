@@ -253,13 +253,16 @@ class Listener {
 			$actorId = $participant->isGuest() ? $sessionHash : $participant->getUser();
 		} else {
 			$user = $this->userSession->getUser();
-			if (!$user instanceof IUser) {
+			if ($user instanceof IUser) {
+				$actorType = 'users';
+				$actorId = $user->getUID();
+			} elseif (\OC::$CLI) {
+				$actorType = 'guests';
+				$actorId = 'cli';
+			} else {
 				$actorType = 'guests';
 				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
-			} else {
-				$actorType = 'users';
-				$actorId = $user->getUID();
 			}
 		}
 
