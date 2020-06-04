@@ -14,7 +14,6 @@
     "Favorite" : "Favorite",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contactos",
     "Loading" : "Loading",
     "Groups" : "Gruppos",
     "Error" : "Error",
@@ -54,6 +53,7 @@
     "Share" : "Compartir",
     "Error while sharing" : "Error al compartir",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
-    "Favorited" : "Favorite"
+    "Favorited" : "Favorite",
+    "Contacts" : "Contactos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

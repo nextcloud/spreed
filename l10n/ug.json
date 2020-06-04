@@ -6,7 +6,6 @@
     "Favorite" : "يىغقۇچ",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "ئالاقەداشلار",
     "Loading" : "Loading",
     "Groups" : "گۇرۇپپا",
     "Error" : "خاتالىق",
@@ -24,6 +23,7 @@
     "Change password" : "ئىم ئۆزگەرت",
     "Rename" : "ئات ئۆزگەرت",
     "Send" : "يوللا",
-    "Share" : "ھەمبەھىر"
+    "Share" : "ھەمبەھىر",
+    "Contacts" : "ئالاقەداشلار"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -74,7 +74,6 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favourites",
     "Add to favorites" : "Add to favourites",
     "Conversations" : "Conversations",
-    "Contacts" : "Contacts",
     "Loading" : "Loading",
     "Groups" : "Groups",
     "Circles" : "Circles",
@@ -94,6 +93,7 @@ OC.L10N.register(
     "Promote to moderator" : "Promote to moderator",
     "Remove participant" : "Remove participant",
     "No results" : "No results",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Participants",
     "Chat" : "Chat",
     "Settings" : "Settings",
@@ -159,6 +159,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "{participantName}'s screen",
     "Guest's screen" : "Guest's screen",
     "Limit app usage to groups." : "Limit app usage to groups.",
-    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device."
+    "Join conversations at any time, any where, on any device." : "Join conversations at any time, any where, on any device.",
+    "Contacts" : "Contacts"
 },
 "nplurals=2; plural=(n != 1);");

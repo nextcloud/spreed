@@ -14,6 +14,7 @@ OC.L10N.register(
     "Today" : "այսօր",
     "Yesterday" : "երեկ",
     "guest" : "հյուր",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "կարգավորումներ",
     "Edit" : "մշակել",
     "Share link" : "Կիսվել հղմամբ",

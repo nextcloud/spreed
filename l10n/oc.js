@@ -8,7 +8,6 @@ OC.L10N.register(
     "Copy link" : "Copiar lo ligam",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contactes",
     "Loading" : "Loading",
     "Groups" : "Gropes",
     "Error" : "Error",
@@ -36,6 +35,7 @@ OC.L10N.register(
     "Rename" : "Renomenar",
     "Send" : "Mandar",
     "Share" : "Partejar",
-    "Error while sharing" : "Error al moment del partiment"
+    "Error while sharing" : "Error al moment del partiment",
+    "Contacts" : "Contactes"
 },
 "nplurals=2; plural=(n > 1);");

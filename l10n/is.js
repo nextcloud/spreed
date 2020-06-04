@@ -180,7 +180,6 @@ OC.L10N.register(
     "Add to favorites" : "Bæta í eftirlæti",
     "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
     "Conversations" : "Samtöl",
-    "Contacts" : "Tengiliðir",
     "Loading" : "Hleð inn",
     "Groups" : "Hópar",
     "Circles" : "Hringir",
@@ -203,6 +202,7 @@ OC.L10N.register(
     "Remove participant" : "Fjarlægja þátttakanda",
     "Searching …" : "Leita …",
     "No results" : "Engar niðurstöður",
+    "Add users or groups" : "Bæta við notendum eða hópum",
     "Participants" : "Þátttakendur",
     "Chat" : "Spjall",
     "Projects" : "Verkefni",
@@ -294,6 +294,7 @@ OC.L10N.register(
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Skipanir er nýr eiginleiki í Nextcloud Talk. Þær gera þér kleift að keyra skriftur á Nextcloud-þjóninum þínum. Þú getur skilgreint þær með skipanalínuviðmóti okkar. Þæmi um reiknivélarskriftu má finna í <a {attributes}>hjálparskjölunum ↗</a>.",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
     "Join conversations at any time, any where, on any device." : "Taktu þátt í samtölum hvenær sem er, hvar sem er, á hvaða tæki sem er.",
+    "Contacts" : "Tengiliðir",
     "Search conversations or contacts" : "Leita í samtölum eða tengiliðum"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

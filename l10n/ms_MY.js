@@ -6,7 +6,6 @@ OC.L10N.register(
     "Name" : "Nama",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Hubungi ",
     "Loading" : "Loading",
     "Groups" : "Kumpulan",
     "Error" : "Ralat",
@@ -29,6 +28,7 @@ OC.L10N.register(
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
     "Send" : "Hantar",
-    "Share" : "Kongsi"
+    "Share" : "Kongsi",
+    "Contacts" : "Hubungi "
 },
 "nplurals=1; plural=0;");

@@ -17,7 +17,6 @@ OC.L10N.register(
     "Favorite" : "Favorite",
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
-    "Contacts" : "Contacte",
     "Loading" : "Loading",
     "Groups" : "Grupuri",
     "Circles" : "Cercuri",
@@ -57,6 +56,7 @@ OC.L10N.register(
     "Share" : "Partajează",
     "Error while sharing" : "Eroare la partajare",
     "Favorited" : "Adăugate la favorite",
-    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri"
+    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri",
+    "Contacts" : "Contacte"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

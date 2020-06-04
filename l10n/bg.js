@@ -33,7 +33,6 @@ OC.L10N.register(
     "Favorite" : "Любима",
     "Remove from favorites" : "Премахни от любимите",
     "Add to favorites" : "Добави към любимите",
-    "Contacts" : "Контакти",
     "Loading" : "Зареждане",
     "Groups" : "Групи",
     "Circles" : "Обкръжения",
@@ -88,6 +87,7 @@ OC.L10N.register(
     "Share" : "Споделяне",
     "Error while sharing" : "Грешка при споделяне",
     "Share screen" : "Споделяне на екран",
-    "Favorited" : "Отбелязано в любими"
+    "Favorited" : "Отбелязано в любими",
+    "Contacts" : "Контакти"
 },
 "nplurals=2; plural=(n != 1);");

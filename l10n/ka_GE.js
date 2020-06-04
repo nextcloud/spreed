@@ -58,7 +58,6 @@ OC.L10N.register(
     "Favorite" : "რჩეული",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add to favorites" : "რჩეულებში დამატება",
-    "Contacts" : "კონტაქტები",
     "Loading" : "იტვირთება",
     "Groups" : "ჯგუფები",
     "Circles" : "წრეები",
@@ -131,6 +130,7 @@ OC.L10N.register(
     "Favorited" : "დამატებულია რჩეულებში",
     "Your screen" : "თქვენი ეკრანი",
     "{participantName}'s screen" : "{participantName} მომხმარებლის ეკრანი",
-    "Guest's screen" : "სტუმრის ეკრანი"
+    "Guest's screen" : "სტუმრის ეკრანი",
+    "Contacts" : "კონტაქტები"
 },
 "nplurals=2; plural=(n!=1);");
