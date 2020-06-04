@@ -48,7 +48,8 @@
 				class="avatar-container">
 				<VideoBackground
 					:display-name="model.attributes.name"
-					:user="model.attributes.userId" />
+					:user="model.attributes.userId"
+					:grid-blur="videoBackgroundBlur" />
 				<Avatar v-if="model.attributes.userId"
 					:size="avatarSize"
 					:disable-menu="true"
@@ -148,6 +149,11 @@ export default {
 		isSidebar: {
 			type: Boolean,
 			default: false,
+		},
+		// Calculated once in the grid component for each video background
+		videoBackgroundBlur: {
+			type: String,
+			default: '',
 		},
 	},
 
