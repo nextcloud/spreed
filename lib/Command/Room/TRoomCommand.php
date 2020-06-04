@@ -369,8 +369,13 @@ trait TRoomCommand {
 			return [];
 		}
 
-		return array_map(function (Participant $participant) {
-			return $participant->getUser();
-		}, $room->searchParticipants($context->getCurrentWord()));
+		$users = [];
+		foreach ($room->searchParticipants($context->getCurrentWord()) as $participant) {
+			if (!$participant->isGuest()) {
+				$users[] = $participant->getUser();
+			}
+		}
+
+		return $users;
 	}
 }
