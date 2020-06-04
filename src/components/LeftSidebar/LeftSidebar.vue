@@ -41,7 +41,7 @@
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
-						:title="t('spreed', 'Contacts')" />
+						:title="t('spreed', 'Users')" />
 					<li v-if="searchResultsUsers.length !== 0">
 						<ConversationsOptionsList
 							:items="searchResultsUsers"
@@ -50,7 +50,7 @@
 				</template>
 				<template v-if="!showStartConversationsOptions">
 					<Caption v-if="searchResultsUsers.length === 0"
-						:title="t('spreed', 'Contacts')" />
+						:title="t('spreed', 'Users')" />
 					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 					<Hint v-else :hint="t('spreed', 'No search results')" />
 				</template>
