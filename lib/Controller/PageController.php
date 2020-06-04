@@ -187,6 +187,7 @@ class PageController extends Controller {
 			try {
 				$room = $this->manager->getRoomByToken($token);
 				$notification = $this->notificationManager->createNotification();
+				$shouldFlush = $this->notificationManager->defer();
 				try {
 					$notification->setApp('spreed')
 						->setUser($this->userId)
@@ -196,6 +197,10 @@ class PageController extends Controller {
 					$this->notificationManager->markProcessed($notification);
 				} catch (\InvalidArgumentException $e) {
 					$this->logger->logException($e, ['app' => 'spreed']);
+				}
+
+				if ($shouldFlush) {
+					$this->notificationManager->flush();
 				}
 
 				// If the room is not a public room, check if the user is in the participants

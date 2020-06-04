@@ -121,6 +121,7 @@ class Listener {
 		$actorId = $actor->getUID();
 
 		$notification = $this->notificationManager->createNotification();
+		$shouldFlush = $this->notificationManager->defer();
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			$notification->setApp('spreed')
@@ -131,6 +132,9 @@ class Listener {
 				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
 			return;
 		}
 
@@ -146,6 +150,10 @@ class Listener {
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->logException($e, ['app' => 'spreed']);
 			}
+		}
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
 		}
 	}
 
@@ -206,8 +214,8 @@ class Listener {
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
-		$this->dispatcher->dispatch(IApp::class . '::defer', new Event());
 		$notification = $this->notificationManager->createNotification();
+		$shouldFlush = $this->notificationManager->defer();
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			// Remove all old notifications for this room
@@ -224,7 +232,9 @@ class Listener {
 				->setDateTime($dateTime);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
-			$this->dispatcher->dispatch(IApp::class . '::flush', new Event());
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
 			return;
 		}
 
@@ -241,7 +251,10 @@ class Listener {
 				$this->logger->logException($e, ['app' => 'spreed']);
 			}
 		}
-		$this->dispatcher->dispatch(IApp::class . '::flush', new Event());
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
+		}
 	}
 
 	/**

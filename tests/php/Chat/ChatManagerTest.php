@@ -34,6 +34,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
+use OCP\Notification\IManager as INotificationManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -43,6 +44,8 @@ class ChatManagerTest extends TestCase {
 	protected $commentsManager;
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
+	/** @var INotificationManager|MockObject */
+	protected $notificationManager;
 	/** @var Notifier|MockObject */
 	protected $notifier;
 	/** @var ITimeFactory|MockObject */
@@ -55,12 +58,14 @@ class ChatManagerTest extends TestCase {
 
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
 		$this->chatManager = new ChatManager(
 			$this->commentsManager,
 			$this->dispatcher,
+			$this->notificationManager,
 			$this->notifier,
 			$this->timeFactory
 		);

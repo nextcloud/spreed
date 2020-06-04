@@ -95,6 +95,7 @@ class Notifier {
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
+		$shouldFlush = $this->notificationManager->defer();
 		foreach ($mentionedUserIds as $mentionedUserId) {
 			if (in_array($mentionedUserId, $alreadyNotifiedUsers, true)) {
 				continue;
@@ -105,6 +106,10 @@ class Notifier {
 				$this->notificationManager->notify($notification);
 				$alreadyNotifiedUsers[] = $mentionedUserId;
 			}
+		}
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
 		}
 
 		return $alreadyNotifiedUsers;
@@ -187,6 +192,7 @@ class Notifier {
 	 */
 	public function removePendingNotificationsForRoom(Room $chat): void {
 		$notification = $this->notificationManager->createNotification();
+		$shouldFlush = $this->notificationManager->defer();
 
 		// @todo this should be in the Notifications\Hooks
 		$notification->setApp('spreed');
@@ -199,6 +205,10 @@ class Notifier {
 
 		$notification->setObject('call', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
+		}
 	}
 
 	/**
@@ -212,6 +222,7 @@ class Notifier {
 			return;
 		}
 
+		$shouldFlush = $this->notificationManager->defer();
 		$notification = $this->notificationManager->createNotification();
 
 		$notification
@@ -220,6 +231,9 @@ class Notifier {
 			->setUser($userId);
 
 		$this->notificationManager->markProcessed($notification);
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
+		}
 	}
 
 	/**

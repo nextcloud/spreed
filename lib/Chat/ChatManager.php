@@ -34,6 +34,7 @@ use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
+use OCP\Notification\IManager as INotificationManager;
 
 /**
  * Basic polling chat manager.
@@ -64,10 +65,12 @@ class ChatManager {
 
 	public function __construct(CommentsManager $commentsManager,
 								IEventDispatcher $dispatcher,
+								INotificationManager $notificationManager,
 								Notifier $notifier,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
+		$this->notificationManager = $notificationManager;
 		$this->notifier = $notifier;
 		$this->timeFactory = $timeFactory;
 	}
@@ -170,6 +173,7 @@ class ChatManager {
 		$event = new ChatParticipantEvent($chat, $comment, $participant);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
 
+		$shouldFlush = $this->notificationManager->defer();
 		try {
 			$this->commentsManager->save($comment);
 
@@ -191,6 +195,9 @@ class ChatManager {
 
 			$this->dispatcher->dispatch(self::EVENT_AFTER_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
+		}
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
 		}
 
 		return $comment;
