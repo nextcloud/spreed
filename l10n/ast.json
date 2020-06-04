@@ -31,11 +31,10 @@
     "Screensharing extension is required to share your screen." : "Ríquese la estensión de compartición de pantalla pa compartir la to pantalla",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Usa un restolador distintu como Firefox o Chrome pa compartir la to pantalla, por favor.",
     "An error occurred while starting screensharing." : "Asocedió un fallu entrín s'aniciaba la compartición de pantalla.",
-    "Your screen" : "La to pantalla",
+    "You" : "Tu",
     "Favorite" : "Marcar como favoritu",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contautos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -48,6 +47,7 @@
     "Yesterday" : "Ayeri",
     "guest" : "invitáu",
     "No results" : "Ensin resultaos",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Settings",
     "Edit" : "Editar",
     "Dismiss" : "Escartar",
@@ -76,7 +76,6 @@
     "Guests" : "Convidaos",
     "Change password" : "Camudar contraseña",
     "Rename" : "Renomar",
-    "You" : "Tu",
     "Send" : "Unviar",
     "Share" : "Share",
     "Error while sharing" : "Fallu entrín se compartía",
@@ -88,7 +87,9 @@
     "Share screen" : "Compartir pantalla",
     "Screensharing is not supported by your browser." : "El to restolador nun sofita la compartición de pantalla.",
     "Favorited" : "Favoritos",
+    "Your screen" : "La to pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla de convidáu/ada"
+    "Guest's screen" : "Pantalla de convidáu/ada",
+    "Contacts" : "Contautos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

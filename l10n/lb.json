@@ -10,7 +10,6 @@
     "Favorite" : "Favorit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Kontakter",
     "Loading" : "Loading",
     "Groups" : "Gruppen",
     "Error" : "Fehler",
@@ -21,6 +20,7 @@
     "Today" : "Haut",
     "Yesterday" : "Gëschter",
     "guest" : "Gaascht",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Astellungen",
     "Edit" : "Änneren",
     "Dismiss" : "Ofbriechen",
@@ -41,6 +41,7 @@
     "Send" : "Schécken",
     "Share" : "Deelen",
     "Error while sharing" : "Feeler beim Deelen",
-    "Favorited" : "Favoriséiert"
+    "Favorited" : "Favoriséiert",
+    "Contacts" : "Kontakter"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -11,7 +11,6 @@ OC.L10N.register(
     "Favorite" : "Ffefryn",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Cysylltiadau",
     "Loading" : "Llwytho",
     "Groups" : "Grwpiau",
     "Error" : "Gwall",
@@ -21,6 +20,7 @@ OC.L10N.register(
     "Today" : "Heddiw",
     "Yesterday" : "Ddoe",
     "No results" : "Dim canlyniadau",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Gosodiadau",
     "Edit" : "Golygu",
     "Share link" : "Rhannu dolen",
@@ -33,6 +33,7 @@ OC.L10N.register(
     "Rename" : "Ailenwi",
     "Send" : "Anfon",
     "Share" : "Rhannu",
-    "Error while sharing" : "Gwall wrth rannu"
+    "Error while sharing" : "Gwall wrth rannu",
+    "Contacts" : "Cysylltiadau"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

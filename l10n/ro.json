@@ -15,7 +15,6 @@
     "Favorite" : "Favorite",
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
-    "Contacts" : "Contacte",
     "Loading" : "Loading",
     "Groups" : "Grupuri",
     "Circles" : "Cercuri",
@@ -28,6 +27,7 @@
     "Yesterday" : "Ieri",
     "guest" : "invitat",
     "No results" : "Niciun rezultat",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Setări",
     "Edit" : "Editează",
     "Dismiss" : "Elimină",
@@ -54,6 +54,7 @@
     "Share" : "Partajează",
     "Error while sharing" : "Eroare la partajare",
     "Favorited" : "Adăugate la favorite",
-    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri"
+    "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri",
+    "Contacts" : "Contacte"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }

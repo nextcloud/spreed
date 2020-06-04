@@ -27,12 +27,12 @@
     "Mute audio (m)" : "靜音 (m)",
     "Mute audio" : "靜音",
     "Disable video" : "停用視訊",
+    "You" : "您",
     "Favorite" : "我的最愛",
     "Leave conversation" : "離開對話",
     "Delete conversation" : "刪除對話",
     "Remove from favorites" : "取消我的最愛",
     "Add to favorites" : "加到我的最愛",
-    "Contacts" : "聯絡人",
     "Loading" : "載入中",
     "Groups" : "群組",
     "Invalid path selected" : "所選的路徑無效",
@@ -49,6 +49,7 @@
     "moderator" : "主持人",
     "guest" : "訪客",
     "No results" : "沒有符合搜尋的項目",
+    "Add users or groups" : "增加使用者或者群組",
     "Participants" : "參與者",
     "Chat" : "聊天",
     "Projects" : "專案項目",
@@ -85,7 +86,6 @@
     "Set password" : "設定密碼",
     "Rename" : "重新命名",
     "Conversation with {name}" : "和 {name} 的談話",
-    "You" : "您",
     "No messages yet, start the conversation!" : "尚無訊息，開始對話！",
     "New message …" : "新訊息 ...",
     "Send" : "傳送",
@@ -95,6 +95,7 @@
     "Share screen" : "分享螢幕",
     "Screensharing is not supported by your browser." : "您的瀏覽器並不支援螢幕分享",
     "Favorited" : "已加入最愛",
-    "Limit app usage to groups." : "限制群組的使用率:"
+    "Limit app usage to groups." : "限制群組的使用率:",
+    "Contacts" : "聯絡人"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

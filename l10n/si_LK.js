@@ -7,7 +7,6 @@ OC.L10N.register(
     "Name" : "නම",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "සබඳතා",
     "Loading" : "Loading",
     "Groups" : "කණ්ඩායම්",
     "Error" : "දෝෂයක්",
@@ -15,6 +14,7 @@ OC.L10N.register(
     "Close" : "වසන්න",
     "Today" : "අද",
     "Yesterday" : "ඊයේ",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "සැකසුම්",
     "Edit" : "සකසන්න",
     "Share link" : "Share link",
@@ -28,6 +28,7 @@ OC.L10N.register(
     "Cancel" : "අවලංගු කරන්න",
     "Change password" : "මුරපදය වෙනස් කිරීම",
     "Rename" : "නැවත නම් කරන්න",
-    "Share" : "බෙදා හදා ගන්න"
+    "Share" : "බෙදා හදා ගන්න",
+    "Contacts" : "සබඳතා"
 },
 "nplurals=2; plural=(n != 1);");

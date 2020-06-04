@@ -8,13 +8,13 @@ OC.L10N.register(
     "Favorite" : "يىغقۇچ",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "ئالاقەداشلار",
     "Loading" : "Loading",
     "Groups" : "گۇرۇپپا",
     "Error" : "خاتالىق",
     "Close" : "ياپ",
     "Reply" : "جاۋاب قايتۇر",
     "Today" : "بۈگۈن",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "تەڭشەكلەر",
     "Edit" : "تەھرىر",
     "Share link" : "Share link",
@@ -25,6 +25,7 @@ OC.L10N.register(
     "Change password" : "ئىم ئۆزگەرت",
     "Rename" : "ئات ئۆزگەرت",
     "Send" : "يوللا",
-    "Share" : "ھەمبەھىر"
+    "Share" : "ھەمبەھىر",
+    "Contacts" : "ئالاقەداشلار"
 },
 "nplurals=1; plural=0;");

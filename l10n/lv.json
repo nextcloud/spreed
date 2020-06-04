@@ -159,7 +159,7 @@
     "Screensharing extension is required to share your screen." : "Lai koplietotu ekrānu, ir nepieciešams ekrāna koplietošanas paplašinājums.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Lai koplietotu ekrānu, lūdzu, izmantojiet citu pārlūkprogrammu, piemēram, Firefox vai Chrome.",
     "An error occurred while starting screensharing." : "Startējot ekrāna koplietošanu, radās kļūda.",
-    "Your screen" : "Jūsu ekrāns",
+    "You" : "Jūs",
     "Show screen" : "Rādīt ekrānu",
     "Favorite" : "Favorīts",
     "Leave conversation" : "Atstāt sarunu",
@@ -167,7 +167,6 @@
     "Remove from favorites" : "Noņemt no favorītiem",
     "Add to favorites" : "Pievienot izlasei",
     "You need to promote a new moderator before you can leave the conversation." : "Pirms sarunas atstāšanas ir jāieceļ jauns regulētājs.",
-    "Contacts" : "Kontakti",
     "Loading" : "Ielādē",
     "Groups" : "Grupas",
     "Error" : "Kļūda",
@@ -185,6 +184,7 @@
     "Promote to moderator" : "Paaugstināt par regulētāju",
     "Remove participant" : "Noņemt dalībnieku",
     "No results" : "Nav rezultātu",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Dalībnieki",
     "Chat" : "Tērzēt",
     "Projects" : "Projekti",
@@ -244,7 +244,6 @@
     "Link copied!" : "Saite nokopēta!",
     "Conversation with {name}" : "Saruna ar {name}",
     "Error occurred while setting password" : "Iestatot paroli, radās kļūda",
-    "You" : "Jūs",
     "No messages yet, start the conversation!" : "Pagaidām nekādu ziņu nav, sāciet sarunu!",
     "New message …" : "Jauns ziņojums …",
     "Send" : "Sūtīt",
@@ -269,11 +268,13 @@
     "Error while removing user from room" : "Kļūda, noņemot lietotāju no telpas",
     "Add participant …" : "Pievienot dalībnieku …",
     "Favorited" : "Favorīti",
+    "Your screen" : "Jūsu ekrāns",
     "{participantName}'s screen" : "{participantName} ekrāns",
     "Guest's screen" : "Viesa ekrāns",
     "Limit app usage to groups." : "Ierobežot lietotņu lietošanu grupās.",
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Komandas ir jauna beta funkcija programmā Nextcloud Talk. Tās ļauj palaist skriptus Nextcloud serverī. Tos var definēt ar mūsu komandrindas interfeisu. Kalkulatora skripta piemērs atrodams mūsu  <a {attributes}> dokumentācijā ↗</a>.",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
-    "Join conversations at any time, any where, on any device." : "Pievienojieties sarunām jebkurā laikā, jebkurā vietā, jebkurā ierīcē."
+    "Join conversations at any time, any where, on any device." : "Pievienojieties sarunām jebkurā laikā, jebkurā vietā, jebkurā ierīcē.",
+    "Contacts" : "Kontakti"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

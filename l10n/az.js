@@ -12,7 +12,6 @@ OC.L10N.register(
     "Favorite" : "İstəkli",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Əlaqələr",
     "Loading" : "Loading",
     "Groups" : "Qruplar",
     "Error" : "Səhv",
@@ -21,6 +20,7 @@ OC.L10N.register(
     "Today" : "Bu gün",
     "Yesterday" : "Dünən",
     "guest" : "Qonaq",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Quraşdırmalar",
     "Edit" : "Dəyişiklik et",
     "Share link" : "Linki yayımla",
@@ -35,6 +35,7 @@ OC.L10N.register(
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
     "Share" : "Paylaş",
-    "Favorited" : "İstəkləndi"
+    "Favorited" : "İstəkləndi",
+    "Contacts" : "Əlaqələr"
 },
 "nplurals=2; plural=(n != 1);");

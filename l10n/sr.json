@@ -203,7 +203,7 @@
     "Screensharing extension is required to share your screen." : "Да бисте делили екран, потребан је додатак за дељење екрана.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Користите други веб читач, као што су Фајерфокс или Хром, да бисте делили екран.",
     "An error occurred while starting screensharing." : "Десила се грешка при покретању дељења екрана.",
-    "Your screen" : "Ваш екран",
+    "You" : "Ви",
     "Show screen" : "Прикажи екран",
     "Drop your files to upload" : "Отпустите фајлове за отпремање",
     "Favorite" : "Омиљени",
@@ -214,7 +214,6 @@
     "Add to favorites" : "Додаје у омиљене",
     "You need to promote a new moderator before you can leave the conversation." : "Морате унапредити новог модератора пре него што напустите разговор.",
     "Conversations" : "Разговори",
-    "Contacts" : "Контакти",
     "Loading" : "Учитавање",
     "No search results" : "Нема резултата претраге",
     "Groups" : "Групе",
@@ -227,7 +226,6 @@
     "Close" : "Затвори",
     "An error occurred while performing the search" : "Грешка приликом претраге",
     "Conversation name" : "Назив разговора",
-    "Search conversations or contacts" : "Претражи разговоре или контакте",
     "You are currently waiting in the lobby" : "Тренутно чекате у лобију",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
     "Reply" : "Одговори",
@@ -244,6 +242,7 @@
     "Add groups" : "Додај групе",
     "Searching …" : "Тражим…",
     "No results" : "Нема резултата",
+    "Add users or groups" : "Додај кориснике или групе",
     "Add participants to the conversation" : "Додај учеснике на разговор",
     "Participants" : "Учесници",
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
@@ -318,7 +317,6 @@
     "Error occurred while changing lobby state" : "Грешка приликом мењања стања лобија",
     "Invalid start time format" : "Неисправан формат времена почетка",
     "Error occurred while setting the lobby start time" : "Грешка приликом постављања почетног времена лобија",
-    "You" : "Ви",
     "No messages yet, start the conversation!" : "Још нема порука, започните разговор!",
     "New message …" : "Нова порука…",
     "Send" : "Пошаљи",
@@ -343,6 +341,7 @@
     "Error while removing user from room" : "Грешка приликом уклањања корисника из собе",
     "Add participant …" : "Додај учесника…",
     "Favorited" : "Омиљене",
+    "Your screen" : "Ваш екран",
     "{participantName}'s screen" : "Екран корисника {participantName}",
     "Guest's screen" : "Екран госта",
     "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Разговори сада могу да имају лоби. Ово ће омогућити модераторима да се придруже разговору и да позову унапред да припреме састанак, док корисници и гости морају да чекају.",
@@ -353,6 +352,8 @@
     "Start calls" : "Почни позиве",
     "Who can start a call?" : "Ко може да започне разговор",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
-    "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја."
+    "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
+    "Contacts" : "Контакти",
+    "Search conversations or contacts" : "Претражи разговоре или контакте"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

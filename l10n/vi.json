@@ -106,7 +106,7 @@
     "Screensharing extension is required to share your screen." : "Cần có tiện ích mở rộng để chia sẻ màn hình của bạn.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn.",
     "An error occurred while starting screensharing." : "Đã xảy ra lỗi khi bắt đầu chia sẻ màn hình.",
-    "Your screen" : "Màn hình của bạn",
+    "You" : "Bạn",
     "Show screen" : "Hiện màn hình",
     "Favorite" : "Ưa thích",
     "Leave conversation" : "Rời khỏi cuộc đàm thoại",
@@ -114,7 +114,6 @@
     "Remove from favorites" : "Xóa khỏi ưa thích",
     "Add to favorites" : "Thêm vào ưa thích",
     "Conversations" : "Đàm thoại",
-    "Contacts" : "Liên hệ",
     "Loading" : "Đang tải",
     "Groups" : "Nhóm",
     "Circles" : "Vòng kết nối",
@@ -134,6 +133,7 @@
     "Promote to moderator" : "Giới thiệu người kiểm duyệt",
     "Remove participant" : "Xóa người tham gia",
     "No results" : "Không có kết quả",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Người tham gia",
     "Chat" : "Trò chuyện",
     "Projects" : "Dự án",
@@ -179,7 +179,6 @@
     "Link copied!" : "Liên kết đã được sao chép!",
     "Conversation with {name}" : "Đàm thoại với {name}",
     "Error occurred while setting password" : "Đã xảy ra lỗi khi đặt mật khẩu",
-    "You" : "Bạn",
     "No messages yet, start the conversation!" : "Chưa có tin nhắn, bắt đầu cuộc trò chuyện!",
     "New message …" : "Thông điệp mới...",
     "Send" : "Gửi",
@@ -198,8 +197,10 @@
     "Screensharing is not supported by your browser." : "Chia sẽ màn hình không được hỗ trợ bởi trình duyệt của bạn.",
     "Add participant …" : "Thêm người tham gia …",
     "Favorited" : "Được ưa thích",
+    "Your screen" : "Màn hình của bạn",
     "{participantName}'s screen" : "Màn hình của {participantName}",
     "Guest's screen" : "Màn hình Khách",
-    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị."
+    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị.",
+    "Contacts" : "Liên hệ"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

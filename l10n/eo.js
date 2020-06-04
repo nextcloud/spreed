@@ -18,10 +18,10 @@ OC.L10N.register(
     "Name" : "Nomo",
     "Saved" : "Konservita",
     "Copy link" : "Kopii ligilon",
+    "You" : "Vi",
     "Favorite" : "Pliŝatata",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
-    "Contacts" : "Kontaktoj",
     "Loading" : "Ŝargado",
     "Groups" : "Grupoj",
     "Circles" : "Rondoj",
@@ -34,6 +34,7 @@ OC.L10N.register(
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",
     "No results" : "Neniu rezulto",
+    "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
     "Settings" : "Agordoj",
     "Edit" : "Modifi",
@@ -58,10 +59,10 @@ OC.L10N.register(
     "Change password" : "Ŝanĝi la pasvorton",
     "Set password" : "Uzi pasvorton",
     "Rename" : "Alinomi",
-    "You" : "Vi",
     "Send" : "Sendi",
     "Share" : "Kunhavigi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Favorited" : "Pliŝatitaj"
+    "Favorited" : "Pliŝatitaj",
+    "Contacts" : "Kontaktoj"
 },
 "nplurals=2; plural=(n != 1);");

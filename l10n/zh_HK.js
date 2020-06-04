@@ -11,7 +11,6 @@ OC.L10N.register(
     "Copy link" : "複製連結",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "聯絡人",
     "Loading" : "Loading",
     "Groups" : "群組",
     "Error" : "錯誤",
@@ -21,6 +20,7 @@ OC.L10N.register(
     "Reply" : "回覆",
     "Today" : "今日",
     "Yesterday" : "明日",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "設定",
     "Edit" : "編輯",
     "Share link" : "分享連結",
@@ -38,6 +38,7 @@ OC.L10N.register(
     "Rename" : "重新命名",
     "Send" : "發送",
     "Share" : "分享",
-    "Error while sharing" : "分享時發生錯誤"
+    "Error while sharing" : "分享時發生錯誤",
+    "Contacts" : "聯絡人"
 },
 "nplurals=1; plural=0;");

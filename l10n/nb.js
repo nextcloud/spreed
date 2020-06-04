@@ -63,7 +63,7 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Utvidelsen for skjermdeling kreves for å dele skjermen din.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Bruk en annen nettleser som Firefox eller Chrome for å dele skjermen din.",
     "An error occurred while starting screensharing." : "En feil inntraff under oppstart av skjermdeling.",
-    "Your screen" : "Din skjerm",
+    "You" : "Du",
     "Show screen" : "Vis skjerm",
     "Favorite" : "Merk som favoritt",
     "Leave conversation" : "Forlat samtale",
@@ -71,7 +71,6 @@ OC.L10N.register(
     "Remove from favorites" : "Fjern fra favoritter",
     "Add to favorites" : "Legg til i favoritter",
     "Conversations" : "Samtaler",
-    "Contacts" : "Kontakter",
     "Loading" : "Laster",
     "Groups" : "Grupper",
     "Circles" : "Sirkler",
@@ -91,6 +90,7 @@ OC.L10N.register(
     "Promote to moderator" : "Gi moderatorstatus",
     "Remove participant" : "Fjern deltaker",
     "No results" : "Ingen resultater",
+    "Add users or groups" : "Legg til bruker eller gruppe",
     "Participants" : "Deltakere",
     "Chat" : "Sludre",
     "Projects" : "Prosjekter",
@@ -136,7 +136,6 @@ OC.L10N.register(
     "Link copied!" : "Lenke kopiert!",
     "Conversation with {name}" : "Samtale med {name}",
     "Error occurred while setting password" : "Feil oppstod ved setting av passord",
-    "You" : "Du",
     "No messages yet, start the conversation!" : "Ingen meldinger enda, start samtalen!",
     "New message …" : "Ny melding …",
     "Send" : "Send",
@@ -154,7 +153,9 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Skjermdeling støttes ikke av din nettleser.",
     "Add participant …" : "Legg til deltager…",
     "Favorited" : "Favorisert",
+    "Your screen" : "Din skjerm",
     "{participantName}'s screen" : "{participantName}'s skjerm",
-    "Guest's screen" : "Gjestens skjerm"
+    "Guest's screen" : "Gjestens skjerm",
+    "Contacts" : "Kontakter"
 },
 "nplurals=2; plural=(n != 1);");

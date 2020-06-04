@@ -60,7 +60,7 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
-    "Your screen" : "Tu pantalla",
+    "You" : "Tú",
     "Show screen" : "Mostrar pantalla",
     "Favorite" : "Hacer favorito",
     "Leave conversation" : "Dejar la conversación",
@@ -68,7 +68,6 @@ OC.L10N.register(
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a tus favoritos",
     "Conversations" : "Conversaciones",
-    "Contacts" : "Contactos",
     "Loading" : "Cargando",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
@@ -86,6 +85,7 @@ OC.L10N.register(
     "Promote to moderator" : "Promover a moderador",
     "Remove participant" : "Eliminar participante",
     "No results" : "No hay resultados",
+    "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
     "Settings" : "Configuraciones ",
@@ -129,7 +129,6 @@ OC.L10N.register(
     "Link copied!" : "¡Liga copiada!",
     "Conversation with {name}" : "Conversación con {name}",
     "Error occurred while setting password" : "Se presentó un error al establecer al contraseña",
-    "You" : "Tú",
     "No messages yet, start the conversation!" : "Aún no hay mensajes. ¡!Inicia la conversación!",
     "New message …" : "Mensaje nuevo ...",
     "Send" : "Enviar",
@@ -147,7 +146,9 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Compartir pantalla no está soportado por tu navegador. ",
     "Add participant …" : "Agregar participante ...",
     "Favorited" : "Marcado como favorito",
+    "Your screen" : "Tu pantalla",
     "{participantName}'s screen" : "Pantalla de {participantName}",
-    "Guest's screen" : "Pantalla del invitado"
+    "Guest's screen" : "Pantalla del invitado",
+    "Contacts" : "Contactos"
 },
 "nplurals=2; plural=(n != 1);");

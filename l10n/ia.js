@@ -12,10 +12,10 @@ OC.L10N.register(
     "UDP only" : "solo UDP",
     "TCP only" : "solo TCP",
     "Copy link" : "Copiar ligamine",
+    "You" : "Tu",
     "Favorite" : "Favorite",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
-    "Contacts" : "Contactos",
     "Loading" : "Loading",
     "Groups" : "Gruppos",
     "Error" : "Error",
@@ -26,6 +26,7 @@ OC.L10N.register(
     "Today" : "Hodie",
     "Yesterday" : "Heri",
     "guest" : "hospite",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Configurationes",
     "Edit" : "Modificar",
     "Dismiss" : "Dimitter",
@@ -50,11 +51,11 @@ OC.L10N.register(
     "Cancel" : "Cancellar",
     "Change password" : "Cambiar contrasigno",
     "Rename" : "Renominar",
-    "You" : "Tu",
     "Send" : "Inviar",
     "Share" : "Compartir",
     "Error while sharing" : "Error al compartir",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
-    "Favorited" : "Favorite"
+    "Favorited" : "Favorite",
+    "Contacts" : "Contactos"
 },
 "nplurals=2; plural=(n != 1);");
