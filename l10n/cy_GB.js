@@ -21,6 +21,7 @@ OC.L10N.register(
     "Today" : "Heddiw",
     "Yesterday" : "Ddoe",
     "No results" : "Dim canlyniadau",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Gosodiadau",
     "Edit" : "Golygu",
     "Share link" : "Rhannu dolen",

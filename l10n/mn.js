@@ -26,6 +26,7 @@ OC.L10N.register(
     "Today" : "өнөөдөр",
     "Yesterday" : "өчигдөр",
     "No results" : "Үр дүн байхгүй",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Тохиргоо",
     "Edit" : "засварлах",
     "Dismiss" : "Арилгах",

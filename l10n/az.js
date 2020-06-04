@@ -21,6 +21,7 @@ OC.L10N.register(
     "Today" : "Bu gün",
     "Yesterday" : "Dünən",
     "guest" : "Qonaq",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Quraşdırmalar",
     "Edit" : "Dəyişiklik et",
     "Share link" : "Linki yayımla",

@@ -23,6 +23,7 @@ OC.L10N.register(
     "Today" : "আজ",
     "Yesterday" : "গতকাল",
     "guest" : "অতিথি",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "সেটিংস",
     "Edit" : "সম্পাদনা",
     "Share link" : "লিংক ভাগাভাগি করেন",

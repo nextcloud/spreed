@@ -50,6 +50,7 @@ OC.L10N.register(
     "Yesterday" : "Ayeri",
     "guest" : "invitáu",
     "No results" : "Ensin resultaos",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Settings",
     "Edit" : "Editar",
     "Dismiss" : "Escartar",

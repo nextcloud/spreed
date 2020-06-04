@@ -21,6 +21,7 @@ OC.L10N.register(
     "Reply" : "回覆",
     "Today" : "今日",
     "Yesterday" : "明日",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "設定",
     "Edit" : "編輯",
     "Share link" : "分享連結",

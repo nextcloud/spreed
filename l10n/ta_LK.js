@@ -16,6 +16,7 @@ OC.L10N.register(
     "Back" : "பின்னுக்கு",
     "Close" : "மூடுக",
     "Today" : "இன்று",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "அமைப்புகள்",
     "Edit" : "தொகுக்க",
     "Share link" : "Share link",

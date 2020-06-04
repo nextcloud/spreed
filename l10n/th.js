@@ -24,6 +24,7 @@ OC.L10N.register(
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวานนี้",
     "guest" : "ผู้เยี่ยมชม",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "ตั้งค่า",
     "Edit" : "แก้ไข",
     "Dismiss" : "ยกเลิก",

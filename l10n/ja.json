@@ -250,7 +250,6 @@
     "Back" : "戻る",
     "Close" : "閉じる",
     "Conversation name" : "会話の名前",
-    "Search conversations or contacts" : "会話や連絡先を検索",
     "Reply" : "返信",
     "Today" : "本日",
     "Yesterday" : "昨日",
@@ -359,6 +358,7 @@
     "Limit app usage to groups." : "アプリの使用をグループに制限する",
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "コマンドはNextcloud Talkの新しいベータ版の機能です。スクリプトをNextcloudサーバー上で実行することができます。コマンドラインインターフェイスを使用して定義できます。計算スクリプトの例は、<a {attributes}>ドキュメント ↗</a>に記載されています。",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURNサーバーは、ファイアウォール内の参加者からのトラフィックをプロキシするために使用されます。",
-    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。"
+    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。",
+    "Search conversations or contacts" : "会話や連絡先を検索"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

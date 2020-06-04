@@ -27,6 +27,7 @@ OC.L10N.register(
     "Today" : "Hodie",
     "Yesterday" : "Heri",
     "guest" : "hospite",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "Configurationes",
     "Edit" : "Modificar",
     "Dismiss" : "Dimitter",

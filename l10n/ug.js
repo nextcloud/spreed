@@ -15,6 +15,7 @@ OC.L10N.register(
     "Close" : "ياپ",
     "Reply" : "جاۋاب قايتۇر",
     "Today" : "بۈگۈن",
+    "Add users or groups" : "Add users or groups",
     "Settings" : "تەڭشەكلەر",
     "Edit" : "تەھرىر",
     "Share link" : "Share link",

@@ -76,6 +76,7 @@ OC.L10N.register(
     "Promote to moderator" : "დაწინაურება მოდერატორობაზე",
     "Remove participant" : "მონაწილის ამოშლა",
     "No results" : "შედეგები არაა",
+    "Add users or groups" : "დაამატეთ მომხმარებლები ან ჯგუფები",
     "Participants" : "მონაწილეები",
     "Chat" : "ჩეთი",
     "Settings" : "პარამეტრები",

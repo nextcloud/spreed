@@ -28,6 +28,7 @@ OC.L10N.register(
     "Promote to moderator" : "Unapredi u moderatora",
     "Remove participant" : "Ukloni učesnika",
     "No results" : "Nema rezultata",
+    "Add users or groups" : "Add users or groups",
     "Participants" : "Učesnici",
     "Settings" : "Поставке",
     "Edit" : "Uredi",
