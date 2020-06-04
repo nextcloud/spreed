@@ -26,14 +26,44 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
-use OCA\Circles\Api\v1\Circles;
-use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\IUserManager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
 
 trait TRoomCommand {
+	/** @var Manager */
+	protected $manager;
+
+	/** @var IUserManager */
+	protected $userManager;
+
+	/** @var IGroupManager */
+	protected $groupManager;
+
+	/**
+	 * TRoomCommand constructor.
+	 *
+	 * @param Manager       $manager
+	 * @param IUserManager  $userManager
+	 * @param IGroupManager $groupManager
+	 */
+	public function __construct(Manager $manager, IUserManager $userManager, IGroupManager $groupManager) {
+		parent::__construct();
+
+		$this->manager = $manager;
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+	}
+
 	/**
 	 * @param Room   $room
 	 * @param string $name
@@ -136,6 +166,8 @@ trait TRoomCommand {
 			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 		}
 
+		$this->unsetRoomOwner($room);
+
 		$room->setParticipantType($participant, Participant::OWNER);
 	}
 
@@ -163,11 +195,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		$groupManager = \OC::$server->getGroupManager();
-
 		$users = [];
 		foreach ($groupIds as $groupId) {
-			$group = $groupManager->get($groupId);
+			$group = $this->groupManager->get($groupId);
 			if ($group === null) {
 				throw new InvalidArgumentException(sprintf("Group '%s' not found.", $groupId));
 			}
@@ -184,43 +214,6 @@ trait TRoomCommand {
 
 	/**
 	 * @param Room     $room
-	 * @param string[] $circleIds
-	 *
-	 * @throws InvalidArgumentException
-	 */
-	protected function addRoomParticipantsByCircle(Room $room, array $circleIds): void {
-		if (!$circleIds) {
-			return;
-		}
-
-		if (!\OC::$server->getAppManager()->isEnabledForUser('circles')) {
-			throw new InvalidArgumentException("App 'circles' is not enabled.");
-		}
-
-		$users = [];
-		foreach ($circleIds as $circleId) {
-			try {
-				$circle = Circles::detailsCircle($circleId);
-			} catch (\Exception $e) {
-				throw new InvalidArgumentException(sprintf("Circle '%s' not found.", $circleId));
-			}
-
-			$circleUsers = array_filter($circle->getMembers(), function (Member $member) {
-				if (($member->getType() !== Member::TYPE_USER) || ($member->getUserId() === '')) {
-					return false;
-				}
-
-				return in_array($member->getStatus(), [Member::STATUS_INVITED, Member::STATUS_MEMBER], true);
-			});
-
-			$users = array_merge($users, $circleUsers);
-		}
-
-		$this->addRoomParticipants($room, $users);
-	}
-
-	/**
-	 * @param Room     $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
@@ -230,11 +223,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		$userManager = \OC::$server->getUserManager();
-
 		$participants = [];
 		foreach ($userIds as $userId) {
-			$user = $userManager->get($userId);
+			$user = $this->userManager->get($userId);
 			if ($user === null) {
 				throw new InvalidArgumentException(sprintf("User '%s' not found.", $userId));
 			}
@@ -268,8 +259,6 @@ trait TRoomCommand {
 	 * @throws InvalidArgumentException
 	 */
 	protected function removeRoomParticipants(Room $room, array $userIds): void {
-		$userManager = \OC::$server->getUserManager();
-
 		$users = [];
 		foreach ($userIds as $userId) {
 			try {
@@ -278,7 +267,7 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			$users[] = $userManager->get($userId);
+			$users[] = $this->userManager->get($userId);
 		}
 
 		foreach ($users as $user) {
@@ -334,5 +323,54 @@ trait TRoomCommand {
 		foreach ($participants as $participant) {
 			$room->setParticipantType($participant, Participant::USER);
 		}
+	}
+
+	protected function completeTokenValues(CompletionContext $context): array {
+		return array_map(function (Room $room) {
+			return $room->getToken();
+		}, $this->manager->searchRoomsByToken($context->getCurrentWord()));
+	}
+
+	protected function completeUserValues(CompletionContext $context): array {
+		return array_map(function (IUser $user) {
+			return $user->getUID();
+		}, $this->userManager->search($context->getCurrentWord()));
+	}
+
+	protected function completeGroupValues(CompletionContext $context): array {
+		return array_map(function (IGroup $group) {
+			return $group->getGID();
+		}, $this->groupManager->search($context->getCurrentWord()));
+	}
+
+	protected function completeParticipantValues(CompletionContext $context): array {
+		$definition = new InputDefinition();
+
+		if ($this->getApplication() !== null) {
+			$definition->addArguments($this->getApplication()->getDefinition()->getArguments());
+			$definition->addOptions($this->getApplication()->getDefinition()->getOptions());
+		}
+
+		$definition->addArguments($this->getDefinition()->getArguments());
+		$definition->addOptions($this->getDefinition()->getOptions());
+
+		$input = new ArgvInput($context->getWords(), $definition);
+		if ($input->hasArgument('token')) {
+			$token = $input->getArgument('token');
+		} elseif ($input->hasOption('token')) {
+			$token = $input->getOption('token');
+		} else {
+			return [];
+		}
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			return [];
+		}
+
+		return array_map(function (Participant $participant) {
+			return $participant->getUser();
+		}, $room->searchParticipants($context->getCurrentWord()));
 	}
 }

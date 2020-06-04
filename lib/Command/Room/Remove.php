@@ -25,31 +25,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use Exception;
+use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCP\IUserManager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Remove extends Base {
 	use TRoomCommand;
-
-	/** @var IUserManager */
-	public $userManager;
-
-	/** @var Manager */
-	public $manager;
-
-	public function __construct(IUserManager $userManager, Manager $manager) {
-		parent::__construct();
-
-		$this->userManager = $userManager;
-		$this->manager = $manager;
-	}
 
 	protected function configure(): void {
 		$this
@@ -60,15 +46,15 @@ class Remove extends Base {
 				InputArgument::REQUIRED,
 				'Token of the room to remove users from'
 			)->addArgument(
-				'user',
+				'participant',
 				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-				'Removes the given users from the room'
+				'Removes the given participants from the room'
 			);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$token = $input->getArgument('token');
-		$users = $input->getArgument('user');
+		$users = $input->getArgument('participant');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -84,12 +70,24 @@ class Remove extends Base {
 
 		try {
 			$this->removeRoomParticipants($room, $users);
-		} catch (Exception $e) {
+		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
 
-		$output->writeln('<info>Users successfully remove from room.</info>');
+		$output->writeln('<info>Users successfully removed from room.</info>');
 		return 0;
+	}
+
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		switch ($argumentName) {
+			case 'token':
+				return $this->completeTokenValues($context);
+
+			case 'participant':
+				return $this->completeParticipantValues($context);
+		}
+
+		return parent::completeArgumentValues($argumentName, $context);
 	}
 }
