@@ -327,6 +327,7 @@ OC.L10N.register(
     "Searching …" : "Ricerca in corso...",
     "No results" : "Nessun risultato",
     "Search for more users" : "Cerca altri utenti",
+    "Add users, groups or circles" : "Aggiungi utenti, gruppi o cerchie",
     "Add users or groups" : "Aggiungi utenti o gruppi",
     "Add users or circles" : "Aggiungi utenti o cerchie",
     "Add groups or circles" : "Aggiungi gruppi o cerchie",
@@ -474,7 +475,6 @@ OC.L10N.register(
     "Add contacts, groups or circles" : "Aggiungi contatti, gruppi e cerchie",
     "Add contacts or groups" : "Aggiungi contatti o gruppi",
     "Add contacts or circles" : "Aggiungi contatti o cerchie",
-    "Add usres, groups or circles" : "Aggiungi utenti, gruppi o cerchie",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk è stato aggiornato, devi ricaricare la pagina prima di poter iniziare o partecipare a una chiamata"
 },
 "nplurals=2; plural=(n != 1);");

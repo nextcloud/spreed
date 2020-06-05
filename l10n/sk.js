@@ -474,7 +474,6 @@ OC.L10N.register(
     "Add contacts, groups or circles" : "Pridať kontakty, skupiny alebo okruhy",
     "Add contacts or groups" : "Pridať kontakty alebo skupiny",
     "Add contacts or circles" : "Pridať kontakty alebo okruhy",
-    "Add usres, groups or circles" : "Pridať používateľov, skupiny alebo okruhy",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
