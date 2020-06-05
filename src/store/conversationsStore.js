@@ -210,6 +210,17 @@ const actions = {
 
 		commit('addConversation', conversation)
 	},
+
+	async updateConversationLastActive({ commit, getters }, token) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		conversation.lastActivity = (new Date().getTime()) / 1000
+
+		commit('addConversation', conversation)
+	},
 }
 
 export default { state, mutations, getters, actions }

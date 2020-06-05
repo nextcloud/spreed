@@ -240,6 +240,7 @@ export default {
 			if (this.parsedText !== '') {
 				const temporaryMessage = this.createTemporaryMessage()
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+				this.$store.dispatch('updateConversationLastActive', temporaryMessage.token)
 				this.text = ''
 				this.parsedText = ''
 				// Scrolls the message list to the last added message
