@@ -786,7 +786,7 @@ class NotifierTest extends \Test\TestCase {
 				->with('roomToken')
 				->willReturn($room);
 		} elseif ($validRoom === false) {
-			$n->expects($this->exactly(2))
+			$n->expects($this->once())
 				->method('getObjectId')
 				->willReturn('roomToken');
 			$this->manager->expects($this->once())
