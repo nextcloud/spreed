@@ -191,7 +191,9 @@ export default {
 
 	watch: {
 		conversation() {
-			this.conversationName = this.conversation.displayName
+			if (!this.isRenamingConversation) {
+				this.conversationName = this.conversation.displayName
+			}
 		},
 	},
 
