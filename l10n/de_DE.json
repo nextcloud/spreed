@@ -325,6 +325,7 @@
     "Searching …" : "Suche …",
     "No results" : "Keine Ergebnisse",
     "Search for more users" : "Nach weiteren Benutzern suchen",
+    "Add users, groups or circles" : "Benutzer, Gruppen oder Kreise hinzufügen",
     "Add users or groups" : "Benutzer oder Gruppen hinzufügen",
     "Add users or circles" : "Benutzer oder Kreise hinzufügen",
     "Add groups or circles" : "Gruppen oder Kreise hinzufügen",
@@ -472,7 +473,6 @@
     "Add contacts, groups or circles" : "Kontakte, Gruppen oder Kreise hinzufügen",
     "Add contacts or groups" : "Kontakte zur Gruppe hinzufügen",
     "Add contacts or circles" : "Kontakte oder Kreise hinzufügen",
-    "Add usres, groups or circles" : "Benutzer, Gruppen oder Kreise hinzufügen",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk wurde aktualisiert, Sie müssen die Seite neu laden, bevor Sie einen Anruf starten oder einem Anruf beitreten können."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
