@@ -843,10 +843,15 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		$maxPingAge = $this->timeFactory->getTime() - 100;
 		$participants = $this->room->getParticipantsLegacy();
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
+			if ($participant['sessionId'] !== '0' && $participant['lastPing'] <= $maxPingAge) {
+				$this->room->leaveRoom($userId);
+			}
+
 			$user = $this->userManager->get((string) $userId);
 			if (!$user instanceof IUser) {
 				continue;
@@ -864,12 +869,21 @@ class RoomController extends AEnvironmentAwareController {
 		}
 		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
 
+		$cleanGuests = false;
 		foreach ($participants['guests'] as $participant) {
+			if ($participant['lastPing'] <= $maxPingAge) {
+				$cleanGuests = true;
+			}
+
 			$sessionHash = sha1($participant['sessionId']);
 			$results[] = array_merge($participant, [
 				'userId' => '',
 				'displayName' => $guestNames[$sessionHash] ?? '',
 			]);
+		}
+
+		if ($cleanGuests) {
+			$this->room->cleanGuestParticipants();
 		}
 
 		return new DataResponse($results);
