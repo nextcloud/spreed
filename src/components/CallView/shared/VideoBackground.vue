@@ -105,13 +105,7 @@ export default {
 	methods: {
 		// Calculate the background blur based on the hight of the background element
 		setBlur({ width, height }) {
-			// The amount of blur
-			const amount = this.$store.getters.videoBackgroundBlur
-			// Represents the surface of the element
-			const surfaceMultiplier = (width * height) / 1000
-			// Calculate the blur
-			this.blur = `filter: blur(${surfaceMultiplier * amount}px)`
-
+			this.blur = this.$store.getters.getBlurFilter(width, height)
 		},
 	},
 }

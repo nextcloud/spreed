@@ -33,8 +33,8 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
-	videoBackgroundBlur: (state) => {
-		return state.videoBackgroundBlur
+	getBlurFilter: (state) => (width, height) => {
+		return `filter: blur(${(width * height * state.videoBackgroundBlur) / 1000}px)`
 	},
 }
 
