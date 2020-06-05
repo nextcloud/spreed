@@ -474,7 +474,6 @@ OC.L10N.register(
     "Add contacts, groups or circles" : "Kişi, grup ya da çevre ekle",
     "Add contacts or groups" : "Kişi ya da grup ekle",
     "Add contacts or circles" : "Kişi ya da çevre ekle",
-    "Add usres, groups or circles" : "Kullanıcı, grup ya da çevre ekle",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz"
 },
 "nplurals=2; plural=(n > 1);");

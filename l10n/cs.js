@@ -327,6 +327,7 @@ OC.L10N.register(
     "Searching …" : "Hledání...",
     "No results" : "Žádné výsledky",
     "Search for more users" : "Hledat další uživatele",
+    "Add users, groups or circles" : "Přidat uživatele, skupiny nebo okruhy",
     "Add users or groups" : "Přidat uživatele nebo skupiny",
     "Add users or circles" : "Přidat uživatele nebo okruhy",
     "Add groups or circles" : "Přidat skupiny nebo okruhy",
@@ -474,7 +475,6 @@ OC.L10N.register(
     "Add contacts, groups or circles" : "Přidat kontakty, skupiny nebo okruhy",
     "Add contacts or groups" : "Přidat kontakty nebo skupiny",
     "Add contacts or circles" : "Přidat kontakty nebo okruhy",
-    "Add usres, groups or circles" : "Přidat uživatele, skupiny nebo okruhy",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
