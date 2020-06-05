@@ -191,7 +191,7 @@ export default {
 		},
 
 		participant() {
-			if (typeof this.token === 'undefined') {
+			if (this.$store.getters.getToken()) {
 				return {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				}
@@ -199,7 +199,7 @@ export default {
 
 			const participantIndex = this.$store.getters.getParticipantIndex(this.$store.getters.getToken(), this.$store.getters.getParticipantIdentifier())
 			if (participantIndex !== -1) {
-				return this.$store.getters.getParticipant(this.token, participantIndex)
+				return this.$store.getters.getParticipant(this.$store.getters.getToken(), participantIndex)
 			}
 
 			return {
