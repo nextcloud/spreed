@@ -24,7 +24,7 @@
 		<ul>
 			<Participant
 				v-for="item in items"
-				:key="item.id"
+				:key="generateKey(item)"
 				:participant="item"
 				:is-selectable="participantsSelectable"
 				@clickParticipant="handleClickParticipant" />
@@ -83,6 +83,16 @@ export default {
 	methods: {
 		async handleClickParticipant(participant) {
 			this.$emit('click', participant)
+		},
+
+		generateKey(participant) {
+			let key = 'i#' + participant.id
+			if (participant.userId) {
+				key = 'u#' + participant.userId
+			} else if (participant.sessionId) {
+				key = 's#' + participant.sessionId
+			}
+			return key
 		},
 	},
 }
