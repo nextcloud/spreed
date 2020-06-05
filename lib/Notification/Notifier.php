@@ -75,6 +75,8 @@ class Notifier implements INotifier {
 
 	/** @var Room[] */
 	protected $rooms = [];
+	/** @var Participant[][] */
+	protected $participants = [];
 
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
@@ -153,6 +155,33 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * @param Room $room
+	 * @param string $userId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException
+	 */
+	protected function getParticipant(Room $room, string $userId): Participant {
+		$roomId = $room->getId();
+		if (array_key_exists($roomId, $this->participants) && array_key_exists($userId, $this->participants[$roomId])) {
+			if ($this->participants[$roomId][$userId] === null) {
+				throw new ParticipantNotFoundException('Participant does not exist');
+			}
+
+			return $this->participants[$roomId][$userId];
+		}
+
+		try {
+			$participant = $room->getParticipant($userId);
+			$this->participants[$roomId][$userId] = $participant;
+			return $participant;
+		} catch (ParticipantNotFoundException $e) {
+			// Participant does not exist
+			$this->participants[$roomId][$userId] = null;
+			throw $e;
+		}
+	}
+
+	/**
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
@@ -186,7 +215,7 @@ class Notifier implements INotifier {
 			// n queries.
 		} else {
 			try {
-				$participant = $room->getParticipant($userId);
+				$participant = $this->getParticipant($room, $userId);
 			} catch (ParticipantNotFoundException $e) {
 				// Room does not exist
 				throw new AlreadyProcessedException();
