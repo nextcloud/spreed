@@ -364,12 +364,7 @@ export default {
 
 		// Blur radius for each background in the grid
 		videoBackgroundBlur() {
-			// The amount of blur
-			const amount = this.$store.getters.videoBackgroundBlur
-			// Represents the surface of the element
-			const surfaceMultiplier = (this.videoWidth * this.videoHeight) / 1000
-			// Calculate the blur
-			return `filter: blur(${surfaceMultiplier * amount}px)`
+			return this.$store.getters.getBlurFilter(this.videoWidth, this.videoHeight)
 		},
 	},
 
