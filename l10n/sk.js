@@ -327,6 +327,7 @@ OC.L10N.register(
     "Searching …" : "Hľadá sa …",
     "No results" : "Žiadne výsledky",
     "Search for more users" : "Vyhľadajte ďalších používateľov",
+    "Add users, groups or circles" : "Pridať používateľov, skupiny alebo okruhy",
     "Add users or groups" : "Pridať používateľov alebo skupiny",
     "Add users or circles" : "Pridať používateľov alebo okruhy",
     "Add groups or circles" : "Pridať skupiny alebo okruhy",
