@@ -105,7 +105,7 @@ export default {
 				return -1
 			}
 
-			return participant2.displayName - participant1.displayName
+			return participant1.displayName.localeCompare(participant2.displayName)
 		},
 	},
 }
