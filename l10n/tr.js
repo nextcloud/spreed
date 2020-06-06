@@ -327,6 +327,7 @@ OC.L10N.register(
     "Searching …" : "Aranıyor …",
     "No results" : "Herhangi bir sonuç bulunamadı",
     "Search for more users" : "Diğer kullanıcıları arama",
+    "Add users, groups or circles" : "Kullanıcı, grup ya da çevre ekle",
     "Add users or groups" : "Kullanıcı ya da grup ekle",
     "Add users or circles" : "Kullanıcı ya da çevre ekle",
     "Add groups or circles" : "Grup ya da çevre ekle",

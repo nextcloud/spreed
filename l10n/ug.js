@@ -28,4 +28,4 @@ OC.L10N.register(
     "Share" : "ھەمبەھىر",
     "Contacts" : "ئالاقەداشلار"
 },
-"nplurals=1; plural=0;");
+"nplurals=2; plural=(n != 1);");

@@ -25,5 +25,5 @@
     "Send" : "يوللا",
     "Share" : "ھەمبەھىر",
     "Contacts" : "ئالاقەداشلار"
-},"pluralForm" :"nplurals=1; plural=0;"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
