@@ -30,6 +30,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
@@ -246,7 +247,14 @@ class ChatController extends AEnvironmentAwareController {
 		$timeout = min(30, $timeout);
 
 		if ($this->participant->getSessionId() !== '0') {
-			$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
+			// The mobile apps dont do internal signaling unless in a call
+			$isMobileApp = $this->request->isUserAgent([
+				IRequest::USER_AGENT_TALK_ANDROID,
+				IRequest::USER_AGENT_TALK_IOS,
+			]);
+			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
+			}
 		}
 
 		/**
