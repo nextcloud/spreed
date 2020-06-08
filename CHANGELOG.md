@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.1 – 2020-06-08
+### Added
+- Store the guest name in browser storage again and read it from there
+  [#3709](https://github.com/nextcloud/spreed/pull/3709)
+- Automatically switch to promoted view upon screenshare
+  [#3711](https://github.com/nextcloud/spreed/pull/3711)
+- Added autocomplete support for talk:room:* commands
+  [#3728](https://github.com/nextcloud/spreed/pull/3728)
+
+### Changed
+- Reload page on changing conversation and disable start/join call when Talk UI needs reloading
+  [#3699](https://github.com/nextcloud/spreed/pull/3699)
+- Show sidebar when Viewer is opened
+  [#3679](https://github.com/nextcloud/spreed/pull/3679)
+
+### Fixed
+- Properly sort participants by display name again
+  [#3763](https://github.com/nextcloud/spreed/pull/3763)
+- Make joining the call synchronous to avoid toggling in and out of the callview
+  [#3682](https://github.com/nextcloud/spreed/pull/3682)
+- Do not fetch all conversations on some signaling events
+  [#3673](https://github.com/nextcloud/spreed/pull/3673)
+- Reduce database load when sending out push notifications
+  [#3782](https://github.com/nextcloud/spreed/pull/3782)
+- Remove automatic ping when getting chat messages via the web UI
+  [#3784](https://github.com/nextcloud/spreed/pull/3784)
+- Always try to connect without camera in case it failed
+  [#3780](https://github.com/nextcloud/spreed/pull/3780)
+- Fix talk:room:* commands showing "Guest" as actor in the chat
+  [#3754](https://github.com/nextcloud/spreed/pull/3754)
+- Do not break LessThan3 in last message of conversations list
+  [#3705](https://github.com/nextcloud/spreed/pull/3705)
+
 ## 9.0.0 – 2020-05-26
 ### Added
 - Added a grid view for calls and made the promoted view more usable in huge calls as well as one-to-one calls
