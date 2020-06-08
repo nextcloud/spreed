@@ -209,6 +209,125 @@ class NotifierTest extends \Test\TestCase {
 		$this->notifier->prepare($n, 'de');
 	}
 
+	/**
+	 * @dataProvider dataPrepareOne2One
+	 * @param string $uid
+	 * @param string $displayName
+	 * @param string $parsedSubject
+	 */
+	public function testPreparingMultipleTimesOnlyGetsTheRoomOnce($uid, $displayName, $parsedSubject) {
+		$numNotifications = 4;
+
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->will($this->returnCallback(function ($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			}));
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->any())
+			->method('getType')
+			->willReturn(Room::ONE_TO_ONE_CALL);
+		$room->expects($this->any())
+			->method('getId')
+			->willReturn(1234);
+		$room->expects($this->any())
+			->method('getDisplayName')
+			->with('recipient')
+			->willReturn($displayName);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with('roomToken')
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with('recipient')
+			->willReturn($participant);
+
+		$this->lFactory->expects($this->exactly($numNotifications))
+			->method('get')
+			->with('spreed', 'de')
+			->willReturn($l);
+
+		$recipient = $this->createMock(IUser::class);
+		$u = $this->createMock(IUser::class);
+		$u->expects($this->exactly($numNotifications * 2))
+			->method('getDisplayName')
+			->willReturn($displayName);
+		$this->userManager->expects($this->any())
+			->method('get')
+			->willReturnMap([
+				['recipient', $recipient],
+				[$uid, $u],
+			]);
+
+
+		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
+		$this->notifier->prepare($n, 'de');
+		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
+		$this->notifier->prepare($n, 'de');
+		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
+		$this->notifier->prepare($n, 'de');
+		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
+		$this->notifier->prepare($n, 'de');
+	}
+
+	public function getNotificationMock(string $parsedSubject, string $uid, string $displayName) {
+		/** @var INotification|MockObject $n */
+		$n = $this->createMock(INotification::class);
+		$n->expects($this->once())
+			->method('setIcon')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setLink')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setParsedSubject')
+			->with($parsedSubject)
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setRichSubject')
+			->with('{user} invited you to a private conversation',[
+				'user' => [
+					'type' => 'user',
+					'id' => $uid,
+					'name' => $displayName,
+				],
+				'call' => [
+					'type' => 'call',
+					'id' => 1234,
+					'name' => $displayName,
+					'call-type' => 'one2one'
+				],
+			])
+			->willReturnSelf();
+
+
+		$n->expects($this->exactly(2))
+			->method('getUser')
+			->willReturn('recipient');
+		$n->expects($this->once())
+			->method('getApp')
+			->willReturn('spreed');
+		$n->expects($this->once())
+			->method('getSubject')
+			->willReturn('invitation');
+		$n->expects($this->once())
+			->method('getSubjectParameters')
+			->willReturn([$uid]);
+		$n->expects($this->once())
+			->method('getObjectType')
+			->willReturn('room');
+		$n->expects($this->once())
+			->method('getObjectId')
+			->willReturn('roomToken');
+
+		return $n;
+	}
+
 	public function dataPrepareGroup() {
 		return [
 			[Room::GROUP_CALL, 'admin', 'Admin', 'Group', 'Admin invited you to a group conversation: Group'],
@@ -278,7 +397,7 @@ class NotifierTest extends \Test\TestCase {
 			->with($parsedSubject)
 			->willReturnSelf();
 
-		$room->expects($this->once())
+		$room->expects($this->exactly(2))
 			->method('getId')
 			->willReturn($roomId);
 
@@ -786,7 +905,7 @@ class NotifierTest extends \Test\TestCase {
 				->with('roomToken')
 				->willReturn($room);
 		} elseif ($validRoom === false) {
-			$n->expects($this->exactly(2))
+			$n->expects($this->once())
 				->method('getObjectId')
 				->willReturn('roomToken');
 			$this->manager->expects($this->once())

@@ -73,6 +73,11 @@ class Notifier implements INotifier {
 	/** @var Definitions */
 	protected $definitions;
 
+	/** @var Room[] */
+	protected $rooms = [];
+	/** @var Participant[][] */
+	protected $participants = [];
+
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
 								Config $config,
@@ -118,6 +123,65 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * @param string $objectId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	protected function getRoom(string $objectId): Room {
+		if (array_key_exists($objectId, $this->rooms)) {
+			if ($this->rooms[$objectId] === null) {
+				throw new RoomNotFoundException('Room does not exist');
+			}
+
+			return $this->rooms[$objectId];
+		}
+
+		try {
+			$room = $this->manager->getRoomByToken($objectId);
+			$this->rooms[$objectId] = $room;
+			return $room;
+		} catch (RoomNotFoundException $e) {
+			try {
+				// Before 3.2.3 the id was passed in notifications
+				$room = $this->manager->getRoomById((int) $objectId);
+				$this->rooms[$objectId] = $room;
+				return $room;
+			} catch (RoomNotFoundException $e) {
+				// Room does not exist
+				$this->rooms[$objectId] = null;
+				throw $e;
+			}
+		}
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string $userId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException
+	 */
+	protected function getParticipant(Room $room, string $userId): Participant {
+		$roomId = $room->getId();
+		if (array_key_exists($roomId, $this->participants) && array_key_exists($userId, $this->participants[$roomId])) {
+			if ($this->participants[$roomId][$userId] === null) {
+				throw new ParticipantNotFoundException('Participant does not exist');
+			}
+
+			return $this->participants[$roomId][$userId];
+		}
+
+		try {
+			$participant = $room->getParticipant($userId);
+			$this->participants[$roomId][$userId] = $participant;
+			return $participant;
+		} catch (ParticipantNotFoundException $e) {
+			// Participant does not exist
+			$this->participants[$roomId][$userId] = null;
+			throw $e;
+		}
+	}
+
+	/**
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
@@ -138,22 +202,24 @@ class Notifier implements INotifier {
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
-			$room = $this->manager->getRoomByToken($notification->getObjectId());
+			$room = $this->getRoom($notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
+			// Room does not exist
+			throw new AlreadyProcessedException();
+		}
+
+		if ($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call') {
+			// Skip the participant check when we generate push notifications
+			// we just looped over the participants to create the notification,
+			// they can not be removed between these 2 steps, but we can save
+			// n queries.
+		} else {
 			try {
-				// Before 3.2.3 the id was passed in notifications
-				$room = $this->manager->getRoomById((int) $notification->getObjectId());
-			} catch (RoomNotFoundException $e) {
+				$participant = $this->getParticipant($room, $userId);
+			} catch (ParticipantNotFoundException $e) {
 				// Room does not exist
 				throw new AlreadyProcessedException();
 			}
-		}
-
-		try {
-			$participant = $room->getParticipant($userId);
-		} catch (ParticipantNotFoundException $e) {
-			// Room does not exist
-			throw new AlreadyProcessedException();
 		}
 
 		$notification
