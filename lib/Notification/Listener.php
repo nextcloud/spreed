@@ -29,7 +29,6 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Notification\IApp;
 use OCP\Notification\IManager;
