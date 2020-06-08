@@ -27,7 +27,9 @@ use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Notification\IApp;
 use OCP\Notification\IManager;
 use OCP\ILogger;
 use OCP\IUser;
@@ -37,6 +39,8 @@ class Listener {
 
 	/** @var IManager */
 	protected $notificationManager;
+	/** @var IEventDispatcher */
+	protected $dispatcher;
 	/** @var IUserSession */
 	protected $userSession;
 	/** @var ITimeFactory */
@@ -48,10 +52,12 @@ class Listener {
 	protected $shouldSendCallNotification = false;
 
 	public function __construct(IManager $notificationManager,
+								IEventDispatcher $dispatcher,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory,
 								ILogger $logger) {
 		$this->notificationManager = $notificationManager;
+		$this->dispatcher = $dispatcher;
 		$this->userSession = $userSession;
 		$this->timeFactory = $timeFactory;
 		$this->logger = $logger;
@@ -199,6 +205,7 @@ class Listener {
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
+		$this->dispatcher->dispatch(IApp::class . '::defer', new Event());
 		$notification = $this->notificationManager->createNotification();
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
@@ -216,6 +223,7 @@ class Listener {
 				->setDateTime($dateTime);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->dispatcher->dispatch(IApp::class . '::flush', new Event());
 			return;
 		}
 
@@ -232,6 +240,7 @@ class Listener {
 				$this->logger->logException($e, ['app' => 'spreed']);
 			}
 		}
+		$this->dispatcher->dispatch(IApp::class . '::flush', new Event());
 	}
 
 	/**
