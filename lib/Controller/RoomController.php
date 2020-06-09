@@ -848,17 +848,18 @@ class RoomController extends AEnvironmentAwareController {
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
+			$userId = (string) $userId;
 			if ($participant['sessionId'] !== '0' && $participant['lastPing'] <= $maxPingAge) {
 				$this->room->leaveRoom($userId);
 			}
 
-			$user = $this->userManager->get((string) $userId);
+			$user = $this->userManager->get($userId);
 			if (!$user instanceof IUser) {
 				continue;
 			}
 
 			$results[] = array_merge($participant, [
-				'userId' => (string) $userId,
+				'userId' => $userId,
 				'displayName' => (string) $user->getDisplayName(),
 			]);
 		}
