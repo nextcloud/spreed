@@ -18,6 +18,17 @@ Tell us what should happen
 ### Actual behaviour
 Tell us what happens instead
 
+## Talk app
+
+**Talk app version:** (see apps admin page: `/index.php/settings/apps`)
+
+**Custom Signaling server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+
+**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+
+**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+
+
 ## Browser
 
 **Microphone available:** yes/no
@@ -41,15 +52,6 @@ c) ...
 ```
 
 </details>
-
-## Talk app
-
-**Talk app version:** (see apps admin page: `/index.php/settings/apps`)
-
-**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
-
-**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
-
 
 ## Server configuration
 <!--
