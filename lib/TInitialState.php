@@ -83,10 +83,6 @@ trait TInitialState {
 		);
 
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
-		$this->initialStateService->provideInitialState(
-			'talk', 'attachment_folder',
-			$attachmentFolder
-		);
 
 		if ($attachmentFolder) {
 			try {
@@ -96,9 +92,16 @@ trait TInitialState {
 					$userFolder->newFolder($attachmentFolder);
 				}
 			} catch (NotPermittedException $e) {
+				$attachmentFolder = '/';
+				$this->serverConfig->setUserValue($user->getUID(), 'spreed', 'attachment_folder', '/');
 			} catch (NoUserException $e) {
 			}
 		}
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'attachment_folder',
+			$attachmentFolder
+		);
 	}
 
 	protected function publishInitialStateForGuest(): void {
