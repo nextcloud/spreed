@@ -111,7 +111,7 @@ class HostedSignalingServerController extends OCSController {
 		$accountId = $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id');
 
 		if ($accountId === null) {
-			return new DataResponse(['message' => $this->l10n->t('No account availble to delete.')], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $this->l10n->t('No account available to delete.')], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
