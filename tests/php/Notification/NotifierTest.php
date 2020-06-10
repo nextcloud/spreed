@@ -199,7 +199,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->once())
+		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
 		$n->expects($this->once())
@@ -264,7 +264,6 @@ class NotifierTest extends \Test\TestCase {
 				[$uid, $u],
 			]);
 
-
 		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
 		$this->notifier->prepare($n, 'de');
 		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
@@ -318,7 +317,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->once())
+		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
 		$n->expects($this->once())
@@ -449,7 +448,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->once())
+		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
 		$n->expects($this->once())
@@ -849,7 +848,7 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn($subjectParameters);
-		$notification->expects($this->once())
+		$notification->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('chat');
 		$notification->expects($this->once())
@@ -968,11 +967,15 @@ class NotifierTest extends \Test\TestCase {
 				->method('getSubjectParameters')
 				->willReturn($params);
 		}
-		if ($objectType === null) {
+		if (($objectType === null && $app !== 'spreed') || $isDisabledForUser) {
 			$n->expects($this->never())
 				->method('getObjectType');
-		} else {
+		} elseif ($objectType === null && $app === 'spreed') {
 			$n->expects($this->once())
+				->method('getObjectType')
+				->willReturn('');
+		} else {
+			$n->expects($this->exactly(2))
 				->method('getObjectType')
 				->willReturn($objectType);
 		}

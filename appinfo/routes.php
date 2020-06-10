@@ -441,5 +441,33 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+
+		/**
+		 * HostedSignalingServer
+		 */
+		[
+			'name' => 'HostedSignalingServer#requestTrial',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/requesttrial',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'HostedSignalingServer#auth',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/auth',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'HostedSignalingServer#deleteAccount',
+			'url' => '/api/{apiVersion}/hostedsignalingserver/delete',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];

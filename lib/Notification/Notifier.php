@@ -201,6 +201,10 @@ class Notifier implements INotifier {
 
 		$l = $this->lFactory->get('spreed', $languageCode);
 
+		if ($notification->getObjectType() === 'hosted-signaling-server') {
+			return $this->parseHostedSignalingServer($notification, $l);
+		}
+
 		try {
 			$room = $this->getRoom($notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
@@ -651,5 +655,39 @@ class Notifier implements INotifier {
 		$notification->addParsedAction($action);
 
 		return $notification;
+	}
+
+	protected function parseHostedSignalingServer(INotification $notification, IL10N $l): INotification {
+		$action = $notification->createAction();
+		$action->setLabel('open_settings')
+			->setParsedLabel($l->t('Open settings'))
+			->setLink($notification->getLink(), IAction::TYPE_WEB)
+			->setPrimary(true);
+
+		switch ($notification->getSubject()) {
+			case 'added':
+				$subject = $l->t('The hosted signaling server is now configured and will be used.');
+				break;
+			case 'removed':
+				$subject = $l->t('The hosted signaling server was removed and will not be used anymore.');
+				break;
+			case 'changed-status':
+				$subject = $l->t('The hosted signaling server account has changed the status from "{oldstatus}" to "{newstatus}".');
+
+				$parameters = $notification->getSubjectParameters();
+				$subject = str_replace(
+					['{oldstatus}', '{newstatus}'],
+					[$parameters['oldstatus'], $parameters['newstatus']],
+					$subject
+				);
+				break;
+			default:
+				throw new \InvalidArgumentException('Unknown subject');
+		}
+
+		return $notification
+			->setParsedSubject($subject)
+			->setIcon($notification->getIcon())
+			->addParsedAction($action);
 	}
 }

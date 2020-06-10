@@ -28,6 +28,7 @@
 		<StunServers />
 		<TurnServers />
 		<SignalingServers />
+		<HostedSignalingServer />
 	</div>
 </template>
 
@@ -38,6 +39,7 @@ import Commands from '../components/AdminSettings/Commands'
 import StunServers from '../components/AdminSettings/StunServers'
 import TurnServers from '../components/AdminSettings/TurnServers'
 import SignalingServers from '../components/AdminSettings/SignalingServers'
+import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer'
 
 export default {
 	name: 'AdminSettings',
@@ -49,6 +51,7 @@ export default {
 		StunServers,
 		TurnServers,
 		SignalingServers,
+		HostedSignalingServer,
 	},
 }
 </script>
