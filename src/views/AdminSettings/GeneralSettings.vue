@@ -49,7 +49,7 @@
 				:placeholder="t('spreed', 'Default group notification for new groups')"
 				label="label"
 				track-by="value"
-				:disabled="loading || loadingStartCalls"
+				:disabled="loading || loadingDefaultGroupNotification"
 				@input="saveDefaultGroupNotification" />
 		</p>
 
@@ -106,6 +106,7 @@ export default {
 			loading: true,
 			loadingStartCalls: false,
 			loadingConversationsFiles: false,
+			loadingDefaultGroupNotification: false,
 
 			startCallOptions,
 			startCalls: startCallOptions[0],
@@ -138,11 +139,11 @@ export default {
 			})
 		},
 		saveDefaultGroupNotification() {
-			this.loadingStartCalls = true
+			this.loadingDefaultGroupNotification = true
 
 			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.defaultGroupNotification.value, {
 				success: function() {
-					this.loadingStartCalls = false
+					this.loadingDefaultGroupNotification = false
 				}.bind(this),
 			})
 		},
