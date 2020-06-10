@@ -136,8 +136,6 @@ class CheckHostedSignalingServer extends TimedJob {
 				],
 				'secret' => $accountInfo['signaling']['secret'],
 			]));
-
-			$notificationSubject = 'added';
 		}
 
 		// store new account info
