@@ -162,8 +162,8 @@ export default {
 				&& this.hostedHPBCountry !== ''
 		},
 		disclaimerHint() {
-			return t('spreed', 'By clicking the button above we send the information in the form to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}.')
-				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://www.spreed.eu/nextcloud-talk-high-performance-backend/">')
+			return t('spreed', 'By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}.')
+				.replace('{linkstart}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://www.spreed.eu/nextcloud-talk-high-performance-backend/">')
 				.replace('{linkend}', ' ↗</a>')
 		},
 		translatedStatus() {
@@ -261,11 +261,13 @@ tr:last-child td {
 tr :first-child {
 	opacity: .5;
 }
+
 .delete {
 	background: var(--color-main-background);
 	border-color: var(--color-error);
 	color: var(--color-error);
 }
+
 .delete:hover,
 .delete:active {
 	background: var(--color-error);
