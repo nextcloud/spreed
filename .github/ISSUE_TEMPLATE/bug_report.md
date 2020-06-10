@@ -22,11 +22,11 @@ Tell us what happens instead
 
 **Talk app version:** (see apps admin page: `/index.php/settings/apps`)
 
-**Custom Signaling server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+**Custom Signaling server configured:** yes/no and version (see additional admin settings: `/index.php/index.php/settings/admin/talk#signaling_server`)
 
-**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk#turn_server`)
 
-**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/additional`)
+**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk#stun_server`)
 
 
 ## Browser
@@ -65,7 +65,7 @@ You can use the Issue Template application to prefill most of the required infor
 
 **Database:** MySQL/Maria/SQLite/PostgreSQL
 
-**PHP version:**
+**PHP version:** 7.2/7.3/7.4
 
 **Nextcloud Version:** (see admin page)
 
