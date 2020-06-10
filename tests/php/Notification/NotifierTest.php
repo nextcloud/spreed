@@ -264,7 +264,6 @@ class NotifierTest extends \Test\TestCase {
 				[$uid, $u],
 			]);
 
-
 		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
 		$this->notifier->prepare($n, 'de');
 		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
@@ -318,7 +317,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->once())
+		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
 		$n->expects($this->once())

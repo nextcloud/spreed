@@ -31,24 +31,28 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CheckHostedSignalingServerTest extends TestCase {
 
-	/** @var ITimeFactory|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
-	/** @var HostedSignalingServerService|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var HostedSignalingServerService|MockObject */
 	protected $hostedSignalingServerService;
-	/** @var IConfig|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var IConfig|MockObject */
 	protected $config;
-	/** @var IManager|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var IManager|MockObject */
 	protected $notificationManager;
-	/** @var IGroupManager|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var IGroupManager|MockObject */
 	protected $groupManager;
-	/** @var IURLGenerator|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var IURLGenerator|MockObject */
 	protected $urlGenerator;
+	/** @var ILogger|MockObject */
+	protected $logger;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -59,6 +63,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 		$this->notificationManager = $this->createMock(IManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->logger = $this->createMock(ILogger::class);
 	}
 
 	public function getBackgroundJob(): CheckHostedSignalingServer {
@@ -68,7 +73,8 @@ class CheckHostedSignalingServerTest extends TestCase {
 			$this->config,
 			$this->notificationManager,
 			$this->groupManager,
-			$this->urlGenerator
+			$this->urlGenerator,
+			$this->logger
 		);
 	}
 
