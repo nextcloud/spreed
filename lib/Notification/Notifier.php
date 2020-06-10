@@ -659,7 +659,7 @@ class Notifier implements INotifier {
 
 	protected function parseHostedSignalingServer(INotification $notification, IL10N $l): INotification {
 		$action = $notification->createAction();
-		$action->setLabel($l->t('Open settings'))
+		$action->setLabel('open_settings')
 			->setParsedLabel($l->t('Open settings'))
 			->setLink($notification->getLink(), IAction::TYPE_WEB)
 			->setPrimary(true);
@@ -681,6 +681,8 @@ class Notifier implements INotifier {
 					$subject
 				);
 				break;
+			default:
+				throw new \InvalidArgumentException('Unknown subject');
 		}
 
 		return $notification
