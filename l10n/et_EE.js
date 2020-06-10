@@ -28,6 +28,7 @@ OC.L10N.register(
     "Today" : "Täna",
     "Yesterday" : "Eile",
     "guest" : "külaline",
+    "Searching …" : "Otsin ...",
     "No results" : "Vasteid ei leitud",
     "Add users or groups" : "Add users or groups",
     "Settings" : "Seaded",
