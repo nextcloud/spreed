@@ -92,10 +92,7 @@ class CheckHostedSignalingServer extends TimedJob {
 			if ($oldStatus === 'active') {
 				// remove signaling servers if account is not active anymore
 				$this->config->setAppValue('spreed', 'signaling_mode', 'internal');
-				$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
-					'servers' => [],
-					'secret' => '',
-				]));
+				$this->config->deleteAppValue('spreed', 'signaling_servers');
 
 				$notificationSubject = 'removed';
 			}

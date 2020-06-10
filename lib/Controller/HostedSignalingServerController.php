@@ -122,10 +122,7 @@ class HostedSignalingServerController extends OCSController {
 
 			// remove signaling servers if account is not active anymore
 			$this->config->setAppValue('spreed', 'signaling_mode', 'internal');
-			$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
-				'servers' => [],
-				'secret' => '',
-			]));
+			$this->config->deleteAppValue('spreed', 'signaling_servers');
 
 			$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId, ['app' => 'spreed']);
 		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
