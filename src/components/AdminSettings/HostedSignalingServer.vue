@@ -1,7 +1,7 @@
 <!--
- - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
- -
- - @author Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2020 Morris Jobke <hey@morrisjobke.de>
+ *
+ * @author Morris Jobke <hey@morrisjobke.de>
  -
  - @license GNU AGPL version 3 or any later version
  -
