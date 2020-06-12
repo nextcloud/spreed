@@ -21,5 +21,8 @@
  */
 global.OC = {
 	requestToken: '123',
+	isUserAdmin() {
+		return true
+	},
 }
 global.t = (app, text) => text
