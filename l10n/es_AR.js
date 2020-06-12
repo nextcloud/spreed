@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados"],
     "Guest" : "Invitado",
+    "Open settings" : "Abrir opciones",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, favor de seguir el formato AAAA-MM-DD",
     "Leave call" : "Dejar la llamada",
     "Limit to groups" : "Limitar a grupos",
@@ -18,6 +19,7 @@ OC.L10N.register(
     "Off" : "Apagado",
     "Language" : "Idioma",
     "Country" : "País",
+    "Status" : "Estatus",
     "Created at" : "Creado en",
     "Pending" : "Pendiente",
     "Error" : "Error",

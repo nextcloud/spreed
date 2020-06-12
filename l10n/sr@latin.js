@@ -2,10 +2,12 @@ OC.L10N.register(
     "spreed",
     {
     "Guest" : "Gost",
+    "Open settings" : "Otvori postavke",
     "None" : "Ništa",
     "User" : "User",
     "Name" : "naziv",
     "Off" : "Isključena",
+    "Pending" : "Na čekanju",
     "Error" : "Greška",
     "Copy link" : "Kopiraj vezu",
     "Favorite" : "Omiljeni",
