@@ -30,7 +30,7 @@
 			{{ t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings.') }}
 		</p>
 
-		<div v-if="!trailAccount.status">
+		<div v-if="!trialAccount.status">
 			<h4>{{ t('spreed', 'URL of this Nextcloud instance') }}</h4>
 			<input
 				v-model="hostedHPBNextcloudUrl"
@@ -39,14 +39,14 @@
 				placeholder="https://cloud.example.org/"
 				:disabled="loading"
 				:aria-label="t('spreed', 'URL of this Nextcloud instance')">
-			<h4>{{ t('spreed', 'Full name of the user requesting the trail') }}</h4>
+			<h4>{{ t('spreed', 'Full name of the user requesting the trial') }}</h4>
 			<input
 				v-model="hostedHPBFullName"
 				type="text"
 				name="full_name"
 				placeholder="Jane Doe"
 				:disabled="loading"
-				:aria-label="t('spreed', 'Name of the user requesting the trail')">
+				:aria-label="t('spreed', 'Name of the user requesting the trial')">
 			<h4>{{ t('spreed', 'E-mail of the user') }}</h4>
 			<input
 				v-model="hostedHPBEmail"
@@ -85,7 +85,7 @@
 			<button class="button primary"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
-				{{ t('spreed', 'Request signaling server trail') }}
+				{{ t('spreed', 'Request signaling server trial') }}
 			</button>
 			<p v-if="requestError !== ''"
 				class="warning">
@@ -111,9 +111,9 @@
 					<td>{{ t('spreed', 'Expires at') }}</td>
 					<td>{{ expiryDate }}</td>
 				</tr>
-				<tr v-if="trailAccount.limits">
+				<tr v-if="trialAccount.limits">
 					<td>{{ t('spreed', 'Limits') }}</td>
-					<td>{{ n('spreed', '%n user', '%n users', trailAccount.limits.users) }}</td>
+					<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
 				</tr>
 			</table>
 			<p v-if="requestError !== ''"
@@ -147,7 +147,7 @@ export default {
 			hostedHPBCountry: '',
 			requestError: '',
 			loading: false,
-			trailAccount: [],
+			trialAccount: [],
 			languages: [],
 			countries: [],
 		}
@@ -167,7 +167,7 @@ export default {
 				.replace('{linkend}', ' ↗</a>')
 		},
 		translatedStatus() {
-			switch (this.trailAccount.status) {
+			switch (this.trialAccount.status) {
 			case 'pending':
 				return t('spreed', 'Pending')
 			case 'error':
@@ -183,10 +183,10 @@ export default {
 			return ''
 		},
 		expiryDate() {
-			return moment(this.trailAccount.expires).format('L')
+			return moment(this.trialAccount.expires).format('L')
 		},
 		createdDate() {
-			return moment(this.trailAccount.created).format('L')
+			return moment(this.trialAccount.created).format('L')
 		},
 	},
 
@@ -198,7 +198,7 @@ export default {
 		this.hostedHPBLanguage = state.language
 		this.hostedHPBCountry = state.country
 
-		this.trailAccount = loadState('talk', 'hosted_signaling_server_trial_data')
+		this.trialAccount = loadState('talk', 'hosted_signaling_server_trial_data')
 
 		const languagesAndCountries = loadState('talk', 'hosted_signaling_server_language_data')
 		this.languages = languagesAndCountries['languages'] // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
@@ -218,7 +218,7 @@ export default {
 					country: this.hostedHPBCountry,
 				})
 
-				this.trailAccount = res.data.ocs.data
+				this.trialAccount = res.data.ocs.data
 			} catch (err) {
 				this.requestError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The trial could not be requested. Please try again later.')
 			} finally {
@@ -233,7 +233,7 @@ export default {
 			try {
 				await axios.delete(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver', 2) + 'delete')
 
-				this.trailAccount = []
+				this.trialAccount = []
 			} catch (err) {
 				this.deleteError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The account could not be deleted. Please try again later.')
 			} finally {
