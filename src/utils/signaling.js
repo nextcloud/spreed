@@ -973,16 +973,6 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 
 		this.pendingJoinCall = null
 	}
-	if (this.roomCollection) {
-		// The list of rooms is not fetched from the server. Update ping
-		// of joined room so it gets sorted to the top.
-		this.roomCollection.forEach(function(room) {
-			if (room.get('token') === token) {
-				room.set('lastPing', (new Date()).getTime() / 1000)
-			}
-		})
-		this.roomCollection.sort()
-	}
 }
 
 Signaling.Standalone.prototype._doLeaveRoom = function(token) {
