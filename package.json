@@ -63,7 +63,7 @@
 		"@nextcloud/browserslist-config": "^1.0.0",
 		"@nextcloud/eslint-config": "^1.2.0",
 		"@nextcloud/eslint-plugin": "^1.4.0",
-		"@vue/cli-plugin-unit-jest": "^4.4.1",
+		"@vue/cli-plugin-unit-jest": "^4.4.4",
 		"@vue/cli-service": "^4.4.4",
 		"@vue/test-utils": "^1.0.3",
 		"babel-eslint": "^10.1.0",
