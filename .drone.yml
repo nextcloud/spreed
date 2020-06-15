@@ -12,7 +12,7 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
-      - sh -c "if [ $(./occ app:check-code $APP_NAME | wc -l) -ne 5 ]; then ./occ app:check-code $APP_NAME; fi"
+      - sh -c "if [ $(./occ app:check-code --skip-validate-info $APP_NAME | wc -l) -ne 5 ]; then ./occ app:check-code --skip-validate-info $APP_NAME; fi"
       - cd apps/$APP_NAME/
 
 trigger:
