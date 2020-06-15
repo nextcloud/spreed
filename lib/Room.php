@@ -839,13 +839,14 @@ class Room {
 			return;
 		}
 
-		$this->leaveRoomAsParticipant($participant);
+		$this->leaveRoomAsParticipant($participant, $sessionId);
 	}
 
 	/**
 	 * @param Participant $participant
+	 * @param string|null $sessionId
 	 */
-	public function leaveRoomAsParticipant(Participant $participant): void {
+	public function leaveRoomAsParticipant(Participant $participant, ?string $sessionId = null): void {
 		$event = new ParticipantEvent($this, $participant);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
@@ -857,7 +858,9 @@ class Room {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if ($participant->getSessionId() !== '0') {
+		if ($sessionId !== null && $sessionId !== '0') {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		} elseif ($participant->getSessionId() !== '0') {
 			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
 		}
 		$query->execute();
@@ -868,7 +871,9 @@ class Room {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if ($participant->getSessionId() !== '0') {
+		if ($sessionId !== null && $sessionId !== '0') {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		} elseif ($participant->getSessionId() !== '0') {
 			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
 		}
 		$query->execute();
