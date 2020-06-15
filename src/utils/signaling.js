@@ -539,6 +539,7 @@ function Standalone(settings, urls) {
 	this.initialReconnectIntervalMs = 1000
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
+	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
 	this.connect()
@@ -905,6 +906,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 }
 
 Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
+	this.ownSessionJoined = false
+
 	if (!this.sessionId) {
 		if (this._pendingJoinRoomPromise && this._pendingJoinRoomPromise.token === token) {
 			return this._pendingJoinRoomPromise
@@ -1067,6 +1070,7 @@ Signaling.Standalone.prototype.processEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomEvent = function(data) {
+	let showSessionConflictDialog = false
 	let i
 	let joinedUsers = []
 	let leftSessionIds = []
@@ -1085,6 +1089,17 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 			for (i = 0; i < joinedUsers.length; i++) {
 				this.joinedUsers[joinedUsers[i].sessionid] = true
 				delete leftUsers[joinedUsers[i].sessionid]
+
+				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
+					if (this.ownSessionJoined && joinedUsers[i].sessionid !== this.sessionId) {
+						console.error('Duplicated session detected for the same user.')
+						showSessionConflictDialog = true
+					} else if (joinedUsers[i].sessionid === this.sessionId) {
+						// We are ignoring joins before we found our own message,
+						// as otherwise you get the warning for your own old session immediately
+						this.ownSessionJoined = true
+					}
+				}
 			}
 			leftUsers = Object.keys(leftUsers)
 			if (leftUsers.length) {
@@ -1111,6 +1126,29 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	default:
 		console.error('Unknown room event', data)
 		break
+	}
+
+	if (showSessionConflictDialog) {
+		OC.dialogs.confirmDestructive(
+			t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+			t('spreed', 'Duplicate session'),
+			{
+				type: OC.dialogs.YES_NO_BUTTONS,
+				confirm: t('spreed', 'Restart here'),
+				confirmClasses: 'error',
+				cancel: t('spreed', 'Leave this page'),
+			},
+			decision => {
+				if (!decision) {
+					// Cancel
+					SessionStorage.removeItem('joined_conversation')
+					window.location = generateUrl('/apps/spreed')
+				} else {
+					// Confirm
+					window.location = generateUrl('call/' + this.currentRoomToken)
+				}
+			}
+		)
 	}
 }
 
