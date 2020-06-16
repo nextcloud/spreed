@@ -33,6 +33,11 @@ return [
 			'url' => '/not-found',
 			'verb' => 'GET',
 		],
+		[
+			'name' => 'Page#duplicateSession',
+			'url' => '/duplicate-session',
+			'verb' => 'GET',
+		],
 
 		[
 			'name' => 'Page#showCall',

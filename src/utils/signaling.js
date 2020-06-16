@@ -39,7 +39,6 @@ import {
 	showError,
 	showWarning,
 } from '@nextcloud/dialogs'
-import SessionStorage from '../services/SessionStorage'
 
 const Signaling = {
 	Base: {},
@@ -446,30 +445,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
-				OC.dialogs.confirmDestructive(
-					t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
-					t('spreed', 'Duplicate session'),
-					{
-						type: OC.dialogs.YES_NO_BUTTONS,
-						confirm: t('spreed', 'Restart here'),
-						confirmClasses: 'error',
-						cancel: t('spreed', 'Leave this page'),
-					},
-					decision => {
-						if (!decision) {
-							// Cancel
-							SessionStorage.removeItem('joined_conversation')
-							window.location = generateUrl('/apps/spreed')
-						} else {
-							// Confirm
-							window.location = generateUrl('call/' + token)
-						}
-					}
-				)
+				EventBus.$emit('duplicateSessionDetected')
 			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
-				OC.redirect(generateUrl('/apps/spreed/not-found'))
+				window.location = generateUrl('/apps/spreed/not-found')
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
@@ -1070,7 +1050,6 @@ Signaling.Standalone.prototype.processEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomEvent = function(data) {
-	let showSessionConflictDialog = false
 	let i
 	let joinedUsers = []
 	let leftSessionIds = []
@@ -1093,7 +1072,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
 					if (this.ownSessionJoined && joinedUsers[i].sessionid !== this.sessionId) {
 						console.error('Duplicated session detected for the same user.')
-						showSessionConflictDialog = true
+						EventBus.$emit('duplicateSessionDetected')
 					} else if (joinedUsers[i].sessionid === this.sessionId) {
 						// We are ignoring joins before we found our own message,
 						// as otherwise you get the warning for your own old session immediately
@@ -1126,29 +1105,6 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	default:
 		console.error('Unknown room event', data)
 		break
-	}
-
-	if (showSessionConflictDialog) {
-		OC.dialogs.confirmDestructive(
-			t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
-			t('spreed', 'Duplicate session'),
-			{
-				type: OC.dialogs.YES_NO_BUTTONS,
-				confirm: t('spreed', 'Restart here'),
-				confirmClasses: 'error',
-				cancel: t('spreed', 'Leave this page'),
-			},
-			decision => {
-				if (!decision) {
-					// Cancel
-					SessionStorage.removeItem('joined_conversation')
-					window.location = generateUrl('/apps/spreed')
-				} else {
-					// Confirm
-					window.location = generateUrl('call/' + this.currentRoomToken)
-				}
-			}
-		)
 	}
 }
 

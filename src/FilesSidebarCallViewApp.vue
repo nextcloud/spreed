@@ -26,7 +26,7 @@
 			v-show="isInCall"
 			:token="token"
 			:is-sidebar="true" />
-		<PreventUnload :when="isInCall" />
+		<PreventUnload :when="warnLeaving" />
 	</div>
 </template>
 
@@ -35,6 +35,7 @@ import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
@@ -48,6 +49,7 @@ export default {
 
 	mixins: [
 		browserCheck,
+		duplicateSessionHandler,
 		talkHashCheck,
 	],
 
@@ -112,6 +114,10 @@ export default {
 			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
 
 			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.isInCall
 		},
 	},
 
