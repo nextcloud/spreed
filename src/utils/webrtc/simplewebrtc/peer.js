@@ -300,11 +300,11 @@ Peer.prototype._observeDataChannel = function(channel) {
 		self.emit('channelOpen', channel)
 		// Check if there are messages that could not be send
 		if (self.pendingDCMessages.hasOwnProperty(channel.label)) {
-			const pendingMessages = self.pendingDCMessages[channel.label]
+			const pendingMessages = self.pendingDCMessages[channel.label].slice()
+			self.pendingDCMessages[channel.label] = []
 			for (let i = 0; i < pendingMessages.length; i++) {
 				self.sendDirectly(channel.label, pendingMessages[i].type, pendingMessages[i].payload)
 			}
-			self.pendingDCMessages[channel.label] = []
 		}
 	}
 }
