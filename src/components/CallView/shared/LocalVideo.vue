@@ -59,7 +59,7 @@ import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
 import { showInfo } from '@nextcloud/dialogs'
-import video from './video.js'
+import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
 
 export default {
