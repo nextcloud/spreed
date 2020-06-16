@@ -49,6 +49,7 @@ import {
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
@@ -62,6 +63,7 @@ export default {
 
 	mixins: [
 		browserCheck,
+		duplicateSessionHandler,
 		talkHashCheck,
 	],
 

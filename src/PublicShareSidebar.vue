@@ -35,7 +35,7 @@
 				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
-				<PreventUnload :when="isInCall" />
+				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView :token="token" />
 			</template>
@@ -59,6 +59,7 @@ import {
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
@@ -74,6 +75,7 @@ export default {
 
 	mixins: [
 		browserCheck,
+		duplicateSessionHandler,
 		talkHashCheck,
 	],
 
@@ -118,6 +120,10 @@ export default {
 			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
 
 			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.isInCall
 		},
 	},
 

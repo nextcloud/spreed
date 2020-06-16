@@ -31,7 +31,7 @@
 		</AppContent>
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
-		<PreventUnload :when="isInCall" />
+		<PreventUnload :when="warnLeaving" />
 	</Content>
 </template>
 
@@ -57,6 +57,7 @@ import {
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 
@@ -73,6 +74,7 @@ export default {
 	mixins: [
 		browserCheck,
 		talkHashCheck,
+		duplicateSessionHandler,
 	],
 
 	data: function() {
@@ -115,6 +117,10 @@ export default {
 
 		isInCall() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.isInCall
 		},
 
 		/**
