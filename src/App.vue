@@ -45,6 +45,7 @@ import Router from './router/router'
 import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
 import BrowserStorage from './services/BrowserStorage'
+import SessionStorage from './services/SessionStorage'
 import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
 import {
@@ -116,7 +117,8 @@ export default {
 		},
 
 		isInCall() {
-			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			return SessionStorage.getItem('joined_conversation') === this.token
+				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		warnLeaving() {
