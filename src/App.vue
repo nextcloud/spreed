@@ -115,7 +115,8 @@ export default {
 		},
 
 		isInCall() {
-			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			return SessionStorage.getItem('joined_conversation') === this.token
+				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		warnLeaving() {

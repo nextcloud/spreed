@@ -22,6 +22,7 @@ import LobbyScreen from '../components/LobbyScreen'
 import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
 import isInLobby from '../mixins/isInLobby'
+import SessionStorage from '../services/SessionStorage'
 
 export default {
 	name: 'MainView',
@@ -65,7 +66,8 @@ export default {
 		},
 
 		showChatInSidebar() {
-			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			return SessionStorage.getItem('joined_conversation') === this.token
+				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 	},
 
