@@ -240,7 +240,7 @@ export default {
 		},
 
 		layoutHintText() {
-			return t('Spreed', `The amount of videos don't fit in the window. Maximize or switch to 'promoted view' for a better experience.`)
+			return t('Spreed', `Too many videos to fit in the window. Maximize the window or switch to 'promoted view' for a better experience.`)
 		},
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
