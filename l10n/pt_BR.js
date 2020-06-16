@@ -74,6 +74,8 @@ OC.L10N.register(
     "{actor} joined the conversation" : "{actor} juntou-se à conversa",
     "You added {user}" : "Você adicionou {user}",
     "{actor} added you" : "{actor} adicionou você",
+    "An administrator added you" : "Um administrador adicionou você",
+    "An administrator added {user}" : "Um administrador adicionou {user}",
     "You left the conversation" : "Você saiu da conversa",
     "{actor} left the conversation" : "{actor} saiu da conversa",
     "{actor} removed {user}" : "{actor} removeu {user}",
