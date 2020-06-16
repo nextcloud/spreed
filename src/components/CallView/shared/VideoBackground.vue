@@ -41,6 +41,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
+import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 
@@ -79,7 +80,7 @@ export default {
 			if (!this.displayName) {
 				return `var(--color-text-maxcontrast)`
 			} else {
-				const color = this.displayName.toRgb()
+				const color = usernameToColor(this.displayName)
 				return `rgb(${color.r}, ${color.g}, ${color.b})`
 			}
 		},
