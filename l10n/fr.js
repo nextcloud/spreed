@@ -466,8 +466,6 @@ OC.L10N.register(
     "@-mentions only" : "seulement les mentions @",
     "Off" : "Éteint",
     "URL of this Nextcloud instance" : "URL de cette instance Nextcloud",
-    "Full name of the user requesting the trail" : "Nom complet de l'utilisateur réclamant l'essai",
-    "Name of the user requesting the trail" : "Nom de l'utilisateur réclamant l'essai",
     "E-mail of the user" : "Courriel de l'utilisateur",
     "Language" : "Langue",
     "Country" : "Pays",
