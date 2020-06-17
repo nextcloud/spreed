@@ -21,10 +21,16 @@
 
 <template>
 	<div class="video-backgroundbackground">
-		<div class="darken" />
+		<div class="darken">
+			<ResizeObserver
+				v-if="gridBlur === ''"
+				class="observer"
+				@notify="setBlur" />
+		</div>
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
+			:style="gridBlur ? gridBlur : blur"
 			class="video-background__picture"
 			alt="">
 		<div v-else
@@ -36,9 +42,13 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
+import { ResizeObserver } from 'vue-resize'
 
 export default {
 	name: 'VideoBackground',
+	components: {
+		ResizeObserver,
+	},
 
 	props: {
 		displayName: {
@@ -49,11 +59,16 @@ export default {
 			type: String,
 			default: '',
 		},
+		gridBlur: {
+			type: String,
+			default: '',
+		},
 	},
 
 	data() {
 		return {
 			hasPicture: false,
+			blur: '',
 		}
 	},
 
@@ -89,6 +104,10 @@ export default {
 	},
 
 	methods: {
+		// Calculate the background blur based on the height of the background element
+		setBlur({ width, height }) {
+			this.blur = this.$store.getters.getBlurFilter(width, height)
+		},
 	},
 }
 </script>
@@ -101,7 +120,6 @@ export default {
 	height: 100%;
 	width: 100%;
 	&__picture {
-		filter: blur(20px);
 		/* Make pic to at least 100% wide and tall */
 		min-width: 105%;
 		min-height: 105%;
