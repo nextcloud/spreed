@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use InvalidArgumentException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
@@ -47,7 +46,7 @@ class RoomService {
 	 */
 	public function createOneToOneConversation(IUser $actor, IUser $targetUser): Room {
 		if ($actor->getUID() === $targetUser->getUID()) {
-			throw new \InvalidArgumentException('invalid_invitee');
+			throw new InvalidArgumentException('invalid_invitee');
 		}
 
 		try {
@@ -68,9 +67,19 @@ class RoomService {
 		return $room;
 	}
 
+	/**
+	 * @param int $type
+	 * @param string $name
+	 * @param IUser|null $owner
+	 * @param string $objectType
+	 * @param string $objectId
+	 * @return Room
+	 * @throws InvalidArgumentException on too long or empty names
+	 */
 	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
+		$name = trim($name);
 		if ($name === '' || isset($name[255])) {
-			throw new \InvalidArgumentException('name');
+			throw new InvalidArgumentException('name');
 		}
 
 		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
@@ -83,5 +92,9 @@ class RoomService {
 		}
 
 		return $room;
+	}
+
+	public function prepareConversationName(string $objectName): string {
+		return rtrim(mb_substr(ltrim($objectName), 0, 64));
 	}
 }

@@ -631,7 +631,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		// Create the room
-		$room = $this->roomService->createConversation(Room::GROUP_CALL, $targetGroup->getDisplayName(), $currentUser);
+		$name = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
+		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
 
 		$usersInGroup = $targetGroup->getUsers();
 		$participants = [];
@@ -677,7 +678,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		// Create the room
-		$room = $this->roomService->createConversation(Room::GROUP_CALL, $circle->getName(), $currentUser);
+		$name = $this->roomService->prepareConversationName($circle->getName());
+		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
 
 		$participants = [];
 		foreach ($circle->getMembers() as $member) {
@@ -715,22 +717,18 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	protected function createEmptyRoom(string $roomName, bool $public = true): DataResponse {
-		$roomName = trim($roomName);
-		if ($roomName === '') {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
 		$currentUser = $this->userManager->get($this->userId);
-
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+
 		// Create the room
-		if ($public) {
-			$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $roomName, $currentUser);
-		} else {
-			$room = $this->roomService->createConversation(Room::GROUP_CALL, $roomName, $currentUser);
+		try {
+			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);

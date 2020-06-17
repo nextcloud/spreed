@@ -155,6 +155,7 @@ class FilesIntegrationController extends OCSController {
 			} else {
 				$name = $groupFolder->getName();
 			}
+			$name = $this->roomService->prepareConversationName($name);
 			$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
 		}
 
@@ -224,6 +225,7 @@ class FilesIntegrationController extends OCSController {
 				$room = $this->manager->getRoomByObject('file', $fileId);
 			} catch (RoomNotFoundException $e) {
 				$name = $share->getNode()->getName();
+				$name = $this->roomService->prepareConversationName($name);
 				$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
 			}
 		} catch (NotFoundException $e) {

@@ -287,11 +287,17 @@ class CreateTest extends TestCase {
 	 * @dataProvider invalidProvider
 	 */
 	public function testInvalid(array $input, string $expectedOutput): void {
-		$this->roomService
-			->method('createConversation')
-			->willReturnCallback(function (int $type, string $name): Room {
-				return $this->roomMockContainer->create(['name' => $name, 'type' => $type]);
-			});
+		if ($input['name'] !== 'PHPUnit Test Room') {
+			$this->roomService
+				->method('createConversation')
+				->willThrowException(new \InvalidArgumentException('name'));
+		} else {
+			$this->roomService
+				->method('createConversation')
+				->willReturnCallback(function (int $type, string $name): Room {
+					return $this->roomMockContainer->create(['name' => $name, 'type' => $type]);
+				});
+		}
 
 		$this->roomMockContainer->registerCallback(function (object $room) {
 			/** @var Room|MockObject $room */
@@ -310,18 +316,6 @@ class CreateTest extends TestCase {
 			[
 				[
 					'name' => '',
-				],
-				"Invalid room name.\n",
-			],
-			[
-				[
-					'name' => '  ',
-				],
-				"Invalid room name.\n",
-			],
-			[
-				[
-					'name' => str_repeat('x', 256),
 				],
 				"Invalid room name.\n",
 			],

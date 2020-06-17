@@ -43,6 +43,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 trait TRoomCommand {
 	/** @var Manager */
 	protected $manager;
+
 	/** @var RoomService */
 	protected $roomService;
 
@@ -51,7 +52,6 @@ trait TRoomCommand {
 
 	/** @var IGroupManager */
 	protected $groupManager;
-
 
 	public function __construct(Manager $manager,
 								RoomService $roomService,

@@ -93,14 +93,13 @@ class Create extends Base {
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
 
-		$name = trim($name);
-		if (!$this->validateRoomName($name)) {
+		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+		try {
+			$room = $this->roomService->createConversation($roomType, $name);
+		} catch (\InvalidArgumentException $e) {
 			$output->writeln('<error>Invalid room name.</error>');
 			return 1;
 		}
-
-		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
-		$room = $this->roomService->createConversation($roomType, $name);
 
 		try {
 			$this->setRoomReadOnly($room, $readonly);
