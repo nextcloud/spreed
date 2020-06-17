@@ -21,11 +21,12 @@
 
 <template>
 	<div class="video-backgroundbackground">
-		<ResizeObserver
-			v-if="gridBlur === ''"
-			class="observer"
-			@notify="setBlur" />
-		<div class="darken" />
+		<div class="darken">
+			<ResizeObserver
+				v-if="gridBlur === ''"
+				class="observer"
+				@notify="setBlur" />
+		</div>
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
@@ -103,7 +104,7 @@ export default {
 	},
 
 	methods: {
-		// Calculate the background blur based on the hight of the background element
+		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
 			this.blur = this.$store.getters.getBlurFilter(width, height)
 		},
@@ -153,10 +154,6 @@ export default {
 	height: 100%;
 	top: 0;
 	left: 0;
-}
-
-.observer {
-	position: absolute;
 }
 
 </style>
