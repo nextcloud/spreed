@@ -27,6 +27,7 @@ namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
 use OC\Core\Command\Base;
+use OCA\Talk\Room;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -98,7 +99,8 @@ class Create extends Base {
 			return 1;
 		}
 
-		$room = $public ? $this->manager->createPublicRoom($name): $this->manager->createGroupRoom($name);
+		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+		$room = $this->roomService->createConversation($roomType, $name);
 
 		try {
 			$this->setRoomReadOnly($room, $readonly);

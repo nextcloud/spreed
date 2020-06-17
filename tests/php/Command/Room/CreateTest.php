@@ -29,6 +29,7 @@ use OCA\Talk\Command\Room\Create;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Exception\RuntimeException as ConsoleRuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -43,6 +44,9 @@ class CreateTest extends TestCase {
 	/** @var Manager|MockObject */
 	private $manager;
 
+	/** @var RoomService|MockObject */
+	private $roomService;
+
 	/** @var RoomMockContainer */
 	private $roomMockContainer;
 
@@ -53,7 +57,13 @@ class CreateTest extends TestCase {
 		$this->registerGroupManagerMock();
 
 		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Create($this->manager, $this->userManager, $this->groupManager);
+		$this->roomService = $this->createMock(RoomService::class);
+		$this->command = new Create(
+			$this->manager,
+			$this->roomService,
+			$this->userManager,
+			$this->groupManager
+		);
 
 		$this->roomMockContainer = new RoomMockContainer($this);
 
@@ -62,11 +72,8 @@ class CreateTest extends TestCase {
 	}
 
 	public function testMissingArguments(): void {
-		$this->manager->expects($this->never())
-			->method('createGroupRoom');
-
-		$this->manager->expects($this->never())
-			->method('createPublicRoom');
+		$this->roomService->expects($this->never())
+			->method('createConversation');
 
 		$this->expectException(ConsoleRuntimeException::class);
 		$this->expectExceptionMessage('Not enough arguments (missing: "name").');
@@ -79,16 +86,10 @@ class CreateTest extends TestCase {
 	 * @dataProvider validProvider
 	 */
 	public function testValid(array $input, array $expectedRoomData): void {
-		$this->manager
-			->method('createGroupRoom')
-			->willReturnCallback(function (string $name = ''): Room {
-				return $this->roomMockContainer->create(['name' => $name, 'type' => Room::GROUP_CALL]);
-			});
-
-		$this->manager
-			->method('createPublicRoom')
-			->willReturnCallback(function (string $name = ''): Room {
-				return $this->roomMockContainer->create(['name' => $name, 'type' => Room::PUBLIC_CALL]);
+		$this->roomService
+			->method('createConversation')
+			->willReturnCallback(function (int $type, string $name): Room {
+				return $this->roomMockContainer->create(['name' => $name, 'type' => $type]);
 			});
 
 		$tester = new CommandTester($this->command);
@@ -286,16 +287,10 @@ class CreateTest extends TestCase {
 	 * @dataProvider invalidProvider
 	 */
 	public function testInvalid(array $input, string $expectedOutput): void {
-		$this->manager
-			->method('createGroupRoom')
-			->willReturnCallback(function (string $name = ''): Room {
-				return $this->roomMockContainer->create(['name' => $name, 'type' => Room::GROUP_CALL]);
-			});
-
-		$this->manager
-			->method('createPublicRoom')
-			->willReturnCallback(function (string $name = ''): Room {
-				return $this->roomMockContainer->create(['name' => $name, 'type' => Room::PUBLIC_CALL]);
+		$this->roomService
+			->method('createConversation')
+			->willReturnCallback(function (int $type, string $name): Room {
+				return $this->roomMockContainer->create(['name' => $name, 'type' => $type]);
 			});
 
 		$this->roomMockContainer->registerCallback(function (object $room) {

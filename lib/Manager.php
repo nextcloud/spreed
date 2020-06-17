@@ -586,35 +586,6 @@ class Manager {
 	}
 
 	/**
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @return Room
-	 */
-	public function createOne2OneRoom(string $objectType = '', string $objectId = ''): Room {
-		return $this->createRoom(Room::ONE_TO_ONE_CALL, '', $objectType, $objectId);
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @return Room
-	 */
-	public function createGroupRoom(string $name = '', string $objectType = '', string $objectId = ''): Room {
-		return $this->createRoom(Room::GROUP_CALL, $name, $objectType, $objectId);
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @return Room
-	 */
-	public function createPublicRoom(string $name = '', string $objectType = '', string $objectId = ''): Room {
-		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
-	}
-
-	/**
 	 * Makes sure the user is part of a changelog room and returns it
 	 *
 	 * @param string $userId
@@ -656,7 +627,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	private function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
+	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
 		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();

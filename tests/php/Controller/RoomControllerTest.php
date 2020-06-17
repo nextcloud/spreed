@@ -31,6 +31,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -59,6 +60,8 @@ class RoomControllerTest extends TestCase {
 	protected $groupManager;
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var RoomService|MockObject */
+	protected $roomService;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
 	/** @var GuestManager|MockObject */
@@ -86,6 +89,7 @@ class RoomControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->roomService = $this->createMock(RoomService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
@@ -111,6 +115,7 @@ class RoomControllerTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->manager,
+			$this->roomService,
 			$this->guestManager,
 			$this->chatManager,
 			$this->dispatcher,

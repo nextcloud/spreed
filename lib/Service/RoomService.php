@@ -1,0 +1,87 @@
+<?php
+declare(strict_types=1);
+/**
+ * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+namespace OCA\Talk\Service;
+
+
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCP\IUser;
+
+class RoomService {
+
+	/** @var Manager */
+	protected $manager;
+
+	public function __construct(Manager $manager) {
+		$this->manager = $manager;
+	}
+
+	/**
+	 * @param IUser $actor
+	 * @param IUser $targetUser
+	 * @return Room
+	 * @throws InvalidArgumentException when both users are the same
+	 */
+	public function createOneToOneConversation(IUser $actor, IUser $targetUser): Room {
+		if ($actor->getUID() === $targetUser->getUID()) {
+			throw new \InvalidArgumentException('invalid_invitee');
+		}
+
+		try {
+			// If room exists: Reuse that one, otherwise create a new one.
+			$room = $this->manager->getOne2OneRoom($actor->getUID(), $targetUser->getUID());
+			$room->ensureOneToOneRoomIsFilled();
+		} catch (RoomNotFoundException $e) {
+			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL);
+			$room->addUsers([
+				'userId' => $actor->getUID(),
+				'participantType' => Participant::OWNER,
+			], [
+				'userId' => $targetUser->getUID(),
+				'participantType' => Participant::OWNER,
+			]);
+		}
+
+		return $room;
+	}
+
+	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
+		if ($name === '' || isset($name[255])) {
+			throw new \InvalidArgumentException('name');
+		}
+
+		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+
+		if ($owner instanceof IUser) {
+			$room->addUsers([
+				'userId' => $owner->getUID(),
+				'participantType' => Participant::OWNER,
+			]);
+		}
+
+		return $room;
+	}
+}

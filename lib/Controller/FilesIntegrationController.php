@@ -27,6 +27,8 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -49,6 +51,8 @@ class FilesIntegrationController extends OCSController {
 
 	/** @var Manager */
 	private $manager;
+	/** @var RoomService */
+	private $roomService;
 	/** @var IShareManager */
 	private $shareManager;
 	/** @var ISession */
@@ -68,6 +72,7 @@ class FilesIntegrationController extends OCSController {
 			string $appName,
 			IRequest $request,
 			Manager $manager,
+			RoomService $roomService,
 			IShareManager $shareManager,
 			ISession $session,
 			IUserSession $userSession,
@@ -78,6 +83,7 @@ class FilesIntegrationController extends OCSController {
 	) {
 		parent::__construct($appName, $request);
 		$this->manager = $manager;
+		$this->roomService = $roomService;
 		$this->shareManager = $shareManager;
 		$this->session = $session;
 		$this->userSession = $userSession;
@@ -149,7 +155,7 @@ class FilesIntegrationController extends OCSController {
 			} else {
 				$name = $groupFolder->getName();
 			}
-			$room = $this->manager->createPublicRoom($name, 'file', $fileId);
+			$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
 		}
 
 		return new DataResponse([
@@ -218,7 +224,7 @@ class FilesIntegrationController extends OCSController {
 				$room = $this->manager->getRoomByObject('file', $fileId);
 			} catch (RoomNotFoundException $e) {
 				$name = $share->getNode()->getName();
-				$room = $this->manager->createPublicRoom($name, 'file', $fileId);
+				$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
 			}
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
