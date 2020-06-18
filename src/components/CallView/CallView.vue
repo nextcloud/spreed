@@ -60,13 +60,13 @@
 			<div v-if="showLocalVideo" ref="videoContainer" class="video__promoted override">
 				<LocalVideo
 					ref="localVideo"
-					class="local-video"
 					:fit-video="true"
 					:is-stripe="false"
+					:is-big="true"
 					:local-media-model="localMediaModel"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
-					:is-sidebar="isSidebar"
+					:is-sidebar="false"
 					@switchScreenToId="1" />
 			</div>
 			<!-- Screens -->
@@ -231,7 +231,7 @@ export default {
 		},
 
 		hasLocalScreen() {
-			return this.localMediaModel.attributes.localScreen
+			return !!this.localMediaModel.attributes.localScreen
 		},
 
 		hasRemoteScreen() {
@@ -247,7 +247,7 @@ export default {
 
 		// Shows the local video if selected
 		showLocalVideo() {
-			return this.hasLocalScreen && this.isLocalVideoSelected
+			return this.hasLocalVideo && this.isLocalVideoSelected
 		},
 
 		// Show selected video (other than local)
@@ -487,7 +487,7 @@ export default {
 			this.$store.dispatch('selectedVideoPeerId', peerId)
 		},
 		handleClickLocalVideo() {
-			this.showSelectedLocalVideo = true
+			this.isLocalVideoSelected = true
 		},
 	},
 }

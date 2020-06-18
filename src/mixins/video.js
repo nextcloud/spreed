@@ -43,6 +43,12 @@ const video = {
 			type: Boolean,
 			default: false,
 		},
+		// True when this component is used in the big video slot in the
+		// promoted view
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
