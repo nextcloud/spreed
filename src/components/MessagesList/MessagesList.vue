@@ -45,6 +45,7 @@ get the messagesList array and loop through the list to generate the messages.
 			:style="{ height: item.height + 'px' }"
 			v-bind="item"
 			:messages="item"
+			:last-read-message="unreadMessageMarkerId"
 			@deleteMessage="handleDeleteMessage" />
 		<template v-if="!messagesGroupedByAuthor.length">
 			<LoadingPlaceholder
@@ -133,6 +134,8 @@ export default {
 			pollingErrorTimeout: 1,
 
 			oldMessagesPromise: null,
+
+			lastReadMessage: 0,
 		}
 	},
 
@@ -226,6 +229,13 @@ export default {
 		scroller() {
 			return this.$refs.scroller
 		},
+
+		unreadMessageMarkerId() {
+			if (this.lastReadMessage !== this.$store.getters.getLastKnownMessageId(this.token)) {
+				return this.lastReadMessage
+			}
+			return 0
+		},
 	},
 
 	watch: {
@@ -236,6 +246,7 @@ export default {
 			},
 		},
 	},
+
 	mounted() {
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
@@ -245,6 +256,7 @@ export default {
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 	},
+
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
@@ -357,6 +369,7 @@ export default {
 
 		handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
+				this.lastReadMessage = this.conversation.lastReadMessage
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					this.$store.dispatch('setFirstKnownMessageId', {
 						token: this.token,
@@ -406,7 +419,10 @@ export default {
 					return
 				}
 
-				this.getNewMessages()
+				const followInNewMessages = this.conversation.lastMessage
+					&& this.conversation.lastReadMessage === this.conversation.lastMessage.id
+
+				this.getNewMessages(followInNewMessages)
 			})
 		},
 
@@ -470,8 +486,9 @@ export default {
 
 		/**
 		 * Creates a long polling request for a new message.
+		 * @param {boolean} scrollToBottom Whether we should try to automatically scroll to the bottom
 		 */
-		async getNewMessages() {
+		async getNewMessages(scrollToBottom = true) {
 			if (!this.cancelLookForNewMessages) {
 				return
 			}
@@ -505,7 +522,7 @@ export default {
 				})
 
 				// Scroll to the last message if sticky
-				if (this.isSticky) {
+				if (scrollToBottom && this.isSticky) {
 					this.smoothScrollToBottom()
 				}
 			} catch (exception) {
