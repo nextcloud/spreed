@@ -91,6 +91,21 @@ class RoomService {
 			throw new InvalidArgumentException('type');
 		}
 
+		$objectType = trim($objectType);
+		if (isset($objectType[64])) {
+			throw new InvalidArgumentException('object_type');
+		}
+
+		$objectId = trim($objectId);
+		if (isset($objectId[64])) {
+			throw new InvalidArgumentException('object_id');
+		}
+
+		if (($objectType !== '' && $objectId === '') ||
+			($objectType === '' && $objectId !== '')) {
+			throw new InvalidArgumentException('object');
+		}
+
 		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
 
 		if ($owner instanceof IUser) {

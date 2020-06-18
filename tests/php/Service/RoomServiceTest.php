@@ -160,6 +160,30 @@ class RoomServiceTest extends TestCase {
 		$this->service->createConversation($type, 'abc');
 	}
 
+	public function dataCreateConversationInvalidObjects(): array {
+		return [
+			[str_repeat('a', 65), 'a', 'object_type'],
+			['a', str_repeat('a', 65), 'object_id'],
+			['a', '', 'object'],
+			['', 'b', 'object'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataCreateConversationInvalidObjects
+	 * @param string $type
+	 * @param string $id
+	 * @param string $exception
+	 */
+	public function testCreateConversationInvalidObjects(string $type, string $id, string $exception): void {
+		$this->manager->expects($this->never())
+			->method('createRoom');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage($exception);
+		$this->service->createConversation(Room::PUBLIC_CALL, 'a', null, $type, $id);
+	}
+
 	public function dataCreateConversation(): array {
 		return [
 			[Room::GROUP_CALL, 'Group conversation', 'admin', '', ''],
