@@ -54,6 +54,9 @@ use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -63,25 +66,29 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 
-class Application extends App {
+class Application extends App implements IBootstrap {
 	public const APP_ID = 'spreed';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
-
-		// This needs to be in the constructor,
-		// because otherwise the middleware is registered on a wrong object,
-		// when it is requested by the Router.
-		$this->getContainer()->registerMiddleWare(CanUseTalkMiddleware::class);
-		$this->getContainer()->registerMiddleWare(InjectionMiddleware::class);
 	}
 
-	public function register(): void {
-		$server = $this->getContainer()->getServer();
+	public function register(IRegistrationContext $context): void {
+		$context->registerMiddleWare(CanUseTalkMiddleware::class);
+		$context->registerMiddleWare(InjectionMiddleware::class);
+		$context->registerCapability(Capabilities::class);
+
+		$context->registerEventListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
+		$context->registerEventListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
+	}
+
+	public function boot(IBootContext $context): void {
+		$server = $context->getServerContainer();
 
 		$this->registerNotifier($server);
 		$this->registerCollaborationResourceProvider($server);
-		$this->getContainer()->registerCapability(Capabilities::class);
+		$this->registerClientLinks($server);
+		$this->registerNavigationLink($server);
 
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->query(IEventDispatcher::class);
@@ -106,13 +113,8 @@ class Application extends App {
 		ShareListener::register($dispatcher);
 		Operation::register($dispatcher);
 
-		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
-		$dispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
-
-		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
-		$this->registerClientLinks($server);
 	}
 
 	protected function registerNotifier(IServerContainer $server): void {
@@ -124,7 +126,7 @@ class Application extends App {
 		/** @var IProviderManager $resourceManager */
 		$resourceManager = $server->query(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
-		\OC::$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
+		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
 			\OCP\Util::addScript(self::APP_ID, 'collections');
 		});
 	}
