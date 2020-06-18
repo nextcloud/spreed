@@ -601,8 +601,17 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
+			// We are only doing this manually here to be able to return different status codes
+			// Actually createOneToOneConversation also checks it.
+			$room = $this->manager->getOne2OneRoom($currentUser->getUID(), $targetUser->getUID());
+			$room->ensureOneToOneRoomIsFilled();
+			return new DataResponse([], Http::STATUS_OK);
+		} catch (RoomNotFoundException $e) {
+		}
+
+		try {
 			$room = $this->roomService->createOneToOneConversation($currentUser, $targetUser);
-			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_OK);
+			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 		} catch (\InvalidArgumentException $e) {
 			// Same current and target user
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
