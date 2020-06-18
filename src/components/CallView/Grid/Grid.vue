@@ -49,6 +49,7 @@
 							:is-selected="isSelected(callParticipantModel)"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
+							:video-background-blur="videoBackgroundBlur"
 							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 							@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
@@ -261,7 +262,12 @@ export default {
 				return this.videos.length + 1
 			}
 		},
-
+		videoWidth() {
+			return this.gridWidth / this.columns
+		},
+		videoHeight() {
+			return this.gridHeight / this.rows
+		},
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
@@ -354,6 +360,11 @@ export default {
 		// Determines when to show the stripe navigation buttons
 		showNavigation() {
 			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
+		},
+
+		// Blur radius for each background in the grid
+		videoBackgroundBlur() {
+			return this.$store.getters.getBlurFilter(this.videoWidth, this.videoHeight)
 		},
 	},
 
