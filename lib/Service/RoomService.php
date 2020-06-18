@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
@@ -80,6 +81,14 @@ class RoomService {
 		$name = trim($name);
 		if ($name === '' || isset($name[255])) {
 			throw new InvalidArgumentException('name');
+		}
+
+		if (!\in_array($type, [
+			Room::GROUP_CALL,
+			Room::PUBLIC_CALL,
+			Room::CHANGELOG_CONVERSATION,
+		], true)) {
+			throw new InvalidArgumentException('type');
 		}
 
 		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
