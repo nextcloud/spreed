@@ -123,14 +123,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->timeFactory);
 		$this->recreateBackendNotifier();
 
-
-		$this->app = new Application();
-		$this->app->register();
-
-		$this->originalBackendNotifier = $this->app->getContainer()->query(BackendNotifier::class);
-		$this->app->getContainer()->registerService(BackendNotifier::class, function () {
-			return $this->controller;
-		});
+		$this->overwriteService(BackendNotifier::class, $this->controller);
 
 		$dbConnection = \OC::$server->getDatabaseConnection();
 		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
@@ -151,9 +144,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	public function tearDown(): void {
 		$config = \OC::$server->getConfig();
 		$config->deleteAppValue('spreed', 'signaling_servers');
-		$this->app->getContainer()->registerService(BackendNotifier::class, function () {
-			return $this->originalBackendNotifier;
-		});
+		$this->restoreService(BackendNotifier::class);
 		parent::tearDown();
 	}
 
