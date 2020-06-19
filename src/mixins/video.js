@@ -25,6 +25,7 @@ const video = {
 	data() {
 		return {
 			incomingStreamAspectRatio: null,
+			mouseover: false,
 		}
 	},
 	props: {
@@ -48,6 +49,23 @@ const video = {
 		isBig: {
 			type: Boolean,
 			default: false,
+		},
+	},
+
+	methods: {
+		showShadow() {
+			if (this.isSelectable) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (this.isSelectable) {
+				this.mouseover = false
+			}
+		},
+
+		handleClickVideo() {
+			this.$emit('click-video')
 		},
 	},
 

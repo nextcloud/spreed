@@ -151,12 +151,6 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			mouseover: false,
-		}
-	},
-
 	computed: {
 
 		isSelectable() {
@@ -355,20 +349,6 @@ export default {
 			if (this.$refs.video.style.transform === 'scaleX(1)') {
 				this.$refs.video.style.transform = ''
 			}
-		},
-		showShadow() {
-			if (this.isSelectable) {
-				this.mouseover = true
-			}
-		},
-		hideShadow() {
-			if (this.isSelectable) {
-				this.mouseover = false
-			}
-		},
-
-		handleClickVideo() {
-			this.$emit('click-video')
 		},
 	},
 

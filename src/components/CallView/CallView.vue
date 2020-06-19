@@ -101,7 +101,8 @@
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
-				@select-video="handleSelectVideo" />
+				@select-video="handleSelectVideo"
+				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if the conversation is 1to1 or if sidebar -->
 			<LocalVideo
 				v-if="isOneToOneView"
@@ -114,8 +115,8 @@
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
-				@switchScreenToId="1"
-				@click="handleClickLocalVideo" />
+				:is-selectable="hasLocalVideo && !isLocalVideoSelected"
+				@switchScreenToId="1" />
 		</div>
 	</div>
 </template>
@@ -166,7 +167,7 @@ export default {
 			},
 			callParticipantCollection: callParticipantCollection,
 			videoContainerAspectRatio: 0,
-			isLocalVideoSelected: true,
+			isLocalVideoSelected: false,
 		}
 	},
 	computed: {
@@ -485,9 +486,11 @@ export default {
 		handleSelectVideo(peerId) {
 			this.$store.dispatch('isGrid', false)
 			this.$store.dispatch('selectedVideoPeerId', peerId)
+			this.isLocalVideoSelected = false
 		},
 		handleClickLocalVideo() {
-			this.isLocalVideoSelected = true
+			this.$store.dispatch('isGrid', false)
+			this.isLocalVideoSelected = !this.isLocalVideoSelected
 		},
 	},
 }
