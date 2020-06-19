@@ -33,50 +33,21 @@ class Listener {
 
 	/** @var Manager */
 	protected $manager;
-	/** @var IUserManager */
-	protected $userManager;
 	/** @var IUserSession */
 	protected $userSession;
 	/** @var TalkSession */
 	protected $talkSession;
-	/** @var Config */
-	protected $config;
 
 	public function __construct(Manager $manager,
-								IUserManager $userManager,
 								IUserSession $userSession,
-								TalkSession $talkSession,
-								Config $config) {
+								TalkSession $talkSession) {
 		$this->manager = $manager;
-		$this->userManager = $userManager;
 		$this->userSession = $userSession;
 		$this->talkSession = $talkSession;
-		$this->config = $config;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', static function ($user) {
-			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
-			$listener->deleteUser($user);
-		});
-
 		Util::connectHook('OC_User', 'logout', self::class, 'logoutUserStatic');
-	}
-
-	/**
-	 * @param IUser $user
-	 */
-	public function deleteUser(IUser $user): void {
-		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
-
-		foreach ($rooms as $room) {
-			if ($room->getNumberOfParticipants() === 1) {
-				$room->deleteRoom();
-			} else {
-				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
-			}
-		}
 	}
 
 	public static function logoutUserStatic(): void {
@@ -89,7 +60,6 @@ class Listener {
 		/** @var IUser $user */
 		$user = $this->userSession->getUser();
 
-		/** @var string[] $sessionIds */
 		$sessionIds = $this->talkSession->getAllActiveSessions();
 		foreach ($sessionIds as $sessionId) {
 			$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
