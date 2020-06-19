@@ -39,8 +39,11 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\Operation;
-use OCA\Talk\Listener;
+use OCA\Talk\Listener\BeforeUserLoggedOutListener;
+use OCA\Talk\Listener\CSPListener;
+use OCA\Talk\Listener\FeaturePolicyListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
+use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
@@ -65,6 +68,8 @@ use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
+use OCP\User\Events\BeforeUserLoggedOutEvent;
+use OCP\User\Events\UserDeletedEvent;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'spreed';
@@ -78,8 +83,10 @@ class Application extends App implements IBootstrap {
 		$context->registerMiddleWare(InjectionMiddleware::class);
 		$context->registerCapability(Capabilities::class);
 
-		$context->registerEventListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
-		$context->registerEventListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
+		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
+		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
+		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
+		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -93,7 +100,6 @@ class Application extends App implements IBootstrap {
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->query(IEventDispatcher::class);
 
-		Listener::register($dispatcher);
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
