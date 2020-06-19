@@ -700,178 +700,178 @@ trigger:
 #    - pull_request
     - push
 
----
-kind: pipeline
-name: int-pgsql-callapi
-
-steps:
-  - name: integration-callapi
-    image: nextcloudci/php7.3:php7.3-5
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/callapi
-
-services:
-  - name: cache
-    image: redis
-  - name: pgsql
-    image: postgres:10
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-pgsql-chat
-
-steps:
-  - name: integration-chat
-    image: nextcloudci/php7.3:php7.3-5
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/chat
-
-services:
-  - name: cache
-    image: redis
-  - name: pgsql
-    image: postgres:10
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-pgsql-conversation
-
-steps:
-  - name: integration-conversation
-    image: nextcloudci/php7.3:php7.3-5
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation
-
-services:
-  - name: cache
-    image: redis
-  - name: pgsql
-    image: postgres:10
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-pgsql-sharing
-
-steps:
-  - name: integration-sharing
-    image: nextcloudci/php7.3:php7.3-5
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing
-
-services:
-  - name: cache
-    image: redis
-  - name: pgsql
-    image: postgres:10
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
+#---
+#kind: pipeline
+#name: int-pgsql-callapi
+#
+#steps:
+#  - name: integration-callapi
+#    image: nextcloudci/php7.3:php7.3-5
+#    environment:
+#      APP_NAME: spreed
+#      CORE_BRANCH: master
+#      DATABASEHOST: pgsql
+#    commands:
+#      - bash tests/drone-run-integration-tests.sh || exit 0
+#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+#      - cd ../server
+#      - ./occ app:enable $APP_NAME
+#      - cd apps/$APP_NAME
+#
+#      # Run integration tests
+#      - cd tests/integration/
+#      - bash run.sh features/callapi
+#
+#services:
+#  - name: cache
+#    image: redis
+#  - name: pgsql
+#    image: postgres:10
+#    environment:
+#      POSTGRES_USER: oc_autotest
+#      POSTGRES_DB: oc_autotest_dummy
+#      POSTGRES_PASSWORD:
+#    tmpfs:
+#      - /var/lib/postgresql/data
+#
+#trigger:
+#  branch:
+#    - master
+#    - stable*
+#  event:
+##    - pull_request
+#    - push
+#
+#---
+#kind: pipeline
+#name: int-pgsql-chat
+#
+#steps:
+#  - name: integration-chat
+#    image: nextcloudci/php7.3:php7.3-5
+#    environment:
+#      APP_NAME: spreed
+#      CORE_BRANCH: master
+#      DATABASEHOST: pgsql
+#    commands:
+#      - bash tests/drone-run-integration-tests.sh || exit 0
+#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+#      - cd ../server
+#      - ./occ app:enable $APP_NAME
+#      - cd apps/$APP_NAME
+#
+#      # Run integration tests
+#      - cd tests/integration/
+#      - bash run.sh features/chat
+#
+#services:
+#  - name: cache
+#    image: redis
+#  - name: pgsql
+#    image: postgres:10
+#    environment:
+#      POSTGRES_USER: oc_autotest
+#      POSTGRES_DB: oc_autotest_dummy
+#      POSTGRES_PASSWORD:
+#    tmpfs:
+#      - /var/lib/postgresql/data
+#
+#trigger:
+#  branch:
+#    - master
+#    - stable*
+#  event:
+##    - pull_request
+#    - push
+#
+#---
+#kind: pipeline
+#name: int-pgsql-conversation
+#
+#steps:
+#  - name: integration-conversation
+#    image: nextcloudci/php7.3:php7.3-5
+#    environment:
+#      APP_NAME: spreed
+#      CORE_BRANCH: master
+#      DATABASEHOST: pgsql
+#    commands:
+#      - bash tests/drone-run-integration-tests.sh || exit 0
+#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+#      - cd ../server
+#      - ./occ app:enable $APP_NAME
+#      - cd apps/$APP_NAME
+#
+#      # Run integration tests
+#      - cd tests/integration/
+#      - bash run.sh features/conversation
+#
+#services:
+#  - name: cache
+#    image: redis
+#  - name: pgsql
+#    image: postgres:10
+#    environment:
+#      POSTGRES_USER: oc_autotest
+#      POSTGRES_DB: oc_autotest_dummy
+#      POSTGRES_PASSWORD:
+#    tmpfs:
+#      - /var/lib/postgresql/data
+#
+#trigger:
+#  branch:
+#    - master
+#    - stable*
+#  event:
+##    - pull_request
+#    - push
+#
+#---
+#kind: pipeline
+#name: int-pgsql-sharing
+#
+#steps:
+#  - name: integration-sharing
+#    image: nextcloudci/php7.3:php7.3-5
+#    environment:
+#      APP_NAME: spreed
+#      CORE_BRANCH: master
+#      DATABASEHOST: pgsql
+#    commands:
+#      - bash tests/drone-run-integration-tests.sh || exit 0
+#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+#      - cd ../server
+#      - ./occ app:enable $APP_NAME
+#      - cd apps/$APP_NAME
+#
+#      # Run integration tests
+#      - cd tests/integration/
+#      - bash run.sh features/sharing
+#
+#services:
+#  - name: cache
+#    image: redis
+#  - name: pgsql
+#    image: postgres:10
+#    environment:
+#      POSTGRES_USER: oc_autotest
+#      POSTGRES_DB: oc_autotest_dummy
+#      POSTGRES_PASSWORD:
+#    tmpfs:
+#      - /var/lib/postgresql/data
+#
+#trigger:
+#  branch:
+#    - master
+#    - stable*
+#  event:
+##    - pull_request
+#    - push
+#
 #---
 #kind: pipeline
 #name: acc-sqlite-app-files
