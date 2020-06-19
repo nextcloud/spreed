@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
-
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\TalkSession;
