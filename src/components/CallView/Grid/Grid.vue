@@ -92,6 +92,7 @@
 			:local-media-model="localMediaModel"
 			:video-container-aspect-ratio="videoContainerAspectRatio"
 			:local-call-participant-model="localCallParticipantModel"
+			:is-selectable="isLocalVideoSelectable"
 			@switchScreenToId="1"
 			@click-video="handleClickLocalVideo" />
 		<!-- page indicator (disabled) -->
@@ -214,6 +215,10 @@ export default {
 		sharedDatas: {
 			type: Object,
 			required: true,
+		},
+		isLocalVideoSelectable: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

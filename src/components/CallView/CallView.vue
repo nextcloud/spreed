@@ -101,6 +101,7 @@
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
+				:is-local-video-selectable="hasLocalVideo && !isLocalVideoSelected"
 				@select-video="handleSelectVideo"
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if the conversation is 1to1 or if sidebar -->
@@ -115,7 +116,6 @@
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
-				:is-selectable="hasLocalVideo && !isLocalVideoSelected"
 				@switchScreenToId="1" />
 		</div>
 	</div>

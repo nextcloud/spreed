@@ -128,6 +128,7 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
+				'selectable': this.isSelectable,
 			}
 		},
 
@@ -368,6 +369,9 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+}
+.selectable {
+	cursor: pointer;
 }
 
 .video {
