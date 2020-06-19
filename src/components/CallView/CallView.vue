@@ -101,7 +101,6 @@
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
-				:is-local-video-selectable="hasLocalVideo && !isLocalVideoSelected"
 				@select-video="handleSelectVideo"
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if the conversation is 1to1 or if sidebar -->
@@ -167,7 +166,6 @@ export default {
 			},
 			callParticipantCollection: callParticipantCollection,
 			videoContainerAspectRatio: 0,
-			isLocalVideoSelected: false,
 		}
 	},
 	computed: {
@@ -248,7 +246,7 @@ export default {
 
 		// Shows the local video if selected
 		showLocalVideo() {
-			return this.hasLocalVideo && this.isLocalVideoSelected
+			return this.hasLocalVideo && this.$store.getters.selectedVideoPeerId === 'local'
 		},
 
 		// Show selected video (other than local)
@@ -323,6 +321,13 @@ export default {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('isGrid', false)
+			}
+		},
+		'hasLocalVideo': function(newValue) {
+			if (this.$store.getters.selectedVideoPeerId === 'local') {
+				if (!newValue) {
+					this.$store.dispatch('selectedVideoPeerId', null)
+				}
 			}
 		},
 
@@ -489,8 +494,9 @@ export default {
 			this.isLocalVideoSelected = false
 		},
 		handleClickLocalVideo() {
+			// Deselect possible selected video
+			this.$store.dispatch('selectedVideoPeerId', 'local')
 			this.$store.dispatch('isGrid', false)
-			this.isLocalVideoSelected = !this.isLocalVideoSelected
 		},
 	},
 }

@@ -54,12 +54,12 @@ const video = {
 
 	methods: {
 		showShadow() {
-			if (this.isSelectable) {
+			if (this.isSelectable || this.mouseover) {
 				this.mouseover = true
 			}
 		},
 		hideShadow() {
-			if (this.isSelectable) {
+			if (this.isSelectable || this.mouseover) {
 				this.mouseover = false
 			}
 		},
