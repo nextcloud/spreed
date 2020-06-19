@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,44 +21,41 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk;
+namespace OCA\Talk\Listener;
 
-use OCP\EventDispatcher\IEventDispatcher;
+
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\TalkSession;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IUser;
-use OCP\IUserManager;
-use OCP\IUserSession;
-use OCP\Util;
+use OCP\User\Events\BeforeUserLoggedOutEvent;
 
-class Listener {
+class BeforeUserLoggedOutListener implements IEventListener {
 
 	/** @var Manager */
-	protected $manager;
-	/** @var IUserSession */
-	protected $userSession;
+	private $manager;
 	/** @var TalkSession */
-	protected $talkSession;
+	private $talkSession;
 
 	public function __construct(Manager $manager,
-								IUserSession $userSession,
 								TalkSession $talkSession) {
 		$this->manager = $manager;
-		$this->userSession = $userSession;
 		$this->talkSession = $talkSession;
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		Util::connectHook('OC_User', 'logout', self::class, 'logoutUserStatic');
-	}
+	public function handle(Event $event): void {
+		if (!($event instanceof BeforeUserLoggedOutEvent)) {
+			// Unrelated
+			return;
+		}
 
-	public static function logoutUserStatic(): void {
-		/** @var self $listener */
-		$listener = \OC::$server->query(self::class);
-		$listener->logoutUser();
-	}
-
-	public function logoutUser(): void {
-		/** @var IUser $user */
-		$user = $this->userSession->getUser();
+		$user = $event->getUser();
+		if (!$user instanceof IUser) {
+			// User already not there anymore, so well …
+			return;
+		}
 
 		$sessionIds = $this->talkSession->getAllActiveSessions();
 		foreach ($sessionIds as $sessionId) {
