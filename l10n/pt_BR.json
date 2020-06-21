@@ -40,7 +40,7 @@
     "An administrator created the conversation" : "Um administrador criou a conversa",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} renomeou a conversa de \"%1$s\" para \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Você renomeou a conversa de \"%1$s\" para \"%2$s\"",
-    "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Um administrador renomeou a conversa de \"%1$s\" para \"%2$s\"",
+    "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Um administrador renomeou a conversa \"%1$s\" para \"%2$s\"",
     "{actor} started a call" : "{actor} iniciou uma chamada",
     "You started a call" : "Você iniciou uma chamada",
     "{actor} joined the call" : "{actor} juntou-se à chamada",
