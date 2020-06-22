@@ -76,6 +76,8 @@ class RoomService {
 	 * @param string $objectId
 	 * @return Room
 	 * @throws InvalidArgumentException on too long or empty names
+	 * @throws InvalidArgumentException unsupported type
+	 * @throws InvalidArgumentException invalid object data
 	 */
 	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
 		$name = trim($name);
