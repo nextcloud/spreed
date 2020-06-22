@@ -97,8 +97,11 @@ class Create extends Base {
 		try {
 			$room = $this->roomService->createConversation($roomType, $name);
 		} catch (\InvalidArgumentException $e) {
-			$output->writeln('<error>Invalid room name.</error>');
-			return 1;
+			if ($e->getMessage() === 'name') {
+				$output->writeln('<error>Invalid room name.</error>');
+				return 1;
+			}
+			throw $e;
 		}
 
 		try {
