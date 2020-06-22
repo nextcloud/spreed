@@ -51,8 +51,7 @@ class RoomServiceTest extends TestCase {
 
 	public function testCreateOneToOneConversationWithSameUser(): void {
 		$user = $this->createMock(IUser::class);
-		$user->expects($this->exactly(2))
-			->method('getUID')
+		$user->method('getUID')
 			->willReturn('uid');
 
 		$this->expectException(\InvalidArgumentException::class);
@@ -62,12 +61,10 @@ class RoomServiceTest extends TestCase {
 
 	public function testCreateOneToOneConversationAlreadyExists(): void {
 		$user1 = $this->createMock(IUser::class);
-		$user1->expects($this->exactly(2))
-			->method('getUID')
+		$user1->method('getUID')
 			->willReturn('uid1');
 		$user2 = $this->createMock(IUser::class);
-		$user2->expects($this->exactly(2))
-			->method('getUID')
+		$user2->method('getUID')
 			->willReturn('uid2');
 
 		$room = $this->createMock(Room::class);
@@ -84,12 +81,10 @@ class RoomServiceTest extends TestCase {
 
 	public function testCreateOneToOneConversationCreated(): void {
 		$user1 = $this->createMock(IUser::class);
-		$user1->expects($this->exactly(3))
-			->method('getUID')
+		$user1->method('getUID')
 			->willReturn('uid1');
 		$user2 = $this->createMock(IUser::class);
-		$user2->expects($this->exactly(3))
-			->method('getUID')
+		$user2->method('getUID')
 			->willReturn('uid2');
 
 		$room = $this->createMock(Room::class);
@@ -205,8 +200,7 @@ class RoomServiceTest extends TestCase {
 
 		if ($ownerId !== '') {
 			$owner = $this->createMock(IUser::class);
-			$owner->expects($this->once())
-				->method('getUID')
+			$owner->method('getUID')
 				->willReturn($ownerId);
 
 			$room->expects($this->once())
