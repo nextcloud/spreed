@@ -96,7 +96,7 @@ class Create extends Base {
 		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
 		try {
 			$room = $this->roomService->createConversation($roomType, $name);
-		} catch (\InvalidArgumentException $e) {
+		} catch (InvalidArgumentException $e) {
 			if ($e->getMessage() === 'name') {
 				$output->writeln('<error>Invalid room name.</error>');
 				return 1;

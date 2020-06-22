@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use InvalidArgumentException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
@@ -54,7 +55,7 @@ class RoomServiceTest extends TestCase {
 		$user->method('getUID')
 			->willReturn('uid');
 
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('invalid_invitee');
 		$this->service->createOneToOneConversation($user, $user);
 	}
@@ -129,7 +130,7 @@ class RoomServiceTest extends TestCase {
 		$this->manager->expects($this->never())
 			->method('createRoom');
 
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('name');
 		$this->service->createConversation(Room::GROUP_CALL, $name);
 	}
@@ -150,7 +151,7 @@ class RoomServiceTest extends TestCase {
 		$this->manager->expects($this->never())
 			->method('createRoom');
 
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('type');
 		$this->service->createConversation($type, 'abc');
 	}
@@ -174,7 +175,7 @@ class RoomServiceTest extends TestCase {
 		$this->manager->expects($this->never())
 			->method('createRoom');
 
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($exception);
 		$this->service->createConversation(Room::PUBLIC_CALL, 'a', null, $type, $id);
 	}

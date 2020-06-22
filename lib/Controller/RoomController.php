@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use InvalidArgumentException;
 use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
@@ -612,7 +613,7 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$room = $this->roomService->createOneToOneConversation($currentUser, $targetUser);
 			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
-		} catch (\InvalidArgumentException $e) {
+		} catch (InvalidArgumentException $e) {
 			// Same current and target user
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		} catch (RoomNotFoundException $e) {
@@ -736,7 +737,7 @@ class RoomController extends AEnvironmentAwareController {
 		// Create the room
 		try {
 			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser);
-		} catch (\InvalidArgumentException $e) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

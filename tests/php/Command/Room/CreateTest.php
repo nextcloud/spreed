@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Command\Room;
 
+use InvalidArgumentException;
 use OCA\Talk\Command\Room\Create;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
@@ -290,7 +291,7 @@ class CreateTest extends TestCase {
 		if ($input['name'] !== 'PHPUnit Test Room') {
 			$this->roomService
 				->method('createConversation')
-				->willThrowException(new \InvalidArgumentException('name'));
+				->willThrowException(new InvalidArgumentException('name'));
 		} else {
 			$this->roomService
 				->method('createConversation')
