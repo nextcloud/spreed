@@ -84,7 +84,7 @@
 		"sass-loader": "^8.0.1",
 		"stylelint": "^13.6.0",
 		"stylelint-config-recommended-scss": "^4.2.0",
-		"stylelint-scss": "^3.17.1",
+		"stylelint-scss": "^3.18.0",
 		"stylelint-webpack-plugin": "^2.0.0",
 		"vue-loader": "^15.9.2",
 		"vue-template-compiler": "^2.6.11",
