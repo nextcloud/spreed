@@ -92,6 +92,8 @@ function PeerConnectionAnalyzer() {
 		'video': new AverageStatValue(2, STAT_VALUE_TYPE.CUMULATIVE),
 	}
 
+	this._handlers = []
+
 	this._peerConnection = null
 	this._peerDirection = null
 
@@ -105,6 +107,41 @@ function PeerConnectionAnalyzer() {
 }
 PeerConnectionAnalyzer.prototype = {
 
+	on: function(event, handler) {
+		if (!this._handlers.hasOwnProperty(event)) {
+			this._handlers[event] = [handler]
+		} else {
+			this._handlers[event].push(handler)
+		}
+	},
+
+	off: function(event, handler) {
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
+		if (index !== -1) {
+			handlers.splice(index, 1)
+		}
+	},
+
+	_trigger: function(event, args) {
+		let handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		args.unshift(this)
+
+		handlers = handlers.slice(0)
+		for (let i = 0; i < handlers.length; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
+	},
+
 	getConnectionQualityAudio: function() {
 		return this._connectionQualityAudio
 	},
@@ -114,11 +151,21 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_setConnectionQualityAudio: function(connectionQualityAudio) {
+		if (this._connectionQualityAudio === connectionQualityAudio) {
+			return
+		}
+
 		this._connectionQualityAudio = connectionQualityAudio
+		this._trigger('change:connectionQualityAudio', [connectionQualityAudio])
 	},
 
 	_setConnectionQualityVideo: function(connectionQualityVideo) {
+		if (this._connectionQualityVideo === connectionQualityVideo) {
+			return
+		}
+
 		this._connectionQualityVideo = connectionQualityVideo
+		this._trigger('change:connectionQualityVideo', [connectionQualityVideo])
 	},
 
 	setPeerConnection: function(peerConnection, peerDirection = null) {
