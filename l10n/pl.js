@@ -28,7 +28,7 @@ OC.L10N.register(
     "New in Talk 8" : "Nowości w Talk 8",
     "- You can now directly reply to messages giving the other users more context what your message is about" : "- Możesz teraz bezpośrednio odpowiadać na wiadomości, dając innym użytkownikom szerszy kontekst na temat Twojej wiadomości",
     "- Searching for conversations and participants will now also filter your existing conversations, making it much easier to find previous conversations" : "- Wyszukiwanie rozmów i uczestników będzie teraz również filtrować istniejące rozmowy, co znacznie ułatwi znajdowanie wcześniejszych rozmów",
-    "- You can now add custom user groups to conversations when the circles app is installed" : "- Możesz teraz dodawać niestandardowe grupy użytkowników do rozmów, gdy jest zainstalowana aplikacja kręgów",
+    "- You can now add custom user groups to conversations when the circles app is installed" : "- Możesz teraz dodawać własne grupy użytkowników do rozmów dzięki zainstalowanej aplikacji kręgów",
     "New in Talk 9" : "Nowości w Talk 9",
     "- Check out the new grid and call view" : "- Sprawdź nowy widok siatki i połączeń",
     "- You can now upload and drag'n'drop files directly from your device into the chat" : "- Możesz teraz przesyłać i przeciągać pliki bezpośrednio z urządzenia do czatu",
