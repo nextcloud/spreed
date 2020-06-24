@@ -57,6 +57,7 @@ import {
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 
@@ -74,6 +75,7 @@ export default {
 		browserCheck,
 		talkHashCheck,
 		duplicateSessionHandler,
+		isInCall,
 	],
 
 	data: function() {
@@ -112,11 +114,6 @@ export default {
 			return {
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
-		},
-
-		isInCall() {
-			return SessionStorage.getItem('joined_conversation') === this.token
-				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		warnLeaving() {
