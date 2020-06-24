@@ -60,8 +60,8 @@ import {
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
-import SessionStorage from './services/SessionStorage'
 
 export default {
 
@@ -77,6 +77,7 @@ export default {
 	mixins: [
 		browserCheck,
 		duplicateSessionHandler,
+		isInCall,
 		talkHashCheck,
 	],
 
@@ -112,16 +113,15 @@ export default {
 			return this.state.isOpen
 		},
 
-		isInCall() {
+		participant() {
 			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
 			if (participantIndex === -1) {
-				return false
+				return {
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				}
 			}
 
-			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
-
-			return SessionStorage.getItem('joined_conversation') === this.token
-				&& participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			return this.$store.getters.getParticipant(this.token, participantIndex)
 		},
 
 		warnLeaving() {

@@ -51,7 +51,7 @@
 <script>
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
-import SessionStorage from '../../services/SessionStorage'
+import isInCall from '../../mixins/isInCall'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 
@@ -62,7 +62,10 @@ export default {
 		Tooltip,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		isInCall,
+	],
 
 	data() {
 		return {
@@ -103,11 +106,6 @@ export default {
 			return {
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
-		},
-
-		isInCall() {
-			return SessionStorage.getItem('joined_conversation') === this.token
-				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		isBlockedByLobby() {
