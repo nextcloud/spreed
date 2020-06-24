@@ -88,6 +88,7 @@ const confirmForceJoinConversation = async(token) => {
 		decision => {
 			if (!decision) {
 				// Cancel
+				EventBus.$emit('duplicateSessionDetected')
 				window.location = generateUrl('/apps/spreed')
 			} else {
 				// Confirm
