@@ -1120,8 +1120,19 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
-	console.debug('Room list event', data)
-	EventBus.$emit('shouldRefreshConversations')
+	switch (data.event.type) {
+	case 'disinvite':
+		if (data.event.disinvite.roomid === this.currentRoomToken) {
+			console.error('User or session was removed from the conversation, redirecting')
+			EventBus.$emit('duplicateSessionDetected')
+			break
+		}
+		// eslint-disable-next-line no-fallthrough
+	default:
+		console.debug('Room list event', data)
+		EventBus.$emit('shouldRefreshConversations')
+		break
+	}
 }
 
 Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
