@@ -224,7 +224,9 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				leaveConversationSync(this.token)
+				if (!this.isLeavingAfterSessionConflict) {
+					leaveConversationSync(this.token)
+				}
 			}
 		})
 
