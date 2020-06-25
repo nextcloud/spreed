@@ -278,6 +278,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
     "Grid view" : "Afișare în grilă",
+    "Access to microphone & camera was denied" : "Accesul la microfon și cameră a fost refuzat",
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Password" : "Parolă",
     "Android app" : "Aplicație Android",
