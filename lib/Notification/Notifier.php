@@ -311,15 +311,38 @@ class Notifier implements INotifier {
 			}
 		}
 
-		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message->getMessage()));
-		$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
+		$parsedMessage = str_replace($placeholders, $replacements, $message->getMessage());
+		if (!$this->notificationManager->isPreparingPushNotification()) {
+			$notification->setParsedMessage($parsedMessage);
+			$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
+		}
 
 		$richSubjectParameters = [
 			'user' => $richSubjectUser,
 			'call' => $richSubjectCall,
 		];
 
-		if ($notification->getSubject() === 'chat') {
+		if ($this->notificationManager->isPreparingPushNotification()) {
+			$richSubjectParameters['message'] = [
+				'type' => 'highlight',
+				'id' => $message->getComment()->getId(),
+				'name' => $parsedMessage,
+			];
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$subject = $l->t('{user}: {message}');
+			} elseif ($richSubjectUser) {
+				$subject = $l->t('{user} in {call}: {message}');
+			} elseif (!$isGuest) {
+				$subject = $l->t('Deleted user in {call}: {message}');
+			} else {
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$subject = $l->t('{guest} (guest) in {call}: {message}');
+				} catch (ParticipantNotFoundException $e) {
+					$subject = $l->t('Guest in {call}: {message}');
+				}
+			}
+		} elseif ($notification->getSubject() === 'chat') {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$subject = $l->t('{user} sent you a private message');
 			} elseif ($richSubjectUser) {
