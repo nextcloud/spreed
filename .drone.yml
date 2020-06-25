@@ -251,134 +251,137 @@ trigger:
     - pull_request
     - push
 
-#---
-#kind: pipeline
-#name: unit-pgsql-php7.2
-#
-#steps:
-#  - name: pgsql-php7.2
-#    image: nextcloudci/php7.2:php7.2-13
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      DATABASEHOST: pgsql
-#    commands:
-#      - bash tests/drone-run-php-tests.sh || exit 0
-#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-#      - cd ../server
-#      - ./occ app:enable $APP_NAME
-#      - cd apps/$APP_NAME
-#
-#      # Run phpunit tests
-#      - cd tests/php/
-#      - phpunit --configuration phpunit.xml
-#
-#services:
-#  - name: cache
-#    image: redis
-#  - name: pgsql
-#    image: postgres:10
-#    environment:
-#      POSTGRES_USER: oc_autotest
-#      POSTGRES_DB: oc_autotest_dummy
-#      POSTGRES_PASSWORD:
-#    tmpfs:
-#      - /var/lib/postgresql/data
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: unit-pgsql-php7.3
-#
-#steps:
-#  - name: pgsql-php7.3
-#    image: nextcloudci/php7.3:php7.3-5
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      DATABASEHOST: pgsql
-#    commands:
-#      - bash tests/drone-run-php-tests.sh || exit 0
-#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-#      - cd ../server
-#      - ./occ app:enable $APP_NAME
-#      - cd apps/$APP_NAME
-#
-#      # Run phpunit tests
-#      - cd tests/php/
-#      - phpunit --configuration phpunit.xml
-#
-#services:
-#  - name: cache
-#    image: redis
-#  - name: pgsql
-#    image: postgres:10
-#    environment:
-#      POSTGRES_USER: oc_autotest
-#      POSTGRES_DB: oc_autotest_dummy
-#      POSTGRES_PASSWORD:
-#    tmpfs:
-#      - /var/lib/postgresql/data
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: unit-pgsql-php7.4
-#
-#steps:
-#  - name: pgsql-php7.4
-#    image: nextcloudci/php7.4:2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      DATABASEHOST: pgsql
-#    commands:
-#      - bash tests/drone-run-php-tests.sh || exit 0
-#      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-#      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-#      - cd ../server
-#      - ./occ app:enable $APP_NAME
-#      - cd apps/$APP_NAME
-#
-#      # Run phpunit tests
-#      - cd tests/php/
-#      - phpunit --configuration phpunit.xml
-#
-#services:
-#  - name: cache
-#    image: redis
-#  - name: pgsql
-#    image: postgres:10
-#    environment:
-#      POSTGRES_USER: oc_autotest
-#      POSTGRES_DB: oc_autotest_dummy
-#      POSTGRES_PASSWORD:
-#    tmpfs:
-#      - /var/lib/postgresql/data
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
+---
+kind: pipeline
+name: unit-pgsql-php7.2
+
+steps:
+  - name: pgsql-php7.2
+    image: nextcloudci/php7.2:php7.2-13
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      DATABASEHOST: pgsql
+    commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.3
+
+steps:
+  - name: pgsql-php7.3
+    image: nextcloudci/php7.3:php7.3-5
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      DATABASEHOST: pgsql
+    commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.4
+
+steps:
+  - name: pgsql-php7.4
+    image: nextcloudci/php7.4:2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      DATABASEHOST: pgsql
+    commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
 
 ---
 kind: pipeline
@@ -731,6 +734,7 @@ services:
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PASSWORD:
     tmpfs:
       - /var/lib/postgresql/data
@@ -774,6 +778,7 @@ services:
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PASSWORD:
     tmpfs:
       - /var/lib/postgresql/data
@@ -817,6 +822,7 @@ services:
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PASSWORD:
     tmpfs:
       - /var/lib/postgresql/data
@@ -860,6 +866,7 @@ services:
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PASSWORD:
     tmpfs:
       - /var/lib/postgresql/data
