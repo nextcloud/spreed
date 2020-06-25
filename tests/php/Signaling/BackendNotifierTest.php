@@ -181,18 +181,41 @@ class BackendNotifierTest extends \Test\TestCase {
 		return $body;
 	}
 
+	private function assertMessageWasSent(Room $room, array $message): void {
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function ($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+
+		$bodies = array_filter($bodies, function (array $body) use ($message) {
+			return $body['type'] === $message['type'];
+		});
+
+		$bodies = array_map([$this, 'sortParticipantUsers'], $bodies);
+		$message = $this->sortParticipantUsers($message);
+		$this->assertContains($message, $bodies);
+	}
+
+	private function sortParticipantUsers(array $message): array {
+		if ($message['type'] === 'participants') {
+			usort($message['participants']['users'], static function ($a, $b) {
+				return
+					[$a['userId'] ?? '', $a['participantType'], $a['sessionId'], $a['lastPing']]
+					<=>
+					[$b['userId'] ?? '', $b['participantType'], $b['sessionId'], $b['lastPing']]
+					;
+			});
+		}
+		return $message;
+	}
+
 	public function testRoomInvite() {
 		$room = $this->manager->createPublicRoom();
 		$room->addUsers([
 			'userId' => $this->userId,
 		]);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'invite',
 			'invite' => [
 				'userids' => [
@@ -210,7 +233,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomDisinvite() {
@@ -226,11 +249,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			->willReturn($this->userId);
 		$room->removeUser($testUser, Room::PARTICIPANT_REMOVED);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => [
@@ -247,18 +266,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomNameChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setName('Test room');
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -272,18 +287,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomPasswordChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setPassword('password');
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -297,18 +308,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomTypeChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setType(Room::GROUP_CALL);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -322,18 +329,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomReadOnlyChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setReadOnly(Room::READ_ONLY);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -347,18 +350,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomLobbyStateChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -372,7 +371,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'active-since' => null,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomDelete() {
@@ -382,18 +381,14 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 		$room->deleteRoom();
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'delete',
 			'delete' => [
 				'userids' => [
 					$this->userId,
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomInCallChanged() {
@@ -406,11 +401,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$participant = $room->getParticipantBySession($userSession);
 		$room->changeInCall($participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
 			'incall' => [
 				'incall' => 7,
@@ -433,18 +424,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 
 		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
 		$guestParticipant = $room->getParticipantBySession($guestSession);
 		$room->changeInCall($guestParticipant, Participant::FLAG_IN_CALL);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
 			'incall' => [
 				'incall' => 1,
@@ -472,16 +459,12 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 
 		$this->controller->clearRequests();
 		$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
 			'incall' => [
 				'incall' => 0,
@@ -503,7 +486,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testRoomPropertiesEvent(): void {
@@ -519,12 +502,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->controller->clearRequests();
 		$room->setName('Test room');
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => [
@@ -540,7 +518,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'room' => $room->getToken(),
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 	public function testParticipantsTypeChanged() {
@@ -553,11 +531,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$participant = $room->getParticipantBySession($userSession);
 		$room->setParticipantType($participant, Participant::MODERATOR);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => [
@@ -579,18 +553,14 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 
 		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
 		$guestParticipant = $room->getParticipantBySession($guestSession);
 		$room->setParticipantType($guestParticipant, Participant::GUEST_MODERATOR);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => [
@@ -617,7 +587,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 
 		$this->controller->clearRequests();
 		$notJoinedUserId = 'not-joined-user-id';
@@ -627,11 +597,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$participant = $room->getParticipant($notJoinedUserId);
 		$room->setParticipantType($participant, Participant::MODERATOR);
 
-		$requests = $this->controller->getRequests();
-		$bodies = array_map(function($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
-		}, $requests);
-		$this->assertContains([
+		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => [
@@ -659,7 +625,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					],
 				],
 			],
-		], $bodies);
+		]);
 	}
 
 }
