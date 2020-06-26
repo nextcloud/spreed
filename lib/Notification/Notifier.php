@@ -345,17 +345,17 @@ class Notifier implements INotifier {
 				'name' => $shortenMessage,
 			];
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$subject = $l->t('{user}: {message}');
+				$subject = "{user}\n{message}";
 			} elseif ($richSubjectUser) {
-				$subject = $l->t('{user} in {call}: {message}');
+				$subject = $l->t('{user} in {call}') . "\n{message}";
 			} elseif (!$isGuest) {
-				$subject = $l->t('Deleted user in {call}: {message}');
+				$subject = $l->t('Deleted user in {call}') . "\n{message}";
 			} else {
 				try {
 					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
-					$subject = $l->t('{guest} (guest) in {call}: {message}');
+					$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
 				} catch (ParticipantNotFoundException $e) {
-					$subject = $l->t('Guest in {call}: {message}');
+					$subject = $l->t('Guest in {call}') . "\n{message}";
 				}
 			}
 		} elseif ($notification->getSubject() === 'chat') {
