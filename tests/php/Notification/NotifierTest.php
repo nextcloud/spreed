@@ -733,9 +733,9 @@ class NotifierTest extends \Test\TestCase {
 			// Push messages
 			'one-to-one push' => [
 				$subject = 'chat', Room::ONE_TO_ONE_CALL, ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Test user',
-				'Test user: Hi @Administrator',
+				'Test user' . "\n" . 'Hi @Administrator',
 				[
-					'{user}: {message}',
+					'{user}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one'],
@@ -746,9 +746,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'user push' => [
 				$subject = 'chat', Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
-				'Test user in Room name: Hi @Administrator',
+				'Test user in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'{user} in {call}: {message}',
+					'{user} in {call}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
@@ -759,9 +759,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'deleted user push' => [
 				$subject = 'chat', Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], null,        'Room name',
-				'Deleted user in Room name: Hi @Administrator',
+				'Deleted user in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'Deleted user in {call}: {message}',
+					'Deleted user in {call}' . "\n" . '{message}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
@@ -771,9 +771,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'user push public' => [
 				$subject = 'chat', Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
-				'Test user in Room name: Hi @Administrator',
+				'Test user in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'{user} in {call}: {message}',
+					'{user} in {call}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
@@ -784,9 +784,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'deleted user push public' => [
 				$subject = 'chat', Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], null,        'Room name',
-				'Deleted user in Room name: Hi @Administrator',
+				'Deleted user in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'Deleted user in {call}: {message}',
+					'Deleted user in {call}' . "\n" . '{message}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
@@ -796,9 +796,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'guest push public' => [
 				$subject = 'chat', Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,        'Room name',
-				'Guest in Room name: Hi @Administrator',
+				'Guest in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'Guest in {call}: {message}',
+					'Guest in {call}' . "\n" . '{message}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
@@ -808,9 +808,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'named guest push public' => [
 				$subject = 'chat', Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
-				'MyNameIs (guest) in Room name: Hi @Administrator',
+				'MyNameIs (guest) in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'{guest} (guest) in {call}: {message}',
+					'{guest} (guest) in {call}' . "\n" . '{message}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
 						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
@@ -821,9 +821,9 @@ class NotifierTest extends \Test\TestCase {
 			],
 			'empty named guest push public' => [
 				$subject = 'chat', Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
-				'Guest in Room name: Hi @Administrator',
+				'Guest in Room name' . "\n" . 'Hi @Administrator',
 				[
-					'Guest in {call}: {message}',
+					'Guest in {call}' . "\n" . '{message}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],

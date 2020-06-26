@@ -248,6 +248,14 @@ class Notifier implements INotifier {
 		throw new \InvalidArgumentException('Unknown subject');
 	}
 
+	protected function shortenJsonEncodedMultibyteSave(string $subject, int $dataLength): string {
+		$temp = mb_substr($subject, 0, $dataLength);
+		while (strlen(json_encode($temp)) > $dataLength) {
+			$temp = mb_substr($temp, 0, -5);
+		}
+		return $temp;
+	}
+
 	/**
 	 * @param INotification $notification
 	 * @param Room $room
@@ -327,23 +335,27 @@ class Notifier implements INotifier {
 		];
 
 		if ($this->notificationManager->isPreparingPushNotification()) {
+			$shortenMessage = $this->shortenJsonEncodedMultibyteSave($parsedMessage, 100);
+			if ($shortenMessage !== $parsedMessage) {
+				$shortenMessage .= '…';
+			}
 			$richSubjectParameters['message'] = [
 				'type' => 'highlight',
 				'id' => $message->getComment()->getId(),
-				'name' => $parsedMessage,
+				'name' => $shortenMessage,
 			];
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$subject = $l->t('{user}: {message}');
+				$subject = "{user}\n{message}";
 			} elseif ($richSubjectUser) {
-				$subject = $l->t('{user} in {call}: {message}');
+				$subject = $l->t('{user} in {call}') . "\n{message}";
 			} elseif (!$isGuest) {
-				$subject = $l->t('Deleted user in {call}: {message}');
+				$subject = $l->t('Deleted user in {call}') . "\n{message}";
 			} else {
 				try {
 					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
-					$subject = $l->t('{guest} (guest) in {call}: {message}');
+					$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
 				} catch (ParticipantNotFoundException $e) {
-					$subject = $l->t('Guest in {call}: {message}');
+					$subject = $l->t('Guest in {call}') . "\n{message}";
 				}
 			}
 		} elseif ($notification->getSubject() === 'chat') {
