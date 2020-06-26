@@ -52,7 +52,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$server = $input->getArgument('server');
 		// check input, similar to stun-server.js
 		$host = parse_url($server, PHP_URL_HOST);

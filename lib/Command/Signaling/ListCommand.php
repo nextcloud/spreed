@@ -48,7 +48,7 @@ class ListCommand extends Base {
 			->setDescription('List external signaling servers.');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
 		if (!is_array($signaling)) {

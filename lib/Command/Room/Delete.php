@@ -47,7 +47,7 @@ class Delete extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$token = $input->getArgument('token');
 
 		try {

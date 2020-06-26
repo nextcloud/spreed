@@ -82,7 +82,7 @@ class Create extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$name = $input->getArgument('name');
 		$users = $input->getOption('user');
 		$groups = $input->getOption('group');

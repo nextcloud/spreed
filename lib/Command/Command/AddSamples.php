@@ -55,7 +55,7 @@ class AddSamples extends Base {
 		;
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		try {
 			$appPath = $this->appManager->getAppPath('spreed');
 		} catch (AppPathNotFoundException $e) {
@@ -107,6 +107,7 @@ class AddSamples extends Base {
 		$output->writeln('<info>Commands added</info>');
 		$output->writeln('');
 		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, $this->commands);
+		return 0;
 	}
 
 	protected function installCommand(OutputInterface $output, string $command, string $name, string $script, int $resonse = Command::RESPONSE_ALL, int $enable = Command::ENABLED_ALL): void {
