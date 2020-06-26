@@ -48,6 +48,8 @@ function VideoConstrainer(localMediaModel) {
 	// By default the constraints used when getting the video try to get the
 	// highest quality
 	this._currentQuality = QUALITY.HIGH
+
+	this._knownValidConstraintsForQuality = {}
 }
 VideoConstrainer.prototype = {
 
@@ -81,10 +83,15 @@ VideoConstrainer.prototype = {
 	},
 
 	_applyRoughConstraints: async function(localVideoTrack, quality) {
-		const constraints = this._getConstraintsForQuality(quality)
+		let constraints = this._knownValidConstraintsForQuality[quality]
+		if (!constraints) {
+			constraints = this._getConstraintsForQuality(quality)
+		}
 
 		try {
 			await localVideoTrack.applyConstraints(constraints)
+
+			this._knownValidConstraintsForQuality[quality] = constraints
 
 			console.debug('Changed quality to ' + quality)
 		} catch (error) {
@@ -105,10 +112,13 @@ VideoConstrainer.prototype = {
 
 			try {
 				await this._applyRoughFrameRateConstraints(localVideoTrack, frameRateConstraints)
+
+				this._knownValidConstraintsForQuality[quality] = frameRateConstraints
 			} catch (error) {
 				// Frame rate could not be changed, but at least resolution
 				// was. Do not fail in that case and settle for this little
 				// victory.
+				this._knownValidConstraintsForQuality[quality] = resolutionConstraints
 			}
 
 			console.debug('Changed quality to ' + quality)
