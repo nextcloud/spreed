@@ -72,7 +72,7 @@ class Add extends Base {
 		;
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$cmd = $input->getArgument('cmd');
 		$name = $input->getArgument('name');
 		$script = $input->getArgument('script');
@@ -115,5 +115,6 @@ class Add extends Base {
 
 		$output->writeln('');
 		$output->writeln("<comment>If you think your command makes sense for other users as well, feel free to share it in the following github issue:\n https://github.com/nextcloud/spreed/issues/1566</comment>");
+		return 0;
 	}
 }

@@ -67,7 +67,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 		$secret = $input->getOption('secret');

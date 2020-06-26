@@ -50,7 +50,7 @@ class Delete extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$id = (int) $input->getArgument('command-id');
 
 		try {
@@ -62,5 +62,6 @@ class Delete extends Base {
 			$output->writeln('<error>The help command cannot be deleted</error>');
 			return 2;
 		}
+		return 0;
 	}
 }

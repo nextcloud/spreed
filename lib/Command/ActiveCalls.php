@@ -50,7 +50,7 @@ class ActiveCalls extends Base {
 			->setDescription('Allows you to check if calls are currently in process');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$query = $this->connection->getQueryBuilder();
 
 		$query->select($query->func()->count('*', 'num_calls'))

@@ -48,7 +48,7 @@ class ListCommand extends Base {
 			->setDescription('List STUN servers.');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): ?int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$config = $this->config->getAppValue('spreed', 'stun_servers');
 		$servers = json_decode($config);
 		if (!is_array($servers)) {
