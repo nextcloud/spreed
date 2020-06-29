@@ -84,6 +84,7 @@ import Quote from '../../../Quote'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT } from '../../../../constants'
+import moment from '@nextcloud/moment'
 
 export default {
 	name: 'Message',
@@ -217,7 +218,7 @@ export default {
 		},
 
 		messageTime() {
-			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+			return moment(this.timestamp * 1000).format('LT')
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
