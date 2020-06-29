@@ -316,10 +316,18 @@ class SignalingController extends OCSController {
 
 			// Was the session killed or the complete conversation?
 			try {
-				$this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				if ($this->userId) {
+					// For logged in users we check if they are still part of the public conversation,
+					// if not they were removed instead of having a conflict.
+					$room->getParticipant($this->userId);
+				}
 
 				// Session was killed, make the UI redirect to an error
 				return new DataResponse($data, Http::STATUS_CONFLICT);
+			} catch (ParticipantNotFoundException $e) {
+				// User removed from conversation, bye!
+				return new DataResponse($data, Http::STATUS_NOT_FOUND);
 			} catch (RoomNotFoundException $e) {
 				// Complete conversation was killed, bye!
 				return new DataResponse($data, Http::STATUS_NOT_FOUND);
