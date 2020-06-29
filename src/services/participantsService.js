@@ -76,6 +76,17 @@ const joinConversation = async(token) => {
 }
 
 const confirmForceJoinConversation = async(token) => {
+	// Little hack to check if the close button was used which we can't disable,
+	// not listen to when it was used.
+	const interval = setInterval(function() {
+		// eslint-disable-next-line no-undef
+		if ($('.oc-dialog-dim').length === 0) {
+			clearInterval(interval)
+			EventBus.$emit('duplicateSessionDetected')
+			window.location = generateUrl('/apps/spreed')
+		}
+	}, 3000)
+
 	await OC.dialogs.confirmDestructive(
 		t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
 		t('spreed', 'Duplicate session'),
@@ -86,6 +97,7 @@ const confirmForceJoinConversation = async(token) => {
 			cancel: t('spreed', 'Leave this page'),
 		},
 		decision => {
+			clearInterval(interval)
 			if (!decision) {
 				// Cancel
 				EventBus.$emit('duplicateSessionDetected')
