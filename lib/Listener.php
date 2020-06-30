@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -106,12 +108,16 @@ class Listener {
 		/** @var string[] $sessionIds */
 		$sessionIds = $this->talkSession->getAllActiveSessions();
 		foreach ($sessionIds as $sessionId) {
-			$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
-			$participant = $room->getParticipant($user->getUID());
-			if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
-				$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+			try {
+				$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
+				$participant = $room->getParticipant($user->getUID());
+				if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
+					$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+				}
+				$room->leaveRoom($user->getUID(), $sessionId);
+			} catch (RoomNotFoundException $e) {
+			} catch (ParticipantNotFoundException $e) {
 			}
-			$room->leaveRoom($user->getUID(), $sessionId);
 		}
 	}
 
