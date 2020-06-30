@@ -49,6 +49,7 @@ export default {
 
 	beforeMount() {
 		EventBus.$on('joinedConversation', this.readSessionStorageJoinedConversation)
+		this.sessionStorageJoinedConversation = SessionStorage.getItem('joined_conversation')
 	},
 
 	methods: {
