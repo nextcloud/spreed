@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\TalkSession;
@@ -58,12 +60,16 @@ class BeforeUserLoggedOutListener implements IEventListener {
 
 		$sessionIds = $this->talkSession->getAllActiveSessions();
 		foreach ($sessionIds as $sessionId) {
-			$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
-			$participant = $room->getParticipant($user->getUID());
-			if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
-				$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+			try {
+				$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
+				$participant = $room->getParticipant($user->getUID());
+				if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
+					$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+				}
+				$room->leaveRoom($user->getUID(), $sessionId);
+			} catch (RoomNotFoundException $e) {
+			} catch (ParticipantNotFoundException $e) {
 			}
-			$room->leaveRoom($user->getUID(), $sessionId);
 		}
 	}
 }
