@@ -51,7 +51,7 @@ const findUniquePath = async function(client, userRoot, path) {
 		// remove the suffix if any
 		pathWithoutSuffix = path.substring(0, path.length - suffix.length)
 	}
-	// Loop untile a unique path is found
+	// Loop until a unique path is found
 	for (let number = 2; true; number++) {
 		const uniquePath = pathWithoutSuffix + ` (${number})` + (fileExtension)
 		if (await client.exists(userRoot + uniquePath) === false) {
