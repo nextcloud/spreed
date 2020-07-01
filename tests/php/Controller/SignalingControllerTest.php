@@ -888,7 +888,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
-		$room = $this->manager->createPublicRoom();
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
 
 		// The user joined the room.
 		$oldSessionId = $room->joinRoom($testUser, '');

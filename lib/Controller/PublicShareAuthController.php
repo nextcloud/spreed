@@ -24,8 +24,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\Manager;
-use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -45,8 +45,8 @@ class PublicShareAuthController extends OCSController {
 	private $shareManager;
 	/** @var IUserSession */
 	private $userSession;
-	/** @var Manager */
-	private $manager;
+	/** @var RoomService */
+	private $roomService;
 
 	public function __construct(
 			string $appName,
@@ -54,13 +54,13 @@ class PublicShareAuthController extends OCSController {
 			IUserManager $userManager,
 			IShareManager $shareManager,
 			IUserSession $userSession,
-			Manager $manager
+			RoomService $roomService
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->userSession = $userSession;
-		$this->manager = $manager;
+		$this->roomService = $roomService;
 	}
 
 	/**
@@ -104,13 +104,10 @@ class PublicShareAuthController extends OCSController {
 		} else {
 			$roomName = trim($share->getTarget(), '/');
 		}
+		$roomName = $this->roomService->prepareConversationName($roomName);
 
 		// Create the room
-		$room = $this->manager->createPublicRoom($roomName, 'share:password', $shareToken);
-		$room->addUsers([
-			'userId' => $sharerUser->getUID(),
-			'participantType' => Participant::OWNER,
-		]);
+		$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $roomName, $sharerUser, 'share:password', $shareToken);
 
 		$user = $this->userSession->getUser();
 		$userId = $user instanceof IUser ? $user->getUID() : '';

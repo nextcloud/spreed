@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -43,23 +44,23 @@ trait TRoomCommand {
 	/** @var Manager */
 	protected $manager;
 
+	/** @var RoomService */
+	protected $roomService;
+
 	/** @var IUserManager */
 	protected $userManager;
 
 	/** @var IGroupManager */
 	protected $groupManager;
 
-	/**
-	 * TRoomCommand constructor.
-	 *
-	 * @param Manager       $manager
-	 * @param IUserManager  $userManager
-	 * @param IGroupManager $groupManager
-	 */
-	public function __construct(Manager $manager, IUserManager $userManager, IGroupManager $groupManager) {
+	public function __construct(Manager $manager,
+								RoomService $roomService,
+								IUserManager $userManager,
+								IGroupManager $groupManager) {
 		parent::__construct();
 
 		$this->manager = $manager;
+		$this->roomService = $roomService;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 	}

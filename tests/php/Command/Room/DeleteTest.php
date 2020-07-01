@@ -29,6 +29,7 @@ use OCA\Talk\Command\Room\Delete;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Exception\RuntimeException as ConsoleRuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -43,6 +44,9 @@ class DeleteTest extends TestCase {
 	/** @var Manager|MockObject */
 	private $manager;
 
+	/** @var RoomService|MockObject */
+	private $roomService;
+
 	/** @var RoomMockContainer */
 	private $roomMockContainer;
 
@@ -53,7 +57,13 @@ class DeleteTest extends TestCase {
 		$this->registerGroupManagerMock();
 
 		$this->manager = $this->createMock(Manager::class);
-		$this->command = new Delete($this->manager, $this->userManager, $this->groupManager);
+		$this->roomService = $this->createMock(RoomService::class);
+		$this->command = new Delete(
+			$this->manager,
+			$this->roomService,
+			$this->userManager,
+			$this->groupManager
+		);
 
 		$this->roomMockContainer = new RoomMockContainer($this);
 	}

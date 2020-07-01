@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use InvalidArgumentException;
 use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
@@ -41,6 +42,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -72,6 +74,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $groupManager;
 	/** @var Manager */
 	protected $manager;
+	/** @var RoomService */
+	protected $roomService;
 	/** @var GuestManager */
 	protected $guestManager;
 	/** @var ChatManager */
@@ -97,6 +101,7 @@ class RoomController extends AEnvironmentAwareController {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								Manager $manager,
+								RoomService $roomService,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
 								IEventDispatcher $dispatcher,
@@ -112,6 +117,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
+		$this->roomService = $roomService;
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->dispatcher = $dispatcher;
@@ -581,40 +587,37 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @NoAdminRequired
 	 *
-	 * @param string $targetUserName
+	 * @param string $targetUserId
 	 * @return DataResponse
 	 */
-	protected function createOneToOneRoom(string $targetUserName): DataResponse {
+	protected function createOneToOneRoom(string $targetUserId): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$targetUser = $this->userManager->get($targetUserName);
+		$targetUser = $this->userManager->get($targetUserId);
 		if (!$targetUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->userId === $targetUserName) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		try {
+			// We are only doing this manually here to be able to return different status codes
+			// Actually createOneToOneConversation also checks it.
+			$room = $this->manager->getOne2OneRoom($currentUser->getUID(), $targetUser->getUID());
+			$room->ensureOneToOneRoomIsFilled();
+			return new DataResponse([], Http::STATUS_OK);
+		} catch (RoomNotFoundException $e) {
 		}
 
-		// If room exists: Reuse that one, otherwise create a new one.
 		try {
-			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
-			$room->ensureOneToOneRoomIsFilled();
-			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_OK);
-		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createOne2OneRoom();
-			$room->addUsers([
-				'userId' => $currentUser->getUID(),
-				'participantType' => Participant::OWNER,
-			], [
-				'userId' => $targetUser->getUID(),
-				'participantType' => Participant::OWNER,
-			]);
-
+			$room = $this->roomService->createOneToOneConversation($currentUser, $targetUser);
 			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
+		} catch (InvalidArgumentException $e) {
+			// Same current and target user
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 	}
 
@@ -627,23 +630,19 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	protected function createGroupRoom(string $targetGroupName): DataResponse {
-		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
-
-		if (!$targetGroup instanceof IGroup) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$targetGroup = $this->groupManager->get($targetGroupName);
+		if (!$targetGroup instanceof IGroup) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		// Create the room
-		$room = $this->manager->createGroupRoom($targetGroup->getGID());
-		$room->addUsers([
-			'userId' => $currentUser->getUID(),
-			'participantType' => Participant::OWNER,
-		]);
+		$name = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
+		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
 
 		$usersInGroup = $targetGroup->getUsers();
 		$participants = [];
@@ -676,24 +675,21 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		$currentUser = $this->userManager->get($this->userId);
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		/** @var Circles $circlesApi */
 		try {
 			$circle = Circles::detailsCircle($targetCircleId);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-		$currentUser = $this->userManager->get($this->userId);
-
-		if (!$currentUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
 
 		// Create the room
-		$room = $this->manager->createGroupRoom($circle->getName());
-		$room->addUsers([
-			'userId' => $currentUser->getUID(),
-			'participantType' => Participant::OWNER,
-		]);
+		$name = $this->roomService->prepareConversationName($circle->getName());
+		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
 
 		$participants = [];
 		foreach ($circle->getMembers() as $member) {
@@ -731,27 +727,19 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	protected function createEmptyRoom(string $roomName, bool $public = true): DataResponse {
-		$roomName = trim($roomName);
-		if ($roomName === '') {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
 		$currentUser = $this->userManager->get($this->userId);
-
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+
 		// Create the room
-		if ($public) {
-			$room = $this->manager->createPublicRoom($roomName);
-		} else {
-			$room = $this->manager->createGroupRoom($roomName);
+		try {
+			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$room->addUsers([
-			'userId' => $currentUser->getUID(),
-			'participantType' => Participant::OWNER,
-		]);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 	}
