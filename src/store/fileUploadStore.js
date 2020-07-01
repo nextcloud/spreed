@@ -110,6 +110,16 @@ const mutations = {
 	setAttachmentFolder(state, attachmentFolder) {
 		state.attachmentFolder = attachmentFolder
 	},
+
+	// Sets the total size of the file in bytes
+	setProgressTotal(state, { uploadId, index, progressTotal }) {
+		Vue.set(state.uploads[uploadId].files[index], 'progressTotal', progressTotal)
+	},
+
+	// Sets uploaded amount of bytes
+	setProgressLoaded(state, { uploadId, index, progressLoaded }) {
+		Vue.set(state.uploads[uploadId].files[index], 'progressLoaded', progressLoaded)
+	},
 }
 
 const actions = {
@@ -138,7 +148,14 @@ const actions = {
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
 				// Upload the file
-				await client.putFileContents(userRoot + uniquePath, currentFile)
+				await client.putFileContents(userRoot + uniquePath, currentFile, { onUploadProgress: progress => {
+					const progressLoaded = progress.loaded
+					const progressTotal = progress.total
+					if (!state.uploads[uploadId].files[index].progressTotal) {
+						commit('setProgressTotal', { state, uploadId, index, progressTotal })
+					}
+					commit('setProgressLoaded', { state, uploadId, index, progressLoaded })
+				} })
 				// Path for the sharing request
 				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
