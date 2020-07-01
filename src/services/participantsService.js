@@ -33,6 +33,7 @@ import {
 import { EventBus } from './EventBus'
 import SessionStorage from './SessionStorage'
 import { PARTICIPANT } from '../constants'
+import store from '../store/index'
 
 /**
  * Joins the current user to a conversation specified with
@@ -48,6 +49,14 @@ const joinConversation = async(token) => {
 		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`, {
 			force: forceJoin,
 		})
+
+		// Update the participant and actor session after a force join
+		store.dispatch('updateSessionId', {
+			token: token,
+			participantIdentifier: store.getters.getParticipantIdentifier(),
+			sessionId: response.data.ocs.data.sessionId,
+		})
+		store.dispatch('setCurrentParticipant', response.data.ocs.data)
 
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
