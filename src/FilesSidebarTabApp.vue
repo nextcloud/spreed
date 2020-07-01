@@ -62,6 +62,7 @@ import { loadState } from '@nextcloud/initial-state'
 import Axios from '@nextcloud/axios'
 import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 
 export default {
 
@@ -71,6 +72,10 @@ export default {
 		CallButton,
 		ChatView,
 	},
+
+	mixins: [
+		duplicateSessionHandler,
+	],
 
 	data() {
 		return {
@@ -151,7 +156,9 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				leaveConversationSync(this.token)
+				if (!this.isLeavingAfterSessionConflict) {
+					leaveConversationSync(this.token)
+				}
 			}
 		})
 	},

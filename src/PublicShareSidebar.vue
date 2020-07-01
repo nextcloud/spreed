@@ -35,7 +35,7 @@
 				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
-				<PreventUnload :when="isInCall" />
+				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView :token="token" />
 			</template>
@@ -59,6 +59,8 @@ import {
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
@@ -74,6 +76,8 @@ export default {
 
 	mixins: [
 		browserCheck,
+		duplicateSessionHandler,
+		isInCall,
 		talkHashCheck,
 	],
 
@@ -109,15 +113,19 @@ export default {
 			return this.state.isOpen
 		},
 
-		isInCall() {
+		participant() {
 			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
 			if (participantIndex === -1) {
-				return false
+				return {
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				}
 			}
 
-			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
+			return this.$store.getters.getParticipant(this.token, participantIndex)
+		},
 
-			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.isInCall
 		},
 	},
 
@@ -127,7 +135,9 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				leaveConversationSync(this.token)
+				if (!this.isLeavingAfterSessionConflict) {
+					leaveConversationSync(this.token)
+				}
 			}
 		})
 	},

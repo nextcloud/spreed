@@ -51,6 +51,7 @@
 <script>
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
+import isInCall from '../../mixins/isInCall'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 
@@ -61,7 +62,10 @@ export default {
 		Tooltip,
 	},
 
-	mixins: [browserCheck],
+	mixins: [
+		browserCheck,
+		isInCall,
+	],
 
 	data() {
 		return {
@@ -173,12 +177,12 @@ export default {
 
 		showStartCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& !this.isInCall
 		},
 
 		showLeaveCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.isInCall
 		},
 	},
 

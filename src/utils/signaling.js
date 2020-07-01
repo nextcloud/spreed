@@ -31,7 +31,10 @@ import { rejoinConversation } from '../services/participantsService'
 import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
-import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import {
+	generateOcsUrl,
+	generateUrl,
+} from '@nextcloud/router'
 import {
 	showError,
 	showWarning,
@@ -292,6 +295,7 @@ function Internal(settings) {
 	this.hideWarning = settings.hideWarning
 	this.spreedArrayConnection = []
 
+	this.pullMessageErrorToast = null
 	this.pullMessagesFails = 0
 	this.pullMessagesRequest = null
 
@@ -405,6 +409,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	request(token)
 		.then(function(result) {
 			this.pullMessagesFails = 0
+			if (this.pullMessageErrorToast) {
+				this.pullMessageErrorToast.hideToast()
+				this.pullMessageErrorToast = null
+			}
+
 			result.data.ocs.data.forEach(message => {
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
@@ -431,23 +440,39 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
-			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
-				console.error('Stop pulling messages because room does not exist or is not accessible')
+			} else if (error.response && error.response.status === 409) {
+				// Participant joined a second time and this session was killed
+				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
+
+				EventBus.$emit('duplicateSessionDetected')
+			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
+				// Conversation was deleted or the user was removed
+				console.error('Conversation was not found anymore')
+				window.location = generateUrl('/apps/spreed/not-found')
 			} else if (token) {
-				if (this.pullMessagesFails >= 3) {
-					console.error('Stop pulling messages after repeated failures')
+				if (this.pullMessagesFails === 1) {
+					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
+						timeout: -1,
+					})
+				}
+				if (this.pullMessagesFails === 30) {
+					if (this.pullMessageErrorToast) {
+						this.pullMessageErrorToast.hideToast()
+					}
 
-					this._trigger('pullMessagesStoppedOnFail')
-
+					// Giving up after 5 minutes
+					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
+						timeout: -1,
+					})
 					return
 				}
 
 				this.pullMessagesFails++
-				// Retry to pull messages after 5 seconds
+				// Retry to pull messages after 10 seconds
 				window.setTimeout(function() {
 					this._startPullingMessages()
-				}.bind(this), 5000)
+				}.bind(this), 10000)
 			}
 		}.bind(this))
 }
@@ -494,6 +519,7 @@ function Standalone(settings, urls) {
 	this.initialReconnectIntervalMs = 1000
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
+	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
 	this.connect()
@@ -860,6 +886,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 }
 
 Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
+	this.ownSessionJoined = false
+
 	if (!this.sessionId) {
 		if (this._pendingJoinRoomPromise && this._pendingJoinRoomPromise.token === token) {
 			return this._pendingJoinRoomPromise
@@ -1040,6 +1068,17 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 			for (i = 0; i < joinedUsers.length; i++) {
 				this.joinedUsers[joinedUsers[i].sessionid] = true
 				delete leftUsers[joinedUsers[i].sessionid]
+
+				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
+					if (this.ownSessionJoined && joinedUsers[i].sessionid !== this.sessionId) {
+						console.error('Duplicated session detected for the same user.')
+						EventBus.$emit('duplicateSessionDetected')
+					} else if (joinedUsers[i].sessionid === this.sessionId) {
+						// We are ignoring joins before we found our own message,
+						// as otherwise you get the warning for your own old session immediately
+						this.ownSessionJoined = true
+					}
+				}
 			}
 			leftUsers = Object.keys(leftUsers)
 			if (leftUsers.length) {
@@ -1081,8 +1120,19 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
-	console.debug('Room list event', data)
-	EventBus.$emit('shouldRefreshConversations')
+	switch (data.event.type) {
+	case 'disinvite':
+		if (data.event.disinvite.roomid === this.currentRoomToken) {
+			console.error('User or session was removed from the conversation, redirecting')
+			EventBus.$emit('duplicateSessionDetected')
+			break
+		}
+		// eslint-disable-next-line no-fallthrough
+	default:
+		console.debug('Room list event', data)
+		EventBus.$emit('shouldRefreshConversations')
+		break
+	}
 }
 
 Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {

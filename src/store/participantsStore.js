@@ -205,6 +205,20 @@ const actions = {
 		commit('purgeParticipantsStore', token)
 	},
 
+	updateSessionId({ commit, getters }, { token, participantIdentifier, sessionId }) {
+		const index = getters.getParticipantIndex(token, participantIdentifier)
+		if (index === -1) {
+			console.error('Participant not found', participantIdentifier)
+			return
+		}
+
+		const updatedData = {
+			sessionId: sessionId,
+			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+		}
+		commit('updateParticipant', { token, index, updatedData })
+	},
+
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
 		const index = getters.getParticipantIndex(token, participantIdentifier)
 		if (index === -1) {

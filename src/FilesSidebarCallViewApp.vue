@@ -23,10 +23,10 @@
 <template>
 	<div v-if="isInFile">
 		<CallView
-			v-show="isInCall"
+			v-show="showCallView"
 			:token="token"
 			:is-sidebar="true" />
-		<PreventUnload :when="isInCall" />
+		<PreventUnload :when="warnLeaving" />
 	</div>
 </template>
 
@@ -35,6 +35,8 @@ import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
 
 export default {
@@ -48,6 +50,8 @@ export default {
 
 	mixins: [
 		browserCheck,
+		duplicateSessionHandler,
+		isInCall,
 		talkHashCheck,
 	],
 
@@ -90,34 +94,38 @@ export default {
 		 *          otherwise.
 		 */
 		isInFile() {
-			if (this.fileId !== this.fileIdForToken) {
-				return false
-			}
-
-			return true
+			return this.fileId === this.fileIdForToken
 		},
 
-		isInCall() {
+		showCallView() {
 			// FIXME Remove participants as soon as the file changes so this
 			// condition is not needed.
 			if (!this.isInFile) {
 				return false
 			}
 
+			return this.isInCall
+		},
+
+		participant() {
 			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
 			if (participantIndex === -1) {
-				return false
+				return {
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				}
 			}
 
-			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
+			return this.$store.getters.getParticipant(this.token, participantIndex)
+		},
 
-			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.showCallView
 		},
 	},
 
 	watch: {
-		isInCall: function(isInCall) {
-			if (isInCall) {
+		showCallView: function(showCallView) {
+			if (showCallView) {
 				this.replaceSidebarHeaderContentsWithCallView()
 			} else {
 				this.restoreSidebarHeaderContents()
