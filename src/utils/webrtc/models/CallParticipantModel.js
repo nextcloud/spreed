@@ -305,7 +305,7 @@ CallParticipantModel.prototype = {
 	},
 
 	setScreenPeer: function(screenPeer) {
-		if (this.get('peerId') !== screenPeer.id) {
+		if (screenPeer && this.get('peerId') !== screenPeer.id) {
 			console.warn('Mismatch between stored peer ID and ID of given screen peer: ', this.get('peerId'), screenPeer.id)
 		}
 
