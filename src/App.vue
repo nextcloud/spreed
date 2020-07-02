@@ -31,7 +31,7 @@
 		</AppContent>
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
-		<PreventUnload :when="isInCall" />
+		<PreventUnload :when="warnLeaving" />
 	</Content>
 </template>
 
@@ -56,6 +56,8 @@ import {
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
+import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 
@@ -72,6 +74,8 @@ export default {
 	mixins: [
 		browserCheck,
 		talkHashCheck,
+		duplicateSessionHandler,
+		isInCall,
 	],
 
 	data: function() {
@@ -112,8 +116,8 @@ export default {
 			}
 		},
 
-		isInCall() {
-			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		warnLeaving() {
+			return !this.isLeavingAfterSessionConflict && this.isInCall
 		},
 
 		/**
@@ -220,7 +224,9 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				leaveConversationSync(this.token)
+				if (!this.isLeavingAfterSessionConflict) {
+					leaveConversationSync(this.token)
+				}
 			}
 		})
 

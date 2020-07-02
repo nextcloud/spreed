@@ -21,12 +21,19 @@
  */
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import {
+	generateUrl,
+	generateOcsUrl,
+} from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
 } from '../utils/webrtc/index'
 import { EventBus } from './EventBus'
+import SessionStorage from './SessionStorage'
+import { PARTICIPANT } from '../constants'
+import store from '../store/index'
 
 /**
  * Joins the current user to a conversation specified with
@@ -35,15 +42,86 @@ import { EventBus } from './EventBus'
  * @param {string} token The conversation token;
  */
 const joinConversation = async(token) => {
+	// When the token is in the last joined conversation, the user is reloading or force joining
+	const forceJoin = SessionStorage.getItem('joined_conversation') === token
+
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`)
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/participants/active`, {
+			force: forceJoin,
+		})
+
+		// Update the participant and actor session after a force join
+		store.dispatch('updateSessionId', {
+			token: token,
+			participantIdentifier: store.getters.getParticipantIdentifier(),
+			sessionId: response.data.ocs.data.sessionId,
+		})
+		store.dispatch('setCurrentParticipant', response.data.ocs.data)
+
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
+		SessionStorage.setItem('joined_conversation', token)
 		EventBus.$emit('joinedConversation')
 		return response
 	} catch (error) {
-		console.debug(error)
+		if (error.response.status === 409) {
+			const responseData = error.response.data.ocs.data
+			let maxLastPingAge = new Date().getTime() / 1000 - 40
+			if (responseData.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				// When the user is/was in a call, we accept 20 seconds more delay
+				maxLastPingAge -= 20
+			}
+			if (maxLastPingAge > responseData.lastPing) {
+				console.debug('Force joining automatically because the old session didn\'t ping for 40 seconds')
+				await forceJoinConversation(token)
+			} else {
+				await confirmForceJoinConversation(token)
+			}
+		} else {
+			console.debug(error)
+			showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
+		}
 	}
+}
+
+const confirmForceJoinConversation = async(token) => {
+	// Little hack to check if the close button was used which we can't disable,
+	// not listen to when it was used.
+	const interval = setInterval(function() {
+		// eslint-disable-next-line no-undef
+		if ($('.oc-dialog-dim').length === 0) {
+			clearInterval(interval)
+			EventBus.$emit('duplicateSessionDetected')
+			window.location = generateUrl('/apps/spreed')
+		}
+	}, 3000)
+
+	await OC.dialogs.confirmDestructive(
+		t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+		t('spreed', 'Duplicate session'),
+		{
+			type: OC.dialogs.YES_NO_BUTTONS,
+			confirm: t('spreed', 'Join here'),
+			confirmClasses: 'error',
+			cancel: t('spreed', 'Leave this page'),
+		},
+		decision => {
+			clearInterval(interval)
+			if (!decision) {
+				// Cancel
+				EventBus.$emit('duplicateSessionDetected')
+				window.location = generateUrl('/apps/spreed')
+			} else {
+				// Confirm
+				forceJoinConversation(token)
+			}
+		}
+	)
+}
+
+const forceJoinConversation = async(token) => {
+	SessionStorage.setItem('joined_conversation', token)
+	await joinConversation(token)
 }
 
 /**

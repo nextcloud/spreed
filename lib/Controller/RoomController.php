@@ -1159,13 +1159,49 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $token
 	 * @param string $password
+	 * @param bool $force
 	 * @return DataResponse
 	 */
-	public function joinRoom(string $token, string $password = ''): DataResponse {
+	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$previousSession = null;
+		if ($this->userId !== null) {
+			try {
+				$previousSession = $room->getParticipant($this->userId);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		} else {
+			$session = $this->session->getSessionForRoom($token);
+			try {
+				$previousSession = $room->getParticipantBySession($session);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		}
+
+		if ($previousSession instanceof Participant && $previousSession->getSessionId() !== '0') {
+			// Previous session was active
+			if ($force === false) {
+				return new DataResponse([
+					'sessionId' => $previousSession->getSessionId(),
+					'inCall' => $previousSession->getInCallFlags(),
+					'lastPing' => $previousSession->getLastPing(),
+				], Http::STATUS_CONFLICT);
+			}
+
+			if ($previousSession->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
+				$room->changeInCall($previousSession, Participant::FLAG_DISCONNECTED);
+			}
+
+			if ($this->userId === null) {
+				$room->removeParticipantBySession($previousSession, Room::PARTICIPANT_LEFT);
+			} else {
+				$room->leaveRoomAsParticipant($previousSession);
+			}
 		}
 
 		$user = $this->userManager->get($this->userId);
@@ -1209,7 +1245,7 @@ class RoomController extends AEnvironmentAwareController {
 				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			} else {
 				$participant = $room->getParticipant($this->userId);
-				$room->leaveRoom($participant->getUser());
+				$room->leaveRoomAsParticipant($participant);
 			}
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {

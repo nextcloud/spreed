@@ -152,7 +152,17 @@ class PageController extends Controller {
 	 * @return Response
 	 */
 	public function notFound(): Response {
-		return new RedirectResponse($this->url->linkToRouteAbsolute('spreed.Page.index'));
+		return $this->index();
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return Response
+	 */
+	public function duplicateSession(): Response {
+		return $this->index();
 	}
 
 	/**

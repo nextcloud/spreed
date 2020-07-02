@@ -25,6 +25,7 @@ import Router from 'vue-router'
 import { getRootUrl, generateUrl } from '@nextcloud/router'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
+import SessionConflictView from '../views/SessionConflictView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
 
 Vue.use(Router)
@@ -52,6 +53,12 @@ export default new Router({
 			path: '/apps/spreed/not-found',
 			name: 'notfound',
 			component: NotFoundView,
+			props: true,
+		},
+		{
+			path: '/apps/spreed/duplicate-session',
+			name: 'duplicatesession',
+			component: SessionConflictView,
 			props: true,
 		},
 		{
