@@ -33,6 +33,7 @@ import participantsStore from './participantsStore'
 import quoteReplyStore from './quoteReplyStore'
 import settingsStore from './settingsStore'
 import sidebarStore from './sidebarStore'
+import soundsStore from './soundsStore'
 import talkHashStore from './talkHashStore'
 import tokenStore from './tokenStore'
 import windowVisibilityStore from './windowVisibilityStore'
@@ -55,6 +56,7 @@ export default new Store({
 		quoteReplyStore,
 		settingsStore,
 		sidebarStore,
+		soundsStore,
 		talkHashStore,
 		tokenStore,
 		windowVisibilityStore,

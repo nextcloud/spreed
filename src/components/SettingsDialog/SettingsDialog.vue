@@ -54,6 +54,18 @@
 				@change="toggleReadStatusPrivacy">
 			<label for="read_status_privacy">{{ t('spreed', 'Share my read-status and show the read-status of others') }}</label>
 		</AppSettingsSection>
+		<AppSettingsSection
+			:title="t('spreed', 'Sounds')"
+			class="app-settings-section">
+			<input id="play_sounds"
+				v-model="playSounds"
+				:checked="readStatusPrivacyIsPublic"
+				:disabled="privacyLoading"
+				type="checkbox"
+				class="checkbox">
+			<label for="play_sounds">{{ t('settings', 'Play sounds when participants join a call or leave it') }}</label>
+			<em>{{ t('settings', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
+		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
 			<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
 
@@ -117,7 +129,10 @@
 
 <script>
 import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
-import { setAttachmentFolder } from '../../services/settingsService'
+import {
+	setAttachmentFolder,
+	setPlaySounds,
+} from '../../services/settingsService'
 import { PRIVACY } from '../../constants'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
@@ -142,6 +157,21 @@ export default {
 	},
 
 	computed: {
+		// Local settings
+		playSounds: {
+			get() {
+				return this.$store.getters.playSounds
+			},
+			set(status) {
+				this.$store.commit('setPlaySounds', status)
+				try {
+					setPlaySounds(status)
+				} catch (e) {
+					showError(t('spreed', 'Failed to save sounds setting'))
+				}
+			},
+		},
+
 		attachmentFolder() {
 			return this.$store.getters.getAttachmentFolder()
 		},

@@ -97,6 +97,11 @@ trait TInitialState {
 			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
 
+		$this->initialStateService->provideInitialState(
+			'talk', 'play_sounds',
+			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
+		);
+
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
 		$freeSpace = 0;
 
@@ -165,6 +170,11 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'enable_matterbridge',
+			false
+		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'play_sounds',
 			false
 		);
 	}

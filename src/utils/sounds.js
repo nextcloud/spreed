@@ -19,6 +19,7 @@
  */
 
 import { generateFilePath } from '@nextcloud/router'
+import store from '../store'
 
 export const Sounds = {
 	BLOCK_SOUND_TIMEOUT: 5000,
@@ -32,27 +33,42 @@ export const Sounds = {
 	_playSounceOnce(soundFile) {
 		const file = generateFilePath('spreed', 'img', soundFile)
 		const audio = new Audio(file)
+		audio.volume = 0.75
 		audio.play()
 	},
 
 	async playWaiting() {
+		if (!store.getters.playSounds) {
+			return
+		}
+
 		if (!this.backgroundAudio) {
 			console.debug('Loading waiting sound')
 			const file = generateFilePath('spreed', 'img', 'LibremPhoneCall.ogg')
 			this.backgroundAudio = new Audio(file)
+			this.backgroundAudio.volume = 0.5
 		}
 
 		console.debug('Playing waiting sound')
 		this.backgroundAudio.play()
 
 		this.backgroundInterval = setInterval(() => {
+			if (!store.getters.playSounds) {
+				return
+			}
+
 			console.debug('Playing waiting sound')
 			this.backgroundAudio.play()
-		}, 7000)
+		}, 15000)
 	},
 
 	async playJoin(force, playWaitingSound) {
 		clearInterval(this.backgroundInterval)
+
+		if (!store.getters.playSounds) {
+			return
+		}
+
 		if (force) {
 			this.isInCall = true
 		} else if (!this.isInCall) {
@@ -83,6 +99,11 @@ export const Sounds = {
 
 	async playLeave(force, playWaitingSound) {
 		clearInterval(this.backgroundInterval)
+
+		if (!store.getters.playSounds) {
+			return
+		}
+
 		if (!this.isInCall) {
 			return
 		}
