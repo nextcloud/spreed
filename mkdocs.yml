@@ -17,6 +17,7 @@ markdown_extensions:
 
 nav:
   - Nextcloud Talk API: 'index.md'
+  - 'System requirements': 'system-requirements.md'
   - Constants: 'constants.md'
   - Capabilities: 'capabilities.md'
   - API v1.0:
