@@ -23,6 +23,7 @@ import Axios from '@nextcloud/axios'
 import CancelableRequest from '../cancelableRequest'
 import Signaling from '../signaling'
 import initWebRtc from './webrtc'
+import CallAnalyzer from './analyzers/CallAnalyzer'
 import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
@@ -34,6 +35,7 @@ let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
+let callAnalyzer = null
 let sentVideoQualityThrottler = null
 
 let cancelFetchSignalingSettings = null
@@ -163,6 +165,12 @@ async function signalingJoinCall(token) {
 
 		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
 
+		if (signaling.hasFeature('mcu')) {
+			callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)
+		} else {
+			callAnalyzer = new CallAnalyzer(localMediaModel, null, callParticipantCollection)
+		}
+
 		return new Promise((resolve, reject) => {
 			startedCall = resolve
 			failedToStartCall = reject
@@ -181,6 +189,9 @@ async function signalingJoinCall(token) {
 async function signalingLeaveCall(token) {
 	sentVideoQualityThrottler.destroy()
 	sentVideoQualityThrottler = null
+
+	callAnalyzer.destroy()
+	callAnalyzer = null
 
 	if (tokensInSignaling[token]) {
 		await signaling.leaveCall(token)
@@ -213,6 +224,8 @@ export {
 	callParticipantCollection,
 	localCallParticipantModel,
 	localMediaModel,
+
+	callAnalyzer,
 
 	signalingJoinConversation,
 	signalingJoinCall,
