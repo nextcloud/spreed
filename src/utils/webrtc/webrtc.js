@@ -41,6 +41,7 @@ let ownScreenPeer = null
 let selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 const delayedConnectionToPeer = []
 let callParticipantCollection = null
+let localCallParticipantModel = null
 let showedTURNWarning = false
 
 function arrayDiff(a, b) {
@@ -72,6 +73,8 @@ function createScreensharingPeer(signaling, sessionId) {
 		})
 		webrtc.emit('createdPeer', ownScreenPeer)
 		ownScreenPeer.start()
+
+		localCallParticipantModel.setScreenPeer(ownScreenPeer)
 	}
 
 	if (sessionId === currentSessionId) {
@@ -134,6 +137,8 @@ function checkStartPublishOwnPeer(signaling) {
 	})
 	webrtc.emit('createdPeer', ownPeer)
 	ownPeer.start()
+
+	localCallParticipantModel.setPeer(ownPeer)
 }
 
 function userHasStreams(user) {
@@ -308,8 +313,9 @@ function usersInCallChanged(signaling, users) {
 	}
 }
 
-export default function initWebRTC(signaling, _callParticipantCollection) {
+export default function initWebRTC(signaling, _callParticipantCollection, _localCallParticipantModel) {
 	callParticipantCollection = _callParticipantCollection
+	localCallParticipantModel = _localCallParticipantModel
 
 	signaling.on('usersLeft', function(users) {
 		users.forEach(function(user) {
@@ -733,6 +739,8 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			webrtc.removePeers(ownPeer.id)
 			ownPeer.end()
 			ownPeer = null
+
+			localCallParticipantModel.setPeer(ownPeer)
 		}
 
 		usersChanged(signaling, [], previousUsersInRoom)
@@ -931,6 +939,8 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		if (ownScreenPeer) {
 			ownScreenPeer = null
 
+			localCallParticipantModel.setScreenPeer(ownScreenPeer)
+
 			signaling.sendRoomMessage({
 				roomType: 'screen',
 				type: 'unshareScreen',
@@ -943,11 +953,15 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 			webrtc.removePeers(ownPeer.id)
 			ownPeer.end()
 			ownPeer = null
+
+			localCallParticipantModel.setPeer(ownPeer)
 		}
 
 		if (ownScreenPeer) {
 			ownScreenPeer.end()
 			ownScreenPeer = null
+
+			localCallParticipantModel.setScreenPeer(ownScreenPeer)
 		}
 
 		selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED

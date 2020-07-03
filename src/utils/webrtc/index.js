@@ -123,7 +123,7 @@ function setupWebRtc() {
 
 	const _signaling = signaling
 
-	webRtc = initWebRtc(_signaling, callParticipantCollection)
+	webRtc = initWebRtc(_signaling, callParticipantCollection, localCallParticipantModel)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
