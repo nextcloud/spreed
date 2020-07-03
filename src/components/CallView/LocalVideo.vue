@@ -90,6 +90,7 @@ export default {
 	data() {
 		return {
 			callAnalyzer: callAnalyzer,
+			qualityWarningInGracePeriodTimeout: null,
 		}
 	},
 
@@ -132,6 +133,10 @@ export default {
 		},
 
 		showQualityWarning() {
+			return this.senderConnectionQualityAudioIsBad || this.qualityWarningInGracePeriodTimeout
+		},
+
+		senderConnectionQualityAudioIsBad() {
 			return callAnalyzer
 				&& (callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.VERY_BAD
 				 || callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
@@ -179,6 +184,20 @@ export default {
 					})
 				}
 			},
+		},
+
+		senderConnectionQualityAudioIsBad: function(senderConnectionQualityAudioIsBad) {
+			if (!senderConnectionQualityAudioIsBad) {
+				return
+			}
+
+			if (this.qualityWarningInGracePeriodTimeout) {
+				window.clearTimeout(this.qualityWarningInGracePeriodTimeout)
+			}
+
+			this.qualityWarningInGracePeriodTimeout = window.setTimeout(() => {
+				this.qualityWarningInGracePeriodTimeout = null
+			}, 3000)
 		},
 
 	},
