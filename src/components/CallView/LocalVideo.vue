@@ -91,6 +91,7 @@ export default {
 		return {
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
+			qualityWarningWasRecentlyShownTimeout: null,
 		}
 	},
 
@@ -146,6 +147,14 @@ export default {
 			return t('spreed', 'Bad sent audio quality')
 		},
 
+		// The quality warning tooltip is automatically shown only if the
+		// quality warning has not been shown in the last minute. Otherwise the
+		// tooltip is hidden even if the warning is shown, although the tooltip
+		// can be shown anyway by hovering on the warning.
+		showQualityWarningTooltip() {
+			return !this.qualityWarningWasRecentlyShownTimeout
+		},
+
 		qualityWarningTooltip() {
 			if (!this.showQualityWarning) {
 				return false
@@ -164,7 +173,7 @@ export default {
 
 			return {
 				content: message,
-				show: true,
+				show: this.showQualityWarningTooltip,
 			}
 		},
 	},
@@ -198,6 +207,20 @@ export default {
 			this.qualityWarningInGracePeriodTimeout = window.setTimeout(() => {
 				this.qualityWarningInGracePeriodTimeout = null
 			}, 3000)
+		},
+
+		showQualityWarning: function(showQualityWarning) {
+			if (showQualityWarning) {
+				return
+			}
+
+			if (this.qualityWarningWasRecentlyShownTimeout) {
+				window.clearTimeout(this.qualityWarningWasRecentlyShownTimeout)
+			}
+
+			this.qualityWarningWasRecentlyShownTimeout = window.setTimeout(() => {
+				this.qualityWarningWasRecentlyShownTimeout = null
+			}, 60000)
 		},
 
 	},
