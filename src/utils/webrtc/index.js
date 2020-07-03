@@ -91,7 +91,7 @@ function setupWebRtc() {
 		return
 	}
 
-	webRtc = initWebRtc(signaling, callParticipantCollection)
+	webRtc = initWebRtc(signaling, callParticipantCollection, localCallParticipantModel)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
