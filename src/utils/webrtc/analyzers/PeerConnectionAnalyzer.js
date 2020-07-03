@@ -52,6 +52,16 @@ const PEER_DIRECTION = {
  * "setPeerConnection(null)" must be called too if the RTCPeerConnection is
  * active but the analyzer is no longer needed.
  *
+ * Similarly, the analysis should be enabled only when audio or video are
+ * enabled. This is also known from the signaling messages and needs to be
+ * handled by the user of this class by calling "setAnalysisEnabledAudio(bool)"
+ * and "setAnalysisEnabledVideo(bool)".
+ *
+ * The reason is that when audio or video are disabled the transmitted packets
+ * are much lower, so it is not possible to get a reliable analysis from them.
+ * Moreover, when the sent video is disabled in Firefox the stats are
+ * meaningless, as the packet count is no longer a monotonic increasing value.
+ *
  * The reported connection quality is mainly based on the packets lost ratio,
  * but also in other stats, like the amount of transmitted packets. UNKNOWN is
  * used when the analysis is started or stopped (including when it is done
@@ -90,6 +100,11 @@ function PeerConnectionAnalyzer() {
 	this._timestamps = {
 		'audio': new AverageStatValue(2, STAT_VALUE_TYPE.CUMULATIVE),
 		'video': new AverageStatValue(2, STAT_VALUE_TYPE.CUMULATIVE),
+	}
+
+	this._analysisEnabled = {
+		'audio': true,
+		'video': true,
 	}
 
 	this._handlers = []
@@ -183,6 +198,34 @@ PeerConnectionAnalyzer.prototype = {
 		}
 	},
 
+	setAnalysisEnabledAudio: function(analysisEnabledAudio) {
+		this._analysisEnabled['audio'] = analysisEnabledAudio
+
+		if (!analysisEnabledAudio) {
+			this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
+		} else {
+			this._packets['audio'].reset()
+			this._packetsLost['audio'].reset()
+			this._packetsLostRatio['audio'].reset()
+			this._packetsPerSecond['audio'].reset()
+			this._timestamps['audio'].reset()
+		}
+	},
+
+	setAnalysisEnabledVideo: function(analysisEnabledVideo) {
+		this._analysisEnabled['video'] = analysisEnabledVideo
+
+		if (!analysisEnabledVideo) {
+			this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
+		} else {
+			this._packets['video'].reset()
+			this._packetsLost['video'].reset()
+			this._packetsLostRatio['video'].reset()
+			this._packetsPerSecond['video'].reset()
+			this._timestamps['video'].reset()
+		}
+	},
+
 	_handleIceConnectionStateChanged: function() {
 		// Note that even if the ICE connection state is "disconnected" the
 		// connection is actually active, media is still transmitted, and the
@@ -222,8 +265,12 @@ PeerConnectionAnalyzer.prototype = {
 			this._processReceiverStats(stats)
 		}
 
-		this._setConnectionQualityAudio(this._calculateConnectionQualityAudio())
-		this._setConnectionQualityVideo(this._calculateConnectionQualityVideo())
+		if (this._analysisEnabled['audio']) {
+			this._setConnectionQualityAudio(this._calculateConnectionQualityAudio())
+		}
+		if (this._analysisEnabled['video']) {
+			this._setConnectionQualityVideo(this._calculateConnectionQualityVideo())
+		}
 	},
 
 	_processSenderStats: function(stats) {
@@ -278,6 +325,10 @@ PeerConnectionAnalyzer.prototype = {
 		}
 
 		for (const stat of stats.values()) {
+			if (!this._analysisEnabled[stat.kind]) {
+				continue
+			}
+
 			if (stat.type === 'outbound-rtp') {
 				if ('packetsSent' in stat && 'kind' in stat) {
 					packetsSent[stat.kind] = stat.packetsSent
@@ -380,6 +431,10 @@ PeerConnectionAnalyzer.prototype = {
 		}
 
 		for (const stat of stats.values()) {
+			if (!this._analysisEnabled[stat.kind]) {
+				continue
+			}
+
 			if (stat.type === 'inbound-rtp') {
 				if ('packetsReceived' in stat && 'kind' in stat) {
 					packetsReceived[stat.kind] = stat.packetsReceived
