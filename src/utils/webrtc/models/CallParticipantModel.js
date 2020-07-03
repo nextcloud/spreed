@@ -37,6 +37,8 @@ export default function CallParticipantModel(options) {
 
 	this.attributes = {
 		peerId: null,
+		peer: null,
+		screenPeer: null,
 		// "undefined" is used for values not known yet; "null" or "false"
 		// are used for known but negative/empty values.
 		userId: undefined,
@@ -127,35 +129,35 @@ CallParticipantModel.prototype = {
 	},
 
 	_handlePeerStreamAdded: function(peer) {
-		if (this._peer === peer) {
-			this.set('stream', this._peer.stream || null)
+		if (this.get('peer') === peer) {
+			this.set('stream', this.get('peer').stream || null)
 			this.set('audioElement', attachMediaStream(this.get('stream'), null, { audio: true }))
 			this.get('audioElement').muted = !this.get('audioAvailable')
 
 			// "peer.nick" is set only for users and when the MCU is not used.
-			if (this._peer.nick !== undefined) {
-				this.set('name', this._peer.nick)
+			if (this.get('peer').nick !== undefined) {
+				this.set('name', this.get('peer').nick)
 			}
-		} else if (this._screenPeer === peer) {
-			this.set('screen', this._screenPeer.stream || null)
+		} else if (this.get('screenPeer') === peer) {
+			this.set('screen', this.get('screenPeer').stream || null)
 		}
 	},
 
 	_handlePeerStreamRemoved: function(peer) {
-		if (this._peer === peer) {
+		if (this.get('peer') === peer) {
 			this.get('audioElement').srcObject = null
 			this.set('audioElement', null)
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
-		} else if (this._screenPeer === peer) {
+		} else if (this.get('screenPeer') === peer) {
 			this.set('screen', null)
 		}
 	},
 
 	_handleNick: function(data) {
-		if (!this._peer || this._peer.id !== data.id) {
+		if (!this.get('peer') || this.get('peer').id !== data.id) {
 			return
 		}
 
@@ -164,7 +166,7 @@ CallParticipantModel.prototype = {
 	},
 
 	_handleMute: function(data) {
-		if (!this._peer || this._peer.id !== data.id) {
+		if (!this.get('peer') || this.get('peer').id !== data.id) {
 			return
 		}
 
@@ -180,22 +182,22 @@ CallParticipantModel.prototype = {
 	},
 
 	forceMute: function() {
-		if (!this._peer) {
+		if (!this.get('peer')) {
 			return
 		}
 
 		this._webRtc.sendToAll('control', {
 			action: 'forceMute',
-			peerId: this._peer.id,
+			peerId: this.get('peer').id,
 		})
 
 		// Mute locally too, as even when sending to all the sender will not
 		// receive the message.
-		this._handleMute({ id: this._peer.id })
+		this._handleMute({ id: this.get('peer').id })
 	},
 
 	_handleUnmute: function(data) {
-		if (!this._peer || this._peer.id !== data.id) {
+		if (!this.get('peer') || this.get('peer').id !== data.id) {
 			return
 		}
 
@@ -210,7 +212,7 @@ CallParticipantModel.prototype = {
 	},
 
 	_handleChannelMessage: function(peer, label, data) {
-		if (!this._peer || this._peer.id !== peer.id) {
+		if (!this.get('peer') || this.get('peer').id !== peer.id) {
 			return
 		}
 
@@ -230,14 +232,14 @@ CallParticipantModel.prototype = {
 			console.warn('Mismatch between stored peer ID and ID of given peer: ', this.get('peerId'), peer.id)
 		}
 
-		if (this._peer) {
-			this._peer.off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		if (this.get('peer')) {
+			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 		}
 
-		this._peer = peer
+		this.set('peer', peer)
 
 		// Special case when the participant has no streams.
-		if (!this._peer) {
+		if (!this.get('peer')) {
 			this.set('connectionState', ConnectionState.COMPLETED)
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
@@ -247,10 +249,10 @@ CallParticipantModel.prototype = {
 		}
 
 		// Reset state that depends on the Peer object.
-		this._handleExtendedIceConnectionStateChange(this._peer.pc.iceConnectionState)
-		this._handlePeerStreamAdded(this._peer)
+		this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
+		this._handlePeerStreamAdded(this.get('peer'))
 
-		this._peer.on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 	},
 
 	_handleExtendedIceConnectionStateChange: function(extendedIceConnectionState) {
@@ -258,8 +260,8 @@ CallParticipantModel.prototype = {
 		// not be set later for registered users without microphone nor
 		// camera.
 		const setNameForUserFromPeerNick = function() {
-			if (this._peer.nick !== undefined) {
-				this.set('name', this._peer.nick)
+			if (this.get('peer').nick !== undefined) {
+				this.set('name', this.get('peer').nick)
 			}
 		}.bind(this)
 
@@ -309,10 +311,10 @@ CallParticipantModel.prototype = {
 			console.warn('Mismatch between stored peer ID and ID of given screen peer: ', this.get('peerId'), screenPeer.id)
 		}
 
-		this._screenPeer = screenPeer
+		this.set('screenPeer', screenPeer)
 
 		// Reset state that depends on the screen Peer object.
-		this._handlePeerStreamAdded(this._screenPeer)
+		this._handlePeerStreamAdded(this.get('screenPeer'))
 	},
 
 	setUserId: function(userId) {
