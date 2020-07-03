@@ -689,6 +689,7 @@
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk güncellendi. Lütfen sayfayı yeniden yükleyin",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud bakım kipinde. Lütfen sayfayı yeniden yükleyin",
     "Error while sharing file" : "Dosya paylaşılırken sorun çıktı",
+    "Failed to join the conversation. Try to reload the page." : "Görüşmeye katılınamadı. Sayfayı yeniden yüklemeyi deneyin.",
     "Error while uploading file" : "Dosya yüklenirken sorun çıktı",
     "Sending signaling message has failed." : "Signaling iletisi gönderilemedi.",
     "Establishing signaling connection is taking longer than expected …" : "Signaling bağlantısının kurulması beklendiğinden uzun sürüyor…",
