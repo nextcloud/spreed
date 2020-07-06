@@ -64,7 +64,11 @@ const video = {
 			}
 		},
 
-		handleClickVideo() {
+		handleClickVideo(e) {
+			// Prevent clicks on the media controls buttons to trigger a video selection
+			if (e.target.localName === 'button') {
+				return
+			}
 			this.$emit('click-video')
 		},
 	},
