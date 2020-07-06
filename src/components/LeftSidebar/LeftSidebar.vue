@@ -31,7 +31,7 @@
 			<NewGroupConversation
 				v-if="canStartConversations" />
 		</div>
-		<ul class="left-sidebar__list">
+		<template #list class="left-sidebar__list">
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
 			<li>
@@ -81,16 +81,18 @@
 				<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
-		</ul>
+		</template>
 
-		<AppNavigationSettings>
-			<label>{{ t('spreed', 'Default location for attachments') }}</label>
-			<input
-				type="text"
-				:value="attachmentFolder"
-				:disabled="attachmentFolderLoading"
-				@click="selectAttachmentFolder">
-		</AppNavigationSettings>
+		<template #footer>
+			<AppNavigationSettings>
+				<label>{{ t('spreed', 'Default location for attachments') }}</label>
+				<input
+					type="text"
+					:value="attachmentFolder"
+					:disabled="attachmentFolderLoading"
+					@click="selectAttachmentFolder">
+			</AppNavigationSettings>
+		</template>
 	</AppNavigation>
 </template>
 
