@@ -156,7 +156,13 @@ export default {
 		},
 
 		showQualityWarning() {
-			return this.senderConnectionQualityAudioIsBad || this.qualityWarningInGracePeriodTimeout
+			return this.senderConnectionQualityIsBad || this.qualityWarningInGracePeriodTimeout
+		},
+
+		senderConnectionQualityIsBad() {
+			return this.senderConnectionQualityAudioIsBad
+				|| this.senderConnectionQualityVideoIsBad
+				|| this.senderConnectionQualityScreenIsBad
 		},
 
 		senderConnectionQualityAudioIsBad() {
@@ -165,8 +171,37 @@ export default {
 				 || callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 		},
 
+		senderConnectionQualityVideoIsBad() {
+			return callAnalyzer
+				&& (callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.VERY_BAD
+				 || callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+		},
+
+		senderConnectionQualityScreenIsBad() {
+			return callAnalyzer
+				&& (callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.VERY_BAD
+				 || callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+		},
+
 		qualityWarningAriaLabel() {
-			return t('spreed', 'Bad sent audio quality')
+			let label = ''
+			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent video and screen quality.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent screen quality.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
+				label = t('spreed', 'Bad sent video quality.')
+			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent audio, video and screen quality.')
+			} else if (this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent audio and screen quality.')
+			} else if (this.localMediaModel.attributes.videoEnabled) {
+				label = t('spreed', 'Bad sent audio and video quality.')
+			} else {
+				label = t('spreed', 'Bad sent audio quality.')
+			}
+
+			return label
 		},
 
 		// The quality warning tooltip is automatically shown only if the
@@ -183,7 +218,13 @@ export default {
 			}
 
 			let message = ''
-			if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
+			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
 				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
 			} else if (this.localMediaModel.attributes.localScreen) {
 				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
@@ -220,8 +261,8 @@ export default {
 			this._setLocalStream(localStream)
 		},
 
-		senderConnectionQualityAudioIsBad: function(senderConnectionQualityAudioIsBad) {
-			if (!senderConnectionQualityAudioIsBad) {
+		senderConnectionQualityIsBad: function(senderConnectionQualityIsBad) {
+			if (!senderConnectionQualityIsBad) {
 				return
 			}
 
