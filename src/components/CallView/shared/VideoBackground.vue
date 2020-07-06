@@ -21,7 +21,9 @@
 
 <template>
 	<div class="video-backgroundbackground">
-		<div class="darken">
+		<div
+			ref="darkener"
+			class="darken">
 			<ResizeObserver
 				v-if="gridBlur === ''"
 				class="observer"
@@ -100,6 +102,16 @@ export default {
 			}
 		} catch (exception) {
 			console.debug(exception)
+		}
+	},
+
+	async mounted() {
+		if (!this.gridBlur) {
+			// Initialise blur
+			this.setBlur({
+				width: this.$refs['darkener'].clientWidth,
+				height: this.$refs['darkener'].clientHeight,
+			})
 		}
 	},
 
