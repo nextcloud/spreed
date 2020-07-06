@@ -105,7 +105,7 @@
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if the conversation is 1to1 or if sidebar -->
 			<LocalVideo
-				v-if="isOneToOneView"
+				v-if="isOneToOneView && !showLocalVideo"
 				ref="localVideo"
 				class="local-video"
 				:class="{ 'local-video--sidebar': isSidebar }"
@@ -115,7 +115,8 @@
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
-				@switchScreenToId="1" />
+				@switchScreenToId="1"
+				@click-video="handleClickLocalVideo" />
 		</div>
 	</div>
 </template>
