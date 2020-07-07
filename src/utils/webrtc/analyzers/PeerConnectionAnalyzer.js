@@ -78,6 +78,13 @@ function PeerConnectionAnalyzer() {
 		'audio': new AverageStatValue(5, STAT_VALUE_TYPE.RELATIVE),
 		'video': new AverageStatValue(5, STAT_VALUE_TYPE.RELATIVE),
 	}
+	// Latest values have a higher weight than the default one to better detect
+	// sudden changes in the round trip time, which can lead to discarded (but
+	// not lost) packets.
+	this._roundTripTime = {
+		'audio': new AverageStatValue(5, STAT_VALUE_TYPE.RELATIVE, 5),
+		'video': new AverageStatValue(5, STAT_VALUE_TYPE.RELATIVE, 5),
+	}
 	// Only the last relative value is used, but as it is a cumulative value the
 	// previous one is needed as a base to calculate the last one.
 	this._timestamps = {
@@ -218,6 +225,11 @@ PeerConnectionAnalyzer.prototype = {
 			'video': -1,
 		}
 
+		const roundTripTime = {
+			'audio': -1,
+			'video': -1,
+		}
+
 		for (const stat of stats.values()) {
 			if (stat.type === 'outbound-rtp') {
 				if ('packetsSent' in stat && 'kind' in stat) {
@@ -237,6 +249,9 @@ PeerConnectionAnalyzer.prototype = {
 				}
 				if ('packetsLost' in stat && 'kind' in stat) {
 					packetsLost[stat.kind] = stat.packetsLost
+				}
+				if ('roundTripTime' in stat && 'kind' in stat) {
+					roundTripTime[stat.kind] = stat.roundTripTime
 				}
 			}
 		}
@@ -288,6 +303,9 @@ PeerConnectionAnalyzer.prototype = {
 				// values are got from the helper object.
 				const packetsPerSecond = this._packets[kind].getLastRelativeValue() / elapsedSeconds
 				this._packetsPerSecond[kind].add(packetsPerSecond)
+			}
+			if (roundTripTime[kind] >= 0) {
+				this._roundTripTime[kind].add(roundTripTime[kind])
 			}
 		}
 	},
@@ -376,14 +394,14 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQualityAudio: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['audio'], this._packetsPerSecond['audio'])
+		return this._calculateConnectionQuality(this._packetsLostRatio['audio'], this._packetsPerSecond['audio'], this._roundTripTime['audio'])
 	},
 
 	_calculateConnectionQualityVideo: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['video'], this._packetsPerSecond['video'])
+		return this._calculateConnectionQuality(this._packetsLostRatio['video'], this._packetsPerSecond['video'], this._roundTripTime['video'])
 	},
 
-	_calculateConnectionQuality: function(packetsLostRatio, packetsPerSecond) {
+	_calculateConnectionQuality: function(packetsLostRatio, packetsPerSecond, roundTripTime) {
 		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
@@ -391,6 +409,14 @@ PeerConnectionAnalyzer.prototype = {
 		const packetsLostRatioWeightedAverage = packetsLostRatio.getWeightedAverage()
 		if (packetsLostRatioWeightedAverage >= 1) {
 			return CONNECTION_QUALITY.NO_TRANSMITTED_DATA
+		}
+
+		// A high round trip time means that the delay is high, but it can also
+		// imply that some packets, even if they are not lost, are anyway
+		// discarded to try to keep the playing rate in real time.
+		// Round trip time is measured in seconds.
+		if (roundTripTime.hasEnoughData() && roundTripTime.getWeightedAverage() > 1.5) {
+			return CONNECTION_QUALITY.VERY_BAD
 		}
 
 		// In some cases there may be packets being transmitted without any lost
