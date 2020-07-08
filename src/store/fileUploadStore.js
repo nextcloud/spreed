@@ -55,6 +55,10 @@ const getters = {
 	getAttachmentFolder: (state) => () => {
 		return state.attachmentFolder
 	},
+
+	uploadProgress: (state) => (uploadId, index) => {
+		return state.uploads[uploadId].files[index].progressLoaded / state.uploads[uploadId].files[index].progressTotal * 100
+	},
 }
 
 const mutations = {
@@ -142,7 +146,7 @@ const actions = {
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
 			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = createTemporaryMessage('{file}', token, currentFile)
+			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
