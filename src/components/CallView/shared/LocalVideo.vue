@@ -21,7 +21,8 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="videoContainerClass">
+		:class="videoContainerClass"
+		:aria-label="videoContainerAriaLabel">
 		<transition name="fade">
 			<span v-show="showQualityWarning"
 				v-tooltip="qualityWarningTooltip"
@@ -128,7 +129,16 @@ export default {
 				'speaking': this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
+				'bad-connection-quality': this.showQualityWarning,
 			}
+		},
+
+		videoContainerAriaLabel() {
+			if (!this.showQualityWarning) {
+				return null
+			}
+
+			return this.qualityWarningAriaLabel
 		},
 
 		userId() {
@@ -382,6 +392,13 @@ export default {
 
 .avatar-container {
 	margin: auto;
+}
+
+.bad-connection-quality {
+	.video,
+	.avatar-container {
+		opacity: 0.5
+	}
 }
 
 .qualityWarning {
