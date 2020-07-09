@@ -52,7 +52,7 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
 			<div class="message__main__right">
-				<div v-if="isTemporary" class="icon-loading-small" />
+				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
 				<h6 v-if="hasDate">
 					{{ messageTime }}
 				</h6>
@@ -302,6 +302,10 @@ export default {
 		// Determines whether the date has to be displayed or not
 		hasDate() {
 			return this.isSystemMessage || (!this.isTemporary && !this.showActions) || this.isTallEnough
+		},
+
+		isTemporaryUpload() {
+			return this.isTemporary && this.messageParameters.file
 		},
 	},
 
