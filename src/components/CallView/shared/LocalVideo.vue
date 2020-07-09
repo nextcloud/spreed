@@ -21,7 +21,7 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid, 'video-container-stripe': isStripe }">
+		:class="videoContainerClass">
 		<transition name="fade">
 			<span v-show="showQualityWarning"
 				v-tooltip="qualityWarningTooltip"
@@ -122,6 +122,14 @@ export default {
 	},
 
 	computed: {
+
+		videoContainerClass() {
+			return {
+				'speaking': this.localMediaModel.attributes.speaking,
+				'video-container-grid': this.isGrid,
+				'video-container-stripe': this.isStripe,
+			}
+		},
 
 		userId() {
 			return this.$store.getters.getUserId()
