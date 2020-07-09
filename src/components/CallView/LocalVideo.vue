@@ -19,7 +19,7 @@
   -->
 
 <template>
-	<div id="localVideoContainer" class="videoContainer videoView" :class="{ speaking: localMediaModel.attributes.speaking }">
+	<div id="localVideoContainer" class="videoContainer videoView" :class="videoContainerClass">
 		<transition name="fade">
 			<span v-show="showQualityWarning"
 				v-tooltip="qualityWarningTooltip"
@@ -96,6 +96,12 @@ export default {
 	},
 
 	computed: {
+
+		videoContainerClass() {
+			return {
+				'speaking': this.localMediaModel.attributes.speaking,
+			}
+		},
 
 		userId() {
 			return this.$store.getters.getUserId()
