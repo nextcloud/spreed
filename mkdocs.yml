@@ -16,11 +16,12 @@ markdown_extensions:
       baselevel: 2
 
 nav:
-  - Nextcloud Talk API: 'index.md'
+  - 'Nextcloud Talk API': 'index.md'
   - 'System requirements': 'system-requirements.md'
+  - 'Call experience': 'call-experience.md'
   - Constants: 'constants.md'
   - Capabilities: 'capabilities.md'
-  - API v1.0:
+  - 'API v1.0':
       - 'Conversations management': 'conversation.md'
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'
