@@ -224,34 +224,27 @@ export default {
 		},
 
 		qualityWarningAudioTooltip() {
-			if (!this.showQualityWarning || !this.localMediaModel.attributes.audioEnabled) {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.audioEnabled || this.localMediaModel.attributes.videoEnabled || this.localMediaModel.attributes.localScreen) {
 				return null
 			}
 
-			let message = ''
-			if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
-			} else if (this.localMediaModel.attributes.localScreen) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
-			} else if (this.localMediaModel.attributes.videoEnabled) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
-			} else {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.')
-			}
-
 			return {
-				content: message,
+				content: t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.'),
 				show: this.showQualityWarningTooltip,
 			}
 		},
 
 		qualityWarningVideoTooltip() {
-			if (!this.showQualityWarning || this.localMediaModel.attributes.audioEnabled || !this.localMediaModel.attributes.videoEnabled) {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.videoEnabled) {
 				return null
 			}
 
 			let message = ''
-			if (this.localMediaModel.attributes.localScreen) {
+			if (this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
+			} else if (this.localMediaModel.attributes.audioEnabled) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
+			} else if (this.localMediaModel.attributes.localScreen) {
 				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
 			} else {
 				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
@@ -264,12 +257,19 @@ export default {
 		},
 
 		qualityWarningScreenTooltip() {
-			if (!this.showQualityWarning || this.localMediaModel.attributes.audioEnabled || this.localMediaModel.attributes.videoEnabled || !this.localMediaModel.attributes.localScreen) {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.localScreen || this.localMediaModel.attributes.videoEnabled) {
 				return null
 			}
 
+			let message = ''
+			if (this.localMediaModel.attributes.audioEnabled) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
+			} else {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
+			}
+
 			return {
-				content: t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.'),
+				content: message,
 				show: this.showQualityWarningTooltip,
 			}
 		},
