@@ -32,7 +32,7 @@
 					<h3>{{ conversation.displayName }}</h3>
 					<p class="message">{{ conversation.lastMessage.message }}</p>
 				</div>
-				<button v-if="conversation.hasCall" class="primary success">{{ t('spreed', 'Join call') }}</button>
+				<button v-if="conversation.hasCall" class="primary success icon-video-white" :title="t('spreed', 'Join call')" />
 			</a>
 		</li>
 	</ul>
@@ -75,7 +75,7 @@ export default {
 	methods: {
 		fetchRooms() {
 			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
-				const rooms = response.data.ocs.data.slice(0, 6)
+				const rooms = response.data.ocs.data.slice(0, 7)
 				rooms.sort((a, b) => b.lastActivity - a.lastActivity)
 				this.roomOptions = rooms
 			})
@@ -85,31 +85,56 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	li a {
+	li .conversation {
 		display: flex;
 		align-items: flex-start;
-		padding: 5px;
+		padding: 8px;
 
 		&:hover {
 			background-color: var(--color-background-hover);
-			border-radius: var(--border-radius);
+			border-radius: var(--border-radius-large);
 		}
-	}
 
-	.conversation__details {
-		padding: 3px;
-		overflow: hidden;
-	}
+		.conversation-icon {
+			position: relative;
 
-	h3 {
-		font-size: 100%;
-		margin: 0;
-	}
+			// Do not show favorite or call icons
+			// Favorite not needed as only important calls are shown
+			// Call icon not needed as "Join call" button is there
+			::v-deep .overlap-icon {
+				display: none;
+				top: 3px;
+				left: 32px;
+			}
+		}
 
-	.message {
-		width: 100%;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		.conversation__details {
+			padding-left: 8px;
+			max-height: 44px;
+			flex-grow: 1;
+			overflow: hidden;
+
+			h3,
+			.message {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			h3 {
+				font-size: 100%;
+				margin: 0;
+			}
+
+			.message {
+				width: 100%;
+				color: var(--color-text-maxcontrast);
+			}
+		}
+
+		button.primary {
+			padding: 21px;
+			margin: 0;
+		}
 	}
 </style>
