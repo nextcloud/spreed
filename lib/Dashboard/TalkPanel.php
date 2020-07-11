@@ -23,8 +23,18 @@
 
 namespace OCA\Talk\Dashboard;
 
+use OCP\IL10N;
 
 class TalkPanel implements \OCP\Dashboard\IPanel {
+
+	/** @var IL10N */
+	private $l10n;
+
+	public function __construct(
+		IL10N $l10n
+	) {
+		$this->l10n = $l10n;
+	}
 
 	/**
 	 * @inheritDoc
@@ -37,7 +47,7 @@ class TalkPanel implements \OCP\Dashboard\IPanel {
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return 'Talk';
+		return $this->l10n->t('Talk mentions');
 	}
 
 	/**
