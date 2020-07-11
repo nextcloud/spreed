@@ -90,7 +90,8 @@ export default {
 		align-items: flex-start;
 		padding: 8px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--color-background-hover);
 			border-radius: var(--border-radius-large);
 		}
