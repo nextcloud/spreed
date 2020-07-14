@@ -21,7 +21,8 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="{ speaking: localMediaModel.attributes.speaking, 'video-container-grid': isGrid, 'video-container-stripe': isStripe }">
+		:class="videoContainerClass"
+		:aria-label="videoContainerAriaLabel">
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
@@ -50,6 +51,9 @@
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
+				:quality-warning-audio-tooltip="qualityWarningAudioTooltip"
+				:quality-warning-video-tooltip="qualityWarningVideoTooltip"
+				:quality-warning-screen-tooltip="qualityWarningScreenTooltip"
 				@switchScreenToId="$emit('switchScreenToId', $event)" />
 		</transition>
 	</div>
@@ -64,6 +68,8 @@ import SHA1 from 'crypto-js/sha1'
 import { showInfo } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
+import { callAnalyzer } from '../../../utils/webrtc/index'
+import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 
 export default {
 
@@ -100,7 +106,32 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			callAnalyzer: callAnalyzer,
+			qualityWarningInGracePeriodTimeout: null,
+			qualityWarningWasRecentlyShownTimeout: null,
+		}
+	},
+
 	computed: {
+
+		videoContainerClass() {
+			return {
+				'speaking': this.localMediaModel.attributes.speaking,
+				'video-container-grid': this.isGrid,
+				'video-container-stripe': this.isStripe,
+				'bad-connection-quality': this.showQualityWarning,
+			}
+		},
+
+		videoContainerAriaLabel() {
+			if (!this.showQualityWarning) {
+				return null
+			}
+
+			return this.qualityWarningAriaLabel
+		},
 
 		userId() {
 			return this.$store.getters.getUserId()
@@ -133,6 +164,115 @@ export default {
 		avatarSizeClass() {
 			return 'avatar-' + this.avatarSize + 'px'
 		},
+
+		showQualityWarning() {
+			return this.senderConnectionQualityIsBad || this.qualityWarningInGracePeriodTimeout
+		},
+
+		senderConnectionQualityIsBad() {
+			return this.senderConnectionQualityAudioIsBad
+				|| this.senderConnectionQualityVideoIsBad
+				|| this.senderConnectionQualityScreenIsBad
+		},
+
+		senderConnectionQualityAudioIsBad() {
+			return callAnalyzer
+				&& (callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.VERY_BAD
+				 || callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+		},
+
+		senderConnectionQualityVideoIsBad() {
+			return callAnalyzer
+				&& (callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.VERY_BAD
+				 || callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+		},
+
+		senderConnectionQualityScreenIsBad() {
+			return callAnalyzer
+				&& (callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.VERY_BAD
+				 || callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+		},
+
+		qualityWarningAriaLabel() {
+			let label = ''
+			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent video and screen quality.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent screen quality.')
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
+				label = t('spreed', 'Bad sent video quality.')
+			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent audio, video and screen quality.')
+			} else if (this.localMediaModel.attributes.localScreen) {
+				label = t('spreed', 'Bad sent audio and screen quality.')
+			} else if (this.localMediaModel.attributes.videoEnabled) {
+				label = t('spreed', 'Bad sent audio and video quality.')
+			} else {
+				label = t('spreed', 'Bad sent audio quality.')
+			}
+
+			return label
+		},
+
+		// The quality warning tooltip is automatically shown only if the
+		// quality warning (dimmed video) has not been shown in the last minute.
+		// Otherwise the tooltip is hidden even if the warning is shown,
+		// although the tooltip can be shown anyway by hovering on the media
+		// button.
+		showQualityWarningTooltip() {
+			return !this.qualityWarningWasRecentlyShownTimeout
+		},
+
+		qualityWarningAudioTooltip() {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.audioEnabled || this.localMediaModel.attributes.videoEnabled || this.localMediaModel.attributes.localScreen) {
+				return null
+			}
+
+			return {
+				content: t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.'),
+				show: this.showQualityWarningTooltip,
+			}
+		},
+
+		qualityWarningVideoTooltip() {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.videoEnabled) {
+				return null
+			}
+
+			let message = ''
+			if (this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
+			} else if (this.localMediaModel.attributes.audioEnabled) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
+			} else if (this.localMediaModel.attributes.localScreen) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+			} else {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
+			}
+
+			return {
+				content: message,
+				show: this.showQualityWarningTooltip,
+			}
+		},
+
+		qualityWarningScreenTooltip() {
+			if (!this.showQualityWarning || !this.localMediaModel.attributes.localScreen || this.localMediaModel.attributes.videoEnabled) {
+				return null
+			}
+
+			let message = ''
+			if (this.localMediaModel.attributes.audioEnabled) {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
+			} else {
+				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
+			}
+
+			return {
+				content: message,
+				show: this.showQualityWarningTooltip,
+			}
+		},
 	},
 
 	watch: {
@@ -153,6 +293,34 @@ export default {
 
 		'localMediaModel.attributes.localStream': function(localStream) {
 			this._setLocalStream(localStream)
+		},
+
+		senderConnectionQualityIsBad: function(senderConnectionQualityIsBad) {
+			if (!senderConnectionQualityIsBad) {
+				return
+			}
+
+			if (this.qualityWarningInGracePeriodTimeout) {
+				window.clearTimeout(this.qualityWarningInGracePeriodTimeout)
+			}
+
+			this.qualityWarningInGracePeriodTimeout = window.setTimeout(() => {
+				this.qualityWarningInGracePeriodTimeout = null
+			}, 10000)
+		},
+
+		showQualityWarning: function(showQualityWarning) {
+			if (showQualityWarning) {
+				return
+			}
+
+			if (this.qualityWarningWasRecentlyShownTimeout) {
+				window.clearTimeout(this.qualityWarningWasRecentlyShownTimeout)
+			}
+
+			this.qualityWarningWasRecentlyShownTimeout = window.setTimeout(() => {
+				this.qualityWarningWasRecentlyShownTimeout = null
+			}, 60000)
 		},
 
 	},
@@ -240,6 +408,13 @@ export default {
 
 .avatar-container {
 	margin: auto;
+}
+
+.bad-connection-quality {
+	.video,
+	.avatar-container {
+		opacity: 0.5
+	}
 }
 
 </style>
