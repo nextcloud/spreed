@@ -80,14 +80,33 @@
 				</li>
 			</ul>
 		</div>
+		<div class="network-connection-state">
+			<Popover
+				v-if="qualityWarningTooltip"
+				:boundaries-element="boundaryElement"
+				:aria-label="qualityWarningAriaLabel"
+				trigger="hover"
+				:open="qualityWarningTooltip.show">
+				<NetworkStrength2Alert
+					slot="trigger"
+					fill-color="#e9322d"
+					title=""
+					:size="24" />
+				<template>
+					<span>{{ qualityWarningTooltip.content }}</span>
+				</template>
+			</Popover>
+		</div>
 	</div>
 </template>
 
 <script>
 import escapeHtml from 'escape-html'
 import { showMessage } from '@nextcloud/dialogs'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
+import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert'
 
 export default {
 
@@ -95,6 +114,11 @@ export default {
 
 	directives: {
 		tooltip: Tooltip,
+	},
+
+	components: {
+		NetworkStrength2Alert,
+		Popover,
 	},
 
 	props: {
@@ -110,6 +134,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		qualityWarningAriaLabel: {
+			type: String,
+			default: '',
+		},
+		qualityWarningTooltip: {
+			type: Object,
+			default: null,
+		},
 	},
 
 	data() {
@@ -118,6 +150,7 @@ export default {
 			speakingWhileMutedNotification: null,
 			screenSharingMenuOpen: false,
 			splitScreenSharingMenu: false,
+			boundaryElement: document.querySelector('.main-view'),
 		}
 	},
 
@@ -481,5 +514,14 @@ export default {
 
 #muteWrapper .icon-audio-off + .volume-indicator {
 	background: linear-gradient(0deg, gray, white 36px);
+}
+
+.network-connection-state {
+	position: absolute;
+	bottom: 0;
+	right: 16px;
+	width: 32px;
+	height: 32px;
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 </style>

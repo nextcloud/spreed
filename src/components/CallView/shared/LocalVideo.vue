@@ -22,12 +22,6 @@
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
 		:class="videoContainerClass">
-		<transition name="fade">
-			<span v-show="showQualityWarning"
-				v-tooltip="qualityWarningTooltip"
-				:aria-label="qualityWarningAriaLabel"
-				class="qualityWarning forced-white icon icon-error" />
-		</transition>
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
@@ -56,6 +50,8 @@
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
+				:quality-warning-aria-label="qualityWarningAriaLabel"
+				:quality-warning-tooltip="qualityWarningTooltip"
 				@switchScreenToId="$emit('switchScreenToId', $event)" />
 		</transition>
 	</div>
@@ -76,10 +72,6 @@ import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnecti
 export default {
 
 	name: 'LocalVideo',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Avatar,
@@ -225,7 +217,7 @@ export default {
 
 		qualityWarningTooltip() {
 			if (!this.showQualityWarning) {
-				return false
+				return null
 			}
 
 			let message = ''
@@ -397,18 +389,6 @@ export default {
 
 .avatar-container {
 	margin: auto;
-}
-
-.qualityWarning {
-	position: absolute;
-	right: 0;
-
-	width: 44px;
-	height: 44px;
-	background-size: 24px;
-
-	/* Needed to show in front of the avatar container. */
-	z-index: 10;
 }
 
 </style>
