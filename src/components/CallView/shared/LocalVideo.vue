@@ -411,9 +411,14 @@ export default {
 }
 
 .bad-connection-quality {
+	/* This adds black bars around the video depending on the resolution,
+	 * but it's still better than having your half-transparent avatar
+	 * shine an underlying video/avatar through it. */
+	background-color: #000000;
+
 	.video,
 	.avatar-container {
-		opacity: 0.5
+		opacity: 0.3
 	}
 }
 
