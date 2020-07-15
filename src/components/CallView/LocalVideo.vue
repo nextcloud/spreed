@@ -20,12 +20,6 @@
 
 <template>
 	<div id="localVideoContainer" class="videoContainer videoView" :class="videoContainerClass">
-		<transition name="fade">
-			<span v-show="showQualityWarning"
-				v-tooltip="qualityWarningTooltip"
-				:aria-label="qualityWarningAriaLabel"
-				class="qualityWarning forced-white icon icon-error" />
-		</transition>
 		<video v-show="localMediaModel.attributes.videoEnabled" id="localVideo" ref="video" />
 		<div v-if="!localMediaModel.attributes.videoEnabled" class="avatar-container">
 			<Avatar v-if="userId"
@@ -44,6 +38,8 @@
 			:model="localMediaModel"
 			:local-call-participant-model="localCallParticipantModel"
 			:screen-sharing-button-hidden="useConstrainedLayout"
+			:quality-warning-aria-label="qualityWarningAriaLabel"
+			:quality-warning-tooltip="qualityWarningTooltip"
 			@switchScreenToId="$emit('switchScreenToId', $event)" />
 	</div>
 </template>
@@ -55,17 +51,12 @@ import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
 import { showError } from '@nextcloud/dialogs'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { callAnalyzer } from '../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 
 export default {
 
 	name: 'LocalVideo',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Avatar,
@@ -198,7 +189,7 @@ export default {
 
 		qualityWarningTooltip() {
 			if (!this.showQualityWarning) {
-				return false
+				return null
 			}
 
 			let message = ''
@@ -304,17 +295,5 @@ export default {
 @import '../../assets/avatar.scss';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
-
-.qualityWarning {
-	position: absolute;
-	right: 0;
-
-	width: 44px;
-	height: 44px;
-	background-size: 24px;
-
-	/* Needed to show in front of the avatar container. */
-	z-index: 10;
-}
 
 </style>
