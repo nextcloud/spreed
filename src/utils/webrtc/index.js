@@ -27,6 +27,7 @@ import CallAnalyzer from './analyzers/CallAnalyzer'
 import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
+import MediaDevicesManager from './MediaDevicesManager'
 import SentVideoQualityThrottler from './SentVideoQualityThrottler'
 import { PARTICIPANT } from '../../constants'
 import { fetchSignalingSettings } from '../../services/signalingService'
@@ -35,6 +36,7 @@ let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
+const mediaDevicesManager = new MediaDevicesManager()
 let callAnalyzer = null
 let sentVideoQualityThrottler = null
 
@@ -224,6 +226,8 @@ export {
 	callParticipantCollection,
 	localCallParticipantModel,
 	localMediaModel,
+
+	mediaDevicesManager,
 
 	callAnalyzer,
 

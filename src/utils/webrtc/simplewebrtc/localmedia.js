@@ -5,6 +5,9 @@ const hark = require('hark')
 const getScreenMedia = require('./getscreenmedia')
 const WildEmitter = require('wildemitter')
 const mockconsole = require('mockconsole')
+// Only mediaDevicesManager is used, but it can not be assigned here due to not
+// being initialized yet.
+const webrtcIndex = require('../index.js')
 
 function isAllTracksEnded(stream) {
 	let isAllTracksEnded = true
@@ -43,7 +46,7 @@ function LocalMedia(opts) {
 	this._audioMonitorStreams = []
 	this.localScreens = []
 
-	if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		this._logerror('Your browser does not support local media capture.')
 	}
 
@@ -86,7 +89,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || this.config.media
 
-	if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		const error = new Error('MediaStreamError')
 		error.name = 'NotSupportedError'
 
@@ -99,7 +102,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this.emit('localStreamRequested', constraints, context)
 
-	navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
 		// only audio is available.
