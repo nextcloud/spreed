@@ -88,7 +88,7 @@ export default {
 		},
 
 		deviceOptionsAvailable() {
-			return this.deviceOptions.length > 0
+			return this.deviceOptions.length > 1
 		},
 
 		deviceSelectorPlaceholder() {
@@ -120,12 +120,19 @@ export default {
 		},
 
 		deviceOptions() {
-			return this.devices.filter(device => device.kind === this.kind).map(device => {
+			const options = this.devices.filter(device => device.kind === this.kind).map(device => {
 				return {
 					id: device.deviceId,
 					label: device.label ? device.label : device.fallbackLabel,
 				}
 			})
+
+			options.push({
+				id: null,
+				label: t('spreed', 'None'),
+			})
+
+			return options
 		},
 
 		deviceSelectedOptionFromDeviceId() {

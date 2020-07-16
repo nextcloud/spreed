@@ -51,7 +51,9 @@
  * The selected devices will be automatically cleared if they are no longer
  * available. When no device of certain kind is selected and there are other
  * devices of that kind the selected device will fall back to the first one
- * found, or to the one with the "default" id (if any).
+ * found, or to the one with the "default" id (if any). It is possible to
+ * explicitly disable devices of certain kind by setting xxxInputId to "null"
+ * (in that case the fallback devices will not be taken into account).
  */
 export default function MediaDevicesManager() {
 	this.attributes = {
@@ -244,18 +246,26 @@ MediaDevicesManager.prototype = {
 			})
 		}
 
-		if (constraints.audio && !constraints.audio.deviceId && this.attributes.audioInputId) {
-			if (!(constraints.audio instanceof Object)) {
-				constraints.audio = {}
+		if (constraints.audio && !constraints.audio.deviceId) {
+			if (this.attributes.audioInputId) {
+				if (!(constraints.audio instanceof Object)) {
+					constraints.audio = {}
+				}
+				constraints.audio.deviceId = this.attributes.audioInputId
+			} else if (this.attributes.audioInputId === null) {
+				constraints.audio = false
 			}
-			constraints.audio.deviceId = this.attributes.audioInputId
 		}
 
-		if (constraints.video && !constraints.video.deviceId && this.attributes.videoInputId) {
-			if (!(constraints.video instanceof Object)) {
-				constraints.video = {}
+		if (constraints.video && !constraints.video.deviceId) {
+			if (this.attributes.videoInputId) {
+				if (!(constraints.video instanceof Object)) {
+					constraints.video = {}
+				}
+				constraints.video.deviceId = this.attributes.videoInputId
+			} else if (this.attributes.videoInputId === null) {
+				constraints.video = false
 			}
-			constraints.video.deviceId = this.attributes.videoInputId
 		}
 
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
