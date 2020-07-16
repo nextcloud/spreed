@@ -82,12 +82,6 @@ function SimpleWebRTC(opts) {
 		connection = this.connection = this.config.connection
 	}
 
-	connection.on('connect', function() {
-		self.emit('connectionReady', connection.getSessionId())
-		self.sessionReady = true
-		self.testReadiness()
-	})
-
 	connection.on('message', function(message) {
 		const peers = self.webrtc.getPeers(message.from, message.roomType)
 		let peer
@@ -162,11 +156,6 @@ function SimpleWebRTC(opts) {
 	if (config.debug) {
 		this.on('*', this.logger.log.bind(this.logger, 'SimpleWebRTC event:'))
 	}
-
-	// check for readiness
-	this.webrtc.on('localStream', function() {
-		self.testReadiness()
-	})
 
 	this.webrtc.on('message', function(payload) {
 		self.connection.emit('message', payload)
@@ -433,17 +422,6 @@ SimpleWebRTC.prototype.stopScreenShare = function() {
 			peer.end()
 		}
 	})
-}
-
-SimpleWebRTC.prototype.testReadiness = function() {
-	const self = this
-	if (this.sessionReady) {
-		if (!this.config.media.video && !this.config.media.audio) {
-			self.emit('readyToCall', self.connection.getSessionId())
-		} else if (this.webrtc.localStreams.length > 0) {
-			self.emit('readyToCall', self.connection.getSessionId())
-		}
-	}
 }
 
 SimpleWebRTC.prototype.createRoom = function(name, cb) {
