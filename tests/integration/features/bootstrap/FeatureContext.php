@@ -912,7 +912,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
 
-		foreach ($formData->getHash() as $key => $row) {
+		usort($mentions, function ($a, $b) {
+			if ($a['source'] === $b['source']) {
+				return $a['label'] <=> $b['label'];
+			}
+			return $a['source'] <=> $b['source'];
+		});
+
+		$expected = $formData->getHash();
+		usort($expected, function ($a, $b) {
+			if ($a['source'] === $b['source']) {
+				return $a['label'] <=> $b['label'];
+			}
+			return $a['source'] <=> $b['source'];
+		});
+
+		foreach ($expected as $key => $row) {
 			if ($row['id'] === 'GUEST_ID') {
 				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
