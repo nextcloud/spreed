@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
+use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
@@ -87,6 +88,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -105,8 +108,6 @@ class Application extends App implements IBootstrap {
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
-		PublicShareAuthTemplateLoader::register($dispatcher);
-		PublicShareTemplateLoader::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
 		RestrictStartingCallsListener::register($dispatcher);
