@@ -199,22 +199,26 @@ ParticipantAnalyzer.prototype = {
 	},
 
 	_handlePeerChange: function(model, peer) {
+		if (this._peer) {
+			this._stopListeningToAudioVideoChanges()
+		}
+
 		this._peer = peer
 
 		if (peer) {
 			this._startListeningToAudioVideoChanges()
-		} else {
-			this._stopListeningToAudioVideoChanges()
 		}
 	},
 
 	_handleScreenPeerChange: function(model, screenPeer) {
+		if (this._screenPeer) {
+			this._stopListeningToScreenChanges()
+		}
+
 		this._screenPeer = screenPeer
 
 		if (screenPeer) {
 			this._startListeningToScreenChanges()
-		} else {
-			this._stopListeningToScreenChanges()
 		}
 	},
 
