@@ -35,13 +35,15 @@
  *   same physical device
  * - kind: either "audioinput", "videoinput" or "audiooutput"
  * - label: a human readable identifier for the device
+ * - fallbackLabel: a generated label if the actual label is empty
  *
  * Note that the list may not contain some kind of devices due to browser
  * limitations (for example, currently Firefox does not list "audiooutput"
  * devices).
  *
  * The label may not be available if persistent media permissions have not been
- * granted and a MediaStream has not been active.
+ * granted and a MediaStream has not been active. In those cases the fallback
+ * label can be used instead.
  *
  * "attributes.audioInputId" and "attributes.videoInputId" define the devices
  * that will be used when calling "getUserMedia(constraints)".
@@ -58,6 +60,8 @@ export default function MediaDevicesManager() {
 	}
 
 	this._enabledCount = 0
+
+	this._knownDevices = {}
 
 	this._updateDevicesBound = this._updateDevices.bind(this)
 }
@@ -158,6 +162,29 @@ MediaDevicesManager.prototype = {
 			kind: addedDevice.kind,
 			label: addedDevice.label,
 		}
+
+		const knownDevice = this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId]
+		if (knownDevice) {
+			addedDevice.fallbackLabel = knownDevice.fallbackLabel
+			// If the added device has a label keep it; otherwise use
+			// the previously known one, if any.
+			addedDevice.label = addedDevice.label ? addedDevice.label : knownDevice.label
+		} else {
+			// Generate a fallback label to be used when the actual label is
+			// not available.
+			if (addedDevice.deviceId === 'default') {
+				addedDevice.fallbackLabel = t('spreed', 'Default')
+			} else if (addedDevice.kind === 'audioinput') {
+				addedDevice.fallbackLabel = t('spreed', 'Microphone {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'audioinput').length + 1 })
+			} else if (addedDevice.kind === 'videoinput') {
+				addedDevice.fallbackLabel = t('spreed', 'Camera {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'videoinput').length + 1 })
+			} else if (addedDevice.kind === 'audiooutput') {
+				addedDevice.fallbackLabel = t('spreed', 'Speaker {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'audioutput').length + 1 })
+			}
+		}
+
+		// Always refresh the known device with the latest values.
+		this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId] = addedDevice
 
 		this.attributes.devices.push(addedDevice)
 	},
