@@ -27,6 +27,7 @@
 		:title="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
+		@update:active="handleUpdateActive"
 		@update:starred="onFavoriteChange"
 		@update:title="handleUpdateTitle"
 		@submit-title="handleSubmitTitle"
@@ -66,6 +67,13 @@
 			icon="icon-settings">
 			<SetGuestUsername />
 		</AppSidebarTab>
+		<AppSidebarTab
+			id="preview"
+			:order="5"
+			:name="t('spreed', 'Preview')"
+			icon="icon-video">
+			<MediaDevicesPreview :enabled="!showChatInSidebar && activeTab === 'preview'" />
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
@@ -73,6 +81,7 @@
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
+import MediaDevicesPreview from '../MediaDevicesPreview'
 import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
@@ -92,6 +101,7 @@ export default {
 		AppSidebarTab,
 		ChatView,
 		CollectionList,
+		MediaDevicesPreview,
 		ParticipantsTab,
 		SetGuestUsername,
 	},
@@ -109,6 +119,7 @@ export default {
 
 	data() {
 		return {
+			activeTab: null,
 			contactsLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
@@ -213,6 +224,10 @@ export default {
 			}
 
 			this.conversation.isFavorite = !this.conversation.isFavorite
+		},
+
+		handleUpdateActive(active) {
+			this.activeTab = active
 		},
 
 		/**
