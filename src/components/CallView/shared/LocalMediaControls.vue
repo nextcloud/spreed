@@ -92,9 +92,17 @@
 					fill-color="#e9322d"
 					title=""
 					:size="24" />
-				<template>
+				<div class="hint">
 					<span>{{ qualityWarningTooltip.content }}</span>
-				</template>
+					<div class="hint__actions">
+						<button
+							v-if="qualityWarningTooltip.action"
+							class="primary"
+							@click="executeQualityWarningTooltipAction">
+							{{ qualityWarningTooltip.actionLabel }}
+						</button>
+					</div>
+				</div>
 			</Popover>
 		</div>
 	</div>
@@ -416,6 +424,16 @@ export default {
 				}
 			})
 		},
+		executeQualityWarningTooltipAction() {
+			if (this.qualityWarningTooltip.action === '') {
+				return
+			}
+			if (this.qualityWarningTooltip.action === 'disableScreenShare') {
+				this.model.stopSharingScreen()
+			} else if (this.qualityWarningTooltip.action === 'disableVideo') {
+				this.model.disableVideo()
+			}
+		},
 	},
 }
 </script>
@@ -523,5 +541,16 @@ export default {
 	width: 32px;
 	height: 32px;
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
+.hint {
+	padding: 4px;
+	text-align: left;
+	&__actions{
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		padding-top:4px;
+	}
 }
 </style>
