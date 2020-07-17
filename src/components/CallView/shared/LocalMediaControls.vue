@@ -86,12 +86,15 @@
 				:boundaries-element="boundaryElement"
 				:aria-label="qualityWarningAriaLabel"
 				trigger="hover"
-				:open="qualityWarningTooltip.show">
+				:auto-hide="false"
+				:open="showQualityWarningTooltip">
 				<NetworkStrength2Alert
 					slot="trigger"
 					fill-color="#e9322d"
 					title=""
-					:size="24" />
+					:size="24"
+					@mouseover="mouseover = true"
+					@mouseleave="mouseover = false" />
 				<div class="hint">
 					<span>{{ qualityWarningTooltip.content }}</span>
 					<div class="hint__actions">
@@ -100,6 +103,11 @@
 							class="primary"
 							@click="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
+						</button>
+						<button
+							v-if="!isQualityWarningTooltipDismissed"
+							@click="isQualityWarningTooltipDismissed = true">
+							{{ t('spreed', 'Dismiss') }}
 						</button>
 					</div>
 				</div>
@@ -159,6 +167,8 @@ export default {
 			screenSharingMenuOpen: false,
 			splitScreenSharingMenu: false,
 			boundaryElement: document.querySelector('.main-view'),
+			isQualityWarningTooltipDismissed: false,
+			mouseover: false,
 		}
 	},
 
@@ -286,6 +296,10 @@ export default {
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		showQualityWarningTooltip() {
+			return this.qualityWarningTooltip && (!this.isQualityWarningTooltipDismissed || this.mouseover)
 		},
 
 	},
@@ -430,8 +444,10 @@ export default {
 			}
 			if (this.qualityWarningTooltip.action === 'disableScreenShare') {
 				this.model.stopSharingScreen()
+				this.isQualityWarningTooltipDismissed = true
 			} else if (this.qualityWarningTooltip.action === 'disableVideo') {
 				this.model.disableVideo()
+				this.isQualityWarningTooltipDismissed = true
 			}
 		},
 	},
