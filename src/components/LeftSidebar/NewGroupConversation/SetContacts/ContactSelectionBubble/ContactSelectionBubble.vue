@@ -29,7 +29,7 @@
 			:disable-menu="true"
 			:disable-tooltip="true" />
 		<span class="contact-selection-bubble__username">
-			{{ trimmedName }}
+			{{ displayName }}
 		</span>
 		<button
 			class="icon-close contact-selection-bubble__remove"
@@ -54,9 +54,10 @@ export default {
 	},
 
 	computed: {
-		// First group of characrers before the space in the name the string
-		trimmedName() {
-			return this.participant.label.match(/^\S*/)[0]
+		displayName() {
+			// Used to be the group of characters before the first space in the name.
+			// But it causes weird scenarios in formal companies or when people have titles.
+			return this.participant.label
 		},
 	},
 
