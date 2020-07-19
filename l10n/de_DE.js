@@ -582,6 +582,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to see you." : "Ihre Internetverbindung oder Ihr Computer sind ausgelastet und andere Teilnehmer können Sie möglicherweise nicht sehen.",
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Ihre Internetverbindung oder Ihr Computer sind ausgelastet und andere Teilnehmer können Sie möglicherweise nicht verstehen und Ihren Bildschirm nicht sehen. Versuchen Sie, Ihre Bildschirmfreigabe zu deaktivieren, um die Übertragung zu verbessern.",
     "Your internet connection or computer are busy and other participants might be unable to see your screen." : "Ihre Internetverbindung oder Ihr Computer sind ausgelastet und andere Teilnehmer können Ihren Bildschirm möglicherweise nicht sehen.",
+    "Error while accessing camera" : "Fehler beim Zugriff auf die Kamera",
     "You have been muted by a moderator" : "Sie wurden von einem Moderator stummgeschaltet",
     "You" : "Sie",
     "Show screen" : "Bildschirm anzeigen",
