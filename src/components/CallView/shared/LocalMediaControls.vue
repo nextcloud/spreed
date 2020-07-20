@@ -110,18 +110,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		qualityWarningAudioTooltip: {
-			type: Object,
-			default: null,
-		},
-		qualityWarningVideoTooltip: {
-			type: Object,
-			default: null,
-		},
-		qualityWarningScreenTooltip: {
-			type: Object,
-			default: null,
-		},
 	},
 
 	data() {
@@ -150,10 +138,6 @@ export default {
 					content: t('spreed', 'No audio'),
 					show: false,
 				}
-			}
-
-			if (this.qualityWarningAudioTooltip) {
-				return this.qualityWarningAudioTooltip
 			}
 
 			if (this.speakingWhileMutedNotification) {
@@ -212,10 +196,6 @@ export default {
 				return t('spreed', 'No camera')
 			}
 
-			if (this.qualityWarningVideoTooltip) {
-				return this.qualityWarningVideoTooltip
-			}
-
 			if (this.model.attributes.videoEnabled) {
 				return t('spreed', 'Disable video (v)')
 			}
@@ -254,10 +234,6 @@ export default {
 		screenSharingButtonTooltip() {
 			if (this.screenSharingMenuOpen) {
 				return null
-			}
-
-			if (this.qualityWarningScreenTooltip) {
-				return this.qualityWarningScreenTooltip
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
