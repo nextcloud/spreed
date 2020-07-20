@@ -24,6 +24,7 @@ import store from '../../../store/index.js'
 export default function LocalMediaModel() {
 
 	this.attributes = {
+		localStreamRequestVideoError: null,
 		localStream: null,
 		audioAvailable: false,
 		audioEnabled: false,
@@ -39,7 +40,9 @@ export default function LocalMediaModel() {
 
 	this._handlers = []
 
+	this._handleLocalStreamRequestedBound = this._handleLocalStreamRequested.bind(this)
 	this._handleLocalStreamBound = this._handleLocalStream.bind(this)
+	this._handleLocalStreamRequestFailedRetryNoVideoBound = this._handleLocalStreamRequestFailedRetryNoVideo.bind(this)
 	this._handleLocalStreamRequestFailedBound = this._handleLocalStreamRequestFailed.bind(this)
 	this._handleLocalStreamStoppedBound = this._handleLocalStreamStopped.bind(this)
 	this._handleAudioOnBound = this._handleAudioOn.bind(this)
@@ -109,7 +112,9 @@ LocalMediaModel.prototype = {
 
 	setWebRtc: function(webRtc) {
 		if (this._webRtc && this._webRtc.webrtc) {
+			this._webRtc.webrtc.off('localStreamRequested', this._handleLocalStreamRequestedBound)
 			this._webRtc.webrtc.off('localStream', this._handleLocalStreamBound)
+			this._webRtc.webrtc.off('localStreamRequestFailedRetryNoVideo', this._handleLocalStreamRequestFailedBound)
 			this._webRtc.webrtc.off('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound)
 			this._webRtc.webrtc.off('localStreamStopped', this._handleLocalStreamStoppedBound)
 			this._webRtc.webrtc.off('audioOn', this._handleAudioOnBound)
@@ -138,7 +143,9 @@ LocalMediaModel.prototype = {
 		this.set('videoEnabled', false)
 		this.set('localScreen', null)
 
+		this._webRtc.webrtc.on('localStreamRequested', this._handleLocalStreamRequestedBound)
 		this._webRtc.webrtc.on('localStream', this._handleLocalStreamBound)
+		this._webRtc.webrtc.on('localStreamRequestFailedRetryNoVideo', this._handleLocalStreamRequestFailedRetryNoVideoBound)
 		this._webRtc.webrtc.on('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound)
 		this._webRtc.webrtc.on('localStreamStopped', this._handleLocalStreamStoppedBound)
 		this._webRtc.webrtc.on('audioOn', this._handleAudioOnBound)
@@ -152,6 +159,12 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('videoOff', this._handleVideoOffBound)
 		this._webRtc.webrtc.on('localScreen', this._handleLocalScreenBound)
 		this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound)
+	},
+
+	_handleLocalStreamRequested: function(constraints, context) {
+		if (context !== 'retry-no-video') {
+			this.set('localStreamRequestVideoError', null)
+		}
 	},
 
 	_handleLocalStream: function(configuration, localStream) {
@@ -170,6 +183,14 @@ LocalMediaModel.prototype = {
 		this.set('token', store.getters.getToken())
 
 		this._setInitialMediaState(configuration)
+	},
+
+	_handleLocalStreamRequestFailedRetryNoVideo: function(constraints, error) {
+		if (!error || error.name === 'NotFoundError') {
+			return
+		}
+
+		this.set('localStreamRequestVideoError', error)
 	},
 
 	_handleLocalStreamRequestFailed: function() {
