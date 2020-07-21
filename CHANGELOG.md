@@ -1,6 +1,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.10 – 2020-07-21
+### Added
+- Warn the user when their connection or computer is busy and others might not be able to see or hear them correctly anymore.
+  [#3899](https://github.com/nextcloud/spreed/pull/3899)
+
+### Changed
+- Improve default push notification text for upcoming iOS 13 SDK changes in the iOS mobile app
+  [#3848](https://github.com/nextcloud/spreed/pull/3848)
+
+### Fixed
+- Always try to connect without camera in case it failed
+  [#3781](https://github.com/nextcloud/spreed/pull/3781)
+- Update lib to parse links in chat messages to fix an issue with trailing spaces
+  [#3925](https://github.com/nextcloud/spreed/pull/3925)
+- Remove automatic ping when getting chat messages via the web UI
+  [#3793](https://github.com/nextcloud/spreed/pull/3793)
+
+## 7.0.4 – 2020-07-21
+### Added
+- Reduce CPU usage when doing a video call
+  [#3416](https://github.com/nextcloud/spreed/pull/3416)
+
+### Changed
+- Improve default push notification text for upcoming iOS 13 SDK changes in the iOS mobile app
+  [#3849](https://github.com/nextcloud/spreed/pull/3849)
+
+### Fixed
+- Fix a failure on logout when an active session was removed from a conversation already
+  [#3871](https://github.com/nextcloud/spreed/pull/3871)
+- Fix an error when the user list is used to fill a missing conversation name
+  [#3629](https://github.com/nextcloud/spreed/pull/3629)
+- Fix an error when the parent of a reply was the first item in the message list
+  [#3588](https://github.com/nextcloud/spreed/pull/3588)
+
 ## 8.0.9 – 2020-05-13
 ### Changed
 - Reduce CPU usage when doing a video call
