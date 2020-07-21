@@ -51,6 +51,13 @@ get the messagesList array and loop through the list to generate the messages.
 				type="messages"
 				:count="15" />
 		</template>
+		<transition name="fade">
+			<button v-show="!isScrolledToBottom"
+				class="scroll-to-bottom"
+				@click="scrollToBottom">
+				<ChevronDown :size="24" fill-color="#fff" />
+			</button>
+		</transition>
 	</div>
 </template>
 
@@ -65,12 +72,14 @@ import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
+import ChevronDown from 'vue-material-design-icons/ChevronDown'
 
 export default {
 	name: 'MessagesList',
 	components: {
 		LoadingPlaceholder,
 		MessagesGroup,
+		ChevronDown,
 	},
 
 	mixins: [
@@ -503,7 +512,7 @@ export default {
 
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
-		}, 600),
+		}, 100),
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
@@ -551,6 +560,7 @@ export default {
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
+			this.isScrolledToBottom = true
 		},
 
 		/**
@@ -581,6 +591,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables.scss';
+
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
@@ -588,6 +600,26 @@ export default {
 		height: 50px;
 		display: flex;
 		justify-content: center;
+	}
+}
+
+.scroll-to-bottom {
+	position: absolute;
+	width: 44px;
+	height: 44px;
+	background-color: var(--color-primary-element-light);
+	opacity: 0.8 !important;
+	bottom: 76px;
+	right: 24px;
+	z-index: 2;
+	box-shadow: 0 0 4px var(--color-box-shadow);
+	padding: 0;
+	margin: 0;
+	&:hover,
+	&:focus {
+		background-color: var(--color-primary-element-light);
+		opacity: 1 !important;
+		border: none;
 	}
 }
 
