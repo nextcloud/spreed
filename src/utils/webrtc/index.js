@@ -21,6 +21,7 @@
 
 import Signaling from '../signaling'
 import initWebRtc from './webrtc'
+import CallAnalyzer from './analyzers/CallAnalyzer'
 import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
@@ -33,6 +34,7 @@ let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
+let callAnalyzer = null
 let sentVideoQualityThrottler = null
 
 let pendingConnectSignaling = null
@@ -91,7 +93,7 @@ function setupWebRtc() {
 		return
 	}
 
-	webRtc = initWebRtc(signaling, callParticipantCollection)
+	webRtc = initWebRtc(signaling, callParticipantCollection, localCallParticipantModel)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
@@ -129,6 +131,12 @@ async function signalingJoinCall(token) {
 
 	sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
 
+	if (signaling.hasFeature('mcu')) {
+		callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)
+	} else {
+		callAnalyzer = new CallAnalyzer(localMediaModel, null, callParticipantCollection)
+	}
+
 	return new Promise((resolve, reject) => {
 		startedCall = resolve
 
@@ -145,6 +153,9 @@ async function signalingJoinCall(token) {
 async function signalingLeaveCall(token) {
 	sentVideoQualityThrottler.destroy()
 	sentVideoQualityThrottler = null
+
+	callAnalyzer.destroy()
+	callAnalyzer = null
 
 	await getSignaling()
 	await signaling.leaveCall(token)
@@ -175,6 +186,8 @@ export {
 	callParticipantCollection,
 	localCallParticipantModel,
 	localMediaModel,
+
+	callAnalyzer,
 
 	connectSignaling,
 

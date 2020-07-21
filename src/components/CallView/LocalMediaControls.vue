@@ -80,13 +80,48 @@
 				</li>
 			</ul>
 		</div>
+		<div class="network-connection-state">
+			<Popover
+				v-if="qualityWarningTooltip"
+				:boundaries-element="boundaryElement"
+				:aria-label="qualityWarningAriaLabel"
+				trigger="hover"
+				:auto-hide="false"
+				:open="showQualityWarningTooltip">
+				<NetworkStrength2Alert
+					slot="trigger"
+					fill-color="#e9322d"
+					title=""
+					:size="24"
+					@mouseover="mouseover = true"
+					@mouseleave="mouseover = false" />
+				<div class="hint">
+					<span>{{ qualityWarningTooltip.content }}</span>
+					<div class="hint__actions">
+						<button
+							v-if="qualityWarningTooltip.action"
+							class="primary"
+							@click="executeQualityWarningTooltipAction">
+							{{ qualityWarningTooltip.actionLabel }}
+						</button>
+						<button
+							v-if="!isQualityWarningTooltipDismissed"
+							@click="isQualityWarningTooltipDismissed = true">
+							{{ t('spreed', 'Dismiss') }}
+						</button>
+					</div>
+				</div>
+			</Popover>
+		</div>
 	</div>
 </template>
 
 <script>
 import escapeHtml from 'escape-html'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner'
+import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert'
 
 export default {
 
@@ -94,6 +129,11 @@ export default {
 
 	directives: {
 		tooltip: Tooltip,
+	},
+
+	components: {
+		NetworkStrength2Alert,
+		Popover,
 	},
 
 	props: {
@@ -109,6 +149,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		qualityWarningAriaLabel: {
+			type: String,
+			default: '',
+		},
+		qualityWarningTooltip: {
+			type: Object,
+			default: null,
+		},
 	},
 
 	data() {
@@ -117,6 +165,9 @@ export default {
 			speakingWhileMutedNotification: null,
 			screenSharingMenuOpen: false,
 			splitScreenSharingMenu: false,
+			boundaryElement: document.querySelector('.main-view'),
+			isQualityWarningTooltipDismissed: false,
+			mouseover: false,
 		}
 	},
 
@@ -244,6 +295,10 @@ export default {
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		showQualityWarningTooltip() {
+			return this.qualityWarningTooltip && (!this.isQualityWarningTooltipDismissed || this.mouseover)
 		},
 
 	},
@@ -382,6 +437,18 @@ export default {
 				}
 			})
 		},
+		executeQualityWarningTooltipAction() {
+			if (this.qualityWarningTooltip.action === '') {
+				return
+			}
+			if (this.qualityWarningTooltip.action === 'disableScreenShare') {
+				this.model.stopSharingScreen()
+				this.isQualityWarningTooltipDismissed = true
+			} else if (this.qualityWarningTooltip.action === 'disableVideo') {
+				this.model.disableVideo()
+				this.isQualityWarningTooltipDismissed = true
+			}
+		},
 	},
 }
 </script>
@@ -477,5 +544,25 @@ export default {
 
 #muteWrapper .icon-audio-off + .volume-indicator {
 	background: linear-gradient(0deg, gray, white 36px);
+}
+
+.network-connection-state {
+	position: absolute;
+	bottom: 0;
+	right: 2px;
+	width: 32px;
+	height: 32px;
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
+.hint {
+	padding: 4px;
+	text-align: left;
+	&__actions{
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		padding-top:4px;
+	}
 }
 </style>
