@@ -21,8 +21,7 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="videoContainerClass"
-		:aria-label="videoContainerAriaLabel">
+		:class="videoContainerClass">
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
@@ -51,9 +50,8 @@
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
-				:quality-warning-audio-tooltip="qualityWarningAudioTooltip"
-				:quality-warning-video-tooltip="qualityWarningVideoTooltip"
-				:quality-warning-screen-tooltip="qualityWarningScreenTooltip"
+				:quality-warning-aria-label="qualityWarningAriaLabel"
+				:quality-warning-tooltip="qualityWarningTooltip"
 				@switchScreenToId="$emit('switchScreenToId', $event)" />
 		</transition>
 	</div>
@@ -110,7 +108,6 @@ export default {
 		return {
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
-			qualityWarningWasRecentlyShownTimeout: null,
 		}
 	},
 
@@ -121,16 +118,7 @@ export default {
 				'speaking': this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
-				'bad-connection-quality': this.showQualityWarning,
 			}
-		},
-
-		videoContainerAriaLabel() {
-			if (!this.showQualityWarning) {
-				return null
-			}
-
-			return this.qualityWarningAriaLabel
 		},
 
 		userId() {
@@ -218,64 +206,43 @@ export default {
 			return label
 		},
 
-		// The quality warning tooltip is automatically shown only if the
-		// quality warning (dimmed video) has not been shown in the last minute.
-		// Otherwise the tooltip is hidden even if the warning is shown,
-		// although the tooltip can be shown anyway by hovering on the media
-		// button.
-		showQualityWarningTooltip() {
-			return !this.qualityWarningWasRecentlyShownTimeout
-		},
-
-		qualityWarningAudioTooltip() {
-			if (!this.showQualityWarning || !this.localMediaModel.attributes.audioEnabled || this.localMediaModel.attributes.videoEnabled || this.localMediaModel.attributes.localScreen) {
+		qualityWarningTooltip() {
+			if (!this.showQualityWarning) {
 				return null
 			}
 
-			return {
-				content: t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.'),
-				show: this.showQualityWarningTooltip,
-			}
-		},
-
-		qualityWarningVideoTooltip() {
-			if (!this.showQualityWarning || !this.localMediaModel.attributes.videoEnabled) {
-				return null
-			}
-
-			let message = ''
-			if (this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
-			} else if (this.localMediaModel.attributes.audioEnabled) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
+			const tooltip = {}
+			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+				tooltip.actionLabel = t('spreed', 'Disable video')
+				tooltip.action = 'disableVideo'
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
+				tooltip.actionLabel = ''
+				tooltip.action = ''
+			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
+				tooltip.actionLabel = ''
+				tooltip.action = ''
+			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
+				tooltip.actionLabel = t('spreed', 'Disable video')
+				tooltip.action = 'disableVideo'
 			} else if (this.localMediaModel.attributes.localScreen) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
+				tooltip.actionLabel = t('spreed', 'Disable screenshare')
+				tooltip.action = 'disableScreenShare'
+			} else if (this.localMediaModel.attributes.videoEnabled) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
+				tooltip.actionLabel = t('spreed', 'Disable video')
+				tooltip.action = 'disableVideo'
 			} else {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.')
+				tooltip.actionLabel = ''
+				tooltip.action = ''
 			}
 
-			return {
-				content: message,
-				show: this.showQualityWarningTooltip,
-			}
-		},
-
-		qualityWarningScreenTooltip() {
-			if (!this.showQualityWarning || !this.localMediaModel.attributes.localScreen || this.localMediaModel.attributes.videoEnabled) {
-				return null
-			}
-
-			let message = ''
-			if (this.localMediaModel.attributes.audioEnabled) {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
-			} else {
-				message = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
-			}
-
-			return {
-				content: message,
-				show: this.showQualityWarningTooltip,
-			}
+			return tooltip
 		},
 	},
 
@@ -323,20 +290,6 @@ export default {
 			this.qualityWarningInGracePeriodTimeout = window.setTimeout(() => {
 				this.qualityWarningInGracePeriodTimeout = null
 			}, 10000)
-		},
-
-		showQualityWarning: function(showQualityWarning) {
-			if (showQualityWarning) {
-				return
-			}
-
-			if (this.qualityWarningWasRecentlyShownTimeout) {
-				window.clearTimeout(this.qualityWarningWasRecentlyShownTimeout)
-			}
-
-			this.qualityWarningWasRecentlyShownTimeout = window.setTimeout(() => {
-				this.qualityWarningWasRecentlyShownTimeout = null
-			}, 60000)
 		},
 
 	},
@@ -424,13 +377,6 @@ export default {
 
 .avatar-container {
 	margin: auto;
-}
-
-.bad-connection-quality {
-	.video,
-	.avatar-container {
-		opacity: 0.5
-	}
 }
 
 </style>
