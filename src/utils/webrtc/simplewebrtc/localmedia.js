@@ -82,7 +82,7 @@ const cloneLinkedStream = function(stream) {
 	return linkedStream
 }
 
-LocalMedia.prototype.start = function(mediaConstraints, cb) {
+LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || this.config.media
 
@@ -97,15 +97,16 @@ LocalMedia.prototype.start = function(mediaConstraints, cb) {
 		return
 	}
 
-	this.emit('localStreamRequested', constraints)
+	this.emit('localStreamRequested', constraints, context)
 
 	navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
 		// only audio is available.
 		if (constraints.video && stream.getVideoTracks().length === 0) {
+			self.emit('localStreamRequestFailedRetryNoVideo', constraints)
 			constraints.video = false
-			self.start(constraints, cb)
+			self.start(constraints, cb, 'retry-no-video')
 			return
 		}
 
@@ -135,8 +136,9 @@ LocalMedia.prototype.start = function(mediaConstraints, cb) {
 		// Fallback for users without a camera or with a camera that can not be
 		// accessed.
 		if (self.config.audioFallback && constraints.video !== false) {
+			self.emit('localStreamRequestFailedRetryNoVideo', constraints, err)
 			constraints.video = false
-			self.start(constraints, cb)
+			self.start(constraints, cb, 'retry-no-video')
 			return
 		}
 

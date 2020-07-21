@@ -48,6 +48,7 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 
@@ -107,12 +108,27 @@ export default {
 			return 'avatar-' + this.avatarSize + 'px'
 		},
 
+		localStreamVideoError() {
+			return this.localMediaModel.attributes.localStream && this.localMediaModel.attributes.localStreamRequestVideoError
+		},
+
 	},
 
 	watch: {
 
 		'localMediaModel.attributes.localStream': function(localStream) {
 			this._setLocalStream(localStream)
+		},
+
+		localStreamVideoError: {
+			immediate: true,
+			handler: function(localStreamVideoError) {
+				if (localStreamVideoError) {
+					showError(t('spreed', 'Error while accessing camera'), {
+						timeout: 0,
+					})
+				}
+			},
 		},
 
 	},
