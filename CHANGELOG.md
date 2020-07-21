@@ -18,6 +18,23 @@ All notable changes to this project will be documented in this file.
 - Remove automatic ping when getting chat messages via the web UI
   [#3793](https://github.com/nextcloud/spreed/pull/3793)
 
+## 7.0.4 – 2020-07-21
+### Added
+- Reduce CPU usage when doing a video call
+  [#3416](https://github.com/nextcloud/spreed/pull/3416)
+
+### Changed
+- Improve default push notification text for upcoming iOS 13 SDK changes in the iOS mobile app
+  [#3849](https://github.com/nextcloud/spreed/pull/3849)
+
+### Fixed
+- Fix a failure on logout when an active session was removed from a conversation already
+  [#3871](https://github.com/nextcloud/spreed/pull/3871)
+- Fix an error when the user list is used to fill a missing conversation name
+  [#3629](https://github.com/nextcloud/spreed/pull/3629)
+- Fix an error when the parent of a reply was the first item in the message list
+  [#3588](https://github.com/nextcloud/spreed/pull/3588)
+
 ## 8.0.9 – 2020-05-13
 ### Changed
 - Reduce CPU usage when doing a video call
