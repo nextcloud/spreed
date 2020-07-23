@@ -75,7 +75,7 @@ const mutations = {
 		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded' })
 	},
 
-	// Marks a given file as failed uplosd
+	// Marks a given file as failed upload
 	markFileAsFailedUpload(state, { uploadId, index }) {
 		state.uploads[uploadId].files[index].status = 'failedUpload'
 	},
@@ -147,7 +147,7 @@ const actions = {
 				console.debug('Error while uploading file:' + exception)
 				showError(t('spreed', 'Error while uploading file'))
 				// Mark the upload as failed in the store
-				commit('markFileAsFailedUpload', { token, index })
+				commit('markFileAsFailedUpload', { uploadId, index })
 			}
 		}
 	},
