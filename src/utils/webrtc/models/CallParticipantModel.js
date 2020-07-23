@@ -216,7 +216,7 @@ CallParticipantModel.prototype = {
 			return
 		}
 
-		if (label !== 'status') {
+		if (label !== 'status' && label !== 'JanusDataChannel') {
 			return
 		}
 
