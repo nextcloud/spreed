@@ -57,7 +57,11 @@ const getters = {
 	},
 
 	uploadProgress: (state) => (uploadId, index) => {
-		return state.uploads[uploadId].files[index].progressLoaded / state.uploads[uploadId].files[index].progressTotal * 100
+		if (state.uploads[uploadId].files[index]) {
+			return state.uploads[uploadId].files[index].progressLoaded / state.uploads[uploadId].files[index].progressTotal * 100
+		} else {
+			return 0
+		}
 	},
 }
 

@@ -152,10 +152,11 @@ export default {
 		},
 		uploadProgress() {
 			if (this.isTemporaryUpload) {
-				return this.$store.getters.uploadProgress(this.uploadId, this.index)
-			} else {
-				return undefined
+				if (this.$store.getters.uploadProgress(this.uploadId, this.index)) {
+					return this.$store.getters.uploadProgress(this.uploadId, this.index)
+				}
 			}
+			return 0
 		},
 	},
 	mounted() {
