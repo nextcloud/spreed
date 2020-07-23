@@ -13,6 +13,8 @@ version+=master
 
 all: dev-setup build-js-production
 
+d: dev-setup watch-js
+
 dev-setup: clean-dev npm-init
 
 dependabot: dev-setup npm-update build-js-production
