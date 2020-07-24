@@ -26,6 +26,7 @@ import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { findUniquePath } from '../utils/fileUpload'
 import createTemporaryMessage from '../utils/temporaryMessage'
+import { EventBus } from '../services/EventBus'
 
 const state = {
 	attachmentFolder: loadState('talk', 'attachment_folder'),
@@ -152,6 +153,8 @@ const actions = {
 			// Create temporary message for the file and add it to the message list
 			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
 			dispatch('addTemporaryMessage', temporaryMessage)
+			// Scroll the message list
+			EventBus.$emit('scrollChatToBottom')
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
 			// Candidate rest of the path
