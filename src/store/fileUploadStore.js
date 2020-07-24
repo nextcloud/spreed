@@ -188,7 +188,6 @@ const actions = {
 			}
 		}
 	},
-
 	/**
 	 * Set the folder to store new attachments in
 	 *
