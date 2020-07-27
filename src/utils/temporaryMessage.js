@@ -27,9 +27,10 @@ import Hex from 'crypto-js/enc-hex'
 const createTemporaryMessage = (text, token, uploadId, index, file) => {
 	const messageToBeReplied = store.getters.getMessageToBeReplied(token)
 	const date = new Date()
-	const tempId = 'temp-' + date.getTime()
+	let tempId = 'temp-' + date.getTime()
 	const messageParameters = {}
 	if (file) {
+		tempId += '-' + uploadId + '-' + index
 		messageParameters.file = {
 			'type': 'file',
 			'file': file,

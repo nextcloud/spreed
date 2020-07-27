@@ -77,13 +77,11 @@ const processFiles = async function(files, token, uploadId) {
 	for (const index in shareableFiles) {
 		const path = shareableFiles[index].sharePath
 		try {
-			store.dispatch('markFileAsSharing', { uploadId, index })
-			await shareFile(path, token)
-			store.dispatch('markFileAsShared', { uploadId, index })
 			const temporaryMessage = shareableFiles[index].temporaryMessage
-			// Delete temporary message
-			store.dispatch('deleteMessage', temporaryMessage)
 
+			store.dispatch('markFileAsSharing', { uploadId, index })
+			await shareFile(path, token, temporaryMessage.referenceId)
+			store.dispatch('markFileAsShared', { uploadId, index })
 		} catch (exception) {
 			console.debug('An error happened when triying to share your file: ', exception)
 		}
