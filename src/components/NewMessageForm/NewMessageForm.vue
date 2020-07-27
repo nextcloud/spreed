@@ -35,19 +35,6 @@
 				class="new-message-form">
 				<div
 					class="new-message-form__button">
-					<EmojiPicker @select="addEmoji">
-						<button
-							type="button"
-							class="new-message-form__icon new-message-form__button"
-							:aria-label="t('spreed', 'Add emoji')"
-							:aria-haspopup="true">
-							<EmoticonOutline
-							     :size="24">
-						</button>
-					</EmojiPicker>
-				</div>
-				<div
-					class="new-message-form__button">
 					<Actions
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button"
@@ -67,6 +54,19 @@
 							{{ t('spreed', 'Share from Files') }}
 						</ActionButton>
 					</Actions>
+				</div>
+				<div
+					class="new-message-form__button">
+					<EmojiPicker @select="addEmoji">
+						<button
+							type="button"
+							class="new-message-form__icon new-message-form__button"
+							:aria-label="t('spreed', 'Add emoji')"
+							:aria-haspopup="true">
+							<EmoticonOutline
+								:size="24" />
+						</button>
+					</EmojiPicker>
 				</div>
 				<div class="new-message-form__input">
 					<Quote
