@@ -125,6 +125,12 @@ const mutations = {
 	setUploadedSize(state, { uploadId, index, uploadedSize }) {
 		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
 	},
+
+	// Set temporary message for each file
+	setTemporaryMessageForFile(state, { uploadId, index, temporaryMessage }) {
+		console.debug('uploadId: ' + uploadId + ' index: ' + index)
+		Vue.set(state.uploads[uploadId].files[index], 'temporaryMessage', temporaryMessage)
+	},
 }
 
 const actions = {
@@ -138,7 +144,8 @@ const actions = {
 		files.forEach(file => {
 			commit('addFileToBeUploaded', { uploadId, token, file })
 		})
-		// Iterate through the previously indexed files for a given conversation (token)
+
+		// Add temporary messages
 		for (const index in state.uploads[uploadId].files) {
 			// Mark file as uploading to prevent a second function call to start a
 			// second upload for the same file
@@ -150,6 +157,13 @@ const actions = {
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// Scroll the message list
 			EventBus.$emit('scrollChatToBottom')
+			commit('setTemporaryMessageForFile', { uploadId, index, temporaryMessage })
+		}
+
+		// Iterate through the previously indexed files for a given conversation (token)
+		for (const index in state.uploads[uploadId].files) {
+			// currentFile to be uploaded
+			const currentFile = state.uploads[uploadId].files[index].file
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
 			// Candidate rest of the path
@@ -166,8 +180,6 @@ const actions = {
 				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
-				// Delete temporary message
-				dispatch('deleteMessage', temporaryMessage)
 			} catch (exception) {
 				console.debug('Error while uploading file:' + exception)
 				showError(t('spreed', 'Error while uploading file'))
@@ -176,7 +188,6 @@ const actions = {
 			}
 		}
 	},
-
 	/**
 	 * Set the folder to store new attachments in
 	 *

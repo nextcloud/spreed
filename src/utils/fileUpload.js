@@ -72,6 +72,7 @@ const processFiles = async function(files, token, uploadId) {
 	await store.dispatch('uploadFiles', { uploadId, token, files })
 	// Get the files that have successfully been uploaded from the store
 	const shareableFiles = store.getters.getShareableFiles(uploadId)
+
 	// Share each of those files in the conversation
 	for (const index in shareableFiles) {
 		const path = shareableFiles[index].sharePath
@@ -79,6 +80,10 @@ const processFiles = async function(files, token, uploadId) {
 			store.dispatch('markFileAsSharing', { uploadId, index })
 			await shareFile(path, token)
 			store.dispatch('markFileAsShared', { uploadId, index })
+			const temporaryMessage = shareableFiles[index].temporaryMessage
+			// Delete temporary message
+			store.dispatch('deleteMessage', temporaryMessage)
+
 		} catch (exception) {
 			console.debug('An error happened when triying to share your file: ', exception)
 		}
