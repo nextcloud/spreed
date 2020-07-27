@@ -37,14 +37,21 @@
 		<span v-if="isLoading"
 			class="preview loading" />
 		<strong>{{ name }}</strong>
+		<ProgressBar v-if="isTemporaryUpload" :value="uploadProgress" />
 	</a>
 </template>
 
 <script>
 import { generateUrl, imagePath } from '@nextcloud/router'
+import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 
 export default {
 	name: 'FilePreview',
+
+	components: {
+		ProgressBar,
+	},
+
 	props: {
 		type: {
 			type: String,
@@ -60,7 +67,7 @@ export default {
 		},
 		path: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		link: {
 			type: String,
@@ -77,6 +84,18 @@ export default {
 		previewSize: {
 			type: Number,
 			default: 128,
+		},
+		// In case this component is used to display a file that is being uploaded
+		// this parameter is used to access the file upload status in the store
+		uploadId: {
+			type: Number,
+			default: null,
+		},
+		// In case this component is used to display a file that is being uploaded
+		// this parameter is used to access the file upload status in the store
+		index: {
+			type: String,
+			default: '',
 		},
 	},
 	data() {
@@ -128,6 +147,17 @@ export default {
 
 			return '/' + this.path
 		},
+		isTemporaryUpload() {
+			return this.id.startsWith('temp') && this.index && this.uploadId
+		},
+		uploadProgress() {
+			if (this.isTemporaryUpload) {
+				if (this.$store.getters.uploadProgress(this.uploadId, this.index)) {
+					return this.$store.getters.uploadProgress(this.uploadId, this.index)
+				}
+			}
+			return 0
+		},
 	},
 	mounted() {
 		const img = new Image()
@@ -177,6 +207,7 @@ export default {
 <style lang="scss" scoped>
 
 .container {
+	width: 100%;
 	/* The file preview can not be a block; otherwise it would fill the whole
 	width of the container and the loading icon would not be centered on the
 	image. */

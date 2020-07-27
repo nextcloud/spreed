@@ -25,6 +25,8 @@ import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { findUniquePath } from '../utils/fileUpload'
+import createTemporaryMessage from '../utils/temporaryMessage'
+import { EventBus } from '../services/EventBus'
 
 const state = {
 	attachmentFolder: loadState('talk', 'attachment_folder'),
@@ -54,6 +56,14 @@ const getters = {
 	getAttachmentFolder: (state) => () => {
 		return state.attachmentFolder
 	},
+
+	uploadProgress: (state) => (uploadId, index) => {
+		if (state.uploads[uploadId].files[index]) {
+			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
+		} else {
+			return 0
+		}
+	},
 }
 
 const mutations = {
@@ -72,7 +82,7 @@ const mutations = {
 				files: {},
 			})
 		}
-		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded' })
+		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded', totalSize: file.size, uploadedSize: 0 })
 	},
 
 	// Marks a given file as failed upload
@@ -110,6 +120,11 @@ const mutations = {
 	setAttachmentFolder(state, attachmentFolder) {
 		state.attachmentFolder = attachmentFolder
 	},
+
+	// Sets uploaded amount of bytes
+	setUploadedSize(state, { uploadId, index, uploadedSize }) {
+		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
+	},
 }
 
 const actions = {
@@ -119,7 +134,7 @@ const actions = {
 	 * @param {object} param1 The unique uploadId, the conversation token and the
 	 * files array
 	 */
-	async uploadFiles({ commit, state, getters }, { uploadId, token, files }) {
+	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, token, files }) {
 		files.forEach(file => {
 			commit('addFileToBeUploaded', { uploadId, token, file })
 		})
@@ -130,6 +145,11 @@ const actions = {
 			commit('markFileAsUploading', { uploadId, index })
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
+			// Create temporary message for the file and add it to the message list
+			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
+			dispatch('addTemporaryMessage', temporaryMessage)
+			// Scroll the message list
+			EventBus.$emit('scrollChatToBottom')
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
 			// Candidate rest of the path
@@ -138,11 +158,16 @@ const actions = {
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
 				// Upload the file
-				await client.putFileContents(userRoot + uniquePath, currentFile)
+				await client.putFileContents(userRoot + uniquePath, currentFile, { onUploadProgress: progress => {
+					const uploadedSize = progress.loaded
+					commit('setUploadedSize', { state, uploadId, index, uploadedSize })
+				} })
 				// Path for the sharing request
 				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
+				// Delete temporary message
+				dispatch('deleteMessage', temporaryMessage)
 			} catch (exception) {
 				console.debug('Error while uploading file:' + exception)
 				showError(t('spreed', 'Error while uploading file'))

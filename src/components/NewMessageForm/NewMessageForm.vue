@@ -84,11 +84,10 @@ import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import SHA1 from 'crypto-js/sha1'
-import Hex from 'crypto-js/enc-hex'
 import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
+import createTemporaryMessage from '../../utils/temporaryMessage'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -186,61 +185,12 @@ export default {
 		},
 
 		/**
-		 * Create a temporary message that will be used until the
-		 * actual message object is retrieved from the server
-		 *
-		 * @returns {Object}
-		 */
-		createTemporaryMessage() {
-			const tempId = this.createTemporaryMessageId()
-			const message = Object.assign({}, {
-				id: tempId,
-				actorId: this.$store.getters.getActorId(),
-				actorType: this.$store.getters.getActorType(),
-				actorDisplayName: this.$store.getters.getDisplayName(),
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: this.parsedText,
-				messageParameters: {},
-				token: this.token,
-				isReplyable: false,
-				referenceId: Hex.stringify(SHA1(tempId)),
-			})
-
-			if (this.$store.getters.getActorType() === 'guests') {
-				// Strip off "guests/" from the sessionHash
-				message.actorId = this.$store.getters.getActorId().substring(6)
-			}
-
-			/**
-			 * If the current message is a quote-reply messag, add the parent key to the
-			 * temporary message object.
-			 */
-			if (this.messageToBeReplied) {
-				message.parent = this.messageToBeReplied.id
-			}
-			return message
-		},
-		/**
-		 * Create a temporary ID that will be used until the actual
-		 * message object is received from the server.
-		 *
-		 * @returns {String}
-		 */
-		createTemporaryMessageId() {
-			const date = new Date()
-			return 'temp-' + date.getTime()
-		},
-
-		/**
 		 * Sends the new message
 		 */
 		async handleSubmit() {
 			if (this.parsedText !== '') {
-				const temporaryMessage = this.createTemporaryMessage()
+				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
-				this.$store.dispatch('updateConversationLastActive', temporaryMessage.token)
 				this.text = ''
 				this.parsedText = ''
 				// Scrolls the message list to the last added message

@@ -195,6 +195,8 @@ const actions = {
 	 */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)
+		// Update conversations list order
+		context.dispatch('updateConversationLastActive', message.token)
 	},
 
 	/**
