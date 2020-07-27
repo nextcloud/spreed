@@ -382,6 +382,9 @@ export default {
 			}
 		}
 	}
+	.icon-loading-small {
+		position: unset;
+	}
 }
 
 // Increase the padding for regular messages to improve readability and
