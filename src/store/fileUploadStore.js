@@ -82,7 +82,7 @@ const mutations = {
 				files: {},
 			})
 		}
-		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded' })
+		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded', totalSize: file.size, uploadedSize: 0 })
 	},
 
 	// Marks a given file as failed uplosd
@@ -121,14 +121,9 @@ const mutations = {
 		state.attachmentFolder = attachmentFolder
 	},
 
-	// Sets the total size of the file in bytes
-	setTotalSize(state, { uploadId, index, totalSize }) {
-		Vue.set(state.uploads[uploadId].files[index], 'totalSize', totalSize)
-	},
-
 	// Sets uploaded amount of bytes
 	setUploadedSize(state, { uploadId, index, uploadedSize }) {
-		Vue.set(state.uploads[uploadId].files[index], 'uploadedSize', uploadedSize)
+		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
 	},
 }
 
@@ -165,10 +160,6 @@ const actions = {
 				// Upload the file
 				await client.putFileContents(userRoot + uniquePath, currentFile, { onUploadProgress: progress => {
 					const uploadedSize = progress.loaded
-					const totalSize = progress.total
-					if (!state.uploads[uploadId].files[index].totalSize) {
-						commit('setTotalSize', { state, uploadId, index, totalSize })
-					}
 					commit('setUploadedSize', { state, uploadId, index, uploadedSize })
 				} })
 				// Path for the sharing request
