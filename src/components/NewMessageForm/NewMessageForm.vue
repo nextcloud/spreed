@@ -103,6 +103,7 @@ import Hex from 'crypto-js/enc-hex'
 import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -119,6 +120,7 @@ export default {
 		Actions,
 		ActionButton,
 		EmojiPicker,
+		EmoticonOutline,
 	},
 	data: function() {
 		return {
