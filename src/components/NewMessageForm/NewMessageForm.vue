@@ -41,7 +41,8 @@
 							class="new-message-form__icon new-message-form__button"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
-							🙂
+							<EmoticonOutline
+								:size="20" />
 						</button>
 					</EmojiPicker>
 				</div>
@@ -101,6 +102,7 @@ import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
 import createTemporaryMessage from '../../utils/temporaryMessage'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -117,6 +119,7 @@ export default {
 		Actions,
 		ActionButton,
 		EmojiPicker,
+		EmoticonOutline,
 	},
 	data: function() {
 		return {
