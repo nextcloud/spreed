@@ -59,7 +59,7 @@ const getters = {
 
 	uploadProgress: (state) => (uploadId, index) => {
 		if (state.uploads[uploadId].files[index]) {
-			return state.uploads[uploadId].files[index].progressLoaded / state.uploads[uploadId].files[index].progressTotal * 100
+			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
 		} else {
 			return 0
 		}
@@ -122,13 +122,13 @@ const mutations = {
 	},
 
 	// Sets the total size of the file in bytes
-	setProgressTotal(state, { uploadId, index, progressTotal }) {
-		Vue.set(state.uploads[uploadId].files[index], 'progressTotal', progressTotal)
+	setTotalSize(state, { uploadId, index, totalSize }) {
+		Vue.set(state.uploads[uploadId].files[index], 'totalSize', totalSize)
 	},
 
 	// Sets uploaded amount of bytes
-	setProgressLoaded(state, { uploadId, index, progressLoaded }) {
-		Vue.set(state.uploads[uploadId].files[index], 'progressLoaded', progressLoaded)
+	setUploadedSize(state, { uploadId, index, uploadedSize }) {
+		Vue.set(state.uploads[uploadId].files[index], 'uploadedSize', uploadedSize)
 	},
 }
 
@@ -164,12 +164,12 @@ const actions = {
 			try {
 				// Upload the file
 				await client.putFileContents(userRoot + uniquePath, currentFile, { onUploadProgress: progress => {
-					const progressLoaded = progress.loaded
-					const progressTotal = progress.total
-					if (!state.uploads[uploadId].files[index].progressTotal) {
-						commit('setProgressTotal', { state, uploadId, index, progressTotal })
+					const uploadedSize = progress.loaded
+					const totalSize = progress.total
+					if (!state.uploads[uploadId].files[index].totalSize) {
+						commit('setTotalSize', { state, uploadId, index, totalSize })
 					}
-					commit('setProgressLoaded', { state, uploadId, index, progressLoaded })
+					commit('setUploadedSize', { state, uploadId, index, uploadedSize })
 				} })
 				// Path for the sharing request
 				const sharePath = '/' + uniquePath
