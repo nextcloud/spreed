@@ -41,7 +41,8 @@
 							class="new-message-form__icon new-message-form__button"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
-							🙂
+							<EmoticonOutline
+							     :size="24">
 						</button>
 					</EmojiPicker>
 				</div>
