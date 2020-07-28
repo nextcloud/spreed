@@ -28,8 +28,9 @@ import { showError } from '@nextcloud/dialogs'
  * @param {string} path The file path from the user's root directory
  * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
+ * @param {string} referenceId An optional reference id to recognize the message later
  */
-const shareFile = async function(path, token) {
+const shareFile = async function(path, token, referenceId) {
 	try {
 		return axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
@@ -37,6 +38,7 @@ const shareFile = async function(path, token) {
 				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
 				path,
 				shareWith: token,
+				referenceId,
 			})
 	} catch (error) {
 		if (error.response

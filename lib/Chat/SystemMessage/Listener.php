@@ -38,6 +38,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IShare;
@@ -45,6 +46,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 
+	/** @var IRequest */
+	protected $request;
 	/** @var ChatManager */
 	protected $chatManager;
 	/** @var TalkSession */
@@ -54,10 +57,12 @@ class Listener {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	public function __construct(ChatManager $chatManager,
+	public function __construct(IRequest $request,
+								ChatManager $chatManager,
 								TalkSession $talkSession,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory) {
+		$this->request = $request;
 		$this->chatManager = $chatManager;
 		$this->talkSession = $talkSession;
 		$this->userSession = $userSession;
@@ -266,10 +271,18 @@ class Listener {
 			}
 		}
 
+		// Little hack to get the reference id from the share request into
+		// the system message left for the share in the chat.
+		$referenceId = $this->request->getParam('referenceId', null);
+		if ($referenceId !== null) {
+			$referenceId = (string) $referenceId;
+		}
+
 		$this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
-			$this->timeFactory->getDateTime(), $message === 'file_shared'
+			$this->timeFactory->getDateTime(), $message === 'file_shared',
+			$referenceId
 		);
 	}
 }

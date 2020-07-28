@@ -81,12 +81,16 @@ class ChatManager {
 	 * @param string $message
 	 * @param \DateTime $creationDateTime
 	 * @param bool $sendNotifications
+	 * @param string|null $referenceId
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
+	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications, ?string $referenceId = null): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
+		if ($referenceId !== null) {
+			$comment->setReferenceId($referenceId);
+		}
 		$comment->setVerb('system');
 
 		$event = new ChatEvent($chat, $comment);
