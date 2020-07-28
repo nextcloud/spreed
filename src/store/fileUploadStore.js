@@ -32,6 +32,7 @@ const state = {
 	attachmentFolder: loadState('talk', 'attachment_folder'),
 	uploads: {
 	},
+	currentUploadId: undefined,
 }
 
 const getters = {
@@ -63,6 +64,10 @@ const getters = {
 		} else {
 			return 0
 		}
+	},
+
+	currentUploadId: (state) => {
+		return state.currentUploadId
 	},
 }
 
@@ -131,6 +136,11 @@ const mutations = {
 		console.debug('uploadId: ' + uploadId + ' index: ' + index)
 		Vue.set(state.uploads[uploadId].files[index], 'temporaryMessage', temporaryMessage)
 	},
+
+	// Sets the id of the current upload operation
+	setCurrentUploadId(state, currentUploadId) {
+		state.currentUploadId = currentUploadId
+	},
 }
 
 const actions = {
@@ -147,6 +157,8 @@ const actions = {
 
 		// Add temporary messages
 		for (const index in state.uploads[uploadId].files) {
+			// Set last upload id
+			commit('setCurrentUploadId', { uploadId })
 			// Mark file as uploading to prevent a second function call to start a
 			// second upload for the same file
 			commit('markFileAsUploading', { uploadId, index })
