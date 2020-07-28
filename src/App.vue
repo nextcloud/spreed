@@ -32,6 +32,7 @@
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving" />
+		<UploadEditor />
 	</Content>
 </template>
 
@@ -61,6 +62,7 @@ import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
+import UploadEditor from './components/UploadEditor'
 
 export default {
 	name: 'App',
@@ -70,6 +72,7 @@ export default {
 		LeftSidebar,
 		PreventUnload,
 		RightSidebar,
+		UploadEditor,
 	},
 
 	mixins: [
