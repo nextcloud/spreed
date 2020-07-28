@@ -33,6 +33,7 @@ const state = {
 	uploads: {
 	},
 	currentUploadId: undefined,
+	showUploadEditor: false,
 }
 
 const getters = {
@@ -68,6 +69,10 @@ const getters = {
 
 	currentUploadId: (state) => {
 		return state.currentUploadId
+	},
+
+	showUploadEditor: (state) => {
+		return state.showUploadEditor
 	},
 }
 
@@ -140,6 +145,11 @@ const mutations = {
 	// Sets the id of the current upload operation
 	setCurrentUploadId(state, currentUploadId) {
 		state.currentUploadId = currentUploadId
+	},
+
+	// Shows hides the upload editor
+	showUploadEditor(state, show) {
+		state.showUploadEditor = show
 	},
 }
 
