@@ -28,7 +28,8 @@
 			v-model="localValue"
 			class="app-navigation-search__input"
 			type="text"
-			:placeHolder="placeholderText">
+			:placeHolder="placeholderText"
+			@keypress.enter.prevent="handleSubmit">
 		<button
 			v-if="isSearching"
 			class="abort-search icon-close"
