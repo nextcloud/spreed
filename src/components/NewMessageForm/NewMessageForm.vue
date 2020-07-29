@@ -324,7 +324,15 @@ export default {
 		 * @param {Emoji} emoji Emoji object
 		 */
 		addEmoji(emoji) {
-			this.text += emoji
+			// Browsers add a "<br>" element as soon as some rich text is
+			// written in a content editable div (for example, if a new line is
+			// added the div content will be "<br><br>"), so the emoji has to be
+			// added before the last "<br>" (if any).
+			if (this.text.endsWith('<br>')) {
+				this.text = this.text.substr(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
+			} else {
+				this.text += emoji
+			}
 		},
 
 	},
