@@ -27,6 +27,7 @@
 				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
+				@submit="selectFirstResult"
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
@@ -272,6 +273,7 @@ export default {
 		hasOneToOneConversationWith(userId) {
 			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
+
 		// Reset the search text, therefore end the search operation.
 		abortSearch() {
 			this.searchText = ''
@@ -279,6 +281,26 @@ export default {
 
 		showSettings() {
 			EventBus.$emit('show-settings', true)
+		},
+
+		// When `Enter` key is used on the search input
+		selectFirstResult() {
+			if (this.conversationsList.length > 0) {
+				this.$router.push({
+					name: 'conversation',
+					params: {
+						token: this.conversationsList[0].token,
+					},
+				})
+			} else if (this.searchResultsUsers.length > 0) {
+				this.createAndJoinConversation(this.searchResultsUsers[0])
+			} else if (this.searchResultsGroups.length > 0) {
+				this.createAndJoinConversation(this.searchResultsGroups[0])
+			} else if (this.searchResultsCircles.length > 0) {
+				this.createAndJoinConversation(this.searchResultsCircles[0])
+			}
+
+			this.searchText = ''
 		},
 
 		handleClickSearchResult(selectedConversationToken) {
