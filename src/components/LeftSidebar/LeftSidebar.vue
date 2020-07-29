@@ -36,6 +36,8 @@
 				:title="t('spreed', 'Conversations')" />
 			<li>
 				<ConversationsList
+					:conversations-list="conversationsList"
+					:initialised-conversations="initialisedConversations"
 					:search-text="searchText"
 					@click-search-result="handleClickSearchResult" />
 			</li>
@@ -106,7 +108,9 @@ import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import {
-	createGroupConversation, createOneToOneConversation,
+	createGroupConversation,
+	createOneToOneConversation,
+	fetchConversations,
 	searchPossibleConversations,
 } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
@@ -137,12 +141,20 @@ export default {
 			contactsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
+			initialisedConversations: false,
 		}
 	},
 
 	computed: {
 		conversationsList() {
-			return this.$store.getters.conversationsList
+			let conversations = this.$store.getters.conversationsList
+
+			if (this.searchText !== '') {
+				const lowerSearchText = this.searchText.toLowerCase()
+				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
+			}
+
+			return conversations.sort(this.sortConversations)
 		},
 
 		isSearching() {
@@ -198,6 +210,23 @@ export default {
 		EventBus.$once('resetSearchFilter', () => {
 			this.searchText = ''
 		})
+
+		this.fetchConversations()
+	},
+
+	mounted() {
+		/** Refreshes the conversations every 30 seconds */
+		window.setInterval(() => {
+			if (!this.isFetchingConversations) {
+				this.fetchConversations()
+			}
+		}, 30000)
+
+		EventBus.$on('shouldRefreshConversations', this.debounceFetchConversations)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('shouldRefreshConversations', this.debounceFetchConversations)
 	},
 
 	methods: {
@@ -263,6 +292,51 @@ export default {
 					inline: 'nearest',
 				})
 			})
+		},
+
+		sortConversations(conversation1, conversation2) {
+			if (conversation1.isFavorite !== conversation2.isFavorite) {
+				return conversation1.isFavorite ? -1 : 1
+			}
+
+			return conversation2.lastActivity - conversation1.lastActivity
+		},
+
+		debounceFetchConversations: debounce(function() {
+			if (!this.isFetchingConversations) {
+				this.fetchConversations()
+			}
+		}, 3000),
+
+		async fetchConversations() {
+			this.isFetchingConversations = true
+
+			/**
+			 * Fetches the conversations from the server and then adds them one by one
+			 * to the store.
+			 */
+			try {
+				const conversations = await fetchConversations()
+				this.initialisedConversations = true
+				this.$store.dispatch('purgeConversationsStore')
+				conversations.data.ocs.data.forEach(conversation => {
+					this.$store.dispatch('addConversation', conversation)
+					if (conversation.token === this.$store.getters.getToken()) {
+						this.$store.dispatch('markConversationRead', this.$store.getters.getToken())
+					}
+				})
+				/**
+				 * Emits a global event that is used in App.vue to update the page title once the
+				 * ( if the current route is a conversation and once the conversations are received)
+				 */
+				EventBus.$emit('conversationsReceived', {
+					singleConversation: false,
+				})
+				this.isFetchingConversations = false
+			} catch (error) {
+				console.debug('Error while fetching conversations: ', error)
+				this.isFetchingConversations = false
+			}
 		},
 	},
 }
