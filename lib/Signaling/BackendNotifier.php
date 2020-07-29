@@ -117,6 +117,9 @@ class BackendNotifier {
 		$params = [
 			'headers' => $headers,
 			'body' => $body,
+			'nextcloud' => [
+				'allow_local_address' => true,
+			],
 		];
 		if (empty($signaling['verify'])) {
 			$params['verify'] = false;
