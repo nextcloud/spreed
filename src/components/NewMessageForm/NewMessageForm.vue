@@ -74,6 +74,7 @@
 						:is-new-message-form-quote="true"
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
+						ref="advancedInput"
 						v-model="text"
 						:token="token"
 						@update:contentEditable="contentEditableToParsed"
@@ -271,18 +272,49 @@ export default {
 		/**
 		 * Add selected emoji to text input area
 		 *
+		 * The emoji will be added at the current caret position, and any text
+		 * currently selected will be replaced by the emoji. If the input area
+		 * does not have the focus there will be no caret or selection; in that
+		 * case the emoji will be added at the end.
+		 *
 		 * @param {Emoji} emoji Emoji object
 		 */
 		addEmoji(emoji) {
-			// Browsers add a "<br>" element as soon as some rich text is
-			// written in a content editable div (for example, if a new line is
-			// added the div content will be "<br><br>"), so the emoji has to be
-			// added before the last "<br>" (if any).
-			if (this.text.endsWith('<br>')) {
-				this.text = this.text.substr(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
-			} else {
-				this.text += emoji
+			const selection = document.getSelection()
+
+			const contentEditable = this.$refs.advancedInput.$refs.contentEditable
+
+			// There is no select, or current selection does not start in the
+			// content editable element, so just append the emoji at the end.
+			if (!contentEditable.isSameNode(selection.anchorNode) && !contentEditable.contains(selection.anchorNode)) {
+				// Browsers add a "<br>" element as soon as some rich text is
+				// written in a content editable div (for example, if a new line
+				// is added the div content will be "<br><br>"), so the emoji
+				// has to be added before the last "<br>" (if any).
+				if (this.text.endsWith('<br>')) {
+					this.text = this.text.substr(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
+				} else {
+					this.text += emoji
+				}
+
+				return
 			}
+
+			// Although due to legacy reasons the API allows several ranges the
+			// specification requires the selection to always have a single
+			// range.
+			// https://developer.mozilla.org/en-US/docs/Web/API/Selection#Multiple_ranges_in_a_selection
+			const range = selection.getRangeAt(0)
+
+			// Deleting the contents also collapses the range to the start.
+			range.deleteContents()
+
+			const emojiTextNode = document.createTextNode(emoji)
+			range.insertNode(emojiTextNode)
+
+			this.text = contentEditable.innerHTML
+
+			range.setStartAfter(emojiTextNode)
 		},
 
 	},
