@@ -65,6 +65,7 @@
 		"@vue/test-utils": "^1.0.0-beta.31",
 		"babel-eslint": "^10.0.3",
 		"babel-loader": "^8.0.6",
+		"babel-loader-exclude-node-modules-except": "^1.0.3",
 		"babel-plugin-add-module-exports": "^1.0.2",
 		"css-loader": "^3.4.2",
 		"eslint": "^5.16.0",
