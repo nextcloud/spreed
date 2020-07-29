@@ -1,6 +1,7 @@
 const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
+const babelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
 
 module.exports = {
 	entry: {
@@ -37,12 +38,20 @@ module.exports = {
 			{
 				test: /\.vue$/,
 				loader: 'vue-loader',
-				exclude: /node_modules(?!(\/|\\)(vue-material-design-icons)(\/|\\))/,
+				exclude: babelLoaderExcludeNodeModulesExcept([
+					'vue-material-design-icons',
+				]),
 			},
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules(?!(\/|\\)(@juliushaertl\/vue-richtext|fast-xml-parser|hot-patcher|nextcloud-vue-collections|webdav)(\/|\\))/,
+				exclude: babelLoaderExcludeNodeModulesExcept([
+					'@juliushaertl/vue-richtext',
+					'fast-xml-parser',
+					'hot-patcher',
+					'nextcloud-vue-collections',
+					'webdav',
+				]),
 			},
 			{
 				/**
