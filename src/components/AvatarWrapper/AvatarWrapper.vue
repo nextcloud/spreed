@@ -116,8 +116,18 @@ export default {
 	@include avatar-mixin($avatar-size);
 }
 
-.offline {
-	opacity: .4;
+.offline .avatar-wrapper .avatardiv {
+	background: rgba(255, 255, 255, .4) !important;
+
+	::v-deep > img {
+		opacity: .4 !important;
+	}
+}
+
+body.dark {
+	.offline .avatar-wrapper .avatardiv {
+		background: rgba(0, 0, 0, .4) !important;
+	}
 }
 
 </style>
