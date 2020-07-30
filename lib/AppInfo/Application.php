@@ -53,6 +53,8 @@ use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
 use OCA\Talk\Room;
+use OCA\Talk\Search\ConversationSearch;
+use OCA\Talk\Search\UnifiedSearchCSSLoader;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
@@ -90,6 +92,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
+
+		$context->registerSearchProvider(ConversationSearch::class);
 	}
 
 	public function boot(IBootContext $context): void {
