@@ -24,6 +24,7 @@
 namespace OCA\Talk\Dashboard;
 
 use OCP\IL10N;
+use OCP\Util;
 
 class TalkPanel implements \OCP\Dashboard\IPanel {
 
@@ -75,6 +76,6 @@ class TalkPanel implements \OCP\Dashboard\IPanel {
 	 * @inheritDoc
 	 */
 	public function load(): void {
-		\OC_Util::addScript('spreed', 'dashboard');
+		Util::addScript('spreed', 'dashboard');
 	}
 }

@@ -30,7 +30,7 @@
 					:hide-call="false" />
 				<div class="conversation__details">
 					<h3>{{ conversation.displayName }}</h3>
-					<p class="message">{{ conversation.lastMessage.message }}</p>
+					<p class="message">{{ simpleLastChatMessage(conversation.lastMessage) }}</p>
 				</div>
 				<button v-if="conversation.hasCall" class="primary success icon-video-white" :title="t('spreed', 'Join call')" />
 			</a>
@@ -51,7 +51,18 @@
 import ConversationIcon from './../components/ConversationIcon'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+
+const ROOM_POLLING_INTERVAL = 30
+
+const propertySort = (properties) => (a, b) => properties.map(obj => {
+	let dir = 1
+	if (obj[0] === '-') {
+		dir = -1;
+		obj = obj.substring(1);
+	}
+	return a[obj] > b[obj] ? dir : a[obj] < b[obj] ? -(dir) : 0
+}).reduce((p, n) => p ? p : n, 0)
 
 export default {
 	name: 'Dashboard',
@@ -64,19 +75,43 @@ export default {
 	computed: {
 		callLink() {
 			return (conversation) => {
-				return '/index.php/call/' + conversation.token
+				return generateUrl('/call/' + conversation.token)
+			}
+		},
+		/**
+		 * This is a simplified version of the last chat message.
+		 * Parameters are parsed without markup (just replaced with the name),
+		 * e.g. no avatars on mentions.
+		 * @returns {string} A simple message to show below the conversation name
+		 */
+		simpleLastChatMessage() {
+			return (lastChatMessage) => {
+				if (!Object.keys(lastChatMessage).length) {
+					return ''
+				}
+
+				const params = lastChatMessage.messageParameters
+				let subtitle = lastChatMessage.message.trim()
+
+				// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
+				Object.keys(params).forEach((parameterKey) => {
+					subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
+				})
+
+				return subtitle
 			}
 		},
 	},
 	beforeMount() {
 		this.fetchRooms()
-		setInterval(() => this.fetchRooms(), 5000)
+		// FIXME: reduce interval if user not active
+		setInterval(() => this.fetchRooms(), ROOM_POLLING_INTERVAL * 1000)
 	},
 	methods: {
 		fetchRooms() {
 			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
 				const rooms = response.data.ocs.data.slice(0, 7)
-				rooms.sort((a, b) => b.lastActivity - a.lastActivity)
+				rooms.sort(propertySort(['-hasCall', '-unreadMention', '-lastActivity']))
 				this.roomOptions = rooms
 			})
 		},
