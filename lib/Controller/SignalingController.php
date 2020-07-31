@@ -183,6 +183,9 @@ class SignalingController extends OCSController {
 		try {
 			$response = $client->get($url . '/api/v1/welcome', [
 				'verify' => (bool) $signalingServers[$serverId]['verify'],
+				'nextcloud' => [
+					'allow_local_address' => true,
+				],
 			]);
 
 			$body = $response->getBody();
