@@ -142,14 +142,12 @@ export default {
 		})
 	},
 
-	mounted() {
-		// see browserCheck mixin
-		this.checkBrowser()
-	},
-
 	methods: {
 
 		async joinConversation() {
+			// see browserCheck mixin
+			this.checkBrowser()
+
 			this.joiningConversation = true
 
 			await this.getPublicShareConversationData()

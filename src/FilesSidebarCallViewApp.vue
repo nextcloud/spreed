@@ -34,7 +34,6 @@
 import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
-import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
@@ -49,7 +48,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		duplicateSessionHandler,
 		isInCall,
 		talkHashCheck,
@@ -163,11 +161,6 @@ export default {
 
 			this.restoreSidebarHeaderContents()
 		},
-	},
-
-	mounted() {
-		// see browserCheck mixin
-		this.checkBrowser()
 	},
 
 	methods: {
