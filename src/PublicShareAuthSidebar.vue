@@ -48,7 +48,6 @@ import {
 	leaveConversationSync,
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
-import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import talkHashCheck from './mixins/talkHashCheck'
 
@@ -62,7 +61,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		duplicateSessionHandler,
 		talkHashCheck,
 	],
@@ -114,11 +112,6 @@ export default {
 				}
 			}
 		})
-	},
-
-	mounted() {
-		// see browserCheck mixin
-		this.checkBrowser()
 	},
 
 	methods: {
