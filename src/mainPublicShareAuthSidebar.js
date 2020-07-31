@@ -65,7 +65,7 @@ function wrapBody() {
 	const bodyWrapperElement = document.createElement('div')
 
 	while (bodyElement.childNodes.length) {
-		bodyWrapperElement.append(bodyElement.childNodes[0])
+		bodyWrapperElement.appendChild(bodyElement.childNodes[0])
 	}
 
 	while (bodyElement.classList.length) {
@@ -76,24 +76,24 @@ function wrapBody() {
 	bodyWrapperElement.setAttribute('id', bodyElement.getAttribute('id'))
 	bodyElement.removeAttribute('id')
 
-	bodyElement.append(bodyWrapperElement)
+	bodyElement.appendChild(bodyWrapperElement)
 }
 
 function adjustLayout() {
 	const contentElement = document.createElement('div')
 	contentElement.setAttribute('id', 'content')
-	document.querySelector('body').append(contentElement)
+	document.querySelector('body').appendChild(contentElement)
 
-	contentElement.append(document.querySelector('.wrapper'))
-	contentElement.append(document.querySelector('footer'))
+	contentElement.appendChild(document.querySelector('.wrapper'))
+	contentElement.appendChild(document.querySelector('footer'))
 
 	const requestPasswordElement = document.createElement('div')
 	requestPasswordElement.setAttribute('id', 'request-password')
-	document.querySelector('main').append(requestPasswordElement)
+	document.querySelector('main').appendChild(requestPasswordElement)
 
 	const talkSidebarElement = document.createElement('div')
 	talkSidebarElement.setAttribute('id', 'talk-sidebar')
-	document.querySelector('body').append(talkSidebarElement)
+	document.querySelector('body').appendChild(talkSidebarElement)
 
 	wrapBody()
 
