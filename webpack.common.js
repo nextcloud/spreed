@@ -50,6 +50,8 @@ module.exports = {
 					'fast-xml-parser',
 					'hot-patcher',
 					'nextcloud-vue-collections',
+					'semver',
+					'@nextcloud/event-bus',
 					'webdav',
 				]),
 			},
