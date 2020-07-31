@@ -99,6 +99,8 @@ must contain two additional HTTP headers:
 - `Spreed-Signaling-Checksum`: SHA256-HMAC of the random string and the request
   body, calculated with a shared secret. The shared secret is configured on
   both sides, so the checksum can be verified.
+- `Spreed-Signaling-Backend`: Base URL of the Nextcloud server performing the
+  request.
 
 ### Example
 
