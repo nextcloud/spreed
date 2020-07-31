@@ -29,6 +29,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
+use OCP\IUrlGenerator;
 use OCP\Security\ISecureRandom;
 
 class BackendNotifier {
@@ -107,6 +108,7 @@ class BackendNotifier {
 		$hash = hash_hmac('sha256', $random . $body, $this->config->getSignalingSecret());
 		$headers['Spreed-Signaling-Random'] = $random;
 		$headers['Spreed-Signaling-Checksum'] = $hash;
+		$headers['Spreed-Signaling-Backend'] = $this->urlGenerator->getBaseUrl();
 
 		$params = [
 			'headers' => $headers,
