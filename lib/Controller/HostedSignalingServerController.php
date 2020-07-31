@@ -36,8 +36,8 @@ use OCP\AppFramework\OCSController;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
+use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerController extends OCSController {
 
@@ -47,7 +47,7 @@ class HostedSignalingServerController extends OCSController {
 	protected $l10n;
 	/** @var IConfig */
 	protected $config;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 	/** @var HostedSignalingServerService */
 	private $hostedSignalingServerService;
@@ -57,7 +57,7 @@ class HostedSignalingServerController extends OCSController {
 								IClientService $clientService,
 								IL10N $l10n,
 								IConfig $config,
-								ILogger $logger,
+								LoggerInterface $logger,
 								HostedSignalingServerService $hostedSignalingServerService) {
 		parent::__construct($appName, $request);
 		$this->clientService = $clientService;
@@ -124,7 +124,7 @@ class HostedSignalingServerController extends OCSController {
 			$this->config->setAppValue('spreed', 'signaling_mode', 'internal');
 			$this->config->deleteAppValue('spreed', 'signaling_servers');
 
-			$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId, ['app' => 'spreed']);
+			$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);
 		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}

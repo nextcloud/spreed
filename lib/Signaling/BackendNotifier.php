@@ -29,14 +29,14 @@ use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Http\Client\IClientService;
-use OCP\ILogger;
 use OCP\IUrlGenerator;
 use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 
 class BackendNotifier {
 	/** @var Config */
 	private $config;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 	/** @var IClientService */
 	private $clientService;
@@ -48,7 +48,7 @@ class BackendNotifier {
 	private $urlGenerator;
 
 	public function __construct(Config $config,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IClientService $clientService,
 								ISecureRandom $secureRandom,
 								Manager $signalingManager,
@@ -79,10 +79,7 @@ class BackendNotifier {
 		try {
 			$client->post($url, $params);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'app' => 'spreed',
-				'message' => 'Failed to send message to signaling server',
-			]);
+			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
 		}
 	}
 
@@ -141,7 +138,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInvited(Room $room, array $users): void {
-		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true), ['app' => 'spreed']);
+		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
 			$userIds[] = $user['userId'];
@@ -166,7 +163,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $userIds): void {
-		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true), ['app' => 'spreed']);
+		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true));
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -187,7 +184,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
-		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true));
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -207,7 +204,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomModified(Room $room): void {
-		$this->logger->info('Room modified: ' . $room->getToken(), ['app' => 'spreed']);
+		$this->logger->info('Room modified: ' . $room->getToken());
 		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
@@ -225,7 +222,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomDeleted(Room $room, array $participants): void {
-		$this->logger->info('Room deleted: ' . $room->getToken(), ['app' => 'spreed']);
+		$this->logger->info('Room deleted: ' . $room->getToken());
 		$userIds = array_keys($participants['users']);
 		$this->backendRequest($room, [
 			'type' => 'delete',
@@ -243,7 +240,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function participantsModified(Room $room, array $sessionIds): void {
-		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
 		$participants = $room->getParticipantsLegacy();
@@ -287,7 +284,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInCallChanged(Room $room, int $flags, array $sessionIds): void {
-		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
 		$participants = $room->getParticipantsLegacy();

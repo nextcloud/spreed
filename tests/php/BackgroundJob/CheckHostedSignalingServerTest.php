@@ -31,10 +31,10 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class CheckHostedSignalingServerTest extends TestCase {
@@ -51,7 +51,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 	protected $groupManager;
 	/** @var IURLGenerator|MockObject */
 	protected $urlGenerator;
-	/** @var ILogger|MockObject */
+	/** @var LoggerInterface|MockObject */
 	protected $logger;
 
 	public function setUp(): void {
@@ -63,7 +63,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 		$this->notificationManager = $this->createMock(IManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->logger = $this->createMock(ILogger::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 	}
 
 	public function getBackgroundJob(): CheckHostedSignalingServer {
@@ -95,7 +95,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->hostedSignalingServerService->expects($this->once())
 			->method('fetchAccountInfo')
-			->willReturn(["status" => "pending"]);
+			->willReturn(['status' => 'pending']);
 
 		$this->invokePrivate($backgroundJob, 'run', ['']);
 	}
@@ -103,10 +103,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 	public function testRunWithPendingToActiveChange() {
 		$backgroundJob = $this->getBackgroundJob();
 		$newStatus = [
-			"status" => "active",
-			"signaling" => [
-				"url" => "signaling-url",
-				"secret" => "signaling-secret",
+			'status' => 'active',
+			'signaling' => [
+				'url' => 'signaling-url',
+				'secret' => 'signaling-secret',
 			],
 		];
 

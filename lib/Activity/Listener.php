@@ -31,9 +31,9 @@ use OCA\Talk\Room;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 class Listener {
 
@@ -46,7 +46,7 @@ class Listener {
 	/** @var ChatManager */
 	protected $chatManager;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 
 	/** @var ITimeFactory */
@@ -55,7 +55,7 @@ class Listener {
 	public function __construct(IManager $activityManager,
 								IUserSession $userSession,
 								ChatManager $chatManager,
-								ILogger $logger,
+								LoggerInterface $logger,
 								ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
@@ -151,7 +151,7 @@ class Listener {
 					'duration' => $duration,
 				]);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return false;
 		}
 
@@ -160,9 +160,9 @@ class Listener {
 				$event->setAffectedUser($userId);
 				$this->activityManager->publish($event);
 			} catch (\BadMethodCallException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
 
@@ -194,7 +194,7 @@ class Listener {
 					'room' => $room->getId(),
 				]);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return;
 		}
 
@@ -216,9 +216,9 @@ class Listener {
 					->setAffectedUser($participant['userId']);
 				$this->activityManager->publish($event);
 			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			} catch (\BadMethodCallException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
 	}

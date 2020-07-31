@@ -32,9 +32,9 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
 use OCP\IGroupManager;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
+use Psr\Log\LoggerInterface;
 
 class CheckHostedSignalingServer extends TimedJob {
 
@@ -48,7 +48,7 @@ class CheckHostedSignalingServer extends TimedJob {
 	private $groupManager;
 	/** @var IURLGenerator */
 	private $urlGenerator;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 
 	public function __construct(ITimeFactory $timeFactory,
@@ -57,7 +57,7 @@ class CheckHostedSignalingServer extends TimedJob {
 								IManager $notificationManager,
 								IGroupManager $groupManager,
 								IURLGenerator $urlGenerator,
-								ILogger $logger) {
+								LoggerInterface $logger) {
 		parent::__construct($timeFactory);
 		$this->setInterval(3600);
 		$this->hostedSignalingServerService = $hostedSignalingServerService;
@@ -148,7 +148,7 @@ class CheckHostedSignalingServer extends TimedJob {
 		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-last-checked', $this->time->getTime());
 
 		if (!is_null($notificationSubject)) {
-			$this->logger->info('Hosted signaling server background job caused a notification: ' . $notificationSubject . ' ' . json_encode($notificationParameters), ['app' => 'spreed']);
+			$this->logger->info('Hosted signaling server background job caused a notification: ' . $notificationSubject . ' ' . json_encode($notificationParameters));
 
 			$notification = $this->notificationManager->createNotification();
 			$notification

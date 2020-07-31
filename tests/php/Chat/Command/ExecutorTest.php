@@ -32,8 +32,8 @@ use OCA\Talk\Service\CommandService;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
-use OCP\ILogger;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class ExecutorTest extends TestCase {
@@ -47,7 +47,7 @@ class ExecutorTest extends TestCase {
 	/** @var CommandService|MockObject */
 	protected $commandService;
 
-	/** @var ILogger|MockObject */
+	/** @var LoggerInterface|MockObject */
 	protected $logger;
 
 	/** @var IL10N|MockObject */
@@ -62,7 +62,7 @@ class ExecutorTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->shellExecutor = $this->createMock(ShellExecutor::class);
 		$this->commandService = $this->createMock(CommandService::class);
-		$this->logger = $this->createMock(ILogger::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->executor = new Executor(
 			$this->dispatcher,

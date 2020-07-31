@@ -26,7 +26,7 @@ namespace OCA\Talk\BackgroundJob;
 use OC\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class RemoveEmptyRooms
@@ -38,13 +38,13 @@ class RemoveEmptyRooms extends TimedJob {
 	/** @var Manager */
 	protected $manager;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 
 	protected $numDeletedRooms = 0;
 
 	public function __construct(Manager $manager,
-								ILogger $logger) {
+								LoggerInterface $logger) {
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
 
@@ -58,7 +58,6 @@ class RemoveEmptyRooms extends TimedJob {
 		if ($this->numDeletedRooms) {
 			$this->logger->info('Deleted {numDeletedRooms} rooms because they were empty', [
 				'numDeletedRooms' => $this->numDeletedRooms,
-				'app' => 'spreed',
 			]);
 		}
 	}

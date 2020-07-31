@@ -30,9 +30,9 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Notification\IManager;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 class Listener {
 
@@ -44,7 +44,7 @@ class Listener {
 	protected $userSession;
 	/** @var ITimeFactory */
 	protected $timeFactory;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 
 	/** @var bool */
@@ -54,7 +54,7 @@ class Listener {
 								IEventDispatcher $dispatcher,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory,
-								ILogger $logger) {
+								LoggerInterface $logger) {
 		$this->notificationManager = $notificationManager;
 		$this->dispatcher = $dispatcher;
 		$this->userSession = $userSession;
@@ -129,7 +129,7 @@ class Listener {
 					'actorId' => $actor->getUID(),
 				]);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			if ($shouldFlush) {
 				$this->notificationManager->flush();
 			}
@@ -146,7 +146,7 @@ class Listener {
 				$notification->setUser($participant['userId']);
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
 
@@ -174,7 +174,7 @@ class Listener {
 				->setSubject('invitation');
 			$this->notificationManager->markProcessed($notification);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return;
 		}
 	}
@@ -229,7 +229,7 @@ class Listener {
 			])
 				->setDateTime($dateTime);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			if ($shouldFlush) {
 				$this->notificationManager->flush();
 			}
@@ -246,7 +246,7 @@ class Listener {
 				$notification->setUser($userId);
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
 
@@ -274,7 +274,7 @@ class Listener {
 				->setSubject('call');
 			$this->notificationManager->markProcessed($notification);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return;
 		}
 	}

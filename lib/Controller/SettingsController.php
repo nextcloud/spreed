@@ -34,8 +34,8 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\IRequest;
+use Psr\Log\LoggerInterface;
 
 class SettingsController extends OCSController {
 
@@ -43,7 +43,7 @@ class SettingsController extends OCSController {
 	protected $rootFolder;
 	/** @var IConfig */
 	protected $config;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 	/** @var string|null */
 	protected $userId;
@@ -52,7 +52,7 @@ class SettingsController extends OCSController {
 								IRequest $request,
 								IRootFolder $rootFolder,
 								IConfig $config,
-								ILogger $logger,
+								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->rootFolder = $rootFolder;
@@ -92,7 +92,7 @@ class SettingsController extends OCSController {
 				return true;
 			} catch (NotPermittedException $e) {
 			} catch (\Exception $e) {
-				$this->logger->logException($e);
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 			return false;
 		}
