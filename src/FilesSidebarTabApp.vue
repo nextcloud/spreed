@@ -63,6 +63,7 @@ import Axios from '@nextcloud/axios'
 import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 
@@ -74,6 +75,7 @@ export default {
 	},
 
 	mixins: [
+		browserCheck,
 		duplicateSessionHandler,
 	],
 
@@ -165,6 +167,9 @@ export default {
 
 	methods: {
 		async joinConversation() {
+			// see browserCheck mixin
+			this.checkBrowser()
+
 			try {
 				await this.getFileConversation()
 			} catch (error) {
