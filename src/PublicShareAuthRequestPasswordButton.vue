@@ -39,10 +39,15 @@
 
 <script>
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService'
+import browserCheck from './mixins/browserCheck'
 
 export default {
 
 	name: 'PublicShareAuthRequestPasswordButton',
+
+	mixins: [
+		browserCheck,
+	],
 
 	props: {
 		shareToken: {
@@ -77,6 +82,9 @@ export default {
 
 	methods: {
 		async requestPassword() {
+			// see browserCheck mixin
+			this.checkBrowser()
+
 			this.hasRequestFailed = false
 			this.isRequestLoading = true
 
