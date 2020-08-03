@@ -1,7 +1,9 @@
 <!--
   - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+  - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Joas Schilling <coding@schilljs.com>
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,11 +22,9 @@
 -->
 
 <template>
-	<a :href="link"
+	<file-preview v-bind="filePreview"
 		class="container"
-		:class="{ 'is-viewer-available': isViewerAvailable }"
-		target="_blank"
-		rel="noopener noreferrer"
+		:class="{ 'is-viewer-available': isViewerAvailable, 'upload-editor': isUploadEditor }"
 		@click="showPreview">
 		<img v-if="!isLoading && !failed"
 			:class="previewSizeClass"
@@ -37,8 +37,8 @@
 		<span v-if="isLoading"
 			class="preview loading" />
 		<strong>{{ name }}</strong>
-		<ProgressBar v-if="isTemporaryUpload" :value="uploadProgress" />
-	</a>
+		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
+	</file-preview>
 </template>
 
 <script>
@@ -97,6 +97,11 @@ export default {
 			type: String,
 			default: '',
 		},
+		// True if this component is used in the upload editor
+		isUploadEditor: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
@@ -105,6 +110,23 @@ export default {
 		}
 	},
 	computed: {
+		// This is used to decide which outer element type to use
+		// a or div
+		filePreview() {
+			if (this.isUploadEditor || this.isTemporaryUpload) {
+				return {
+					is: 'div',
+					tag: 'div',
+				}
+			}
+			return {
+				is: 'a',
+				tag: 'a',
+				href: this.link,
+				target: '_blank',
+				rel: 'noopener noreferrer',
+			}
+		},
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
@@ -213,20 +235,14 @@ export default {
 	image. */
 	display: inline-block;
 
-	/* Show a hover colour around the preview when navigating with the
-	 * keyboard through the file links (or hovering them with the mouse). */
-	&:hover,
-	&:focus,
-	&:active {
-		.preview {
-			background-color: var(--color-background-hover);
+	border-radius: 16px;
 
-			/* Trick to keep the same position while adding a padding to show
-			 * the background. */
-			box-sizing: content-box !important;
-			padding: 10px;
-			margin: -10px;
-		}
+	&:hover,
+	&:focus {
+		background-color: var(--color-background-hover);
+		/* Trick to keep the same position while adding a padding to show
+			* the background. */
+		box-sizing: content-box !important;
 	}
 
 	.preview {
@@ -244,6 +260,8 @@ export default {
 		/* As the file preview is an inline block the name is set as a block to
 		force it to be on its own line below the preview. */
 		display: block;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	&:not(.is-viewer-available) {
@@ -251,6 +269,12 @@ export default {
 			content: ' ↗';
 		}
 	}
+}
+
+.upload-editor {
+	max-width: 160px;
+	max-height: 160px;
+	margin: 10px;
 }
 
 </style>
