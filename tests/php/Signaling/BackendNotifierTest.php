@@ -37,13 +37,13 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 class CustomBackendNotifier extends BackendNotifier {
 	private $requests = [];
@@ -155,7 +155,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	private function recreateBackendNotifier() {
 		$this->controller = new CustomBackendNotifier(
 			$this->config,
-			$this->createMock(ILogger::class),
+			$this->createMock(LoggerInterface::class),
 			$this->createMock(IClientService::class),
 			$this->secureRandom,
 			$this->signalingManager,

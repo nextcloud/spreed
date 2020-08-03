@@ -48,12 +48,12 @@ use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IInitialStateService;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
+use Psr\Log\LoggerInterface;
 
 class PageController extends Controller {
 	use TInitialState;
@@ -68,7 +68,7 @@ class PageController extends Controller {
 	private $talkSession;
 	/** @var IUserSession */
 	private $userSession;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 	/** @var Manager */
 	private $manager;
@@ -88,7 +88,7 @@ class PageController extends Controller {
 								TalkSession $session,
 								IUserSession $userSession,
 								?string $UserId,
-								ILogger $logger,
+								LoggerInterface $logger,
 								Manager $manager,
 								IURLGenerator $url,
 								INotificationManager $notificationManager,
@@ -196,7 +196,7 @@ class PageController extends Controller {
 					$notification->setObject('call', $room->getToken());
 					$this->notificationManager->markProcessed($notification);
 				} catch (\InvalidArgumentException $e) {
-					$this->logger->logException($e, ['app' => 'spreed']);
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
 				}
 
 				if ($shouldFlush) {

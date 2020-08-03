@@ -35,7 +35,7 @@ use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerService {
 
@@ -45,7 +45,7 @@ class HostedSignalingServerService {
 	private $apiServerUrl;
 	/** @var IClientService */
 	private $clientService;
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 	/** @var IL10N */
 	private $l10n;
@@ -54,7 +54,7 @@ class HostedSignalingServerService {
 
 	public function __construct(IConfig $config,
 								IClientService $clientService,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IL10N $l10n,
 								SecureRandom $secureRandom) {
 		$this->config = $config;
@@ -98,10 +98,7 @@ class HostedSignalingServerService {
 			$response = $e->getResponse();
 
 			if ($response === null) {
-				$this->logger->logException($e, [
-					'app' => 'spreed',
-					'message' => 'Failed to request hosted signaling server trial',
-				]);
+				$this->logger->error('Failed to request hosted signaling server trial', ['exception' => $e]);
 				$message = $this->l10n->t('Failed to request trial because the trial server is unreachable. Please try again later.');
 				throw new HostedSignalingServerAPIException($message);
 			}
@@ -110,7 +107,7 @@ class HostedSignalingServerService {
 			switch ($status) {
 				case Http::STATUS_UNAUTHORIZED:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Requesting hosted signaling server trial failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Requesting hosted signaling server trial failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it\'s URL.');
 					throw new HostedSignalingServerAPIException($message);
@@ -119,7 +116,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message);
@@ -185,35 +182,31 @@ class HostedSignalingServerService {
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_TOO_MANY_REQUESTS:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Requesting hosted signaling server trial failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Requesting hosted signaling server trial failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Too many requests are send from your servers address. Please try again later.');
 					throw new HostedSignalingServerInputException($message);
 				case Http::STATUS_CONFLICT:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Requesting hosted signaling server trial failed: already registered - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Requesting hosted signaling server trial failed: already registered - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is already a trial registered for this Nextcloud instance.');
 					throw new HostedSignalingServerInputException($message);
 				case Http::STATUS_INTERNAL_SERVER_ERROR:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Requesting hosted signaling server trial failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Requesting hosted signaling server trial failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Something unexpected happened. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				default:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Requesting hosted signaling server trial failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Requesting hosted signaling server trial failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Failed to request trial because the trial server behaved wrongly. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 			}
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'app' => 'spreed',
-				'message' => 'Failed to request hosted signaling server trial',
-			]);
-
+			$this->logger->error('Failed to request hosted signaling server trial', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to request trial because the trial server is unreachable. Please try again later.');
 			throw new HostedSignalingServerAPIException($message);
 		}
@@ -222,7 +215,7 @@ class HostedSignalingServerService {
 
 		if ($status !== Http::STATUS_CREATED) {
 			$body = $response->getBody();
-			$this->logger->error('Requesting hosted signaling server trial failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Requesting hosted signaling server trial failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message);
@@ -232,14 +225,14 @@ class HostedSignalingServerService {
 		$data = json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message);
 		}
 
 		if (!isset($data['account_id'])) {
-			$this->logger->error('Requesting hosted signaling server trial failed: no account ID transfered - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Requesting hosted signaling server trial failed: no account ID transfered - HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message);
@@ -275,11 +268,7 @@ class HostedSignalingServerService {
 			$response = $e->getResponse();
 
 			if ($response === null) {
-				$this->logger->logException($e, [
-					'app' => 'spreed',
-					'message' => 'Trial requested but failed to get account information',
-				]);
-
+				$this->logger->error('Trial requested but failed to get account information', ['exception' => $e]);
 				$message = $this->l10n->t('Trial requested but failed to get account information. Please check back later.');
 				throw new HostedSignalingServerAPIException($message);
 			}
@@ -289,7 +278,7 @@ class HostedSignalingServerService {
 			switch ($status) {
 				case Http::STATUS_UNAUTHORIZED:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Getting the account information failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Getting the account information failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is a problem with the authentication of this request. Maybe it is not reachable from the outside to verify it\'s URL.');
 					throw new HostedSignalingServerAPIException($message);
@@ -298,7 +287,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message);
@@ -310,7 +299,7 @@ class HostedSignalingServerService {
 									break;
 								default:
 									$body = $response->getBody()->getContents();
-									$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+									$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 									$message = $this->l10n->t('Failed to fetch account information because the trial server behaved wrongly. Please check back later.');
 									throw new HostedSignalingServerAPIException($message);
@@ -326,35 +315,31 @@ class HostedSignalingServerService {
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_TOO_MANY_REQUESTS:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Getting the account information failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Getting the account information failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Too many requests are send from your servers address. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_NOT_FOUND:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Getting the account information failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Getting the account information failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is no such account registered.');
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_INTERNAL_SERVER_ERROR:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Getting the account information failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Getting the account information failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Something unexpected happened. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				default:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Failed to fetch account information because the trial server behaved wrongly. Please check back later.');
 					throw new HostedSignalingServerAPIException($message);
 			}
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'app' => 'spreed',
-				'message' => 'Failed to request hosted signaling server trial',
-			]);
-
+			$this->logger->error('Failed to request hosted signaling server trial', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to fetch account information because the trial server is unreachable. Please check back later.');
 			throw new HostedSignalingServerAPIException($message);
 		}
@@ -363,7 +348,7 @@ class HostedSignalingServerService {
 
 		if ($status !== Http::STATUS_OK) {
 			$body = $response->getBody();
-			$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 
 			$message = $this->l10n->t('Something unexpected happened.');
@@ -374,7 +359,7 @@ class HostedSignalingServerService {
 		$data = json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message);
@@ -404,7 +389,7 @@ class HostedSignalingServerService {
 			|| (in_array($data['status'], ['error', 'blocked']) && !isset($data['reason']))
 			|| !in_array($data['status'], ['error', 'blocked', 'pending', 'active', 'expired'])
 		) {
-			$this->logger->error('Getting the account information failed: response is missing mandatory field - data: ' . json_encode($data), ['app' => 'spreed']);
+			$this->logger->error('Getting the account information failed: response is missing mandatory field - data: ' . json_encode($data));
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message);
@@ -437,11 +422,7 @@ class HostedSignalingServerService {
 			$response = $e->getResponse();
 
 			if ($response === null) {
-				$this->logger->logException($e, [
-					'app' => 'spreed',
-					'message' => 'Deleting the hosted signaling server account failed',
-				]);
-
+				$this->logger->error('Deleting the hosted signaling server account failed', ['exception' => $e]);
 				$message = $this->l10n->t('Deleting the hosted signaling server account failed. Please check back later.');
 				throw new HostedSignalingServerAPIException($message);
 			}
@@ -451,7 +432,7 @@ class HostedSignalingServerService {
 			switch ($status) {
 				case Http::STATUS_UNAUTHORIZED:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Deleting the hosted signaling server account failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Deleting the hosted signaling server account failed: unauthorized - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is a problem with the authentication of this request. Maybe it is not reachable from the outside to verify it\'s URL.');
 					throw new HostedSignalingServerAPIException($message);
@@ -460,7 +441,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message);
@@ -472,7 +453,7 @@ class HostedSignalingServerService {
 									break;
 								default:
 									$body = $response->getBody()->getContents();
-									$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+									$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 									$message = $this->l10n->t('Failed to delete the account because the trial server behaved wrongly. Please check back later.');
 									throw new HostedSignalingServerAPIException($message);
@@ -488,35 +469,31 @@ class HostedSignalingServerService {
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_TOO_MANY_REQUESTS:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Deleting the hosted signaling server account failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Deleting the hosted signaling server account failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Too many requests are send from your servers address. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_NOT_FOUND:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Deleting the hosted signaling server account failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Deleting the hosted signaling server account failed: account not found - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('There is no such account registered.');
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_INTERNAL_SERVER_ERROR:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Deleting the hosted signaling server account failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Deleting the hosted signaling server account failed: internal server error - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Something unexpected happened. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				default:
 					$body = $response->getBody()->getContents();
-					$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+					$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 					$message = $this->l10n->t('Failed to delete the account because the trial server behaved wrongly. Please check back later.');
 					throw new HostedSignalingServerAPIException($message);
 			}
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'app' => 'spreed',
-				'message' => 'Deleting the hosted signaling server account failed',
-			]);
-
+			$this->logger->error('Deleting the hosted signaling server account failed', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to delete the account because the trial server is unreachable. Please check back later.');
 			throw new HostedSignalingServerAPIException($message);
 		}
@@ -525,7 +502,7 @@ class HostedSignalingServerService {
 
 		if ($status !== Http::STATUS_NO_CONTENT) {
 			$body = $response->getBody();
-			$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body, ['app' => 'spreed']);
+			$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
 
 			$message = $this->l10n->t('Something unexpected happened.');

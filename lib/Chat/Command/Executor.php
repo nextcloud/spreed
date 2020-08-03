@@ -32,7 +32,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class Executor {
 	public const EVENT_APP_EXECUTE = self::class . '::execApp';
@@ -51,7 +51,7 @@ class Executor {
 	/** @var CommandService */
 	protected $commandService;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 
 	/** @var IL10N */
@@ -60,7 +60,7 @@ class Executor {
 	public function __construct(IEventDispatcher $dispatcher,
 								ShellExecutor $shellExecutor,
 								CommandService $commandService,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IL10N $l) {
 		$this->dispatcher = $dispatcher;
 		$this->shellExecutor = $shellExecutor;
@@ -190,7 +190,7 @@ class Executor {
 				$message->getActorType() === 'users' ? $message->getActorId() : ''
 			);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return $this->l->t('An error occurred while running the command. Please ask an administrator to check the logs.');
 		}
 	}
