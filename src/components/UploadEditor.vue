@@ -22,6 +22,13 @@
 <template>
 	<Modal v-if="showModal"
 		@close="handleDismiss">
+		<!--native file picker, hidden -->
+		<input id="file-upload"
+			ref="fileUploadInput"
+			multiple
+			type="file"
+			class="hidden-visually"
+			@change="handleFileInput">
 		<div class="upload-editor">
 			<div class="upload-editor__previews">
 				<template v-for="file in files">
@@ -30,6 +37,9 @@
 						v-bind="file.temporaryMessage.messageParameters.file"
 						:is-upload-editor="true" />
 				</template>
+				<button class="upload-editor__add-more primary" @click="clickImportInput">
+					<Plus :size="48" class="upload-editor__plus-icon" />
+				</button>
 			</div>
 			<div class="upload-editor__actions">
 				<button @click="handleDismiss">
@@ -47,6 +57,8 @@
 
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import Plus from 'vue-material-design-icons/Plus'
+import { processFiles } from '../utils/fileUpload'
 
 export default {
 	name: 'UploadEditor',
@@ -54,6 +66,7 @@ export default {
 	components: {
 		Modal,
 		FilePreview,
+		Plus,
 	},
 
 	data() {
@@ -63,6 +76,10 @@ export default {
 	},
 
 	computed: {
+		token() {
+			return this.$store.getters.getToken()
+		},
+
 		currentUploadId() {
 			return this.$store.getters.currentUploadId
 		},
@@ -98,11 +115,24 @@ export default {
 			this.$store.dispatch('uploadFiles', this.currentUploadId)
 			this.modalDismissed = true
 		},
+		/**
+		 * Clicks the hidden file input when clicking the correspondent ActionButton,
+		 * thus opening the file-picker
+		 */
+		clickImportInput() {
+			this.$refs.fileUploadInput.click()
+		},
+
+		handleFileInput(event) {
+			const files = Object.values(event.target.files)
+			processFiles(files, this.token, this.currentUploadId)
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/variables.scss';
 
 .upload-editor {
 	height: 100%;
@@ -116,6 +146,21 @@ export default {
 		justify-content: space-between;
 		margin-bottom: 16px;
 		margin-top: 16px;
+	}
+	&__add-more {
+		width: 100px;
+		height: 100px;
+		border: none;
+		border-radius: var(--border-radius-large);
+		position: relative;
+		z-index: 2;
+		box-shadow: 0 0 4px var(--color-box-shadow);
+		padding: 0;
+		margin: 0;
+		&__plus {
+			color: var(--color-primary-text);
+			z-index: 3;
+		}
 	}
 }
 
