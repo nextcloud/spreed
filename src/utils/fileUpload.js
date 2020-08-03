@@ -69,7 +69,7 @@ const findUniquePath = async function(client, userRoot, path) {
  */
 const processFiles = async function(files, token, uploadId) {
 	// Process these files in the store
-	await store.dispatch('uploadFiles', { uploadId, token, files })
+	await store.dispatch('initialiseUpload', { uploadId, token, files })
 	// Get the files that have successfully been uploaded from the store
 	const shareableFiles = store.getters.getShareableFiles(uploadId)
 

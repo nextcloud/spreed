@@ -37,6 +37,22 @@ const state = {
 }
 
 const getters = {
+
+	getInitialisedUploads: (state) => (uploadId) => {
+		if (state.uploads[uploadId]) {
+			const initialisedUploads = {}
+			for (const index in state.uploads[uploadId].files) {
+				const currentFile = state.uploads[uploadId].files[index]
+				if (currentFile.status === 'initialised') {
+					initialisedUploads[index] = (currentFile)
+				}
+			}
+			return initialisedUploads
+		} else {
+			return {}
+		}
+	},
+
 	// Returns all the files that have been successfully uploaded provided an
 	// upload id
 	getShareableFiles: (state) => (uploadId) => {
@@ -106,6 +122,11 @@ const mutations = {
 		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
+	// Marks a given file as initialised
+	markFileAsInitialised(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'initialised'
+	},
+
 	// Marks a given file as uploading
 	markFileAsUploading(state, { uploadId, index }) {
 		state.uploads[uploadId].files[index].status = 'uploading'
@@ -154,36 +175,47 @@ const mutations = {
 }
 
 const actions = {
-	/**
-	 * Uploads the files to the root directory of the user
-	 * @param {object} param0 Commit, state and getters
-	 * @param {object} param1 The unique uploadId, the conversation token and the
-	 * files array
-	 */
-	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, token, files }) {
+
+	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
+		// Set last upload id
+		commit('setCurrentUploadId', uploadId)
+		// Show upload editor
+		commit('showUploadEditor', true)
 		files.forEach(file => {
 			commit('addFileToBeUploaded', { uploadId, token, file })
 		})
 
 		// Add temporary messages
 		for (const index in state.uploads[uploadId].files) {
-			// Set last upload id
-			commit('setCurrentUploadId', { uploadId })
-			// Mark file as uploading to prevent a second function call to start a
-			// second upload for the same file
-			commit('markFileAsUploading', { uploadId, index })
+			// Mark file as initialised
+			commit('markFileAsInitialised', { uploadId, index })
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
 			// Create temporary message for the file and add it to the message list
 			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
-			dispatch('addTemporaryMessage', temporaryMessage)
-			// Scroll the message list
-			EventBus.$emit('scrollChatToBottom')
+			// Add the temporary messages to the store
 			commit('setTemporaryMessageForFile', { uploadId, index, temporaryMessage })
 		}
+	},
+
+	/**
+	 * Uploads the files to the root directory of the user
+	 * @param {object} param0 Commit, state and getters
+	 * @param {object} uploadId The unique uploadId
+	 */
+	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
 
 		// Iterate through the previously indexed files for a given conversation (token)
 		for (const index in state.uploads[uploadId].files) {
+			// Mark file as uploading to prevent a second function call to start a
+			// second upload for the same file
+			commit('markFileAsInitialised', { uploadId, index })
+			// Store the previously created temporary message
+			const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
+			// Add temporary messages (files) to the messages list
+			dispatch('addTemporaryMessage', temporaryMessage)
+			// Scroll the message list
+			EventBus.$emit('scrollChatToBottom')
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
 			// userRoot path

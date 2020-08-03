@@ -69,7 +69,7 @@ export default {
 
 		files() {
 			if (this.currentUploadId) {
-				return this.$store.getters.getShareableFiles(this.currentUploadId)
+				return this.$store.getters.getInitialisedUploads(this.currentUploadId)
 			}
 			return []
 		},
