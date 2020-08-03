@@ -1,6 +1,7 @@
 const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
+const babelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
 
 module.exports = {
 	entry: {
@@ -46,7 +47,12 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules(?!(\/|\\)(@juliushaertl\/vue-richtext|nextcloud-vue-collections)(\/|\\))/
+				exclude: babelLoaderExcludeNodeModulesExcept([
+					'@juliushaertl/vue-richtext',
+					'@nextcloud/event-bus',
+					'nextcloud-vue-collections',
+					'semver',
+				]),
 			},
 			{
 				/**
