@@ -1,0 +1,23 @@
+.unified-search {
+	.conversation-icon {
+		background-color: var(--color-background-darker);
+		background-size: 22px !important;
+
+		// We always want to use the white icons, this is why we don't use var(--color-white) here.
+		&.icon-public {
+			background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
+		}
+		&.icon-contacts {
+			background-image: url(icon-color-path('contacts', 'places', 'fff', 1, true));
+		}
+		&.icon-password {
+			background-image: url(icon-color-path('password', 'actions', 'fff', 1, true));
+		}
+		&.icon-file {
+			background-image: url(icon-color-path('text', 'filetypes', 'fff', 1, true));
+		}
+		&.icon-mail {
+			background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
+		}
+	}
+}
