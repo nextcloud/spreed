@@ -38,6 +38,7 @@ use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
@@ -76,6 +77,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	private $timeFactory;
 	/** @var \OCA\Talk\Signaling\Manager|MockObject */
 	private $signalingManager;
+	/** @var IURLGenerator|MockObject */
+	private $urlGenerator;
 	/** @var CustomBackendNotifier */
 	private $controller;
 
@@ -102,6 +105,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$config = \OC::$server->getConfig();
 		$this->signalingSecret = 'the-signaling-secret';
@@ -163,7 +167,8 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->createMock(ILogger::class),
 			$this->createMock(IClientService::class),
 			$this->secureRandom,
-			$this->signalingManager
+			$this->signalingManager,
+			$this->urlGenerator
 		);
 	}
 
