@@ -53,11 +53,11 @@ Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 
 function adjustLayout() {
-	document.querySelector('#app-content').append(document.querySelector('footer'))
+	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
 
 	const talkSidebarElement = document.createElement('div')
 	talkSidebarElement.setAttribute('id', 'talk-sidebar')
-	document.querySelector('#content').append(talkSidebarElement)
+	document.querySelector('#content').appendChild(talkSidebarElement)
 }
 
 adjustLayout()
@@ -88,10 +88,10 @@ function addTalkSidebarTrigger() {
 	if (!document.querySelector('.header-right')) {
 		const headerRightElement = document.createElement('div')
 		headerRightElement.setAttribute('class', 'header-right')
-		document.querySelector('#header').append(headerRightElement)
+		document.querySelector('#header').appendChild(headerRightElement)
 	}
 
-	document.querySelector('.header-right').append(talkSidebarTriggerElement)
+	document.querySelector('.header-right').appendChild(talkSidebarTriggerElement)
 }
 
 addTalkSidebarTrigger()

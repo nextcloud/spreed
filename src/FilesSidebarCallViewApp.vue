@@ -254,7 +254,7 @@ export default {
 				}
 			}
 
-			header.append(this.$el)
+			header.appendChild(this.$el)
 		},
 
 		/**
@@ -279,7 +279,7 @@ export default {
 
 			const headerAction = document.querySelector('.app-sidebar-header__action')
 			if (headerAction) {
-				headerAction.append(this.$el)
+				headerAction.appendChild(this.$el)
 			}
 		},
 	},
