@@ -41,15 +41,19 @@ class BackendNotifier {
 	private $clientService;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IUrlGenerator */
+	private $urlGenerator;
 
 	public function __construct(Config $config,
 								ILogger $logger,
 								IClientService $clientService,
-								ISecureRandom $secureRandom) {
+								ISecureRandom $secureRandom,
+								IUrlGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;
 		$this->secureRandom = $secureRandom;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
