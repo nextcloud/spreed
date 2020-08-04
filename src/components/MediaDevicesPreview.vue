@@ -104,6 +104,8 @@ export default {
 		return {
 			mounted: false,
 			mediaDevicesManager: mediaDevicesManager,
+			pendingGetUserMediaAudioCount: 0,
+			pendingGetUserMediaVideoCount: 0,
 			audioStream: null,
 			audioStreamError: null,
 			videoStream: null,
@@ -284,6 +286,12 @@ export default {
 				return
 			}
 
+			if (this.pendingGetUserMediaAudioCount) {
+				this.pendingGetUserMediaAudioCount++
+
+				return
+			}
+
 			// When the audio input device changes the previous stream must be
 			// stopped before a new one is requested, as for example currently
 			// Firefox does not support having two different audio input devices
@@ -297,6 +305,8 @@ export default {
 				return
 			}
 
+			this.pendingGetUserMediaAudioCount = 1
+
 			this.mediaDevicesManager.getUserMedia({ audio: true })
 				.then(stream => {
 					this.setAudioStream(stream)
@@ -305,11 +315,25 @@ export default {
 					console.error('Error getting audio stream: ' + error.name + ': ' + error.message)
 					this.audioStreamError = error
 					this.setAudioStream(null)
+				}).finally(() => {
+					const updateAudioStreamAgain = this.pendingGetUserMediaAudioCount > 1
+
+					this.pendingGetUserMediaAudioCount = 0
+
+					if (updateAudioStreamAgain) {
+						this.updateAudioStream()
+					}
 				})
 		},
 
 		updateVideoStream() {
 			if (!this.mediaDevicesManager.isSupported()) {
+				return
+			}
+
+			if (this.pendingGetUserMediaVideoCount) {
+				this.pendingGetUserMediaVideoCount++
+
 				return
 			}
 
@@ -323,6 +347,8 @@ export default {
 				return
 			}
 
+			this.pendingGetUserMediaVideoCount = 1
+
 			this.mediaDevicesManager.getUserMedia({ video: true })
 				.then(stream => {
 					this.setVideoStream(stream)
@@ -331,6 +357,14 @@ export default {
 					console.error('Error getting video stream: ' + error.name + ': ' + error.message)
 					this.videoStreamError = error
 					this.setVideoStream(null)
+				}).finally(() => {
+					const updateVideoStreamAgain = this.pendingGetUserMediaVideoCount > 1
+
+					this.pendingGetUserMediaVideoCount = 0
+
+					if (updateVideoStreamAgain) {
+						this.updateVideoStream()
+					}
 				})
 		},
 
