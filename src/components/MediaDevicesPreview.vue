@@ -36,6 +36,9 @@
 					class="icon icon-audio" />
 				<div v-else-if="!audioStream"
 					class="icon icon-loading" />
+				<p v-if="audioStreamErrorMessage">
+					{{ audioStreamErrorMessage }}
+				</p>
 			</div>
 			<!-- v-show has to be used instead of v-if/else to ensure that the
 				 reference is always valid once mounted. -->
@@ -63,6 +66,9 @@
 					class="icon icon-video" />
 				<div v-else-if="!videoStream"
 					class="icon icon-loading" />
+				<p v-if="videoStreamErrorMessage">
+					{{ videoStreamErrorMessage }}
+				</p>
 			</div>
 			<!-- v-show has to be used instead of v-if/else to ensure that the
 				 reference is always valid once mounted. -->
@@ -99,9 +105,9 @@ export default {
 			mounted: false,
 			mediaDevicesManager: mediaDevicesManager,
 			audioStream: null,
-			audioStreamError: false,
+			audioStreamError: null,
 			videoStream: null,
-			videoStreamError: false,
+			videoStreamError: null,
 			hark: null,
 			currentVolume: -100,
 			volumeThreshold: -100,
@@ -137,6 +143,58 @@ export default {
 
 		videoPreviewAvailable() {
 			return this.videoInputId && this.videoStream
+		},
+
+		audioStreamErrorMessage() {
+			if (!this.audioStreamError) {
+				return null
+			}
+
+			if (this.audioStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
+				return t('spreed', 'Calls are not supported in your browser')
+			}
+
+			// In newer browser versions MediaDevicesManager is not supported in
+			// insecure contexts; in older browser versions it is, but getting
+			// the user media fails with "NotAllowedError".
+			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
+			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.indexOf('Only secure origins') !== -1
+			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
+				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
+				return t('spreed', 'Access to microphone is only possible with HTTPS')
+			}
+
+			if (this.audioStreamError.name === 'NotAllowedError') {
+				return t('spreed', 'Access to microphone was denied')
+			}
+
+			return t('spreed', 'Error while accessing microphone')
+		},
+
+		videoStreamErrorMessage() {
+			if (!this.videoStreamError) {
+				return null
+			}
+
+			if (this.videoStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
+				return t('spreed', 'Calls are not supported in your browser')
+			}
+
+			// In newer browser versions MediaDevicesManager is not supported in
+			// insecure contexts; in older browser versions it is, but getting
+			// the user media fails with "NotAllowedError".
+			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
+			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.indexOf('Only secure origins') !== -1
+			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
+				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
+				return t('spreed', 'Access to camera is only possible with HTTPS')
+			}
+
+			if (this.videoStreamError.name === 'NotAllowedError') {
+				return t('spreed', 'Access to camera was denied')
+			}
+
+			return t('spreed', 'Error while accessing camera')
 		},
 
 		currentVolumeIndicatorHeight() {
@@ -233,7 +291,7 @@ export default {
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1468700
 			this.stopAudioStream()
 
-			this.audioStreamError = false
+			this.audioStreamError = null
 
 			if (!this.audioInputId) {
 				return
@@ -245,7 +303,7 @@ export default {
 				})
 				.catch(error => {
 					console.error('Error getting audio stream: ' + error.name + ': ' + error.message)
-					this.audioStreamError = true
+					this.audioStreamError = error
 					this.setAudioStream(null)
 				})
 		},
@@ -259,7 +317,7 @@ export default {
 			// the audio ones (see "updateAudioStream").
 			this.stopVideoStream()
 
-			this.videoStreamError = false
+			this.videoStreamError = null
 
 			if (!this.videoInputId) {
 				return
@@ -271,7 +329,7 @@ export default {
 				})
 				.catch(error => {
 					console.error('Error getting video stream: ' + error.name + ': ' + error.message)
-					this.videoStreamError = true
+					this.videoStreamError = error
 					this.setVideoStream(null)
 				})
 		},
@@ -356,7 +414,14 @@ export default {
 		width: 64px;
 		height: 64px;
 		opacity: 0.4;
+
+		margin-left: auto;
+		margin-right: auto;
 	}
+}
+
+.preview-not-available p {
+	margin-bottom: 16px;
 }
 
 .preview-audio {
@@ -396,7 +461,7 @@ export default {
 .preview-video {
 	.preview-not-available .icon {
 		margin-top: 64px;
-		margin-bottom: 64px;
+		margin-bottom: 16px;
 	}
 
 	video {
