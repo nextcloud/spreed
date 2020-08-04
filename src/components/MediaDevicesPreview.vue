@@ -139,6 +139,32 @@ export default {
 			},
 		},
 
+		audioStreamInputId() {
+			if (!this.audioStream) {
+				return null
+			}
+
+			const audioTracks = this.audioStream.getAudioTracks()
+			if (audioTracks.length < 1) {
+				return null
+			}
+
+			return audioTracks[0].getSettings().deviceId
+		},
+
+		videoStreamInputId() {
+			if (!this.videoStream) {
+				return null
+			}
+
+			const videoTracks = this.videoStream.getVideoTracks()
+			if (videoTracks.length < 1) {
+				return null
+			}
+
+			return videoTracks[0].getSettings().deviceId
+		},
+
 		audioPreviewAvailable() {
 			return this.audioInputId && this.audioStream
 		},
@@ -286,6 +312,10 @@ export default {
 				return
 			}
 
+			if (this.audioStreamInputId && this.audioStreamInputId === this.audioInputId) {
+				return
+			}
+
 			if (this.pendingGetUserMediaAudioCount) {
 				this.pendingGetUserMediaAudioCount++
 
@@ -328,6 +358,10 @@ export default {
 
 		updateVideoStream() {
 			if (!this.mediaDevicesManager.isSupported()) {
+				return
+			}
+
+			if (this.videoStreamInputId && this.videoStreamInputId === this.videoInputId) {
 				return
 			}
 
