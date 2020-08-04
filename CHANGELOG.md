@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.3 – 2020-08-04
+### Fixed
+- Fix compatibility with Janus 0.10.4 and the newest High-performance backend
+  [#3940](https://github.com/nextcloud/spreed/pull/3940)
+  [#3979](https://github.com/nextcloud/spreed/pull/3979)
+- Allow Internet Explorer 11 to render the page again
+  [#3967](https://github.com/nextcloud/spreed/pull/3967)
+  [#3982](https://github.com/nextcloud/spreed/pull/3982)
+- Only show the browser warning when interacting with Nextcloud Talk features
+  [#3978](https://github.com/nextcloud/spreed/pull/3978)
+- Avatar menu is opaque for participants that are offline
+  [#3959](https://github.com/nextcloud/spreed/pull/3959)
+- Always allow to communicate with the HPB even when it's a local url
+  [#3965](https://github.com/nextcloud/spreed/pull/3965)
+
 ## 9.0.2 – 2020-07-21
 ### Added
 - Warn the user when their connection or computer is busy and others might not be able to see or hear them correctly anymore.
