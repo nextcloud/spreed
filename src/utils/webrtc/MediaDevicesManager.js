@@ -269,6 +269,11 @@ MediaDevicesManager.prototype = {
 		}
 
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+			// In Firefox the dialog to grant media permissions allows the user
+			// to change the device to use, overriding the device that was
+			// originally requested.
+			this._updateSelectedDevicesFromGetUserMediaResult(stream)
+
 			// The list of devices is always updated when a stream is started as
 			// that is the only time at which the full device information is
 			// guaranteed to be available.
@@ -283,5 +288,27 @@ MediaDevicesManager.prototype = {
 
 			throw error
 		})
+	},
+
+	_updateSelectedDevicesFromGetUserMediaResult: function(stream) {
+		if (this.attributes.audioInputId) {
+			const audioTracks = stream.getAudioTracks()
+			const audioTrackSettings = audioTracks.length > 0 ? audioTracks[0].getSettings() : null
+			if (audioTrackSettings && audioTrackSettings.deviceId && this.attributes.audioInputId !== audioTrackSettings.deviceId) {
+				console.debug('Input audio device overridden in getUserMedia: Expected: ' + this.attributes.audioInputId + ' Found: ' + audioTrackSettings.deviceId)
+
+				this.attributes.audioInputId = audioTrackSettings.deviceId
+			}
+		}
+
+		if (this.attributes.videoInputId) {
+			const videoTracks = stream.getVideoTracks()
+			const videoTrackSettings = videoTracks.length > 0 ? videoTracks[0].getSettings() : null
+			if (videoTrackSettings && videoTrackSettings.deviceId && this.attributes.videoInputId !== videoTrackSettings.deviceId) {
+				console.debug('Input video device overridden in getUserMedia: Expected: ' + this.attributes.videoInputId + ' Found: ' + videoTrackSettings.deviceId)
+
+				this.attributes.videoInputId = videoTrackSettings.deviceId
+			}
+		}
 	},
 }
