@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Search;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCP\IL10N;
@@ -31,6 +32,7 @@ use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
+use OCP\Search\SearchResultEntry;
 
 class ConversationSearch implements IProvider {
 
@@ -68,17 +70,39 @@ class ConversationSearch implements IProvider {
 	/**
 	 * @inheritDoc
 	 */
+	public function getOrder(string $route, array $routeParameters): int {
+		if (strpos($route, Application::APP_ID . '.') === 0) {
+			// Active app, prefer Talk results
+			return 0;
+		}
+
+		return 6;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
 
 		$result = [];
 		foreach ($rooms as $room) {
-			if (
-				$room->getType() === Room::CHANGELOG_CONVERSATION || (
-					stripos($room->getName(), $query->getTerm()) === false &&
-					stripos($room->getDisplayName($user->getUID()), $query->getTerm()) === false
-				)
-			) {
+			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+				continue;
+			}
+
+			$parameters = $query->getRouteParameters();
+			if (isset($parameters['token']) &&
+				$parameters['token'] === $room->getToken() &&
+				strpos($query->getRoute(), Application::APP_ID . '.') === 0) {
+				// Don't search the current conversation.
+				//User mostlikely looks for other things with the same name
+				continue;
+			}
+
+			if (stripos($room->getName(), $query->getTerm()) === false &&
+				stripos($room->getDisplayName($user->getUID()), $query->getTerm()) === false) {
+				// Neither name nor displayname (one-to-one) match, skip
 				continue;
 			}
 
@@ -106,7 +130,7 @@ class ConversationSearch implements IProvider {
 				$iconClass = 'conversation-icon icon-contacts';
 			}
 
-			$result[] = new ConversationSearchResult(
+			$result[] = new SearchResultEntry(
 				$icon,
 				$room->getDisplayName($user->getUID()),
 				'',
