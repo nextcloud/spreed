@@ -331,7 +331,7 @@ export default {
 
 			this.audioStreamError = null
 
-			if (!this.audioInputId) {
+			if (this.audioInputId === null || this.audioInputId === undefined) {
 				return
 			}
 
@@ -377,7 +377,7 @@ export default {
 
 			this.videoStreamError = null
 
-			if (!this.videoInputId) {
+			if (this.videoInputId === null || this.videoInputId === undefined) {
 				return
 			}
 
