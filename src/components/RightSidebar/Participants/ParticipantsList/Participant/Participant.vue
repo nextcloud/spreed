@@ -37,6 +37,7 @@
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 		<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
+		<span v-if="isNotAvailable(participant)" class="participant-row__status">{{ getStatusMessage(participant) }}</span>
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -66,6 +67,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
+import UserStatus from '../../../../../mixins/userStatus'
 import isEqual from 'lodash/isEqual'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 
@@ -77,6 +79,10 @@ export default {
 		ActionButton,
 		AvatarWrapper,
 	},
+
+	mixins: [
+		UserStatus,
+	],
 
 	props: {
 		participant: {
@@ -292,6 +298,10 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
 		padding-left: 5px;
+	}
+	&__status {
+		color: var(--color-text-maxcontrast);
+		/* TODO bring this to a new line */
 	}
 	&__icon {
 		width: 32px;

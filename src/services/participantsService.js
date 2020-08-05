@@ -223,6 +223,9 @@ const demoteFromModerator = async(token, options) => {
 }
 
 const fetchParticipants = async(token, options) => {
+	options = options || {}
+	options.params = options.params || {}
+	options.params.includeStatus = true
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v2/room', 2) + token + '/participants', options)
 	return response
 }
