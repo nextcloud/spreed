@@ -116,6 +116,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `search` | string | Search term for name suggestions (should at least be 1 character)
     `limit` | int | Number of suggestions to receive (20 by default)
+    `includeStatus` | bool | Whether the user status information also needs to be loaded
 
 * Response:
     - Status code:
@@ -132,6 +133,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `id` | string | The user id which should be sent as `@<id>` in the message (user ids that contain spaces as well as guest ids need to be wrapped in double-quotes when sending in a message: `@"space user"` and `@"guest/random-string"`)
         `label` | string | The displayname of the user
         `source` | string | The type of the user, currently only `users`, `guests` or `calls` (for mentioning the whole conversation
+        `status` | string | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusIcon` | string | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusMessage` | string | Optional: Only available with `includeStatus=true` and for users with a set status
         
 ## System messages
 
