@@ -58,6 +58,7 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IConfig;
+use OCP\UserStatus\IManager as IUserStatusManager;
 
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
@@ -78,6 +79,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $roomService;
 	/** @var GuestManager */
 	protected $guestManager;
+	/** @var IUserStatusManager */
+	protected $statusManager;
 	/** @var ChatManager */
 	protected $chatManager;
 	/** @var IEventDispatcher */
@@ -103,6 +106,7 @@ class RoomController extends AEnvironmentAwareController {
 								Manager $manager,
 								RoomService $roomService,
 								GuestManager $guestManager,
+								IUserStatusManager $statusManager,
 								ChatManager $chatManager,
 								IEventDispatcher $dispatcher,
 								MessageParser $messageParser,
@@ -119,6 +123,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->manager = $manager;
 		$this->roomService = $roomService;
 		$this->guestManager = $guestManager;
+		$this->statusManager = $statusManager;
 		$this->chatManager = $chatManager;
 		$this->dispatcher = $dispatcher;
 		$this->messageParser = $messageParser;
@@ -824,9 +829,10 @@ class RoomController extends AEnvironmentAwareController {
 	 * @RequireParticipant
 	 * @RequireModeratorOrNoLobby
 	 *
+	 * @param bool $includeStatus
 	 * @return DataResponse
 	 */
-	public function getParticipants(): DataResponse {
+	public function getParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -834,6 +840,12 @@ class RoomController extends AEnvironmentAwareController {
 		$maxPingAge = $this->timeFactory->getTime() - 100;
 		$participants = $this->room->getParticipantsLegacy();
 		$results = [];
+
+		$statuses = [];
+		if ($includeStatus && count($participants['users']) < 100) {
+			$userIds = array_map('strval', array_keys($participants['users']));
+			$statuses = $this->statusManager->getUserStatuses($userIds);
+		}
 
 		foreach ($participants['users'] as $userId => $participant) {
 			$userId = (string) $userId;
@@ -846,10 +858,16 @@ class RoomController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$results[] = array_merge($participant, [
-				'userId' => $userId,
-				'displayName' => (string) $user->getDisplayName(),
-			]);
+			$participant['userId'] = $userId;
+			$participant['displayName'] = (string) $user->getDisplayName();
+
+			if (isset($statuses[$userId])) {
+				$participant['status'] = $statuses[$userId]->getStatus();
+				$participant['statusIcon'] = $statuses[$userId]->getIcon();
+				$participant['statusMessage'] = $statuses[$userId]->getMessage();
+			}
+
+			$results[] = $participant;
 		}
 
 		$guestSessions = [];
