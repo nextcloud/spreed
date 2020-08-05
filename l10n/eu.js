@@ -350,6 +350,7 @@ OC.L10N.register(
     "Turkey" : "Turkia",
     "Trinidad and Tobago" : "Trinidad eta Tobago",
     "Tuvalu" : "Tuvalu",
+    "Taiwan, Province of China" : "Taiwan",
     "Tanzania, United Republic of" : "Tanzaniako Errepublika Batua",
     "Ukraine" : "Ukraina",
     "Uganda" : "Uganda",
