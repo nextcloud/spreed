@@ -33,6 +33,7 @@ const searchPossibleMentions = async function(token, searchText) {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + `${token}/mentions`, {
 			params: {
 				search: searchText,
+				includeStatus: 1,
 			},
 		})
 		return response

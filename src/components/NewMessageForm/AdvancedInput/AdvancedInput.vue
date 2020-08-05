@@ -46,6 +46,8 @@
 				:disable-menu="true" />
 			&nbsp;
 			<span>{{ scope.item.label }}</span>
+			<em v-if="isNotAvailable(scope.item)">&nbsp;{{ getStatus(scope.item) }}</em>
+
 		</template>
 		<template v-slot:embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
@@ -76,6 +78,7 @@
 
 <script>
 import At from 'vue-at'
+import UserStatus from '../../../mixins/userStatus'
 import VueAtReparenter from '../../../mixins/vueAtReparenter'
 import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
@@ -153,6 +156,7 @@ export default {
 	},
 	mixins: [
 		VueAtReparenter,
+		UserStatus,
 	],
 	props: {
 		/**
@@ -349,6 +353,14 @@ export default {
 			}
 
 			return 'user'
+		},
+
+		getStatus(candidate) {
+			const status = this.getStatusMessage(candidate)
+			if (status) {
+				return '(' + status + ')'
+			}
+			return ''
 		},
 	},
 }
