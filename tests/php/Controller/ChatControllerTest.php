@@ -42,6 +42,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\UserStatus\IManager as IUserStatusManager;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -62,6 +63,8 @@ class ChatControllerTest extends TestCase {
 	protected $messageParser;
 	/** @var IManager|MockObject */
 	protected $autoCompleteManager;
+	/** @var IUserStatusManager|MockObject */
+	protected $statusManager;
 	/** @var SearchPlugin|MockObject */
 	protected $searchPlugin;
 	/** @var ISearchResult|MockObject */
@@ -90,6 +93,7 @@ class ChatControllerTest extends TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
+		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -118,6 +122,7 @@ class ChatControllerTest extends TestCase {
 			$this->guestManager,
 			$this->messageParser,
 			$this->autoCompleteManager,
+			$this->statusManager,
 			$this->searchPlugin,
 			$this->searchResult,
 			$this->timeFactory,

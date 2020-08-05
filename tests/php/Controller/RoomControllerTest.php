@@ -43,6 +43,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\UserStatus\IManager as IUserStatusManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -58,6 +59,8 @@ class RoomControllerTest extends TestCase {
 	protected $userManager;
 	/** @var IGroupManager|MockObject */
 	protected $groupManager;
+	/** @var IUserStatusManager|MockObject */
+	protected $statusManager;
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var RoomService|MockObject */
@@ -91,6 +94,7 @@ class RoomControllerTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -117,6 +121,7 @@ class RoomControllerTest extends TestCase {
 			$this->manager,
 			$this->roomService,
 			$this->guestManager,
+			$this->statusManager,
 			$this->chatManager,
 			$this->dispatcher,
 			$this->messageParser,
