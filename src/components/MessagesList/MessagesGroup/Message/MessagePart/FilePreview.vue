@@ -23,8 +23,8 @@
 
 <template>
 	<file-preview v-bind="filePreview"
-		class="container"
-		:class="{ 'is-viewer-available': isViewerAvailable, 'upload-editor': isUploadEditor }"
+		class="file-preview"
+		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click="showPreview">
 		<img v-if="!isLoading && !failed"
 			:class="previewSizeClass"
@@ -37,6 +37,10 @@
 		<span v-if="isLoading"
 			class="preview loading" />
 		<strong>{{ name }}</strong>
+		<button v-if="isUploadEditor"
+			class="remove-file primary">
+			<Close class="remove-file__icon" @click="$emit('remove-file', id)" />
+		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 	</file-preview>
 </template>
@@ -44,12 +48,14 @@
 <script>
 import { generateUrl, imagePath } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
+import Close from 'vue-material-design-icons/Close'
 
 export default {
 	name: 'FilePreview',
 
 	components: {
 		ProgressBar,
+		Close,
 	},
 
 	props: {
@@ -227,8 +233,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../../../assets/variables.scss';
 
-.container {
+.file-preview {
+	position: relative;
 	width: 100%;
 	/* The file preview can not be a block; otherwise it would fill the whole
 	width of the container and the loading icon would not be centered on the
@@ -243,6 +251,9 @@ export default {
 		/* Trick to keep the same position while adding a padding to show
 			* the background. */
 		box-sizing: content-box !important;
+		.remove-file {
+			visibility: visible;
+		}
 	}
 
 	.preview {
@@ -264,17 +275,34 @@ export default {
 		white-space: nowrap;
 	}
 
-	&:not(.is-viewer-available) {
+	&:not(.file-preview--viewer-available) {
 		strong:after {
 			content: ' ↗';
 		}
 	}
+	&--upload-editor {
+		max-width: 160px;
+		max-height: 160px;
+		margin: 10px;
+		.preview {
+			margin: auto;
+		}
+	}
 }
 
-.upload-editor {
-	max-width: 160px;
-	max-height: 160px;
-	margin: 10px;
+.remove-file {
+	visibility: hidden;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	box-shadow: 0 0 4px var(--color-box-shadow);
+	width: $clickable-area;
+	height: $clickable-area;
+	padding: 0;
+	margin: 0;
+	&__icon {
+		color: var(--color-primary-text);
+	}
 }
 
 </style>

@@ -30,17 +30,21 @@
 			class="hidden-visually"
 			@change="handleFileInput">
 		<div class="upload-editor">
-			<div class="upload-editor__previews">
+			<transition-group
+				class="upload-editor__previews"
+				name="fade"
+				tag="div">
 				<template v-for="file in files">
 					<FilePreview
 						:key="file.temporaryMessage.id"
 						v-bind="file.temporaryMessage.messageParameters.file"
-						:is-upload-editor="true" />
+						:is-upload-editor="true"
+						@remove-file="handleRemoveFileFromSelection" />
 				</template>
-				<button class="upload-editor__add-more primary" @click="clickImportInput">
+				<button :key="'addMore'" class="upload-editor__add-more primary" @click="clickImportInput">
 					<Plus :size="48" class="upload-editor__plus-icon" />
 				</button>
-			</div>
+			</transition-group>
 			<div class="upload-editor__actions">
 				<button @click="handleDismiss">
 					Dismiss
@@ -126,6 +130,10 @@ export default {
 		handleFileInput(event) {
 			const files = Object.values(event.target.files)
 			processFiles(files, this.token, this.currentUploadId)
+		},
+
+		handleRemoveFileFromSelection(id) {
+			this.$store.dispatch('removeFileFromSelection', id)
 		},
 	},
 }

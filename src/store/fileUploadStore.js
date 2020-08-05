@@ -172,6 +172,15 @@ const mutations = {
 	showUploadEditor(state, show) {
 		state.showUploadEditor = show
 	},
+
+	removeFileFromSelection(state, fileId) {
+		const uploadId = state.currentUploadId
+		for (const key in state.uploads[uploadId].files) {
+			if (state.uploads[uploadId].files[key].temporaryMessage.id === fileId) {
+				Vue.delete(state.uploads[uploadId].files, key)
+			}
+		}
+	},
 }
 
 const actions = {
@@ -272,6 +281,10 @@ const actions = {
 	 */
 	markFileAsShared(context, { uploadId, index }) {
 		context.commit('markFileAsShared', { uploadId, index })
+	},
+
+	removeFileFromSelection({ commit }, fileId) {
+		commit('removeFileFromSelection', fileId)
 	},
 
 }
