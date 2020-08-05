@@ -33,7 +33,7 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<div>
+		<div class="participant-row__user-wrapper">
 			<div class="participant-row__user-descriptor">
 				<span class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
@@ -290,11 +290,13 @@ export default {
 	height: 44px;
 	cursor: pointer;
 	padding: 0 5px;
-	margin: 5px 0;
+	margin: 8px 0;
 	border-radius: 22px;
 
+	&__user-wrapper {
+		padding-left: 8px;
+	}
 	&__user-name {
-		margin-left: 6px;
 		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
@@ -307,8 +309,8 @@ export default {
 		padding-left: 5px;
 	}
 	&__status {
-		padding-left: 6px;
 		color: var(--color-text-maxcontrast);
+		line-height: 1.3em;
 	}
 	&__icon {
 		width: 32px;
