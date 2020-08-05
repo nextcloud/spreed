@@ -24,7 +24,7 @@ import store from '../store/index'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 
-const createTemporaryMessage = (text, token, uploadId, index, file) => {
+const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) => {
 	const messageToBeReplied = store.getters.getMessageToBeReplied(token)
 	const date = new Date()
 	let tempId = 'temp-' + date.getTime()
@@ -39,6 +39,7 @@ const createTemporaryMessage = (text, token, uploadId, index, file) => {
 			'name': file.name,
 			index,
 			uploadId,
+			localUrl,
 		}
 	}
 	const message = Object.assign({}, {

@@ -21,6 +21,7 @@
 
 <template>
 	<Modal v-if="showModal"
+		class="upload-editor"
 		@close="handleDismiss">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
@@ -29,30 +30,30 @@
 			type="file"
 			class="hidden-visually"
 			@change="handleFileInput">
-		<div class="upload-editor">
-			<transition-group
-				class="upload-editor__previews"
-				name="fade"
-				tag="div">
-				<template v-for="file in files">
-					<FilePreview
-						:key="file.temporaryMessage.id"
-						v-bind="file.temporaryMessage.messageParameters.file"
-						:is-upload-editor="true"
-						@remove-file="handleRemoveFileFromSelection" />
-				</template>
-				<button :key="'addMore'" class="upload-editor__add-more primary" @click="clickImportInput">
+		<transition-group
+			class="upload-editor__previews"
+			name="fade"
+			tag="div">
+			<template v-for="file in files">
+				<FilePreview
+					:key="file.temporaryMessage.id"
+					v-bind="file.temporaryMessage.messageParameters.file"
+					:is-upload-editor="true"
+					@remove-file="handleRemoveFileFromSelection" />
+			</template>
+			<div :key="'addMore'" class="add-more">
+				<button class="add-more__button primary" @click="clickImportInput">
 					<Plus :size="48" class="upload-editor__plus-icon" />
 				</button>
-			</transition-group>
-			<div class="upload-editor__actions">
-				<button @click="handleDismiss">
-					Dismiss
-				</button>
-				<button class="primary" @click="handleUpload">
-					Upload
-				</button>
 			</div>
+		</transition-group>
+		<div class="upload-editor__actions">
+			<button @click="handleDismiss">
+				Dismiss
+			</button>
+			<button class="primary" @click="handleUpload">
+				Upload
+			</button>
 		</div>
 	</Modal>
 </template>
@@ -152,14 +153,20 @@ export default {
 	&__actions {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 16px;
 		margin-top: 16px;
 	}
-	&__add-more {
-		width: 100px;
-		height: 100px;
+}
+
+.add-more {
+	width: 180px;
+	height: 180px;
+	display: flex;
+	margin: 10px;
+	&__button {
+		width: 80px;
+		height: 80px;
 		border: none;
-		border-radius: var(--border-radius-large);
+		border-radius: var(--border-radius-pill);
 		position: relative;
 		z-index: 2;
 		box-shadow: 0 0 4px var(--color-box-shadow);

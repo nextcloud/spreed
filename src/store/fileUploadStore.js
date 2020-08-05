@@ -200,8 +200,10 @@ const actions = {
 			commit('markFileAsInitialised', { uploadId, index })
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
+			// Get localurl for previews
+			const localUrl = URL.createObjectURL(currentFile)
 			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
+			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile, localUrl)
 			// Add the temporary messages to the store
 			commit('setTemporaryMessageForFile', { uploadId, index, temporaryMessage })
 		}

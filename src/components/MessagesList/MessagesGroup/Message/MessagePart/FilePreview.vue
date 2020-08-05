@@ -26,7 +26,7 @@
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click="showPreview">
-		<img v-if="!isLoading && !failed"
+		<img v-if="(!isLoading && !failed) || hasTemporaryImageUrl"
 			:class="previewSizeClass"
 			alt=""
 			:src="previewUrl">
@@ -108,6 +108,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		// The link to the file for displaying it in the preview
+		localUrl: {
+			type: String,
+			default: '',
+		},
 	},
 	data() {
 		return {
@@ -143,6 +148,10 @@ export default {
 			return 'preview'
 		},
 		previewUrl() {
+			if (this.hasTemporaryImageUrl) {
+				return this.localUrl
+			}
+
 			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
@@ -185,6 +194,9 @@ export default {
 				}
 			}
 			return 0
+		},
+		hasTemporaryImageUrl() {
+			return this.mimetype.startsWith('image/') && this.localUrl
 		},
 	},
 	mounted() {
