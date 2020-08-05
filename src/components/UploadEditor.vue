@@ -144,16 +144,21 @@ export default {
 @import '../assets/variables.scss';
 
 .upload-editor {
-	height: 100%;
 	&__previews {
-		display: flex;
-		flex-wrap: wrap;
+		overflow-x: hidden !important;
+		display: grid;
+		position: relative;
 		overflow: auto;
+		grid-template-columns: repeat(4, auto);
 	}
 	&__actions {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 16px;
+		margin-bottom: 4px;
+		button {
+			margin: 0 4px 0 4px;
+		}
 	}
 }
 
@@ -171,7 +176,7 @@ export default {
 		z-index: 2;
 		box-shadow: 0 0 4px var(--color-box-shadow);
 		padding: 0;
-		margin: 0;
+		margin: auto;
 		&__plus {
 			color: var(--color-primary-text);
 			z-index: 3;
@@ -179,4 +184,10 @@ export default {
 	}
 }
 
+::v-deep .modal-container {
+	display: flex !important;
+	flex-direction: column;
+	padding: 12px !important;
+	min-width: 400px;
+}
 </style>

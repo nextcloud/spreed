@@ -285,6 +285,8 @@ export default {
 		display: block;
 		overflow: hidden;
 		white-space: nowrap;
+		text-overflow: ellipsis;
+		margin-top: 4px;
 	}
 
 	&:not(.file-preview--viewer-available) {
@@ -296,6 +298,7 @@ export default {
 		max-width: 160px;
 		max-height: 160px;
 		margin: 10px;
+		padding: 12px;
 		.preview {
 			margin: auto;
 		}
