@@ -44,6 +44,8 @@ use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\UserStatus\IManager as IUserStatusManager;
+use OCP\UserStatus\IUserStatus;
 
 class ChatController extends AEnvironmentAwareController {
 
@@ -71,6 +73,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IManager */
 	private $autoCompleteManager;
 
+	/** @var IUserStatusManager */
+	private $statusManager;
+
 	/** @var SearchPlugin */
 	private $searchPlugin;
 
@@ -91,6 +96,7 @@ class ChatController extends AEnvironmentAwareController {
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
+								IUserStatusManager $statusManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
 								ITimeFactory $timeFactory,
@@ -104,6 +110,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
+		$this->statusManager = $statusManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->timeFactory = $timeFactory;
@@ -397,9 +404,10 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param string $search
 	 * @param int $limit
+	 * @param bool $includeStatus
 	 * @return DataResponse
 	 */
-	public function mentions(string $search, int $limit = 20): DataResponse {
+	public function mentions(string $search, int $limit = 20, bool $includeStatus = false): DataResponse {
 		$this->searchPlugin->setContext([
 			'itemType' => 'chat',
 			'itemId' => $this->room->getId(),
@@ -419,7 +427,16 @@ class ChatController extends AEnvironmentAwareController {
 			'search' => $search,
 		]);
 
-		$results = $this->prepareResultArray($results);
+		$statuses = [];
+		if ($includeStatus) {
+			$userIds = array_filter(array_map(static function (array $userResult) {
+				return $userResult['value']['shareWith'];
+			}, $results['users']));
+
+			$statuses = $this->statusManager->getUserStatuses($userIds);
+		}
+
+		$results = $this->prepareResultArray($results, $statuses);
 
 		$roomDisplayName = $this->room->getDisplayName($this->participant->getUser());
 		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
@@ -444,15 +461,28 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 
-	protected function prepareResultArray(array $results): array {
+	/**
+	 * @param array $results
+	 * @param IUserStatus[] $statuses
+	 * @return array
+	 */
+	protected function prepareResultArray(array $results, array $statuses): array {
 		$output = [];
 		foreach ($results as $type => $subResult) {
 			foreach ($subResult as $result) {
-				$output[] = [
+				$data = [
 					'id' => $result['value']['shareWith'],
 					'label' => $result['label'],
 					'source' => $type,
 				];
+
+				if ($type === 'users' && isset($statuses[$data['id']])) {
+					$data['status'] = $statuses[$data['id']]->getStatus();
+					$data['statusIcon'] = $statuses[$data['id']]->getIcon();
+					$data['statusMessage'] = $statuses[$data['id']]->getMessage();
+				}
+
+				$output[] = $data;
 			}
 		}
 		return $output;
