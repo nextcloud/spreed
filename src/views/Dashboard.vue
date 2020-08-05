@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import ConversationIcon from './../components/ConversationIcon'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import axios from '@nextcloud/axios'
@@ -66,7 +67,7 @@ const propertySort = (properties) => (a, b) => properties.map(obj => {
 
 export default {
 	name: 'Dashboard',
-	components: { ConversationIcon, EmptyContent },
+	components: { DashboardWidget, DashboardWidgetItem, ConversationIcon, EmptyContent },
 	data() {
 		return {
 			roomOptions: [],
