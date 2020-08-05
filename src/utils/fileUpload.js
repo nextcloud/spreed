@@ -29,7 +29,6 @@
   * @returns {string} The unique path
   */
 
-import { shareFile } from '../services/filesSharingServices'
 import store from '../store/index'
 
 const findUniquePath = async function(client, userRoot, path) {
@@ -70,22 +69,7 @@ const findUniquePath = async function(client, userRoot, path) {
 const processFiles = async function(files, token, uploadId) {
 	// Process these files in the store
 	await store.dispatch('initialiseUpload', { uploadId, token, files })
-	// Get the files that have successfully been uploaded from the store
-	const shareableFiles = store.getters.getShareableFiles(uploadId)
 
-	// Share each of those files in the conversation
-	for (const index in shareableFiles) {
-		const path = shareableFiles[index].sharePath
-		try {
-			const temporaryMessage = shareableFiles[index].temporaryMessage
-
-			store.dispatch('markFileAsSharing', { uploadId, index })
-			await shareFile(path, token, temporaryMessage.referenceId)
-			store.dispatch('markFileAsShared', { uploadId, index })
-		} catch (exception) {
-			console.debug('An error happened when triying to share your file: ', exception)
-		}
-	}
 }
 
 export {
