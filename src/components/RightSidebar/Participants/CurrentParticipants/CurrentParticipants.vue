@@ -29,6 +29,7 @@
 
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import { PARTICIPANT } from '../../../../constants'
+import UserStatus from '../../../../mixins/userStatus'
 
 export default {
 	name: 'CurrentParticipants',
@@ -36,6 +37,10 @@ export default {
 	components: {
 		ParticipantsList,
 	},
+
+	mixins: [
+		UserStatus,
+	],
 
 	props: {
 		searchText: {
@@ -76,6 +81,7 @@ export default {
 		 * Sort two participants by:
 		 * - type (moderators before normal participants)
 		 * - online status
+		 * - user status (away + dnd at the end)
 		 * - display name
 		 *
 		 * @param {object} participant1 First participant
@@ -103,6 +109,12 @@ export default {
 				}
 			} else if (participant2.sessionId === '0') {
 				return -1
+			}
+
+			const participant1Away = this.isNotAvailable(participant1)
+			const participant2Away = this.isNotAvailable(participant2)
+			if (participant1Away !== participant2Away) {
+				return participant1Away ? 1 : -1
 			}
 
 			return participant1.displayName.localeCompare(participant2.displayName)

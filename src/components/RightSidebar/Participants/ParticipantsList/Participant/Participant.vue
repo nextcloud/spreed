@@ -33,10 +33,18 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<span class="participant-row__user-name">{{ computedName }}</span>
-		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
-		<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
+		<div class="participant-row__user-wrapper">
+			<div class="participant-row__user-descriptor">
+				<span class="participant-row__user-name">{{ computedName }}</span>
+				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
+				<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
+			</div>
+			<div v-if="isNotAvailable(participant)"
+				class="participant-row__status">
+				<span>{{ getStatusMessage(participant) }}</span>
+			</div>
+		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -66,6 +74,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
+import UserStatus from '../../../../../mixins/userStatus'
 import isEqual from 'lodash/isEqual'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 
@@ -77,6 +86,10 @@ export default {
 		ActionButton,
 		AvatarWrapper,
 	},
+
+	mixins: [
+		UserStatus,
+	],
 
 	props: {
 		participant: {
@@ -277,11 +290,13 @@ export default {
 	height: 44px;
 	cursor: pointer;
 	padding: 0 5px;
-	margin: 5px 0;
+	margin: 8px 0;
 	border-radius: 22px;
 
+	&__user-wrapper {
+		padding-left: 8px;
+	}
 	&__user-name {
-		margin-left: 6px;
 		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
@@ -292,6 +307,10 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
 		padding-left: 5px;
+	}
+	&__status {
+		color: var(--color-text-maxcontrast);
+		line-height: 1.3em;
 	}
 	&__icon {
 		width: 32px;
@@ -317,7 +336,7 @@ export default {
 
 .offline {
 
-	& > span {
+	.participant-row__user-descriptor > span {
 		color: var(--color-text-maxcontrast);
 	}
 }

@@ -6,6 +6,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * Method: `GET`
 * Endpoint: `/room/{token}/participants`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `includeStatus` | bool | Whether the user status information also needs to be loaded
 
 * Response:
     - Status code:
@@ -24,6 +29,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `participantType` | int | Permissions level of the participant
         `lastPing` | int | Timestamp of the last ping of the user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
+        `status` | string | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusIcon` | string | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusMessage` | string | Optional: Only available with `includeStatus=true` and for users with a set status
 
 ## Add a participant to a conversation
 
