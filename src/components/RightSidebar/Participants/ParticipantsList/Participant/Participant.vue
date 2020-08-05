@@ -336,7 +336,7 @@ export default {
 
 .offline {
 
-	& > span {
+	.participant-row__user-descriptor > span {
 		color: var(--color-text-maxcontrast);
 	}
 }
