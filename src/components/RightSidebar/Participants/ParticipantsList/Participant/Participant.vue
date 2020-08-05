@@ -33,11 +33,18 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<span class="participant-row__user-name">{{ computedName }}</span>
-		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
-		<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
-		<span v-if="isNotAvailable(participant)" class="participant-row__status">{{ getStatusMessage(participant) }}</span>
+		<div>
+			<div class="participant-row__user-descriptor">
+				<span class="participant-row__user-name">{{ computedName }}</span>
+				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
+				<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
+			</div>
+			<div v-if="isNotAvailable(participant)"
+				class="participant-row__status">
+				<span>{{ getStatusMessage(participant) }}</span>
+			</div>
+		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -300,8 +307,8 @@ export default {
 		padding-left: 5px;
 	}
 	&__status {
+		padding-left: 6px;
 		color: var(--color-text-maxcontrast);
-		/* TODO bring this to a new line */
 	}
 	&__icon {
 		width: 32px;
