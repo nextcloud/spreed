@@ -26,7 +26,7 @@ namespace OCA\Talk\Dashboard;
 use OCP\IL10N;
 use OCP\Util;
 
-class TalkPanel implements \OCP\Dashboard\IPanel {
+class TalkWidget implements \OCP\Dashboard\IWidget {
 
 	/** @var IL10N */
 	private $l10n;
