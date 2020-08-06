@@ -31,6 +31,7 @@ OC.L10N.register(
     "Share link" : "Del lenkje",
     "Password protection" : "Password protection",
     "Enter a password" : "Skriv inn eit passord",
+    "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Password" : "Passord",
     "Copied!" : "Kopiert!",
