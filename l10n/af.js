@@ -269,6 +269,7 @@ OC.L10N.register(
     "Edit" : "Wysig",
     "Share link" : "Deelskakel",
     "Enter a password" : "Gee ’n wagwoord",
+    "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Password" : "Wagwoord",
     "Android app" : "Android-toep",

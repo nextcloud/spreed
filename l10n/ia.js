@@ -32,6 +32,7 @@ OC.L10N.register(
     "guest" : "hospite",
     "Add users or groups" : "Add users or groups",
     "Settings" : "Configurationes",
+    "Preview" : "Previsualisar",
     "Edit" : "Modificar",
     "Share link" : "Compartir ligamine",
     "Password protection" : "Password protection",
