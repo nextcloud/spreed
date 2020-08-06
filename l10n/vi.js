@@ -158,6 +158,7 @@ OC.L10N.register(
     "Fullscreen (f)" : "Toàn màn hình (f)",
     "Grid view" : "Xem dạng Lưới",
     "Join a conversation or start a new one" : "Tham gia cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới",
+    "Default" : "Mặc định",
     "Access to microphone & camera is only possible with HTTPS" : "Chỉ có thể truy cập micrô và máy ảnh bằng HTTPS",
     "Please move your setup to HTTPS" : "Vui lòng di chuyển thiết lập của bạn sang HTTPS",
     "Access to microphone & camera was denied" : "Quyền truy cập vào micrô và máy ảnh đã bị từ chối",
