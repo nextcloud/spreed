@@ -79,7 +79,7 @@ export default {
 		isInCall,
 	],
 
-	data: function() {
+	data() {
 		return {
 			savedLastMessageMap: {},
 			defaultPageTitle: false,

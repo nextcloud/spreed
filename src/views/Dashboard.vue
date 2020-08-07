@@ -21,30 +21,32 @@
   -->
 
 <template>
-	<ul v-if="roomOptions.length > 0">
-		<li v-for="conversation in roomOptions" :key="conversation.token">
-			<a :href="callLink(conversation)" class="conversation">
-				<ConversationIcon
-					:item="conversation"
-					:hide-favorite="false"
-					:hide-call="false" />
-				<div class="conversation__details">
-					<h3>{{ conversation.displayName }}</h3>
-					<p class="message">{{ simpleLastChatMessage(conversation.lastMessage) }}</p>
-				</div>
-				<button v-if="conversation.hasCall" class="primary success icon-video-white" :title="t('spreed', 'Join call')" />
-			</a>
-		</li>
-	</ul>
-	<div v-else>
-		<EmptyContent icon="icon-talk">
-			{{ t('spreed', 'Join a conversation or start a new one') }}
-			<template #desc>
-				<p>{{ t('spreed', 'Say hi to your friends and colleagues!') }}</p>
-				<button>{{ t('spreed', 'Start a conversation') }}</button>
-			</template>
-		</EmptyContent>
-	</div>
+	<DashboardWidget id="talk-panel"
+		:items="roomOptions"
+		:show-more-url="''"
+		:loading="loading"
+		@hide="() => {}"
+		@markDone="() => {}">
+		<template v-slot:default="{ item }">
+			<DashboardWidgetItem :item="getWidgetItem(item)">
+				<template v-slot:avatar>
+					<ConversationIcon
+						:item="item"
+						:hide-favorite="true"
+						:hide-call="true" />
+				</template>
+			</DashboardWidgetItem>
+		</template>
+		<template v-slot:empty-content>
+			<EmptyContent icon="icon-talk">
+				{{ t('spreed', 'Join a conversation or start a new one') }}
+				<template #desc>
+					<p>{{ t('spreed', 'Say hi to your friends and colleagues!') }}</p>
+					<button>{{ t('spreed', 'Start a conversation') }}</button>
+				</template>
+			</EmptyContent>
+		</template>
+	</DashboardWidget>
 </template>
 
 <script>
@@ -59,11 +61,11 @@ const ROOM_POLLING_INTERVAL = 30
 const propertySort = (properties) => (a, b) => properties.map(obj => {
 	let dir = 1
 	if (obj[0] === '-') {
-		dir = -1;
-		obj = obj.substring(1);
+		dir = -1
+		obj = obj.substring(1)
 	}
 	return a[obj] > b[obj] ? dir : a[obj] < b[obj] ? -(dir) : 0
-}).reduce((p, n) => p ? p : n, 0)
+}).reduce((p, n) => p || n, 0)
 
 export default {
 	name: 'Dashboard',
@@ -71,6 +73,7 @@ export default {
 	data() {
 		return {
 			roomOptions: [],
+			loading: true,
 		}
 	},
 	computed: {
@@ -102,6 +105,16 @@ export default {
 				return subtitle
 			}
 		},
+		getWidgetItem() {
+			return (conversation) => {
+				return {
+					targetUrl: generateUrl(`/call/${conversation.token}`),
+					mainText: conversation.displayName,
+					subText: this.simpleLastChatMessage(conversation.lastMessage),
+					conversation,
+				}
+			}
+		},
 	},
 	beforeMount() {
 		this.fetchRooms()
@@ -111,9 +124,10 @@ export default {
 	methods: {
 		fetchRooms() {
 			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
-				const rooms = response.data.ocs.data.slice(0, 7)
+				const rooms = response.data.ocs.data
 				rooms.sort(propertySort(['-hasCall', '-unreadMention', '-lastActivity']))
-				this.roomOptions = rooms
+				this.roomOptions = rooms.slice(0, 7)
+				this.loading = false
 			})
 		},
 	},
@@ -121,57 +135,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	li .conversation {
-		display: flex;
-		align-items: flex-start;
-		padding: 8px;
-
-		&:hover,
-		&:focus {
-			background-color: var(--color-background-hover);
-			border-radius: var(--border-radius-large);
-		}
-
-		.conversation-icon {
-			position: relative;
-
-			// Do not show favorite or call icons
-			// Favorite not needed as only important calls are shown
-			// Call icon not needed as "Join call" button is there
-			::v-deep .overlap-icon {
-				display: none;
-				top: 3px;
-				left: 32px;
-			}
-		}
-
-		.conversation__details {
-			padding-left: 8px;
-			max-height: 44px;
-			flex-grow: 1;
-			overflow: hidden;
-
-			h3,
-			.message {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-
-			h3 {
-				font-size: 100%;
-				margin: 0;
-			}
-
-			.message {
-				width: 100%;
-				color: var(--color-text-maxcontrast);
-			}
-		}
-
-		button.primary {
-			padding: 21px;
-			margin: 0;
-		}
+	.empty-content {
+		text-align: center;
 	}
 </style>
