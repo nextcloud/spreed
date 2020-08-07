@@ -32,6 +32,7 @@ OC.L10N.register(
     "Share link" : "Link deelen",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Default" : "Standard",
     "The password is wrong. Try again." : "Den Passwuert ass incorrect. Probeier ed nach eng keier.",
     "Password" : "Passwuert",
     "Android app" : "Android-App",
