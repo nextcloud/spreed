@@ -34,6 +34,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
     "Grid view" : "มุมมองแบบตาราง Grid",
+    "Default" : "ค่าเริ่มต้น",
     "The password is wrong. Try again." : "รหัสผ่านที่ไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Password" : "รหัสผ่าน",
     "Android app" : "แอพฯ แอนดรอยด์",
