@@ -30,16 +30,17 @@ const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) =>
 	let tempId = 'temp-' + date.getTime()
 	const messageParameters = {}
 	if (file) {
-		tempId += '-' + uploadId + '-' + index
+		tempId += '-' + uploadId + '-' + Math.random()
 		messageParameters.file = {
 			'type': 'file',
 			'file': file,
 			'mimetype': file.type,
 			'id': tempId,
 			'name': file.name,
-			index,
+			// index, will be the id from now on
 			uploadId,
 			localUrl,
+			index,
 		}
 	}
 	const message = Object.assign({}, {

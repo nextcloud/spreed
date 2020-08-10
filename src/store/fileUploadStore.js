@@ -94,14 +94,12 @@ const getters = {
 }
 
 const mutations = {
-	/**
-	 * Adds a "file to be shared to the store"
-	 * @param {object} state the state object
-	 * @param {object} file the file to be added to the store
-	 * @param {number} uploadId The unique identifier of the upload operation
-	 * @param {string} token the conversation's token
-	 */
-	addFileToBeUploaded(state, { uploadId, token, file }) {
+
+	// Adds a "file to be shared to the store"
+	addFileToBeUploaded(state, { file, temporaryMessage }) {
+		const uploadId = temporaryMessage.messageParameters.file.uploadId
+		const token = temporaryMessage.messageParameters.file.token
+		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
 			Vue.set(state.uploads, uploadId, {
@@ -109,11 +107,12 @@ const mutations = {
 				files: {},
 			})
 		}
-		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, {
+		Vue.set(state.uploads[uploadId].files, index, {
 			file,
-			status: 'toBeUploaded',
+			status: 'initialised',
 			totalSize: file.size,
 			uploadedSize: 0,
+			temporaryMessage,
 		 })
 	},
 
@@ -126,11 +125,6 @@ const mutations = {
 	markFileAsSuccessUpload(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'successUpload'
 		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
-	},
-
-	// Marks a given file as initialised
-	markFileAsInitialised(state, { uploadId, index }) {
-		state.uploads[uploadId].files[index].status = 'initialised'
 	},
 
 	// Marks a given file as uploading
@@ -196,23 +190,18 @@ const actions = {
 		commit('setCurrentUploadId', uploadId)
 		// Show upload editor
 		commit('showUploadEditor', true)
-		files.forEach(file => {
-			commit('addFileToBeUploaded', { uploadId, token, file })
-		})
 
-		// Add temporary messages
-		for (const index in state.uploads[uploadId].files) {
-			// Mark file as initialised
-			commit('markFileAsInitialised', { uploadId, index })
-			// currentFile to be uploaded
-			const currentFile = state.uploads[uploadId].files[index].file
+		files.forEach(file => {
 			// Get localurl for previews
-			const localUrl = URL.createObjectURL(currentFile)
+			const localUrl = URL.createObjectURL(file)
+			// Create a unique index for each file
+			const date = new Date()
+			const index = 'temp_' + date.getTime() + Math.random()
 			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile, localUrl)
-			// Add the temporary messages to the store
-			commit('setTemporaryMessageForFile', { uploadId, index, temporaryMessage })
-		}
+			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, file, localUrl)
+			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
+			commit('addFileToBeUploaded', { file, temporaryMessage })
+		})
 	},
 
 	/**
