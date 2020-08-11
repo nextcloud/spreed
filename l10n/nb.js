@@ -141,6 +141,7 @@ OC.L10N.register(
     "Loading" : "Laster",
     "Groups" : "Grupper",
     "Circles" : "Sirkler",
+    "Invalid path selected" : "Ugyldig angitt sti",
     "Password protect" : "Passordbeskyttelse",
     "Back" : "Tilbake",
     "Close" : "Lukk",
