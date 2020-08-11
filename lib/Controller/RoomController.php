@@ -38,8 +38,10 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\BridgeManager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -75,6 +77,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $groupManager;
 	/** @var Manager */
 	protected $manager;
+	/** @var BridgeManager */
+	protected $bridgeManager;
 	/** @var RoomService */
 	protected $roomService;
 	/** @var GuestManager */
@@ -104,6 +108,7 @@ class RoomController extends AEnvironmentAwareController {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								Manager $manager,
+								BridgeManager $bridgeManager,
 								RoomService $roomService,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
@@ -121,6 +126,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
+		$this->bridgeManager = $bridgeManager;
 		$this->roomService = $roomService;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
@@ -1363,4 +1369,87 @@ class RoomController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
+
+	/**
+	 * Get bridge information on one room
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function getBridgeOfRoom(string $token): DataResponse {
+		// TODO check if user is room admin
+		$bridge = $this->bridgeManager->getBridgeOfRoom($token);
+
+		return new DataResponse($bridge);
+	}
+
+	/**
+	 * Edit bridge information on one room
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function editBridgeOfRoom(string $token, bool $enabled, array $parts = []): DataResponse {
+		// TODO check if user is room admin
+		try {
+			$success = $this->bridgeManager->editBridgeOfRoom($token, $enabled, $parts);
+		} catch (ImpossibleToKillException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+		}
+
+		return new DataResponse($success);
+	}
+
+	/**
+	 * Delete bridge of one room
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function deleteBridgeOfRoom(string $token): DataResponse {
+		// TODO check if user is room admin
+		try {
+			$success = $this->bridgeManager->deleteBridgeOfRoom($token);
+		} catch (ImpossibleToKillException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+		}
+
+		return new DataResponse($success);
+	}
+	/* this is an example
+		// TODEL
+		//$this->editBridgeOfRoom('gtk5zv44', false, []);
+		/*
+		$this->editBridgeOfRoom('gtk5zv44', true, [
+			[
+				'type' => 'nctalk',
+				'name' => 'mytalk',
+				'server' => 'https://***',
+				'login' => 'demo2',
+				'password' => 'demo2demo2',
+				'channel' => 'mof37hnj',
+			],
+			[
+				'type' => 'mattermost',
+				'name' => 'mymatmost',
+				'server' => '***.org:443',
+				'login' => '***',
+				'team' => '****',
+				'password' => '***',
+				'channel' => 'test',
+			],
+			[
+				'type' => 'matrix',
+				'name' => 'mymatrix',
+				'server' => 'https://matrix.org',
+				'login' => '***',
+				'password' => '***',
+				'channel' => '!****:matrix.org',
+			],
+		]);
+		$this->deleteBridgeOfRoom('gtk5zv44');
+	*/
 }
