@@ -32,6 +32,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 
+use OCA\Talk\Manager;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 
 class BridgeManager {
@@ -50,11 +51,13 @@ class BridgeManager {
 								IConfig $config,
 								IAppData $appData,
 								IURLGenerator $urlGenerator,
+								Manager $manager,
 								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->appData = $appData;
+		$this->manager = $manager;
 		$this->l = $l;
 	}
 
@@ -98,6 +101,17 @@ class BridgeManager {
 		// then actually delete the config
 		$bridgeJSON = $this->config->deleteAppValue('spreed', 'bridge_' . $token);
 		return true;
+	}
+
+	public function checkAllBridges() {
+		// TODO call this from time to time to make sure everything is running fine
+		$this->manager->forAllRooms(function($room) {
+			$token = $room->getToken();
+			if ($room->getType() === Room::GROUP_CALL or $room->getType() === Room::PUBLIC_CALL) {
+				$bridge = $this->getBridgeOfRoom($token);
+				$this->checkStateOfBridge($token, $newBridge);
+			}
+		});
 	}
 
 	private function getDataFolder(): ISimpleFolder {
