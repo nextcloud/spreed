@@ -1378,10 +1378,22 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getBridgeOfRoom(string $token): DataResponse {
-		// TODO check if user is room admin
-		$bridge = $this->bridgeManager->getBridgeOfRoom($token);
-
-		return new DataResponse($bridge);
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
+			try {
+				$participant = $room->getParticipant($this->userId);
+				if ($participant->hasModeratorPermissions()) {
+					$bridge = $this->bridgeManager->getBridgeOfRoom($token);
+					return new DataResponse($bridge);
+				} else {
+					return new DataResponse([], Http::STATUS_FORBIDDEN);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 	}
 
 	/**
@@ -1392,14 +1404,26 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function editBridgeOfRoom(string $token, bool $enabled, array $parts = []): DataResponse {
-		// TODO check if user is room admin
 		try {
-			$success = $this->bridgeManager->editBridgeOfRoom($token, $enabled, $parts);
-		} catch (ImpossibleToKillException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
+			try {
+				$participant = $room->getParticipant($this->userId);
+				if ($participant->hasModeratorPermissions()) {
+					try {
+						$success = $this->bridgeManager->editBridgeOfRoom($token, $enabled, $parts);
+					} catch (ImpossibleToKillException $e) {
+						return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+					}
+					return new DataResponse($success);
+				} else {
+					return new DataResponse([], Http::STATUS_FORBIDDEN);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-
-		return new DataResponse($success);
 	}
 
 	/**
@@ -1410,14 +1434,26 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function deleteBridgeOfRoom(string $token): DataResponse {
-		// TODO check if user is room admin
 		try {
-			$success = $this->bridgeManager->deleteBridgeOfRoom($token);
-		} catch (ImpossibleToKillException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
+			try {
+				$participant = $room->getParticipant($this->userId);
+				if ($participant->hasModeratorPermissions()) {
+					try {
+						$success = $this->bridgeManager->deleteBridgeOfRoom($token);
+					} catch (ImpossibleToKillException $e) {
+						return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+					}
+					return new DataResponse($success);
+				} else {
+					return new DataResponse([], Http::STATUS_FORBIDDEN);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-
-		return new DataResponse($success);
 	}
 	/* this is an example
 		// TODEL
