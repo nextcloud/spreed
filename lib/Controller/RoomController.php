@@ -1455,37 +1455,4 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 	}
-	/* this is an example
-		// TODEL
-		//$this->editBridgeOfRoom('gtk5zv44', false, []);
-		/*
-		$this->editBridgeOfRoom('gtk5zv44', true, [
-			[
-				'type' => 'nctalk',
-				'name' => 'mytalk',
-				'server' => 'https://***',
-				'login' => 'demo2',
-				'password' => 'demo2demo2',
-				'channel' => 'mof37hnj',
-			],
-			[
-				'type' => 'mattermost',
-				'name' => 'mymatmost',
-				'server' => '***.org:443',
-				'login' => '***',
-				'team' => '****',
-				'password' => '***',
-				'channel' => 'test',
-			],
-			[
-				'type' => 'matrix',
-				'name' => 'mymatrix',
-				'server' => 'https://matrix.org',
-				'login' => '***',
-				'password' => '***',
-				'channel' => '!****:matrix.org',
-			],
-		]);
-		$this->deleteBridgeOfRoom('gtk5zv44');
-	*/
 }

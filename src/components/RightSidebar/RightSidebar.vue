@@ -67,6 +67,8 @@
 					</button>
 				</div>
 			</div>
+			<BridgeSettings
+				v-if="canModerate" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -80,6 +82,7 @@ import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 import { setConversationName } from '../../services/conversationsService'
+import BridgeSettings from '../BridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import { EventBus } from '../../services/EventBus'
@@ -93,6 +96,7 @@ export default {
 		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
+		BridgeSettings,
 	},
 
 	mixins: [

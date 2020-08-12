@@ -59,7 +59,7 @@ class BridgeManager {
 	}
 
 	public function getBridgeOfRoom(string $token): array {
-		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, '{}');
+		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, '{"enabled":false,"pid":0,"parts":[]}');
 		$bridge = json_decode($bridgeJSON, true);
 		return $bridge;
 	}
@@ -117,9 +117,9 @@ class BridgeManager {
 
 	private function generateConfig($token, array $bridge): string {
 		$content = '';
-		foreach ($bridge['parts'] as $part) {
+		foreach ($bridge['parts'] as $k => $part) {
 			if ($part['type'] === 'nctalk') {
-				$content .= sprintf('[%s.%s]', $part['type'], $part['name']) . "\n";
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
 				if (isset($part['server'])) {
 					$serverUrl = $part['server'];
 				} else {
@@ -132,7 +132,7 @@ class BridgeManager {
 				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($part['type'] === 'mattermost') {
 				$content .= sprintf('[%s]', $part['type']) . "\n";
-				$content .= sprintf('	[%s.%s]', $part['type'], $part['name']) . "\n";
+				$content .= sprintf('	[%s.%s]', $part['type'], $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Team = "%s"', $part['team']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
@@ -140,7 +140,7 @@ class BridgeManager {
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($part['type'] === 'matrix') {
-				$content .= sprintf('[%s.%s]', $part['type'], $part['name']) . "\n";
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
@@ -154,9 +154,9 @@ class BridgeManager {
 		$content .= '	name = "myGateway"' . "\n";
 		$content .= '	enable = true' . "\n\n";
 
-		foreach ($bridge['parts'] as $part) {
+		foreach ($bridge['parts'] as $k => $part) {
 			$content .= '[[gateway.inout]]' . "\n";
-			$content .= sprintf('	account = "%s.%s"', $part['type'], $part['name']) . "\n";
+			$content .= sprintf('	account = "%s.%s"', $part['type'], $k) . "\n";
 			if (in_array($part['type'], ['mattermost', 'matrix', 'nctalk'])) {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
 			}
