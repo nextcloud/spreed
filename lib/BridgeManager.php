@@ -62,7 +62,11 @@ class BridgeManager {
 	}
 
 	public function getBridgeOfRoom(string $token): array {
-		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, '{"enabled":false,"pid":0,"parts":[]}');
+		$defaultParts = sprintf(
+			'{"enabled":false,"pid":0,"parts":[{"type":"nctalk","server":"","login":"","password":"","channel":"%s"}]}',
+			$token
+		);
+		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, $defaultParts);
 		$bridge = json_decode($bridgeJSON, true);
 		return $bridge;
 	}
@@ -109,7 +113,13 @@ class BridgeManager {
 			$token = $room->getToken();
 			if ($room->getType() === Room::GROUP_CALL or $room->getType() === Room::PUBLIC_CALL) {
 				$bridge = $this->getBridgeOfRoom($token);
-				$this->checkStateOfBridge($token, $newBridge);
+				$pid = $this->checkStateOfBridge($token, $bridge);
+				if ($pid !== $bridge['pid']) {
+					// save the new PID if necessary
+					$bridge['pid'] = $pid;
+					$bridgeJSON = json_encode($bridge);
+					$this->config->setAppValue('spreed', 'bridge_' . $token, $bridgeJSON);
+				}
 			}
 		});
 	}
@@ -134,10 +144,12 @@ class BridgeManager {
 		foreach ($bridge['parts'] as $k => $part) {
 			if ($part['type'] === 'nctalk') {
 				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
-				if (isset($part['server'])) {
+				if (isset($part['server']) and $part['server'] !== '') {
 					$serverUrl = $part['server'];
 				} else {
 					$serverUrl = preg_replace('/\/+$/', '', $this->urlGenerator->getAbsoluteURL(''));
+					// TODO remove that
+					//$serverUrl = preg_replace('/https:/', 'http:', $serverUrl);
 				}
 				$content .= sprintf('	Server = "%s"', $serverUrl) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
@@ -145,6 +157,10 @@ class BridgeManager {
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($part['type'] === 'mattermost') {
+				// remove protocol from server URL
+				if (preg_match('/^https?:/', $part['server'])) {
+					$part['server'] = $this->cleanUrl($part['server']);
+				}
 				$content .= sprintf('[%s]', $part['type']) . "\n";
 				$content .= sprintf('	[%s.%s]', $part['type'], $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
@@ -177,6 +193,18 @@ class BridgeManager {
 		}
 
 		return $content;
+	}
+
+	private function cleanUrl($url): string {
+		$uo = parse_url($url);
+		$result = $uo['host'];
+		if ($uo['scheme'] === 'https' and !isset($uo['port'])) {
+			$result .= ':443';
+		} elseif (isset($uo['port'])) {
+			$result .= ':' . $uo['port'];
+		}
+		$result .= $uo['path'];
+		return $result;
 	}
 
 	/**

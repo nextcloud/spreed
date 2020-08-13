@@ -76,7 +76,7 @@ export default {
 			serverPH: t('spreed', 'Matrix server URL'),
 			loginPH: t('spreed', 'User name'),
 			passwordPH: t('spreed', 'User password'),
-			channelPH: t('spreed', 'Talk channel'),
+			channelPH: t('spreed', 'Matrix channel'),
 			readonly: true,
 		}
 	},

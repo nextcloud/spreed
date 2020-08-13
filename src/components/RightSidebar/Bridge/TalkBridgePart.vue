@@ -22,15 +22,18 @@
 <template>
 	<div>
 		<h2>
-			{{ t('spreed', '{n}: Nextcloud Talk', { n: num }) }}
+			{{ title }}
 		</h2>
-		<button @click="$emit('deletePart')">
-			{{ t('spreed', 'Delete') }}
-		</button>
-		<a class="icon icon-link" />
-		<input v-model="part.server"
-			type="url"
-			:placeholder="serverPH">
+		<div v-if="!isFixed">
+			<button @click="$emit('deletePart')">
+				{{ t('spreed', 'Delete') }}
+			</button>
+			<a class="icon icon-link" />
+			<input
+				v-model="part.server"
+				type="url"
+				:placeholder="serverPH">
+		</div>
 		<a class="icon icon-user" />
 		<input v-model="part.login"
 			type="text"
@@ -43,10 +46,12 @@
 			:placeholder="passwordPH"
 			:readonly="readonly"
 			@focus="readonly = false">
-		<a class="icon icon-group" />
-		<input v-model="part.channel"
-			type="text"
-			:placeholder="channelPH">
+		<div v-if="!isFixed">
+			<a class="icon icon-group" />
+			<input v-model="part.channel"
+				type="text"
+				:placeholder="channelPH">
+		</div>
 	</div>
 </template>
 
@@ -82,6 +87,14 @@ export default {
 	},
 
 	computed: {
+		isFixed() {
+			return this.num === 0
+		},
+		title() {
+			return this.isFixed
+				? t('spreed', 'This room')
+				: t('spreed', '{n}: Nextcloud Talk', { n: this.num })
+		},
 	},
 
 	beforeMount() {

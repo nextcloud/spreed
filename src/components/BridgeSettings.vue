@@ -44,7 +44,10 @@
 				:internal-search="true"
 				@input="clickAddPart" />
 			<ul>
-				<li v-for="(part, i) in parts" :key="i">
+				<TalkBridgePart v-if="myPart"
+					:num="0"
+					:part="myPart" />
+				<li v-for="(part, i) in editableParts" :key="i">
 					<TalkBridgePart v-if="part.type === 'nctalk'"
 						:num="i+1"
 						:part="part"
@@ -128,6 +131,16 @@ export default {
 			const token = this.$store.getters.getToken()
 			this.getBridge(token)
 			return token
+		},
+		editableParts() {
+			return this.parts.filter((p) => {
+				return p.type !== 'nctalk' || p.channel !== this.token
+			})
+		},
+		myPart() {
+			return this.parts.find((p) => {
+				return p.type === 'nctalk' && p.channel === this.token
+			})
 		},
 	},
 
