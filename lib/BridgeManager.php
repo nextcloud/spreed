@@ -274,6 +274,34 @@ class BridgeManager {
 		return $pid;
 	}
 
+	/**
+	 * kill the mattermost processes that do not match with any room
+	 */
+	public function killZombieBridges() {
+		// get list of running matterbridge processes
+		$cmd = 'ps -ux | grep "commands/matterbridge" | grep -v grep | awk \'{print $2}\'';
+		exec($cmd, $output, $ret);
+		$runningPidList = [];
+		foreach ($output as $o) {
+			array_push($runningPidList, intval($o));
+		}
+		// get list of what should be running
+		$expectedPidList = [];
+		$this->manager->forAllRooms(function($room) use (&$expectedPidList) {
+			$token = $room->getToken();
+			$bridge = $this->getBridgeOfRoom($token);
+			if ($bridge['enabled'] and $bridge['pid'] !== 0) {
+				array_push($expectedPidList, intval($bridge['pid']));
+			}
+		});
+		// kill what should not be running
+		foreach ($runningPidList as $runningPid) {
+			if (!in_array($runningPid, $expectedPidList)) {
+				$this->killPid($runningPid);
+			}
+		}
+	}
+
 	private function killPid($pid): bool {
 		// kill
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
