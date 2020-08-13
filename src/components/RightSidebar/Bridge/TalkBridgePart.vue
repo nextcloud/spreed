@@ -23,11 +23,11 @@
 	<div>
 		<h2>
 			{{ title }}
-		</h2>
-		<div v-if="!isFixed">
-			<button @click="$emit('deletePart')">
+			<button v-if="!isFixed" @click="$emit('deletePart')">
 				{{ t('spreed', 'Delete') }}
 			</button>
+		</h2>
+		<div v-if="!isFixed">
 			<a class="icon icon-link" />
 			<input
 				v-model="part.server"
@@ -110,7 +110,7 @@ export default {
 
 <style scoped>
 button {
-	display: block;
+	display: inline-block;
 }
 
 h2 {

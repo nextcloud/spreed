@@ -23,10 +23,10 @@
 	<div>
 		<h2>
 			{{ t('spreed', '{n}: Matrix', { n: num }) }}
+			<button @click="$emit('deletePart')">
+				{{ t('spreed', 'Delete') }}
+			</button>
 		</h2>
-		<button @click="$emit('deletePart')">
-			{{ t('spreed', 'Delete') }}
-		</button>
 		<a class="icon icon-link" />
 		<input v-model="part.server"
 			type="url"
@@ -97,7 +97,7 @@ export default {
 
 <style scoped>
 button {
-	display: block;
+	display: inline-block;
 }
 
 h2 {

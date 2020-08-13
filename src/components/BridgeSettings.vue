@@ -44,10 +44,14 @@
 				:internal-search="true"
 				@input="clickAddPart" />
 			<ul>
-				<TalkBridgePart v-if="myPart"
-					:num="0"
-					:part="myPart" />
+				<li>
+					<hr>
+					<TalkBridgePart v-if="myPart"
+						:num="0"
+						:part="myPart" />
+				</li>
 				<li v-for="(part, i) in editableParts" :key="i">
+					<hr>
 					<TalkBridgePart v-if="part.type === 'nctalk'"
 						:num="i+1"
 						:part="part"
