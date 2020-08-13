@@ -642,7 +642,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du wartest aktuell in der Lobby. Dieses Meeting ist für {startTime} geplant",
     "Calls are not supported in your browser" : "Anrufe werden von Ihrem Browser nicht unterstützt",
     "Access to microphone is only possible with HTTPS" : "Mikrofonzugriff ist nur über HTTPS möglich",
-    "Access to microphone was denied" : "Mikrofonzugriff verweigert",
+    "Access to microphone was denied" : "Zugriff auf Mikrofon wurde verweigert",
     "Error while accessing microphone" : "Fehler beim Zugriff auf das Mikrofon",
     "Access to camera is only possible with HTTPS" : "Kamerazugriff ist nur über HTTPS möglich",
     "Access to camera was denied" : "Der Zugriff auf die Kamera wurde verweigert",
