@@ -87,7 +87,7 @@ class BridgeManager {
 		$this->editBridgeConfig($token, $newBridge);
 
 		// check state and manage the binary
-		$pid = $this->checkStateOfBridge($token, $newBridge);
+		$pid = $this->checkBridgeProcess($token, $newBridge);
 		$newBridge['pid'] = $pid;
 
 		// save config
@@ -101,7 +101,7 @@ class BridgeManager {
 		// first potentially kill the process
 		$currentBridge = $this->getBridgeOfRoom($token);
 		$currentBridge['enabled'] = false;
-		$this->checkStateOfBridge($token, $currentBridge);
+		$this->checkBridgeProcess($token, $currentBridge);
 		// then actually delete the config
 		$bridgeJSON = $this->config->deleteAppValue('spreed', 'bridge_' . $token);
 		return true;
@@ -112,16 +112,20 @@ class BridgeManager {
 		$this->manager->forAllRooms(function($room) {
 			$token = $room->getToken();
 			if ($room->getType() === Room::GROUP_CALL or $room->getType() === Room::PUBLIC_CALL) {
-				$bridge = $this->getBridgeOfRoom($token);
-				$pid = $this->checkStateOfBridge($token, $bridge);
-				if ($pid !== $bridge['pid']) {
-					// save the new PID if necessary
-					$bridge['pid'] = $pid;
-					$bridgeJSON = json_encode($bridge);
-					$this->config->setAppValue('spreed', 'bridge_' . $token, $bridgeJSON);
-				}
+				$this->checkBridge($token);
 			}
 		});
+	}
+
+	public function checkBridge(string $token) {
+		$bridge = $this->getBridgeOfRoom($token);
+		$pid = $this->checkBridgeProcess($token, $bridge);
+		if ($pid !== $bridge['pid']) {
+			// save the new PID if necessary
+			$bridge['pid'] = $pid;
+			$bridgeJSON = json_encode($bridge);
+			$this->config->setAppValue('spreed', 'bridge_' . $token, $bridgeJSON);
+		}
 	}
 
 	private function getDataFolder(): ISimpleFolder {
@@ -211,7 +215,7 @@ class BridgeManager {
 	 * check if a bridge process is running
 	 * @return PID the corresponding matterbridge process ID, 0 if none
 	 */
-	private function checkStateOfBridge($token, $bridge): int {
+	private function checkBridgeProcess($token, $bridge): int {
 		$pid = 0;
 
 		if (isset($bridge['pid']) and intval($bridge['pid']) !== 0) {

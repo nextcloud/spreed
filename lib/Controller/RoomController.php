@@ -1383,6 +1383,7 @@ class RoomController extends AEnvironmentAwareController {
 			try {
 				$participant = $room->getParticipant($this->userId);
 				if ($participant->hasModeratorPermissions()) {
+					$this->bridgeManager->checkBridge($token);
 					$bridge = $this->bridgeManager->getBridgeOfRoom($token);
 					return new DataResponse($bridge);
 				} else {
