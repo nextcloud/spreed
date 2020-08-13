@@ -231,7 +231,6 @@ class BridgeManager {
 					error_log('process running AND config DISABLED : KILL |||||');
 					error_log('KILL '.$pid.'||||');
 					$killed = $this->killPid($pid);
-						throw new ImpossibleToKillException('Impossible to kill bridge process [' . $pid . ']');
 					if ($killed) {
 						$pid = 0;
 					} else {
@@ -307,7 +306,7 @@ class BridgeManager {
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
 		// check the process is gone
 		$isStillRunning = $this->isRunning($pid);
-		return ($ret === 0 and !$isStillRunning);
+		return (intval($ret) === 0 and !$isStillRunning);
 	}
 
 	private function isRunning($pid): bool {
