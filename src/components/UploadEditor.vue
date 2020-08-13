@@ -42,7 +42,9 @@
 					@remove-file="handleRemoveFileFromSelection" />
 			</template>
 			<div :key="'addMore'" class="add-more">
-				<button class="add-more__button primary" @click="clickImportInput">
+				<button :aria-label="addMoreAriaLabel"
+					class="add-more__button primary"
+					@click="clickImportInput">
 					<Plus :size="48" class="upload-editor__plus-icon" />
 				</button>
 			</div>
@@ -102,6 +104,10 @@ export default {
 
 		showModal() {
 			return this.showUploadEditor && !this.modalDismissed
+		},
+
+		addMoreAriaLabel() {
+			return t('spreed', 'Add more files')
 		},
 	},
 

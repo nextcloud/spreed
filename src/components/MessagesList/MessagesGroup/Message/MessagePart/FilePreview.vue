@@ -23,11 +23,14 @@
 
 <template>
 	<file-preview v-bind="filePreview"
+		:tabindex="wrapperTabIndex"
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
-		@click="showPreview">
+		@click="handleClick"
+		@keydown.enter="handleClick">
 		<img v-if="(!isLoading && !failed) || hasTemporaryImageUrl"
 			:class="previewSizeClass"
+			class="file-preview__image"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
@@ -38,6 +41,8 @@
 			class="preview loading" />
 		<strong>{{ name }}</strong>
 		<button v-if="isUploadEditor"
+			tabindex="1"
+			:aria-label="removeAriaLabel"
 			class="remove-file primary">
 			<Close class="remove-file__icon" @click="$emit('remove-file', id)" />
 		</button>
@@ -198,6 +203,14 @@ export default {
 		hasTemporaryImageUrl() {
 			return this.mimetype.startsWith('image/') && this.localUrl
 		},
+
+		wrapperTabIndex() {
+			return this.isUploadEditor ? '0' : ''
+		},
+
+		removeAriaLabel() {
+			return t('spreed', 'Remove' + this.name)
+		},
 	},
 	mounted() {
 		const img = new Image()
@@ -211,7 +224,12 @@ export default {
 		img.src = this.previewUrl
 	},
 	methods: {
-		showPreview(event) {
+		handleClick(event) {
+			if (this.isUploadEditor) {
+				this.$emit('remove-file', this.id)
+				return
+			}
+
 			if (!this.isViewerAvailable) {
 				// Regular event handling by opening the link.
 				return
@@ -266,6 +284,10 @@ export default {
 		.remove-file {
 			visibility: visible;
 		}
+	}
+
+	&__image {
+		object-fit: cover;
 	}
 
 	.preview {
