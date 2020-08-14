@@ -23,26 +23,28 @@
 	<div>
 		<div v-if="loading" class="loading" />
 		<div v-show="!loading">
-			<ActionCheckbox
-				:token="token"
-				:checked="enabled"
-				@update:checked="onEnabled">
-				{{ t('spreed', 'Enabled') }}
-			</ActionCheckbox>
-			<ActionButton
-				icon="icon-checkmark"
-				@click="onSave">
-				{{ t('spreed', 'Save') }}
-			</ActionButton>
-			<Multiselect
-				ref="partMultiselect"
-				v-model="selectedType"
-				label="displayName"
-				track-by="type"
-				:placeholder="newPartPlaceholder"
-				:options="formatedTypes"
-				:internal-search="true"
-				@input="clickAddPart" />
+			<div class="basic-settings">
+				<ActionCheckbox
+					:token="token"
+					:checked="enabled"
+					@update:checked="onEnabled">
+					{{ t('spreed', 'Enabled') }}
+				</ActionCheckbox>
+				<Multiselect
+					ref="partMultiselect"
+					v-model="selectedType"
+					label="displayName"
+					track-by="type"
+					:placeholder="newPartPlaceholder"
+					:options="formatedTypes"
+					:internal-search="true"
+					@input="clickAddPart" />
+				<ActionButton
+					icon="icon-checkmark"
+					@click="onSave">
+					{{ t('spreed', 'Save') }}
+				</ActionButton>
+			</div>
 			<ul>
 				<li>
 					<hr>
@@ -119,7 +121,7 @@ export default {
 					type: 'mattermost',
 				},
 			],
-			newPartPlaceholder: t('spreed', 'Add new bridge part'),
+			newPartPlaceholder: t('spreed', 'Add new bridge'),
 			selectedType: null,
 		}
 	},
@@ -212,5 +214,10 @@ export default {
 <style scoped>
 .loading {
 	margin-top: 30px;
+}
+
+.basic-settings {
+	display: flex;
+	list-style: none;
 }
 </style>
