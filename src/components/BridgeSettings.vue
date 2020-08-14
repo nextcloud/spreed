@@ -219,5 +219,6 @@ export default {
 .basic-settings {
 	display: flex;
 	list-style: none;
+	align-items: center;
 }
 </style>
