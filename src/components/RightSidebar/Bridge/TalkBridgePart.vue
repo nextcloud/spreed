@@ -29,27 +29,51 @@
 		</h2>
 		<div v-if="!isFixed">
 			<a class="icon icon-link" />
+			<label
+				:for="'server-' + num"
+				class="hidden-visually">
+				{{ serverPH }}
+			</label>
 			<input
 				v-model="part.server"
 				type="url"
+				:id="'server-' + num"
 				:placeholder="serverPH">
 		</div>
 		<a class="icon icon-user" />
+		<label
+			:for="'login-' + num"
+			class="hidden-visually">
+			{{ loginPH }}
+		</label>
 		<input v-model="part.login"
 			type="text"
+			:id="'login-' + num"
 			:placeholder="loginPH"
 			:readonly="readonly"
 			@focus="readonly = false">
 		<a class="icon icon-category-auth" />
+		<label
+			:for="'password-' + num"
+			class="hidden-visually">
+			{{ passwordPH }}
+		</label>
 		<input v-model="part.password"
 			type="password"
+			:id="'password-' + num"
 			:placeholder="passwordPH"
 			:readonly="readonly"
 			@focus="readonly = false">
 		<div v-if="!isFixed">
 			<a class="icon icon-group" />
+			<label
+				:for="'channel-' + num"
+				class="hidden-visually">
+				{{ channelPH }}
+			</label>
 			<input v-model="part.channel"
 				type="text"
+				:id="'channel-' + num"
 				:placeholder="channelPH">
 		</div>
 	</div>
