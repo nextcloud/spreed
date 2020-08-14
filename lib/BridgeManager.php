@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -32,7 +31,6 @@ use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 
-use OCA\Talk\Manager;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 
 class BridgeManager {
@@ -109,7 +107,7 @@ class BridgeManager {
 
 	public function checkAllBridges() {
 		// TODO call this from time to time to make sure everything is running fine
-		$this->manager->forAllRooms(function($room) {
+		$this->manager->forAllRooms(function ($room) {
 			$token = $room->getToken();
 			if ($room->getType() === Room::GROUP_CALL or $room->getType() === Room::PUBLIC_CALL) {
 				$this->checkBridge($token);
@@ -286,7 +284,7 @@ class BridgeManager {
 		}
 		// get list of what should be running
 		$expectedPidList = [];
-		$this->manager->forAllRooms(function($room) use (&$expectedPidList) {
+		$this->manager->forAllRooms(function ($room) use (&$expectedPidList) {
 			$token = $room->getToken();
 			$bridge = $this->getBridgeOfRoom($token);
 			if ($bridge['enabled'] and $bridge['pid'] !== 0) {
@@ -315,7 +313,7 @@ class BridgeManager {
 			if (count(preg_split('/\n/', $result)) > 2) {
 				return true;
 			}
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 		}
 		return false;
 	}
