@@ -689,7 +689,7 @@ OC.L10N.register(
     "Projects" : "Proxectos",
     "Settings" : "Axustes",
     "Preview" : "Vista previa",
-    "Display name: " : "Nome a amosar:",
+    "Display name: " : "Nome para amosar:",
     "Edit" : "Editar",
     "Start call" : "Iniciar a chamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk foi actualizado, ten que volver cargar a páxina antes de poder comezar ou unirse a unha chamada.",
