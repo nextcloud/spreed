@@ -179,6 +179,53 @@ class BridgeManager {
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	NoHomeServerSuffix = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'rocketchat') {
+				// include # in channel
+				if (!preg_match('/^#/', $part['channel'])) {
+					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
+				}
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
+				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
+				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'slack') {
+				// do not include # in channel
+				if (preg_match('/^#/', $part['channel'])) {
+					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
+				}
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'irc') {
+				// include # in channel
+				if (!preg_match('/^#/', $part['channel'])) {
+					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
+				}
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
+				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
+				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'msteams') {
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	TenantID = "%s"', $part['tenantid']) . "\n";
+				$content .= sprintf('	ClientID = "%s"', $part['clientid']) . "\n";
+				$content .= sprintf('	TeamID = "%s"', $part['teamid']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'xmpp') {
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
+				$content .= sprintf('	Jid = "%s"', $part['jid']) . "\n";
+				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				$content .= sprintf('	Muc = "%s"', $part['muc']) . "\n";
+				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			}
 		}
 
@@ -189,8 +236,10 @@ class BridgeManager {
 		foreach ($bridge['parts'] as $k => $part) {
 			$content .= '[[gateway.inout]]' . "\n";
 			$content .= sprintf('	account = "%s.%s"', $part['type'], $k) . "\n";
-			if (in_array($part['type'], ['mattermost', 'matrix', 'nctalk'])) {
+			if (in_array($part['type'], ['xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
+			} elseif ($part['type'] === 'msteams') {
+				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";
 			}
 		}
 

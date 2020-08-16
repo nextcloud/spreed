@@ -66,6 +66,26 @@
 						:num="i+1"
 						:part="part"
 						@deletePart="onDelete(i)" />
+					<RocketchatBridgePart v-if="part.type === 'rocketchat'"
+						:num="i+1"
+						:part="part"
+						@deletePart="onDelete(i)" />
+					<SlackBridgePart v-if="part.type === 'slack'"
+						:num="i+1"
+						:part="part"
+						@deletePart="onDelete(i)" />
+					<IrcBridgePart v-if="part.type === 'irc'"
+						:num="i+1"
+						:part="part"
+						@deletePart="onDelete(i)" />
+					<MsteamsBridgePart v-if="part.type === 'msteams'"
+						:num="i+1"
+						:part="part"
+						@deletePart="onDelete(i)" />
+					<XmppBridgePart v-if="part.type === 'xmpp'"
+						:num="i+1"
+						:part="part"
+						@deletePart="onDelete(i)" />
 				</li>
 			</ul>
 		</div>
@@ -84,6 +104,11 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import TalkBridgePart from './RightSidebar/Bridge/TalkBridgePart'
 import MatrixBridgePart from './RightSidebar/Bridge/MatrixBridgePart'
 import MattermostBridgePart from './RightSidebar/Bridge/MattermostBridgePart'
+import RocketchatBridgePart from './RightSidebar/Bridge/RocketchatBridgePart'
+import SlackBridgePart from './RightSidebar/Bridge/SlackBridgePart'
+import IrcBridgePart from './RightSidebar/Bridge/IrcBridgePart'
+import MsteamsBridgePart from './RightSidebar/Bridge/MsteamsBridgePart'
+import XmppBridgePart from './RightSidebar/Bridge/XmppBridgePart'
 
 export default {
 	name: 'BridgeSettings',
@@ -94,6 +119,11 @@ export default {
 		TalkBridgePart,
 		MatrixBridgePart,
 		MattermostBridgePart,
+		RocketchatBridgePart,
+		SlackBridgePart,
+		IrcBridgePart,
+		MsteamsBridgePart,
+		XmppBridgePart,
 	},
 
 	mixins: [
@@ -119,6 +149,26 @@ export default {
 				{
 					displayName: t('spreed', 'Mattermost'),
 					type: 'mattermost',
+				},
+				{
+					displayName: t('spreed', 'Rocket.Chat'),
+					type: 'rocketchat',
+				},
+				{
+					displayName: t('spreed', 'Slack'),
+					type: 'slack',
+				},
+				{
+					displayName: t('spreed', 'IRC'),
+					type: 'irc',
+				},
+				{
+					displayName: t('spreed', 'Microsoft Teams'),
+					type: 'msteams',
+				},
+				{
+					displayName: t('spreed', 'Xmpp/Jabber'),
+					type: 'xmpp',
 				},
 			],
 			newPartPlaceholder: t('spreed', 'Add new bridge'),
