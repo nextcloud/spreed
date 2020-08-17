@@ -23,7 +23,8 @@
 	<div>
 		<h2>
 			{{ num }}: {{ type.name }}
-			<button @click="$emit('deletePart')">
+			<button v-if="deletable"
+				@click="$emit('deletePart')">
 				{{ t('spreed', 'Delete') }}
 			</button>
 		</h2>
@@ -66,6 +67,10 @@ export default {
 		type: {
 			type: Object,
 			required: true,
+		},
+		deletable: {
+			type: Boolean,
+			default: true,
 		},
 	},
 

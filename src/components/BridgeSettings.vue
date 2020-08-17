@@ -50,6 +50,7 @@
 					<hr>
 					<BridgePart v-if="myPart"
 						:num="0"
+						:deletable="false"
 						:part="myPart"
 						:type="thisRoomType" />
 				</li>
@@ -305,7 +306,7 @@ export default {
 				},
 			},
 			thisRoomType: {
-				name: t('spreed', 'This room'),
+				name: t('spreed', 'User who connects to this room to relay bridge messages'),
 				fields: {
 					login: {
 						type: 'text',
