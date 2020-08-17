@@ -55,6 +55,7 @@ use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
 use OCA\Talk\Room;
 use OCA\Talk\Search\ConversationSearch;
+use OCA\Talk\Search\MessageSearch;
 use OCA\Talk\Search\UnifiedSearchCSSLoader;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
@@ -96,6 +97,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
+		$context->registerSearchProvider(MessageSearch::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
 	}
