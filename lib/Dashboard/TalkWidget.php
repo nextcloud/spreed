@@ -84,6 +84,7 @@ class TalkWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function load(): void {
+		Util::addStyle('spreed', 'icons');
 		Util::addScript('spreed', 'dashboard');
 	}
 }
