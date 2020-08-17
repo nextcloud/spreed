@@ -1,7 +1,9 @@
 <!--
   - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+  - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Joas Schilling <coding@schilljs.com>
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,14 +22,15 @@
 -->
 
 <template>
-	<a :href="link"
-		class="container"
-		:class="{ 'is-viewer-available': isViewerAvailable }"
-		target="_blank"
-		rel="noopener noreferrer"
-		@click="showPreview">
-		<img v-if="!isLoading && !failed"
+	<file-preview v-bind="filePreview"
+		:tabindex="wrapperTabIndex"
+		class="file-preview"
+		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
+		@click="handleClick"
+		@keydown.enter="handleClick">
+		<img v-if="(!isLoading && !failed) || hasTemporaryImageUrl"
 			:class="previewSizeClass"
+			class="file-preview__image"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
@@ -37,19 +40,27 @@
 		<span v-if="isLoading"
 			class="preview loading" />
 		<strong>{{ name }}</strong>
-		<ProgressBar v-if="isTemporaryUpload" :value="uploadProgress" />
-	</a>
+		<button v-if="isUploadEditor"
+			tabindex="1"
+			:aria-label="removeAriaLabel"
+			class="remove-file primary">
+			<Close class="remove-file__icon" @click="$emit('remove-file', id)" />
+		</button>
+		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
+	</file-preview>
 </template>
 
 <script>
 import { generateUrl, imagePath } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
+import Close from 'vue-material-design-icons/Close'
 
 export default {
 	name: 'FilePreview',
 
 	components: {
 		ProgressBar,
+		Close,
 	},
 
 	props: {
@@ -97,6 +108,16 @@ export default {
 			type: String,
 			default: '',
 		},
+		// True if this component is used in the upload editor
+		isUploadEditor: {
+			type: Boolean,
+			default: false,
+		},
+		// The link to the file for displaying it in the preview
+		localUrl: {
+			type: String,
+			default: '',
+		},
 	},
 	data() {
 		return {
@@ -105,6 +126,23 @@ export default {
 		}
 	},
 	computed: {
+		// This is used to decide which outer element type to use
+		// a or div
+		filePreview() {
+			if (this.isUploadEditor || this.isTemporaryUpload) {
+				return {
+					is: 'div',
+					tag: 'div',
+				}
+			}
+			return {
+				is: 'a',
+				tag: 'a',
+				href: this.link,
+				target: '_blank',
+				rel: 'noopener noreferrer',
+			}
+		},
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
@@ -115,6 +153,10 @@ export default {
 			return 'preview'
 		},
 		previewUrl() {
+			if (this.hasTemporaryImageUrl) {
+				return this.localUrl
+			}
+
 			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
@@ -158,6 +200,17 @@ export default {
 			}
 			return 0
 		},
+		hasTemporaryImageUrl() {
+			return this.mimetype.startsWith('image/') && this.localUrl
+		},
+
+		wrapperTabIndex() {
+			return this.isUploadEditor ? '0' : ''
+		},
+
+		removeAriaLabel() {
+			return t('spreed', 'Remove' + this.name)
+		},
 	},
 	mounted() {
 		const img = new Image()
@@ -171,7 +224,12 @@ export default {
 		img.src = this.previewUrl
 	},
 	methods: {
-		showPreview(event) {
+		handleClick(event) {
+			if (this.isUploadEditor) {
+				this.$emit('remove-file', this.id)
+				return
+			}
+
 			if (!this.isViewerAvailable) {
 				// Regular event handling by opening the link.
 				return
@@ -205,28 +263,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../../../assets/variables.scss';
 
-.container {
+.file-preview {
+	position: relative;
 	width: 100%;
 	/* The file preview can not be a block; otherwise it would fill the whole
 	width of the container and the loading icon would not be centered on the
 	image. */
 	display: inline-block;
 
-	/* Show a hover colour around the preview when navigating with the
-	 * keyboard through the file links (or hovering them with the mouse). */
-	&:hover,
-	&:focus,
-	&:active {
-		.preview {
-			background-color: var(--color-background-hover);
+	border-radius: 16px;
 
-			/* Trick to keep the same position while adding a padding to show
-			 * the background. */
-			box-sizing: content-box !important;
-			padding: 10px;
-			margin: -10px;
+	&:hover,
+	&:focus {
+		background-color: var(--color-background-hover);
+		/* Trick to keep the same position while adding a padding to show
+			* the background. */
+		box-sizing: content-box !important;
+		.remove-file {
+			visibility: visible;
 		}
+	}
+
+	&__image {
+		object-fit: cover;
 	}
 
 	.preview {
@@ -244,12 +305,40 @@ export default {
 		/* As the file preview is an inline block the name is set as a block to
 		force it to be on its own line below the preview. */
 		display: block;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		margin-top: 4px;
 	}
 
-	&:not(.is-viewer-available) {
+	&:not(.file-preview--viewer-available) {
 		strong:after {
 			content: ' ↗';
 		}
+	}
+	&--upload-editor {
+		max-width: 160px;
+		max-height: 160px;
+		margin: 10px;
+		padding: 12px;
+		.preview {
+			margin: auto;
+		}
+	}
+}
+
+.remove-file {
+	visibility: hidden;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	box-shadow: 0 0 4px var(--color-box-shadow);
+	width: $clickable-area;
+	height: $clickable-area;
+	padding: 0;
+	margin: 0;
+	&__icon {
+		color: var(--color-primary-text);
 	}
 }
 

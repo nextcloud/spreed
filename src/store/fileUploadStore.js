@@ -27,14 +27,33 @@ import { loadState } from '@nextcloud/initial-state'
 import { findUniquePath } from '../utils/fileUpload'
 import createTemporaryMessage from '../utils/temporaryMessage'
 import { EventBus } from '../services/EventBus'
+import { shareFile } from '../services/filesSharingServices'
 
 const state = {
 	attachmentFolder: loadState('talk', 'attachment_folder'),
 	uploads: {
 	},
+	currentUploadId: undefined,
+	showUploadEditor: false,
 }
 
 const getters = {
+
+	getInitialisedUploads: (state) => (uploadId) => {
+		if (state.uploads[uploadId]) {
+			const initialisedUploads = {}
+			for (const index in state.uploads[uploadId].files) {
+				const currentFile = state.uploads[uploadId].files[index]
+				if (currentFile.status === 'initialised') {
+					initialisedUploads[index] = (currentFile)
+				}
+			}
+			return initialisedUploads
+		} else {
+			return {}
+		}
+	},
+
 	// Returns all the files that have been successfully uploaded provided an
 	// upload id
 	getShareableFiles: (state) => (uploadId) => {
@@ -64,17 +83,23 @@ const getters = {
 			return 0
 		}
 	},
+
+	currentUploadId: (state) => {
+		return state.currentUploadId
+	},
+
+	showUploadEditor: (state) => {
+		return state.showUploadEditor
+	},
 }
 
 const mutations = {
-	/**
-	 * Adds a "file to be shared to the store"
-	 * @param {object} state the state object
-	 * @param {object} file the file to be added to the store
-	 * @param {number} uploadId The unique identifier of the upload operation
-	 * @param {string} token the conversation's token
-	 */
-	addFileToBeUploaded(state, { uploadId, token, file }) {
+
+	// Adds a "file to be shared to the store"
+	addFileToBeUploaded(state, { file, temporaryMessage }) {
+		const uploadId = temporaryMessage.messageParameters.file.uploadId
+		const token = temporaryMessage.messageParameters.file.token
+		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
 			Vue.set(state.uploads, uploadId, {
@@ -82,7 +107,13 @@ const mutations = {
 				files: {},
 			})
 		}
-		Vue.set(state.uploads[uploadId].files, Object.keys(state.uploads[uploadId].files).length, { file, status: 'toBeUploaded', totalSize: file.size, uploadedSize: 0 })
+		Vue.set(state.uploads[uploadId].files, index, {
+			file,
+			status: 'initialised',
+			totalSize: file.size,
+			uploadedSize: 0,
+			temporaryMessage,
+		 })
 	},
 
 	// Marks a given file as failed upload
@@ -131,36 +162,68 @@ const mutations = {
 		console.debug('uploadId: ' + uploadId + ' index: ' + index)
 		Vue.set(state.uploads[uploadId].files[index], 'temporaryMessage', temporaryMessage)
 	},
+
+	// Sets the id of the current upload operation
+	setCurrentUploadId(state, currentUploadId) {
+		state.currentUploadId = currentUploadId
+	},
+
+	// Shows hides the upload editor
+	showUploadEditor(state, show) {
+		state.showUploadEditor = show
+	},
+
+	removeFileFromSelection(state, fileId) {
+		const uploadId = state.currentUploadId
+		for (const key in state.uploads[uploadId].files) {
+			if (state.uploads[uploadId].files[key].temporaryMessage.id === fileId) {
+				Vue.delete(state.uploads[uploadId].files, key)
+			}
+		}
+	},
 }
 
 const actions = {
+
+	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
+		// Set last upload id
+		commit('setCurrentUploadId', uploadId)
+		// Show upload editor
+		commit('showUploadEditor', true)
+
+		files.forEach(file => {
+			// Get localurl for previews
+			const localUrl = URL.createObjectURL(file)
+			// Create a unique index for each file
+			const date = new Date()
+			const index = 'temp_' + date.getTime() + Math.random()
+			// Create temporary message for the file and add it to the message list
+			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, file, localUrl)
+			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
+			commit('addFileToBeUploaded', { file, temporaryMessage })
+		})
+	},
+
 	/**
 	 * Uploads the files to the root directory of the user
 	 * @param {object} param0 Commit, state and getters
-	 * @param {object} param1 The unique uploadId, the conversation token and the
-	 * files array
+	 * @param {object} uploadId The unique uploadId
 	 */
-	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, token, files }) {
-		files.forEach(file => {
-			commit('addFileToBeUploaded', { uploadId, token, file })
-		})
+	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
 
-		// Add temporary messages
+		// Tag the previously indexed files and add the temporary messages to the
+		// messages list
 		for (const index in state.uploads[uploadId].files) {
-			// Mark file as uploading to prevent a second function call to start a
-			// second upload for the same file
+			// mark all files as uploading
 			commit('markFileAsUploading', { uploadId, index })
-			// currentFile to be uploaded
-			const currentFile = state.uploads[uploadId].files[index].file
-			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, currentFile)
+			// Store the previously created temporary message
+			const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
+			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// Scroll the message list
 			EventBus.$emit('scrollChatToBottom')
-			commit('setTemporaryMessageForFile', { uploadId, index, temporaryMessage })
 		}
-
-		// Iterate through the previously indexed files for a given conversation (token)
+		// Iterate again and perform the uploads
 		for (const index in state.uploads[uploadId].files) {
 			// currentFile to be uploaded
 			const currentFile = state.uploads[uploadId].files[index].file
@@ -185,6 +248,22 @@ const actions = {
 				showError(t('spreed', 'Error while uploading file'))
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
+			}
+
+			// Get the files that have successfully been uploaded from the store
+			const shareableFiles = getters.getShareableFiles(uploadId)
+			// Share each of those files to the conversation
+			for (const index in shareableFiles) {
+				const path = shareableFiles[index].sharePath
+				try {
+					const temporaryMessage = shareableFiles[index].temporaryMessage
+					const token = temporaryMessage.token
+					dispatch('markFileAsSharing', { uploadId, index })
+					await shareFile(path, token, temporaryMessage.referenceId)
+					dispatch('markFileAsShared', { uploadId, index })
+				} catch (exception) {
+					console.debug('An error happened when trying to share your file: ', exception)
+				}
 			}
 		}
 	},
@@ -218,6 +297,10 @@ const actions = {
 	 */
 	markFileAsShared(context, { uploadId, index }) {
 		context.commit('markFileAsShared', { uploadId, index })
+	},
+
+	removeFileFromSelection({ commit }, fileId) {
+		commit('removeFileFromSelection', fileId)
 	},
 
 }
