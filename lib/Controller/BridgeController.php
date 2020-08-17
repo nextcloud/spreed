@@ -25,9 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Manager;
 use OCA\Talk\BridgeManager;
