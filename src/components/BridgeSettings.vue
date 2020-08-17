@@ -59,13 +59,6 @@
 				</ActionButton>
 			</div>
 			<ul>
-				<li>
-					<BridgePart v-if="myPart"
-						:num="0"
-						:deletable="false"
-						:part="myPart"
-						:type="thisRoomType" />
-				</li>
 				<li v-for="(part, i) in editableParts" :key="i">
 					<BridgePart
 						:num="i+1"
@@ -408,21 +401,6 @@ export default {
 					},
 				},
 			},
-			thisRoomType: {
-				name: t('spreed', 'User who connects to this room to relay bridge messages'),
-				fields: {
-					login: {
-						type: 'text',
-						placeholder: t('spreed', 'Nextcloud user'),
-						icon: 'icon-user',
-					},
-					password: {
-						type: 'password',
-						placeholder: t('spreed', 'User password'),
-						icon: 'icon-category-auth',
-					},
-				},
-			},
 			newPartPlaceholder: t('spreed', 'Add new bridge'),
 			selectedType: null,
 		}
@@ -452,11 +430,6 @@ export default {
 		editableParts() {
 			return this.parts.filter((p) => {
 				return p.type !== 'nctalk' || p.channel !== this.token
-			})
-		},
-		myPart() {
-			return this.parts.find((p) => {
-				return p.type === 'nctalk' && p.channel === this.token
 			})
 		},
 	},

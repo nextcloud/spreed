@@ -32,6 +32,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 
 class BridgeManager {
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
@@ -60,10 +61,7 @@ class BridgeManager {
 	}
 
 	public function getBridgeOfRoom(string $token): array {
-		$defaultParts = sprintf(
-			'{"enabled":false,"pid":0,"parts":[{"type":"nctalk","server":"","login":"","password":"","channel":"%s"}]}',
-			$token
-		);
+		$defaultParts = '{"enabled":false,"pid":0,"parts":[]}';
 		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, $defaultParts);
 		$bridge = json_decode($bridgeJSON, true);
 		return $bridge;
@@ -74,12 +72,8 @@ class BridgeManager {
 		$newBridge = [
 			'enabled' => $enabled,
 			'pid' => isset($currentBridge['pid']) ? $currentBridge['pid'] : 0,
+			'parts' => $parts,
 		];
-		if (count($parts) > 0) {
-			$newBridge['parts'] = $parts;
-		} else {
-			$newBridge['parts'] = $currentBridge['parts'];
-		}
 
 		// edit/update the config file
 		$this->editBridgeConfig($token, $newBridge);
@@ -135,10 +129,48 @@ class BridgeManager {
 	}
 
 	private function editBridgeConfig(string $token, array $newBridge) {
+		// check bot user exists and is member of the room
+		// add the 'local' bridge part
+		$newBridge = $this->addLocalPart($token, $newBridge);
+
 		// TODO adapt that to use appData
 		$configPath = sprintf('/tmp/bridge-%s.toml', $token);
 		$configContent = $this->generateConfig($token, $newBridge);
 		file_put_contents($configPath, $configContent);
+	}
+
+	private function addLocalPart($token, $bridge) {
+		$user = $this->checkBotUser($token);
+		$localPart = [
+			'type' => 'nctalk',
+			'login' => $user['id'],
+			'password' => $user['password'],
+			'channel' => $token,
+		];
+		array_push($bridge['parts'], $localPart);
+		return $bridge;
+	}
+
+	private function checkBotUser(string $token) {
+		$botUserId = 'john';
+		// TODO check user exists and create it if necessary
+
+		// check user is member of the room
+		$room = $this->manager->getRoomByToken($token);
+		try {
+			$participant = $room->getParticipant($botUserId);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers([
+				'userId' => $botUserId,
+				'participantType' => Participant::USER,
+			]);
+		}
+
+		// TODO get app password for the pair room-user
+		return [
+			'id' => $botUserId,
+			'password' => 'johnpass',
+		];
 	}
 
 	private function generateConfig($token, array $bridge): string {
