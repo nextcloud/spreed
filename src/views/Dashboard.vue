@@ -33,7 +33,7 @@
 					<ConversationIcon
 						:item="item"
 						:hide-favorite="true"
-						:hide-call="true" />
+						:hide-call="false" />
 				</template>
 			</DashboardWidgetItem>
 		</template>
@@ -135,6 +135,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	::v-deep .item-list__entry {
+		position: relative;
+	}
+
 	.empty-content {
 		text-align: center;
 	}
