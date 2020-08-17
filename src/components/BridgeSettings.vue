@@ -219,6 +219,41 @@ export default {
 						},
 					},
 				},
+				discord: {
+					name: t('spreed', 'Discord'),
+					fields: {
+						token: {
+							type: 'password',
+							placeholder: t('spreed', 'API token'),
+							icon: 'icon-category-auth',
+						},
+						server: {
+							type: 'text',
+							placeholder: t('spreed', 'Server ID or name'),
+							icon: 'icon-group',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Channel ID or name'),
+							icon: 'icon-group',
+						},
+					},
+				},
+				telegram: {
+					name: t('spreed', 'Telegram'),
+					fields: {
+						token: {
+							type: 'password',
+							placeholder: t('spreed', 'API token'),
+							icon: 'icon-category-auth',
+						},
+						chatid: {
+							type: 'text',
+							placeholder: t('spreed', 'Chat ID'),
+							icon: 'icon-group',
+						},
+					},
+				},
 				irc: {
 					name: t('spreed', 'IRC'),
 					fields: {
