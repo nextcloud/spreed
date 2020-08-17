@@ -214,6 +214,12 @@ class BridgeManager {
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'steam') {
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
+				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($part['type'] === 'irc') {
 				// include # in channel
 				if (!preg_match('/^#/', $part['channel'])) {
@@ -255,7 +261,7 @@ class BridgeManager {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
 			} elseif ($part['type'] === 'msteams') {
 				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";
-			} elseif ($part['type'] === 'telegram') {
+			} elseif (in_array($part['type'], ['telegram', 'steam'])) {
 				$content .= sprintf('	chatid = "%s"', $part['chatid']) . "\n\n";
 			}
 		}

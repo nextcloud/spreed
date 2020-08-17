@@ -254,6 +254,26 @@ export default {
 						},
 					},
 				},
+				steam: {
+					name: t('spreed', 'Steam'),
+					fields: {
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'Login'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'Password'),
+							icon: 'icon-category-auth',
+						},
+						chatid: {
+							type: 'text',
+							placeholder: t('spreed', 'Chat ID'),
+							icon: 'icon-group',
+						},
+					},
+				},
 				irc: {
 					name: t('spreed', 'IRC'),
 					fields: {
