@@ -76,7 +76,7 @@ class ConversationSearch implements IProvider {
 			return -1;
 		}
 
-		return 15;
+		return 25;
 	}
 
 	/**
