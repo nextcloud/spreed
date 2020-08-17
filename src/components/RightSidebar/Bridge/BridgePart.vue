@@ -20,20 +20,22 @@
 -->
 
 <template>
-	<div>
-		<h2>
-			{{ num }}: {{ type.name }}
-			<button v-if="deletable"
-				@click="$emit('deletePart')">
-				{{ t('spreed', 'Delete') }}
-			</button>
-		</h2>
+	<div class="part">
+		<h3>
+			<span>
+				{{ type.name }}
+			</span>
+			<a v-if="deletable"
+				class="icon icon-delete"
+				@click="$emit('deletePart')" />
+		</h3>
 		<div v-for="(field, key) in type.fields" :key="key">
-			<a :class="classesOf(key)" />
-			<label
-				:for="key + '-' + num"
-				class="hidden-visually">
-				{{ field.placeholder }}
+			<label :for="key + '-' + num">
+				<a :class="classesOf(key)" />
+				<span
+					class="hidden-visually">
+					{{ field.placeholder }}
+				</span>
 			</label>
 			<input v-model="part[key]"
 				:type="field.type"
@@ -102,15 +104,23 @@ export default {
 </script>
 
 <style scoped>
+.part {
+	padding-top: 10px;
+}
+
 button {
 	display: inline-block;
 }
 
-h2 {
-	text-align: center;
+h3 {
+	padding-left: 35px;
+	text-align: left;
+	display: grid;
+	grid-template: 1fr / 90% 10%;
 }
 
 input {
+	display: inline-block;
 	width: 88%;
 }
 

@@ -23,6 +23,19 @@
 	<div>
 		<div v-if="loading" class="loading" />
 		<div v-show="!loading">
+			<div id="matterbridge-header">
+				<h3>
+					<span>
+						{{ t('spreed', 'Bridge with other services') }}
+					</span>
+					<a class="icon icon-info"
+						href="https://github.com/42wim/matterbridge/wiki"
+						target="_blank" />
+				</h3>
+				<p>
+					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
+				</p>
+			</div>
 			<div class="basic-settings">
 				<ActionCheckbox
 					:token="token"
@@ -47,7 +60,6 @@
 			</div>
 			<ul>
 				<li>
-					<hr>
 					<BridgePart v-if="myPart"
 						:num="0"
 						:deletable="false"
@@ -55,7 +67,6 @@
 						:type="thisRoomType" />
 				</li>
 				<li v-for="(part, i) in editableParts" :key="i">
-					<hr>
 					<BridgePart
 						:num="i+1"
 						:part="part"
@@ -505,5 +516,14 @@ export default {
 	display: flex;
 	list-style: none;
 	align-items: center;
+}
+
+#matterbridge-header {
+	padding-left: 15px;
+}
+
+.icon {
+	display: inline-block;
+	width: 8%;
 }
 </style>
