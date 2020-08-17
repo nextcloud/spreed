@@ -22,62 +22,32 @@
 <template>
 	<div>
 		<h2>
-			{{ t('spreed', '{n}: IRC', { n: num }) }}
+			{{ num }}: {{ type.name }}
 			<button @click="$emit('deletePart')">
 				{{ t('spreed', 'Delete') }}
 			</button>
 		</h2>
-		<a class="icon icon-link" />
-		<label
-			:for="'server-' + num"
-			class="hidden-visually">
-			{{ serverPH }}
-		</label>
-		<input v-model="part.server"
-			type="url"
-			:id="'server-' + num"
-			:placeholder="serverPH">
-		<a class="icon icon-user" />
-		<label
-			:for="'nick-' + num"
-			class="hidden-visually">
-			{{ nickPH }}
-		</label>
-		<input v-model="part.nick"
-			type="text"
-			:id="'nick-' + num"
-			:placeholder="nickPH"
-			:readonly="readonly"
-			@focus="readonly = false">
-		<a class="icon icon-category-auth" />
-		<label
-			:for="'password-' + num"
-			class="hidden-visually">
-			{{ passwordPH }}
-		</label>
-		<input v-model="part.password"
-			type="password"
-			:id="'password-' + num"
-			:placeholder="passwordPH"
-			:readonly="readonly"
-			@focus="readonly = false">
-		<a class="icon icon-group" />
-		<label
-			:for="'channel-' + num"
-			class="hidden-visually">
-			{{ channelPH }}
-		</label>
-		<input v-model="part.channel"
-			type="text"
-			:id="'channel-' + num"
-			:placeholder="channelPH">
+		<div v-for="(field, key) in type.fields" :key="key">
+			<a :class="classesOf(key)" />
+			<label
+				:for="key + '-' + num"
+				class="hidden-visually">
+				{{ field.placeholder }}
+			</label>
+			<input v-model="part[key]"
+				:type="field.type"
+				:id="key + '-' + num"
+				:placeholder="field.placeholder"
+				:readonly="readonly"
+				@focus="readonly = false">
+		</div>
 	</div>
 </template>
 
 <script>
 
 export default {
-	name: 'IrcBridgePart',
+	name: 'BridgePart',
 	components: {
 	},
 
@@ -93,14 +63,14 @@ export default {
 			type: Object,
 			required: true,
 		},
+		type: {
+			type: Object,
+			required: true,
+		},
 	},
 
 	data() {
 		return {
-			serverPH: t('spreed', 'IRC server URL'),
-			nickPH: t('spreed', 'Nickname'),
-			passwordPH: t('spreed', 'Password'),
-			channelPH: t('spreed', 'IRC channel'),
 			readonly: true,
 		}
 	},
@@ -115,6 +85,13 @@ export default {
 	},
 
 	methods: {
+		classesOf(name) {
+			const classes = {
+				icon: true,
+			}
+			classes[this.type.fields[name].icon] = true
+			return classes
+		},
 	},
 }
 </script>

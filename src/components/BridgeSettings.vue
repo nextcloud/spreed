@@ -48,43 +48,17 @@
 			<ul>
 				<li>
 					<hr>
-					<TalkBridgePart v-if="myPart"
+					<BridgePart v-if="myPart"
 						:num="0"
-						:part="myPart" />
+						:part="myPart"
+						:type="thisRoomType" />
 				</li>
 				<li v-for="(part, i) in editableParts" :key="i">
 					<hr>
-					<TalkBridgePart v-if="part.type === 'nctalk'"
+					<BridgePart
 						:num="i+1"
 						:part="part"
-						@deletePart="onDelete(i)" />
-					<MattermostBridgePart v-if="part.type === 'mattermost'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<MatrixBridgePart v-if="part.type === 'matrix'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<RocketchatBridgePart v-if="part.type === 'rocketchat'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<SlackBridgePart v-if="part.type === 'slack'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<IrcBridgePart v-if="part.type === 'irc'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<MsteamsBridgePart v-if="part.type === 'msteams'"
-						:num="i+1"
-						:part="part"
-						@deletePart="onDelete(i)" />
-					<XmppBridgePart v-if="part.type === 'xmpp'"
-						:num="i+1"
-						:part="part"
+						:type="types[part.type]"
 						@deletePart="onDelete(i)" />
 				</li>
 			</ul>
@@ -101,14 +75,7 @@ import { showSuccess } from '@nextcloud/dialogs'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
-import TalkBridgePart from './RightSidebar/Bridge/TalkBridgePart'
-import MatrixBridgePart from './RightSidebar/Bridge/MatrixBridgePart'
-import MattermostBridgePart from './RightSidebar/Bridge/MattermostBridgePart'
-import RocketchatBridgePart from './RightSidebar/Bridge/RocketchatBridgePart'
-import SlackBridgePart from './RightSidebar/Bridge/SlackBridgePart'
-import IrcBridgePart from './RightSidebar/Bridge/IrcBridgePart'
-import MsteamsBridgePart from './RightSidebar/Bridge/MsteamsBridgePart'
-import XmppBridgePart from './RightSidebar/Bridge/XmppBridgePart'
+import BridgePart from './RightSidebar/Bridge/BridgePart'
 
 export default {
 	name: 'BridgeSettings',
@@ -116,14 +83,7 @@ export default {
 		ActionCheckbox,
 		ActionButton,
 		Multiselect,
-		TalkBridgePart,
-		MatrixBridgePart,
-		MattermostBridgePart,
-		RocketchatBridgePart,
-		SlackBridgePart,
-		IrcBridgePart,
-		MsteamsBridgePart,
-		XmppBridgePart,
+		BridgePart,
 	},
 
 	mixins: [
@@ -137,40 +97,228 @@ export default {
 			enabled: false,
 			parts: [],
 			loading: false,
-			formatedTypes: [
-				{
-					displayName: t('spreed', 'Nextcloud Talk'),
-					type: 'nctalk',
+			types: {
+				nctalk: {
+					name: t('spreed', 'Nextcloud Talk'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Nextcloud URL'),
+							icon: 'icon-link',
+						},
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'Nextcloud user'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'User password'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Talk room'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Matrix'),
-					type: 'matrix',
+				matrix: {
+					name: t('spreed', 'Matrix'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Matrix server URL'),
+							icon: 'icon-link',
+						},
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'User'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'User password'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Matrix channel'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Mattermost'),
-					type: 'mattermost',
+				mattermost: {
+					name: t('spreed', 'Mattermost'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Mattermost server URL'),
+							icon: 'icon-link',
+						},
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'Mattermost user'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'User password'),
+							icon: 'icon-category-auth',
+						},
+						team: {
+							type: 'text',
+							placeholder: t('spreed', 'Team name'),
+							icon: 'icon-group',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Channel name'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Rocket.Chat'),
-					type: 'rocketchat',
+				rocketchat: {
+					name: t('spreed', 'Rocket.Chat'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Rocket.Chat server URL'),
+							icon: 'icon-link',
+						},
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'User name or e-mail address'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'Password'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Rocket.Chat channel'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Slack'),
-					type: 'slack',
+				slack: {
+					name: t('spreed', 'Slack'),
+					fields: {
+						token: {
+							type: 'password',
+							placeholder: t('spreed', 'API token'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Slack channel'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'IRC'),
-					type: 'irc',
+				irc: {
+					name: t('spreed', 'IRC'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'IRC server URL'),
+							icon: 'icon-link',
+						},
+						nick: {
+							type: 'text',
+							placeholder: t('spreed', 'Nickname'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'Password'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'IRC channel'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Microsoft Teams'),
-					type: 'msteams',
+				msteams: {
+					name: t('spreed', 'Microsoft Teams'),
+					fields: {
+						tenantid: {
+							type: 'text',
+							placeholder: t('spreed', 'Tenant ID'),
+							icon: 'icon-user',
+						},
+						clientid: {
+							type: 'password',
+							placeholder: t('spreed', 'Client ID'),
+							icon: 'icon-user',
+						},
+						teamid: {
+							type: 'text',
+							placeholder: t('spreed', 'Team ID'),
+							icon: 'icon-category-auth',
+						},
+						threadid: {
+							type: 'text',
+							placeholder: t('spreed', 'Thread ID'),
+							icon: 'icon-group',
+						},
+					},
 				},
-				{
-					displayName: t('spreed', 'Xmpp/Jabber'),
-					type: 'xmpp',
+				xmpp: {
+					name: t('spreed', 'Xmpp/Jabber'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Xmpp/Jabber server URL'),
+							icon: 'icon-link',
+						},
+						muc: {
+							type: 'url',
+							placeholder: t('spreed', 'MUC server URL'),
+							icon: 'icon-link',
+						},
+						jid: {
+							type: 'text',
+							placeholder: t('spreed', 'Jabber ID'),
+							icon: 'icon-user',
+						},
+						nick: {
+							type: 'text',
+							placeholder: t('spreed', 'Nickname'),
+							icon: 'icon-user',
+						},
+						password: {
+							type: 'password',
+							placeholder: t('spreed', 'Password'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Channel'),
+							icon: 'icon-group',
+						},
+					},
 				},
-			],
+			},
+			thisRoomType: {
+				name: t('spreed', 'This room'),
+				fields: {
+					login: {
+						type: 'text',
+						placeholder: t('spreed', 'Nextcloud user'),
+						icon: 'icon-user',
+					},
+					password: {
+						type: 'password',
+						placeholder: t('spreed', 'User password'),
+						icon: 'icon-category-auth',
+					},
+				},
+			},
 			newPartPlaceholder: t('spreed', 'Add new bridge'),
 			selectedType: null,
 		}
@@ -187,6 +335,15 @@ export default {
 			const token = this.$store.getters.getToken()
 			this.getBridge(token)
 			return token
+		},
+		formatedTypes() {
+			return Object.keys(this.types).map((k) => {
+				const t = this.types[k]
+				return {
+					displayName: t.name,
+					type: k,
+				}
+			})
 		},
 		editableParts() {
 			return this.parts.filter((p) => {
@@ -208,16 +365,13 @@ export default {
 
 	methods: {
 		clickAddPart() {
-			const type = this.selectedType.type
+			const typeKey = this.selectedType.type
+			const type = this.types[typeKey]
 			const newPart = {
-				type,
-				server: '',
-				login: '',
-				password: '',
-				channel: '',
+				type: typeKey,
 			}
-			if (type === 'mattermost') {
-				newPart.team = ''
+			for (const fieldKey in type.fields) {
+				newPart[fieldKey] = ''
 			}
 			this.parts.unshift(newPart)
 			this.selectedType = null
