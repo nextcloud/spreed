@@ -39,10 +39,12 @@
 		</template>
 		<template v-slot:empty-content>
 			<EmptyContent icon="icon-talk">
-				{{ t('spreed', 'Join a conversation or start a new one') }}
+				{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 				<template #desc>
-					<p>{{ t('spreed', 'Say hi to your friends and colleagues!') }}</p>
-					<button>{{ t('spreed', 'Start a conversation') }}</button>
+					<button
+						@click="clickStartNew">
+						{{ t('spreed', 'Start a conversation') }}
+					</button>
 				</template>
 			</EmptyContent>
 		</template>
@@ -130,6 +132,9 @@ export default {
 				this.loading = false
 			})
 		},
+		clickStartNew() {
+			window.location = generateUrl('/apps/spreed')
+		},
 	},
 }
 </script>
@@ -141,5 +146,6 @@ export default {
 
 	.empty-content {
 		text-align: center;
+		margin-top: 5vh;
 	}
 </style>
