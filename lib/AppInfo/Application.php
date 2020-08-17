@@ -35,6 +35,7 @@ use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
+use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -95,6 +96,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
+
+		$context->registerDashboardWidget(TalkWidget::class);
 	}
 
 	public function boot(IBootContext $context): void {

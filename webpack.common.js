@@ -13,6 +13,7 @@ module.exports = {
 		'talk-public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 		'talk-public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
 		'flow': path.join(__dirname, 'src', 'flow.js'),
+		'dashboard': path.join(__dirname, 'src', 'dashboard.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, './js'),
