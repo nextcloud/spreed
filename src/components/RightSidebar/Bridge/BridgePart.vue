@@ -24,6 +24,10 @@
 		<h3>
 			<span>
 				{{ type.name }}
+				<a v-if="type.infoTarget"
+					class="icon icon-info"
+					target="_blank"
+					:href="type.infoTarget" />
 			</span>
 			<a v-if="deletable"
 				class="icon icon-delete"

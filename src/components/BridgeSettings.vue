@@ -112,6 +112,7 @@ export default {
 			types: {
 				nctalk: {
 					name: t('spreed', 'Nextcloud Talk'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Section-Nextcloud-Talk-%28basic%29',
 					fields: {
 						server: {
 							type: 'url',
@@ -137,6 +138,7 @@ export default {
 				},
 				matrix: {
 					name: t('spreed', 'Matrix'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#matrix',
 					fields: {
 						server: {
 							type: 'url',
@@ -162,6 +164,7 @@ export default {
 				},
 				mattermost: {
 					name: t('spreed', 'Mattermost'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#mattermost',
 					fields: {
 						server: {
 							type: 'url',
@@ -192,6 +195,7 @@ export default {
 				},
 				rocketchat: {
 					name: t('spreed', 'Rocket.Chat'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#rocketchat',
 					fields: {
 						server: {
 							type: 'url',
@@ -217,6 +221,7 @@ export default {
 				},
 				zulip: {
 					name: t('spreed', 'Zulip'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#zulip',
 					fields: {
 						server: {
 							type: 'url',
@@ -242,6 +247,7 @@ export default {
 				},
 				slack: {
 					name: t('spreed', 'Slack'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Slack-bot-setup',
 					fields: {
 						token: {
 							type: 'password',
@@ -257,6 +263,7 @@ export default {
 				},
 				discord: {
 					name: t('spreed', 'Discord'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Discord-bot-setup',
 					fields: {
 						token: {
 							type: 'password',
@@ -277,6 +284,7 @@ export default {
 				},
 				telegram: {
 					name: t('spreed', 'Telegram'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#telegram',
 					fields: {
 						token: {
 							type: 'password',
@@ -292,6 +300,7 @@ export default {
 				},
 				steam: {
 					name: t('spreed', 'Steam'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#steam',
 					fields: {
 						login: {
 							type: 'text',
@@ -312,6 +321,7 @@ export default {
 				},
 				irc: {
 					name: t('spreed', 'IRC'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#irc',
 					fields: {
 						server: {
 							type: 'url',
@@ -337,6 +347,7 @@ export default {
 				},
 				msteams: {
 					name: t('spreed', 'Microsoft Teams'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/MS-Teams-setup',
 					fields: {
 						tenantid: {
 							type: 'text',
@@ -362,6 +373,7 @@ export default {
 				},
 				xmpp: {
 					name: t('spreed', 'Xmpp/Jabber'),
+					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#xmpp',
 					fields: {
 						server: {
 							type: 'url',
@@ -513,6 +525,7 @@ export default {
 }
 
 .basic-settings {
+	padding-top: 10px;
 	display: flex;
 	list-style: none;
 	align-items: center;
