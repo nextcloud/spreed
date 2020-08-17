@@ -179,6 +179,13 @@ class BridgeManager {
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	NoHomeServerSuffix = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
+			} elseif ($part['type'] === 'zulip') {
+				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
+				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
+				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
+				$content .= '	PrefixMessagesWithNick = true' . "\n";
+				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($part['type'] === 'rocketchat') {
 				// include # in channel
 				if (!preg_match('/^#/', $part['channel'])) {
@@ -257,7 +264,7 @@ class BridgeManager {
 		foreach ($bridge['parts'] as $k => $part) {
 			$content .= '[[gateway.inout]]' . "\n";
 			$content .= sprintf('	account = "%s.%s"', $part['type'], $k) . "\n";
-			if (in_array($part['type'], ['discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
+			if (in_array($part['type'], ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
 			} elseif ($part['type'] === 'msteams') {
 				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";

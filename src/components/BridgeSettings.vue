@@ -204,6 +204,31 @@ export default {
 						},
 					},
 				},
+				zulip: {
+					name: t('spreed', 'Zulip'),
+					fields: {
+						server: {
+							type: 'url',
+							placeholder: t('spreed', 'Zulip server URL'),
+							icon: 'icon-link',
+						},
+						login: {
+							type: 'text',
+							placeholder: t('spreed', 'Bot user name'),
+							icon: 'icon-user',
+						},
+						token: {
+							type: 'password',
+							placeholder: t('spreed', 'Bot API key'),
+							icon: 'icon-category-auth',
+						},
+						channel: {
+							type: 'text',
+							placeholder: t('spreed', 'Zulip channel'),
+							icon: 'icon-group',
+						},
+					},
+				},
 				slack: {
 					name: t('spreed', 'Slack'),
 					fields: {
