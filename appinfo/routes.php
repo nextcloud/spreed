@@ -362,30 +362,35 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+
+
+		/**
+		 * Bridges
+		 */
 		[
-			'name' => 'Room#getBridgeOfRoom',
+			'name' => 'Bridge#getBridgeOfRoom',
 			'url' => '/api/{apiVersion}/room/{token}/bridge',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
-			'name' => 'Room#editBridgeOfRoom',
+			'name' => 'Bridge#editBridgeOfRoom',
 			'url' => '/api/{apiVersion}/room/{token}/bridge',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
-			'name' => 'Room#deleteBridgeOfRoom',
+			'name' => 'Bridge#deleteBridgeOfRoom',
 			'url' => '/api/{apiVersion}/room/{token}/bridge',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

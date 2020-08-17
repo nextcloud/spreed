@@ -32,7 +32,7 @@ import {
  * @param {string} parts parts of the bridge, where it has to connect
  */
 const editBridge = async function(token, enabled, parts) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/bridge`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/bridge`, {
 		token,
 		enabled,
 		parts,
@@ -45,7 +45,7 @@ const editBridge = async function(token, enabled, parts) {
  * @param {token} token the conversation token.
  */
 const getBridge = async function(token) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/bridge`)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/bridge`)
 	return response
 }
 

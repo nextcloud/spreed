@@ -38,10 +38,8 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
-use OCA\Talk\BridgeManager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -77,8 +75,6 @@ class RoomController extends AEnvironmentAwareController {
 	protected $groupManager;
 	/** @var Manager */
 	protected $manager;
-	/** @var BridgeManager */
-	protected $bridgeManager;
 	/** @var RoomService */
 	protected $roomService;
 	/** @var GuestManager */
@@ -108,7 +104,6 @@ class RoomController extends AEnvironmentAwareController {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								Manager $manager,
-								BridgeManager $bridgeManager,
 								RoomService $roomService,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
@@ -126,7 +121,6 @@ class RoomController extends AEnvironmentAwareController {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
-		$this->bridgeManager = $bridgeManager;
 		$this->roomService = $roomService;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
@@ -1368,92 +1362,5 @@ class RoomController extends AEnvironmentAwareController {
 		$room->setParticipantType($targetParticipant, Participant::GUEST);
 
 		return new DataResponse();
-	}
-
-	/**
-	 * Get bridge information on one room
-	 *
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
-	public function getBridgeOfRoom(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
-			try {
-				$participant = $room->getParticipant($this->userId);
-				if ($participant->hasModeratorPermissions()) {
-					$this->bridgeManager->checkBridge($token);
-					$bridge = $this->bridgeManager->getBridgeOfRoom($token);
-					return new DataResponse($bridge);
-				} else {
-					return new DataResponse([], Http::STATUS_FORBIDDEN);
-				}
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-	}
-
-	/**
-	 * Edit bridge information on one room
-	 *
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
-	public function editBridgeOfRoom(string $token, bool $enabled, array $parts = []): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
-			try {
-				$participant = $room->getParticipant($this->userId);
-				if ($participant->hasModeratorPermissions()) {
-					try {
-						$success = $this->bridgeManager->editBridgeOfRoom($token, $enabled, $parts);
-					} catch (ImpossibleToKillException $e) {
-						return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
-					}
-					return new DataResponse($success);
-				} else {
-					return new DataResponse([], Http::STATUS_FORBIDDEN);
-				}
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-	}
-
-	/**
-	 * Delete bridge of one room
-	 *
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
-	public function deleteBridgeOfRoom(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
-			try {
-				$participant = $room->getParticipant($this->userId);
-				if ($participant->hasModeratorPermissions()) {
-					try {
-						$success = $this->bridgeManager->deleteBridgeOfRoom($token);
-					} catch (ImpossibleToKillException $e) {
-						return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
-					}
-					return new DataResponse($success);
-				} else {
-					return new DataResponse([], Http::STATUS_FORBIDDEN);
-				}
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
 	}
 }

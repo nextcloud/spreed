@@ -103,7 +103,7 @@ class BridgeManager {
 		// TODO call this from time to time to make sure everything is running fine
 		$this->manager->forAllRooms(function ($room) {
 			$token = $room->getToken();
-			if ($room->getType() === Room::GROUP_CALL or $room->getType() === Room::PUBLIC_CALL) {
+			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
 				$this->checkBridge($token);
 			}
 		});
@@ -178,7 +178,7 @@ class BridgeManager {
 		foreach ($bridge['parts'] as $k => $part) {
 			if ($part['type'] === 'nctalk') {
 				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
-				if (isset($part['server']) and $part['server'] !== '') {
+				if (isset($part['server']) && $part['server'] !== '') {
 					$serverUrl = $part['server'];
 				} else {
 					$serverUrl = preg_replace('/\/+$/', '', $this->urlGenerator->getAbsoluteURL(''));
@@ -311,7 +311,7 @@ class BridgeManager {
 	private function cleanUrl($url): string {
 		$uo = parse_url($url);
 		$result = $uo['host'];
-		if ($uo['scheme'] === 'https' and !isset($uo['port'])) {
+		if ($uo['scheme'] === 'https' && !isset($uo['port'])) {
 			$result .= ':443';
 		} elseif (isset($uo['port'])) {
 			$result .= ':' . $uo['port'];
@@ -327,7 +327,7 @@ class BridgeManager {
 	private function checkBridgeProcess($token, $bridge): int {
 		$pid = 0;
 
-		if (isset($bridge['pid']) and intval($bridge['pid']) !== 0) {
+		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
 			// config : there is a PID stored
 			error_log('pid is defined in config |||||');
 			$pid = $bridge['pid'];
@@ -398,7 +398,7 @@ class BridgeManager {
 		$this->manager->forAllRooms(function ($room) use (&$expectedPidList) {
 			$token = $room->getToken();
 			$bridge = $this->getBridgeOfRoom($token);
-			if ($bridge['enabled'] and $bridge['pid'] !== 0) {
+			if ($bridge['enabled'] && $bridge['pid'] !== 0) {
 				array_push($expectedPidList, intval($bridge['pid']));
 			}
 		});
@@ -415,7 +415,7 @@ class BridgeManager {
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
 		// check the process is gone
 		$isStillRunning = $this->isRunning($pid);
-		return (intval($ret) === 0 and !$isStillRunning);
+		return (intval($ret) === 0 && !$isStillRunning);
 	}
 
 	private function isRunning($pid): bool {
