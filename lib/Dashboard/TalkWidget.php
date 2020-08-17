@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Julius Härtl <jus@bitgrid.net>
  *
@@ -23,17 +25,23 @@
 
 namespace OCA\Talk\Dashboard;
 
+use OCP\Dashboard\IWidget;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use OCP\Util;
 
-class TalkWidget implements \OCP\Dashboard\IWidget {
+class TalkWidget implements IWidget {
 
+	/** @var IURLGenerator */
+	private $url;
 	/** @var IL10N */
 	private $l10n;
 
 	public function __construct(
+		IURLGenerator $url,
 		IL10N $l10n
 	) {
+		$this->url = $url;
 		$this->l10n = $l10n;
 	}
 
@@ -48,7 +56,7 @@ class TalkWidget implements \OCP\Dashboard\IWidget {
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return $this->l10n->t('Talk mentions');
+		return $this->l10n->t('Conversations');
 	}
 
 	/**
@@ -69,7 +77,7 @@ class TalkWidget implements \OCP\Dashboard\IWidget {
 	 * @inheritDoc
 	 */
 	public function getUrl(): ?string {
-		return \OC::$server->getURLGenerator()->getAbsoluteURL('/apps/spreed');
+		return $this->url->linkToRouteAbsolute('spreed.Page.index');
 	}
 
 	/**
