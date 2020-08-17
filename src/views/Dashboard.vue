@@ -28,7 +28,12 @@
 		@hide="() => {}"
 		@markDone="() => {}">
 		<template v-slot:default="{ item }">
-			<DashboardWidgetItem :item="getWidgetItem(item)">
+			<EmptyContent v-if="item.empty"
+				class="half-screen"
+				icon="icon-checkmark">
+				{{ t('spreed', 'No unread mentions or active calls') }}
+			</EmptyContent>
+			<DashboardWidgetItem v-else :item="getWidgetItem(item)">
 				<template v-slot:avatar>
 					<ConversationIcon
 						:item="item"
@@ -84,6 +89,7 @@ export default {
 				return generateUrl('/call/' + conversation.token)
 			}
 		},
+
 		/**
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
@@ -107,12 +113,27 @@ export default {
 				return subtitle
 			}
 		},
+
+		getSubText() {
+			return (conversation) => {
+				if (conversation.hasCall) {
+					return t('spreed', 'Call in progress')
+				}
+
+				if (conversation.unreadMention) {
+					return t('spreed', 'You were mentioned')
+				}
+
+				return this.simpleLastChatMessage(conversation.lastMessage)
+			}
+		},
+
 		getWidgetItem() {
 			return (conversation) => {
 				return {
 					targetUrl: generateUrl(`/call/${conversation.token}`),
 					mainText: conversation.displayName,
-					subText: this.simpleLastChatMessage(conversation.lastMessage),
+					subText: this.getSubText(conversation),
 					conversation,
 				}
 			}
@@ -125,10 +146,25 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v2', 2) + 'room').then((response) => {
 				const rooms = response.data.ocs.data
-				rooms.sort(propertySort(['-hasCall', '-unreadMention', '-lastActivity']))
-				this.roomOptions = rooms.slice(0, 7)
+				const importantRooms = rooms.filter((conversation) => {
+					return conversation.hasCall || conversation.unreadMention
+				})
+
+				if (importantRooms.length) {
+					importantRooms.sort(propertySort(['-hasCall', '-unreadMention', '-lastActivity']))
+					this.roomOptions = importantRooms.slice(0, 7)
+					this.hasImportantConversations = true
+				} else {
+					const items = rooms.sort(propertySort(['-lastActivity'])).slice(0, 4)
+					items.unshift({
+						empty: true,
+					})
+					this.roomOptions = items
+					this.hasImportantConversations = false
+				}
+
 				this.loading = false
 			})
 		},
@@ -147,5 +183,10 @@ export default {
 	.empty-content {
 		text-align: center;
 		margin-top: 5vh;
+
+		&.half-screen {
+			margin-top: 0;
+			margin-bottom: 2vh;
+		}
 	}
 </style>
