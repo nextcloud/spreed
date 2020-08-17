@@ -86,7 +86,7 @@ export default {
 	computed: {
 		callLink() {
 			return (conversation) => {
-				return generateUrl('/call/' + conversation.token)
+				return generateUrl('call/' + conversation.token)
 			}
 		},
 
@@ -131,7 +131,7 @@ export default {
 		getWidgetItem() {
 			return (conversation) => {
 				return {
-					targetUrl: generateUrl(`/call/${conversation.token}`),
+					targetUrl: generateUrl(`call/${conversation.token}`),
 					mainText: conversation.displayName,
 					subText: this.getSubText(conversation),
 					conversation,
@@ -146,7 +146,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(generateOcsUrl('/apps/spreed/api/v2', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room').then((response) => {
 				const rooms = response.data.ocs.data
 				const importantRooms = rooms.filter((conversation) => {
 					return conversation.hasCall || conversation.unreadMention
