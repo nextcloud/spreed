@@ -33,6 +33,7 @@ OC.L10N.register(
     "Back" : "Tagasi",
     "Close" : "Sulge",
     "Reply" : "Vasta",
+    "Remove" : "Eemalda",
     "Today" : "Täna",
     "Yesterday" : "Eile",
     "guest" : "külaline",

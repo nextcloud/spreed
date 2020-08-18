@@ -267,6 +267,7 @@ OC.L10N.register(
     "Back" : "Înapoi",
     "Close" : "Închide",
     "Reply" : "Răspunde",
+    "Remove" : "Șterge",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
     "guest" : "invitat",

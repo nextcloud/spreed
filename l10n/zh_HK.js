@@ -20,6 +20,7 @@ OC.L10N.register(
     "Back" : "返回",
     "Close" : "關閉",
     "Reply" : "回覆",
+    "Remove" : "刪除",
     "Today" : "今日",
     "Yesterday" : "明日",
     "Add users or groups" : "Add users or groups",

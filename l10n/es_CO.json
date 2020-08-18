@@ -84,6 +84,7 @@
     "Close" : "Cerrar",
     "Conversation name" : "Nombre de la conversación",
     "Reply" : "Responder",
+    "Remove" : "Eliminar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
