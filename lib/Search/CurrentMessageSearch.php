@@ -23,21 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Search;
 
-use OCA\Talk\AppInfo\Application;
-use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Manager as RoomManager;
-use OCA\Talk\Room;
-use OCP\IL10N;
-use OCP\IURLGenerator;
 use OCP\IUser;
-use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
-use OCP\Search\SearchResultEntry;
 
 class CurrentMessageSearch extends MessageSearch {
 
@@ -107,7 +98,7 @@ class CurrentMessageSearch extends MessageSearch {
 		$result = [];
 		foreach ($comments as $comment) {
 			try {
-				$result[] = $this->commentToSearchResultEntry($room, $user, $comment);
+				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);
 			} catch (UnauthorizedException $e) {
 			} catch (ParticipantNotFoundException $e) {
 			}
