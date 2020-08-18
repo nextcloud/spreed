@@ -283,6 +283,7 @@ OC.L10N.register(
     "Back" : "Назад",
     "Close" : "Затваряне",
     "Reply" : "Отговори",
+    "Remove" : "Премахни",
     "Today" : "Днес",
     "Yesterday" : "Вчера",
     "Send message" : "Изпрати съобщение",

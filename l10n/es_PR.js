@@ -74,6 +74,7 @@ OC.L10N.register(
     "Back" : "Atrás",
     "Close" : "Cerrar",
     "Reply" : "Responder",
+    "Remove" : "Eliminar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "moderator" : "moderador",
