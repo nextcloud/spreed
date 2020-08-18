@@ -26,8 +26,11 @@ namespace OCA\Talk\Search;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Room;
+use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -67,7 +70,7 @@ class MessageSearch implements IProvider {
 	 * @inheritDoc
 	 */
 	public function getId(): string {
-		return 'talk_message';
+		return 'talk-message';
 	}
 
 	/**
@@ -89,16 +92,36 @@ class MessageSearch implements IProvider {
 		return 15;
 	}
 
+	protected function getCurrentConversationToken(ISearchQuery $query): string {
+		if ($query->getRoute() === 'spreed.Page.showCall') {
+			return $query->getRouteParameters()['token'];
+		}
+		return '';
+	}
+
+	protected function getSublineTemplate(): string {
+		return $this->l->t('{user} in {conversation}');
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
+		$title = $this->l->t('Messages');
+		if ($this->getCurrentConversationToken($query) !== '') {
+			$title = $this->l->t('Messages in other conversations');
+		}
+
 		$rooms = $this->roomManager->getRoomsForParticipant($user->getUID());
-		$subline = $this->l->t('{user} in {conversation}');
 
 		$roomMap = [];
 		foreach ($rooms as $room) {
 			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+				continue;
+			}
+
+			if ($this->getCurrentConversationToken($query) === $room->getToken()) {
+				// No search result from current conversation
 				continue;
 			}
 
@@ -123,54 +146,62 @@ class MessageSearch implements IProvider {
 		$result = [];
 		foreach ($comments as $comment) {
 			$room = $roomMap[$comment->getObjectId()];
-			$participant = $room->getParticipant($user->getUID());
-
-			$id = (int) $comment->getId();
-			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
-			$this->messageParser->parseMessage($message);
-
-			$messageStr = $message->getMessage();
-			$search = $replace = [];
-			foreach ($message->getMessageParameters() as $key => $parameter) {
-				$search = '{' . $key . '}';
-				if ($parameter['type'] === 'user') {
-					$replace = '@' . $parameter['name'];
-				} else {
-					$replace = $parameter['name'];
-				}
+			try {
+				$result[] = $this->commentToSearchResultEntry($room, $user, $comment);
+			} catch (UnauthorizedException $e) {
+			} catch (ParticipantNotFoundException $e) {
 			}
-			$messageStr = str_replace($search, $replace, $messageStr);
-
-			if (!$message->getVisibility()) {
-				$commentIdToIndex[$id] = null;
-				continue;
-			}
-
-			$iconUrl = '';
-			if ($message->getActorType() === 'users') {
-				$iconUrl = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
-					'userId' => $message->getActorId(),
-					'size' => 64,
-				]);
-			}
-
-			$result[] = new SearchResultEntry(
-				$iconUrl,
-				$messageStr,
-				str_replace(
-					['{user}', '{conversation}'],
-					[$message->getActorDisplayName(), $room->getDisplayName($user->getUID())],
-					$subline
-				),
-				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getId()]) . '#m' . $id,
-				'icon-talk', // $iconClass,
-				true
-			);
 		}
 
 		return SearchResult::complete(
-			$this->l->t('Messages'),
+			$title,
 			$result
+		);
+	}
+
+	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment): SearchResultEntry {
+		$participant = $room->getParticipant($user->getUID());
+
+		$id = (int) $comment->getId();
+		$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
+		$this->messageParser->parseMessage($message);
+
+		$messageStr = $message->getMessage();
+		$search = $replace = [];
+		foreach ($message->getMessageParameters() as $key => $parameter) {
+			$search = '{' . $key . '}';
+			if ($parameter['type'] === 'user') {
+				$replace = '@' . $parameter['name'];
+			} else {
+				$replace = $parameter['name'];
+			}
+		}
+		$messageStr = str_replace($search, $replace, $messageStr);
+
+		if (!$message->getVisibility()) {
+			$commentIdToIndex[$id] = null;
+			throw new UnauthorizedException('Not visible');
+		}
+
+		$iconUrl = '';
+		if ($message->getActorType() === 'users') {
+			$iconUrl = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
+				'userId' => $message->getActorId(),
+				'size' => 64,
+			]);
+		}
+
+		return new SearchResultEntry(
+			$iconUrl,
+			$messageStr,
+			str_replace(
+				['{user}', '{conversation}'],
+				[$message->getActorDisplayName(), $room->getDisplayName($user->getUID())],
+				$this->getSublineTemplate()
+			),
+			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getId()]) . '#m' . $id,
+			'icon-talk', // $iconClass,
+			true
 		);
 	}
 }

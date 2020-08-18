@@ -57,7 +57,7 @@ class ConversationSearch implements IProvider {
 	 * @inheritDoc
 	 */
 	public function getId(): string {
-		return 'talk_conversations';
+		return 'talk-conversations';
 	}
 
 	/**
