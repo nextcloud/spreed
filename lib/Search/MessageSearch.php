@@ -147,7 +147,7 @@ class MessageSearch implements IProvider {
 		foreach ($comments as $comment) {
 			$room = $roomMap[$comment->getObjectId()];
 			try {
-				$result[] = $this->commentToSearchResultEntry($room, $user, $comment);
+				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);
 			} catch (UnauthorizedException $e) {
 			} catch (ParticipantNotFoundException $e) {
 			}
@@ -159,7 +159,7 @@ class MessageSearch implements IProvider {
 		);
 	}
 
-	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment): SearchResultEntry {
+	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment, ISearchQuery $query): SearchResultEntry {
 		$participant = $room->getParticipant($user->getUID());
 
 		$id = (int) $comment->getId();
@@ -178,6 +178,13 @@ class MessageSearch implements IProvider {
 		}
 		$messageStr = str_replace($search, $replace, $messageStr);
 
+		$matchPosition = mb_stripos($messageStr, $query->getTerm());
+		if ($matchPosition > 30 && mb_strlen($messageStr) > 40) {
+			// Mostlikely the result is not visible from the beginning,
+			// so we cut of the message a bit.
+			$messageStr = '…' . mb_substr($messageStr, $matchPosition - 10);
+		}
+
 		if (!$message->getVisibility()) {
 			$commentIdToIndex[$id] = null;
 			throw new UnauthorizedException('Not visible');
@@ -193,12 +200,12 @@ class MessageSearch implements IProvider {
 
 		return new SearchResultEntry(
 			$iconUrl,
-			$messageStr,
 			str_replace(
 				['{user}', '{conversation}'],
 				[$message->getActorDisplayName(), $room->getDisplayName($user->getUID())],
 				$this->getSublineTemplate()
 			),
+			$messageStr,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getId()]) . '#m' . $id,
 			'icon-talk', // $iconClass,
 			true
