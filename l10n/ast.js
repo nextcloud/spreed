@@ -59,6 +59,7 @@ OC.L10N.register(
     "Back" : "Atrás",
     "Close" : "Zarrar",
     "Reply" : "Rempuesta",
+    "Remove" : "Desaniciar",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "guest" : "invitáu",

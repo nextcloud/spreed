@@ -24,6 +24,7 @@ OC.L10N.register(
     "Back" : "ย้อนกลับ",
     "Close" : "ปิด",
     "Reply" : "ตอบกลับ",
+    "Remove" : "ลบออก",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวานนี้",
     "guest" : "ผู้เยี่ยมชม",
