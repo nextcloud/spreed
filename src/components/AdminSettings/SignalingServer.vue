@@ -28,7 +28,7 @@
 			placeholder="wss://signaling.example.org"
 			:value="server"
 			:disabled="loading"
-			:aria-label="t('spreed', 'Signaling server URL')"
+			:aria-label="t('spreed', 'High-performance backend URL')"
 			@input="updateServer">
 		<input :id="'verify' + index"
 			type="checkbox"

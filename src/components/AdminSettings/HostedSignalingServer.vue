@@ -23,7 +23,7 @@
 <template>
 	<div id="hosted_signaling_server" class="videocalls section">
 		<h2>
-			{{ t('spreed', 'Hosted signaling server') }}
+			{{ t('spreed', 'Hosted high-performance backend') }}
 		</h2>
 
 		<p class="settings-hint">

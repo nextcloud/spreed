@@ -23,7 +23,7 @@
 <template>
 	<div id="signaling_server" class="videocalls section">
 		<h2>
-			{{ t('spreed', 'Signaling servers') }}
+			{{ t('spreed', 'High-performance backend') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
 			<a v-else-if="!loading && showAddServerButton"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
