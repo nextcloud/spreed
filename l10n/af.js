@@ -262,6 +262,7 @@ OC.L10N.register(
     "Back" : "Terug",
     "Close" : "Sluit",
     "Reply" : "Antwoord",
+    "Remove" : "Verwyder",
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Chat" : "Klets",

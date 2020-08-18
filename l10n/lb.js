@@ -23,6 +23,7 @@ OC.L10N.register(
     "Back" : "Zeréck",
     "Close" : "Zoumaachen",
     "Reply" : "Äntwerten",
+    "Remove" : "Läschen",
     "Today" : "Haut",
     "Yesterday" : "Gëschter",
     "guest" : "Gaascht",

@@ -29,6 +29,7 @@ OC.L10N.register(
     "Back" : "буцах",
     "Close" : "Хаах",
     "Reply" : "хариулт",
+    "Remove" : "Устгах",
     "Today" : "өнөөдөр",
     "Yesterday" : "өчигдөр",
     "No results" : "Үр дүн байхгүй",

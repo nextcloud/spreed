@@ -31,6 +31,7 @@ OC.L10N.register(
     "Back" : "Kembali",
     "Close" : "Tutup",
     "Reply" : "Balas",
+    "Remove" : "Buang",
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "guest" : "pengunjung",

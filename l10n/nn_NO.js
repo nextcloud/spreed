@@ -22,6 +22,7 @@ OC.L10N.register(
     "Password protect" : "Vern med passord",
     "Back" : "Tilbake",
     "Close" : "Lukk",
+    "Remove" : "Fjern",
     "Today" : "I dag",
     "Yesterday" : "i går",
     "Add users or groups" : "Add users or groups",

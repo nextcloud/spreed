@@ -274,6 +274,7 @@ OC.L10N.register(
     "Back" : "Antaŭen",
     "Close" : "Malfermi",
     "Reply" : "Respondi",
+    "Remove" : "Forigi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",

@@ -76,6 +76,7 @@ OC.L10N.register(
     "Close" : "დახურვა",
     "Conversation name" : "საუბრის სახელწოდება",
     "Reply" : "პასუხი",
+    "Remove" : "წაშლა",
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
