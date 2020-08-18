@@ -26,6 +26,7 @@ namespace OCA\Talk;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\IUserManager;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
@@ -45,17 +46,21 @@ class BridgeManager {
 	private $appData;
 	/** @var IL10N */
 	private $l;
+	/** @var IUserManager */
+	private $userManager;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								IAppData $appData,
 								IURLGenerator $urlGenerator,
+								IUserManager $userManager,
 								Manager $manager,
 								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->appData = $appData;
+		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->l = $l;
 	}
@@ -152,8 +157,14 @@ class BridgeManager {
 	}
 
 	private function checkBotUser(string $token) {
-		$botUserId = 'john';
+		$botUserId = 'matterbridge-bot';
 		// TODO check user exists and create it if necessary
+		if (!$this->userManager->userExists($botUserId)) {
+			$pass = md5(strval(rand()));
+			$botUser = $this->userManager->createUser($botUserId, $pass);
+		} else {
+			$botUser = $this->userManager->get($botUserId);
+		}
 
 		// check user is member of the room
 		$room = $this->manager->getRoomByToken($token);
@@ -169,7 +180,7 @@ class BridgeManager {
 		// TODO get app password for the pair room-user
 		return [
 			'id' => $botUserId,
-			'password' => 'johnpass',
+			'password' => 'NOPASS_FTM',
 		];
 	}
 
