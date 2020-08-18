@@ -31,6 +31,8 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
+use OC\Authentication\Token\IProvider as IAuthTokenProvider;
+use OC\Authentication\Token\IToken;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -48,6 +50,8 @@ class BridgeManager {
 	private $l;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IAuthTokenProvider */
+	private $tokenProvider;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
@@ -55,6 +59,7 @@ class BridgeManager {
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								Manager $manager,
+								IAuthTokenProvider $tokenProvider,
 								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
@@ -62,6 +67,7 @@ class BridgeManager {
 		$this->appData = $appData;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->tokenProvider = $tokenProvider;
 		$this->l = $l;
 	}
 
@@ -178,6 +184,18 @@ class BridgeManager {
 		}
 
 		// TODO get app password for the pair room-user
+		$tokens = $this->tokenProvider->getTokenByUser($botUserId);
+		foreach ($tokens as $token) {
+			$j = $token->jsonSerialize();
+			$keys = implode(',',array_keys($j));
+			error_log('KKKKKK '.$keys.'||||');
+			// TODO revoke existing tokens for this room
+		}
+		// gen token:
+		$this->tokenProvider->generateToken(
+			$strToken, $botUserId, $botUserId, $password, $tokenName, IToken::PERMANENT_TOKEN, IToken::REMEMBER
+		);
+
 		return [
 			'id' => $botUserId,
 			'password' => 'NOPASS_FTM',
