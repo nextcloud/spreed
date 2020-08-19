@@ -610,6 +610,26 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	const forceReconnect = function(signaling, flags) {
+		if (ownPeer) {
+			webrtc.removePeers(ownPeer.id)
+			ownPeer.end()
+			ownPeer = null
+
+			localCallParticipantModel.setPeer(ownPeer)
+		}
+
+		usersChanged(signaling, [], previousUsersInRoom)
+		usersInCallMapping = {}
+		previousUsersInRoom = []
+
+		// Reconnects with a new session id will trigger "usersChanged"
+		// with the users in the room and that will re-establish the
+		// peerconnection streams.
+		// If flags are undefined the current call flags are used.
+		signaling.forceReconnect(true, flags)
+	}
+
 	webrtc.on('createdPeer', function(peer) {
 		console.debug('Peer created', peer)
 
@@ -733,26 +753,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	webrtc.on('peerStreamRemoved', function(peer) {
 		stopPeerCheckMedia(peer)
 	})
-
-	const forceReconnect = function(signaling, flags) {
-		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
-			ownPeer.end()
-			ownPeer = null
-
-			localCallParticipantModel.setPeer(ownPeer)
-		}
-
-		usersChanged(signaling, [], previousUsersInRoom)
-		usersInCallMapping = {}
-		previousUsersInRoom = []
-
-		// Reconnects with a new session id will trigger "usersChanged"
-		// with the users in the room and that will re-establish the
-		// peerconnection streams.
-		// If flags are undefined the current call flags are used.
-		signaling.forceReconnect(true, flags)
-	}
 
 	webrtc.webrtc.on('videoOn', function() {
 		if (signaling.getSendVideoIfAvailable()) {
