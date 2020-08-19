@@ -224,9 +224,8 @@ class BridgeManager {
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 			// set avatar
 			$avatar = $this->avatarManager->getAvatar($botUserId);
-			$image = new \OC_Image();
-			$image->loadFromFile(\OC::$SERVERROOT . '/apps/spreed/img/bridge-bot.png');
-			$avatar->set($image->data());
+			$imageData = file_get_contents(\OC::$SERVERROOT . '/apps/spreed/img/bridge-bot.png');
+			$avatar->set($imageData);
 		} else {
 			$botUser = $this->userManager->get($botUserId);
 		}
