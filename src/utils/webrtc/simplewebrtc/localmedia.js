@@ -60,6 +60,9 @@ function LocalMedia(opts) {
 
 	this._audioMonitors = []
 	this.on('localScreenStopped', this._stopAudioMonitor.bind(this))
+
+	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
+	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
 }
 
 util.inherits(LocalMedia, WildEmitter)
@@ -162,6 +165,9 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 		self.emit('localStream', constraints, stream)
 
+		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
+		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
+
 		if (cb) {
 			return cb(null, stream)
 		}
@@ -183,9 +189,215 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	})
 }
 
+LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, audioInputId) {
+	const localStreamsChanged = []
+	const localTracksReplaced = []
+
+	if (this.localStreams.length === 0 && audioInputId) {
+		// Force the creation of a new stream to add a new audio track to it.
+		localTracksReplaced.push({ track: null, stream: null })
+	}
+
+	this.localStreams.forEach(stream => {
+		if (stream.getAudioTracks().length === 0) {
+			localStreamsChanged.push(stream)
+
+			localTracksReplaced.push({ track: null, stream })
+		}
+
+		stream.getAudioTracks().forEach(track => {
+			const settings = track.getSettings()
+			if (track.kind === 'audio' && settings && settings.deviceId !== audioInputId) {
+				track.stop()
+
+				stream.removeTrack(track)
+
+				if (!localStreamsChanged.includes(stream)) {
+					localStreamsChanged.push(stream)
+				}
+
+				localTracksReplaced.push({ track, stream })
+			}
+		})
+	})
+
+	if (audioInputId === null) {
+		localStreamsChanged.forEach(stream => {
+			this.emit('localStreamChanged', stream)
+		})
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
+		})
+
+		return
+	}
+
+	if (localTracksReplaced.length === 0) {
+		return
+	}
+
+	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
+		// According to the specification "getUserMedia({ audio: true })" will
+		// return a single audio track.
+		const track = stream.getTracks()[0]
+		if (stream.getTracks().length > 1) {
+			console.error('More than a single audio track returned by getUserMedia, only the first one will be used')
+		}
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			const clonedTrack = track.clone()
+
+			let stream = trackStreamPair.stream
+			let streamIndex = this.localStreams.indexOf(stream)
+			if (streamIndex < 0) {
+				stream = new MediaStream()
+				this.localStreams.push(stream)
+				streamIndex = this.localStreams.length - 1
+			}
+
+			stream.addTrack(clonedTrack)
+
+			// The audio monitor stream is never disabled to be able to analyze
+			// it even when the stream sent is muted.
+			let audioMonitorStream
+			if (streamIndex > this._audioMonitorStreams.length - 1) {
+				audioMonitorStream = cloneLinkedStream(stream)
+				this._audioMonitorStreams.push(audioMonitorStream)
+			} else {
+				audioMonitorStream = this._audioMonitorStreams[streamIndex]
+			}
+
+			if (this.config.detectSpeakingEvents) {
+				this._setupAudioMonitor(audioMonitorStream, this.config.harkOptions)
+			}
+
+			clonedTrack.addEventListener('ended', () => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+
+			this.emit('localStreamChanged', stream)
+			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, trackStreamPair.stream)
+		})
+
+		// After the clones were added to the local streams the original track
+		// is no longer needed.
+		track.stop()
+	}).catch(() => {
+		localStreamsChanged.forEach(stream => {
+			this.emit('localStreamChanged', stream)
+		})
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
+		})
+	})
+}
+
+LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, videoInputId) {
+	const localStreamsChanged = []
+	const localTracksReplaced = []
+
+	if (this.localStreams.length === 0 && videoInputId) {
+		// Force the creation of a new stream to add a new video track to it.
+		localTracksReplaced.push({ track: null, stream: null })
+	}
+
+	this.localStreams.forEach(stream => {
+		if (stream.getVideoTracks().length === 0) {
+			localStreamsChanged.push(stream)
+
+			localTracksReplaced.push({ track: null, stream })
+		}
+
+		stream.getVideoTracks().forEach(track => {
+			const settings = track.getSettings()
+			if (track.kind === 'video' && settings && settings.deviceId !== videoInputId) {
+				track.stop()
+
+				stream.removeTrack(track)
+
+				if (!localStreamsChanged.includes(stream)) {
+					localStreamsChanged.push(stream)
+				}
+
+				localTracksReplaced.push({ track, stream })
+			}
+		})
+	})
+
+	if (videoInputId === null) {
+		localStreamsChanged.forEach(stream => {
+			this.emit('localStreamChanged', stream)
+		})
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
+		})
+
+		return
+	}
+
+	if (localTracksReplaced.length === 0) {
+		return
+	}
+
+	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
+		// According to the specification "getUserMedia({ video: true })" will
+		// return a single video track.
+		const track = stream.getTracks()[0]
+		if (stream.getTracks().length > 1) {
+			console.error('More than a single video track returned by getUserMedia, only the first one will be used')
+		}
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			const clonedTrack = track.clone()
+
+			let stream = trackStreamPair.stream
+			if (!this.localStreams.includes(stream)) {
+				stream = new MediaStream()
+				this.localStreams.push(stream)
+
+				const audioMonitorStream = cloneLinkedStream(stream)
+				this._audioMonitorStreams.push(audioMonitorStream)
+			}
+
+			stream.addTrack(clonedTrack)
+
+			clonedTrack.addEventListener('ended', () => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+
+			this.emit('localStreamChanged', stream)
+			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, trackStreamPair.stream)
+		})
+
+		// After the clones were added to the local streams the original track
+		// is no longer needed.
+		track.stop()
+	}).catch(() => {
+		localStreamsChanged.forEach(stream => {
+			this.emit('localStreamChanged', stream)
+		})
+
+		localTracksReplaced.forEach(trackStreamPair => {
+			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
+		})
+	})
+}
+
 LocalMedia.prototype.stop = function(stream) {
 	this.stopStream(stream)
 	this.stopScreenShare(stream)
+
+	if (!this.localStreams.length) {
+		webrtcIndex.mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
+		webrtcIndex.mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
+	}
 }
 
 LocalMedia.prototype.stopStream = function(stream) {

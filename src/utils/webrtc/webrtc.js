@@ -630,6 +630,17 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		signaling.forceReconnect(true, flags)
 	}
 
+	function setHandlerForNegotiationNeeded(peer) {
+		peer.pc.addEventListener('negotiationneeded', function() {
+			// Negotiation needed will be first triggered before the connection
+			// is established, but forcing a reconnection should be done only
+			// once the connection was established.
+			if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
+				forceReconnect(signaling)
+			}
+		})
+	}
+
 	webrtc.on('createdPeer', function(peer) {
 		console.debug('Peer created', peer)
 
@@ -659,6 +670,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 			}
+
+			setHandlerForNegotiationNeeded(peer)
 
 			// Make sure required data channels exist for all peers. This
 			// is required for peers that get created by SimpleWebRTC from

@@ -77,6 +77,11 @@ function Peer(options) {
 				}
 			})
 		})
+
+		this.handleLocalTrackReplacedBound = this.handleLocalTrackReplaced.bind(this)
+		// TODO What would happen if the track is replaced while the peer is
+		// still negotiating the offer and answer?
+		this.parent.on('localTrackReplaced', this.handleLocalTrackReplacedBound)
 	}
 
 	// proxy events to parent
@@ -377,6 +382,59 @@ Peer.prototype.end = function() {
 	}
 	this.pc.close()
 	this.handleStreamRemoved()
+	this.parent.off('localTrackReplaced', this.handleLocalTrackReplacedBound)
+}
+
+Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
+	let senderFound = false
+
+	this.pc.getSenders().forEach(sender => {
+		if (sender.track !== oldTrack) {
+			return
+		}
+
+		if (!sender.track && !newTrack) {
+			return
+		}
+
+		if (!sender.kind && sender.track) {
+			sender.kind = sender.track.kind
+		} else if (!sender.kind) {
+			this.pc.getTransceivers().forEach(transceiver => {
+				if (transceiver.sender === sender) {
+					sender.kind = transceiver.mid
+				}
+			})
+		}
+
+		// A null track can match on audio and video senders, so it needs to be
+		// ensured that the sender kind and the new track kind are compatible.
+		// However, in some cases it may not be possible to know the sender
+		// kind. In those cases just go ahead and try to replace the track; if
+		// the kind does not match then replacing the track will fail, but this
+		// should not prevent replacing the track with a proper one later, nor
+		// affect any other sender.
+		if (!sender.track && sender.kind && sender.kind !== newTrack.kind) {
+			return
+		}
+
+		senderFound = true
+
+		sender.replaceTrack(newTrack).catch(error => {
+			if (error.name === 'InvalidModificationError') {
+				console.debug('Track could not be replaced, negotiation needed')
+			} else {
+				console.error('Track could not be replaced: ', error, oldTrack, newTrack)
+			}
+		})
+	})
+
+	// If the call started when the audio or video device was not active there
+	// will be no sender for that type. In that case the track needs to be added
+	// instead of replaced.
+	if (!senderFound && newTrack) {
+		this.pc.addTrack(newTrack, stream)
+	}
 }
 
 Peer.prototype.handleRemoteStreamAdded = function(event) {
