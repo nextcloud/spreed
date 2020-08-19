@@ -25,6 +25,7 @@ namespace OCA\Talk;
 
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IL10N;
 use OCP\IUserManager;
 use OCP\Files\IAppData;
@@ -81,10 +82,7 @@ class BridgeManager {
 	 * @return array decoded json bridge information
 	 */
 	public function getBridgeOfRoom(string $token): array {
-		$defaultParts = '{"enabled":false,"pid":0,"parts":[]}';
-		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, $defaultParts);
-		$bridge = json_decode($bridgeJSON, true);
-		return $bridge;
+		return $this->getBridgeFromDb($token);
 	}
 
 	/**
@@ -111,8 +109,7 @@ class BridgeManager {
 		$newBridge['pid'] = $pid;
 
 		// save config
-		$newBridgeJSON = json_encode($newBridge);
-		$this->config->setAppValue('spreed', 'bridge_' . $token, $newBridgeJSON);
+		$this->saveBridgeToDb($token, $newBridge);
 
 		return true;
 	}
@@ -157,8 +154,7 @@ class BridgeManager {
 		if ($pid !== $bridge['pid']) {
 			// save the new PID if necessary
 			$bridge['pid'] = $pid;
-			$bridgeJSON = json_encode($bridge);
-			$this->config->setAppValue('spreed', 'bridge_' . $token, $bridgeJSON);
+			$this->saveBridgeToDb($token, $bridge);
 		}
 	}
 
@@ -556,5 +552,67 @@ class BridgeManager {
 		} catch (Exception $e) {
 		}
 		return false;
+	}
+
+	private function getBridgeFromDb(string $token): array {
+		$room = $this->manager->getRoomByToken($token);
+		$roomId = $room->getId();
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('json_values')
+			->from('talk_bridges', 'b')
+			->where(
+				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
+			);
+		$req = $qb->execute();
+		$jsonValues = '{"enabled":false,"pid":0,"parts":[]}';
+		while ($row = $req->fetch()) {
+			$jsonValues = $row['json_values'];
+			break;
+		}
+		$req->closeCursor();
+		$qb = $qb->resetQueryParts();
+
+		return json_decode($jsonValues, true);
+	}
+
+	private function saveBridgeToDb(string $token, array $bridge) {
+		$room = $this->manager->getRoomByToken($token);
+		$roomId = $room->getId();
+		$jsonValues = json_encode($bridge);
+
+		$qb = $this->db->getQueryBuilder();
+
+		$exists = false;
+		$qb->select('json_values')
+			->from('talk_bridges', 'b')
+			->where(
+				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
+			);
+		$req = $qb->execute();
+		while ($row = $req->fetch()) {
+			$exists = true;
+			break;
+		}
+		$req->closeCursor();
+		$qb = $qb->resetQueryParts();
+
+		if ($exists) {
+			$qb->update('talk_bridges');
+			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
+			$qb->where(
+				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
+			);
+			$req = $qb->execute();
+			$qb = $qb->resetQueryParts();
+		} else {
+			$qb->insert('talk_bridges')
+				->values([
+					'room_id' => $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
+					'json_values' => $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR),
+				]);
+			$req = $qb->execute();
+			$qb = $qb->resetQueryParts();
+		}
 	}
 }
