@@ -39,8 +39,6 @@ use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 
 class BridgeManager {
-	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
-
 	/** @var IDBConnection */
 	private $db;
 	/** @var IConfig */
@@ -76,6 +74,12 @@ class BridgeManager {
 		$this->l = $l;
 	}
 
+	/**
+	 * Get bridge information for a specific room
+	 *
+	 * @param string $token the room token
+	 * @return array decoded json bridge information
+	 */
 	public function getBridgeOfRoom(string $token): array {
 		$defaultParts = '{"enabled":false,"pid":0,"parts":[]}';
 		$bridgeJSON = $this->config->getAppValue('spreed', 'bridge_' . $token, $defaultParts);
@@ -83,6 +87,14 @@ class BridgeManager {
 		return $bridge;
 	}
 
+	/**
+	 * Edit bridge information for a room
+	 *
+	 * @param string $token the room token
+	 * @param bool $enabled desired state of the bridge
+	 * @param array $parts parts of the bridge (what it connects to)
+	 * @return bool success
+	 */
 	public function editBridgeOfRoom(string $token, bool $enabled, array $parts = []): bool {
 		$currentBridge = $this->getBridgeOfRoom($token);
 		$newBridge = [
@@ -105,6 +117,12 @@ class BridgeManager {
 		return true;
 	}
 
+	/**
+	 * Delete bridge information for a room
+	 *
+	 * @param string $token the room token
+	 * @return bool success
+	 */
 	public function deleteBridgeOfRoom(string $token): bool {
 		// first potentially kill the process
 		$currentBridge = $this->getBridgeOfRoom($token);
@@ -115,6 +133,10 @@ class BridgeManager {
 		return true;
 	}
 
+	/**
+	 * Check everything bridge-related is running fine
+	 * For each room, check mattermost process respects desired state
+	 */
 	public function checkAllBridges() {
 		// TODO call this from time to time to make sure everything is running fine
 		$this->manager->forAllRooms(function ($room) {
@@ -125,6 +147,10 @@ class BridgeManager {
 		});
 	}
 
+	/**
+	 * For one room, check mattermost process respects desired state
+	 * @param string $token the room token
+	 */
 	public function checkBridge(string $token) {
 		$bridge = $this->getBridgeOfRoom($token);
 		$pid = $this->checkBridgeProcess($token, $bridge);
@@ -144,6 +170,12 @@ class BridgeManager {
 		}
 	}
 
+	/**
+	 * Edit the mattermost configuration file for one room
+	 * This method takes care of connecting the bridge to the Talk room with a bot user
+	 *
+	 * @param string $token the room token
+	 */
 	private function editBridgeConfig(string $token, array $newBridge) {
 		// check bot user exists and is member of the room
 		// add the 'local' bridge part
@@ -155,7 +187,14 @@ class BridgeManager {
 		file_put_contents($configPath, $configContent);
 	}
 
-	private function addLocalPart($token, $bridge) {
+	/**
+	 * Add a bridge part with bot credentials to connect to the room
+	 *
+	 * @param string $token the room token
+	 * @param array $bridge bridge information
+	 * @return array the bridge with local part added
+	 */
+	private function addLocalPart(string $token, array $bridge): array {
 		$botInfo = $this->checkBotUser($token, $bridge['enabled']);
 		$localPart = [
 			'type' => 'nctalk',
@@ -167,8 +206,18 @@ class BridgeManager {
 		return $bridge;
 	}
 
+	/**
+	 * routine to check the Nextcloud bot user exists (and create it if not)
+	 * and to add it in the room in necessary
+	 * and to revoke its old app token
+	 * and to generate a new app token (used to connect via matterbridge)
+	 *
+	 * @param string $token the room token
+	 * @param bool $create whether we should generate a new app token or not
+	 * @return array Bot user information (username and app token). token is an empty string if creation was not asked.
+	 */
 	private function checkBotUser(string $token, bool $create): array {
-		$botUserId = 'matterbridge-bot';
+		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
 			$pass = md5(strval(rand()));
@@ -222,6 +271,13 @@ class BridgeManager {
 		];
 	}
 
+	/**
+	 * Actually generate the matterbridge configuration file content for one bridge (one room)
+	 * It basically add a pair of sections for each part: authentication and target channel
+	 *
+	 * @param string $token the room token
+	 * @return string config file content
+	 */
 	private function generateConfig($token, array $bridge): string {
 		$content = '';
 		foreach ($bridge['parts'] as $k => $part) {
@@ -357,7 +413,10 @@ class BridgeManager {
 		return $content;
 	}
 
-	private function cleanUrl($url): string {
+	/**
+	 * Remove the scheme from an URL and add port
+	 */
+	private function cleanUrl(string $url): string {
 		$uo = parse_url($url);
 		$result = $uo['host'];
 		if ($uo['scheme'] === 'https' && !isset($uo['port'])) {
@@ -371,15 +430,18 @@ class BridgeManager {
 
 	/**
 	 * check if a bridge process is running
-	 * @return PID the corresponding matterbridge process ID, 0 if none
+	 *
+	 * @param string $token the room token
+	 * @param array $bridge bridge information
+	 * @return int the corresponding matterbridge process ID, 0 if none
 	 */
-	private function checkBridgeProcess($token, $bridge): int {
+	private function checkBridgeProcess(string $token, array $bridge): int {
 		$pid = 0;
 
 		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
 			// config : there is a PID stored
 			error_log('pid is defined in config |||||');
-			$pid = $bridge['pid'];
+			$pid = intval($bridge['pid']);
 			$isRunning = $this->isRunning($pid);
 			// if bridge running and enabled is false : kill it
 			if ($isRunning) {
@@ -417,7 +479,13 @@ class BridgeManager {
 		return $pid;
 	}
 
-	private function launchMatterbridge($token): int {
+	/**
+	 * Actually launch a matterbridge process for a room
+	 *
+	 * @param string $token the room token
+	 * @return int the corresponding matterbridge process ID, 0 if it failed
+	 */
+	private function launchMatterbridge(string $token): int {
 		$binPath = __DIR__ . '/../sample-commands/matterbridge';
 		// TODO this should be in appdata
 		$configPath = sprintf('/tmp/bridge-%s.toml', $token);
@@ -432,7 +500,7 @@ class BridgeManager {
 	}
 
 	/**
-	 * kill the mattermost processes that do not match with any room
+	 * kill the mattermost processes (owned by web server unix user) that do not match with any room
 	 */
 	public function killZombieBridges() {
 		// get list of running matterbridge processes
@@ -459,7 +527,13 @@ class BridgeManager {
 		}
 	}
 
-	private function killPid($pid): bool {
+	/**
+	 * Utility to kill a process
+	 *
+	 * @param int $pid the process ID to kill
+	 * @return bool if it was successfully killed
+	 */
+	private function killPid(int $pid): bool {
 		// kill
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
 		// check the process is gone
@@ -467,7 +541,13 @@ class BridgeManager {
 		return (intval($ret) === 0 && !$isStillRunning);
 	}
 
-	private function isRunning($pid): bool {
+	/**
+	 * Check if a process is running
+	 *
+	 * @param int $pid the process ID
+	 * @return bool true if it's running
+	 */
+	private function isRunning(int $pid): bool {
 		try {
 			$result = shell_exec(sprintf('ps %d', $pid));
 			if (count(preg_split('/\n/', $result)) > 2) {
