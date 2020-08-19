@@ -112,20 +112,22 @@
 	// narrow.
 	.atwho-view {
 		max-width: unset;
+		// mention height: 48 * visible mentions: 4.5
+		max-height: 216px;
 	}
 
 	// Override max height to show 4.5 mentions to make clear you can scroll for more options
 	.atwho-ul {
-		// (padding top: 6 + avatar height: 32 + padding bottom: 6) * visible mentions: 4.5
-		max-height: 198px;
+		// (padding top: 4 + avatar height: 48 + padding bottom: 4) * visible mentions: 4.5
+		max-height: unset;
 	}
 
 	// Override autocompletion panel items height, as they are too short
 	// for the avatars and also need some padding.
 	.atwho-li {
-		height: unset;
-		padding-top: 6px;
-		padding-bottom: 6px;
+		height: 48px;
+		padding-top: 4px;
+		padding-bottom: 4px;
 	}
 
 	// Although the height of its wrapper is 32px the height of the icon

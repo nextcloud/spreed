@@ -45,8 +45,14 @@
 				:disable-tooltip="true"
 				:disable-menu="true" />
 			&nbsp;
-			<span>{{ scope.item.label }}</span>
-			<em v-if="isNotAvailable(scope.item)">&nbsp;{{ getStatus(scope.item) }}</em>
+
+			<span class="mention-suggestion">
+				<span>{{ scope.item.label }}</span>
+				<em v-if="isNotAvailable(scope.item)"
+					class="user-status">
+					{{ getStatusMessage(scope.item) }}
+				</em>
+			</span>
 		</template>
 		<template v-slot:embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
@@ -353,14 +359,6 @@ export default {
 
 			return 'user'
 		},
-
-		getStatus(candidate) {
-			const status = this.getStatusMessage(candidate)
-			if (status) {
-				return '(' + status + ')'
-			}
-			return ''
-		},
 	},
 }
 </script>
@@ -390,4 +388,16 @@ div[contenteditable] {
 	display: block;
 	color: var(--color-text-maxcontrast);
 }
+
+.mention-suggestion {
+	max-width: 250px;
+
+	.user-status {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+		margin-top: -5px;
+	}
+}
+
 </style>

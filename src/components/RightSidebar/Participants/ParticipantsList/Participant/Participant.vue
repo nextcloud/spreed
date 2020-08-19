@@ -295,6 +295,7 @@ export default {
 
 	&__user-wrapper {
 		padding-left: 8px;
+		width: calc(100% - 80px);
 	}
 	&__user-name {
 		display: inline-block;
@@ -311,6 +312,8 @@ export default {
 	&__status {
 		color: var(--color-text-maxcontrast);
 		line-height: 1.3em;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	&__icon {
 		width: 32px;
