@@ -372,7 +372,6 @@ OC.L10N.register(
     "Pending" : "Чекање",
     "Error" : "Грешка",
     "Active" : "Активно",
-    "Signaling server URL" : "URL за сервер за сигнализација",
     "Saved" : "Зачувано",
     "Copy link" : "Копирај линк",
     "Waiting for others to join the call …" : "Чекање на останатите да се приклучат кон повикот ...",
@@ -554,6 +553,7 @@ OC.L10N.register(
     "Add contacts" : "Додади контакти",
     "Add contacts, groups or circles" : "Додади контакти, групи или кругови",
     "Add contacts or groups" : "Додади контакти или групи",
-    "Add contacts or circles" : "Додади контакти или кругови"
+    "Add contacts or circles" : "Додади контакти или кругови",
+    "Signaling server URL" : "URL за сервер за сигнализација"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

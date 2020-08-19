@@ -357,12 +357,10 @@ OC.L10N.register(
     "Expired" : "Nebegalioja",
     "The account could not be deleted. Please try again later." : "Nepavyko ištrinti paskyros. Vėliau bandykite dar kartą.",
     "_%n user_::_%n users_" : ["%n naudotojas","%n naudotojai","%n naudotojų","%n naudotojas"],
-    "Signaling server URL" : "Signalinio serverio URL",
     "Delete this server" : "Ištrinti šį serverį",
     "Status: Checking connection" : "Būsena: Tikrinamas ryšys",
     "Error: Can not connect to server" : "Klaida: Nepavyksta prisijungti prie serverio",
     "Error: Unknown error occurred" : "Klaida: Įvyko nežinoma klaida",
-    "Signaling servers" : "Signaliniai serveriai",
     "Saved" : "Įrašyta",
     "Add a new server" : "Pridėti naują serverį",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Didesniems diegimams pasirinktinai turėtų būti naudojamas signalinis serveris. Palikite tuščią norėdami naudoti vidinį signalinį serverį.",
@@ -526,6 +524,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Slaptažodis neteisingas. Bandykite dar kartą.",
     "Password" : "Slaptažodis",
     "TURN server" : "TURN serveris",
+    "Signaling servers" : "Signaliniai serveriai",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Didesniems diegimams pasirinktinai gali būti naudojamas signalinis serveris. Palikite tuščią norėdami naudoti vidinį signalinį serverį.",
     "%s Talk on your mobile devices" : "%s Pokalbiai jūsų mobiliuosiuose įrenginiuose",
     "Join conversations at any time, anywhere, on any device." : "Prisijunkite prie pokalbių bet kur, bet kada, bet kokiame įrenginyje.",
@@ -604,6 +603,7 @@ OC.L10N.register(
     "Add contacts" : "Pridėti adresatus",
     "Add contacts, groups or circles" : "Pridėti adresatus, grupes ar ratus",
     "Add contacts or groups" : "Pridėti adresatus ar grupes",
-    "Add contacts or circles" : "Pridėti adresatus ar ratus"
+    "Add contacts or circles" : "Pridėti adresatus ar ratus",
+    "Signaling server URL" : "Signalinio serverio URL"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

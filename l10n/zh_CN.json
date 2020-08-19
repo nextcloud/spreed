@@ -429,10 +429,8 @@
     "Blocked" : "被阻止",
     "Active" : "活动",
     "Expired" : "已过期",
-    "Signaling server URL" : "发信服务器URL",
     "Validate SSL certificate" : "验证SSL证书",
     "Delete this server" : "删除此服务器",
-    "Signaling servers" : "发信服务器",
     "Saved" : "已保存",
     "Add a new server" : "添加新服务器",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部发信服务器。若使用内部发信服务器请留空。",
@@ -608,6 +606,7 @@
     "Specify commands the users can use in chats" : "指定用户可以在聊天中使用的命令",
     "TURN server" : "TURN 服务器",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 服务器是用来为防火墙后面的参与者代理流量的。",
+    "Signaling servers" : "发信服务器",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部发信服务器。若使用内部发信服务器请留空。",
     "%s Talk on your mobile devices" : "%s 在您的移动设备上说话",
     "Join conversations at any time, anywhere, on any device." : "随时随地在任何设备上加入对话。",
@@ -692,6 +691,7 @@
     "Add contacts" : "添加联系人",
     "Add contacts, groups or circles" : "添加联系人，群组或圈子",
     "Add contacts or groups" : "添加联系人或群组",
-    "Add contacts or circles" : "添加联系人或圈子"
+    "Add contacts or circles" : "添加联系人或圈子",
+    "Signaling server URL" : "发信服务器URL"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

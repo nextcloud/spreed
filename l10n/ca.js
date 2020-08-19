@@ -399,10 +399,8 @@ OC.L10N.register(
     "Blocked" : "Blocat",
     "Active" : "Actiu",
     "Expired" : "Caducat",
-    "Signaling server URL" : "URL del servidor de senyalització",
     "Validate SSL certificate" : "Validar certificat SSL",
     "Delete this server" : "Suprimeix aquest servidor",
-    "Signaling servers" : "Servidors de senyalització",
     "Saved" : "Desat",
     "Add a new server" : "Afegeix un nou servidor",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana emprar un servidor de senyalització extern per a instal·lacions grans. Deixeu buit aquest camp per emprar el servidor de senyalització intern.",
@@ -523,6 +521,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Especifiqueu les ordres que els usuaris poden fer servir als xats",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN s'utilitza per proxy el trànsit dels participants darrere d'un servidor de seguretat.",
+    "Signaling servers" : "Servidors de senyalització",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana l'ús d'un servidor de senyalització extern per a instal·lacions grans. Deixeu aquest camp buit per utilitzar el servidor de senyalització intern.",
     "%s Talk on your mobile devices" : "%s Talk als vostres dispositius mòbils",
     "Android app" : "Aplicació d'Android",
@@ -593,6 +592,7 @@ OC.L10N.register(
     "Start calls" : "Inicia les trucades",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "S'empra un servidor TURN per vehicular el tràfic dels participants darrera d'un talla-focs.",
     "Join conversations at any time, any where, on any device." : "Uniu-vos a una conversa en qualsevol moment, des de qualsevol lloc i dispositiu.",
-    "Contacts" : "Contactes"
+    "Contacts" : "Contactes",
+    "Signaling server URL" : "URL del servidor de senyalització"
 },
 "nplurals=2; plural=(n != 1);");

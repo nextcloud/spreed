@@ -83,7 +83,6 @@ OC.L10N.register(
     "Pending" : "Đang dừng",
     "Error" : "Lỗi",
     "Blocked" : "Bị chặn",
-    "Signaling server URL" : "URL máy chủ đăng ký",
     "Validate SSL certificate" : "Xác thực chứng chỉ SSL",
     "Saved" : "Đã lưu",
     "Shared secret" : "Chia sẽ mật khẩu",
@@ -214,6 +213,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "Màn hình của {participantName}",
     "Guest's screen" : "Màn hình Khách",
     "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị.",
-    "Contacts" : "Liên hệ"
+    "Contacts" : "Liên hệ",
+    "Signaling server URL" : "URL máy chủ đăng ký"
 },
 "nplurals=1; plural=0;");
