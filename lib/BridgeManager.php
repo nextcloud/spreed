@@ -35,6 +35,7 @@ use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
 use OCP\Security\ISecureRandom;
+use OCP\IAvatarManager;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -63,7 +64,9 @@ class BridgeManager {
 								Manager $manager,
 								IAuthTokenProvider $tokenProvider,
 								ISecureRandom $random,
+								IAvatarManager $avatarManager,
 								IL10N $l) {
+		$this->avatarManager = $avatarManager;
 		$this->db = $db;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
@@ -219,6 +222,11 @@ class BridgeManager {
 			$pass = md5(strval(rand()));
 			$this->config->setAppValue('spreed', 'bot_pass', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
+			// set avatar
+			$avatar = $this->avatarManager->getAvatar($botUserId);
+			$image = new \OC_Image();
+			$image->loadFromFile(\OC::$SERVERROOT . '/apps/spreed/img/bridge-bot.png');
+			$avatar->set($image->data());
 		} else {
 			$botUser = $this->userManager->get($botUserId);
 		}
