@@ -425,7 +425,6 @@ OC.L10N.register(
     "Blocked" : "Blockerar",
     "Active" : "Aktiv",
     "Expired" : "Utgånget",
-    "Signaling server URL" : "Signalerar serverwebbadress",
     "Validate SSL certificate" : "Validera SSL-certifikat",
     "Delete this server" : "Ta bort denna server",
     "Status: Checking connection" : "Status: Kontrollerar anslutning",
@@ -434,7 +433,6 @@ OC.L10N.register(
     "Error: Server did not respond with proper JSON" : "Error: Servern svarade inte med korrekt JSON",
     "Error: Server responded with: {error}" : "Error: Servern svarade med: {error}",
     "Error: Unknown error occurred" : "Error: Okänt fel inträffade",
-    "Signaling servers" : "Signalservrar",
     "Saved" : "Sparad",
     "Add a new server" : "Lägg till ny server",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver bör eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
@@ -627,6 +625,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Ange kommandon som användare kan använda i chattar",
     "TURN server" : "TURN-server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
+    "Signaling servers" : "Signalservrar",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
     "%s Talk on your mobile devices" : "%s Talk på dina mobila enheter",
     "Join conversations at any time, anywhere, on any device." : "Gå med i konversationer när som helst, var som helst, på alla enheter.",
@@ -712,6 +711,7 @@ OC.L10N.register(
     "Add contacts, groups or circles" : "Lägg till kontakter, grupper och cirklar",
     "Add contacts or groups" : "Lägg till kontakter eller grupper",
     "Add contacts or circles" : "Lägg till kontakter eller cirklar",
+    "Signaling server URL" : "Signalerar serverwebbadress",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal"
 },
 "nplurals=2; plural=(n != 1);");

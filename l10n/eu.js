@@ -431,7 +431,6 @@ OC.L10N.register(
     "Blocked" : "Blokeatuta",
     "Active" : "Aktiboa",
     "Expired" : "Iraungita",
-    "Signaling server URL" : "Seinalizazio zerbitzariaren URLa",
     "Validate SSL certificate" : "Balioztatu SSL ziurtagiria",
     "Delete this server" : "Ezabatu zerbitzari hau",
     "Status: Checking connection" : "Egoera: konexioa egiaztatzen",
@@ -440,7 +439,6 @@ OC.L10N.register(
     "Error: Server did not respond with proper JSON" : "Errorea: zerbitzariak ez du JSON egokiarekin erantzun",
     "Error: Server responded with: {error}" : "Errorea: zerbitzariak {error} errorearekin erantzun du",
     "Error: Unknown error occurred" : "Errorea: errore ezezaguna gertatu da",
-    "Signaling servers" : "Seinalizazio zerbitzariak",
     "Saved" : "Gordeta",
     "Add a new server" : "Gehitu zerbitzari berria",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko.",
@@ -618,6 +616,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Zehaztu erabiltzaileek txatetan erabil ditzaketen komandoak",
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzaria suebaki baten atzean dauden parte-hartzaileen trafikoan proxy lanak egiteko erabiltzen da.",
+    "Signaling servers" : "Seinalizazio zerbitzariak",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko.",
     "%s Talk on your mobile devices" : "%s Hitz egin zure gailu mugikorretan",
     "Join conversations at any time, anywhere, on any device." : "Batu elkarrizketetara edonoiz, edonondik, edozein gailutatik.",
@@ -702,6 +701,7 @@ OC.L10N.register(
     "Add contacts" : "Gehitu kontaktuak",
     "Add contacts, groups or circles" : "Gehitu kontaktuak, taldeak edo zirkuluak",
     "Add contacts or groups" : "Gehitu kontaktuak edo taldeak",
-    "Add contacts or circles" : "Gehitu kontaktuak edo zirkuluak"
+    "Add contacts or circles" : "Gehitu kontaktuak edo zirkuluak",
+    "Signaling server URL" : "Seinalizazio zerbitzariaren URLa"
 },
 "nplurals=2; plural=(n != 1);");

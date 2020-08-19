@@ -479,7 +479,6 @@
     "All messages" : "Tous les messages",
     "@-mentions only" : "seulement les mentions @",
     "Off" : "Éteint",
-    "Hosted signaling server" : "Serveur de signalisation hébergé.",
     "Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings." : "Notre partenaire Struktur AG fournit un service dans lequel un serveur de signalisation hébergé peut être demandé. Pour cela il vous suffit de renseigner le formulaire ci-dessous et votre Nextcloud le demandera. Une fois le serveur configuré pour vous les identifiants seront automatiquement renseignés. Ceci écrasera les actuels réglages du serveur de signalement.",
     "URL of this Nextcloud instance" : "URL de cette instance Nextcloud",
     "Full name of the user requesting the trial" : "Nom complet de l'utilisateur qui sollicite l'essai",
@@ -503,7 +502,6 @@
     "The trial could not be requested. Please try again later." : "L'essai n'a pas pu être demandé. Veuillez essayer plus tard.",
     "The account could not be deleted. Please try again later." : "Le compte n'a pas pu être supprimé. Veuillez essayer plus tard.",
     "_%n user_::_%n users_" : ["%n utilisateur","%n utilisateurs"],
-    "Signaling server URL" : "URL du serveur de signal",
     "Validate SSL certificate" : "Valider le certificat SSL",
     "Delete this server" : "Supprimer ce serveur",
     "Status: Checking connection" : "Statut : vérification de la connexion ...",
@@ -512,7 +510,6 @@
     "Error: Server did not respond with proper JSON" : "Erreur: Le serveur n'a pas répondu avec un JSON correct",
     "Error: Server responded with: {error}" : "Erreur: Le serveur a répondu avec: {error}",
     "Error: Unknown error occurred" : "Erreur: Une erreur inconnue est survenue",
-    "Signaling servers" : "Serveur de signalement",
     "Saved" : "Sauvegardé",
     "Add a new server" : "Ajouter un nouveau serveur",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signalement externe devrait optionnellement être utilisé pour les installations larges. Laissez vide pour utiliser le serveur de signalement interne.",
@@ -754,6 +751,7 @@
     "Specify commands the users can use in chats" : "Précise les commandes que les utilisateurs peuvent utiliser dans les discussions",
     "TURN server" : "Serveur TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
+    "Signaling servers" : "Serveur de signalement",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
     "%s Talk on your mobile devices" : "%s Talk sur votre smartphone",
     "Join conversations at any time, anywhere, on any device." : "Rejoignez des conversations n'importe quand, n'importe où, depuis n'importe quel appareil.",
@@ -839,6 +837,7 @@
     "Add contacts, groups or circles" : "Ajouter des contacts, groupes ou cercles",
     "Add contacts or groups" : "Ajouter des contacts ou groupes",
     "Add contacts or circles" : "Ajouter des contacts ou cercles",
+    "Signaling server URL" : "URL du serveur de signal",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

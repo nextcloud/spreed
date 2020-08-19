@@ -412,7 +412,6 @@ OC.L10N.register(
     "Blocked" : "Blokkolva",
     "Active" : "Aktív",
     "Expired" : "Lejárt",
-    "Signaling server URL" : "Jeltovábbító kiszolgáló URL",
     "Validate SSL certificate" : "SSL tanúsítvány érvényesítése",
     "Delete this server" : "Ezen kiszolgáló törlése",
     "Status: Checking connection" : "Állapot: kapcsolat ellenőrzése",
@@ -421,7 +420,6 @@ OC.L10N.register(
     "Error: Server did not respond with proper JSON" : "Hiba: A kiszolgáló nem megfelelő JSON üzenettel válaszolt",
     "Error: Server responded with: {error}" : "Hiba: A kiszolgáló válasza: {error}",
     "Error: Unknown error occurred" : "Hiba: Ismeretlen hiba történt",
-    "Signaling servers" : "Jeltovábbító kiszolgálók",
     "Saved" : "Elmentve",
     "Add a new server" : "Új kiszolgáló hozzáadása",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Nagyobb telepítések esetén egy választható külső jeltovábbító kiszolgálót kell használni. Hagyja üresen a belső jeltovábbító kiszolgáló használatához.",
@@ -607,6 +605,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Adja meg a felhasználók által a csevegésekben használható parancsokat",
     "TURN server" : "TURN kiszolgáló",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "A TURN szervert használjuk a proxyként a tűzfal mögötti felhasználókhoz.",
+    "Signaling servers" : "Jeltovábbító kiszolgálók",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Külső jelzőszerver használata is lehetséges nagyobb telepítések esetén. Hagyd üresen a belső szerver használatához.",
     "%s Talk on your mobile devices" : "%s Beszélgetés a mobileszközein",
     "Join conversations at any time, anywhere, on any device." : "Csatlakozzon a beszélgetésekhez bármikor, bárhol és bármilyen eszközön.",
@@ -689,6 +688,7 @@ OC.L10N.register(
     "Add contacts" : "Személyek hozzáadása",
     "Add contacts, groups or circles" : "Névjegyek, csoportok vagy körök hozzáadása",
     "Add contacts or groups" : "Névjegyek vagy csoportok hozzáadása",
-    "Add contacts or circles" : "Névjegyek vagy körök kozzáadása"
+    "Add contacts or circles" : "Névjegyek vagy körök kozzáadása",
+    "Signaling server URL" : "Jeltovábbító kiszolgáló URL"
 },
 "nplurals=2; plural=(n != 1);");

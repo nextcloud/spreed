@@ -118,10 +118,8 @@
     "Status" : "Status",
     "Pending" : "Gaida",
     "Error" : "Kļūda",
-    "Signaling server URL" : "Signalizēšanas servera URL",
     "Validate SSL certificate" : "Pārbaudīt SSL sertifikātu",
     "Delete this server" : "Dzēst šo serveri",
-    "Signaling servers" : "Signalizēšanas serveri",
     "Saved" : "Saglabāts",
     "Add a new server" : "Pievienot jaunu serveri",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Lielāka izmēra instalācijām pēc izvēles jāizmanto ārējais signalizēšanas serveris. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
@@ -225,6 +223,7 @@
     "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā",
     "TURN server" : "TURN serveris",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
+    "Signaling servers" : "Signalizēšanas serveri",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ārējo signalizēšanas serveri var pēc izvēles izmantot lielākām instalācijām. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
@@ -283,6 +282,7 @@
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Komandas ir jauna beta funkcija programmā Nextcloud Talk. Tās ļauj palaist skriptus Nextcloud serverī. Tos var definēt ar mūsu komandrindas interfeisu. Kalkulatora skripta piemērs atrodams mūsu  <a {attributes}> dokumentācijā ↗</a>.",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
     "Join conversations at any time, any where, on any device." : "Pievienojieties sarunām jebkurā laikā, jebkurā vietā, jebkurā ierīcē.",
-    "Contacts" : "Kontakti"
+    "Contacts" : "Kontakti",
+    "Signaling server URL" : "Signalizēšanas servera URL"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }
