@@ -53,7 +53,8 @@ the main body of the message as well as a quote.
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
-				<h6 v-if="hasDate">
+				<h6 v-if="hasDate"
+					v-tooltip.auto="messageDate">
 					{{ messageTime }}
 				</h6>
 				<Actions
@@ -75,6 +76,7 @@ the main body of the message as well as a quote.
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
@@ -88,6 +90,10 @@ import moment from '@nextcloud/moment'
 
 export default {
 	name: 'Message',
+
+	directives: {
+		tooltip: Tooltip,
+	},
 
 	components: {
 		Actions,
@@ -220,6 +226,11 @@ export default {
 		messageTime() {
 			return moment(this.timestamp * 1000).format('LT')
 		},
+
+		messageDate() {
+			return moment(this.timestamp * 1000).format('LL')
+		},
+
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
 		},
