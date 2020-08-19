@@ -80,6 +80,8 @@ export default function MediaDevicesManager() {
 	this._fallbackAudioInputId = undefined
 	this._fallbackVideoInputId = undefined
 
+	this._tracks = []
+
 	this._updateDevicesBound = this._updateDevices.bind(this)
 }
 MediaDevicesManager.prototype = {
@@ -335,7 +337,11 @@ MediaDevicesManager.prototype = {
 			}
 		}
 
+		this._stopIncompatibleTracks(constraints)
+
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+			this._registerStream(stream)
+
 			// In Firefox the dialog to grant media permissions allows the user
 			// to change the device to use, overriding the device that was
 			// originally requested.
@@ -354,6 +360,45 @@ MediaDevicesManager.prototype = {
 			this._updateDevices()
 
 			throw error
+		})
+	},
+
+	_stopIncompatibleTracks: function(constraints) {
+		this._tracks.forEach(track => {
+			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
+				const settings = track.getSettings()
+				if (settings && settings.deviceId !== constraints.audio.deviceId) {
+					track.stop()
+				}
+			}
+
+			if (constraints.video && constraints.video.deviceId && track.kind === 'video') {
+				const settings = track.getSettings()
+				if (settings && settings.deviceId !== constraints.video.deviceId) {
+					track.stop()
+				}
+			}
+		})
+	},
+
+	_registerStream: function(stream) {
+		stream.getTracks().forEach(track => {
+			this._registerTrack(track)
+		})
+	},
+
+	_registerTrack: function(track) {
+		this._tracks.push(track)
+
+		track.addEventListener('ended', () => {
+			const index = this._tracks.indexOf(track)
+			if (index >= 0) {
+				this._tracks.splice(index, 1)
+			}
+		})
+
+		track.addEventListener('cloned', event => {
+			this._registerTrack(event.detail)
 		})
 	},
 
