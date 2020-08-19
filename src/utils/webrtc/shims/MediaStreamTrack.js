@@ -20,6 +20,17 @@
  */
 
 if (window.MediaStreamTrack) {
+	const originalMediaStreamTrackStop = window.MediaStreamTrack.prototype.stop
+	window.MediaStreamTrack.prototype.stop = function() {
+		const wasAlreadyEnded = this.readyState === 'ended'
+
+		originalMediaStreamTrackStop.apply(this, arguments)
+
+		if (!wasAlreadyEnded) {
+			this.dispatchEvent(new Event('ended'))
+		}
+	}
+
 	// Event implementations do not support advanced parameters like "options"
 	// or "useCapture".
 	const originalMediaStreamTrackDispatchEvent = window.MediaStreamTrack.prototype.dispatchEvent
