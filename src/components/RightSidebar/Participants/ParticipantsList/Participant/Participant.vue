@@ -206,7 +206,7 @@ export default {
 		},
 
 		isOffline() {
-			return this.sessionId === '0'
+			return this.participant.status === 'offline' || this.sessionId === '0'
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
