@@ -22,9 +22,9 @@
 <template>
 	<ul>
 		<!-- Placeholder animation -->
-		<svg class="unified-search__result-placeholder-gradient">
+		<svg class="placeholder-gradient">
 			<defs>
-				<linearGradient id="unified-search__result-placeholder-gradient">
+				<linearGradient id="placeholder-gradient">
 					<stop offset="0%" :stop-color="light">
 						<animate attributeName="stop-color"
 							:values="`${light}; ${light}; ${dark}; ${dark}; ${light}`"
@@ -42,14 +42,26 @@
 		</svg>
 
 		<!-- Placeholders -->
-		<li v-for="placeholder in 5" :key="placeholder">
+		<li v-for="placeholder in count" :key="placeholder">
 			<svg
-				class="unified-search__result-placeholder"
+				v-if="type === 'conversations'"
+				class="conversation-placeholder"
 				xmlns="http://www.w3.org/2000/svg"
-				fill="url(#unified-search__result-placeholder-gradient)">
-				<circle class="unified-search__result-placeholder-icon" />
-				<rect class="unified-search__result-placeholder-line-one" />
-				<rect class="unified-search__result-placeholder-line-two" :style="{width: `calc(${randWidth()}%)`}" />
+				fill="url(#placeholder-gradient)">
+				<circle class="conversation-placeholder-icon" />
+				<rect class="conversation-placeholder-line-one" />
+				<rect class="conversation-placeholder-line-two" :style="{width: `calc(${randWidth()}%)`}" />
+			</svg>
+			<svg
+				v-if="type === 'messages'"
+				class="message-placeholder"
+				xmlns="http://www.w3.org/2000/svg"
+				fill="url(#placeholder-gradient)">
+				<circle class="message-placeholder-icon" />
+				<rect class="message-placeholder-line-one" />
+				<rect class="message-placeholder-line-two" />
+				<rect class="message-placeholder-line-three" />
+				<rect class="message-placeholder-line-four" :style="{width: `calc(${randWidth()}%)`}" />
 			</svg>
 		</li>
 	</ul>
@@ -62,7 +74,11 @@ export default {
 	props: {
 		type: {
 			type: String,
-			default: 'conversation',
+			required: true,
+		},
+		count: {
+			type: Number,
+			default: 5,
 		},
 	},
 
@@ -96,27 +112,29 @@ export default {
 		position: relative;
 	}
 
-	.unified-search__result-placeholder-gradient {
+	.placeholder-gradient {
 		position: fixed;
 		height: 0;
 		width: 0;
 		z-index: -1;
 	}
 
-	.unified-search__result-placeholder {
-		width: calc(100% - 2 * #{$margin});
-		height: $clickable-area;
-		margin: $margin;
-		position: relative;
+	.conversation-placeholder,
+	.message-placeholder {
 
 		&-icon {
 			width: $clickable-area;
 			height: $clickable-area;
-			position: relative;
 			cx: calc(#{$clickable-area} / 2);
 			cy: calc(#{$clickable-area} / 2);
 			r: calc(#{$clickable-area} / 2);
 		}
+	}
+
+	.conversation-placeholder {
+		width: calc(100% - 2 * #{$margin});
+		height: $clickable-area;
+		margin: $margin;
 
 		&-line-one,
 		&-line-two {
@@ -132,6 +150,40 @@ export default {
 
 		&-line-two {
 			y: 25px;
+		}
+	}
+
+	.message-placeholder {
+		width: 800px;
+		height: calc(#{$clickable-area} * 2);
+		margin: $margin auto;
+		padding: 0 $margin;
+		display: block;
+
+		&-line-one,
+		&-line-two,
+		&-line-three,
+		&-line-four {
+			width: 640px;
+			height: 1em;
+			x: $margin + $clickable-area;
+		}
+
+		&-line-one {
+			y: 5px;
+			width: 175px;
+		}
+
+		&-line-two {
+			y: 25px;
+		}
+
+		&-line-three {
+			y: 45px;
+		}
+
+		&-line-four {
+			y: 65px;
 		}
 	}
 

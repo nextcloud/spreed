@@ -28,7 +28,8 @@
 			@click.native="handleConversationClick" />
 		<template
 			v-if="!initialisedConversations">
-			<LoadingPlaceholder />
+			<LoadingPlaceholder
+				type="conversations" />
 		</template>
 		<Hint v-else-if="searchText && !conversationsList.length"
 			:hint="t('spreed', 'No matches')" />
