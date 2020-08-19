@@ -20,6 +20,15 @@
  */
 
 if (window.MediaStreamTrack) {
+	const originalMediaStreamTrackClone = window.MediaStreamTrack.prototype.clone
+	window.MediaStreamTrack.prototype.clone = function() {
+		const newTrack = originalMediaStreamTrackClone.apply(this, arguments)
+
+		this.dispatchEvent(new CustomEvent('cloned', { detail: newTrack }))
+
+		return newTrack
+	}
+
 	const originalMediaStreamTrackStop = window.MediaStreamTrack.prototype.stop
 	window.MediaStreamTrack.prototype.stop = function() {
 		const wasAlreadyEnded = this.readyState === 'ended'
