@@ -57,6 +57,23 @@ function LocalMedia(opts) {
 util.inherits(LocalMedia, WildEmitter)
 
 /**
+ * Clones a MediaStreamTrack that will be ended when the original
+ * MediaStreamTrack is ended.
+ *
+ * @param {MediaStreamTrack} track the track to clone
+ * @returns {MediaStreamTrack} the linked track
+ */
+const cloneLinkedTrack = function(track) {
+	const linkedTrack = track.clone()
+
+	track.addEventListener('ended', function() {
+		linkedTrack.stop()
+	})
+
+	return linkedTrack
+}
+
+/**
  * Clones a MediaStream that will be ended when the original MediaStream is
  * ended.
  *
@@ -67,12 +84,7 @@ const cloneLinkedStream = function(stream) {
 	const linkedStream = new MediaStream()
 
 	stream.getTracks().forEach(function(track) {
-		const linkedTrack = track.clone()
-		linkedStream.addTrack(linkedTrack)
-
-		track.addEventListener('ended', function() {
-			linkedTrack.stop()
-		})
+		linkedStream.addTrack(cloneLinkedTrack(track))
 	})
 
 	return linkedStream
