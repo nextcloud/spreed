@@ -33,6 +33,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
+use OCP\Security\ISecureRandom;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -52,6 +53,8 @@ class BridgeManager {
 	private $userManager;
 	/** @var IAuthTokenProvider */
 	private $tokenProvider;
+	/** @var ISecureRandom */
+	private $random;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
@@ -60,6 +63,7 @@ class BridgeManager {
 								IUserManager $userManager,
 								Manager $manager,
 								IAuthTokenProvider $tokenProvider,
+								ISecureRandom $random,
 								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
@@ -68,6 +72,7 @@ class BridgeManager {
 		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->tokenProvider = $tokenProvider;
+		$this->random = $random;
 		$this->l = $l;
 	}
 
@@ -151,22 +156,23 @@ class BridgeManager {
 	}
 
 	private function addLocalPart($token, $bridge) {
-		$user = $this->checkBotUser($token);
+		$botInfo = $this->checkBotUser($token, $bridge['enabled']);
 		$localPart = [
 			'type' => 'nctalk',
-			'login' => $user['id'],
-			'password' => $user['password'],
+			'login' => $botInfo['id'],
+			'password' => $botInfo['password'],
 			'channel' => $token,
 		];
 		array_push($bridge['parts'], $localPart);
 		return $bridge;
 	}
 
-	private function checkBotUser(string $token) {
+	private function checkBotUser(string $token, bool $create): array {
 		$botUserId = 'matterbridge-bot';
-		// TODO check user exists and create it if necessary
+		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
 			$pass = md5(strval(rand()));
+			$this->config->setAppValue('spreed', 'bot_pass', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 		} else {
 			$botUser = $this->userManager->get($botUserId);
@@ -183,22 +189,36 @@ class BridgeManager {
 			]);
 		}
 
-		// TODO get app password for the pair room-user
+		// delete old bot app tokens for this room
+		$tokenName = 'spreed_' . $token;
 		$tokens = $this->tokenProvider->getTokenByUser($botUserId);
-		foreach ($tokens as $token) {
-			$j = $token->jsonSerialize();
-			$keys = implode(',',array_keys($j));
-			error_log('KKKKKK '.$keys.'||||');
-			// TODO revoke existing tokens for this room
+		foreach ($tokens as $t) {
+			$j = $t->jsonSerialize();
+			if ($j['name'] === $tokenName) {
+				$this->tokenProvider->invalidateTokenById($botUserId, $j['id']);
+			}
 		}
-		// gen token:
-		$this->tokenProvider->generateToken(
-			$strToken, $botUserId, $botUserId, $password, $tokenName, IToken::PERMANENT_TOKEN, IToken::REMEMBER
-		);
+
+		if ($create) {
+			// generate app token for the bot
+			$appToken = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+			$botPassword = $this->config->getAppValue('spreed', 'bot_pass', '');
+			$generatedToken = $this->tokenProvider->generateToken(
+				$appToken,
+				$botUserId,
+				$botUserId,
+				$botPassword,
+				$tokenName,
+				IToken::PERMANENT_TOKEN,
+				IToken::REMEMBER
+			);
+		} else {
+			$appToken = '';
+		}
 
 		return [
 			'id' => $botUserId,
-			'password' => 'NOPASS_FTM',
+			'password' => $appToken,
 		];
 	}
 
