@@ -97,7 +97,6 @@ OC.L10N.register(
     "Error" : "Feil",
     "Blocked" : "Blokkert",
     "Expired" : "Utløpt",
-    "Signaling server URL" : "Sender signal til servers URL",
     "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Saved" : "Lagret",
     "Shared secret" : "Delt hemmelighet",
@@ -226,6 +225,7 @@ OC.L10N.register(
     "Your screen" : "Din skjerm",
     "{participantName}'s screen" : "{participantName}'s skjerm",
     "Guest's screen" : "Gjestens skjerm",
-    "Contacts" : "Kontakter"
+    "Contacts" : "Kontakter",
+    "Signaling server URL" : "Sender signal til servers URL"
 },
 "nplurals=2; plural=(n != 1);");

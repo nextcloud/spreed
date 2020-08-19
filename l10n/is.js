@@ -377,10 +377,8 @@ OC.L10N.register(
     "Blocked" : "Útilokaður",
     "Active" : "Virkt",
     "Expired" : "Útrunnið",
-    "Signaling server URL" : "Slóð á merkjasendingaþjón",
     "Validate SSL certificate" : "Sannreyna SSL-skilríki",
     "Delete this server" : "Eyða þessum þjóni",
-    "Signaling servers" : "Merkjasendingaþjónar",
     "Saved" : "Vistað",
     "Add a new server" : "Bæta við nýjum þjóni",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
@@ -489,6 +487,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli",
     "TURN server" : "TURN-þjónn",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
+    "Signaling servers" : "Merkjasendingaþjónar",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
     "%s Talk on your mobile devices" : "%s Talaðu á snjalltækjunum þínum",
     "Android app" : "Android-forrit",
@@ -548,6 +547,7 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
     "Join conversations at any time, any where, on any device." : "Taktu þátt í samtölum hvenær sem er, hvar sem er, á hvaða tæki sem er.",
     "Contacts" : "Tengiliðir",
-    "Search conversations or contacts" : "Leita í samtölum eða tengiliðum"
+    "Search conversations or contacts" : "Leita í samtölum eða tengiliðum",
+    "Signaling server URL" : "Slóð á merkjasendingaþjón"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

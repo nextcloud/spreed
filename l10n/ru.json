@@ -470,7 +470,6 @@
     "Active" : "Активный",
     "Expired" : "Закончилась",
     "The account could not be deleted. Please try again later." : "Аккаунт не может быть удален. Повторите попытку позже.",
-    "Signaling server URL" : "Адрес cервера сигнализации",
     "Validate SSL certificate" : "Проверять сертификат SSL",
     "Delete this server" : "Удалить этот сервер",
     "Status: Checking connection" : "Статус: Проверка соединения",
@@ -479,7 +478,6 @@
     "Error: Server did not respond with proper JSON" : "Ошибка: Сервер вернул неверный JSON",
     "Error: Server responded with: {error}" : "Ошибка: Ответ сервера: {error}",
     "Error: Unknown error occurred" : "Ошибка: Произошла неизвестная ошибка",
-    "Signaling servers" : "Серверы сигнализации",
     "Saved" : "Сохранено",
     "Add a new server" : "Добавить новый сервер",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Внешний сервер сигнализации следует использовать для более крупных установок. Оставьте пустым, чтобы использовать внутренний сервер сигнализации.",
@@ -703,6 +701,7 @@
     "Specify commands the users can use in chats" : "Задайте команды, которые пользователи могут использовать в чате",
     "TURN server" : "Сервер TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потоков данных от участников, находящихся за межсетевым экраном.",
+    "Signaling servers" : "Серверы сигнализации",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Для крупных развёртываний может быть использован внешний сервер сигнализации. Для использования встроенного сервера сигнализации оставьте поле пустым.",
     "%s Talk on your mobile devices" : "%s Talk для мобильных устройств",
     "Join conversations at any time, anywhere, on any device." : "Присоединяйтесь к обсуждениям в любое время, в любом месте, с любого устройства.",
@@ -788,6 +787,7 @@
     "Add contacts, groups or circles" : "Добавить контакты, группы или круги",
     "Add contacts or groups" : "Добавить контакты или группы",
     "Add contacts or circles" : "Добавить контакты или круги",
+    "Signaling server URL" : "Адрес cервера сигнализации",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk обновлен, перезагрузите страницу чтобы можно было начать или присоединиться к звонку"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

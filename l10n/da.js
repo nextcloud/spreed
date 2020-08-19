@@ -266,10 +266,8 @@ OC.L10N.register(
     "Error" : "Fejl",
     "Blocked" : "Blokeret",
     "Expired" : "Udløbet",
-    "Signaling server URL" : "Signalserver URL",
     "Validate SSL certificate" : "Godkend SSL certifikat",
     "Delete this server" : "Slet denne server",
-    "Signaling servers" : "Signaleringsservere",
     "Saved" : "Gemt",
     "Add a new server" : "Tilføj en ny server",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver bør eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
@@ -438,6 +436,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Definer kommandoer brugerne kan bruge i chats",
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveren bliver brugt til at proxy trafikken fra deltagerne bagved en firewall.",
+    "Signaling servers" : "Signaleringsservere",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
     "%s Talk on your mobile devices" : "%s Talk på dine mobilenheder",
     "Join conversations at any time, anywhere, on any device." : "Deltag i samtaler når som helst, hvor som helst og på en hvilken som helst enhed.",
@@ -522,6 +521,7 @@ OC.L10N.register(
     "Add contacts" : "Tilføj kontakter",
     "Add contacts, groups or circles" : "Tilføj kontakter, grupper eller cirkler",
     "Add contacts or groups" : "Tilføj kontakter eller grupper",
-    "Add contacts or circles" : "Tilføj kontakter eller cirkler"
+    "Add contacts or circles" : "Tilføj kontakter eller cirkler",
+    "Signaling server URL" : "Signalserver URL"
 },
 "nplurals=2; plural=(n != 1);");
