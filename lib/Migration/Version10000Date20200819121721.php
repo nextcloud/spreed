@@ -44,21 +44,16 @@ class Version10000Date20200819121721 extends SimpleMigrationStep {
 
 		if (!$schema->hasTable('talk_bridges')) {
 			$table = $schema->createTable('talk_bridges');
-			$table->addColumn('id', Type::INTEGER, [
+			$table->addColumn('id', Type::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
-				'length' => 11,
 			]);
-			$table->addColumn('room_id', Type::INTEGER, [
+			$table->addColumn('room_id', Type::BIGINT, [
 				'notnull' => true,
-				'length' => 11,
 				'unsigned' => true,
-				'default' => 0,
 			]);
-			$table->addColumn('json_values', Type::STRING, [
+			$table->addColumn('json_values', Type::TEXT, [
 				'notnull' => true,
-				'length' => 10000,
-				'default' => '{}',
 			]);
 			$table->addIndex(['room_id'], 'tbr_room_id');
 		}

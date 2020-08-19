@@ -246,9 +246,8 @@ class BridgeManager {
 		$tokenName = 'spreed_' . $token;
 		$tokens = $this->tokenProvider->getTokenByUser($botUserId);
 		foreach ($tokens as $t) {
-			$j = $t->jsonSerialize();
-			if ($j['name'] === $tokenName) {
-				$this->tokenProvider->invalidateTokenById($botUserId, $j['id']);
+			if ($t->getName() === $tokenName) {
+				$this->tokenProvider->invalidateTokenById($botUserId, $t->getId());
 			}
 		}
 
