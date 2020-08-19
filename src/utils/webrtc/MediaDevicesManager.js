@@ -50,7 +50,11 @@
  * those cases the fallback label can be used instead.
  *
  * "attributes.audioInputId" and "attributes.videoInputId" define the devices
- * that will be used when calling "getUserMedia(constraints)".
+ * that will be used when calling "getUserMedia(constraints)". Clients of this
+ * class must modify them using "set('audioInputId', value)" and
+ * "set('videoInputId', value)" to ensure that change events are triggered.
+ * However, note that change events are not triggered when the devices are
+ * modified.
  *
  * The selected devices will be automatically cleared if they are no longer
  * available. When no device of certain kind is selected and there are other
@@ -67,6 +71,8 @@ export default function MediaDevicesManager() {
 		videoInputId: undefined,
 	}
 
+	this._handlers = []
+
 	this._enabledCount = 0
 
 	this._knownDevices = {}
@@ -77,6 +83,51 @@ export default function MediaDevicesManager() {
 	this._updateDevicesBound = this._updateDevices.bind(this)
 }
 MediaDevicesManager.prototype = {
+
+	get: function(key) {
+		return this.attributes[key]
+	},
+
+	set: function(key, value) {
+		this.attributes[key] = value
+
+		this._trigger('change:' + key, [value])
+	},
+
+	on: function(event, handler) {
+		if (!this._handlers.hasOwnProperty(event)) {
+			this._handlers[event] = [handler]
+		} else {
+			this._handlers[event].push(handler)
+		}
+	},
+
+	off: function(event, handler) {
+		const handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		const index = handlers.indexOf(handler)
+		if (index !== -1) {
+			handlers.splice(index, 1)
+		}
+	},
+
+	_trigger: function(event, args) {
+		let handlers = this._handlers[event]
+		if (!handlers) {
+			return
+		}
+
+		args.unshift(this)
+
+		handlers = handlers.slice(0)
+		for (let i = 0; i < handlers.length; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
+	},
 
 	/**
 	 * Returns whether getting user media and enumerating media devices is
@@ -119,6 +170,9 @@ MediaDevicesManager.prototype = {
 
 	_updateDevices: function() {
 		navigator.mediaDevices.enumerateDevices().then(devices => {
+			const previousAudioInputId = this.attributes.audioInputId
+			const previousVideoInputId = this.attributes.videoInputId
+
 			const removedDevices = this.attributes.devices.filter(oldDevice => !devices.find(device => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
 			const updatedDevices = devices.filter(device => this.attributes.devices.find(oldDevice => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
 			const addedDevices = devices.filter(device => !this.attributes.devices.find(oldDevice => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
@@ -132,6 +186,15 @@ MediaDevicesManager.prototype = {
 			addedDevices.forEach(addedDevice => {
 				this._addDevice(addedDevice)
 			})
+
+			// Trigger change events after all the devices are processed to
+			// prevent change events for intermediate states.
+			if (previousAudioInputId !== this.attributes.audioInputId) {
+				this._trigger('change:audioInputId', [this.attributes.audioInputId])
+			}
+			if (previousVideoInputId !== this.attributes.videoInputId) {
+				this._trigger('change:videoInputId', [this.attributes.videoInputId])
+			}
 		}).catch(function(error) {
 			console.error('Could not update known media devices: ' + error.name + ': ' + error.message)
 		})
@@ -301,7 +364,7 @@ MediaDevicesManager.prototype = {
 			if (audioTrackSettings && audioTrackSettings.deviceId && this.attributes.audioInputId !== audioTrackSettings.deviceId) {
 				console.debug('Input audio device overridden in getUserMedia: Expected: ' + this.attributes.audioInputId + ' Found: ' + audioTrackSettings.deviceId)
 
-				this.attributes.audioInputId = audioTrackSettings.deviceId
+				this.set('audioInputId', audioTrackSettings.deviceId)
 			}
 		}
 
@@ -311,7 +374,7 @@ MediaDevicesManager.prototype = {
 			if (videoTrackSettings && videoTrackSettings.deviceId && this.attributes.videoInputId !== videoTrackSettings.deviceId) {
 				console.debug('Input video device overridden in getUserMedia: Expected: ' + this.attributes.videoInputId + ' Found: ' + videoTrackSettings.deviceId)
 
-				this.attributes.videoInputId = videoTrackSettings.deviceId
+				this.set('videoInputId', videoTrackSettings.deviceId)
 			}
 		}
 	},

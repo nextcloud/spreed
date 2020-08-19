@@ -126,7 +126,7 @@ export default {
 				return mediaDevicesManager.attributes.audioInputId
 			},
 			set(value) {
-				mediaDevicesManager.attributes.audioInputId = value
+				mediaDevicesManager.set('audioInputId', value)
 			},
 		},
 
@@ -135,7 +135,7 @@ export default {
 				return mediaDevicesManager.attributes.videoInputId
 			},
 			set(value) {
-				mediaDevicesManager.attributes.videoInputId = value
+				mediaDevicesManager.set('videoInputId', value)
 			},
 		},
 
