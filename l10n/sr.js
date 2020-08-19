@@ -407,10 +407,8 @@ OC.L10N.register(
     "Blocked" : "Блокиран",
     "Active" : "Активан",
     "Expired" : "Истекао",
-    "Signaling server URL" : "Адреса сигнализационог сервера",
     "Validate SSL certificate" : "Потвди SSL сертификат",
     "Delete this server" : "Обриши овај сервер",
-    "Signaling servers" : "Сигнализациони сервери",
     "Saved" : "Сачувано",
     "Add a new server" : "Додај нови сервер",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер би требало опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
@@ -534,6 +532,7 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Одредите команде које корисник може користити у разговору",
     "TURN server" : "TURN сервер",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
+    "Signaling servers" : "Сигнализациони сервери",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер се може опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "%s Talk on your mobile devices" : "%s „Разговор“ на мобилним уређајима",
     "Android app" : "Андроид апликација",
@@ -606,6 +605,7 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
     "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
     "Contacts" : "Контакти",
-    "Search conversations or contacts" : "Претражи разговоре или контакте"
+    "Search conversations or contacts" : "Претражи разговоре или контакте",
+    "Signaling server URL" : "Адреса сигнализационог сервера"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
