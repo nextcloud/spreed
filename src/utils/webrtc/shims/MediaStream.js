@@ -20,6 +20,40 @@
  */
 
 if (window.MediaStream) {
+	const originalMediaStreamAddTrack = window.MediaStream.prototype.addTrack
+	window.MediaStream.prototype.addTrack = function(track) {
+		let addTrackEventDispatched = false
+		const testAddTrackEvent = () => {
+			addTrackEventDispatched = true
+		}
+		this.addEventListener('addtrack', testAddTrackEvent)
+
+		originalMediaStreamAddTrack.apply(this, arguments)
+
+		this.removeEventListener('addtrack', testAddTrackEvent)
+
+		if (!addTrackEventDispatched) {
+			this.dispatchEvent(new MediaStreamTrackEvent('addtrack', { track: track }))
+		}
+	}
+
+	const originalMediaStreamRemoveTrack = window.MediaStream.prototype.removeTrack
+	window.MediaStream.prototype.removeTrack = function(track) {
+		let removeTrackEventDispatched = false
+		const testRemoveTrackEvent = () => {
+			removeTrackEventDispatched = true
+		}
+		this.addEventListener('removetrack', testRemoveTrackEvent)
+
+		originalMediaStreamRemoveTrack.apply(this, arguments)
+
+		this.removeEventListener('removetrack', testRemoveTrackEvent)
+
+		if (!removeTrackEventDispatched) {
+			this.dispatchEvent(new MediaStreamTrackEvent('removetrack', { track: track }))
+		}
+	}
+
 	// Event implementations do not support advanced parameters like "options"
 	// or "useCapture".
 	const originalMediaStreamDispatchEvent = window.MediaStream.prototype.dispatchEvent
