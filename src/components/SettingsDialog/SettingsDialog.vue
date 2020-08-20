@@ -23,19 +23,17 @@
 	<Modal v-if="showSettings"
 		@close="showSettings = false">
 		<div class="wrapper">
-			<div class="app-settings-section">
-				<h2 class="app-setting-section__title">
+			<div class="app-settings-section"
+				:class="{last : isGuest}">
+				<h2 class="
+				app-setting-section__title">
 					{{ t('spreed', 'Choose devices') }}
 				</h2>
 				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
 			</div>
-			<div v-if="!isGuest" class="app-settings-section last">
-				<h2 class="app-setting-section__title">
-					{{ t('spreed', 'Choose devices') }}
-				</h2>
-				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
-			</div>
-			<div v-if="!isGuest" class="app-settings-section last">
+			<div v-if="!isGuest"
+				class="app-settings-section"
+				:class="{last : !isGuest}">
 				<h2 class="app-setting-section__title">
 					{{ t('spreed', 'Attachments folder') }}
 				</h2>
