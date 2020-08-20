@@ -206,7 +206,7 @@ class MessageSearch implements IProvider {
 				$this->getSublineTemplate()
 			),
 			$messageStr,
-			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getId()]) . '#m' . $id,
+			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 			'icon-talk', // $iconClass,
 			true
 		);
