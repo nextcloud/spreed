@@ -124,7 +124,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Talk room'),
+							placeholder: t('spreed', 'Talk conversation'),
 							icon: 'icon-group',
 						},
 					},
@@ -401,7 +401,7 @@ export default {
 					},
 				},
 			},
-			newPartPlaceholder: t('spreed', 'Add new bridge'),
+			newPartPlaceholder: t('spreed', 'Add new bridged channel'),
 			selectedType: null,
 		}
 	},
@@ -510,6 +510,6 @@ export default {
 
 .icon {
 	display: inline-block;
-	width: 8%;
+	width: 35px;
 }
 </style>

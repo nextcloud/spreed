@@ -60,8 +60,9 @@ class BridgeController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getBridgeOfRoom(string $token): DataResponse {
-		$this->bridgeManager->checkBridge($token);
-		$bridge = $this->bridgeManager->getBridgeOfRoom($token);
+		$room = $this->manager->getRoomByToken($token);
+		$this->bridgeManager->checkBridge($room);
+		$bridge = $this->bridgeManager->getBridgeOfRoom($room);
 		return new DataResponse($bridge);
 	}
 
@@ -74,8 +75,9 @@ class BridgeController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function editBridgeOfRoom(string $token, bool $enabled, array $parts = []): DataResponse {
+		$room = $this->manager->getRoomByToken($token);
 		try {
-			$success = $this->bridgeManager->editBridgeOfRoom($token, $enabled, $parts);
+			$success = $this->bridgeManager->editBridgeOfRoom($room, $enabled, $parts);
 		} catch (ImpossibleToKillException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
 		}
@@ -91,8 +93,9 @@ class BridgeController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function deleteBridgeOfRoom(string $token): DataResponse {
+		$room = $this->manager->getRoomByToken($token);
 		try {
-			$success = $this->bridgeManager->deleteBridgeOfRoom($token);
+			$success = $this->bridgeManager->deleteBridgeOfRoom($room);
 		} catch (ImpossibleToKillException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
 		}

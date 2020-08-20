@@ -369,7 +369,7 @@ return [
 		 */
 		[
 			'name' => 'Bridge#getBridgeOfRoom',
-			'url' => '/api/{apiVersion}/room/{token}/bridge',
+			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -378,7 +378,7 @@ return [
 		],
 		[
 			'name' => 'Bridge#editBridgeOfRoom',
-			'url' => '/api/{apiVersion}/room/{token}/bridge',
+			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -387,7 +387,7 @@ return [
 		],
 		[
 			'name' => 'Bridge#deleteBridgeOfRoom',
-			'url' => '/api/{apiVersion}/room/{token}/bridge',
+			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',

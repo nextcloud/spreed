@@ -130,6 +130,6 @@ input {
 
 .icon {
 	display: inline-block;
-	width: 8%;
+	width: 35px;
 }
 </style>
