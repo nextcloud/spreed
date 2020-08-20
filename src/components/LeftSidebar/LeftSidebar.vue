@@ -84,21 +84,19 @@
 		</template>
 
 		<template #footer>
-			<AppNavigationSettings>
-				<label>{{ t('spreed', 'Default location for attachments') }}</label>
-				<input
-					type="text"
-					:value="attachmentFolder"
-					:disabled="attachmentFolderLoading"
-					@click="selectAttachmentFolder">
-			</AppNavigationSettings>
+			<div id="app-settings">
+				<div id="app-settings-header">
+					<button class="settings-button" @click="showSettings">
+						{{ t('spreed', 'Settings') }}
+					</button>
+				</div>
+			</div>
 		</template>
 	</AppNavigation>
 </template>
 
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
 import Caption from '../Caption'
 import ConversationsList from './ConversationsList/ConversationsList'
 import ConversationsOptionsList from '../ConversationsOptionsList'
@@ -110,11 +108,9 @@ import {
 	createGroupConversation, createOneToOneConversation,
 	searchPossibleConversations,
 } from '../../services/conversationsService'
-import { setAttachmentFolder } from '../../services/settingsService'
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 
 export default {
 
@@ -122,7 +118,6 @@ export default {
 
 	components: {
 		AppNavigation,
-		AppNavigationSettings,
 		Caption,
 		ConversationsList,
 		ConversationsOptionsList,
@@ -141,7 +136,6 @@ export default {
 			contactsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
-			attachmentFolderLoading: true,
 		}
 	},
 
@@ -192,10 +186,6 @@ export default {
 			}
 			return t('spreed', 'Other sources')
 		},
-
-		attachmentFolder() {
-			return this.$store.getters.getAttachmentFolder()
-		},
 	},
 
 	beforeMount() {
@@ -205,10 +195,6 @@ export default {
 		EventBus.$once('resetSearchFilter', () => {
 			this.searchText = ''
 		})
-	},
-
-	mounted() {
-		this.attachmentFolderLoading = false
 	},
 
 	methods: {
@@ -259,33 +245,8 @@ export default {
 			this.searchText = ''
 		},
 
-		selectAttachmentFolder() {
-			const picker = getFilePickerBuilder(t('spreed', 'Select default location for attachments'))
-				.setMultiSelect(false)
-				.setModal(true)
-				.setType(1)
-				.addMimeTypeFilter('httpd/unix-directory')
-				.allowDirectories()
-				.startAt(this.attachmentFolder)
-				.build()
-			picker.pick()
-				.then(async(path) => {
-					console.debug(`Path '${path}' selected for talk attachments`)
-					if (path !== '' && !path.startsWith('/')) {
-						throw new Error(t('spreed', 'Invalid path selected'))
-					}
-
-					const oldFolder = this.attachmentFolder
-					this.attachmentFolderLoading = true
-					try {
-						this.$store.commit('setAttachmentFolder', path)
-						await setAttachmentFolder(path)
-					} catch (exception) {
-						showError(t('spreed', 'Error while setting attachment folder'))
-						this.$store.commit('setAttachmentFolder', oldFolder)
-					}
-					this.attachmentFolderLoading = false
-				})
+		showSettings() {
+			EventBus.$emit('show-settings', true)
 		},
 	},
 }
