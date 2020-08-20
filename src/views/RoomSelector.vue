@@ -22,18 +22,19 @@
 
 <template>
 	<Modal @close="close">
-		<div id="modal-inner" :class="{ 'icon-loading': loading }">
+		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-				<h1>{{ t('spreed', 'Select a conversation to add to the project') }}</h1>
+				<h2>{{ t('spreed', 'Link to a conversation') }}</h2>
 				<div id="room-list">
 					<ul v-if="!loading">
 						<li v-for="room in availableRooms"
 							:key="room.token"
 							:class="{selected: selectedRoom === room.token }"
 							@click="selectedRoom=room.token">
-							<Avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name" />
-							<div v-else-if="room.type === types.ROOM_TYPE_PUBLIC" class="avatar icon icon-public icon-white" />
-							<div v-else class="avatar icon icon-contacts" />
+							<ConversationIcon
+								:item="room"
+								:hide-call="true"
+								:hide-favorite="false" />
 							<span>{{ room.displayName }}</span>
 						</li>
 					</ul>
@@ -47,81 +48,18 @@
 		</div>
 	</Modal>
 </template>
-<style scoped>
-	#modal-inner {
-		width: 90vw;
-		max-width: 400px;
-		height: 50vh;
-		position: relative;
-	}
 
-	#modal-content {
-		position: absolute;
-		width: calc(100% - 40px);
-		height: calc(100% - 40px);
-		display: flex;
-		flex-direction: column;
-		padding: 20px;
-	}
-
-	#room-list {
-		overflow-y: auto;
-		flex: 0 1 auto;
-	}
-
-	li {
-		padding: 6px;
-		border: 1px solid transparent;
-		display: flex;
-	}
-
-	li:hover, li:focus {
-		background-color: var(--color-background-dark);
-	}
-
-	li.selected {
-		box-shadow: inset 4px 0 var(--color-primary-element);
-	}
-
-	.avatar.icon {
-		border-radius: 50%;
-		width: 32px;
-		height: 32px;
-		background-color: var(--color-background-darker);
-	}
-
-	li > span {
-		padding: 5px;
-	}
-
-	li > span,
-	.avatar {
-		vertical-align: middle;
-
-	}
-
-	#modal-buttons {
-		overflow: hidden;
-		height: 44px;
-		flex-shrink: 0;
-	}
-
-	#modal-buttons .primary {
-		float: right;
-	}
-
-</style>
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import ConversationIcon from '../components/ConversationIcon'
 
 export default {
 	name: 'RoomSelector',
 	components: {
+		ConversationIcon,
 		Modal,
-		Avatar,
 	},
 	data() {
 		return {
@@ -159,9 +97,16 @@ export default {
 	methods: {
 		fetchRooms() {
 			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
-				this.rooms = response.data.ocs.data
+				this.rooms = response.data.ocs.data.sort(this.sortConversations)
 				this.loading = false
 			})
+		},
+		sortConversations(conversation1, conversation2) {
+			if (conversation1.isFavorite !== conversation2.isFavorite) {
+				return conversation1.isFavorite ? -1 : 1
+			}
+
+			return conversation2.lastActivity - conversation1.lastActivity
 		},
 		close() {
 			this.$root.$emit('close')
@@ -172,3 +117,58 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+#modal-inner {
+	width: 90vw;
+	max-width: 400px;
+	height: 50vh;
+	position: relative;
+}
+
+#modal-content {
+	position: absolute;
+	width: calc(100% - 40px);
+	height: calc(100% - 40px);
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+}
+
+#room-list {
+	overflow-y: auto;
+	flex: 0 1 auto;
+}
+
+li {
+	padding: 6px;
+	border: 1px solid transparent;
+	display: flex;
+}
+
+li:hover, li:focus {
+	background-color: var(--color-background-dark);
+	border-radius: var(--border-radius-pill);
+}
+
+li.selected {
+	background-color: var(--color-primary-light);
+	border-radius: var(--border-radius-pill);
+}
+
+li > span {
+	padding: 5px;
+	vertical-align: middle;
+
+}
+
+#modal-buttons {
+	overflow: hidden;
+	height: 44px;
+	flex-shrink: 0;
+}
+
+#modal-buttons .primary {
+	float: right;
+}
+</style>
