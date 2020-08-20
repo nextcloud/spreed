@@ -38,7 +38,7 @@
 					{{ t('spreed', 'Attachments folder') }}
 				</h2>
 				<h3 class="app-settings-section__hint">
-					{{ defaultLocationHint }}
+					{{ locationHint }}
 				</h3>
 				<input
 					type="text"
@@ -81,8 +81,8 @@ export default {
 			return this.$store.getters.getAttachmentFolder()
 		},
 
-		defaultLocationHint() {
-			return t('spreed', `Choose in which folder talk attachments should be saved`)
+		locationHint() {
+			return t('spreed', `Choose in which folder attachments should be saved`)
 		},
 
 		enableMediaDevicesPreview() {
@@ -101,7 +101,7 @@ export default {
 	methods: {
 
 		selectAttachmentFolder() {
-			const picker = getFilePickerBuilder(t('spreed', 'Select default location for attachments'))
+			const picker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
 				.setMultiSelect(false)
 				.setModal(true)
 				.setType(1)
