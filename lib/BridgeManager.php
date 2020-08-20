@@ -37,6 +37,7 @@ use OC\Authentication\Token\IToken;
 use OCP\Security\ISecureRandom;
 use OCP\IAvatarManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Psr\Log\LoggerInterface;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -67,6 +68,7 @@ class BridgeManager {
 								IAuthTokenProvider $tokenProvider,
 								ISecureRandom $random,
 								IAvatarManager $avatarManager,
+								LoggerInterface $logger,
 								IL10N $l) {
 		$this->avatarManager = $avatarManager;
 		$this->db = $db;
@@ -77,6 +79,7 @@ class BridgeManager {
 		$this->manager = $manager;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
+		$this->logger = $logger;
 		$this->l = $l;
 	}
 
@@ -442,40 +445,38 @@ class BridgeManager {
 
 		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
 			// config : there is a PID stored
-			error_log('pid is defined in config |||||');
 			$pid = intval($bridge['pid']);
 			$isRunning = $this->isRunning($pid);
 			// if bridge running and enabled is false : kill it
 			if ($isRunning) {
 				if ($bridge['enabled']) {
-					error_log('process running AND config enabled : doing nothing |||||');
+					$this->logger->info('Process running AND bridge enabled in config : doing nothing');
 				} else {
-					error_log('process running AND config DISABLED : KILL |||||');
-					error_log('KILL '.$pid.'||||');
+					$this->logger->info('Process running AND bridge disabled in config : KILL ' . $pid);
 					$killed = $this->killPid($pid);
 					if ($killed) {
 						$pid = 0;
 					} else {
-						error_log('IMPOSSIBLE to kill '.$pid.'||||');
+						$this->logger->info('Impossible to kill ' . $pid);
 						throw new ImpossibleToKillException('Impossible to kill bridge process [' . $pid . ']');
 					}
 				}
 			} else {
 				// no process found
 				if ($bridge['enabled']) {
-					error_log('process not found AND config enabled : RELAUNCHING |||||');
+					$this->logger->info('Process not found AND bridge enabled in config : relaunching');
 					$pid = $this->launchMatterbridge($room);
 				} else {
-					error_log('process not found AND config disabled : doing nothing |||||');
+					$this->logger->info('Process not found AND bridge disabled in config : doing nothing');
 				}
 			}
 		} elseif ($bridge['enabled']) {
 			// config : no PID stored
 			// config : enabled => launch it
 			$pid = $this->launchMatterbridge($room);
-			error_log('LAUNCH '.$pid.'||||');
+			$this->logger->info('Launch process, PID is '.$pid);
 		} else {
-			error_log('no PID defined in config AND config disabled : doing nothing |||||');
+			$this->logger->info('No PID defined in config AND bridge disabled in config : doing nothing');
 		}
 
 		return $pid;
