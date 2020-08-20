@@ -569,6 +569,7 @@ Signaling.Standalone.prototype.connect = function() {
 	this.pendingMessages = []
 	this.connected = false
 	this._forceReconnect = false
+	this._isRejoiningConversationWithNewSession = false
 	this.socket = new WebSocket(this.url)
 	window.signalingSocket = this.socket
 	this.socket.onopen = function(event) {
@@ -724,6 +725,8 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 			// Mark this session as "no longer in the call".
 			this.leaveCall(this.currentCallToken, true)
 		}
+
+		this._isRejoiningConversationWithNewSession = true
 
 		rejoinConversation(this.currentRoomToken)
 			.then(response => {
@@ -1123,6 +1126,10 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
 	case 'disinvite':
 		if (data.event.disinvite.roomid === this.currentRoomToken) {
+			if (this._isRejoiningConversationWithNewSession) {
+				console.debug('Rejoining conversation with new session, "disinvite" message ignored')
+				return
+			}
 			console.error('User or session was removed from the conversation, redirecting')
 			EventBus.$emit('duplicateSessionDetected')
 			break
