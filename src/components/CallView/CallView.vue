@@ -56,6 +56,19 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
+			<!-- Local Video Override mode -->
+			<div v-if="showLocalVideo" ref="videoContainer" class="video__promoted override">
+				<LocalVideo
+					ref="localVideo"
+					:fit-video="true"
+					:is-stripe="false"
+					:is-big="true"
+					:local-media-model="localMediaModel"
+					:video-container-aspect-ratio="videoContainerAspectRatio"
+					:local-call-participant-model="localCallParticipantModel"
+					:is-sidebar="false"
+					@switchScreenToId="1" />
+			</div>
 			<!-- Screens -->
 			<div v-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
 				<!-- local screen -->
@@ -88,7 +101,8 @@
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
-				@select-video="handleSelectVideo" />
+				@select-video="handleSelectVideo"
+				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if the conversation is 1to1 or if sidebar -->
 			<LocalVideo
 				v-if="isOneToOneView"
@@ -183,6 +197,18 @@ export default {
 			return this.$store.getters.isGrid
 		},
 
+		showGrid() {
+			return (!this.isOneToOneView || this.showLocalScreen) && !this.isSidebar
+		},
+
+		gridTargetAspectRatio() {
+			if (this.isStripe) {
+				return 1
+			} else {
+				return 1.5
+			}
+		},
+
 		selectedVideoPeerId() {
 			return this.$store.getters.selectedVideoPeerId
 		},
@@ -199,33 +225,43 @@ export default {
 			return (this.isOneToOne && !this.isGrid) || this.isSidebar
 		},
 
-		showGrid() {
-			return (!this.isOneToOneView || this.showLocalScreen) && !this.isSidebar
+		hasLocalVideo() {
+			return this.localMediaModel.attributes.videoEnabled
 		},
 
 		hasLocalScreen() {
-			return this.localMediaModel.attributes.localScreen
+			return !!this.localMediaModel.attributes.localScreen
 		},
 
 		hasRemoteScreen() {
 			return this.callParticipantModelsWithScreen.length > 0
 		},
+		// The following conditions determine what to show in the "Big container"
+		// of the promoted view
 
-		showSelected() {
-			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showRemoteScreen
-		},
-
-		showPromoted() {
-			return !this.isGrid && !this.hasSelectedVideo && !this.screenSharingActive
-		},
-
+		// Show local screen (has priority over anything else when screensharing)
 		showLocalScreen() {
 			return this.screens.filter(screen => screen === localCallParticipantModel.attributes.peerId).length === 1
-
 		},
 
+		// Shows the local video if selected
+		showLocalVideo() {
+			return this.hasLocalVideo && this.$store.getters.selectedVideoPeerId === 'local'
+		},
+
+		// Show selected video (other than local)
+		showSelected() {
+			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showLocalVideo
+		},
+
+		// Show the current automatically promoted video
+		showPromoted() {
+			return !this.isGrid && !this.hasSelectedVideo && !this.screenSharingActive && !this.showLocalVideo
+		},
+
+		// Show somebody else's screen
 		showRemoteScreen() {
-			return this.shownRemoteScreenPeerId !== null
+			return this.shownRemoteScreenPeerId !== null && !this.showLocalVideo
 		},
 
 		shownRemoteScreenPeerId() {
@@ -250,14 +286,6 @@ export default {
 			}
 
 			return null
-		},
-
-		gridTargetAspectRatio() {
-			if (this.isStripe) {
-				return 1
-			} else {
-				return 1.5
-			}
 		},
 	},
 	watch: {
@@ -293,6 +321,13 @@ export default {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('isGrid', false)
+			}
+		},
+		'hasLocalVideo': function(newValue) {
+			if (this.$store.getters.selectedVideoPeerId === 'local') {
+				if (!newValue) {
+					this.$store.dispatch('selectedVideoPeerId', null)
+				}
 			}
 		},
 
@@ -456,6 +491,12 @@ export default {
 		handleSelectVideo(peerId) {
 			this.$store.dispatch('isGrid', false)
 			this.$store.dispatch('selectedVideoPeerId', peerId)
+			this.isLocalVideoSelected = false
+		},
+		handleClickLocalVideo() {
+			// Deselect possible selected video
+			this.$store.dispatch('selectedVideoPeerId', 'local')
+			this.$store.dispatch('isGrid', false)
 		},
 	},
 }

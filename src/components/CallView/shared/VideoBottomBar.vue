@@ -228,6 +228,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	height: 40px;
+	z-index: 1;
 	&--big {
 		justify-content: center;
 		height: 48px;

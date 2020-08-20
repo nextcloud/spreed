@@ -62,7 +62,8 @@
 						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
-						@switchScreenToId="1" />
+						@switchScreenToId="1"
+						@click-video="handleClickLocalVideo" />
 				</template>
 				<!-- Grid developer mode -->
 				<template v-else>
@@ -91,7 +92,8 @@
 			:local-media-model="localMediaModel"
 			:video-container-aspect-ratio="videoContainerAspectRatio"
 			:local-call-participant-model="localCallParticipantModel"
-			@switchScreenToId="1" />
+			@switchScreenToId="1"
+			@click-video="handleClickLocalVideo" />
 		<!-- page indicator (disabled) -->
 		<div
 			v-if="numberOfPages !== 0 && hasPagination && false"
@@ -212,6 +214,10 @@ export default {
 		sharedDatas: {
 			type: Object,
 			required: true,
+		},
+		isLocalVideoSelectable: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -632,9 +638,15 @@ export default {
 			console.debug('selected-video peer id', peerId)
 			this.$emit('select-video', peerId)
 		},
+
+		handleClickLocalVideo() {
+			this.$emit('click-local-video')
+		},
+
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
 		},
+
 	},
 }
 

@@ -21,7 +21,10 @@
 <template>
 	<div id="localVideoContainer"
 		class="videoContainer videoView"
-		:class="videoContainerClass">
+		:class="videoContainerClass"
+		@mouseover="showShadow"
+		@mouseleave="hideShadow"
+		@click="handleClickVideo">
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
@@ -47,6 +50,7 @@
 		<transition name="fade">
 			<LocalMediaControls
 				ref="localMediaControls"
+				:is-big="isBig"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
@@ -54,6 +58,7 @@
 				:quality-warning-tooltip="qualityWarningTooltip"
 				@switchScreenToId="$emit('switchScreenToId', $event)" />
 		</transition>
+		<div v-if="mouseover && isSelectable" class="hover-shadow" />
 	</div>
 </template>
 
@@ -118,6 +123,7 @@ export default {
 				'speaking': this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
+				'video-container-big': this.isBig,
 			}
 		},
 
@@ -243,6 +249,18 @@ export default {
 			}
 
 			return tooltip
+		},
+
+		hasLocalVideo() {
+			return this.localMediaModel.attributes.videoEnabled
+		},
+
+		isSelected() {
+			return this.$store.getters.selectedVideoPeerId === 'local'
+		},
+
+		isSelectable() {
+			return this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
 		},
 	},
 
@@ -379,4 +397,19 @@ export default {
 	margin: auto;
 }
 
+.video-container-big {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+.hover-shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	box-shadow: inset 0 0 0 3px white;
+	cursor: pointer;
+}
 </style>

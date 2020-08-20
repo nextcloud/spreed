@@ -139,12 +139,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		// True when this component is used in the big video slot in the
-		// promoted view
-		isBig: {
-			type: Boolean,
-			default: false,
-		},
 		// True when this component is used as main video in the sidebar
 		isSidebar: {
 			type: Boolean,
@@ -155,12 +149,6 @@ export default {
 			type: String,
 			default: '',
 		},
-	},
-
-	data() {
-		return {
-			mouseover: false,
-		}
 	},
 
 	computed: {
@@ -361,20 +349,6 @@ export default {
 			if (this.$refs.video.style.transform === 'scaleX(1)') {
 				this.$refs.video.style.transform = ''
 			}
-		},
-		showShadow() {
-			if (this.isSelectable) {
-				this.mouseover = true
-			}
-		},
-		hideShadow() {
-			if (this.isSelectable) {
-				this.mouseover = false
-			}
-		},
-
-		handleClickVideo() {
-			this.$emit('click-video')
 		},
 	},
 

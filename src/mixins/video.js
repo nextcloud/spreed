@@ -25,6 +25,7 @@ const video = {
 	data() {
 		return {
 			incomingStreamAspectRatio: null,
+			mouseover: false,
 		}
 	},
 	props: {
@@ -42,6 +43,33 @@ const video = {
 		fitVideo: {
 			type: Boolean,
 			default: false,
+		},
+		// True when this component is used in the big video slot in the
+		// promoted view
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
+	methods: {
+		showShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = false
+			}
+		},
+
+		handleClickVideo(e) {
+			// Prevent clicks on the media controls buttons to trigger a video selection
+			if (e.target.localName === 'button') {
+				return
+			}
+			this.$emit('click-video')
 		},
 	},
 
