@@ -74,6 +74,13 @@ util.inherits(LocalMedia, WildEmitter)
 const cloneLinkedTrack = function(track) {
 	const linkedTrack = track.clone()
 
+	// Keep a reference of all the linked clones of a track to be able to
+	// remove them when the source track is removed.
+	if (!track.linkedTracks) {
+		track.linkedTracks = []
+	}
+	track.linkedTracks.push(linkedTrack)
+
 	track.addEventListener('ended', function() {
 		linkedTrack.stop()
 	})
@@ -93,6 +100,16 @@ const cloneLinkedStream = function(stream) {
 
 	stream.getTracks().forEach(function(track) {
 		linkedStream.addTrack(cloneLinkedTrack(track))
+	})
+
+	stream.addEventListener('addtrack', function(event) {
+		linkedStream.addTrack(cloneLinkedTrack(event.track))
+	})
+
+	stream.addEventListener('removetrack', function(event) {
+		event.track.linkedTracks.forEach(linkedTrack => {
+			linkedStream.removeTrack(linkedTrack)
+		})
 	})
 
 	return linkedStream
