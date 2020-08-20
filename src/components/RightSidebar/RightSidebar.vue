@@ -49,27 +49,21 @@
 			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
 		<AppSidebarTab
-			v-if="getUserId"
-			id="projects"
+			id="settings-tab"
 			:order="3"
-			:name="t('spreed', 'Projects')"
-			icon="icon-projects">
-			<CollectionList v-if="conversation.token"
+			:name="t('spreed', 'Settings')"
+			icon="icon-settings">
+			<SetGuestUsername
+				v-if="!getUserId" />
+			<CollectionList
+				v-if="getUserId && conversation.token"
 				:id="conversation.token"
 				type="room"
 				:name="conversation.displayName" />
 		</AppSidebarTab>
 		<AppSidebarTab
-			v-if="!getUserId"
-			id="settings"
-			:order="4"
-			:name="t('spreed', 'Settings')"
-			icon="icon-settings">
-			<SetGuestUsername />
-		</AppSidebarTab>
-		<AppSidebarTab
 			id="preview"
-			:order="5"
+			:order="4"
 			:name="t('spreed', 'Preview')"
 			icon="icon-video">
 			<MediaDevicesPreview :enabled="!showChatInSidebar && activeTab === 'preview'" />
