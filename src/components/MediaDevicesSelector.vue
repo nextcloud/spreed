@@ -20,7 +20,9 @@
 
 <template>
 	<div class="media-devices-selector">
-		<label :for="deviceSelectorId">{{ deviceSelectorLabel }}</label>
+		<h3 :for="deviceSelectorId">
+			{{ deviceSelectorLabel }}
+		</h3>
 		<Multiselect :id="deviceSelectorId"
 			v-model="deviceSelectedOption"
 			:options="deviceOptions"
@@ -158,16 +160,11 @@ export default {
 
 <style lang="scss" scoped>
 .media-devices-selector {
-	display: flex;
-	align-items: center;
-
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-top: 28px;
+	margin-bottom: 8px;
 
 	.multiselect {
-		flex-grow: 1;
-
-		margin-left: 5px;
+		width: 100%;
 	}
 }
 </style>
