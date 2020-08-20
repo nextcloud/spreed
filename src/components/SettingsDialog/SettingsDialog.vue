@@ -31,6 +31,12 @@
 			</div>
 			<div v-if="!isGuest" class="app-settings-section last">
 				<h2 class="app-setting-section__title">
+					{{ t('spreed', 'Choose devices') }}
+				</h2>
+				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
+			</div>
+			<div v-if="!isGuest" class="app-settings-section last">
+				<h2 class="app-setting-section__title">
 					{{ t('spreed', 'Attachments folder') }}
 				</h2>
 				<h3 class="app-settings-section__hint">
@@ -42,12 +48,6 @@
 					:value="attachmentFolder"
 					:disabled="attachmentFolderLoading"
 					@click="selectAttachmentFolder">
-			</div>
-			<div class="app-settings-section last">
-				<h2 class="app-setting-section__title">
-					{{ t('spreed', 'Preview') }}
-				</h2>
-				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
 			</div>
 		</div>
 	</Modal>
@@ -89,6 +89,9 @@ export default {
 
 		enableMediaDevicesPreview() {
 			return !this.isInCall
+		},
+		isGuest() {
+			return !this.$store.getters.getUserId()
 		},
 	},
 
