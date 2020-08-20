@@ -47,7 +47,7 @@
 				<h2 class="app-setting-section__title">
 					{{ t('spreed', 'Preview') }}
 				</h2>
-				<MediaDevicesPreview :enabled="true" />
+				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
 			</div>
 		</div>
 	</Modal>
@@ -59,6 +59,7 @@ import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { setAttachmentFolder } from '../../services/settingsService'
 import { EventBus } from '../../services/EventBus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
+import isInCall from '../../mixins/isInCall'
 
 export default {
 	name: 'SettingsDialog',
@@ -67,6 +68,8 @@ export default {
 		Modal,
 		MediaDevicesPreview,
 	},
+
+	mixins: [isInCall],
 
 	data() {
 		return {
@@ -82,6 +85,10 @@ export default {
 
 		defaultLocationHint() {
 			return t('spreed', `Choose in which folder talk attachments should be saved`)
+		},
+
+		enableMediaDevicesPreview() {
+			return !this.isInCall
 		},
 	},
 
