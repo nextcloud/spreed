@@ -220,7 +220,7 @@ class BridgeManager {
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
 			$pass = md5(strval(rand()));
-			$this->config->setAppValue('spreed', 'bot_pass', $pass);
+			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 			// set avatar
 			$avatar = $this->avatarManager->getAvatar($botUserId);
@@ -253,7 +253,7 @@ class BridgeManager {
 		if ($create) {
 			// generate app token for the bot
 			$appToken = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
-			$botPassword = $this->config->getAppValue('spreed', 'bot_pass', '');
+			$botPassword = $this->config->getAppValue('spreed', 'bridge_bot_password', '');
 			$generatedToken = $this->tokenProvider->generateToken(
 				$appToken,
 				$botUserId,
