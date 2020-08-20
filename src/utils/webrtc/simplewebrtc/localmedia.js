@@ -17,6 +17,14 @@ function isAllTracksEnded(stream) {
 	return isAllTracksEnded
 }
 
+function isAllAudioTracksEnded(stream) {
+	let isAllAudioTracksEnded = true
+	stream.getAudioTracks().forEach(function(t) {
+		isAllAudioTracksEnded = t.readyState === 'ended' && isAllAudioTracksEnded
+	})
+	return isAllAudioTracksEnded
+}
+
 function LocalMedia(opts) {
 	WildEmitter.call(this)
 
@@ -335,7 +343,6 @@ LocalMedia.prototype._removeStream = function(stream) {
 	let idx = this.localStreams.indexOf(stream)
 	if (idx > -1) {
 		this.localStreams.splice(idx, 1)
-		this._stopAudioMonitor(this._audioMonitorStreams[idx])
 		this._audioMonitorStreams.splice(idx, 1)
 		this.emit('localStreamStopped', stream)
 	} else {
@@ -352,6 +359,14 @@ LocalMedia.prototype._setupAudioMonitor = function(stream, harkOptions) {
 	const audio = hark(stream, harkOptions)
 	const self = this
 	let timeout
+
+	stream.getAudioTracks().forEach(function(track) {
+		track.addEventListener('ended', function() {
+			if (isAllAudioTracksEnded(stream)) {
+				self._stopAudioMonitor(stream)
+			}
+		})
+	})
 
 	audio.on('speaking', function() {
 		self._speaking = true
