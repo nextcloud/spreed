@@ -36,6 +36,7 @@ use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
 use OCP\Security\ISecureRandom;
 use OCP\IAvatarManager;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -595,34 +596,20 @@ class BridgeManager {
 		$jsonValues = json_encode($bridge);
 
 		$qb = $this->db->getQueryBuilder();
-
-		$exists = false;
-		$qb->select('json_values')
-			->from('talk_bridges', 'b')
-			->where(
-				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
-			);
-		$req = $qb->execute();
-		while ($row = $req->fetch()) {
-			$exists = true;
-			break;
-		}
-		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
-
-		if ($exists) {
-			$qb->update('talk_bridges');
-			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
-			$qb->where(
-				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
-			);
-			$req = $qb->execute();
-		} else {
+		try {
 			$qb->insert('talk_bridges')
 				->values([
 					'room_id' => $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 					'json_values' => $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR),
 				]);
+			$req = $qb->execute();
+		} catch (UniqueConstraintViolationException $e) {
+			$qb = $this->db->getQueryBuilder();
+			$qb->update('talk_bridges');
+			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
+			$qb->where(
+				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
+			);
 			$req = $qb->execute();
 		}
 	}

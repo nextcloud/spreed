@@ -55,7 +55,7 @@ class Version10000Date20200819121721 extends SimpleMigrationStep {
 			$table->addColumn('json_values', Type::TEXT, [
 				'notnull' => true,
 			]);
-			$table->addIndex(['room_id'], 'tbr_room_id');
+			$table->addUniqueIndex(['room_id'], 'tbr_room_id');
 		}
 
 		return $schema;
