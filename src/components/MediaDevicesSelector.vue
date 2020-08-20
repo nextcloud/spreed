@@ -20,7 +20,7 @@
 
 <template>
 	<div class="media-devices-selector">
-		<h3 :for="deviceSelectorId">
+		<h3 class="media-devices-selector__heading" :for="deviceSelectorId">
 			{{ deviceSelectorLabel }}
 		</h3>
 		<Multiselect :id="deviceSelectorId"
@@ -79,11 +79,11 @@ export default {
 
 		deviceSelectorLabel() {
 			if (this.kind === 'audioinput') {
-				return t('spreed', 'Microphone:')
+				return t('spreed', 'Microphone')
 			}
 
 			if (this.kind === 'videoinput') {
-				return t('spreed', 'Camera:')
+				return t('spreed', 'Camera')
 			}
 
 			return null
@@ -162,6 +162,9 @@ export default {
 .media-devices-selector {
 	margin-top: 28px;
 	margin-bottom: 8px;
+	&__heading {
+		font-weight: bold;
+	}
 
 	.multiselect {
 		width: 100%;

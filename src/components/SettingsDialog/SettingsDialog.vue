@@ -82,7 +82,7 @@ export default {
 		},
 
 		locationHint() {
-			return t('spreed', `Choose in which folder attachments should be saved`)
+			return t('spreed', `Choose in which folder attachments should be saved.`)
 		},
 
 		enableMediaDevicesPreview() {
