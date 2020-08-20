@@ -41,7 +41,6 @@ use Psr\Log\LoggerInterface;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Room;
 
 class BridgeManager {
 	/** @var IDBConnection */
