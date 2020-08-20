@@ -62,11 +62,12 @@
 				:name="conversation.displayName" />
 		</AppSidebarTab>
 		<AppSidebarTab
-			id="preview"
+			v-if="!getUserId"
+			id="settings"
 			:order="4"
-			:name="t('spreed', 'Preview')"
-			icon="icon-video">
-			<MediaDevicesPreview :enabled="!showChatInSidebar && activeTab === 'preview'" />
+			:name="t('spreed', 'Settings')"
+			icon="icon-settings">
+			<SetGuestUsername />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -75,7 +76,6 @@
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
-import MediaDevicesPreview from '../MediaDevicesPreview'
 import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
@@ -95,7 +95,6 @@ export default {
 		AppSidebarTab,
 		ChatView,
 		CollectionList,
-		MediaDevicesPreview,
 		ParticipantsTab,
 		SetGuestUsername,
 	},
