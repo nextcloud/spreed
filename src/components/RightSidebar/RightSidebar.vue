@@ -60,14 +60,13 @@
 				:id="conversation.token"
 				type="room"
 				:name="conversation.displayName" />
-		</AppSidebarTab>
-		<AppSidebarTab
-			v-if="!getUserId"
-			id="settings"
-			:order="4"
-			:name="t('spreed', 'Settings')"
-			icon="icon-settings">
-			<SetGuestUsername />
+			<div id="app-settings">
+				<div id="app-settings-header">
+					<button class="settings-button" @click="showSettings">
+						{{ t('spreed', 'Settings') }}
+					</button>
+				</div>
+			</div>
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -87,6 +86,7 @@ import {
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'RightSidebar',
@@ -244,6 +244,10 @@ export default {
 
 		dismissEditing() {
 			this.$store.dispatch('isRenamingConversation', false)
+		},
+
+		showSettings() {
+			EventBus.$emit('show-settings', true)
 		},
 
 	},
