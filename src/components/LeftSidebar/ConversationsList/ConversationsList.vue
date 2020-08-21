@@ -28,9 +28,8 @@
 			@click.native="handleConversationClick" />
 		<template
 			v-if="!initialisedConversations">
-			<LoadingHint
-				v-for="n in 5"
-				:key="n" />
+			<LoadingPlaceholder
+				type="conversations" />
 		</template>
 		<Hint v-else-if="searchText && !conversationsList.length"
 			:hint="t('spreed', 'No matches')" />
@@ -40,7 +39,7 @@
 <script>
 import Conversation from './Conversation'
 import Hint from '../../Hint'
-import LoadingHint from '../../LoadingHint'
+import LoadingPlaceholder from '../../LoadingPlaceholder'
 import { fetchConversations } from '../../../services/conversationsService'
 import { joinConversation, leaveConversation } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
@@ -51,7 +50,7 @@ export default {
 	components: {
 		Conversation,
 		Hint,
-		LoadingHint,
+		LoadingPlaceholder,
 	},
 	props: {
 		searchText: {

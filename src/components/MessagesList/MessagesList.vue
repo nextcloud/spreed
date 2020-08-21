@@ -46,9 +46,9 @@ get the messagesList array and loop through the list to generate the messages.
 			:messages="item"
 			@deleteMessage="handleDeleteMessage" />
 		<template v-if="!messagesGroupedByAuthor.length">
-			<LoadingMessage
-				v-for="n in 15"
-				:key="n" />
+			<LoadingPlaceholder
+				type="messages"
+				:count="15" />
 		</template>
 	</div>
 </template>
@@ -56,7 +56,6 @@ get the messagesList array and loop through the list to generate the messages.
 <script>
 import moment from '@nextcloud/moment'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import LoadingMessage from './LoadingMessage'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
@@ -64,11 +63,12 @@ import { subscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
+import LoadingPlaceholder from '../LoadingPlaceholder'
 
 export default {
 	name: 'MessagesList',
 	components: {
-		LoadingMessage,
+		LoadingPlaceholder,
 		MessagesGroup,
 	},
 
