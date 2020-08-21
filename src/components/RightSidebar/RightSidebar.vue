@@ -68,12 +68,13 @@
 				</div>
 			</div>
 			<BridgeSettings
-				v-if="canModerate" />
+				v-if="canModerate && matterbridgeEnabled" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
@@ -118,6 +119,7 @@ export default {
 			conversationName: '',
 			// Sidebar status before starting editing operation
 			sidebarOpenBeforeEditingName: '',
+			matterbridgeEnabled: parseInt(loadState('talk', 'enable_matterbridge')) === 1,
 		}
 	},
 

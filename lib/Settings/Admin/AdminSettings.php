@@ -94,6 +94,7 @@ class AdminSettings implements ISettings {
 		$this->initialStateService->provideInitialState('talk', 'default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialStateService->provideInitialState('talk', 'conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
+		$this->initialStateService->provideInitialState('talk', 'enable_matterbridge', (int) $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0'));
 	}
 
 	protected function initAllowedGroups(): void {
