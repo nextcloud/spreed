@@ -24,26 +24,23 @@
 		<h3>
 			<span>
 				{{ type.name }}
-				<a v-if="type.infoTarget"
-					class="icon icon-info"
-					target="_blank"
-					:href="type.infoTarget" />
 			</span>
-			<a v-if="deletable"
+			<a v-if="type.infoTarget"
+				class="icon icon-info"
+				target="_blank"
+				:href="type.infoTarget" />
+			<button v-if="deletable"
 				class="icon icon-delete"
 				@click="$emit('deletePart')" />
 		</h3>
 		<div v-for="(field, key) in type.fields" :key="key">
-			<label :for="key + '-' + num">
-				<a :class="classesOf(key)" />
-				<span
-					class="hidden-visually">
-					{{ field.placeholder }}
-				</span>
+			<label :for="key + '-' + num" class="hidden-visually">
+				{{ field.placeholder }}
 			</label>
 			<input v-model="part[key]"
 				:type="field.type"
 				:id="key + '-' + num"
+				:class="classesOf(key)"
 				:placeholder="field.placeholder"
 				:readonly="readonly"
 				@focus="readonly = false">
@@ -107,7 +104,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .part {
 	padding-top: 10px;
 }
@@ -117,19 +114,41 @@ button {
 }
 
 h3 {
-	padding-left: 35px;
-	text-align: left;
-	display: grid;
-	grid-template: 1fr / 90% 10%;
+	padding-left: 40px;
+	display: flex;
+	margin-bottom: 0;
+
+	> span {
+		flex-grow: 1;
+		padding-top: 14px;
+	}
+
+	.icon {
+		display: inline-block;
+		width: 44px;
+		height: 44px;
+		border-radius: var(--border-radius-pill);
+		opacity: .5;
+
+		&.icon-delete {
+			background-color: transparent;
+			border: none;
+			margin: 0;
+		}
+
+		&:hover,
+		&:focus {
+			opacity: 1;
+			background-color: var(--color-background-hover);
+		}
+	}
 }
 
 input {
-	display: inline-block;
-	width: 88%;
-}
-
-.icon {
-	display: inline-block;
-	width: 35px;
+	background-size: 16px;
+	background-position: 16px;
+	padding-left: 40px;
+	width: 100%;
+	text-overflow: ellipsis;
 }
 </style>

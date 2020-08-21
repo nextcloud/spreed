@@ -25,15 +25,13 @@
 		<div v-show="!loading">
 			<div id="matterbridge-header">
 				<h3>
-					<span>
-						{{ t('spreed', 'Bridge with other services') }}
-					</span>
-					<a class="icon icon-info"
-						href="https://github.com/42wim/matterbridge/wiki"
-						target="_blank" />
+					{{ t('spreed', 'Bridge with other services') }}
 				</h3>
 				<p>
 					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
+                    <a href="https://github.com/42wim/matterbridge/wiki" target="_blank" rel="noopener">
+                        {{ t('spreed', 'More info on Matterbridge.') }}
+                    </a>
 				</p>
 			</div>
 			<div class="basic-settings">
@@ -492,24 +490,37 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .loading {
 	margin-top: 30px;
 }
 
-.basic-settings {
-	padding-top: 10px;
-	display: flex;
-	list-style: none;
-	align-items: center;
-}
-
 #matterbridge-header {
-	padding-left: 15px;
+	padding-left: 40px;
+	padding-top: 40px;
+
+	h3 {
+		font-weight: bold;
+	}
+
+	p {
+		color: var(--color-text-maxcontrast);
+
+		a:hover,
+		a:focus {
+			border-bottom: 2px solid var(--color-text-maxcontrast);
+		}
+	}
 }
 
-.icon {
-	display: inline-block;
-	width: 35px;
+.basic-settings {
+	.multiselect {
+		width: calc(100% - 40px);
+		margin-left: 40px;
+	}
+}
+
+ul {
+	margin-bottom: 64px;
 }
 </style>
