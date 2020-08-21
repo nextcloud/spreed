@@ -190,6 +190,12 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 }
 
 LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, audioInputId) {
+	if (this._pendingAudioInputIdChangedCount) {
+		this._pendingAudioInputIdChangedCount++
+
+		return
+	}
+
 	const localStreamsChanged = []
 	const localTracksReplaced = []
 
@@ -235,6 +241,18 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 
 	if (localTracksReplaced.length === 0) {
 		return
+	}
+
+	this._pendingAudioInputIdChangedCount = 1
+
+	const resetPendingAudioInputIdChangedCount = () => {
+		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
+
+		this._pendingAudioInputIdChangedCount = 0
+
+		if (audioInputIdChangedAgain) {
+			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
+		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
@@ -285,6 +303,8 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		// After the clones were added to the local streams the original track
 		// is no longer needed.
 		track.stop()
+
+		resetPendingAudioInputIdChangedCount()
 	}).catch(() => {
 		localStreamsChanged.forEach(stream => {
 			this.emit('localStreamChanged', stream)
@@ -293,10 +313,18 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		localTracksReplaced.forEach(trackStreamPair => {
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
+
+		resetPendingAudioInputIdChangedCount()
 	})
 }
 
 LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, videoInputId) {
+	if (this._pendingVideoInputIdChangedCount) {
+		this._pendingVideoInputIdChangedCount++
+
+		return
+	}
+
 	const localStreamsChanged = []
 	const localTracksReplaced = []
 
@@ -344,6 +372,18 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		return
 	}
 
+	this._pendingVideoInputIdChangedCount = 1
+
+	const resetPendingVideoInputIdChangedCount = () => {
+		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
+
+		this._pendingVideoInputIdChangedCount = 0
+
+		if (videoInputIdChangedAgain) {
+			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
+		}
+	}
+
 	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
 		// According to the specification "getUserMedia({ video: true })" will
 		// return a single video track.
@@ -379,6 +419,8 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		// After the clones were added to the local streams the original track
 		// is no longer needed.
 		track.stop()
+
+		resetPendingVideoInputIdChangedCount()
 	}).catch(() => {
 		localStreamsChanged.forEach(stream => {
 			this.emit('localStreamChanged', stream)
@@ -387,6 +429,8 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		localTracksReplaced.forEach(trackStreamPair => {
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
+
+		resetPendingVideoInputIdChangedCount()
 	})
 }
 
