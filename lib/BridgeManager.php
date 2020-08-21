@@ -560,9 +560,9 @@ class BridgeManager {
 	}
 
 	/**
-	* Stop all bridges
-	*
-	* @return bool success
+	 * Stop all bridges
+	 *
+	 * @return bool success
 	*/
 	public function stopAllBridges(): bool {
 		$this->manager->forAllRooms(function ($room) {
