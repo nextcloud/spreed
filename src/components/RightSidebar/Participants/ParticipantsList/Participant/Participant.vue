@@ -325,6 +325,7 @@ export default {
 	.callstate-icon {
 		opacity: .4;
 		margin-left: 5px;
+		display: inline-block;
 	}
 }
 
