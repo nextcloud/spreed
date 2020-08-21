@@ -125,7 +125,7 @@
 	// Override autocompletion panel items height, as they are too short
 	// for the avatars and also need some padding.
 	.atwho-li {
-		height: 48px;
+		height: 64px;
 		padding-top: 4px;
 		padding-bottom: 4px;
 	}
@@ -134,8 +134,8 @@
 	// is the default 16px. This is a temporary fix until it is fixed
 	// in the avatar component.
 	.atwho-li .icon-group-forced-white {
-		width: 32px;
-		height: 32px;
+		width: 44px;
+		height: 44px;
 	}
 
 	// Override all colors with our theming and dark mode

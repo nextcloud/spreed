@@ -30,6 +30,7 @@
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
+				:size="44"
 				:icon-class="'icon-group-forced-white'"
 				:disable-tooltip="true"
 				:disable-menu="true"
@@ -40,6 +41,7 @@
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
 			<Avatar v-else
+				:size="44"
 				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
 				:display-name="scope.item.label"
 				:disable-tooltip="true"
@@ -337,9 +339,9 @@ export default {
 
 		getGuestAvatarStyle() {
 			return {
-				'width': '32px',
-				'height': '32px',
-				'line-height': '32px',
+				'width': '44px',
+				'height': '44px',
+				'line-height': '44px',
 				'background-color': '#b9b9b9',
 				'text-align': 'center',
 			}
@@ -391,12 +393,13 @@ div[contenteditable] {
 
 .mention-suggestion {
 	max-width: 250px;
+	padding-left: 8px;
 
 	.user-status {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: block;
-		margin-top: -5px;
+		margin-top: 2px;
 	}
 }
 
