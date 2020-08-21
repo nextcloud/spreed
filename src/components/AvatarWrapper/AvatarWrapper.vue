@@ -124,7 +124,7 @@ export default {
 	}
 }
 
-body.dark {
+body.theme--dark {
 	.offline .avatar-wrapper .avatardiv {
 		background: rgba(0, 0, 0, .4) !important;
 	}
