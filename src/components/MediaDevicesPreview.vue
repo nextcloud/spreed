@@ -340,22 +340,28 @@ export default {
 
 			this.pendingGetUserMediaAudioCount = 1
 
+			const resetPendingGetUserMediaAudioCount = () => {
+				const updateAudioStreamAgain = this.pendingGetUserMediaAudioCount > 1
+
+				this.pendingGetUserMediaAudioCount = 0
+
+				if (updateAudioStreamAgain) {
+					this.updateAudioStream()
+				}
+			}
+
 			this.mediaDevicesManager.getUserMedia({ audio: true })
 				.then(stream => {
 					this.setAudioStream(stream)
+
+					resetPendingGetUserMediaAudioCount()
 				})
 				.catch(error => {
 					console.error('Error getting audio stream: ' + error.name + ': ' + error.message)
 					this.audioStreamError = error
 					this.setAudioStream(null)
-				}).finally(() => {
-					const updateAudioStreamAgain = this.pendingGetUserMediaAudioCount > 1
 
-					this.pendingGetUserMediaAudioCount = 0
-
-					if (updateAudioStreamAgain) {
-						this.updateAudioStream()
-					}
+					resetPendingGetUserMediaAudioCount()
 				})
 		},
 
@@ -386,22 +392,28 @@ export default {
 
 			this.pendingGetUserMediaVideoCount = 1
 
+			const resetPendingGetUserMediaVideoCount = () => {
+				const updateVideoStreamAgain = this.pendingGetUserMediaVideoCount > 1
+
+				this.pendingGetUserMediaVideoCount = 0
+
+				if (updateVideoStreamAgain) {
+					this.updateVideoStream()
+				}
+			}
+
 			this.mediaDevicesManager.getUserMedia({ video: true })
 				.then(stream => {
 					this.setVideoStream(stream)
+
+					resetPendingGetUserMediaVideoCount()
 				})
 				.catch(error => {
 					console.error('Error getting video stream: ' + error.name + ': ' + error.message)
 					this.videoStreamError = error
 					this.setVideoStream(null)
-				}).finally(() => {
-					const updateVideoStreamAgain = this.pendingGetUserMediaVideoCount > 1
 
-					this.pendingGetUserMediaVideoCount = 0
-
-					if (updateVideoStreamAgain) {
-						this.updateVideoStream()
-					}
+					resetPendingGetUserMediaVideoCount()
 				})
 		},
 

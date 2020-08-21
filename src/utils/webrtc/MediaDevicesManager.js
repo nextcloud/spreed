@@ -303,6 +303,9 @@ MediaDevicesManager.prototype = {
 	 * constraints do not specify a device already. Otherwise the devices in the
 	 * constraints are respected.
 	 *
+	 * For compatibility with older browsers "finally" should not be used on the
+	 * returned Promise.
+	 *
 	 * @param {MediaStreamConstraints} constraints the constraints specifying
 	 *        the media to request
 	 * @returns {Promise} resolved with a MediaStream object when successful, or
