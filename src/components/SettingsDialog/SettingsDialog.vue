@@ -29,7 +29,7 @@
 				app-setting-section__title">
 					{{ t('spreed', 'Choose devices') }}
 				</h2>
-				<MediaDevicesPreview :enabled="enableMediaDevicesPreview" />
+				<MediaDevicesPreview />
 			</div>
 			<div v-if="!isGuest"
 				class="app-settings-section"
@@ -57,7 +57,6 @@ import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { setAttachmentFolder } from '../../services/settingsService'
 import { EventBus } from '../../services/EventBus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
-import isInCall from '../../mixins/isInCall'
 
 export default {
 	name: 'SettingsDialog',
@@ -66,8 +65,6 @@ export default {
 		Modal,
 		MediaDevicesPreview,
 	},
-
-	mixins: [isInCall],
 
 	data() {
 		return {
@@ -85,9 +82,6 @@ export default {
 			return t('spreed', `Choose in which folder attachments should be saved.`)
 		},
 
-		enableMediaDevicesPreview() {
-			return !this.isInCall
-		},
 		isGuest() {
 			return !this.$store.getters.getUserId()
 		},
