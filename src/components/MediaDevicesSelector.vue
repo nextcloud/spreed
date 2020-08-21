@@ -143,10 +143,18 @@ export default {
 	},
 
 	watch: {
-		deviceSelectedOptionFromDeviceId(deviceSelectedOptionFromDeviceId) {
-			this.deviceSelectedOption = deviceSelectedOptionFromDeviceId
+		// The watcher needs to be set as "immediate" to ensure that
+		// "deviceSelectedOption" will be set when mounted.
+		deviceSelectedOptionFromDeviceId: {
+			handler(deviceSelectedOptionFromDeviceId) {
+				this.deviceSelectedOption = deviceSelectedOptionFromDeviceId
+			},
+			immediate: true,
 		},
 
+		// The watcher should not be set as "immediate" to prevent
+		// "update:deviceId" from being emitted when mounted with the same value
+		// initially passed to the component.
 		deviceSelectedOption(deviceSelectedOption) {
 			if (deviceSelectedOption && deviceSelectedOption.id === null) {
 				this.$emit('update:deviceId', null)
