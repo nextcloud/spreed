@@ -26,6 +26,7 @@ the main body of the message as well as a quote.
 
 <template>
 	<div
+		:id="`message_${id}`"
 		class="message"
 		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
 		@mouseover="showActions=true"
@@ -38,7 +39,7 @@ the main body of the message as well as a quote.
 			class="message__main">
 			<div v-if="isSingleEmoji"
 				class="message__main__text">
-				<Quote v-if="parent" v-bind="quote" />
+				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 				<div class="single-emoji">
 					{{ message }}
 				</div>
@@ -48,7 +49,7 @@ the main body of the message as well as a quote.
 				<CallButton />
 			</div>
 			<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
-				<Quote v-if="parent" v-bind="quote" />
+				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
 			<div class="message__main__right">

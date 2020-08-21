@@ -25,7 +25,9 @@ components.
 </docs>
 
 <template>
-	<div class="quote">
+	<a href="#"
+		class="quote"
+		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
 			<div class="quote__main__author">
 				<h6>{{ getDisplayName }}</h6>
@@ -50,7 +52,7 @@ components.
 					@click.stop="handleAbortReply" />
 			</Actions>
 		</div>
-	</div>
+	</a>
 </template>
 
 <script>
@@ -114,6 +116,13 @@ export default {
 		isNewMessageFormQuote: {
 			type: Boolean,
 			default: false,
+		},
+		/**
+		 * The parent message's id
+		 */
+		parentId: {
+			type: Number,
+			required: true,
 		},
 	},
 	computed: {
@@ -194,6 +203,10 @@ export default {
 			}
 		},
 
+		parent() {
+			return document.getElementById(`message_${this.parentId}`)
+		},
+
 	},
 	methods: {
 		/**
@@ -202,6 +215,15 @@ export default {
 		 */
 		handleAbortReply() {
 			this.$store.dispatch('removeMessageToBeReplied', this.token)
+		},
+
+		async handleQuoteClick() {
+			await this.parent.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'nearest',
+			})
+			this.parent.focus()
 		},
 	},
 }
