@@ -610,6 +610,37 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	const forceReconnect = function(signaling, flags) {
+		if (ownPeer) {
+			webrtc.removePeers(ownPeer.id)
+			ownPeer.end()
+			ownPeer = null
+
+			localCallParticipantModel.setPeer(ownPeer)
+		}
+
+		usersChanged(signaling, [], previousUsersInRoom)
+		usersInCallMapping = {}
+		previousUsersInRoom = []
+
+		// Reconnects with a new session id will trigger "usersChanged"
+		// with the users in the room and that will re-establish the
+		// peerconnection streams.
+		// If flags are undefined the current call flags are used.
+		signaling.forceReconnect(true, flags)
+	}
+
+	function setHandlerForNegotiationNeeded(peer) {
+		peer.pc.addEventListener('negotiationneeded', function() {
+			// Negotiation needed will be first triggered before the connection
+			// is established, but forcing a reconnection should be done only
+			// once the connection was established.
+			if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
+				forceReconnect(signaling)
+			}
+		})
+	}
+
 	webrtc.on('createdPeer', function(peer) {
 		console.debug('Peer created', peer)
 
@@ -639,6 +670,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 			}
+
+			setHandlerForNegotiationNeeded(peer)
 
 			// Make sure required data channels exist for all peers. This
 			// is required for peers that get created by SimpleWebRTC from
@@ -733,26 +766,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	webrtc.on('peerStreamRemoved', function(peer) {
 		stopPeerCheckMedia(peer)
 	})
-
-	const forceReconnect = function(signaling, flags) {
-		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
-			ownPeer.end()
-			ownPeer = null
-
-			localCallParticipantModel.setPeer(ownPeer)
-		}
-
-		usersChanged(signaling, [], previousUsersInRoom)
-		usersInCallMapping = {}
-		previousUsersInRoom = []
-
-		// Reconnects with a new session id will trigger "usersChanged"
-		// with the users in the room and that will re-establish the
-		// peerconnection streams.
-		// If flags are undefined the current call flags are used.
-		signaling.forceReconnect(true, flags)
-	}
 
 	webrtc.webrtc.on('videoOn', function() {
 		if (signaling.getSendVideoIfAvailable()) {

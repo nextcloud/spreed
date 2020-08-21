@@ -19,6 +19,8 @@
  *
  */
 
+import './shims/MediaStream'
+import './shims/MediaStreamTrack'
 import Axios from '@nextcloud/axios'
 import CancelableRequest from '../cancelableRequest'
 import Signaling from '../signaling'

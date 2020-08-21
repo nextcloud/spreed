@@ -44,6 +44,7 @@ export default function LocalMediaModel() {
 	this._handleLocalStreamBound = this._handleLocalStream.bind(this)
 	this._handleLocalStreamRequestFailedRetryNoVideoBound = this._handleLocalStreamRequestFailedRetryNoVideo.bind(this)
 	this._handleLocalStreamRequestFailedBound = this._handleLocalStreamRequestFailed.bind(this)
+	this._handleLocalStreamChangedBound = this._handleLocalStreamChanged.bind(this)
 	this._handleLocalStreamStoppedBound = this._handleLocalStreamStopped.bind(this)
 	this._handleAudioOnBound = this._handleAudioOn.bind(this)
 	this._handleAudioOffBound = this._handleAudioOff.bind(this)
@@ -116,6 +117,7 @@ LocalMediaModel.prototype = {
 			this._webRtc.webrtc.off('localStream', this._handleLocalStreamBound)
 			this._webRtc.webrtc.off('localStreamRequestFailedRetryNoVideo', this._handleLocalStreamRequestFailedBound)
 			this._webRtc.webrtc.off('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound)
+			this._webRtc.webrtc.off('localStreamChanged', this._handleLocalStreamChangedBound)
 			this._webRtc.webrtc.off('localStreamStopped', this._handleLocalStreamStoppedBound)
 			this._webRtc.webrtc.off('audioOn', this._handleAudioOnBound)
 			this._webRtc.webrtc.off('audioOff', this._handleAudioOffBound)
@@ -147,6 +149,7 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('localStream', this._handleLocalStreamBound)
 		this._webRtc.webrtc.on('localStreamRequestFailedRetryNoVideo', this._handleLocalStreamRequestFailedRetryNoVideoBound)
 		this._webRtc.webrtc.on('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound)
+		this._webRtc.webrtc.on('localStreamChanged', this._handleLocalStreamChangedBound)
 		this._webRtc.webrtc.on('localStreamStopped', this._handleLocalStreamStoppedBound)
 		this._webRtc.webrtc.on('audioOn', this._handleAudioOnBound)
 		this._webRtc.webrtc.on('audioOff', this._handleAudioOffBound)
@@ -221,6 +224,43 @@ LocalMediaModel.prototype = {
 			}
 		} else {
 			this.set('videoEnabled', false)
+			this.set('videoAvailable', false)
+		}
+	},
+
+	_handleLocalStreamChanged: function(localStream) {
+		// Only a single local stream is assumed to be active at the same time.
+		this.set('localStream', localStream)
+
+		this._updateMediaAvailability(localStream)
+	},
+
+	_updateMediaAvailability: function(localStream) {
+		if (localStream && localStream.getAudioTracks().length > 0) {
+			this.set('audioAvailable', true)
+
+			if (!this.get('audioEnabled')) {
+				// Explicitly disable the audio to ensure that it will also be
+				// disabled in the other end. Otherwise the WebRTC media could
+				// be enabled.
+				this.disableAudio()
+			}
+		} else {
+			this.disableAudio()
+			this.set('audioAvailable', false)
+		}
+
+		if (localStream && localStream.getVideoTracks().length > 0) {
+			this.set('videoAvailable', true)
+
+			if (!this.get('videoEnabled')) {
+				// Explicitly disable the video to ensure that it will also be
+				// disabled in the other end. Otherwise the WebRTC media could
+				// be enabled.
+				this.disableVideo()
+			}
+		} else {
+			this.disableVideo()
 			this.set('videoAvailable', false)
 		}
 	},
