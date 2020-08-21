@@ -29,9 +29,9 @@
 				</h3>
 				<p>
 					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
-                    <a href="https://github.com/42wim/matterbridge/wiki" target="_blank" rel="noopener">
-                        {{ t('spreed', 'More info on Matterbridge.') }}
-                    </a>
+					<a href="https://github.com/42wim/matterbridge/wiki" target="_blank" rel="noopener">
+						{{ t('spreed', 'More info on Matterbridge.') }}
+					</a>
 				</p>
 			</div>
 			<div class="basic-settings">
