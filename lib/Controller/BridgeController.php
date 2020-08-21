@@ -102,10 +102,10 @@ class BridgeController extends AEnvironmentAwareController {
 	}
 
 	/**
-	* Stop all bridges
-	*
-	* @return DataResponse
-	*/
+	 * Stop all bridges
+	 *
+	 * @return DataResponse
+	 */
 	public function stopAllBridges(): DataResponse {
 		try {
 			$success = $this->bridgeManager->stopAllBridges();
