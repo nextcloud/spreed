@@ -299,4 +299,18 @@ class ChatManager {
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
+
+	/**
+	 * Search for comments with a given content
+	 *
+	 * @param string $search content to search for
+	 * @param array $objectIds Limit the search by object ids
+	 * @param string $verb Limit the verb of the comment
+	 * @param int $offset
+	 * @param int $limit
+	 * @return IComment[]
+	 */
+	public function searchForObjects(string $search,  array $objectIds, string $verb = '', int $offset = 0, int $limit = 50): array {
+		return $this->commentsManager->searchForObjects($search, 'chat', $objectIds, $verb, $offset, $limit);
+	}
 }
