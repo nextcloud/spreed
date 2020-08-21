@@ -37,10 +37,10 @@ components.
 					:arguments="richParameters"
 					:autolink="true" />
 			</div>
-			<div v-else
+			<blockquote v-else
 				class="quote__main__text">
 				<p>{{ shortenedQuoteMessage }}</p>
-			</div>
+			</blockquote>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
 			<Actions class="quote__main__right__actions">
