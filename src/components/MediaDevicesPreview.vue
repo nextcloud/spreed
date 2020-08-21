@@ -250,16 +250,19 @@ export default {
 	},
 
 	watch: {
-		enabled(enabled) {
-			if (this.enabled) {
-				this.mediaDevicesManager.enableDeviceEvents()
-				this.updateAudioStream()
-				this.updateVideoStream()
-			} else {
-				this.mediaDevicesManager.disableDeviceEvents()
-				this.stopAudioStream()
-				this.stopVideoStream()
-			}
+		enabled: {
+			handler: function(enabled) {
+				if (this.enabled) {
+					this.mediaDevicesManager.enableDeviceEvents()
+					this.updateAudioStream()
+					this.updateVideoStream()
+				} else {
+					this.mediaDevicesManager.disableDeviceEvents()
+					this.stopAudioStream()
+					this.stopVideoStream()
+				}
+			},
+			immediate: true,
 		},
 
 		audioInputId(audioInputId) {
@@ -475,7 +478,6 @@ export default {
 <style lang="scss" scoped>
 .preview {
 	display: flex;
-	justify-content: center;
 
 	.icon {
 		background-size: 64px;
@@ -527,14 +529,15 @@ export default {
 }
 
 .preview-video {
+	margin-top: 24px;
 	.preview-not-available .icon {
-		margin-top: 64px;
+		margin-top: 16px;
 		margin-bottom: 16px;
 	}
 
 	video {
 		display: block;
-		max-height: 192px;
+		width: 100%;
 	}
 }
 </style>

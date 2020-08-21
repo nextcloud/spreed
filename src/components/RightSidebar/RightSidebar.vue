@@ -60,13 +60,13 @@
 				:id="conversation.token"
 				type="room"
 				:name="conversation.displayName" />
-		</AppSidebarTab>
-		<AppSidebarTab
-			id="preview"
-			:order="4"
-			:name="t('spreed', 'Preview')"
-			icon="icon-video">
-			<MediaDevicesPreview :enabled="!showChatInSidebar && activeTab === 'preview'" />
+			<div id="app-settings">
+				<div id="app-settings-header">
+					<button class="settings-button" @click="showSettings">
+						{{ t('spreed', 'Settings') }}
+					</button>
+				</div>
+			</div>
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -75,7 +75,6 @@
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
-import MediaDevicesPreview from '../MediaDevicesPreview'
 import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
@@ -87,6 +86,7 @@ import {
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'RightSidebar',
@@ -95,7 +95,6 @@ export default {
 		AppSidebarTab,
 		ChatView,
 		CollectionList,
-		MediaDevicesPreview,
 		ParticipantsTab,
 		SetGuestUsername,
 	},
@@ -245,6 +244,10 @@ export default {
 
 		dismissEditing() {
 			this.$store.dispatch('isRenamingConversation', false)
+		},
+
+		showSettings() {
+			EventBus.$emit('show-settings', true)
 		},
 
 	},
