@@ -43,6 +43,7 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
+import { stopAllBridges } from '../../services/bridgeService'
 
 export default {
 	name: 'MatterbridgeIntegration',
@@ -65,7 +66,10 @@ export default {
 		saveMatterbridgeEnabled() {
 			OCP.AppConfig.setValue('spreed', 'enable_matterbridge', this.matterbridgeEnabled ? '1' : '0', {
 				success: function() {
-				},
+					if (!this.matterbridgeEnabled) {
+						stopAllBridges()
+					}
+				}.bind(this),
 			})
 		},
 	},

@@ -560,6 +560,28 @@ class BridgeManager {
 	}
 
 	/**
+	* Stop all bridges
+	*
+	* @return bool success
+	*/
+	public function stopAllBridges(): bool {
+		$this->manager->forAllRooms(function ($room) {
+			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
+				$bridge = $this->getBridgeOfRoom($room);
+				// disable bridge in stored config
+				$bridge['enabled'] = false;
+				$this->saveBridgeToDb($room, $bridge);
+				// this will kill the bridge process
+				$this->checkBridgeProcess($token, $currentBridge);
+			}
+		});
+
+		// finally kill all potential zombie matterbridge processes
+		$this->killZombieBridges();
+		return true;
+	}
+
+	/**
 	 * Get bridge information for one room
 	 *
 	 * @param Room $room the room

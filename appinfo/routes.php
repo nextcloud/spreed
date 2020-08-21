@@ -394,6 +394,15 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Bridge#stopAllBridges',
+			'url' => '/api/{apiVersion}/bridge',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 
 		/**

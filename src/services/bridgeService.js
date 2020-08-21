@@ -49,7 +49,16 @@ const getBridge = async function(token) {
 	return response
 }
 
+/**
+ * Ask to stop all bridges (and kill all related processes)
+ */
+const stopAllBridges = async function() {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `bridge`)
+	return response
+}
+
 export {
 	editBridge,
 	getBridge,
+	stopAllBridges,
 }
