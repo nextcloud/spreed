@@ -79,11 +79,7 @@ import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
-import {
-	addToFavorites,
-	removeFromFavorites,
-	setConversationName,
-} from '../../services/conversationsService'
+import { setConversationName } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import { EventBus } from '../../services/EventBus'
@@ -210,13 +206,7 @@ export default {
 		},
 
 		async onFavoriteChange() {
-			if (this.conversation.isFavorite) {
-				await removeFromFavorites(this.conversation.token)
-			} else {
-				await addToFavorites(this.conversation.token)
-			}
-
-			this.conversation.isFavorite = !this.conversation.isFavorite
+			this.$store.dispatch('toggleFavorite', this.conversation)
 		},
 
 		handleUpdateActive(active) {
