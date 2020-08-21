@@ -30,6 +30,7 @@
 		@click="handleClick">
 		<AvatarWrapper
 			:id="computedId"
+			size="44"
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
@@ -287,15 +288,17 @@ export default {
 .participant-row {
 	display: flex;
 	align-items: center;
-	height: 44px;
 	cursor: pointer;
-	padding: 0 5px;
-	margin: 8px 0;
+	margin: 4px 0;
 	border-radius: 22px;
+	height: 56px;
+	padding: 0 4px;
 
 	&__user-wrapper {
-		padding-left: 8px;
-		width: calc(100% - 80px);
+		margin-left: 24px;
+		width: calc(100% - 96px);
+		display: flex;
+		flex-direction: column;
 	}
 	&__user-name {
 		display: inline-block;
@@ -314,15 +317,18 @@ export default {
 		line-height: 1.3em;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	&__icon {
 		width: 32px;
 		height: 44px;
 		cursor: pointer;
 	}
-	&__utils,
+	&__utils {
+		margin-right: 28px;
+	}
 	&__actions {
-		margin-left: auto;
+		margin-right: 28px;
 	}
 
 	.callstate-icon {

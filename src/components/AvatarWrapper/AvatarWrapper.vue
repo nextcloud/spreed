@@ -127,6 +127,7 @@ export default {
 body.theme--dark {
 	.offline .avatar-wrapper .avatardiv {
 		background: rgba(0, 0, 0, .4) !important;
+		margin-top: -4px;
 	}
 }
 
