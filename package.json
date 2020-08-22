@@ -36,7 +36,7 @@
 		"hark": "^1.2.3",
 		"lodash": "^4.17.20",
 		"mockconsole": "0.0.1",
-		"nextcloud-vue-collections": "^0.7.2",
+		"nextcloud-vue-collections": "^0.8.1",
 		"sdp-transform": "^2.14.0",
 		"ua-parser-js": "^0.7.21",
 		"url-parse": "^1.4.7",
