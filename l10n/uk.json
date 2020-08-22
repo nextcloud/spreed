@@ -100,9 +100,7 @@
     "Loading" : "Завантаження",
     "No search results" : "Відсутні результати",
     "Groups" : "Групи",
-    "Default location for attachments" : "Типове розташування для вкладень",
-    "Select default location for attachments" : "Виберіть типове розташування для вкладень",
-    "Invalid path selected" : "Вибрано неправильний шлях",
+    "Settings" : "Налаштування",
     "Create a new group conversation" : "Створити нову групову розмову",
     "Password protect" : "Захистити паролем",
     "Add participants" : "Додати учасників",
@@ -113,6 +111,7 @@
     "Allow guests to join via link " : "Дозволити гостям приєднуватися через посилання",
     "Search conversations or users" : "Пошук розмов та учасників",
     "You are currently waiting in the lobby" : "Чекаємо на схвалення доступу",
+    "Camera" : "Камера",
     "Reply" : "Відповісти",
     "Remove" : "Вилучити",
     "Today" : "Сьогодні",
@@ -122,6 +121,7 @@
     "Upload new files" : "Додати файл",
     "Share from Files" : "Відкрити Файли",
     "File to share" : "Виберіть файл для надання доступу",
+    "Invalid path selected" : "Вибрано неправильний шлях",
     "guest" : "гість",
     "Add users" : "Додати користувачів",
     "Add groups" : "Додати групи",
@@ -134,8 +134,6 @@
     "Add participants to the conversation" : "Додати учасників до розмови",
     "Participants" : "Учасники",
     "Chat" : "Чат",
-    "Settings" : "Налаштування",
-    "Preview" : "Перегляд",
     "Edit" : "Редагувати",
     "Start call" : "Почати виклик",
     "Toggle fullscreen" : "Перемкнути на весь екран",
@@ -185,6 +183,8 @@
     "Contacts" : "Контакти",
     "Select participants" : "Виберіть учасників",
     "Search conversations or contacts" : "Пошук розмов та контактів",
-    "Search for more contacts" : "Шукати більше контактів"
+    "Search for more contacts" : "Шукати більше контактів",
+    "Default location for attachments" : "Типове розташування для вкладень",
+    "Select default location for attachments" : "Виберіть типове розташування для вкладень"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }
