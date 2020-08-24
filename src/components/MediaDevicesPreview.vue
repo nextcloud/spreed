@@ -96,7 +96,7 @@ export default {
 	props: {
 		enabled: {
 			type: Boolean,
-			required: true,
+			default: true,
 		},
 	},
 
