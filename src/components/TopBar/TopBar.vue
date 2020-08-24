@@ -133,6 +133,16 @@
 					{{ t('spreed', 'Start time (optional)') }}
 				</ActionInput>
 			</template>
+			<template
+				v-if="showModerationOptions && canFullModerate && isInCall">
+				<ActionSeparator />
+				<ActionButton
+					icon="icon-audio"
+					:close-after-click="true"
+					@click="forceMuteOthers">
+					{{ t('spreed', 'Mute others') }}
+				</ActionButton>
+			</template>
 		</Actions>
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
@@ -161,6 +171,7 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
+import { callParticipantCollection } from '../../utils/webrtc/index'
 
 export default {
 	name: 'TopBar',
@@ -477,6 +488,11 @@ export default {
 		handleRenameConversation() {
 			this.$store.dispatch('isRenamingConversation', true)
 			this.$store.dispatch('showSidebar')
+		},
+		forceMuteOthers() {
+			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
+				callParticipantModel.forceMute()
+			})
 		},
 	},
 }
