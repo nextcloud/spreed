@@ -363,6 +363,25 @@ return [
 			],
 		],
 
+		/**
+		 * Bridge settings
+		 */
+		[
+			'name' => 'BridgeSettings#stopAllBridges',
+			'url' => '/api/{apiVersion}/bridge',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'BridgeSettings#getMatterbridgeVersion',
+			'url' => '/api/{apiVersion}/bridge/version',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 
 		/**
 		 * Bridges
@@ -394,27 +413,6 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
-
-		/**
-		 * Bridge settings
-		 */
-		[
-			'name' => 'BridgeSettings#stopAllBridges',
-			'url' => '/api/{apiVersion}/bridge',
-			'verb' => 'DELETE',
-			'requirements' => [
-				'apiVersion' => 'v1',
-			],
-		],
-		[
-			'name' => 'BridgeSettings#getMatterbridgeVersion',
-			'url' => '/api/{apiVersion}/bridge/version',
-			'verb' => 'GET',
-			'requirements' => [
-				'apiVersion' => 'v1',
-			],
-		],
-
 
 		/**
 		 * PublicShareAuth
