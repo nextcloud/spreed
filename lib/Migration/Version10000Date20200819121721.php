@@ -56,6 +56,8 @@ class Version10000Date20200819121721 extends SimpleMigrationStep {
 				'notnull' => true,
 			]);
 			$table->addUniqueIndex(['room_id'], 'tbr_room_id');
+
+			$table->setPrimaryKey(['id']);
 		}
 
 		return $schema;
