@@ -111,11 +111,11 @@
 	// Override "max-width: 180px", as that makes the autocompletion panel too
 	// narrow.
 	.atwho-view {
-		max-width: unset;
+		max-width: 300px;
+		min-width: 250px;
 		// mention height: 48 * visible mentions: 4.5
 		max-height: 216px;
 	}
-
 	// Override max height to show 4.5 mentions to make clear you can scroll for more options
 	.atwho-ul {
 		// (padding top: 4 + avatar height: 48 + padding bottom: 4) * visible mentions: 4.5

@@ -36,8 +36,8 @@ export default {
 
 <style lang="scss" scoped>
 .participant-loading {
-	$icon-size: 32px;
-	height: 44px;
+	$icon-size: 44px;
+	height: 56px;
 	list-style-type: none;
 	padding-left: 4px;
 	margin: 5px 0;

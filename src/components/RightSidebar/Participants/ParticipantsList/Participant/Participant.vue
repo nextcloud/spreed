@@ -30,7 +30,7 @@
 		@click="handleClick">
 		<AvatarWrapper
 			:id="computedId"
-			size="44"
+			:size="44"
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
@@ -295,7 +295,8 @@ export default {
 	padding: 0 4px;
 
 	&__user-wrapper {
-		margin-left: 24px;
+		margin-top: -4px;
+		margin-left: 12px;
 		width: calc(100% - 96px);
 		display: flex;
 		flex-direction: column;
@@ -320,7 +321,7 @@ export default {
 		white-space: nowrap;
 	}
 	&__icon {
-		width: 32px;
+		width: 44px;
 		height: 44px;
 		cursor: pointer;
 	}
