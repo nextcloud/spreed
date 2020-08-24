@@ -31,7 +31,9 @@
 			<EmptyContent v-if="item.empty"
 				class="half-screen"
 				icon="icon-checkmark">
-				<template #desc>{{ t('spreed', 'No unread mentions') }}</template>
+				<template #desc>
+					{{ t('spreed', 'No unread mentions') }}
+				</template>
 			</EmptyContent>
 			<DashboardWidgetItem v-else :item="getWidgetItem(item)">
 				<template v-slot:avatar>
