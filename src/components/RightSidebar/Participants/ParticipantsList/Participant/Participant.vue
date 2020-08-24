@@ -328,9 +328,6 @@ export default {
 	&__utils {
 		margin-right: 28px;
 	}
-	&__actions {
-		margin-right: 28px;
-	}
 
 	.callstate-icon {
 		opacity: .4;
