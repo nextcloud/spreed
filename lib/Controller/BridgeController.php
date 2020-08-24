@@ -100,18 +100,4 @@ class BridgeController extends AEnvironmentAwareController {
 		}
 		return new DataResponse($success);
 	}
-
-	/**
-	 * Stop all bridges
-	 *
-	 * @return DataResponse
-	 */
-	public function stopAllBridges(): DataResponse {
-		try {
-			$success = $this->bridgeManager->stopAllBridges();
-		} catch (ImpossibleToKillException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
-		}
-		return new DataResponse($success);
-	}
 }

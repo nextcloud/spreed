@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\BridgeManager;
+use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -59,5 +60,19 @@ class BridgeSettingsController extends OCSController {
 		return new DataResponse([
 			'version' => $version,
 		]);
+	}
+
+	/**
+	 * Stop all bridges
+	 *
+	 * @return DataResponse
+	 */
+	public function stopAllBridges(): DataResponse {
+		try {
+			$success = $this->bridgeManager->stopAllBridges();
+		} catch (ImpossibleToKillException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
+		}
+		return new DataResponse($success);
 	}
 }
