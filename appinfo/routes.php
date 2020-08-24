@@ -400,7 +400,14 @@ return [
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'BridgeSettings#getMatterbridgeVersion',
+			'url' => '/api/{apiVersion}/bridge/version',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
 			],
 		],
 

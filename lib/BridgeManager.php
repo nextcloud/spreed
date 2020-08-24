@@ -488,11 +488,11 @@ class BridgeManager {
 	 * @return int the corresponding matterbridge process ID, 0 if it failed
 	 */
 	private function launchMatterbridge(Room $room): int {
-		$binPath = __DIR__ . '/../sample-commands/matterbridge';
+		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
 		// TODO this should be in appdata
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
-		$cmd = sprintf('%s -conf %s', $binPath, $configPath);
+		$cmd = sprintf('%s -conf %s', $binaryPath, $configPath);
 		$pid = exec(sprintf('%s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
 		$pid = intval($pid);
 		if ($ret !== 0) {
@@ -634,5 +634,21 @@ class BridgeManager {
 			);
 			$req = $qb->execute();
 		}
+	}
+
+	public function getCurrentVersionFromBinary(): ?string {
+		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
+		if (!file_exists($binaryPath)) {
+			return null;
+		}
+
+		$cmd = escapeshellcmd($binaryPath) . ' ' . escapeshellarg('-version');
+		@exec($cmd, $output, $returnCode);
+
+		if ($returnCode !== 0) {
+			return null;
+		}
+
+		return trim(implode("\n", $output));
 	}
 }

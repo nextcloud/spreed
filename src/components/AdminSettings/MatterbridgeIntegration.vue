@@ -24,11 +24,20 @@
 	<div id="matterbridge_settings" class="section">
 		<h2>{{ t('spreed', 'Matterbridge integration') }}</h2>
 
-		<p class="settings-hint">
-			{{ t('spreed', 'Official matterbridge binary is downloaded from Github.') }}
+		<p v-if="matterbridgeVersion"
+			class="settings-hint">
+			{{ installedVersion }}
 		</p>
 
-		<p>
+		<p v-else
+			class="settings-hint">
+			<button
+				@click="enableMatterbridgeApp">
+				{{ t('spreed', 'Install Matterbridge app') }}
+			</button>
+		</p>
+
+		<p v-if="matterbridgeVersion">
 			<input id="enable_matterbridge"
 				v-model="matterbridgeEnabled"
 				type="checkbox"
@@ -37,13 +46,17 @@
 				@change="saveMatterbridgeEnabled">
 			<label for="enable_matterbridge">{{ t('spreed', 'Enable Matterbridge integration') }}</label>
 		</p>
-
 	</div>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
-import { stopAllBridges } from '../../services/bridgeService'
+import { showError } from '@nextcloud/dialogs'
+import {
+	enableMatterbridgeApp,
+	stopAllBridges,
+	getMatterbridgeVersion,
+} from '../../services/bridgeService'
 
 export default {
 	name: 'MatterbridgeIntegration',
@@ -52,14 +65,17 @@ export default {
 
 	data() {
 		return {
-			matterbridgeEnabled: false,
+			matterbridgeEnabled: loadState('talk', 'matterbridge_enable'),
+			matterbridgeVersion: loadState('talk', 'matterbridge_version'),
 		}
 	},
 
-	mounted() {
-		this.loading = true
-		this.matterbridgeEnabled = parseInt(loadState('talk', 'enable_matterbridge')) === 1
-		this.loading = false
+	computed: {
+		installedVersion() {
+			return t('spreed', 'Installed version: {version}', {
+				version: this.matterbridgeVersion,
+			})
+		},
 	},
 
 	methods: {
@@ -71,6 +87,32 @@ export default {
 					}
 				}.bind(this),
 			})
+		},
+
+		async enableMatterbridgeApp() {
+			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
+				OC.PasswordConfirmation.requirePasswordConfirmation(this.enableMatterbridgeAppCallback, {}, () => {
+					showError(t('spreed', 'An error occurred while installing the Matterbridge app.'))
+				})
+			}
+
+			this.enableMatterbridgeAppCallback()
+		},
+
+		enableMatterbridgeAppCallback() {
+			try {
+				enableMatterbridgeApp()
+			} catch (e) {
+				showError(t('spreed', 'An error occurred while installing the Matterbridge app.'))
+			}
+
+			try {
+				this.matterbridgeVersion = getMatterbridgeVersion()
+				this.matterbridgeEnabled = true
+				this.saveMatterbridgeEnabled()
+			} catch (e) {
+				showError(t('spreed', 'Failed to execute Matterbridge binary.'))
+			}
 		},
 	},
 }

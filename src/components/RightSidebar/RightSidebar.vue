@@ -119,7 +119,7 @@ export default {
 			conversationName: '',
 			// Sidebar status before starting editing operation
 			sidebarOpenBeforeEditingName: '',
-			matterbridgeEnabled: parseInt(loadState('talk', 'enable_matterbridge')) === 1,
+			matterbridgeEnabled: loadState('talk', 'enable_matterbridge'),
 		}
 	},
 

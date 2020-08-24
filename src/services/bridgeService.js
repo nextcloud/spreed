@@ -23,6 +23,7 @@
 import axios from '@nextcloud/axios'
 import {
 	generateOcsUrl,
+	generateUrl,
 } from '@nextcloud/router'
 
 /**
@@ -57,8 +58,20 @@ const stopAllBridges = async function() {
 	return response
 }
 
+const enableMatterbridgeApp = async function() {
+	const response = await axios.post(generateUrl('settings/apps/enable/talk_matterbridge'))
+	return response
+}
+
+const getMatterbridgeVersion = async function() {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `bridge/version`)
+	return response
+}
+
 export {
 	editBridge,
 	getBridge,
 	stopAllBridges,
+	getMatterbridgeVersion,
+	enableMatterbridgeApp,
 }
