@@ -54,7 +54,7 @@ const getBridge = async function(token) {
  * Ask to stop all bridges (and kill all related processes)
  */
 const stopAllBridges = async function() {
-	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `bridge`)
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + 'bridge')
 	return response
 }
 
@@ -64,7 +64,7 @@ const enableMatterbridgeApp = async function() {
 }
 
 const getMatterbridgeVersion = async function() {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `bridge/version`)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'bridge/version')
 	return response
 }
 
