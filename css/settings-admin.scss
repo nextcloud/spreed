@@ -46,15 +46,14 @@
 }
 
 
-.commands.section {
+.commands.section,
+.matterbridge.section {
 	.icon-beta-feature {
 		@include icon-color('customization', 'categories', $color-warning, 1, true);
 	}
+}
 
-	p.settings-hint > a {
-		text-decoration: underline !important;
-	}
-
+.commands.section {
 	#commands_list {
 		display: grid;
 		grid-template-columns: minmax(100px, 200px) minmax(100px, 200px)  1fr minmax(100px, 200px)  minmax(100px, 200px);

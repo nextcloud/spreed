@@ -21,31 +21,41 @@
  -->
 
 <template>
-	<div id="matterbridge_settings" class="section">
-		<h2>{{ t('spreed', 'Matterbridge integration') }}</h2>
+	<div id="matterbridge_settings" class="matterbridge section">
+		<h2>
+			{{ t('spreed', 'Matterbridge integration') }}
+			<small>
+				{{ t('spreed', 'Beta') }}
+				<span class="icon icon-beta-feature" />
+			</small>
+		</h2>
 
-		<p v-if="matterbridgeVersion"
-			class="settings-hint">
-			{{ installedVersion }}
-		</p>
+		<template v-if="matterbridgeVersion">
+			<p class="settings-hint">
+				{{ installedVersion }}
+			</p>
 
-		<p v-else
-			class="settings-hint">
-			<button
-				@click="enableMatterbridgeApp">
-				{{ t('spreed', 'Install Matterbridge app') }}
-			</button>
-		</p>
+			<p v-if="matterbridgeVersion">
+				<input id="enable_matterbridge"
+					v-model="matterbridgeEnabled"
+					type="checkbox"
+					name="enable_matterbridge"
+					class="checkbox"
+					@change="saveMatterbridgeEnabled">
+				<label for="enable_matterbridge">{{ t('spreed', 'Enable Matterbridge integration') }}</label>
+			</p>
+		</template>
 
-		<p v-if="matterbridgeVersion">
-			<input id="enable_matterbridge"
-				v-model="matterbridgeEnabled"
-				type="checkbox"
-				name="enable_matterbridge"
-				class="checkbox"
-				@change="saveMatterbridgeEnabled">
-			<label for="enable_matterbridge">{{ t('spreed', 'Enable Matterbridge integration') }}</label>
-		</p>
+		<template v-else>
+			<p class="settings-hint" v-html="description" />
+
+			<p>
+				<button
+					@click="enableMatterbridgeApp">
+					{{ t('spreed', 'Install Talk Matterbridge') }}
+				</button>
+			</p>
+		</template>
 	</div>
 </template>
 
@@ -76,6 +86,17 @@ export default {
 				version: this.matterbridgeVersion,
 			})
 		},
+		description() {
+			return t('spreed', 'You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart}GitHub page{linkend} for more details.')
+				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://github.com/42wim/matterbridge/wiki">')
+				.replace('{linkend}', ' ↗</a>')
+		},
+		linkopen() {
+
+		},
+		linkclose() {
+
+		}
 	},
 
 	methods: {
@@ -117,10 +138,21 @@ export default {
 	},
 }
 </script>
-<style scoped lang="scss">
 
-h3 {
-	margin-top: 24px;
+<style scoped lang="scss">
+h2 {
+	small {
+		color: var(--color-warning);
+		border: 1px solid var(--color-warning);
+		border-radius: 16px;
+		padding: 0 9px;
+
+		.icon {
+			width: 16px;
+			height: 16px;
+			margin-bottom: 4px;
+		}
+	}
 }
 
 p {
