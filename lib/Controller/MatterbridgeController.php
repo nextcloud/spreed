@@ -27,24 +27,24 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Manager;
-use OCA\Talk\BridgeManager;
+use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
-class BridgeController extends AEnvironmentAwareController {
+class MatterbridgeController extends AEnvironmentAwareController {
 	/** @var string|null */
 	protected $userId;
 	/** @var Manager */
 	protected $manager;
-	/** @var BridgeManager */
+	/** @var MatterbridgeManager */
 	protected $bridgeManager;
 
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
 								Manager $manager,
-								BridgeManager $bridgeManager) {
+								MatterbridgeManager $bridgeManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->manager = $manager;

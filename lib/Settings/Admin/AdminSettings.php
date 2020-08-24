@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Settings\Admin;
 
-use OCA\Talk\BridgeManager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
@@ -51,7 +51,7 @@ class AdminSettings implements ISettings {
 	private $initialStateService;
 	/** @var ICacheFactory */
 	private $memcacheFactory;
-	/** @var BridgeManager */
+	/** @var MatterbridgeManager */
 	private $bridgeManager;
 	/** @var IUser */
 	private $currentUser;
@@ -65,7 +65,7 @@ class AdminSettings implements ISettings {
 								CommandService $commandService,
 								IInitialStateService $initialStateService,
 								ICacheFactory $memcacheFactory,
-								BridgeManager $bridgeManager,
+								MatterbridgeManager $bridgeManager,
 								IUserSession $userSession,
 								IL10N $l10n,
 								IFactory $l10nFactory) {

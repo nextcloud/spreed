@@ -73,15 +73,15 @@
 import {
 	editBridge,
 	getBridge,
-} from '../services/bridgeService'
+} from '../../../services/matterbridgeService'
 import { showSuccess } from '@nextcloud/dialogs'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
-import BridgePart from './RightSidebar/Bridge/BridgePart'
+import BridgePart from './BridgePart'
 
 export default {
-	name: 'BridgeSettings',
+	name: 'MatterbridgeSettings',
 	components: {
 		ActionCheckbox,
 		ActionButton,

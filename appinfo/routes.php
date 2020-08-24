@@ -367,7 +367,7 @@ return [
 		 * Bridge settings
 		 */
 		[
-			'name' => 'BridgeSettings#stopAllBridges',
+			'name' => 'MatterbridgeSettings#stopAllBridges',
 			'url' => '/api/{apiVersion}/bridge',
 			'verb' => 'DELETE',
 			'requirements' => [
@@ -375,7 +375,7 @@ return [
 			],
 		],
 		[
-			'name' => 'BridgeSettings#getMatterbridgeVersion',
+			'name' => 'MatterbridgeSettings#getMatterbridgeVersion',
 			'url' => '/api/{apiVersion}/bridge/version',
 			'verb' => 'GET',
 			'requirements' => [
@@ -387,7 +387,7 @@ return [
 		 * Bridges
 		 */
 		[
-			'name' => 'Bridge#getBridgeOfRoom',
+			'name' => 'Matterbridge#getBridgeOfRoom',
 			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'GET',
 			'requirements' => [
@@ -396,7 +396,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Bridge#editBridgeOfRoom',
+			'name' => 'Matterbridge#editBridgeOfRoom',
 			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
@@ -405,7 +405,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Bridge#deleteBridgeOfRoom',
+			'name' => 'Matterbridge#deleteBridgeOfRoom',
 			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'DELETE',
 			'requirements' => [

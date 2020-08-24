@@ -25,20 +25,20 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\BridgeManager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
-class BridgeSettingsController extends OCSController {
-	/** @var BridgeManager */
+class MatterbridgeSettingsController extends OCSController {
+	/** @var MatterbridgeManager */
 	protected $bridgeManager;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								BridgeManager $bridgeManager) {
+								MatterbridgeManager $bridgeManager) {
 		parent::__construct($appName, $request);
 		$this->bridgeManager = $bridgeManager;
 	}

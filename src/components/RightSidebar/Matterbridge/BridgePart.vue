@@ -37,9 +37,10 @@
 			<label :for="key + '-' + num" class="hidden-visually">
 				{{ field.placeholder }}
 			</label>
-			<input v-model="part[key]"
-				:type="field.type"
+			<input
 				:id="key + '-' + num"
+				v-model="part[key]"
+				:type="field.type"
 				:class="classesOf(key)"
 				:placeholder="field.placeholder"
 				:readonly="readonly"

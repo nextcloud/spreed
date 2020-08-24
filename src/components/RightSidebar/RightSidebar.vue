@@ -67,7 +67,7 @@
 					</button>
 				</div>
 			</div>
-			<BridgeSettings
+			<MatterbridgeSettings
 				v-if="canModerate && matterbridgeEnabled" />
 		</AppSidebarTab>
 	</AppSidebar>
@@ -83,7 +83,7 @@ import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 import { setConversationName } from '../../services/conversationsService'
-import BridgeSettings from '../BridgeSettings'
+import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import { EventBus } from '../../services/EventBus'
@@ -97,7 +97,7 @@ export default {
 		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
-		BridgeSettings,
+		MatterbridgeSettings,
 	},
 
 	mixins: [

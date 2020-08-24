@@ -42,7 +42,7 @@ use Psr\Log\LoggerInterface;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 
-class BridgeManager {
+class MatterbridgeManager {
 	/** @var IDBConnection */
 	private $db;
 	/** @var IConfig */

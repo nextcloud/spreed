@@ -70,7 +70,7 @@ import {
 	enableMatterbridgeApp,
 	stopAllBridges,
 	getMatterbridgeVersion,
-} from '../../services/bridgeService'
+} from '../../services/matterbridgeService'
 
 export default {
 	name: 'MatterbridgeIntegration',
