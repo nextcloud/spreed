@@ -46,7 +46,6 @@ class BridgeSettingsController extends OCSController {
 	/**
 	 * Get Matterbridge version
 	 *
-	 * @NoAdminRequired
 	 * @return DataResponse
 	 */
 	public function getMatterbridgeVersion(): DataResponse {
