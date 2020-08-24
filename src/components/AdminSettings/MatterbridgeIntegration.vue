@@ -50,7 +50,11 @@
 			<p class="settings-hint" v-html="description" />
 
 			<p>
-				<button
+				<button v-if="isInstalling">
+					<span class="icon icon-loading-small" />
+					{{ t('spreed', 'Downloading …') }}
+				</button>
+				<button v-else
 					@click="enableMatterbridgeApp">
 					{{ t('spreed', 'Install Talk Matterbridge') }}
 				</button>
@@ -77,6 +81,7 @@ export default {
 		return {
 			matterbridgeEnabled: loadState('talk', 'matterbridge_enable'),
 			matterbridgeVersion: loadState('talk', 'matterbridge_version'),
+			isInstalling: false,
 		}
 	},
 
@@ -87,16 +92,11 @@ export default {
 			})
 		},
 		description() {
-			return t('spreed', 'You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart}GitHub page{linkend} for more details.')
-				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://github.com/42wim/matterbridge/wiki">')
-				.replace('{linkend}', ' ↗</a>')
+			return t('spreed', 'You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}.')
+				.replace('{linkstart1}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://github.com/42wim/matterbridge/wiki">')
+				.replace('{linkstart2}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://apps.nextcloud.com/apps/talk_matterbridge">')
+				.replace(/{linkend}/g, ' ↗</a>')
 		},
-		linkopen() {
-
-		},
-		linkclose() {
-
-		}
 	},
 
 	methods: {
@@ -120,18 +120,28 @@ export default {
 			this.enableMatterbridgeAppCallback()
 		},
 
-		enableMatterbridgeAppCallback() {
+		async enableMatterbridgeAppCallback() {
+			this.isInstalling = true
 			try {
-				enableMatterbridgeApp()
+				await enableMatterbridgeApp()
 			} catch (e) {
-				showError(t('spreed', 'An error occurred while installing the Matterbridge app.'))
+				showError(t('spreed', 'An error occurred while installing the Talk Matterbridge. Please install it manually'), {
+					onClick: () => {
+						window.open('https://apps.nextcloud.com/apps/talk_matterbridge', '_blank')
+					},
+				})
+				return
 			}
 
 			try {
-				this.matterbridgeVersion = getMatterbridgeVersion()
+				const response = await getMatterbridgeVersion()
+				this.matterbridgeVersion = response.data.ocs.data.version
 				this.matterbridgeEnabled = true
 				this.saveMatterbridgeEnabled()
+
+				this.isInstalling = false
 			} catch (e) {
+				console.error(e)
 				showError(t('spreed', 'Failed to execute Matterbridge binary.'))
 			}
 		},
@@ -156,8 +166,13 @@ h2 {
 }
 
 p {
-	display: flex;
+	display: block;
 	align-items: center;
+
+	.icon {
+		width: 16px;
+		height: 16px;
+	}
 
 	label {
 		display: block;
