@@ -47,7 +47,6 @@
 			&nbsp;
 			<span>{{ scope.item.label }}</span>
 			<em v-if="isNotAvailable(scope.item)">&nbsp;{{ getStatus(scope.item) }}</em>
-
 		</template>
 		<template v-slot:embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
