@@ -67,11 +67,14 @@
 					</button>
 				</div>
 			</div>
+			<MatterbridgeSettings
+				v-if="canModerate && matterbridgeEnabled" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
@@ -80,6 +83,7 @@ import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 import { setConversationName } from '../../services/conversationsService'
+import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import { EventBus } from '../../services/EventBus'
@@ -93,6 +97,7 @@ export default {
 		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
+		MatterbridgeSettings,
 	},
 
 	mixins: [
@@ -114,6 +119,7 @@ export default {
 			conversationName: '',
 			// Sidebar status before starting editing operation
 			sidebarOpenBeforeEditingName: '',
+			matterbridgeEnabled: loadState('talk', 'enable_matterbridge'),
 		}
 	},
 

@@ -23,6 +23,7 @@
 <template>
 	<div>
 		<GeneralSettings />
+		<MatterbridgeIntegration />
 		<AllowedGroups />
 		<Commands />
 		<StunServers />
@@ -40,6 +41,7 @@ import StunServers from '../components/AdminSettings/StunServers'
 import TurnServers from '../components/AdminSettings/TurnServers'
 import SignalingServers from '../components/AdminSettings/SignalingServers'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer'
+import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration'
 
 export default {
 	name: 'AdminSettings',
@@ -52,6 +54,7 @@ export default {
 		TurnServers,
 		SignalingServers,
 		HostedSignalingServer,
+		MatterbridgeIntegration,
 	},
 }
 </script>

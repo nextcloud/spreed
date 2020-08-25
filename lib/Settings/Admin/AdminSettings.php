@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Settings\Admin;
 
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
@@ -50,6 +51,8 @@ class AdminSettings implements ISettings {
 	private $initialStateService;
 	/** @var ICacheFactory */
 	private $memcacheFactory;
+	/** @var MatterbridgeManager */
+	private $bridgeManager;
 	/** @var IUser */
 	private $currentUser;
 	/** @var IL10N */
@@ -62,6 +65,7 @@ class AdminSettings implements ISettings {
 								CommandService $commandService,
 								IInitialStateService $initialStateService,
 								ICacheFactory $memcacheFactory,
+								MatterbridgeManager $bridgeManager,
 								IUserSession $userSession,
 								IL10N $l10n,
 								IFactory $l10nFactory) {
@@ -70,6 +74,7 @@ class AdminSettings implements ISettings {
 		$this->commandService = $commandService;
 		$this->initialStateService = $initialStateService;
 		$this->memcacheFactory = $memcacheFactory;
+		$this->bridgeManager = $bridgeManager;
 		$this->currentUser = $userSession->getUser();
 		$this->l10n = $l10n;
 		$this->l10nFactory = $l10nFactory;
@@ -82,6 +87,7 @@ class AdminSettings implements ISettings {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
 		$this->initCommands();
+		$this->initMatterbridge();
 		$this->initStunServers();
 		$this->initTurnServers();
 		$this->initSignalingServers();
@@ -110,6 +116,18 @@ class AdminSettings implements ISettings {
 		}, $commands);
 
 		$this->initialStateService->provideInitialState('talk', 'commands', $result);
+	}
+
+	protected function initMatterbridge(): void {
+		$this->initialStateService->provideInitialState(
+			'talk', 'matterbridge_version',
+			(string) $this->bridgeManager->getCurrentVersionFromBinary()
+		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'matterbridge_enable',
+			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
+		);
 	}
 
 	protected function initStunServers(): void {

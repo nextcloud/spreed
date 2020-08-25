@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
 use OCA\Talk\Config;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\ICacheFactory;
@@ -46,14 +47,16 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $initialState;
 	/** @var ICacheFactory|MockObject */
 	protected $cacheFactory;
-	/** @var AdminSettings */
-	protected $admin;
+	/** @var MatterbridgeManager|MockObject  */
+	protected $matterbridgeManager;
 	/** @var IUserSession|MockObject  */
 	protected $userSession;
 	/** @var IL10N|MockObject  */
 	protected $l10n;
 	/** @var IFactory|MockObject  */
 	protected $l10nFactory;
+	/** @var AdminSettings */
+	protected $admin;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -63,6 +66,7 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialStateService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
@@ -82,6 +86,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
+				$this->matterbridgeManager,
 				$this->userSession,
 				$this->l10n,
 				$this->l10nFactory
@@ -95,6 +100,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
+				$this->matterbridgeManager,
 				$this->userSession,
 				$this->l10n,
 				$this->l10nFactory,

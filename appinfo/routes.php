@@ -363,6 +363,56 @@ return [
 			],
 		],
 
+		/**
+		 * Bridge settings
+		 */
+		[
+			'name' => 'MatterbridgeSettings#stopAllBridges',
+			'url' => '/api/{apiVersion}/bridge',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'MatterbridgeSettings#getMatterbridgeVersion',
+			'url' => '/api/{apiVersion}/bridge/version',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+
+		/**
+		 * Bridges
+		 */
+		[
+			'name' => 'Matterbridge#getBridgeOfRoom',
+			'url' => '/api/{apiVersion}/bridge/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Matterbridge#editBridgeOfRoom',
+			'url' => '/api/{apiVersion}/bridge/{token}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Matterbridge#deleteBridgeOfRoom',
+			'url' => '/api/{apiVersion}/bridge/{token}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 		/**
 		 * PublicShareAuth
