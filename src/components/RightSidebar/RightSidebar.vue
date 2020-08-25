@@ -259,13 +259,17 @@ export default {
 }
 
 /* Force scroll bars in tabs content instead of in whole sidebar. */
-::v-deep .app-sidebar-tabs__content {
-	overflow: hidden;
+::v-deep .app-sidebar-tabs {
+	height: calc(100% - 80px);
 
-	section {
-		height: 100%;
+	&__content {
+		overflow: hidden;
 
-		overflow-y: auto;
+		section {
+			height: 100%;
+
+			overflow-y: auto;
+		}
 	}
 }
 
