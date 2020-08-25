@@ -36,7 +36,8 @@
 				:title="t('spreed', 'Conversations')" />
 			<li>
 				<ConversationsList
-					:search-text="searchText" />
+					:search-text="searchText"
+					@click-search-result="handleClickSearchResult" />
 			</li>
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
@@ -143,9 +144,11 @@ export default {
 		conversationsList() {
 			return this.$store.getters.conversationsList
 		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		showStartConversationsOptions() {
 			return this.isSearching && this.canStartConversations
 		},
@@ -247,6 +250,19 @@ export default {
 
 		showSettings() {
 			EventBus.$emit('show-settings', true)
+		},
+
+		handleClickSearchResult(selectedConversationToken) {
+			// End the search operation
+			this.abortSearch()
+			const selectedConversation = document.getElementById(`conversation_${selectedConversationToken}`)
+			this.$nextTick(() => {
+				 selectedConversation.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+					inline: 'nearest',
+				})
+			})
 		},
 	},
 }

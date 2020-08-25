@@ -147,33 +147,43 @@ export default {
 		counterShouldBePrimary() {
 			return this.item.unreadMention || (this.item.unreadMessages && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)
 		},
+
 		linkToConversation() {
 			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
 		},
+
 		canFavorite() {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
 		},
+
 		iconFavorite() {
 			return this.item.isFavorite ? 'icon-star-dark' : 'icon-starred'
 		},
+
 		labelFavorite() {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
 		},
+
 		isNotifyAlways() {
 			return this.item.notificationLevel === PARTICIPANT.NOTIFY.ALWAYS
 		},
+
 		isNotifyMention() {
 			return this.item.notificationLevel === PARTICIPANT.NOTIFY.MENTION
 		},
+
 		isNotifyNever() {
 			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
 		},
+
 		canDeleteConversation() {
 			return this.item.canDeleteConversation
 		},
+
 		canLeaveConversation() {
 			return this.item.canLeaveConversation
 		},
+
 		iconLeaveConversation() {
 			if (this.canDeleteConversation) {
 				return 'icon-close'
@@ -258,6 +268,7 @@ export default {
 
 			return subtitle
 		},
+
 		/**
 		 * @returns {string} Part of the name until the first space
 		 */
@@ -289,6 +300,7 @@ export default {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
+
 		/**
 		 * Deletes the conversation.
 		 */
@@ -316,6 +328,7 @@ export default {
 				}.bind(this)
 			)
 		},
+
 		/**
 		 * Deletes the current user from the conversation.
 		 */
@@ -335,6 +348,7 @@ export default {
 		async toggleFavoriteConversation() {
 			this.$store.dispatch('toggleFavorite', this.item)
 		},
+
 		/**
 		 * Set the notification level for the conversation
 		 * @param {int} level The notification level to set.

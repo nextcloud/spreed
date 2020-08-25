@@ -126,6 +126,7 @@ export default {
 		return {
 			text: '',
 			parsedText: '',
+			conversationIsFirstInList: false,
 		}
 	},
 	computed: {
@@ -137,17 +138,21 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				readOnly: CONVERSATION.STATE.READ_WRITE,
 			}
 		},
+
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
+
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
 		},
+
 		canShareAndUploadFiles() {
 			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 		},
@@ -156,6 +161,17 @@ export default {
 			return this.$store.getters.getAttachmentFolder()
 		},
 	},
+
+	watch: {
+		token(newValue, oldValue) {
+			this.isCurrentConversationIsFirstInList()
+		},
+	},
+
+	mounted() {
+		this.isCurrentConversationIsFirstInList()
+	},
+
 	methods: {
 		contentEditableToParsed(contentEditable) {
 			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
@@ -206,6 +222,7 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
+
 			if (this.parsedText !== '') {
 				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
@@ -225,10 +242,20 @@ export default {
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
+					// Scrolls the conversationlist to conversation
+					if (!this.conversationIsFirstInList) {
+						const conversation = document.getElementById(`conversation_${this.token}`)
+						this.$nextTick(() => {
+							conversation.scrollIntoView({
+								behavior: 'smooth',
+								block: 'center',
+								inline: 'nearest',
+							})
+						})
+					}
 				} catch (error) {
 					console.debug(`error while submitting message ${error}`)
 				}
-
 			}
 		},
 
@@ -317,6 +344,11 @@ export default {
 			range.setStartAfter(emojiTextNode)
 		},
 
+		// Check whether the current conversation is the first in the conversations
+		// list and stores the value in the component's data.
+		isCurrentConversationIsFirstInList() {
+			this.conversationIsFirstInList = this.$store.getters.conversationsList.map(conversation => conversation.token).indexOf(this.token) === 0
+		},
 	},
 }
 </script>
@@ -366,4 +398,5 @@ export default {
 
 	}
 }
+
 </style>
