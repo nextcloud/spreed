@@ -29,6 +29,7 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div
+		id="scroller"
 		class="scroller"
 		@scroll="debounceHandleScroll">
 		<div
