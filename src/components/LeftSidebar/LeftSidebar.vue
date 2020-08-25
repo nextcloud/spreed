@@ -143,9 +143,11 @@ export default {
 		conversationsList() {
 			return this.$store.getters.conversationsList
 		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		showStartConversationsOptions() {
 			return this.isSearching && this.canStartConversations
 		},

@@ -78,9 +78,11 @@ export default {
 			return conversations.sort(this.sortConversations)
 		},
 	},
+
 	beforeMount() {
 		this.fetchConversations()
 	},
+
 	mounted() {
 		/** Refreshes the conversations every 30 seconds */
 		window.setInterval(() => {
@@ -92,10 +94,12 @@ export default {
 		EventBus.$on('routeChange', this.onRouteChange)
 		EventBus.$on('shouldRefreshConversations', this.debounceFetchConversations)
 	},
+
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('shouldRefreshConversations', this.debounceFetchConversations)
 	},
+
 	methods: {
 		onRouteChange({ from, to }) {
 			if (from.name === 'conversation') {
@@ -106,6 +110,7 @@ export default {
 				this.$store.dispatch('markConversationRead', to.params.token)
 			}
 		},
+
 		sortConversations(conversation1, conversation2) {
 			if (conversation1.isFavorite !== conversation2.isFavorite) {
 				return conversation1.isFavorite ? -1 : 1
@@ -150,6 +155,7 @@ export default {
 				this.isFetchingConversations = false
 			}
 		},
+
 		// Emit the click event so the search text in the leftsidebar can be reset.
 		handleConversationClick() {
 			this.$emit('click-conversation')
