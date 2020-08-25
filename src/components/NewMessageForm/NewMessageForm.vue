@@ -135,7 +135,6 @@ export default {
 		 *
 		 * @returns {String}
 		 */
-
 		token() {
 			return this.$store.getters.getToken()
 		},
