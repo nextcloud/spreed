@@ -24,6 +24,7 @@
 		class="acli_wrapper"
 		v-bind="navElement">
 		<a
+			:id="anchorId"
 			:class="{ 'active' : isActive }"
 			href="#"
 			class="acli"
@@ -101,6 +102,13 @@ export default {
 		*/
 		to: {
 			type: [String, Object],
+			default: '',
+		},
+		/**
+		 * Id for the <a> element
+		 */
+		anchorId: {
+			type: String,
 			default: '',
 		},
 	},

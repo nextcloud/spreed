@@ -22,6 +22,7 @@
 <template>
 	<AppContentListItem
 		:title="item.displayName"
+		:anchor-id="`conversation_${item.token}`"
 		:to="{ name: 'conversation', params: { token: item.token }}"
 		:class="{ 'has-unread-messages': item.unreadMessages }">
 		<template v-slot:icon>
