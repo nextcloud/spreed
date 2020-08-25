@@ -25,7 +25,7 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item"
-			@click.native="handleConversationClick" />
+			@click.native="handleConversationClick(item)" />
 		<template
 			v-if="!initialisedConversations">
 			<LoadingPlaceholder
@@ -157,8 +157,8 @@ export default {
 		},
 
 		// Emit the click event so the search text in the leftsidebar can be reset.
-		handleConversationClick() {
-			this.$emit('click-conversation')
+		handleConversationClick(item) {
+			this.$emit('click-search-result', item.token)
 		},
 	},
 }
