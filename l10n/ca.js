@@ -509,6 +509,7 @@ OC.L10N.register(
     "Link to a conversation" : "Enllaça a una conversa",
     "Select conversation" : "Seleccioneu una conversa",
     "Join a conversation or start a new one" : "Uniu-vos a una conversa o inicieu-ne una de nova",
+    "Error while sharing file" : "Error en compartir el fitxer",
     "Default" : "Per defecte",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Sembla que esteu parlant mentre esteu silenciat/da, si us plau, deixeu de silenciar-vos perquè altres persones us puguin sentir.",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Això ja porta massa estona. Ja s'han acceptat (o rebutjat) els permisos multimèdia necessaris al vostre navegador/sistema? Si és així llavors reinicieu el navegador web, perquè estan fallant l'àudio i el vídeo",
