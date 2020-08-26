@@ -495,6 +495,10 @@ export default {
 			this.isLocalVideoSelected = false
 		},
 		handleClickLocalVideo() {
+			// DO nothing if no video
+			if (!this.hasLocalVideo) {
+				return
+			}
 			// Deselect possible selected video
 			this.$store.dispatch('selectedVideoPeerId', 'local')
 			this.$store.dispatch('isGrid', false)
