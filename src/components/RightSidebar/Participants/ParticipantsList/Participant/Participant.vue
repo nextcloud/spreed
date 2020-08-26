@@ -40,13 +40,13 @@
 				<span class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
-				<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
 			</div>
 			<div v-if="isNotAvailable(participant)"
 				class="participant-row__status">
 				<span>{{ getStatusMessage(participant) }}</span>
 			</div>
 		</div>
+		<div v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -332,8 +332,9 @@ export default {
 
 	.callstate-icon {
 		opacity: .4;
-		margin-left: 5px;
 		display: inline-block;
+		height: 44px;
+		width: 44px;
 	}
 }
 
