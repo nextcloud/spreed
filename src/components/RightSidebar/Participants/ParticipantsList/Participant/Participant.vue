@@ -30,6 +30,7 @@
 		@click="handleClick">
 		<AvatarWrapper
 			:id="computedId"
+			:disable-tooltip="true"
 			:size="44"
 			:name="computedName"
 			:source="participant.source"
