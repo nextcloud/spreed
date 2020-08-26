@@ -510,7 +510,7 @@ export default {
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
-	padding: 0 6px;
+	padding: 8px;
 	&__button {
 		margin: 0 2px;
 		align-self: center;

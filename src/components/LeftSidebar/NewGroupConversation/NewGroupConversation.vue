@@ -20,16 +20,16 @@
 -->
 
 <template>
-	<div>
+	<div class="wrapper">
 		<!-- Tooltip -->
 		<Popover trigger="hover" placement="bottom">
-			<Actions slot="trigger">
-				<ActionButton
-					class="toggle"
-					icon="icon-add"
-					:aria-label="t('spreed','Create a new group conversation')"
-					@click="showModal" />
-			</Actions>
+			<Button slot="trigger"
+				class="toggle"
+				icon=""
+				:aria-label="t('spreed','Create a new group conversation')"
+				@click="showModal">
+				<Plus size="24" />
+			</Button>
 			<p>{{ t('spreed','Create a new group conversation') }}</p>
 		</Popover>
 		<!-- New group form -->
@@ -89,7 +89,7 @@
 					<!-- First page -->
 					<button
 						v-if="page===0"
-						class="navigation__button-right primary"
+						class="navigation__button navigation__button-right primary"
 						:disabled="disabled"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
@@ -97,20 +97,20 @@
 					<!-- Second page -->
 					<button
 						v-if="page===1"
-						class="navigation__button-left"
+						class="navigation__button navigation__button-left"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
 					</button>
 					<button
 						v-if="page===1"
-						class="navigation__button-right primary"
+						class="navigation__button navigation__button-right primary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</button>
 					<!-- Third page -->
 					<button
 						v-if="page===2 && (error || isPublic)"
-						class="navigation__button-right primary"
+						class="navigation__button navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
 					</button>
@@ -123,9 +123,8 @@
 <script>
 
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
+import Plus from 'vue-material-design-icons/Plus'
 import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
@@ -146,14 +145,13 @@ export default {
 
 	components: {
 		Modal,
-		Actions,
-		ActionButton,
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
 		Confirmation,
 		Popover,
 		PasswordProtect,
+		Plus,
 	},
 
 	data() {
@@ -339,7 +337,10 @@ $dialog-width: 300px;
 $dialog-height: 480px;
 
 .toggle {
-	margin-left: 5px !important;
+	height: 44px;
+	width: 44px;
+	padding: 0;
+	margin: 0 0 0 4px;
 }
 
 .new-group-conversation {
@@ -373,8 +374,16 @@ it back */
 	z-index: 1;
 	// Same as above
 	width: $dialog-width - $dialog-margin * 2;
+	&__button {
+		height: 44px;
+		padding: 0 16px;
+	}
 	&__button-right {
 		margin-left:auto;
 	}
+}
+
+.wrapper {
+	margin: auto;
 }
 </style>
