@@ -135,11 +135,12 @@ class MessageSearch implements IProvider {
 			);
 		}
 
+		$offset = (int) $query->getCursor();
 		$comments = $this->chatManager->searchForObjects(
 			$query->getTerm(),
 			array_keys($roomMap),
 			'comment',
-			0,
+			$offset,
 			$query->getLimit()
 		);
 
@@ -153,9 +154,10 @@ class MessageSearch implements IProvider {
 			}
 		}
 
-		return SearchResult::complete(
+		return SearchResult::paginated(
 			$title,
-			$result
+			$result,
+			$offset + $query->getLimit()
 		);
 	}
 

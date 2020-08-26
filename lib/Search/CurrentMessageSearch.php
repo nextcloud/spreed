@@ -87,11 +87,12 @@ class CurrentMessageSearch extends MessageSearch {
 			);
 		}
 
+		$offset = (int) $query->getCursor();
 		$comments = $this->chatManager->searchForObjects(
 			$query->getTerm(),
 			[(string) $room->getId()],
 			'comment',
-			0,
+			$offset,
 			$query->getLimit()
 		);
 
@@ -104,13 +105,14 @@ class CurrentMessageSearch extends MessageSearch {
 			}
 		}
 
-		return SearchResult::complete(
+		return SearchResult::paginated(
 			str_replace(
 				'{conversation}',
 				$room->getDisplayName($user->getUID()),
 				$this->l->t('Messages in {conversation}')
 			),
-			$result
+			$result,
+			$offset + $query->getLimit()
 		);
 	}
 }
