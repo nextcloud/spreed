@@ -39,6 +39,7 @@
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
+				:show-user-status="false"
 				:user="userId"
 				:display-name="displayName" />
 			<div v-if="!userId"
