@@ -109,6 +109,7 @@ $icon-size: 44px;
 .conversation-icon {
 	width: $icon-size;
 	height: $icon-size;
+	position: relative;
 
 	.avatar.icon {
 		width: $icon-size;
@@ -132,8 +133,8 @@ $icon-size: 44px;
 
 	.overlap-icon {
 		position: absolute;
-		top: 6px;
-		left: $icon-size - 6px;
+		top: 0;
+		left: calc(#{$icon-size} - 12px);
 		line-height: 100%;
 
 		.icon-favorite {

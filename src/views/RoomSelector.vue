@@ -118,7 +118,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #modal-inner {
 	width: 90vw;
 	max-width: 400px;
@@ -144,31 +144,32 @@ li {
 	padding: 6px;
 	border: 1px solid transparent;
 	display: flex;
-}
 
-li:hover, li:focus {
-	background-color: var(--color-background-dark);
-	border-radius: var(--border-radius-pill);
-}
+	&:hover,
+	&:focus {
+		background-color: var(--color-background-dark);
+		border-radius: var(--border-radius-pill);
+	}
 
-li.selected {
-	background-color: var(--color-primary-light);
-	border-radius: var(--border-radius-pill);
-}
+	&.selected {
+		background-color: var(--color-primary-light);
+		border-radius: var(--border-radius-pill);
+	}
 
-li > span {
-	padding: 5px;
-	vertical-align: middle;
-
+	& > span {
+		padding: 5px 5px 5px 10px;
+		vertical-align: middle;
+	}
 }
 
 #modal-buttons {
 	overflow: hidden;
 	height: 44px;
 	flex-shrink: 0;
+
+	.primary {
+		float: right;
+	}
 }
 
-#modal-buttons .primary {
-	float: right;
-}
 </style>
