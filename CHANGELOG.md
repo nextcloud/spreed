@@ -1,6 +1,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.0-beta.1– 2020-08-27
+### Added
+- Implement unified search for messages
+  [#4017](https://github.com/nextcloud/spreed/pull/4017)
+- Support for user status
+  [#3993](https://github.com/nextcloud/spreed/pull/3993)
+- Moderators can now mute all participants in the moderator menu
+  [#4052](https://github.com/nextcloud/spreed/pull/4052)
+- Allow changing the camera and microphone during a call
+  [#4023](https://github.com/nextcloud/spreed/pull/4023)
+- Show upload progress and a preview when sharing a file into the chat
+  [#3988](https://github.com/nextcloud/spreed/pull/3988)
+- Add a dashboard widget with unread mentions and active calls
+  [#3890](https://github.com/nextcloud/spreed/pull/3890)
+- Add an emoji picker to the chat
+  [#3994](https://github.com/nextcloud/spreed/pull/3994)
+- Hosted high-performance backend trial option in the admin settings
+  [#3620](https://github.com/nextcloud/spreed/pull/3620)
+- 🚧 TechPreview: Matterbridge integration
+  [#4010](https://github.com/nextcloud/spreed/pull/4010)
+- Compatibility with Nextcloud 20
+  
+### Changed
+- Allow to select your own video
+  [#3814](https://github.com/nextcloud/spreed/pull/3814)
+  
+### Fixed
+- Scroll to the original message when clicking on a quota
+  [#4037](https://github.com/nextcloud/spreed/pull/4037)
+- Fix transparency issue with the avatar menu in the participant list
+  [#3958](https://github.com/nextcloud/spreed/pull/3958)
+- Prevent infinite loop in datachannel open re-transmission
+  [#3882](https://github.com/nextcloud/spreed/pull/3882)
+
 ## 9.0.3 – 2020-08-04
 ### Fixed
 - Fix compatibility with Janus 0.10.4 and the newest High-performance backend
