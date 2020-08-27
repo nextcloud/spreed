@@ -558,7 +558,7 @@ Signaling.Standalone.prototype.connect = function() {
 		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
 			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
-				timeout: 0,
+				timeout: -1,
 			})
 		}, 2000)
 	}
@@ -601,7 +601,7 @@ Signaling.Standalone.prototype.connect = function() {
 		}
 		if (this.signalingConnectionError === null) {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
-				timeout: 0,
+				timeout: -1,
 			})
 		}
 		this.reconnect()

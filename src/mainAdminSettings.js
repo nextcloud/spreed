@@ -23,6 +23,9 @@
 import Vue from 'vue'
 import AdminSettings from './views/AdminSettings'
 
+// Styles
+import '@nextcloud/dialogs/styles/toast.scss'
+
 Vue.prototype.t = t
 Vue.prototype.n = n
 Vue.prototype.OC = OC

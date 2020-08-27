@@ -51,7 +51,7 @@ const talkHashCheck = {
 
 			this.reloadWarningShown = true
 			showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
-				timeout: 0,
+				timeout: -1,
 			})
 		},
 	},
