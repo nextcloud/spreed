@@ -32,6 +32,7 @@
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
+			:show-user-status="showUserStatus"
 			:size="size" />
 		<div v-else
 			class="guest"
@@ -80,6 +81,11 @@ export default {
 		disableMenu: {
 			type: Boolean,
 			default: false,
+		},
+
+		showUserStatus: {
+			type: Boolean,
+			default: true,
 		},
 	},
 	computed: {
