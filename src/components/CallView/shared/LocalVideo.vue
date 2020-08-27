@@ -291,7 +291,7 @@ export default {
 			handler: function(localStreamVideoError) {
 				if (localStreamVideoError) {
 					showError(t('spreed', 'Error while accessing camera'), {
-						timeout: 0,
+						timeout: -1,
 					})
 				}
 			},

@@ -31,7 +31,7 @@ const browserCheck = {
 				showError(
 					this.unsupportedWarning,
 					{
-						timeout: 0,
+						timeout: -1,
 					})
 			}
 		},
