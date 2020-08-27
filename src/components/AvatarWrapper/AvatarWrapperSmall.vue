@@ -30,6 +30,7 @@
 			:user="id"
 			:display-name="name"
 			menu-position="left"
+			:show-user-status="showUserStatus"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
 			:size="size" />
@@ -80,6 +81,10 @@ export default {
 		disableMenu: {
 			type: Boolean,
 			default: false,
+		},
+		showUserStatus: {
+			type: Boolean,
+			default: true,
 		},
 	},
 	computed: {

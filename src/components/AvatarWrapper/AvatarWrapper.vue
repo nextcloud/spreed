@@ -109,7 +109,7 @@ export default {
 <style lang="scss" scoped>
 
 .avatar-wrapper {
-	$avatar-size: 32px;
+	$avatar-size: 44px;
 	height: $avatar-size;
 	width: $avatar-size;
 	@import '../../assets/avatar.scss';
@@ -127,6 +127,7 @@ export default {
 body.theme--dark {
 	.offline .avatar-wrapper .avatardiv {
 		background: rgba(0, 0, 0, .4) !important;
+		margin-top: -4px;
 	}
 }
 

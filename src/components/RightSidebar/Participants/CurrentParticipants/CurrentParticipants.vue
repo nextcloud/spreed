@@ -103,11 +103,19 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
-			if (participant1.sessionId === '0') {
-				if (participant2.sessionId !== '0') {
+			let session1 = participant1.sessionId
+			let session2 = participant2.sessionId
+			if (participant1.status === 'offline') {
+				session1 = '0'
+			}
+			if (participant2.status === 'offline') {
+				session2 = '0'
+			}
+			if (session1 === '0') {
+				if (session2 !== '0') {
 					return 1
 				}
-			} else if (participant2.sessionId === '0') {
+			} else if (session2 === '0') {
 				return -1
 			}
 

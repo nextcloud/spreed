@@ -56,6 +56,7 @@
 					:disable-tooltip="true"
 					:user="model.attributes.userId"
 					:display-name="model.attributes.name"
+					:show-user-status="false"
 					:class="avatarClass" />
 				<div v-if="!model.attributes.userId"
 					:class="guestAvatarClass"

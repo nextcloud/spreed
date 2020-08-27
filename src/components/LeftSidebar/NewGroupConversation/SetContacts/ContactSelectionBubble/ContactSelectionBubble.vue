@@ -26,6 +26,7 @@
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
+			:show-user-status="false"
 			:disable-menu="true"
 			:disable-tooltip="true" />
 		<span class="contact-selection-bubble__username">

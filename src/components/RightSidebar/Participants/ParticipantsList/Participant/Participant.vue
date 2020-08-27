@@ -30,6 +30,8 @@
 		@click="handleClick">
 		<AvatarWrapper
 			:id="computedId"
+			:disable-tooltip="true"
+			:size="44"
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
@@ -38,13 +40,13 @@
 				<span class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
-				<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
 			</div>
 			<div v-if="isNotAvailable(participant)"
 				class="participant-row__status">
 				<span>{{ getStatusMessage(participant) }}</span>
 			</div>
 		</div>
+		<div v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -206,7 +208,7 @@ export default {
 		},
 
 		isOffline() {
-			return this.sessionId === '0'
+			return this.participant.status === 'offline' || this.sessionId === '0'
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
@@ -287,14 +289,18 @@ export default {
 .participant-row {
 	display: flex;
 	align-items: center;
-	height: 44px;
 	cursor: pointer;
-	padding: 0 5px;
-	margin: 8px 0;
+	margin: 4px 0;
 	border-radius: 22px;
+	height: 56px;
+	padding: 0 4px;
 
 	&__user-wrapper {
-		padding-left: 8px;
+		margin-top: -4px;
+		margin-left: 12px;
+		width: calc(100% - 96px);
+		display: flex;
+		flex-direction: column;
 	}
 	&__user-name {
 		display: inline-block;
@@ -311,21 +317,24 @@ export default {
 	&__status {
 		color: var(--color-text-maxcontrast);
 		line-height: 1.3em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	&__icon {
-		width: 32px;
+		width: 44px;
 		height: 44px;
 		cursor: pointer;
 	}
-	&__utils,
-	&__actions {
-		margin-left: auto;
+	&__utils {
+		margin-right: 28px;
 	}
 
 	.callstate-icon {
 		opacity: .4;
-		margin-left: 5px;
 		display: inline-block;
+		height: 44px;
+		width: 44px;
 	}
 }
 

@@ -111,29 +111,31 @@
 	// Override "max-width: 180px", as that makes the autocompletion panel too
 	// narrow.
 	.atwho-view {
-		max-width: unset;
+		max-width: 300px;
+		min-width: 250px;
+		// mention height: 48 * visible mentions: 4.5
+		max-height: 216px;
 	}
-
 	// Override max height to show 4.5 mentions to make clear you can scroll for more options
 	.atwho-ul {
-		// (padding top: 6 + avatar height: 32 + padding bottom: 6) * visible mentions: 4.5
-		max-height: 198px;
+		// (padding top: 4 + avatar height: 48 + padding bottom: 4) * visible mentions: 4.5
+		max-height: unset;
 	}
 
 	// Override autocompletion panel items height, as they are too short
 	// for the avatars and also need some padding.
 	.atwho-li {
-		height: unset;
-		padding-top: 6px;
-		padding-bottom: 6px;
+		height: 64px;
+		padding-top: 4px;
+		padding-bottom: 4px;
 	}
 
 	// Although the height of its wrapper is 32px the height of the icon
 	// is the default 16px. This is a temporary fix until it is fixed
 	// in the avatar component.
 	.atwho-li .icon-group-forced-white {
-		width: 32px;
-		height: 32px;
+		width: 44px;
+		height: 44px;
 	}
 
 	// Override all colors with our theming and dark mode

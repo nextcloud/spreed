@@ -21,8 +21,10 @@
 
 <template>
 	<Avatar v-if="isUser"
+		:disable-tooltip="true"
 		class="messages__avatar__icon"
 		:user="authorId"
+		:show-user-status="false"
 		:display-name="displayName" />
 	<div v-else-if="isDeletedUser"
 		class="avatar-32px guest">

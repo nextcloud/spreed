@@ -30,6 +30,7 @@
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
+				:size="44"
 				:icon-class="'icon-group-forced-white'"
 				:disable-tooltip="true"
 				:disable-menu="true"
@@ -40,13 +41,20 @@
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
 			<Avatar v-else
+				:size="44"
 				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
 				:display-name="scope.item.label"
 				:disable-tooltip="true"
 				:disable-menu="true" />
 			&nbsp;
-			<span>{{ scope.item.label }}</span>
-			<em v-if="isNotAvailable(scope.item)">&nbsp;{{ getStatus(scope.item) }}</em>
+
+			<span class="mention-suggestion">
+				<span>{{ scope.item.label }}</span>
+				<em v-if="isNotAvailable(scope.item)"
+					class="user-status">
+					{{ getStatusMessage(scope.item) }}
+				</em>
+			</span>
 		</template>
 		<template v-slot:embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
@@ -331,9 +339,9 @@ export default {
 
 		getGuestAvatarStyle() {
 			return {
-				'width': '32px',
-				'height': '32px',
-				'line-height': '32px',
+				'width': '44px',
+				'height': '44px',
+				'line-height': '44px',
 				'background-color': '#b9b9b9',
 				'text-align': 'center',
 			}
@@ -352,14 +360,6 @@ export default {
 			}
 
 			return 'user'
-		},
-
-		getStatus(candidate) {
-			const status = this.getStatusMessage(candidate)
-			if (status) {
-				return '(' + status + ')'
-			}
-			return ''
 		},
 	},
 }
@@ -390,4 +390,17 @@ div[contenteditable] {
 	display: block;
 	color: var(--color-text-maxcontrast);
 }
+
+.mention-suggestion {
+	max-width: 250px;
+	padding-left: 8px;
+
+	.user-status {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+		margin-top: 2px;
+	}
+}
+
 </style>
