@@ -43,6 +43,9 @@ import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
 
+// Styles
+import '@nextcloud/dialogs/styles/toast.scss'
+
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
 __webpack_nonce__ = btoa(getRequestToken())
