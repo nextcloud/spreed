@@ -129,11 +129,11 @@ export default {
 	z-index: 1;
 	display: flex;
 	justify-content: center;
-
 	&__input {
 		align-self: center;
 		width: 100%;
-		margin: 0;
+		margin: 4px;
+		padding-left: 8px;
 	}
 }
 

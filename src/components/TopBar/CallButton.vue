@@ -228,12 +228,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar__button .icon {
-	opacity: 1;
-	margin-right: 4px;
+.top-bar__button {
+	height: 44px;
+	padding: 0 16px;
 
-	&.icon-incoming-call {
-		animation: pulse 2s infinite;
+	.icon {
+		opacity: 1;
+		margin-right: 8px;
+
+		&.icon-incoming-call {
+			animation: pulse 2s infinite;
+		}
 	}
 }
 

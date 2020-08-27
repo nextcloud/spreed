@@ -274,7 +274,7 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 6px;
+	padding: 8px;
 	border-bottom: 1px solid var(--color-border-dark);
 }
 
