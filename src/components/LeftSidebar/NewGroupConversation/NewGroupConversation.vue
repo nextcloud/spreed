@@ -21,18 +21,15 @@
 
 <template>
 	<div class="wrapper">
-		<!-- Tooltip -->
-		<Popover trigger="hover" placement="bottom">
-			<Button slot="trigger"
-				class="toggle"
-				icon=""
-				:aria-label="t('spreed','Create a new group conversation')"
-				@click="showModal">
-				<Plus size="24"
-					decorative />
-			</Button>
-			<p>{{ t('spreed','Create a new group conversation') }}</p>
-		</Popover>
+		<button slot="trigger"
+			v-tooltip.bottom="t('spreed','Create a new group conversation')"
+			class="toggle"
+			icon=""
+			:aria-label="t('spreed','Create a new group conversation')"
+			@click="showModal">
+			<Plus decorative
+				size="24" />
+		</button>
 		<!-- New group form -->
 		<Modal
 			v-if="modal"
@@ -124,7 +121,6 @@
 <script>
 
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Plus from 'vue-material-design-icons/Plus'
 import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
@@ -139,10 +135,15 @@ import {
 import { generateUrl } from '@nextcloud/router'
 import PasswordProtect from './PasswordProtect/PasswordProtect'
 import { PARTICIPANT } from '../../../constants'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 export default {
 
 	name: 'NewGroupConversation',
+
+	directives: {
+		tooltip: Tooltip,
+	},
 
 	components: {
 		Modal,
@@ -150,7 +151,6 @@ export default {
 		SetConversationName,
 		SetConversationType,
 		Confirmation,
-		Popover,
 		PasswordProtect,
 		Plus,
 	},
@@ -387,4 +387,5 @@ it back */
 .wrapper {
 	margin: auto;
 }
+
 </style>
