@@ -32,6 +32,7 @@
 			:id="computedId"
 			:disable-tooltip="true"
 			:size="44"
+			:show-user-status="!isSearched"
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
