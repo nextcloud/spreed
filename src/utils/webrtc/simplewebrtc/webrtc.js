@@ -58,34 +58,6 @@ function WebRTC(opts) {
 	// call localMedia constructor
 	localMedia.call(this, this.config)
 
-	this.on('speaking', function() {
-		if (!self.hardMuted) {
-			// FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
-			self.peers.forEach(function(peer) {
-				if (peer.enableDataChannels) {
-					const dc = peer.getDataChannel('hark')
-					if (dc.readyState !== 'open') {
-						return
-					}
-					dc.send(JSON.stringify({ type: 'speaking' }))
-				}
-			})
-		}
-	})
-	this.on('stoppedSpeaking', function() {
-		if (!self.hardMuted) {
-			// FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
-			self.peers.forEach(function(peer) {
-				if (peer.enableDataChannels) {
-					const dc = peer.getDataChannel('hark')
-					if (dc.readyState !== 'open') {
-						return
-					}
-					dc.send(JSON.stringify({ type: 'stoppedSpeaking' }))
-				}
-			})
-		}
-	})
 	this.on('unshareScreen', function(message) {
 		// End peers we were receiving the screensharing stream from.
 		const peers = self.getPeers(message.id, 'screen')

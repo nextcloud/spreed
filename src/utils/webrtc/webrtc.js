@@ -895,8 +895,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			} else {
 				console.debug('Unknown message type %s from %s datachannel', data.type, label, data)
 			}
-		} else if (label === 'hark') {
-			// Ignore messages from hark datachannel
 		} else {
 			console.debug('Unknown message from %s datachannel', label, data)
 		}
