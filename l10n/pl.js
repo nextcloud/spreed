@@ -518,6 +518,7 @@ OC.L10N.register(
     "Installed version: {version}" : "Zainstalowana wersja: {version}",
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Możesz zainstalować Matterbridge, aby połączyć Nextcloud Talk z innymi usługami. Odwiedź {linkstart1}stronę GitHub{linkend}, aby uzyskać więcej informacji. Pobieranie i instalowanie aplikacji może chwilę potrwać. W przypadku przekroczenia limitu czasu, zainstaluj ją ręcznie ze {linkstart2}sklepu z aplikacjami{linkend}.",
     "An error occurred while installing the Matterbridge app." : "Wystąpił błąd podczas instalowania aplikacji Matterbridge.",
+    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Wystąpił błąd podczas instalacji Talk Matterbridge. Zainstaluj ręcznie.",
     "Failed to execute Matterbridge binary." : "Nie udało się uruchomić pliku binarnego Matterbridge.",
     "High-performance backend URL" : "Adres URL zaplecza o wysokiej wydajności",
     "Validate SSL certificate" : "Potwierdź certyfikat SSL",
