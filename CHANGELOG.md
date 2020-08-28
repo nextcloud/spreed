@@ -1,13 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 10.0.0-beta.1– 2020-08-27
+## 10.0.0-beta.1 – 2020-08-27
 ### Added
 - Implement unified search for messages
   [#4017](https://github.com/nextcloud/spreed/pull/4017)
 - Support for user status
   [#3993](https://github.com/nextcloud/spreed/pull/3993)
-- Moderators can now mute all participants in the moderator menu
+- Moderators can now mute all participants with one click in the moderator menu
   [#4052](https://github.com/nextcloud/spreed/pull/4052)
 - Allow changing the camera and microphone during a call
   [#4023](https://github.com/nextcloud/spreed/pull/4023)
