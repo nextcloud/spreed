@@ -28,9 +28,8 @@ the main body of the message as well as a quote.
 	<div
 		:id="`message_${id}`"
 		class="message"
-		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
-		@mouseover="showActions=true"
-		@mouseleave="showActions=false">
+		tabindex="0"
+		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
@@ -55,11 +54,12 @@ the main body of the message as well as a quote.
 			<div class="message__main__right">
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
 				<h6 v-if="hasDate"
-					v-tooltip.auto="messageDate">
+					v-tooltip.auto="messageDate"
+					class="date">
 					{{ messageTime }}
 				</h6>
 				<Actions
-					v-show="showActions && hasActions"
+					tabindex="0"
 					class="message__main__right__actions">
 					<ActionButton
 						v-if="isReplyable"
@@ -363,6 +363,18 @@ export default {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
+	&:hover,
+	&:focus {
+		background-color: var(--color-background-hover);
+		border-radius: 8px;
+		.message__main__right__actions {
+			visibility: visible;
+		}
+		.date {
+			visibility: hidden;
+		}
+
+	}
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -409,9 +421,14 @@ export default {
 			flex: 0 0 95px;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
+				visibility: hidden;
 				position: absolute;
 				bottom: -11px;
 				right: -3px;
+				&:hover,
+				&:focus {
+					visibility: visible;
+				}
 			}
 			& h6 {
 				margin-left: auto;
@@ -430,8 +447,4 @@ export default {
 	margin: -6px 0;
 }
 
-.hover {
-	background-color: var(--color-background-hover);
-	border-radius: 8px;
-}
 </style>
