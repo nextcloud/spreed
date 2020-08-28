@@ -516,6 +516,7 @@
     "Installed version: {version}" : "Kurulu sürüm: {version}",
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Nextcloud Sohbet ile diğer hizmetleri bağlamak için Matterbridge kurabilirsiniz. Ayrıntılı bilgi almak için Matterbridge {linkstart1}GitHub sayfasına{linkend} bakabilirsiniz. Uygulamanın indirilip kurulması biraz zaman alabilir. İşlem zaman aşımına uğrarsa {linkstart2}uygulama mağazasından{linkend} el ile kurun.",
     "An error occurred while installing the Matterbridge app." : "Matterbridge uygulaması kurulurken bir sorun çıktı.",
+    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Talk Matterbridge kurulurken bir sorun çıktı. Lütfen el ile kurun.",
     "Failed to execute Matterbridge binary." : "Matterbridge uygulaması çalıştırılamadı.",
     "High-performance backend URL" : "Yüksek başarımlı yönetim adresi",
     "Validate SSL certificate" : "SSL sertifikasını doğrula",
