@@ -670,7 +670,7 @@ OC.L10N.register(
     "API token" : "Token de API",
     "Login" : "Login",
     "Nickname" : "Apelido",
-    "Client ID" : "ID do client",
+    "Client ID" : "ID do cliente",
     "moderator" : "moderador",
     "guest" : "convidado",
     "Participant settings" : "Configurações dos participantes",
