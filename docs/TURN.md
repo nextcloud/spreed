@@ -11,6 +11,8 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 ## Install and setup _coTURN_ as TURN server
 
+It is recommended to install the latest _coTURN_ version; at the very minimum _coTURN_ 4.5.0.8 should be used. In previous versions there is a bug that causes [the IPv6 UDP sockets created by coTURN not to be freed](https://github.com/coturn/coturn/issues/217). Due to this the _turn_ process ends not being able to open new ports and thus not being able to serve new connections. Moreover, when that happens, even if there are no connections a high CPU load will be caused by the _turn_ process. Therefore, if you can not install _coTURN_ 4.5.0.8 or a later version you should restart the _turn_ process periodically to work around that issue.
+
 #### 1. Download and install
 
 - On **Debian and Ubuntu** there are official repository packages available:
