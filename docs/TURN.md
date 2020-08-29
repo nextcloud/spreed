@@ -122,6 +122,14 @@ When the TURN server is set in the Talk settings a basic test against the TURN s
 
 Now, in that browser, the media sent to and received from other participants in the call should go through the TURN server. If the call works then the TURN server should work.
 
+##### Differences between Firefox and Chromium
+
+Firefox and Chromium handle `iceTransportPolicy = 'relay'` in slightly different ways. When relay candidates are forced Firefox will use only relay candidates, but Chromium will also take into account peer reflexive candidates that refer to the TURN server. Due to this in the above test, in some specific cases, a connection could be established in Chromium but not in Firefox.
+
+For example, if a Janus gateway is used too, the TURN server is in the same server as the Janus gateway and both are behind a firewall (not recommended), relay candidates could have the public IP address of the server while peer reflexive candidates could have the internal one. If the firewall drops connections between the public IP address and the public IP address the connection between coTURN and Janus may not be established (but without failing either), which would cause that Firefox establishes a connection with the TURN server, but the TURN server does not send or receive any packet to or from Janus. In Chromium, on the other hand, the connection would work as it would use the internal IP address of the server from the peer reflexive candidate.
+
+However, in the scenario above Firefox would not be able to establish a connection only if relay candidates are forced. With a standard Firefox configuration it would take into account peer reflexive candidates too and thus it should work without issues. Nevertheless, note that although using `iceTransportPolicy = 'relay'` in the browser console is just a temporary setting there is a persistent setting in Firefox configuration (_about:config_) to force relay candidates, `media.peerconnection.ice.relay_only`. This setting is targeted towards privacy-minded people, so you may want to test the TURN server with Firefox to ensure that it works even with the most restrictive configurations.
+
 ### What else
 Nextcloud Talk´s WebRTC handling is still mostly based on the one from the [Spreed.ME](https://www.spreed.me/) WebRTC solution. For this reason, all guides about how to configure coTURN for it, applies to Nextcloud Talk too.
 
