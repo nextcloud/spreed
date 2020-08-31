@@ -211,7 +211,7 @@ export default {
 			// Remove selected participant
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.loading = true
-			// Open navigarion
+			// Open navigation
 			emit('toggle-navigation', {
 				open: true,
 			})
