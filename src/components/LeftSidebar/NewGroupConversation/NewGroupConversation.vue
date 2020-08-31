@@ -28,7 +28,8 @@
 				icon=""
 				:aria-label="t('spreed','Create a new group conversation')"
 				@click="showModal">
-				<Plus size="24" />
+				<Plus size="24"
+					decorative />
 			</Button>
 			<p>{{ t('spreed','Create a new group conversation') }}</p>
 		</Popover>

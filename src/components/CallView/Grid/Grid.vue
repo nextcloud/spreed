@@ -25,7 +25,8 @@
 			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
 				class="grid-navigation grid-navigation__previous"
 				@click="handleClickPrevious">
-				<ChevronLeft :size="24" />
+				<ChevronLeft decorative
+					:size="24" />
 			</button>
 			<div
 				ref="grid"
@@ -80,7 +81,7 @@
 			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
 				class="grid-navigation grid-navigation__next"
 				@click="handleClickNext">
-				<ChevronRight :size="24" />
+				<ChevronRight decorative :size="24" />
 			</button>
 		</div>
 		<LocalVideo

@@ -55,7 +55,9 @@ get the messagesList array and loop through the list to generate the messages.
 			<button v-show="!isScrolledToBottom"
 				class="scroll-to-bottom"
 				@click="scrollToBottom">
-				<ChevronDown :size="24" fill-color="#fff" />
+				<ChevronDown decorative
+					:size="24"
+					fill-color="#fff" />
 			</button>
 		</transition>
 	</div>

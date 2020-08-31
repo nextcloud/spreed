@@ -66,7 +66,8 @@
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<EmoticonOutline
-								:size="20" />
+								:size="20"
+								decorative />
 						</button>
 					</EmojiPicker>
 				</div>
