@@ -67,7 +67,10 @@
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
-				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="36" />
+				<AccountCircle v-if="isPromoted || isSelected"
+					decorative
+					fill-color="#FFFFFF"
+					:size="36" />
 			</div>
 		</transition-group>
 		<VideoBottomBar v-bind="$props"

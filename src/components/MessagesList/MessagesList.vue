@@ -51,6 +51,16 @@ get the messagesList array and loop through the list to generate the messages.
 				type="messages"
 				:count="15" />
 		</template>
+		<transition name="fade">
+			<button v-show="!isScrolledToBottom"
+				:aria-label="scrollTobottomAriaLabel"
+				class="scroll-to-bottom"
+				@click="scrollToBottom">
+				<ChevronDown decorative
+					:size="24"
+					fill-color="#fff" />
+			</button>
+		</transition>
 	</div>
 </template>
 
@@ -65,12 +75,14 @@ import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
+import ChevronDown from 'vue-material-design-icons/ChevronDown'
 
 export default {
 	name: 'MessagesList',
 	components: {
 		LoadingPlaceholder,
 		MessagesGroup,
+		ChevronDown,
 	},
 
 	mixins: [
@@ -199,6 +211,14 @@ export default {
 
 		chatIdentifier() {
 			return this.token + ':' + this.isParticipant + ':' + this.isInLobby
+		},
+
+		scrollToBottomAriaLabel() {
+			return t('spreed', 'Scroll to bottom')
+		},
+
+		scroller() {
+			return document.querySelector('.scroller')
 		},
 	},
 
@@ -503,17 +523,16 @@ export default {
 
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
-		}, 600),
+		}, 200),
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
 		 */
 		async handleScroll() {
-			const scroller = document.querySelector('.scroller')
-			const scrollHeight = scroller.scrollHeight
-			const scrollTop = scroller.scrollTop
+			const scrollHeight = this.scroller.scrollHeight
+			const scrollTop = this.scroller.scrollTop
 			const scrollOffset = scrollHeight - scrollTop
-			const elementHeight = scroller.clientHeight
+			const elementHeight = this.scroller.clientHeight
 			const tolerance = 10
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
 				this.isScrolledToBottom = true
@@ -549,8 +568,9 @@ export default {
 		 */
 		scrollToBottom() {
 			this.$nextTick(function() {
-				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
+				this.scroller.scrollTop = this.scroller.scrollHeight
 			})
+			this.isScrolledToBottom = true
 		},
 
 		/**
@@ -581,13 +601,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables.scss';
+
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
+	scroll-behavior: smooth;
 	&__loading {
 		height: 50px;
 		display: flex;
 		justify-content: center;
+	}
+}
+
+.scroll-to-bottom {
+	position: absolute;
+	width: 44px;
+	height: 44px;
+
+	background-color: var(--color-primary-element);
+	bottom: 76px;
+	right: 24px;
+	z-index: 2;
+	padding: 0;
+	margin: 0;
+	&:hover,
+	&:focus {
+		background-color: var(--color-primary-element-light);
+		opacity: 1 !important;
+		border: none;
 	}
 }
 

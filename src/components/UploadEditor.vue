@@ -45,7 +45,10 @@
 				<button :aria-label="addMoreAriaLabel"
 					class="add-more__button primary"
 					@click="clickImportInput">
-					<Plus :size="48" class="upload-editor__plus-icon" />
+					<Plus
+						decorative
+						:size="48"
+						class="upload-editor__plus-icon" />
 				</button>
 			</div>
 		</transition-group>

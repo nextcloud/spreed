@@ -100,6 +100,7 @@
 				:open="showQualityWarningTooltip">
 				<NetworkStrength2Alert
 					slot="trigger"
+					decorative
 					fill-color="#e9322d"
 					title=""
 					:size="24"
