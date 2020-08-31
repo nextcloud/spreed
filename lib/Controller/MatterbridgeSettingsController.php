@@ -27,6 +27,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -49,10 +50,16 @@ class MatterbridgeSettingsController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getMatterbridgeVersion(): DataResponse {
-		$version = $this->bridgeManager->getCurrentVersionFromBinary();
-		if ($version === null) {
+		try {
+			$version = $this->bridgeManager->getCurrentVersionFromBinary();
+			if ($version === null) {
+				return new DataResponse([
+					'error' => 'binary',
+				], Http::STATUS_BAD_REQUEST);
+			}
+		} catch (WrongPermissionsException $e) {
 			return new DataResponse([
-				'error' => 'binary',
+				'error' => 'binary_permissions',
 			], Http::STATUS_BAD_REQUEST);
 		}
 
