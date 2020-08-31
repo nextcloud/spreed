@@ -83,7 +83,7 @@
 		"eslint-plugin-standard": "^4.0.1",
 		"eslint-plugin-vue": "^5.2.3",
 		"node-sass": "^4.14.1",
-		"sass-loader": "^9.0.3",
+		"sass-loader": "^10.0.1",
 		"stylelint": "^13.6.1",
 		"stylelint-config-recommended-scss": "^4.2.0",
 		"stylelint-scss": "^3.18.0",
