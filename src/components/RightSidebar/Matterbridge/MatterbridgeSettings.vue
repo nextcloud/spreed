@@ -40,7 +40,17 @@
 					:checked="enabled"
 					@update:checked="onEnabled">
 					{{ t('spreed', 'Enabled') }}
+					({{ processStateText }})
 				</ActionCheckbox>
+				<button class="" @click="showLogContent">
+					{{ t('spreed', 'Show matterbridge log') }}
+				</button>
+				<Modal v-if="logModal"
+					@close="closeLogModal">
+					<div class="modal__content">
+						<textarea v-model="processLog" class="log-content" />
+					</div>
+				</Modal>
 				<Multiselect
 					ref="partMultiselect"
 					v-model="selectedType"
@@ -73,11 +83,13 @@
 import {
 	editBridge,
 	getBridge,
+	getBridgeProcessState,
 } from '../../../services/matterbridgeService'
 import { showSuccess } from '@nextcloud/dialogs'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
 
 export default {
@@ -87,6 +99,7 @@ export default {
 		ActionButton,
 		Multiselect,
 		BridgePart,
+		Modal,
 	},
 
 	mixins: [
@@ -100,6 +113,9 @@ export default {
 			enabled: false,
 			parts: [],
 			loading: false,
+			processRunning: null,
+			processLog: '',
+			logModal: false,
 			types: {
 				nctalk: {
 					name: t('spreed', 'Nextcloud Talk'),
@@ -430,6 +446,13 @@ export default {
 				return p.type !== 'nctalk' || p.channel !== this.token
 			})
 		},
+		processStateText() {
+			return this.processRunning === null
+				? t('spreed', 'unknown state')
+				: this.processRunning
+					? t('spreed', 'running')
+					: t('spreed', 'not running')
+		},
 	},
 
 	beforeMount() {
@@ -460,17 +483,17 @@ export default {
 			this.onSave()
 		},
 		onSave() {
-			console.debug(this.parts)
 			this.editBridge(this.token, this.enabled, this.parts)
 		},
 		async getBridge(token) {
 			this.loading = true
 			try {
 				const result = await getBridge(token)
-				console.debug(result)
 				const bridge = result.data.ocs.data
 				this.enabled = bridge.enabled
 				this.parts = bridge.parts
+				this.processLog = bridge.log
+				this.processRunning = bridge.running
 			} catch (exception) {
 				console.debug(exception)
 			}
@@ -485,6 +508,24 @@ export default {
 				console.debug(exception)
 			}
 			this.loading = false
+			setTimeout(() => this.getBridgeProcessState(this.token), 4000)
+		},
+		async getBridgeProcessState(token) {
+			try {
+				const result = await getBridgeProcessState(token)
+				this.processLog = result.data.ocs.data.log
+				this.processRunning = result.data.ocs.data.running
+				console.debug(result.data.ocs.data.log)
+			} catch (exception) {
+				console.debug(exception)
+			}
+		},
+		showLogContent() {
+			this.getBridgeProcessState(this.token)
+			this.logModal = true
+		},
+		closeLogModal() {
+			this.logModal = false
 		},
 	},
 }
@@ -514,6 +555,7 @@ export default {
 }
 
 .basic-settings {
+	button,
 	.multiselect {
 		width: calc(100% - 40px);
 		margin-left: 40px;
@@ -522,5 +564,10 @@ export default {
 
 ul {
 	margin-bottom: 64px;
+}
+
+.log-content {
+	width: 600px;
+	height: 400px;
 }
 </style>

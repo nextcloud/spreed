@@ -60,9 +60,25 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getBridgeOfRoom(): DataResponse {
-		$this->bridgeManager->checkBridge($this->room);
+		$pid = $this->bridgeManager->checkBridge($this->room);
+		$logContent = $this->bridgeManager->getBridgeLog($this->room);
 		$bridge = $this->bridgeManager->getBridgeOfRoom($this->room);
+		$bridge['running'] = ($pid !== 0);
+		$bridge['log'] = $logContent;
 		return new DataResponse($bridge);
+	}
+
+	/**
+	 * Get bridge process information
+	 *
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function getBridgeProcessState(): DataResponse {
+		$result = $this->bridgeManager->getBridgeProcessState($this->room);
+		return new DataResponse($result);
 	}
 
 	/**

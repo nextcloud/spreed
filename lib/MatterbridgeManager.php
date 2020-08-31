@@ -93,6 +93,36 @@ class MatterbridgeManager {
 	}
 
 	/**
+	 * Get bridge process information for a specific room
+	 *
+	 * @param Room $room the room
+	 * @return array process state and log
+	 */
+	public function getBridgeProcessState(Room $room): array {
+		$bridge =  $this->getBridgeFromDb($room);
+
+		$logContent = $this->getBridgeLog($room);
+
+		$pid = $this->checkBridgeProcess($room, $bridge, false);
+		return [
+			'running' => ($pid !== 0),
+			'log' => $logContent
+		];
+	}
+
+	/**
+	 * Get bridge log file content
+	 *
+	 * @param Room $room the room
+	 * @return string log file content
+	 */
+	public function getBridgeLog(Room $room): string {
+		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
+		$logContent = file_get_contents($outputPath);
+		return $logContent ?? '';
+	}
+
+	/**
 	 * Edit bridge information for a room
 	 *
 	 * @param Room $room the room
@@ -153,8 +183,9 @@ class MatterbridgeManager {
 	/**
 	 * For one room, check mattermost process respects desired state
 	 * @param Room $room the room
+	 * @return int the bridge process ID
 	 */
-	public function checkBridge(Room $room): void {
+	public function checkBridge(Room $room): int {
 		$bridge = $this->getBridgeOfRoom($room);
 		$pid = $this->checkBridgeProcess($room, $bridge);
 		if ($pid !== $bridge['pid']) {
@@ -162,6 +193,7 @@ class MatterbridgeManager {
 			$bridge['pid'] = $pid;
 			$this->saveBridgeToDb($room, $bridge);
 		}
+		return $pid;
 	}
 
 	private function getDataFolder(): ISimpleFolder {
@@ -437,43 +469,48 @@ class MatterbridgeManager {
 	 *
 	 * @param Room $room the room
 	 * @param array $bridge bridge information
+	 * @param $relaunch whether to launch the process if it's down but bridge is enabled
 	 * @return int the corresponding matterbridge process ID, 0 if none
 	 */
-	private function checkBridgeProcess(Room $room, array $bridge): int {
+	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
 		$pid = 0;
 
 		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
 			// config : there is a PID stored
-			$pid = intval($bridge['pid']);
-			$isRunning = $this->isRunning($pid);
+			$isRunning = $this->isRunning($bridge['pid']);
 			// if bridge running and enabled is false : kill it
 			if ($isRunning) {
 				if ($bridge['enabled']) {
 					$this->logger->info('Process running AND bridge enabled in config : doing nothing');
+					$pid = $bridge['pid'];
 				} else {
-					$this->logger->info('Process running AND bridge disabled in config : KILL ' . $pid);
-					$killed = $this->killPid($pid);
+					$this->logger->info('Process running AND bridge disabled in config : KILL ' . $bridge['pid']);
+					$killed = $this->killPid($bridge['pid']);
 					if ($killed) {
 						$pid = 0;
 					} else {
-						$this->logger->info('Impossible to kill ' . $pid);
-						throw new ImpossibleToKillException('Impossible to kill bridge process [' . $pid . ']');
+						$this->logger->info('Impossible to kill ' . $bridge['pid']);
+						throw new ImpossibleToKillException('Impossible to kill bridge process [' . $bridge['pid'] . ']');
 					}
 				}
 			} else {
 				// no process found
 				if ($bridge['enabled']) {
-					$this->logger->info('Process not found AND bridge enabled in config : relaunching');
-					$pid = $this->launchMatterbridge($room);
+					if ($relaunch) {
+						$this->logger->info('Process not found AND bridge enabled in config : relaunching');
+						$pid = $this->launchMatterbridge($room);
+					}
 				} else {
 					$this->logger->info('Process not found AND bridge disabled in config : doing nothing');
 				}
 			}
 		} elseif ($bridge['enabled']) {
-			// config : no PID stored
-			// config : enabled => launch it
-			$pid = $this->launchMatterbridge($room);
-			$this->logger->info('Launch process, PID is '.$pid);
+			if ($relaunch) {
+				// config : no PID stored
+				// config : enabled => launch it
+				$pid = $this->launchMatterbridge($room);
+				$this->logger->info('Launch process, PID is '.$pid);
+			}
 		} else {
 			$this->logger->info('No PID defined in config AND bridge disabled in config : doing nothing');
 		}

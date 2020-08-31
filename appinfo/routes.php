@@ -396,6 +396,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Matterbridge#getBridgeProcessState',
+			'url' => '/api/{apiVersion}/bridge/{token}/process',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Matterbridge#editBridgeOfRoom',
 			'url' => '/api/{apiVersion}/bridge/{token}',
 			'verb' => 'PUT',
