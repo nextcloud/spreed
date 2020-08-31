@@ -57,8 +57,7 @@ get the messagesList array and loop through the list to generate the messages.
 				class="scroll-to-bottom"
 				@click="scrollToBottom">
 				<ChevronDown decorative
-					:size="24"
-					fill-color="#fff" />
+					:size="24" />
 			</button>
 		</transition>
 	</div>
@@ -620,6 +619,7 @@ export default {
 	height: 44px;
 
 	background-color: var(--color-primary-element);
+	color: var(--color-primary-text);
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
