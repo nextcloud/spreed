@@ -48,6 +48,7 @@ export default {
 		user-select: none;
 		pointer-events: none;
 		padding-left: 10px;
+		font-weight: bold;
 
 		&:not(:first-child) {
 			margin-top: 22px;
