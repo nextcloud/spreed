@@ -53,6 +53,7 @@ get the messagesList array and loop through the list to generate the messages.
 		</template>
 		<transition name="fade">
 			<button v-show="!isScrolledToBottom"
+				:aria-label="scrollTobottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="scrollToBottom">
 				<ChevronDown decorative
@@ -210,6 +211,10 @@ export default {
 
 		chatIdentifier() {
 			return this.token + ':' + this.isParticipant + ':' + this.isInLobby
+		},
+
+		scrollToBottomAriaLabel() {
+			return t('spreed', 'Scroll to bottom')
 		},
 	},
 
