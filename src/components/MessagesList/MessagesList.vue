@@ -216,6 +216,10 @@ export default {
 		scrollToBottomAriaLabel() {
 			return t('spreed', 'Scroll to bottom')
 		},
+
+		scroller() {
+			return document.querySelector('.scroller')
+		},
 	},
 
 	watch: {
@@ -519,17 +523,16 @@ export default {
 
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
-		}, 100),
+		}, 200),
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
 		 */
 		async handleScroll() {
-			const scroller = document.querySelector('.scroller')
-			const scrollHeight = scroller.scrollHeight
-			const scrollTop = scroller.scrollTop
+			const scrollHeight = this.scroller.scrollHeight
+			const scrollTop = this.scroller.scrollTop
 			const scrollOffset = scrollHeight - scrollTop
-			const elementHeight = scroller.clientHeight
+			const elementHeight = this.scroller.clientHeight
 			const tolerance = 10
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
 				this.isScrolledToBottom = true
@@ -565,7 +568,7 @@ export default {
 		 */
 		scrollToBottom() {
 			this.$nextTick(function() {
-				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
+				this.scroller.scrollTop = this.scroller.scrollHeight
 			})
 			this.isScrolledToBottom = true
 		},
@@ -603,6 +606,7 @@ export default {
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
+	scroll-behavior: smooth;
 	&__loading {
 		height: 50px;
 		display: flex;
@@ -614,12 +618,11 @@ export default {
 	position: absolute;
 	width: 44px;
 	height: 44px;
-	background-color: var(--color-primary-element-light);
-	opacity: 0.8 !important;
+
+	background-color: var(--color-primary-element);
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
-	box-shadow: 0 0 4px var(--color-box-shadow);
 	padding: 0;
 	margin: 0;
 	&:hover,
