@@ -186,6 +186,14 @@ export default {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
 		},
 
+		callParticipantModelsWithVideo() {
+			return this.callParticipantModels.filter(callParticipantModel => {
+				return callParticipantModel.attributes.videoAvailable
+					&& this.sharedDatas[callParticipantModel.attributes.peerId].videoEnabled
+					&& (typeof callParticipantModel.attributes.stream === 'object')
+			})
+		},
+
 		localScreen() {
 			return localMediaModel.attributes.localScreen
 		},
@@ -199,7 +207,12 @@ export default {
 		},
 
 		showGrid() {
-			return (!this.isOneToOneView || this.showLocalScreen) && !this.isSidebar
+			return !this.isSidebar
+				&& (
+					!this.isOneToOneView
+					|| this.showLocalScreen
+					|| (this.showRemoteScreen && this.hasRemoteVideo)
+				)
 		},
 
 		gridTargetAspectRatio() {
@@ -228,6 +241,10 @@ export default {
 
 		hasLocalVideo() {
 			return this.localMediaModel.attributes.videoEnabled
+		},
+
+		hasRemoteVideo() {
+			return this.callParticipantModelsWithVideo.length > 0
 		},
 
 		hasLocalScreen() {
