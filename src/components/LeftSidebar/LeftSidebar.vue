@@ -27,7 +27,7 @@
 				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
-				@submit="selectFirstResult"
+				@keypress.enter.prevent.stop="onInputEnter"
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
@@ -40,7 +40,8 @@
 					:conversations-list="conversationsList"
 					:initialised-conversations="initialisedConversations"
 					:search-text="searchText"
-					@click-search-result="handleClickSearchResult" />
+					@click-search-result="handleClickSearchResult"
+					@focus="setFocusedIndex" />
 			</li>
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
@@ -117,6 +118,7 @@ import {
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
+import arrowNavigation from '../../mixins/arrowNavigation'
 
 export default {
 
@@ -131,6 +133,10 @@ export default {
 		SearchBox,
 		NewGroupConversation,
 	},
+
+	mixins: [
+		arrowNavigation,
+	],
 
 	data() {
 		return {
@@ -224,6 +230,8 @@ export default {
 		}, 30000)
 
 		EventBus.$on('shouldRefreshConversations', this.debounceFetchConversations)
+
+		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
@@ -231,6 +239,16 @@ export default {
 	},
 
 	methods: {
+		getFocusableList() {
+			return this.$el.querySelectorAll('li.acli_wrapper .acli')
+		},
+		focusCancel() {
+			return this.abortSearch()
+		},
+		isFocused() {
+			return this.isSearching
+		},
+
 		debounceFetchSearchResults: debounce(function() {
 			if (this.isSearching) {
 				this.fetchSearchResults()
@@ -249,6 +267,9 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
+
+			// If none already focused, focus the first rendered result
+			this.focusInitialise()
 		},
 
 		/**
@@ -281,26 +302,6 @@ export default {
 
 		showSettings() {
 			EventBus.$emit('show-settings', true)
-		},
-
-		// When `Enter` key is used on the search input
-		selectFirstResult() {
-			if (this.conversationsList.length > 0) {
-				this.$router.push({
-					name: 'conversation',
-					params: {
-						token: this.conversationsList[0].token,
-					},
-				})
-			} else if (this.searchResultsUsers.length > 0) {
-				this.createAndJoinConversation(this.searchResultsUsers[0])
-			} else if (this.searchResultsGroups.length > 0) {
-				this.createAndJoinConversation(this.searchResultsGroups[0])
-			} else if (this.searchResultsCircles.length > 0) {
-				this.createAndJoinConversation(this.searchResultsCircles[0])
-			}
-
-			this.searchText = ''
 		},
 
 		handleClickSearchResult(selectedConversationToken) {
