@@ -670,6 +670,7 @@ OC.L10N.register(
     "More info on Matterbridge." : "Plus d'information sur Matterbridge.",
     "Enabled" : "Activé",
     "Save" : "Enregistrer",
+    "Nextcloud URL" : "URL Nextcloud",
     "Nextcloud user" : "Utilisateur Nextcloud",
     "User password" : "Mot de passe utilisateur",
     "Matrix" : "Matrice",
