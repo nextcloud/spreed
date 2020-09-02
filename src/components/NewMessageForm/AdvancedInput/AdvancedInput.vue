@@ -72,13 +72,17 @@
 					:data-mention-id="scope.current.id" />
 			</span>
 		</template>
-		<div ref="contentEditable"
+		<div
+			ref="contentEditable"
+			v-shortkey="['c']"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			role="textbox"
 			aria-multiline="true"
 			class="new-message-form__advancedinput"
-			@keydown.enter="handleKeydown"
+			@shortkey="focusInput"
+			@keydown.enter="handleKeydownEnter"
+			@keydown.esc.prevent="handleKeydownEsc"
 			@paste="onPaste" />
 	</At>
 </template>
@@ -291,7 +295,7 @@ export default {
 		 *
 		 * @param {object} event the event object;
 		 */
-		handleKeydown(event) {
+		handleKeydownEnter(event) {
 			// Prevent submit event when vue-at panel is open, as that should
 			// just select the mention from the panel.
 			if (this.atwho) {
@@ -303,6 +307,15 @@ export default {
 				event.preventDefault()
 				this.$emit('submit', event)
 			}
+		},
+
+		/**
+		 * Loose focus of the chat so shortcuts can be used
+		 *
+		 * @param {object} event the event object;
+		 */
+		handleKeydownEsc(event) {
+			document.activeElement.blur()
 		},
 
 		/**

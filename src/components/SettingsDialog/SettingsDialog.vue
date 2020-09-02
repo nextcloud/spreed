@@ -53,6 +53,14 @@
 
 				<dl>
 					<div>
+						<dt><kbd>C</kbd></dt>
+						<dd>{{ t('spreed', 'Focus the chat input') }}</dd>
+					</div>
+					<div>
+						<dt><kbd>ESC</kbd></dt>
+						<dd>{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}</dd>
+					</div>
+					<div>
 						<dt><kbd>F</kbd></dt>
 						<dd>{{ t('spreed', 'Fullscreen the chat or call') }}</dd>
 					</div>
@@ -184,6 +192,10 @@ export default {
 	}
 	&__input {
 		width: 100%;
+	}
+
+	dd {
+		width: calc(100% - 160px);
 	}
 }
 
