@@ -249,6 +249,8 @@ export default {
 				const text = content.text
 				const div = document.createElement('div').innerText = escapeHtml(text)
 				document.execCommand('insertHtml', false, div)
+
+				this.focusInput()
 			}
 		},
 
