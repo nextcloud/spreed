@@ -667,6 +667,7 @@ OC.L10N.register(
     "Reply" : "Yanıtla",
     "Remove" : "Sil",
     "[Unknown username]" : "[Kullanıcı adı bilinmiyor]",
+    "Scroll to bottom" : "Aşağıya kaydır",
     "Today" : "Bugün",
     "Yesterday" : "Dün",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
