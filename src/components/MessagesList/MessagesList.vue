@@ -53,7 +53,7 @@ get the messagesList array and loop through the list to generate the messages.
 		</template>
 		<transition name="fade">
 			<button v-show="!isScrolledToBottom"
-				:aria-label="scrollTobottomAriaLabel"
+				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="scrollToBottom">
 				<ChevronDown decorative
