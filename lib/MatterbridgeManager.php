@@ -119,7 +119,7 @@ class MatterbridgeManager {
 	public function getBridgeLog(Room $room): string {
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$logContent = file_get_contents($outputPath);
-		return $logContent ?? '';
+		return $logContent !== false ? $logContent : '';
 	}
 
 	/**
@@ -128,9 +128,9 @@ class MatterbridgeManager {
 	 * @param Room $room the room
 	 * @param bool $enabled desired state of the bridge
 	 * @param array $parts parts of the bridge (what it connects to)
-	 * @return bool success
+	 * @return array bridge state
 	 */
-	public function editBridgeOfRoom(Room $room, bool $enabled, array $parts = []): bool {
+	public function editBridgeOfRoom(Room $room, bool $enabled, array $parts = []): array {
 		$currentBridge = $this->getBridgeOfRoom($room);
 		$newBridge = [
 			'enabled' => $enabled,
@@ -148,7 +148,11 @@ class MatterbridgeManager {
 		// save config
 		$this->saveBridgeToDb($room, $newBridge);
 
-		return true;
+		$logContent = $this->getBridgeLog($room);
+		return [
+			'running' => ($pid !== 0),
+			'log' => $logContent
+		];
 	}
 
 	/**

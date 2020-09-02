@@ -116,6 +116,7 @@ export default {
 			processRunning: null,
 			processLog: '',
 			logModal: false,
+			stateLoop: null,
 			types: {
 				nctalk: {
 					name: t('spreed', 'Nextcloud Talk'),
@@ -430,6 +431,7 @@ export default {
 		token() {
 			const token = this.$store.getters.getToken()
 			this.getBridge(token)
+			this.relaunchStateLoop(token)
 			return token
 		},
 		formatedTypes() {
@@ -462,6 +464,11 @@ export default {
 	},
 
 	methods: {
+		relaunchStateLoop(token) {
+			// start loop to periodically get bridge state
+			clearInterval(this.stateLoop)
+			this.stateLoop = setInterval(() => this.getBridgeProcessState(token), 60000)
+		},
 		clickAddPart() {
 			const typeKey = this.selectedType.type
 			const type = this.types[typeKey]
@@ -502,13 +509,14 @@ export default {
 		async editBridge() {
 			this.loading = true
 			try {
-				await editBridge(this.token, this.enabled, this.parts)
+				const result = await editBridge(this.token, this.enabled, this.parts)
+				this.processLog = result.data.ocs.data.log
+				this.processRunning = result.data.ocs.data.running
 				showSuccess(t('spreed', 'Bridge saved'))
 			} catch (exception) {
 				console.debug(exception)
 			}
 			this.loading = false
-			setTimeout(() => this.getBridgeProcessState(this.token), 4000)
 		},
 		async getBridgeProcessState(token) {
 			try {
