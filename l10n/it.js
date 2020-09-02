@@ -667,6 +667,7 @@ OC.L10N.register(
     "Reply" : "Rispondi",
     "Remove" : "Rimuovi",
     "[Unknown username]" : "[Nome utente sconosciuto]",
+    "Scroll to bottom" : "Scorri in fondo",
     "Today" : "Oggi",
     "Yesterday" : "Ieri",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

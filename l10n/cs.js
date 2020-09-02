@@ -667,6 +667,7 @@ OC.L10N.register(
     "Reply" : "Odpovědět",
     "Remove" : "Odebrat",
     "[Unknown username]" : "[Neznámé uživatelské jméno]",
+    "Scroll to bottom" : "Odrolovat na konec",
     "Today" : "Dnes",
     "Yesterday" : "Včera",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
