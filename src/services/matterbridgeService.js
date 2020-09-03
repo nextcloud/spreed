@@ -51,6 +51,15 @@ const getBridge = async function(token) {
 }
 
 /**
+ * Get the bridge binary state for a room
+ * @param {token} token the conversation token.
+ */
+const getBridgeProcessState = async function(token) {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `bridge/${token}/process`)
+	return response
+}
+
+/**
  * Ask to stop all bridges (and kill all related processes)
  */
 const stopAllBridges = async function() {
@@ -71,6 +80,7 @@ const getMatterbridgeVersion = async function() {
 export {
 	editBridge,
 	getBridge,
+	getBridgeProcessState,
 	stopAllBridges,
 	getMatterbridgeVersion,
 	enableMatterbridgeApp,

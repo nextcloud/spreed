@@ -60,9 +60,25 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getBridgeOfRoom(): DataResponse {
-		$this->bridgeManager->checkBridge($this->room);
+		$pid = $this->bridgeManager->checkBridge($this->room);
+		$logContent = $this->bridgeManager->getBridgeLog($this->room);
 		$bridge = $this->bridgeManager->getBridgeOfRoom($this->room);
+		$bridge['running'] = ($pid !== 0);
+		$bridge['log'] = $logContent;
 		return new DataResponse($bridge);
+	}
+
+	/**
+	 * Get bridge process information
+	 *
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function getBridgeProcessState(): DataResponse {
+		$result = $this->bridgeManager->getBridgeProcessState($this->room);
+		return new DataResponse($result);
 	}
 
 	/**
@@ -77,11 +93,11 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 */
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
 		try {
-			$success = $this->bridgeManager->editBridgeOfRoom($this->room, $enabled, $parts);
+			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $enabled, $parts);
 		} catch (ImpossibleToKillException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
 		}
-		return new DataResponse($success);
+		return new DataResponse($state);
 	}
 
 	/**
