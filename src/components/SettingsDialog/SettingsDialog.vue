@@ -54,19 +54,27 @@
 				<dl>
 					<div>
 						<dt><kbd>C</kbd></dt>
-						<dd>{{ t('spreed', 'Focus the chat input') }}</dd>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Focus the chat input') }}
+						</dd>
 					</div>
 					<div>
-						<dt><kbd>ESC</kbd></dt>
-						<dd>{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}</dd>
+						<dt><kbd>Esc</kbd></dt>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}
+						</dd>
 					</div>
 					<div>
 						<dt><kbd>F</kbd></dt>
-						<dd>{{ t('spreed', 'Fullscreen the chat or call') }}</dd>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Fullscreen the chat or call') }}
+						</dd>
 					</div>
 					<div>
 						<dt><kbd>Ctrl</kbd> + <kbd>F</kbd></dt>
-						<dd>{{ t('spreed', 'Search') }}</dd>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Search') }}
+						</dd>
 					</div>
 				</dl>
 
@@ -74,11 +82,15 @@
 				<dl>
 					<div>
 						<dt><kbd>V</kbd></dt>
-						<dd>{{ t('spreed', 'Video on and off') }}</dd>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Video on and off') }}
+						</dd>
 					</div>
 					<div>
 						<dt><kbd>M</kbd></dt>
-						<dd>{{ t('spreed', 'Microphone on and off') }}</dd>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Microphone on and off') }}
+						</dd>
 					</div>
 				</dl>
 			</div>
@@ -179,7 +191,7 @@ export default {
 .app-settings-section {
 	margin-bottom: 80px;
 	&.last {
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 	&__title {
 		overflow: hidden;
@@ -194,7 +206,7 @@ export default {
 		width: 100%;
 	}
 
-	dd {
+	.shortcut-description {
 		width: calc(100% - 160px);
 	}
 }
