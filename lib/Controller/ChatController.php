@@ -428,7 +428,7 @@ class ChatController extends AEnvironmentAwareController {
 		]);
 
 		$statuses = [];
-		if ($includeStatus) {
+		if ($this->userId !== null && $includeStatus) {
 			$userIds = array_filter(array_map(static function (array $userResult) {
 				return $userResult['value']['shareWith'];
 			}, $results['users']));

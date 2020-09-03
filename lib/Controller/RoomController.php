@@ -842,7 +842,7 @@ class RoomController extends AEnvironmentAwareController {
 		$results = [];
 
 		$statuses = [];
-		if ($includeStatus && count($participants['users']) < 100) {
+		if ($this->userId !== null && $includeStatus && count($participants['users']) < 100) {
 			$userIds = array_map('strval', array_keys($participants['users']));
 			$statuses = $this->statusManager->getUserStatuses($userIds);
 		}
