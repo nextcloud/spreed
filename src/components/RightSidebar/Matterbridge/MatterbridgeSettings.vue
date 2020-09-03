@@ -333,7 +333,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'IRC server URL'),
+							placeholder: t('spreed', 'IRC server URL (e.g. chat.freenode.net:6667)'),
 							icon: 'icon-link',
 						},
 						nick: {
@@ -350,6 +350,16 @@ export default {
 							type: 'text',
 							placeholder: t('spreed', 'IRC channel'),
 							icon: 'icon-group',
+						},
+						nickservnick: {
+							type: 'text',
+							placeholder: t('spreed', 'NickServ nickname'),
+							icon: 'icon-user',
+						},
+						nickservpassword: {
+							type: 'password',
+							placeholder: t('spreed', 'NickServ password'),
+							icon: 'icon-category-auth',
 						},
 					},
 				},
