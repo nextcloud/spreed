@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.0-beta.2 – 2020-09-03
+### Added
+- Show keyboard shortcuts in the settings
+  [#4089](https://github.com/nextcloud/spreed/pull/4089)
+
+### Fixed
+- Remove old "hark" data channel
+  [#4068](https://github.com/nextcloud/spreed/pull/4068)
+- Show a message when enabling matterbridge if the binary is not executable
+  [#4079](https://github.com/nextcloud/spreed/pull/4079)
+- Show other participants video when they share their screen
+  [#4082](https://github.com/nextcloud/spreed/pull/4082)
+- Show the status of the matterbridge in the sidebar tab
+  [#4083](https://github.com/nextcloud/spreed/pull/4083)
+- Don't leak the statuses to guests
+  [#4092](https://github.com/nextcloud/spreed/pull/4092)
+
 ## 10.0.0-beta.1 – 2020-08-27
 ### Added
 - Implement unified search for messages
@@ -22,11 +39,11 @@ All notable changes to this project will be documented in this file.
 - 🚧 TechPreview: Matterbridge integration
   [#4010](https://github.com/nextcloud/spreed/pull/4010)
 - Compatibility with Nextcloud 20
-  
+
 ### Changed
 - Allow to select your own video
   [#3814](https://github.com/nextcloud/spreed/pull/3814)
-  
+
 ### Fixed
 - Scroll to the original message when clicking on a quota
   [#4037](https://github.com/nextcloud/spreed/pull/4037)
