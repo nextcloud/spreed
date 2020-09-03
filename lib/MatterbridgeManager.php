@@ -40,6 +40,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 
 class MatterbridgeManager {
@@ -681,6 +682,33 @@ class MatterbridgeManager {
 		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
 		if (!file_exists($binaryPath)) {
 			return null;
+		}
+
+		// is www user the file owner?
+		$user = posix_getpwuid(posix_getuid());
+		$fileOwner = posix_getpwuid(fileowner($binaryPath));
+		$userIsOwner = $user['name'] === $fileOwner['name'];
+
+		// get file group and user groups
+		$fileGid = filegroup($binaryPath);
+		$myGids = posix_getgroups();
+
+		// check permissions
+		$perms = fileperms($binaryPath);
+		$uExec = (($perms & 0x0040) && !($perms & 0x0800));
+		$gExec = (($perms & 0x0008) && !($perms & 0x0400));
+		$aExec = (($perms & 0x0001) && !($perms & 0x0200));
+
+		// 3 ways to have the permission :
+		// * be the owner and have u+x perm
+		// * not be the owner, be in the file group and have g+x perm
+		// * have o+x perm
+		$execPerm = $aExec
+			|| ($user['name'] === $fileOwner['name'] && $uExec)
+			|| ($user['name'] !== $fileOwner['name'] && in_array($fileGid, $myGids) && $gExec);
+
+		if (!$execPerm) {
+			throw new WrongPermissionsException();
 		}
 
 		$cmd = escapeshellcmd($binaryPath) . ' ' . escapeshellarg('-version');

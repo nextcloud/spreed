@@ -49,6 +49,10 @@
 		<template v-else>
 			<p class="settings-hint" v-html="description" />
 
+			<p v-if="errorText" class="settings-hint">
+				{{ errorText }}
+			</p>
+
 			<p>
 				<button v-if="isInstalling">
 					<span class="icon icon-loading-small" />
@@ -82,6 +86,7 @@ export default {
 			matterbridgeEnabled: loadState('talk', 'matterbridge_enable'),
 			matterbridgeVersion: loadState('talk', 'matterbridge_version'),
 			isInstalling: false,
+			error: loadState('talk', 'matterbridge_error'),
 		}
 	},
 
@@ -96,6 +101,15 @@ export default {
 				.replace('{linkstart1}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://github.com/42wim/matterbridge/wiki">')
 				.replace('{linkstart2}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://apps.nextcloud.com/apps/talk_matterbridge">')
 				.replace(/{linkend}/g, ' ↗</a>')
+		},
+		errorText() {
+			if (this.error === 'binary_permissions') {
+				return t('spreed', 'Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in "/.../nextcloud/apps/talk_matterbridge/bin/".')
+			} else if (this.error === 'binary') {
+				return t('spreed', 'Matterbridge binary was not found or couldn\'t be executed.')
+			} else {
+				return ''
+			}
 		},
 	},
 
@@ -138,12 +152,17 @@ export default {
 				this.matterbridgeVersion = response.data.ocs.data.version
 				this.matterbridgeEnabled = true
 				this.saveMatterbridgeEnabled()
-
-				this.isInstalling = false
+				this.error = ''
 			} catch (e) {
 				console.error(e)
 				showError(t('spreed', 'Failed to execute Matterbridge binary.'))
+				if (e.response && e.response.data && e.response.data.ocs && e.response.data.ocs.data && e.response.data.ocs.data.error) {
+					this.error = e.response.data.ocs.data.error
+				} else {
+					this.error = 'binary'
+				}
 			}
+			this.isInstalling = false
 		},
 	},
 }

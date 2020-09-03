@@ -29,6 +29,7 @@ use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
+use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -119,9 +120,21 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initMatterbridge(): void {
+		$error = '';
+		try {
+			$version = (string) $this->bridgeManager->getCurrentVersionFromBinary();
+			if ($version === '') {
+				$error = 'binary';
+			}
+		} catch (WrongPermissionsException $e) {
+			$version = '';
+			$error = 'binary_permissions';
+		}
 		$this->initialStateService->provideInitialState(
-			'talk', 'matterbridge_version',
-			(string) $this->bridgeManager->getCurrentVersionFromBinary()
+			'talk', 'matterbridge_error', $error
+		);
+		$this->initialStateService->provideInitialState(
+			'talk', 'matterbridge_version', $version
 		);
 
 		$this->initialStateService->provideInitialState(
