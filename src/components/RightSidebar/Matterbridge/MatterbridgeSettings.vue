@@ -361,6 +361,18 @@ export default {
 							placeholder: t('spreed', 'NickServ password'),
 							icon: 'icon-category-auth',
 						},
+						usetls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Use TLS'),
+						},
+						usesasl: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Use SASL'),
+						},
+						skiptls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Skip TLS verification'),
+						},
 					},
 				},
 				msteams: {
@@ -533,7 +545,6 @@ export default {
 				const result = await getBridgeProcessState(token)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
-				console.debug(result.data.ocs.data.log)
 			} catch (exception) {
 				console.debug(exception)
 			}

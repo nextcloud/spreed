@@ -415,9 +415,18 @@ class MatterbridgeManager {
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
-				if ($part['nickservnick'] && $part['nickservpassword']) {
+				if ($part['nickservnick']) {
 					$content .= sprintf('	NickServNick = "%s"', $part['nickservnick']) . "\n";
-					$content .= sprintf('	NickServPassword = "%s"', $part['nickservpassword']) . "\n";
+					$content .= sprintf('	NickServNick = "%s"', $part['nickservnick']) . "\n";
+				}
+				if ($part['usetls']) {
+					$content .= sprintf('	UseTLS = true') . "\n";
+				}
+				if ($part['usesasl']) {
+					$content .= sprintf('	UseSASL = true') . "\n";
+				}
+				if ($part['skiptls']) {
+					$content .= sprintf('	SkipTLSVerify = true') . "\n";
 				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
