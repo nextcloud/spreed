@@ -322,8 +322,10 @@ class MatterbridgeManager {
 	private function generateConfig(Room $room, array $bridge): string {
 		$content = '';
 		foreach ($bridge['parts'] as $k => $part) {
-			if ($part['type'] === 'nctalk') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			$type = $part['type'];
+
+			if ($type === 'nctalk') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				if (isset($part['server']) && $part['server'] !== '') {
 					$serverUrl = $part['server'];
 				} else {
@@ -336,95 +338,94 @@ class MatterbridgeManager {
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'mattermost') {
+			} elseif ($type === 'mattermost') {
 				// remove protocol from server URL
 				if (preg_match('/^https?:/', $part['server'])) {
 					$part['server'] = $this->cleanUrl($part['server']);
 				}
-				$content .= sprintf('[%s]', $part['type']) . "\n";
-				$content .= sprintf('	[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('[%s]', $type) . "\n";
+				$content .= sprintf('	[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Team = "%s"', $part['team']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'matrix') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'matrix') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	NoHomeServerSuffix = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'zulip') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'zulip') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'rocketchat') {
+			} elseif ($type === 'rocketchat') {
 				// include # in channel
 				if (!preg_match('/^#/', $part['channel'])) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'slack') {
+			} elseif ($type === 'slack') {
 				// do not include # in channel
 				if (preg_match('/^#/', $part['channel'])) {
 					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
 				}
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'discord') {
+			} elseif ($type === 'discord') {
 				// do not include # in channel
 				if (preg_match('/^#/', $part['channel'])) {
 					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
 				}
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'telegram') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'telegram') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'steam') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'steam') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'irc') {
+			} elseif ($type === 'irc') {
 				// include # in channel
 				if (!preg_match('/^#/', $part['channel'])) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
-				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'msteams') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'msteams') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	TenantID = "%s"', $part['tenantid']) . "\n";
 				$content .= sprintf('	ClientID = "%s"', $part['clientid']) . "\n";
 				$content .= sprintf('	TeamID = "%s"', $part['teamid']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
-			} elseif ($part['type'] === 'xmpp') {
-				$content .= sprintf('[%s.%s]', $part['type'], $k) . "\n";
+			} elseif ($type === 'xmpp') {
+				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Jid = "%s"', $part['jid']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
@@ -440,13 +441,19 @@ class MatterbridgeManager {
 		$content .= '	enable = true' . "\n\n";
 
 		foreach ($bridge['parts'] as $k => $part) {
+			$type = $part['type'];
+
 			$content .= '[[gateway.inout]]' . "\n";
-			$content .= sprintf('	account = "%s.%s"', $part['type'], $k) . "\n";
-			if (in_array($part['type'], ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
-				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
-			} elseif ($part['type'] === 'msteams') {
+			$content .= sprintf('	account = "%s.%s"', $type, $k) . "\n";
+			if (in_array($type, ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
+				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n";
+				if ($type === 'irc' && $part['password']) {
+					$content .= sprintf('	options = { key = "%s" }', $part['password']) . "\n";
+				}
+				$content .= "\n";
+			} elseif ($type === 'msteams') {
 				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";
-			} elseif (in_array($part['type'], ['telegram', 'steam'])) {
+			} elseif (in_array($type, ['telegram', 'steam'])) {
 				$content .= sprintf('	chatid = "%s"', $part['chatid']) . "\n\n";
 			}
 		}
