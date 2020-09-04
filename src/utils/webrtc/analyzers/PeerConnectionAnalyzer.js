@@ -496,20 +496,24 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQualityAudio: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['audio'], this._packetsPerSecond['audio'], this._roundTripTime['audio'])
+		return this._calculateConnectionQuality(this._packetsLostRatio['audio'], this._packetsPerSecond['audio'], this._roundTripTime['audio'], this._connectionQualityAudio, 'audio')
 	},
 
 	_calculateConnectionQualityVideo: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['video'], this._packetsPerSecond['video'], this._roundTripTime['video'])
+		return this._calculateConnectionQuality(this._packetsLostRatio['video'], this._packetsPerSecond['video'], this._roundTripTime['video'], this._connectionQualityVideo, 'video')
 	},
 
-	_calculateConnectionQuality: function(packetsLostRatio, packetsPerSecond, roundTripTime) {
+	_calculateConnectionQuality: function(packetsLostRatio, packetsPerSecond, roundTripTime, currentConnectionQuality, connectionQualityType) {
 		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
 
 		const packetsLostRatioWeightedAverage = packetsLostRatio.getWeightedAverage()
 		if (packetsLostRatioWeightedAverage >= 1) {
+			if (currentConnectionQuality !== CONNECTION_QUALITY.NO_TRANSMITTED_DATA) {
+				console.debug('Setting ' + connectionQualityType + ' connection quality to NO_TRANSMITTED_DATA (previous value ' + this._connectionQualityToString(currentConnectionQuality) + ')')
+			}
+
 			return CONNECTION_QUALITY.NO_TRANSMITTED_DATA
 		}
 
@@ -518,6 +522,10 @@ PeerConnectionAnalyzer.prototype = {
 		// discarded to try to keep the playing rate in real time.
 		// Round trip time is measured in seconds.
 		if (roundTripTime.hasEnoughData() && roundTripTime.getWeightedAverage() > 1.5) {
+			if (currentConnectionQuality !== CONNECTION_QUALITY.VERY_BAD) {
+				console.debug('Setting ' + connectionQualityType + ' connection quality to VERY_BAD due to round trip time (previous value ' + this._connectionQualityToString(currentConnectionQuality) + ')')
+			}
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
@@ -533,10 +541,18 @@ PeerConnectionAnalyzer.prototype = {
 		// with a threshold of 10 packets issues can be detected too for videos,
 		// although only once they can not be further downscaled.
 		if (packetsPerSecond.getWeightedAverage() < 10) {
+			if (currentConnectionQuality !== CONNECTION_QUALITY.VERY_BAD) {
+				console.debug('Setting ' + connectionQualityType + ' connection quality to VERY_BAD due to low packet count (previous value ' + this._connectionQualityToString(currentConnectionQuality) + ')')
+			}
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
 		if (packetsLostRatioWeightedAverage > 0.3) {
+			if (currentConnectionQuality !== CONNECTION_QUALITY.VERY_BAD) {
+				console.debug('Setting ' + connectionQualityType + ' connection quality to VERY_BAD due to high lost packet ratio (previous value ' + this._connectionQualityToString(currentConnectionQuality) + ')')
+			}
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
@@ -549,6 +565,30 @@ PeerConnectionAnalyzer.prototype = {
 		}
 
 		return CONNECTION_QUALITY.GOOD
+	},
+
+	_connectionQualityToString: function(connectionQuality) {
+		if (connectionQuality === CONNECTION_QUALITY.UNKNOWN) {
+			return 'UNKNOWN'
+		}
+
+		if (connectionQuality === CONNECTION_QUALITY.GOOD) {
+			return 'GOOD'
+		}
+
+		if (connectionQuality === CONNECTION_QUALITY.MEDIUM) {
+			return 'MEDIUM'
+		}
+
+		if (connectionQuality === CONNECTION_QUALITY.BAD) {
+			return 'BAD'
+		}
+
+		if (connectionQuality === CONNECTION_QUALITY.VERY_BAD) {
+			return 'VERY_BAD'
+		}
+
+		return 'NO_TRANSMITTED_DATA'
 	},
 
 }
