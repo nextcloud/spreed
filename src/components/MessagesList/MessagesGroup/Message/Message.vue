@@ -28,7 +28,6 @@ the main body of the message as well as a quote.
 	<div
 		:id="`message_${id}`"
 		class="message"
-		tabindex="0"
 		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
@@ -59,7 +58,6 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions
-					tabindex="0"
 					class="message__main__right__actions">
 					<ActionButton
 						v-if="isReplyable"
@@ -363,17 +361,21 @@ export default {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
-	&:hover,
-	&:focus {
+	background-color: var(--color-main-background);
+	&:hover {
 		background-color: var(--color-background-hover);
 		border-radius: 8px;
-		.message__main__right__actions {
-			visibility: visible;
-		}
-		.date {
-			visibility: hidden;
-		}
-
+		z-index: 1;
+	}
+	.action-item--single {
+		z-index: -1;
+	}
+	.action-item--single:focus,
+	&:hover .action-item--single {
+		z-index: 1;
+	}
+	.date {
+		visibility: hidden;
 	}
 	&__author {
 		color: var(--color-text-maxcontrast);
@@ -421,13 +423,12 @@ export default {
 			flex: 0 0 95px;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
-				visibility: hidden;
 				position: absolute;
 				bottom: -11px;
 				right: -3px;
 				&:hover,
 				&:focus {
-					visibility: visible;
+					z-index: 1;
 				}
 			}
 			& h6 {
