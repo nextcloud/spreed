@@ -671,11 +671,12 @@
     "Chat" : "Pogovor",
     "Display name: " : "Prikazano ime:",
     "Edit" : "Uredi",
+    "Keyboard shortcuts" : "Tipkovne bližnjice",
+    "Search" : "Poišči",
     "Error while setting attachment folder" : "Napaka med nastavljanjem mape prilog",
     "Start call" : "Začni klic",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor.",
     "You will be able to join the call only after a moderator starts it." : "Pogovoru se je mogoče pridružiti šele, ko ga moderator začne.",
-    "Use promoted view" : "Uporabi osprednji pogled",
     "Toggle fullscreen" : "Preklopi celozaslonski način",
     "Go to file" : "Pojdi na datoteko",
     "Rename conversation" : "Preimenuj pogovor",
@@ -686,7 +687,6 @@
     "Start time (optional)" : "Čas začetka (izbirno)",
     "Exit fullscreen (f)" : "Končaj celozaslonski način (f)",
     "Fullscreen (f)" : "Celozaslonski način (f)",
-    "Promoted view" : "Osprednji pogled",
     "Grid view" : "Mrežni pogled",
     "Say hi to your friends and colleagues!" : "Pozdravite prijatelje in znance.",
     "Start a conversation" : "Začni pogovor",
@@ -825,6 +825,8 @@
     "Signaling server URL" : "Naslov URL signalnega strežnika",
     "Default location for attachments" : "Privzeto mesto za priloge",
     "Select default location for attachments" : "Izbor privzetega mesta za priloge",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor."
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor.",
+    "Use promoted view" : "Uporabi osprednji pogled",
+    "Promoted view" : "Osprednji pogled"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }

@@ -273,6 +273,8 @@ OC.L10N.register(
     "Client ID" : "Kliënt-ID",
     "Chat" : "Klets",
     "Edit" : "Wysig",
+    "Keyboard shortcuts" : "Sneltoetse",
+    "Search" : "Soek",
     "Share link" : "Deelskakel",
     "Enter a password" : "Gee ’n wagwoord",
     "Default" : "Verstek",

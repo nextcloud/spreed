@@ -45,6 +45,8 @@ OC.L10N.register(
     "No results" : "Tidak ada hasil",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Sunting",
+    "Keyboard shortcuts" : "Pintasan keyboard",
+    "Search" : "Cari",
     "Share link" : "Bagikan tautan",
     "Password protection" : "Password protection",
     "Enter a password" : "Masukkan kata sandi",

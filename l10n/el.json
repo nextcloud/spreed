@@ -750,12 +750,13 @@
     "Edit" : "Επεξεργασία",
     "Choose devices" : "Επιλέξτε συσκευές",
     "Attachments folder" : "Φάκελος συνημμένων",
+    "Keyboard shortcuts" : "Συντομεύσεις πληκτρολογίου",
+    "Search" : "Αναζήτηση",
     "Select location for attachments" : "Επιλέξτε τοποθεσία για τα συνημμένα",
     "Error while setting attachment folder" : "Σφάλμα κατά την ρύθμιση φακέλου συνημμένων",
     "Start call" : "Έναρξη κλήσης",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση.",
     "You will be able to join the call only after a moderator starts it." : "Μπορείτε να συμμετάσχετε στην κλήση μόνο μετά την εκκίνηση από τον συντονιστή.",
-    "Use promoted view" : "Χρήση προβολής promoted",
     "Toggle fullscreen" : "Εναλλαγή πλήρους οθόνης",
     "Go to file" : "Μετάβαση στο αρχείο",
     "Rename conversation" : "Μετονομασία συνομιλίας",
@@ -767,9 +768,7 @@
     "Mute others" : "Σίγαση των άλλων",
     "Exit fullscreen (f)" : "Έξοδος πλήρους οθόνης (f)",
     "Fullscreen (f)" : "Πλήρης οθόνη (f)",
-    "Promoted view" : "Προηγμένη εμφάνιση",
     "Grid view" : "Προβολή πλέγματος",
-    "Too many videos to fit in the window. Maximize the window or switch to \"promoted view\" for a better experience." : "Πάρα πολλά βίντεο για προσαρμογή στο παράθυρο. Μεγιστοποιήστε το ή κάνετε εναλλαγή σε \"προηγμένη εμφάνιση\" για καλύτερη εμπειρία.",
     "Add more files" : "Προσθήκη περισσότερων αρχείων",
     "No unread mentions" : "Δεν υπάρχουν μη αναγνωσμένες αναφορές στο όνομά σας",
     "Say hi to your friends and colleagues!" : "Πείτε γειά σε φίλους και συνεργάτες!",
@@ -910,6 +909,8 @@
     "Signaling server URL" : "URL διακομιστή σηματοδότησης",
     "Default location for attachments" : "Προεπιλεγμένη θέση για συνημμένα",
     "Select default location for attachments" : "Επιλέξτε προεπιλεγμένη θέση για συνημμένα",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση",
+    "Use promoted view" : "Χρήση προβολής promoted",
+    "Promoted view" : "Προηγμένη εμφάνιση"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -136,6 +136,8 @@ OC.L10N.register(
     "Participants" : "Participantes",
     "Chat" : "Conversa",
     "Edit" : "Editar",
+    "Keyboard shortcuts" : "Atalhos de teclado",
+    "Search" : "Pesquisa sobre",
     "Rename conversation" : "Renomear conversação",
     "Share link" : "Partilhar hiperligação",
     "Password protection" : "Protegido por palavra-passe",

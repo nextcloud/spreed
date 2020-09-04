@@ -696,7 +696,6 @@ OC.L10N.register(
     "Start call" : "Begin gesprek",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen.",
     "You will be able to join the call only after a moderator starts it." : "Je kunt pas aan het gesprek deelnemen als een moderator het gestart heeft.",
-    "Use promoted view" : "Gebruik aanbevolen overzicht",
     "Toggle fullscreen" : "Volledig scherm omschakelen",
     "Go to file" : "Ga naar bestand",
     "Rename conversation" : "Hernoem gesprek",
@@ -707,7 +706,6 @@ OC.L10N.register(
     "Start time (optional)" : "Begintijd (optioneel)",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
     "Fullscreen (f)" : "Volledig scherm (f)",
-    "Promoted view" : "Aanbevolen overzicht",
     "Grid view" : "Rasterweergave",
     "Add more files" : "Voeg meer bestanden toe",
     "Say hi to your friends and colleagues!" : "Zeg hallo tegen je vrienden en collega's!",
@@ -848,6 +846,8 @@ OC.L10N.register(
     "Signaling server URL" : "Signaling server URL",
     "Default location for attachments" : "Standaardlocatie voor bijlagen",
     "Select default location for attachments" : "Selecteer standaardlocatie voor bijlagen",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen",
+    "Use promoted view" : "Gebruik aanbevolen overzicht",
+    "Promoted view" : "Aanbevolen overzicht"
 },
 "nplurals=2; plural=(n != 1);");

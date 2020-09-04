@@ -210,6 +210,8 @@ OC.L10N.register(
     "No results" : "Asnjë rezultat",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Përpuno",
+    "Keyboard shortcuts" : "Shkurtoret e tastierës",
+    "Search" : "Kërko",
     "Rename conversation" : "Riemërtojeni bisedën",
     "Share link" : "Shpërndaj ndërlidhjen",
     "Password protection" : "Password protection",

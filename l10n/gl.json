@@ -757,12 +757,13 @@
     "Edit" : "Editar",
     "Choose devices" : "Escoller dispositivos",
     "Attachments folder" : "Cartafol de anexos",
+    "Keyboard shortcuts" : "Atallos de teclado",
+    "Search" : "Buscar",
     "Select location for attachments" : "Seleccionar a localización dos ficheiros anexos",
     "Error while setting attachment folder" : "Produciuse un erro ao configurar o cartafol de anexos",
     "Start call" : "Iniciar a chamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk foi actualizado, ten que volver cargar a páxina antes de poder comezar ou unirse a unha chamada.",
     "You will be able to join the call only after a moderator starts it." : "Só poderá unirse á chamada após que a inicie un moderador.",
-    "Use promoted view" : "Usar a vista promocionada",
     "Toggle fullscreen" : "Alternar a pantalla completa",
     "Go to file" : "Ir ao ficheiro",
     "Rename conversation" : "Renomear a conversa",
@@ -774,9 +775,7 @@
     "Mute others" : "Silenciar aos outros",
     "Exit fullscreen (f)" : "Saír da pantalla completa (f)",
     "Fullscreen (f)" : "Pantalla completa (f)",
-    "Promoted view" : "Vista promocionada",
     "Grid view" : "Ver como grella",
-    "Too many videos to fit in the window. Maximize the window or switch to \"promoted view\" for a better experience." : "Demasiados vídeos para encaixalos na xanela. Aumente a xanela ou cambie a «vista promocionada» para unha mellor experiencia.",
     "Add more files" : "Engadir máis ficheiros",
     "No unread mentions" : "Non hai mencións sen ler",
     "Say hi to your friends and colleagues!" : "Saúde aos seus amigos e compañeiros!",
@@ -917,6 +916,8 @@
     "Signaling server URL" : "URL do servidor de sinalización",
     "Default location for attachments" : "Localización predeterminada dos ficheiros anexos",
     "Select default location for attachments" : "Seleccione a localización predeterminada dos ficheiros anexos",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk foi actualizado, ten que volver cargar a páxina antes de poder comezar ou unirse a unha chamada"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk foi actualizado, ten que volver cargar a páxina antes de poder comezar ou unirse a unha chamada",
+    "Use promoted view" : "Usar a vista promocionada",
+    "Promoted view" : "Vista promocionada"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

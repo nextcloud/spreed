@@ -304,6 +304,8 @@ OC.L10N.register(
     "Participants" : "Участници",
     "Chat" : "Съобщения",
     "Edit" : "Променяне",
+    "Keyboard shortcuts" : "Бързи клавиши",
+    "Search" : "Търсене",
     "Share link" : "Сподели връзка",
     "Password protection" : "Password protection",
     "Enter a password" : "Въведете парола",

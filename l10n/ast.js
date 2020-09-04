@@ -74,6 +74,8 @@ OC.L10N.register(
     "No results" : "Ensin resultaos",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Editar",
+    "Keyboard shortcuts" : "Atayos de tecláu",
+    "Search" : "Search",
     "Share link" : "Compartir enllaz",
     "Password protection" : "Password protection",
     "Enter a password" : "Introduz una contraseña",
