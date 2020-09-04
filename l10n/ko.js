@@ -137,6 +137,8 @@ OC.L10N.register(
     "Participants" : "참가자",
     "Chat" : "대화",
     "Edit" : "편집",
+    "Keyboard shortcuts" : "키보드 단축키",
+    "Search" : "검색",
     "Rename conversation" : "대화 제목 변경",
     "Share link" : "링크 공유",
     "Password protection" : "암호 보호",

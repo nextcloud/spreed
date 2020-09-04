@@ -658,11 +658,12 @@
     "Chat" : "Razmjena poruka",
     "Display name: " : "Ime za prikaz: ",
     "Edit" : "Uredi",
+    "Keyboard shortcuts" : "Tipkovni prečaci",
+    "Search" : "Traži",
     "Error while setting attachment folder" : "Pogreška pri postavljanju mape za privitke",
     "Start call" : "Uputi poziv",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru.",
     "You will be able to join the call only after a moderator starts it." : "Pozivu ćete se moći pridružiti tek nakon što ga moderator pokrene.",
-    "Use promoted view" : "Koristi nadređeni prikaz",
     "Toggle fullscreen" : "Uključi/isključi prikaz preko cijelog zaslona",
     "Go to file" : "Idi na datoteku",
     "Rename conversation" : "Preimenuj razgovor",
@@ -673,7 +674,6 @@
     "Start time (optional)" : "Vrijeme početka (neobvezno)",
     "Exit fullscreen (f)" : "Zatvori prikaz preko cijelog zaslona (f)",
     "Fullscreen (f)" : "Cijeli zaslon (f)",
-    "Promoted view" : "Nadređeni prikaz",
     "Grid view" : "Prikaz rešetke",
     "Say hi to your friends and colleagues!" : "Pozdravi svoje prijatelje i kolege!",
     "Start a conversation" : "Započni razgovor",
@@ -799,6 +799,8 @@
     "Signaling server URL" : "URL signalnog poslužitelja",
     "Default location for attachments" : "Zadana lokacija privitaka",
     "Select default location for attachments" : "Odaberi zadanu lokaciju privitaka",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru",
+    "Use promoted view" : "Koristi nadređeni prikaz",
+    "Promoted view" : "Nadređeni prikaz"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }

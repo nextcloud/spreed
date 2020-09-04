@@ -41,6 +41,7 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Učesnici",
     "Edit" : "Uredi",
+    "Search" : "Traži",
     "Rename conversation" : "Preimenuj razgovor",
     "Share link" : "Veza deljenja",
     "Password protection" : "Password protection",

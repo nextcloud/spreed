@@ -400,6 +400,8 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Display name: " : "Vist navn:",
     "Edit" : "Rediger",
+    "Keyboard shortcuts" : "Tastaturgenveje",
+    "Search" : "Søg",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
     "Start call" : "Start opkald",
     "Go to file" : "Gå til fil",

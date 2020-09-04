@@ -757,12 +757,13 @@
     "Edit" : "Upravit",
     "Choose devices" : "Zvolte zařízení",
     "Attachments folder" : "Složka s přílohami",
+    "Keyboard shortcuts" : "Klávesové zkratky",
+    "Search" : "Hledat",
     "Select location for attachments" : "Vyberte umístění pro přílohy",
     "Error while setting attachment folder" : "Chyba při nastavování složky pro přílohy",
     "Start call" : "Zavolat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru se budete moci připojit až poté, co ho moderátor zahájí.",
-    "Use promoted view" : "Použít povýšený pohled",
     "Toggle fullscreen" : "Vyp/zap. zobrazení na celou obrazovku",
     "Go to file" : "Přejít k souboru",
     "Rename conversation" : "Přejmenovat konverzaci",
@@ -774,9 +775,7 @@
     "Mute others" : "Ztlumit ostatní",
     "Exit fullscreen (f)" : "Opustit režim celé obrazovky (f)",
     "Fullscreen (f)" : "Celá obrazovka (f)",
-    "Promoted view" : "Povýšený pohled",
     "Grid view" : "Zobrazení v mřížce",
-    "Too many videos to fit in the window. Maximize the window or switch to \"promoted view\" for a better experience." : "Příliš mnoho videí na to, aby bylo možné přizpůsobit oknu. Pro lepší dojem z používání okno maximalizujte okno nebo přepněte do „vyzdviženého pohledu“.",
     "Add more files" : "Přidat další soubory",
     "No unread mentions" : "Žádná nepřečtená zmínění",
     "Say hi to your friends and colleagues!" : "Pozdravte své přátele a kolegy!",
@@ -917,6 +916,8 @@
     "Signaling server URL" : "URL adresa signalizovacího serveru",
     "Default location for attachments" : "Výchozí umístění pro přílohy",
     "Select default location for attachments" : "Vyberte výchozí umístění pro přílohy",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu",
+    "Use promoted view" : "Použít povýšený pohled",
+    "Promoted view" : "Povýšený pohled"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

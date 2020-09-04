@@ -143,6 +143,8 @@ OC.L10N.register(
     "Participants" : "Учасники",
     "Chat" : "Чат",
     "Edit" : "Редагувати",
+    "Keyboard shortcuts" : "Гарячі клавіші",
+    "Search" : "Пошук",
     "Start call" : "Почати виклик",
     "Toggle fullscreen" : "Перемкнути на весь екран",
     "Rename conversation" : "Перейменувати розмову",

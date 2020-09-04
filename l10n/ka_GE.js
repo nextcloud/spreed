@@ -97,6 +97,8 @@ OC.L10N.register(
     "Participants" : "მონაწილეები",
     "Chat" : "ჩეთი",
     "Edit" : "შეცვლა",
+    "Keyboard shortcuts" : "კლავიატურის კომბინაციები",
+    "Search" : "ძიება",
     "Share link" : "ბმულის გაზიარება",
     "Password protection" : "პაროლით თავდაცვა",
     "Enter a password" : "შეიყვანეთ პაროლი",

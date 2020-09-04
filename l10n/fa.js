@@ -308,6 +308,8 @@ OC.L10N.register(
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
     "Participants" : "شركت كنندگان",
     "Edit" : "ویرایش",
+    "Keyboard shortcuts" : "میان بر صفحه ی کلید",
+    "Search" : "جستجو کردن",
     "Rename conversation" : "تغییر نام مکالمه",
     "Share link" : "Share link",
     "Password protection" : "Password protection",

@@ -171,6 +171,8 @@ OC.L10N.register(
     "Participants" : "Deltakere",
     "Chat" : "Sludre",
     "Edit" : "Rediger",
+    "Keyboard shortcuts" : "Tastatursnarveier",
+    "Search" : "Søk",
     "Start call" : "Start samtale",
     "Rename conversation" : "Endre navn på samtale",
     "Share link" : "Del lenke",

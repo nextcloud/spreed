@@ -533,6 +533,8 @@ OC.L10N.register(
     "Display name: " : "Rodomas vardas: ",
     "Edit" : "Taisyti",
     "Attachments folder" : "Priedų aplankas",
+    "Keyboard shortcuts" : "Klavišų kombinacijos",
+    "Search" : "Ieškoti",
     "Error while setting attachment folder" : "Klaida nustatant priedų aplanką",
     "Start call" : "Pradėti skambutį",
     "Toggle fullscreen" : "Perjungti visą ekraną",

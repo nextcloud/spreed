@@ -678,11 +678,12 @@
     "Chat" : "Správy",
     "Display name: " : "Zobrazovaný názov:",
     "Edit" : "Upraviť",
+    "Keyboard shortcuts" : "Klávesové skratky",
+    "Search" : "Hľadať",
     "Error while setting attachment folder" : "Pri nastavovaní priečinka pre prílohy sa vyskytla chyba",
     "Start call" : "Začať hovor",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru sa budete môcť pripojiť až potom, keď ho moderátor začne.",
-    "Use promoted view" : "Použiť propagované zobrazenie",
     "Toggle fullscreen" : "Prepnúť na celú obrazovku",
     "Go to file" : "Prejsť na súbor",
     "Rename conversation" : "Premenovať rozhovor",
@@ -693,7 +694,6 @@
     "Start time (optional)" : "Čas začiatku (voliteľné)",
     "Exit fullscreen (f)" : "Opustiť celú obrazovku",
     "Fullscreen (f)" : "Celá obrazovka  (f)",
-    "Promoted view" : "Propagované zobrazenie",
     "Grid view" : "Zobrazenie v mriežke",
     "Say hi to your friends and colleagues!" : "Pozdravte svojich priateľov a kolegov!",
     "Start a conversation" : "Začať rozhovor",
@@ -827,6 +827,8 @@
     "Signaling server URL" : "URL adresa signalizačného servera",
     "Default location for attachments" : "Predvolené umiestnenie príloh",
     "Select default location for attachments" : "Vyberte predvolené umiestnenie príloh",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku",
+    "Use promoted view" : "Použiť propagované zobrazenie",
+    "Promoted view" : "Propagované zobrazenie"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

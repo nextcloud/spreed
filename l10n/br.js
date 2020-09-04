@@ -697,12 +697,12 @@ OC.L10N.register(
     "Edit" : "Cheñch",
     "Choose devices" : "Choazit un ardivink",
     "Attachments folder" : "Teuliad stag",
+    "Search" : "Klask",
     "Select location for attachments" : "Choazit ul lec'h evit stagañ",
     "Error while setting attachment folder" : "Ur fazi a zo bet en ur lakaat an teuliad stagañ",
     "Start call" : "Kregiñ ar gemenadenn",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Adnevesaet e bet Nextcloud Talk, ret eo deoc'h freskaat ar bajenn a raok kregiñ pe mont en ut gamanadenn.",
     "You will be able to join the call only after a moderator starts it." : "Posupl vo deoc'h mont er gemenadenn goude ma vo bet groget gant ar modertator.",
-    "Use promoted view" : "Implij ar gwellet herouezet",
     "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Go to file" : "Mont d'ar restr",
     "Rename conversation" : "Adenvel an diviz",
@@ -714,9 +714,7 @@ OC.L10N.register(
     "Mute others" : "Lakaat ar re all mut",
     "Exit fullscreen (f)" : "Kuitaat ar skramm a bez (f)",
     "Fullscreen (f)" : "Skramm a bez (f)",
-    "Promoted view" : "Gwellet herouezet",
     "Grid view" : "Diskwell ar roued",
-    "Too many videos to fit in the window. Maximize the window or switch to \"promoted view\" for a better experience." : "Re a videoioù da lakaat er prenestr. Lakit ar prenestr da vezhañ ar vrasañ posupl pe cheñchitda \"gwell lusket\" evit un abadenn gwelaet.",
     "Add more files" : "Ouzhpennañ muioc'h a restroù",
     "No unread mentions" : "Kemenadenn nan-lennet ebet",
     "Say hi to your friends and colleagues!" : "Lâr koukouk d'ho mignoned ha genseurted",
@@ -857,6 +855,8 @@ OC.L10N.register(
     "Signaling server URL" : "O arhentañ URL ar servijour",
     "Default location for attachments" : "Lec'h dre ziouer evit ar stagadennoù",
     "Select default location for attachments" : "Choaz al lec'h stagadenn dre ziouer",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a zo bet adnevesaet, ret eo deoc'h freskaat ar bajenn a raok kregin pe mont en ur gemenadenn"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a zo bet adnevesaet, ret eo deoc'h freskaat ar bajenn a raok kregin pe mont en ur gemenadenn",
+    "Use promoted view" : "Implij ar gwellet herouezet",
+    "Promoted view" : "Gwellet herouezet"
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");

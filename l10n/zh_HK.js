@@ -31,6 +31,7 @@ OC.L10N.register(
     "Nickname" : "暱稱",
     "Add users or groups" : "Add users or groups",
     "Edit" : "編輯",
+    "Search" : "Search",
     "Share link" : "分享連結",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

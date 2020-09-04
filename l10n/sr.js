@@ -506,6 +506,8 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
     "Chat" : "Ћаскање",
     "Edit" : "Измени",
+    "Keyboard shortcuts" : "Пречице на тастатури",
+    "Search" : "Претрага",
     "Start call" : "Почни позив",
     "Go to file" : "Иди на фајл",
     "Rename conversation" : "Преименуј разговор",

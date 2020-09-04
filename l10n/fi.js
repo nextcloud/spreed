@@ -302,6 +302,8 @@ OC.L10N.register(
     "Chat" : "Keskustelu",
     "Display name: " : "Näyttönimi:",
     "Edit" : "Muokkaa",
+    "Keyboard shortcuts" : "Pikanäppäimet",
+    "Search" : "Etsi",
     "Error while setting attachment folder" : "Virhe asettaessa liitekansiota",
     "Start call" : "Aloita puhelu",
     "Go to file" : "Siirry tiedostoon",
