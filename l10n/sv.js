@@ -580,6 +580,8 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Display name: " : "Visningsnamn:",
     "Edit" : "Ändra",
+    "Keyboard shortcuts" : "Tangentbordsgenvägar",
+    "Search" : "Sök",
     "Error while setting attachment folder" : "Fel vid inställning av mapp för bilagor",
     "Start call" : "Starta samtal",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal.",

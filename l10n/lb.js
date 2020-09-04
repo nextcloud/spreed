@@ -36,6 +36,7 @@ OC.L10N.register(
     "guest" : "Gaascht",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Änneren",
+    "Search" : "Search",
     "Share link" : "Link deelen",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
