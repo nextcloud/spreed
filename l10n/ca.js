@@ -500,6 +500,8 @@ OC.L10N.register(
     "Participants" : "Participants",
     "Chat" : "Xat",
     "Edit" : "Edita",
+    "Keyboard shortcuts" : "Dreceres de teclat",
+    "Search" : "Cerca",
     "Start call" : "Inicia trucada",
     "Go to file" : "Vés al fitxer",
     "Rename conversation" : "Reanomena la conversa",

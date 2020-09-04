@@ -202,6 +202,8 @@ OC.L10N.register(
     "Participants" : "Dalībnieki",
     "Chat" : "Tērzēt",
     "Edit" : "Rediģēt",
+    "Keyboard shortcuts" : "Tastatūras saīsnes",
+    "Search" : "Meklēt",
     "Start call" : "Sākt zvanu",
     "Go to file" : "Doties uz datni",
     "Share link" : "Koplietot saiti",

@@ -48,6 +48,8 @@ OC.L10N.register(
     "No results" : "Vasteid ei leitud",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Redigeeri",
+    "Keyboard shortcuts" : "Klaviatuuri otseteed",
+    "Search" : "Otsi",
     "Share link" : "Jaga link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

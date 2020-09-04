@@ -562,6 +562,8 @@ OC.L10N.register(
     "Chat" : "Csevegés",
     "Display name: " : "Megjelenítendő név:",
     "Edit" : "Szerkesztés",
+    "Keyboard shortcuts" : "Gyorsbillentyűk",
+    "Search" : "Keresés",
     "Error while setting attachment folder" : "Hiba a mellékletek mappa beállításakor",
     "Start call" : "Hívás indítása",
     "Toggle fullscreen" : "Teljes képernyőre váltás",

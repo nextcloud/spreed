@@ -38,6 +38,8 @@ OC.L10N.register(
     "guest" : "hospite",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Modificar",
+    "Keyboard shortcuts" : "Combinationes de claves",
+    "Search" : "Cercar",
     "Share link" : "Compartir ligamine",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

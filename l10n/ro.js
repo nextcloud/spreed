@@ -282,6 +282,8 @@ OC.L10N.register(
     "No results" : "Niciun rezultat",
     "Add users or groups" : "Add users or groups",
     "Edit" : "Editează",
+    "Keyboard shortcuts" : "Scurtături din tastatură",
+    "Search" : "Caută",
     "Share link" : "Partajează link-ul",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

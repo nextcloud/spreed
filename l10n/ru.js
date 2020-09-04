@@ -660,11 +660,12 @@ OC.L10N.register(
     "Chat" : "Чат",
     "Display name: " : "Отображаемое имя:",
     "Edit" : "Редактировать",
+    "Keyboard shortcuts" : "Комбинации клавиш",
+    "Search" : "Поиск",
     "Error while setting attachment folder" : "Не удалось задать папку для вложений",
     "Start call" : "Начать вызов",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk был обновлен, перезагрузите страницу чтобы можно было начать или присоединиться к звонку.",
     "You will be able to join the call only after a moderator starts it." : "Вы сможете подключиться к звонку после того как его начнет модератор.",
-    "Use promoted view" : "Использовать расширенный режим",
     "Toggle fullscreen" : "Переключить на полный экран",
     "Go to file" : "Перейти к файлу",
     "Rename conversation" : "Переименовать разговор",
@@ -675,7 +676,6 @@ OC.L10N.register(
     "Start time (optional)" : "Время начала (необязательно)",
     "Exit fullscreen (f)" : "Выйти из полноэкранного режима (f)",
     "Fullscreen (f)" : "Во весь экран (f)",
-    "Promoted view" : "Расширенный режим",
     "Grid view" : "Вид сеткой",
     "Say hi to your friends and colleagues!" : "Поприветствуйте своих друзей и коллег.",
     "Start a conversation" : "Начать обсуждение",
@@ -809,6 +809,8 @@ OC.L10N.register(
     "Signaling server URL" : "Адрес cервера сигнализации",
     "Default location for attachments" : "Расположение для вложений по умолчанию",
     "Select default location for attachments" : "Выберите расположение для вложений по умолчанию",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk обновлен, перезагрузите страницу чтобы можно было начать или присоединиться к звонку"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk обновлен, перезагрузите страницу чтобы можно было начать или присоединиться к звонку",
+    "Use promoted view" : "Использовать расширенный режим",
+    "Promoted view" : "Расширенный режим"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

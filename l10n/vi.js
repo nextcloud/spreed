@@ -155,6 +155,8 @@ OC.L10N.register(
     "Participants" : "Người tham gia",
     "Chat" : "Trò chuyện",
     "Edit" : "Chỉnh sửa",
+    "Keyboard shortcuts" : "Phím tắt",
+    "Search" : "Tìm",
     "Start call" : "Bắt đầu cuộc gọi",
     "Rename conversation" : "Đổi tên cuộc đàm thoại",
     "Share link" : "Chia sẽ liên kết",

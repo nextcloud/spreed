@@ -720,12 +720,13 @@ OC.L10N.register(
     "Edit" : "Modifier",
     "Choose devices" : "Sélectionnez les appareils",
     "Attachments folder" : "Dossier des pièces jointes",
+    "Keyboard shortcuts" : "Raccourcis clavier",
+    "Search" : "Rechercher",
     "Select location for attachments" : "Sélectionnez l'emplacement des pièces jointes",
     "Error while setting attachment folder" : "Erreur lors de la définition du dossier pour la pièce jointe",
     "Start call" : "Commencer l'appel",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel.",
     "You will be able to join the call only after a moderator starts it." : "Vous pourrez rejoindre l'appel seulement après son lancement par un modérateur.",
-    "Use promoted view" : "Utilisation de la vue promue",
     "Toggle fullscreen" : "Activer / Désactiver le mode plein écran",
     "Go to file" : "Ouvrir le fichier",
     "Rename conversation" : "Renommer la conversation",
@@ -737,7 +738,6 @@ OC.L10N.register(
     "Mute others" : "Mettre en sourdine les autres",
     "Exit fullscreen (f)" : "Quitter le plein écran (f)",
     "Fullscreen (f)" : "Plein écran (f)",
-    "Promoted view" : "vue promue",
     "Grid view" : "Affichage mosaïque",
     "Add more files" : "Ajouter d'autres fichiers",
     "No unread mentions" : "Aucune mention non lue",
@@ -879,6 +879,8 @@ OC.L10N.register(
     "Signaling server URL" : "URL du serveur de signal",
     "Default location for attachments" : "Emplacement par défaut des pièces jointes",
     "Select default location for attachments" : "Sélectionnez l'emplacement par défaut des pièces jointes",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel",
+    "Use promoted view" : "Utilisation de la vue promue",
+    "Promoted view" : "vue promue"
 },
 "nplurals=2; plural=(n > 1);");

@@ -757,12 +757,13 @@
     "Edit" : "Düzenle",
     "Choose devices" : "Aygıtları seçin",
     "Attachments folder" : "Ek dosya klasörü",
+    "Keyboard shortcuts" : "Tuş takımı kısayolları",
+    "Search" : "Arama",
     "Select location for attachments" : "Ek dosyaların konumunu seçin",
     "Error while setting attachment folder" : "Ek dosyalar klasörü ayarlanırken sorun çıktı",
     "Start call" : "Görüşmeyi başlat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz.",
     "You will be able to join the call only after a moderator starts it." : "Görüşmeye ancak bir sorumlu görüşmeyi başlattıktan sonra katılabilirsiniz.",
-    "Use promoted view" : "Sorumlu görünümü kullanılsın",
     "Toggle fullscreen" : "Tam ekranı aç/kapat",
     "Go to file" : "Dosyaya git",
     "Rename conversation" : "Görüşmeyi yeniden adlandır",
@@ -774,9 +775,7 @@
     "Mute others" : "Diğerlerinin sesini kıs",
     "Exit fullscreen (f)" : "Tam ekrandan çık (f)",
     "Fullscreen (f)" : "Tam ekran (f)",
-    "Promoted view" : "Sorumlu görünümü",
     "Grid view" : "Tablo görünümü",
-    "Too many videos to fit in the window. Maximize the window or switch to \"promoted view\" for a better experience." : "Pencereye sığdırılamayacak kadar çok görüntü var. Pencereyi büyütün ya da daha iyi bir deneyim için \"sorumlu görünümüne\" geçin.",
     "Add more files" : "Başka dosya ekle",
     "No unread mentions" : "Okunmamış bir anma yok",
     "Say hi to your friends and colleagues!" : "Tanıdık ve çalışma arkadaşlarınıza selam verin!",
@@ -917,6 +916,8 @@
     "Signaling server URL" : "Signaling sunucusunun adresi",
     "Default location for attachments" : "Ek dosyalarının varsayılan yolu",
     "Select default location for attachments" : "Ek dosyalarının varsayılan yolunu seçin",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz",
+    "Use promoted view" : "Sorumlu görünümü kullanılsın",
+    "Promoted view" : "Sorumlu görünümü"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

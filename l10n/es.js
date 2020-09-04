@@ -691,11 +691,12 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Display name: " : "Nombre para mostrar:",
     "Edit" : "Editar",
+    "Keyboard shortcuts" : "Atajos de teclado",
+    "Search" : "Buscar",
     "Error while setting attachment folder" : "Error al fijar la carpeta para los archivos adjuntos",
     "Start call" : "Comenzar llamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk se ha actualizado, tienes que volver a cargar la página antes de que puedas empezar una llamada o unirte a una.",
     "You will be able to join the call only after a moderator starts it." : "Serás capaz de unirte a la conversación solo después de un moderador la inicie.",
-    "Use promoted view" : "Usar la vista ampliada",
     "Toggle fullscreen" : "Cambiar a pantalla completa",
     "Go to file" : "Ir al archivo",
     "Rename conversation" : "Renombrar conversación",
@@ -706,7 +707,6 @@ OC.L10N.register(
     "Start time (optional)" : "Hora de inicio (opcional)",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
     "Fullscreen (f)" : "Pantalla completa (f)",
-    "Promoted view" : "Vista ampliada",
     "Grid view" : "Vista en cuadrícula",
     "Say hi to your friends and colleagues!" : "¡Saluda a tus amigos y colegas!",
     "Start a conversation" : "Comenzar una conversación",
@@ -845,6 +845,8 @@ OC.L10N.register(
     "Signaling server URL" : "URL del servidor de señalización",
     "Default location for attachments" : "Localización predeterminada para los adjuntos",
     "Select default location for attachments" : "Seleccione la localización predeterminada para los adjuntos",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada",
+    "Use promoted view" : "Usar la vista ampliada",
+    "Promoted view" : "Vista ampliada"
 },
 "nplurals=2; plural=(n != 1);");

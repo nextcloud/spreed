@@ -37,6 +37,8 @@ OC.L10N.register(
     "guest" : "ผู้เยี่ยมชม",
     "Add users or groups" : "Add users or groups",
     "Edit" : "แก้ไข",
+    "Keyboard shortcuts" : "ปุ่มลัด",
+    "Search" : "Search",
     "Share link" : "แชร์ลิงค์",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

@@ -290,6 +290,8 @@ OC.L10N.register(
     "Participants" : "參與者",
     "Chat" : "聊天",
     "Edit" : "編輯",
+    "Keyboard shortcuts" : "快速鍵",
+    "Search" : "搜尋",
     "Start call" : "通話",
     "Rename conversation" : "重新命名對話",
     "Share link" : "分享連結",

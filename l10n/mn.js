@@ -41,6 +41,7 @@ OC.L10N.register(
     "No results" : "Үр дүн байхгүй",
     "Add users or groups" : "Add users or groups",
     "Edit" : "засварлах",
+    "Search" : "Хайх",
     "Share link" : "Холбоос хуваалцах",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",

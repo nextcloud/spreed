@@ -172,6 +172,8 @@ OC.L10N.register(
     "Participants" : "المشاركون",
     "Chat" : "الدردشة",
     "Edit" : "تعديل",
+    "Keyboard shortcuts" : "إختصارات لوحة المفاتيح",
+    "Search" : "البحث",
     "Rename conversation" : "إعادة تسمية المحادثة",
     "Share link" : "مشاركة الرابط",
     "Password protection" : "الحماية بكلمة السر",

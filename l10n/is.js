@@ -465,6 +465,8 @@ OC.L10N.register(
     "Participants" : "Þátttakendur",
     "Chat" : "Spjall",
     "Edit" : "Breyta",
+    "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
+    "Search" : "Search",
     "Start call" : "Hefja samtal",
     "Go to file" : "Fara í skrá",
     "Rename conversation" : "Endurnefna samtal",

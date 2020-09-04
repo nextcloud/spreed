@@ -94,6 +94,8 @@ OC.L10N.register(
     "Participants" : "Participantes",
     "Chat" : "Chat",
     "Edit" : "Editar",
+    "Keyboard shortcuts" : "Atajos del teclado",
+    "Search" : "Buscar",
     "Share link" : "Compartir liga",
     "Password protection" : "Protección con contraseña",
     "Enter a password" : "Ingresa una contraseña",

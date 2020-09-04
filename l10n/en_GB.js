@@ -117,6 +117,8 @@ OC.L10N.register(
     "Participants" : "Participants",
     "Chat" : "Chat",
     "Edit" : "Edit",
+    "Keyboard shortcuts" : "Keyboard shortcuts",
+    "Search" : "Search",
     "Rename conversation" : "Rename conversation",
     "Share link" : "Share link",
     "Password protection" : "Password protection",

@@ -33,6 +33,8 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Chat" : "Lynmelding",
     "Edit" : "Endra",
+    "Keyboard shortcuts" : "Tastatursnarvegar",
+    "Search" : "Search",
     "Share link" : "Del lenkje",
     "Password protection" : "Password protection",
     "Enter a password" : "Skriv inn eit passord",
