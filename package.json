@@ -67,7 +67,7 @@
 		"@nextcloud/eslint-plugin": "^1.4.0",
 		"@vue/cli-plugin-unit-jest": "^4.5.4",
 		"@vue/cli-service": "^4.5.4",
-		"@vue/test-utils": "^1.0.4",
+		"@vue/test-utils": "^1.0.5",
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.1.0",
 		"babel-loader-exclude-node-modules-except": "^1.0.3",
