@@ -692,6 +692,8 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Display name: " : "Weergavenaam:",
     "Edit" : "Bewerk",
+    "Keyboard shortcuts" : "Sneltoetsen",
+    "Search" : "Zoeken",
     "Error while setting attachment folder" : "Fout bij instellen map voor bijlagen",
     "Start call" : "Begin gesprek",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen.",
