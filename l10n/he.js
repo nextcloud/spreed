@@ -454,6 +454,8 @@ OC.L10N.register(
     "Chat" : "צ׳אט",
     "Display name: " : "שם תצוגה:",
     "Edit" : "עריכה",
+    "Keyboard shortcuts" : "קיצורי מקלדת",
+    "Search" : "חיפוש",
     "Start call" : "התחלת שיחה",
     "Go to file" : "מעבר לקובץ",
     "Rename conversation" : "שינוי שם הדיון",

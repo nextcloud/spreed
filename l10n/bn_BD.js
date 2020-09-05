@@ -35,6 +35,8 @@ OC.L10N.register(
     "guest" : "অতিথি",
     "Add users or groups" : "Add users or groups",
     "Edit" : "সম্পাদনা",
+    "Keyboard shortcuts" : "কী-বোর্ড শর্টকাট",
+    "Search" : "Search",
     "Share link" : "লিংক ভাগাভাগি করেন",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
