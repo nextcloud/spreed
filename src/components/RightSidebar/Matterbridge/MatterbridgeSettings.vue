@@ -385,7 +385,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Xmpp/Jabber server URL'),
+							placeholder: t('spreed', 'XMPP/Jabber server URL'),
 							icon: 'icon-link',
 						},
 						muc: {
