@@ -81,7 +81,7 @@ export default {
 }
 </script>
 
-:<style lang="scss" scoped>
+<style lang="scss" scoped>
 .mention {
 	display: contents;
 	white-space: nowrap;
