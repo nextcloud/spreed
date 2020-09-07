@@ -33,11 +33,11 @@
 		<template v-if="matterbridgeVersion">
 			<p class="settings-hint path-hint">
 				{{ t('spreed', 'You can manually define a custom Matterbridge binary path with occ.') }}
-				<a href="https://github.com/nextcloud/spreed/wiki/Matterbridge-integration"
+				<a href="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/"
 					class="external"
 					target="_blank"
 					rel="noopener">
-					({{ t('spreed', 'Talk wiki') }})
+					({{ t('spreed', 'Matterbridge integration documentation') }})
 				</a>
 			</p>
 
