@@ -31,16 +31,6 @@
 		</h2>
 
 		<template v-if="matterbridgeVersion">
-			<p class="settings-hint path-hint">
-				{{ t('spreed', 'You can manually define a custom Matterbridge binary path with occ.') }}
-				<a href="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/"
-					class="external"
-					target="_blank"
-					rel="noopener">
-					({{ t('spreed', 'Matterbridge integration documentation') }})
-				</a>
-			</p>
-
 			<p class="settings-hint">
 				{{ installedVersion }}
 			</p>
@@ -58,6 +48,8 @@
 
 		<template v-else>
 			<p class="settings-hint" v-html="description" />
+
+			<p class="settings-hint" v-html="customBinaryText" />
 
 			<p v-if="errorText" class="settings-hint">
 				{{ errorText }}
@@ -120,6 +112,11 @@ export default {
 			} else {
 				return ''
 			}
+		},
+		customBinaryText() {
+			return t('spreed', 'You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information.')
+				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/">')
+				.replace(/{linkend}/g, ' ↗</a>')
 		},
 	},
 
@@ -209,7 +206,4 @@ p {
 	}
 }
 
-.path-hint {
-	margin-bottom: 20px;
-}
 </style>
