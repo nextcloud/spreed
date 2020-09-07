@@ -93,7 +93,7 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 */
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
 		try {
-			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $enabled, $parts);
+			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $this->userId, $enabled, $parts);
 		} catch (ImpossibleToKillException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_ACCEPTABLE);
 		}

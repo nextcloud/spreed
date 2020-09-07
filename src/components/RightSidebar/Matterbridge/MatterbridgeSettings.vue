@@ -505,7 +505,6 @@ export default {
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
-			this.onSave()
 		},
 		onEnabled(checked) {
 			this.enabled = checked

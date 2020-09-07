@@ -289,6 +289,21 @@ class SystemMessage {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} elseif ($message === 'matterbridge_config_added') {
+			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats.');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You set up Matterbridge to synchronize this conversation with other chats.');
+			}
+		} elseif ($message === 'matterbridge_config_edited') {
+			$parsedMessage = $this->l->t('{actor} updated the Matterbridge configuration.');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You updated the Matterbridge configuration.');
+			}
+		} elseif ($message === 'matterbridge_config_removed') {
+			$parsedMessage = $this->l->t('{actor} removed the Matterbridge configuration.');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed the Matterbridge configuration.');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}

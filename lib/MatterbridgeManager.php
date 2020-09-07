@@ -38,10 +38,12 @@ use OCP\Security\ISecureRandom;
 use OCP\IAvatarManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
+use OCP\AppFramework\Utility\ITimeFactory;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Chat\ChatManager;
 
 class MatterbridgeManager {
 	/** @var IDBConnection */
@@ -58,6 +60,10 @@ class MatterbridgeManager {
 	private $tokenProvider;
 	/** @var ISecureRandom */
 	private $random;
+	/** @var ChatManager */
+	private $chatManager;
+	/** @var ITimeFactory */
+	private $timeFactory;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
@@ -65,11 +71,13 @@ class MatterbridgeManager {
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								Manager $manager,
+								ChatManager $chatManager,
 								IAuthTokenProvider $tokenProvider,
 								ISecureRandom $random,
 								IAvatarManager $avatarManager,
 								LoggerInterface $logger,
-								IL10N $l) {
+								IL10N $l,
+								ITimeFactory $timeFactory) {
 		$this->avatarManager = $avatarManager;
 		$this->db = $db;
 		$this->config = $config;
@@ -77,10 +85,12 @@ class MatterbridgeManager {
 		$this->appData = $appData;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->chatManager = $chatManager;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->logger = $logger;
 		$this->l = $l;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -131,7 +141,7 @@ class MatterbridgeManager {
 	 * @param array $parts parts of the bridge (what it connects to)
 	 * @return array bridge state
 	 */
-	public function editBridgeOfRoom(Room $room, bool $enabled, array $parts = []): array {
+	public function editBridgeOfRoom(Room $room, string $userId, bool $enabled, array $parts = []): array {
 		$currentBridge = $this->getBridgeOfRoom($room);
 		// kill matterbridge if we edit a running bridge config file so that it will be launched again
 		// matterbridge dynamic config reload does not fully work
@@ -143,6 +153,8 @@ class MatterbridgeManager {
 			'pid' => isset($currentBridge['pid']) ? $currentBridge['pid'] : 0,
 			'parts' => $parts,
 		];
+
+		$this->notify($room, $userId, $currentBridge, $newBridge);
 
 		// edit/update the config file
 		$this->editBridgeConfig($room, $newBridge);
@@ -546,6 +558,90 @@ class MatterbridgeManager {
 		}
 
 		return $pid;
+	}
+
+	/**
+	 * Send system message to the room if necessary
+	 *
+	 * @param Room $room the room
+	 * @param string $userId the editing user
+	 * @param array $currentBridge previous bridge values
+	 * @param array $newBridge future bridge values
+	 */
+	private function notify(Room $room, string $userId, array $currentBridge, array $newBridge): void {
+		$currentParts = $currentBridge['parts'];
+		$newParts = $newBridge['parts'];
+		if (count($currentParts) === 0 && count($newParts) > 0) {
+			$this->sendSystemMessage($room, $userId, 'matterbridge_config_added');
+		} elseif (count($currentParts) > 0 && count($newParts) === 0) {
+			$this->sendSystemMessage($room, $userId, 'matterbridge_config_removed');
+		} elseif (count($currentParts) !== count($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
+			$this->sendSystemMessage($room, $userId, 'matterbridge_config_edited');
+		}
+	}
+
+	/**
+	 * Check if 2 bridge configurations are identical
+	 *
+	 * @param array $bridge1
+	 * @param array $bridge2
+	 * @return bool True if they are strictly equivalent
+	 */
+	private function compareBridges(array $bridge1, array $bridge2): bool {
+		// try to find an equivalent for each bridge part of one side in the other
+		foreach ($bridge1['parts'] as $part1) {
+			$found = false;
+			foreach ($bridge2['parts'] as $part2) {
+				if ($this->compareBridgeParts($part1, $part2)) {
+					$found = true;
+					break;
+				}
+			}
+			if (!$found) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check if 2 bridge parts are identical
+	 *
+	 * @param array $part1
+	 * @param array $part2
+	 * @return bool True if they are strictly equivalent
+	 */
+	private function compareBridgeParts(array $part1, array $part2): bool {
+		$keys1 = array_keys($part1);
+		$keys2 = array_keys($part2);
+		if (count($keys1) !== count($keys2)) {
+			return false;
+		}
+
+		foreach ($part1 as $key => $val) {
+			if (!isset($part2[$key]) || $val !== $part2[$key]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * actually send the system message
+	 * @param Room $room the room
+	 * @param string $userId the involved user
+	 * @param string $message the message ID
+	 */
+	private function sendSystemMessage(Room $room, string $userId, string $message): void {
+		$this->chatManager->addSystemMessage(
+			$room,
+			'users',
+			$userId,
+			json_encode(['message' => $message, 'parameters' => []]),
+			$this->timeFactory->getDateTime(),
+			false
+		);
 	}
 
 	/**
