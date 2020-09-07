@@ -133,6 +133,11 @@ class MatterbridgeManager {
 	 */
 	public function editBridgeOfRoom(Room $room, bool $enabled, array $parts = []): array {
 		$currentBridge = $this->getBridgeOfRoom($room);
+		// kill matterbridge if we edit a running bridge config file so that it will be launched again
+		// matterbridge dynamic config reload does not fully work
+		if ($currentBridge['enabled'] && $enabled && $currentBridge['pid'] && $currentBridge['pid'] !== 0) {
+			$this->killPid($currentBridge['pid']);
+		}
 		$newBridge = [
 			'enabled' => $enabled,
 			'pid' => isset($currentBridge['pid']) ? $currentBridge['pid'] : 0,
