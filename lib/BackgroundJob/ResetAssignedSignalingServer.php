@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OC\BackgroundJob\TimedJob;
+use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
 use OCP\ICache;
 use OCP\ICacheFactory;
