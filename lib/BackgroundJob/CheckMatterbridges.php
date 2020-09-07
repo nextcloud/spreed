@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2020 Julien Veyssier <eneiluj@posteo.net>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,26 +24,34 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCP\BackgroundJob\TimedJob;
-use OCA\Talk\Signaling\Messages;
+use OCA\Talk\MatterbridgeManager;
+use Psr\Log\LoggerInterface;
 
 /**
- * Class ExpireSignalingMessage
+ * Class CheckMatterbridges
  *
  * @package OCA\Talk\BackgroundJob
  */
-class ExpireSignalingMessage extends TimedJob {
+class CheckMatterbridges extends TimedJob {
 
-	/** @var Messages */
-	protected $messages;
+	/** @var MatterbridgeManager */
+	protected $bridgeManager;
 
-	public function __construct(Messages $messages) {
-		// Every 5 minutes
-		$this->setInterval(60 * 5);
+	/** @var LoggerInterface */
+	protected $logger;
 
-		$this->messages = $messages;
+	public function __construct(MatterbridgeManager $bridgeManager,
+								LoggerInterface $logger) {
+		// Every 15 minutes
+		$this->setInterval(60 * 15);
+
+		$this->bridgeManager = $bridgeManager;
+		$this->logger = $logger;
 	}
 
 	protected function run($argument): void {
-		$this->messages->expireOlderThan(5 * 60);
+		$this->bridgeManager->checkAllBridges();
+		$this->bridgeManager->killZombieBridges();
+		$this->logger->info('Checked if Matterbridge instances are running correctly.');
 	}
 }
