@@ -124,12 +124,12 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Nextcloud URL'),
+							placeholder: t('spreed', '{nextcloud} URL', { nextcloud: 'Nextcloud' }),
 							icon: 'icon-link',
 						},
 						login: {
 							type: 'text',
-							placeholder: t('spreed', 'Nextcloud user'),
+							placeholder: t('spreed', '{nextcloud} user', { nextcloud: 'Nextcloud' }),
 							icon: 'icon-user',
 						},
 						password: {
@@ -139,7 +139,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Talk conversation'),
+							placeholder: t('spreed', '{talk} conversation', { talk: 'Talk' }),
 							icon: 'icon-group',
 						},
 					},
@@ -150,7 +150,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Matrix server URL'),
+							placeholder: t('spreed', '{matrix} server URL', { matrix: 'Matrix' }),
 							icon: 'icon-link',
 						},
 						login: {
@@ -165,7 +165,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Matrix channel'),
+							placeholder: t('spreed', '{matrix} channel', { matrix: 'Matrix' }),
 							icon: 'icon-group',
 						},
 					},
@@ -176,12 +176,12 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Mattermost server URL'),
+							placeholder: t('spreed', '{mattermost} server URL', { mattermost: 'Mattermost' }),
 							icon: 'icon-link',
 						},
 						login: {
 							type: 'text',
-							placeholder: t('spreed', 'Mattermost user'),
+							placeholder: t('spreed', '{mattermost} user', { mattermost: 'Mattermost' }),
 							icon: 'icon-user',
 						},
 						password: {
@@ -207,7 +207,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Rocket.Chat server URL'),
+							placeholder: t('spreed', '{rocketchat} server URL', { rocketchat: 'Rocket.Chat' }),
 							icon: 'icon-link',
 						},
 						login: {
@@ -222,7 +222,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Rocket.Chat channel'),
+							placeholder: t('spreed', '{rocketchat} channel', { rocketchat: 'Rocket.Chat' }),
 							icon: 'icon-group',
 						},
 					},
@@ -233,7 +233,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Zulip server URL'),
+							placeholder: t('spreed', '{zulip} server URL', { zulip: 'Zulip' }),
 							icon: 'icon-link',
 						},
 						login: {
@@ -248,7 +248,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Zulip channel'),
+							placeholder: t('spreed', '{zulip} channel', { zulip: 'Zulip' }),
 							icon: 'icon-group',
 						},
 					},
@@ -264,7 +264,7 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Slack channel'),
+							placeholder: t('spreed', '{slack} channel', { slack: 'Slack' }),
 							icon: 'icon-group',
 						},
 					},
@@ -333,7 +333,7 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'IRC server URL (e.g. chat.freenode.net:6667)'),
+							placeholder: t('spreed', '{irc} server URL (e.g. {exampleIrcUrl})', { irc: 'IRC', exampleIrcUrl: 'chat.freenode.net:6667' }),
 							icon: 'icon-link',
 						},
 						nick: {
@@ -348,17 +348,17 @@ export default {
 						},
 						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'IRC channel'),
+							placeholder: t('spreed', '{irc} channel', { irc: 'IRC' }),
 							icon: 'icon-group',
 						},
 						nickservnick: {
 							type: 'text',
-							placeholder: t('spreed', 'NickServ nickname'),
+							placeholder: t('spreed', '{nickserv} nickname', { nickserv: 'NickServ' }),
 							icon: 'icon-user',
 						},
 						nickservpassword: {
 							type: 'password',
-							placeholder: t('spreed', 'NickServ password'),
+							placeholder: t('spreed', '{nickserv} password', { nickserv: 'NickServ' }),
 							icon: 'icon-category-auth',
 						},
 						usetls: {
@@ -407,17 +407,17 @@ export default {
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'XMPP/Jabber server URL'),
+							placeholder: t('spreed', '{xmppJabber} server URL', { xmppJabber: 'XMPP/Jabber' }),
 							icon: 'icon-link',
 						},
 						muc: {
 							type: 'url',
-							placeholder: t('spreed', 'MUC server URL'),
+							placeholder: t('spreed', '{muc} server URL', { muc: 'MUC' }),
 							icon: 'icon-link',
 						},
 						jid: {
 							type: 'text',
-							placeholder: t('spreed', 'Jabber ID'),
+							placeholder: t('spreed', '{jabber} ID', { jabber: 'Jabber' }),
 							icon: 'icon-user',
 						},
 						nick: {
