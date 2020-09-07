@@ -267,11 +267,11 @@ LocalMedia.prototype.unmute = function() {
 
 // Video controls
 LocalMedia.prototype.pauseVideo = function() {
-	this._videoEnabled(false)
+	this._setVideoEnabled(false)
 	this.emit('videoOff')
 }
 LocalMedia.prototype.resumeVideo = function() {
-	this._videoEnabled(true)
+	this._setVideoEnabled(true)
 	this.emit('videoOn')
 }
 
@@ -295,7 +295,9 @@ LocalMedia.prototype._setAudioEnabled = function(bool) {
 		})
 	})
 }
-LocalMedia.prototype._videoEnabled = function(bool) {
+LocalMedia.prototype._setVideoEnabled = function(bool) {
+	this._videoEnabled = bool
+
 	this.localStreams.forEach(function(stream) {
 		stream.getVideoTracks().forEach(function(track) {
 			track.enabled = !!bool
