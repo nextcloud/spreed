@@ -31,6 +31,13 @@
 		</h2>
 
 		<template v-if="matterbridgeVersion">
+			<p class="settings-hint path-hint">
+				{{ t('spreed', 'You can manually define a custom Matterbridge binary path with occ.') }}
+				<a href="https://github.com/nextcloud/spreed/wiki/Matterbridge-integration" target="_blank" rel="noopener">
+					({{ t('spreed', 'Talk wiki') }})
+				</a>
+			</p>
+
 			<p class="settings-hint">
 				{{ installedVersion }}
 			</p>
@@ -199,4 +206,12 @@ p {
 	}
 }
 
+.path-hint {
+	margin-bottom: 20px;
+
+	a:hover,
+	a:focus {
+		border-bottom: 2px solid var(--color-text-maxcontrast);
+	}
+}
 </style>
