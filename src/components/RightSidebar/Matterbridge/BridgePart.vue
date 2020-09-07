@@ -34,17 +34,29 @@
 				@click="$emit('deletePart')" />
 		</h3>
 		<div v-for="(field, key) in type.fields" :key="key">
-			<label :for="key + '-' + num" class="hidden-visually">
-				{{ field.placeholder }}
-			</label>
-			<input
-				:id="key + '-' + num"
-				v-model="part[key]"
-				:type="field.type"
-				:class="classesOf(key)"
-				:placeholder="field.placeholder"
-				:readonly="readonly"
-				@focus="readonly = false">
+			<div v-if="field.type === 'checkbox'" class="checkbox-container">
+				<input
+					:id="key + '-' + num"
+					v-model="part[key]"
+					:type="field.type"
+					:class="classesOf(key)">
+				<label :for="key + '-' + num">
+					{{ field.labelText }}
+				</label>
+			</div>
+			<div v-else>
+				<label :for="key + '-' + num" class="hidden-visually">
+					{{ field.placeholder }}
+				</label>
+				<input
+					:id="key + '-' + num"
+					v-model="part[key]"
+					:type="field.type"
+					:class="classesOf(key)"
+					:placeholder="field.placeholder"
+					:readonly="readonly"
+					@focus="readonly = false">
+			</div>
 		</div>
 	</div>
 </template>
@@ -151,5 +163,26 @@ input {
 	padding-left: 40px;
 	width: 100%;
 	text-overflow: ellipsis;
+	&[type=checkbox] {
+		width: unset;
+		margin-left: 15px;
+		margin-right: 10px;
+	}
+}
+
+.checkbox-container {
+	display: flex;
+	height: 40px;
+
+	> label {
+		flex-grow: 1;
+		line-height: 40px;
+	}
+
+	&:hover {
+		opacity: 1;
+		background-color: var(--color-background-hover);
+		border-radius: var(--border-radius-large);
+	}
 }
 </style>

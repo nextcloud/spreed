@@ -119,7 +119,7 @@ export default {
 			stateLoop: null,
 			types: {
 				nctalk: {
-					name: t('spreed', 'Nextcloud Talk'),
+					name: 'Nextcloud Talk',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Section-Nextcloud-Talk-%28basic%29',
 					fields: {
 						server: {
@@ -145,7 +145,7 @@ export default {
 					},
 				},
 				matrix: {
-					name: t('spreed', 'Matrix'),
+					name: 'Matrix',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#matrix',
 					fields: {
 						server: {
@@ -171,7 +171,7 @@ export default {
 					},
 				},
 				mattermost: {
-					name: t('spreed', 'Mattermost'),
+					name: 'Mattermost',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#mattermost',
 					fields: {
 						server: {
@@ -202,7 +202,7 @@ export default {
 					},
 				},
 				rocketchat: {
-					name: t('spreed', 'Rocket.Chat'),
+					name: 'Rocket.Chat',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#rocketchat',
 					fields: {
 						server: {
@@ -228,7 +228,7 @@ export default {
 					},
 				},
 				zulip: {
-					name: t('spreed', 'Zulip'),
+					name: 'Zulip',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#zulip',
 					fields: {
 						server: {
@@ -254,7 +254,7 @@ export default {
 					},
 				},
 				slack: {
-					name: t('spreed', 'Slack'),
+					name: 'Slack',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Slack-bot-setup',
 					fields: {
 						token: {
@@ -270,7 +270,7 @@ export default {
 					},
 				},
 				discord: {
-					name: t('spreed', 'Discord'),
+					name: 'Discord',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Discord-bot-setup',
 					fields: {
 						token: {
@@ -291,7 +291,7 @@ export default {
 					},
 				},
 				telegram: {
-					name: t('spreed', 'Telegram'),
+					name: 'Telegram',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#telegram',
 					fields: {
 						token: {
@@ -307,7 +307,7 @@ export default {
 					},
 				},
 				steam: {
-					name: t('spreed', 'Steam'),
+					name: 'Steam',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#steam',
 					fields: {
 						login: {
@@ -328,12 +328,12 @@ export default {
 					},
 				},
 				irc: {
-					name: t('spreed', 'IRC'),
+					name: 'IRC',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#irc',
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'IRC server URL'),
+							placeholder: t('spreed', 'IRC server URL (e.g. chat.freenode.net:6667)'),
 							icon: 'icon-link',
 						},
 						nick: {
@@ -343,7 +343,7 @@ export default {
 						},
 						password: {
 							type: 'password',
-							placeholder: t('spreed', 'Password'),
+							placeholder: t('spreed', 'Connection password'),
 							icon: 'icon-category-auth',
 						},
 						channel: {
@@ -351,10 +351,32 @@ export default {
 							placeholder: t('spreed', 'IRC channel'),
 							icon: 'icon-group',
 						},
+						nickservnick: {
+							type: 'text',
+							placeholder: t('spreed', 'NickServ nickname'),
+							icon: 'icon-user',
+						},
+						nickservpassword: {
+							type: 'password',
+							placeholder: t('spreed', 'NickServ password'),
+							icon: 'icon-category-auth',
+						},
+						usetls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Use TLS'),
+						},
+						usesasl: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Use SASL'),
+						},
+						skiptls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Skip TLS verification'),
+						},
 					},
 				},
 				msteams: {
-					name: t('spreed', 'Microsoft Teams'),
+					name: 'Microsoft Teams',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/MS-Teams-setup',
 					fields: {
 						tenantid: {
@@ -380,12 +402,12 @@ export default {
 					},
 				},
 				xmpp: {
-					name: t('spreed', 'Xmpp/Jabber'),
+					name: 'XMPP/Jabber',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#xmpp',
 					fields: {
 						server: {
 							type: 'url',
-							placeholder: t('spreed', 'Xmpp/Jabber server URL'),
+							placeholder: t('spreed', 'XMPP/Jabber server URL'),
 							icon: 'icon-link',
 						},
 						muc: {
@@ -523,7 +545,6 @@ export default {
 				const result = await getBridgeProcessState(token)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
-				console.debug(result.data.ocs.data.log)
 			} catch (exception) {
 				console.debug(exception)
 			}
