@@ -535,7 +535,7 @@ class MatterbridgeManager {
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$cmd = sprintf('%s -conf %s', $binaryPath, $configPath);
-		$pid = exec(sprintf('%s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
+		$pid = exec(sprintf('nice -n19 %s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
 		$pid = intval($pid);
 		if ($ret !== 0) {
 			$pid = 0;
