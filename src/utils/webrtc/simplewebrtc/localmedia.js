@@ -39,6 +39,9 @@ function LocalMedia(opts) {
 	this._log = this.logger.log.bind(this.logger, 'LocalMedia:')
 	this._logerror = this.logger.error.bind(this.logger, 'LocalMedia:')
 
+	this._audioEnabled = true
+	this._videoEnabled = true
+
 	this.localStreams = []
 	this._audioMonitorStreams = []
 	this.localScreens = []
@@ -120,6 +123,11 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._audioMonitorStreams.push(audioMonitorStream)
 
 		stream.getTracks().forEach(function(track) {
+			if ((track.kind === 'audio' && !self._audioEnabled)
+				|| (track.kind === 'video' && !self._videoEnabled)) {
+				track.enabled = false
+			}
+
 			track.addEventListener('ended', function() {
 				if (isAllTracksEnded(stream)) {
 					self._removeStream(stream)
