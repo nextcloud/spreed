@@ -49,6 +49,8 @@
 		<template v-else>
 			<p class="settings-hint" v-html="description" />
 
+			<p class="settings-hint" v-html="customBinaryText" />
+
 			<p v-if="errorText" class="settings-hint">
 				{{ errorText }}
 			</p>
@@ -110,6 +112,11 @@ export default {
 			} else {
 				return ''
 			}
+		},
+		customBinaryText() {
+			return t('spreed', 'You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information.')
+				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/">')
+				.replace(/{linkend}/g, ' ↗</a>')
 		},
 	},
 

@@ -34,3 +34,4 @@ nav:
   - Commands: 'commands.md'
   - 'PHP events': 'events.md'
   - 'Configuring coTURN': 'TURN.md'
+  - 'Matterbridge integration': 'matterbridge.md'
