@@ -93,7 +93,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			$table->addColumn('session_id', Type::STRING, [
 				'notnull' => true,
 				'length' => 255,
-				'default' => '',
+				'default' => '0',
 			]);
 			$table->addColumn('participant_type', Type::SMALLINT, [
 				'notnull' => true,
