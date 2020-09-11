@@ -33,6 +33,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -57,6 +58,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var TalkSession */
 	private $session;
+
+	/** @var IAppManager */
+	private $appManager;
 
 	/** @var ChatManager */
 	private $chatManager;
@@ -92,6 +96,7 @@ class ChatController extends AEnvironmentAwareController {
 								IRequest $request,
 								IUserManager $userManager,
 								TalkSession $session,
+								IAppManager $appManager,
 								ChatManager $chatManager,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
@@ -106,6 +111,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->session = $session;
+		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
@@ -428,7 +434,9 @@ class ChatController extends AEnvironmentAwareController {
 		]);
 
 		$statuses = [];
-		if ($this->userId !== null && $includeStatus) {
+		if ($this->userId !== null
+			&& $includeStatus
+			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(static function (array $userResult) {
 				return $userResult['value']['shareWith'];
 			}, $results['users']));

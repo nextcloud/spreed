@@ -32,6 +32,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -55,6 +56,8 @@ class ChatControllerTest extends TestCase {
 	protected $userManager;
 	/** @var TalkSession|MockObject */
 	private $session;
+	/** @var IAppManager|MockObject */
+	private $appManager;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
 	/** @var GuestManager|MockObject */
@@ -89,6 +92,7 @@ class ChatControllerTest extends TestCase {
 		$this->userId = 'testUser';
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->session = $this->createMock(TalkSession::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -118,6 +122,7 @@ class ChatControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->userManager,
 			$this->session,
+			$this->appManager,
 			$this->chatManager,
 			$this->guestManager,
 			$this->messageParser,
