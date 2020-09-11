@@ -25,17 +25,15 @@
 		:items="roomOptions"
 		:show-more-url="''"
 		:loading="loading"
-		@hide="() => {}"
-		@markDone="() => {}">
+		:show-items-and-empty-content="!hasImportantConversations"
+		:half-empty-content-message="t('spreed', 'No unread mentions')">
 		<template v-slot:default="{ item }">
-			<EmptyContent v-if="item.empty"
-				class="half-screen"
-				icon="icon-checkmark">
-				<template #desc>
-					{{ t('spreed', 'No unread mentions') }}
-				</template>
-			</EmptyContent>
-			<DashboardWidgetItem v-else :item="getWidgetItem(item)">
+			<DashboardWidgetItem
+				:target-url="getItemTargetUrl(item)"
+				:main-text="getMainText(item)"
+				:sub-text="getSubText(item)"
+				:item="item"
+				v-on="handlers">
 				<template v-slot:avatar>
 					<ConversationIcon
 						:item="item"
@@ -79,12 +77,15 @@ const propertySort = (properties) => (a, b) => properties.map(obj => {
 export default {
 	name: 'Dashboard',
 	components: { DashboardWidget, DashboardWidgetItem, ConversationIcon, EmptyContent },
+
 	data() {
 		return {
 			roomOptions: [],
+			hasImportantConversations: false,
 			loading: true,
 		}
 	},
+
 	computed: {
 		callLink() {
 			return (conversation) => {
@@ -116,6 +117,18 @@ export default {
 			}
 		},
 
+		getItemTargetUrl() {
+			return (conversation) => {
+				return generateUrl(`call/${conversation.token}`)
+			}
+		},
+
+		getMainText() {
+			return (conversation) => {
+				return conversation.displayName
+			}
+		},
+
 		getSubText() {
 			return (conversation) => {
 				if (conversation.hasCall) {
@@ -129,23 +142,14 @@ export default {
 				return this.simpleLastChatMessage(conversation.lastMessage)
 			}
 		},
-
-		getWidgetItem() {
-			return (conversation) => {
-				return {
-					targetUrl: generateUrl(`call/${conversation.token}`),
-					mainText: conversation.displayName,
-					subText: this.getSubText(conversation),
-					conversation,
-				}
-			}
-		},
 	},
+
 	beforeMount() {
 		this.fetchRooms()
 		// FIXME: reduce interval if user not active
 		setInterval(() => this.fetchRooms(), ROOM_POLLING_INTERVAL * 1000)
 	},
+
 	methods: {
 		fetchRooms() {
 			axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room').then((response) => {
@@ -159,17 +163,14 @@ export default {
 					this.roomOptions = importantRooms.slice(0, 7)
 					this.hasImportantConversations = true
 				} else {
-					const items = rooms.sort(propertySort(['-lastActivity'])).slice(0, 4)
-					items.unshift({
-						empty: true,
-					})
-					this.roomOptions = items
+					this.roomOptions = rooms.sort(propertySort(['-lastActivity'])).slice(0, 5)
 					this.hasImportantConversations = false
 				}
 
 				this.loading = false
 			})
 		},
+
 		clickStartNew() {
 			window.location = generateUrl('/apps/spreed')
 		},
