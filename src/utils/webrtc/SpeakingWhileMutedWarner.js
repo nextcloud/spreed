@@ -46,11 +46,18 @@
 	*        "setSpeakingWhileMutedNotification" method
 	*/
 export default function SpeakingWhileMutedWarner(model, view) {
-	model.on('change:speakingWhileMuted', this._handleSpeakingWhileMutedChange.bind(this))
-
+	this._model = model
 	this._view = view
+
+	this._handleSpeakingWhileMutedChangeBound = this._handleSpeakingWhileMutedChange.bind(this)
+
+	this._model.on('change:speakingWhileMuted', this._handleSpeakingWhileMutedChangeBound)
 }
 SpeakingWhileMutedWarner.prototype = {
+
+	destroy: function() {
+		this._model.off('change:speakingWhileMuted', this._handleSpeakingWhileMutedChangeBound)
+	},
 
 	_handleSpeakingWhileMutedChange: function(model, speakingWhileMuted) {
 		if (speakingWhileMuted) {
