@@ -213,14 +213,8 @@ export default {
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 
-		subscribe('networkOffline', () => {
-			console.debug('Canceling message request as we are offline')
-			this.cancelLookForNewMessages()
-		})
-		subscribe('networkOnline', () => {
-			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages()
-		})
+		subscribe('networkOffline', this.handleNetworkOffline)
+		subscribe('networkOnline', this.handleNetworkOnline)
 	},
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
@@ -574,6 +568,16 @@ export default {
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
+		},
+
+		handleNetworkOffline() {
+			console.debug('Canceling message request as we are offline')
+			this.cancelLookForNewMessages()
+		},
+
+		handleNetworkOnline() {
+			console.debug('Restarting polling of new chat messages')
+			this.getNewMessages()
 		},
 	},
 }
