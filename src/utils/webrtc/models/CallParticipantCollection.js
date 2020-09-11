@@ -91,6 +91,8 @@ CallParticipantCollection.prototype = {
 			this.callParticipantModels.splice(index, 1)
 
 			this._trigger('remove', [callParticipantModel])
+
+			callParticipantModel.destroy()
 		}
 	},
 
