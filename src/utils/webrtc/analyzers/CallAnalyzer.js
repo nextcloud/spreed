@@ -125,6 +125,8 @@ CallAnalyzer.prototype = {
 	destroy: function() {
 		if (this._localParticipantAnalyzer) {
 			this._localParticipantAnalyzer.off('change:senderConnectionQualityAudio', this._handleSenderConnectionQualityAudioChangeBound)
+			this._localParticipantAnalyzer.off('change:senderConnectionQualityVideo', this._handleSenderConnectionQualityVideoChangeBound)
+			this._localParticipantAnalyzer.off('change:senderConnectionQualityScreen', this._handleSenderConnectionQualityScreenChangeBound)
 
 			this._localParticipantAnalyzer.destroy()
 		}
