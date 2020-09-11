@@ -25,6 +25,7 @@
 		class="messages__avatar__icon"
 		:user="authorId"
 		:show-user-status="false"
+		menu-position="left"
 		:display-name="displayName" />
 	<div v-else-if="isDeletedUser"
 		class="avatar-32px guest">
