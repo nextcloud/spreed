@@ -60,7 +60,7 @@ import LoadingMessage from './LoadingMessage'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
-import { subscribe } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
@@ -219,6 +219,9 @@ export default {
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		this.cancelLookForNewMessages()
+
+		unsubscribe('networkOffline', this.handleNetworkOffline)
+		unsubscribe('networkOnline', this.handleNetworkOnline)
 	},
 
 	methods: {
