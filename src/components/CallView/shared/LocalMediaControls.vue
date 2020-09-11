@@ -339,6 +339,10 @@ export default {
 		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
 	},
 
+	beforeDestroy() {
+		this.speakingWhileMutedWarner.destroy()
+	},
+
 	methods: {
 
 		toggleAudio() {
