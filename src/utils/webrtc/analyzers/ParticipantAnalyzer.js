@@ -121,10 +121,12 @@ ParticipantAnalyzer.prototype = {
 	destroy: function() {
 		if (this._localCallParticipantModel) {
 			this._localCallParticipantModel.off('change:peer', this._handlePeerChangeBound)
+			this._localCallParticipantModel.off('change:screenPeer', this._handleScreenPeerChangeBound)
 		}
 
 		if (this._callParticipantModel) {
 			this._callParticipantModel.off('change:peer', this._handlePeerChangeBound)
+			this._callParticipantModel.off('change:screenPeer', this._handleScreenPeerChangeBound)
 		}
 
 		this._stopListeningToAudioVideoChanges()
