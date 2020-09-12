@@ -97,6 +97,7 @@ OC.L10N.register(
     "Pending" : "Venter",
     "Error" : "Feil",
     "Blocked" : "Blokkert",
+    "Active" : "Aktiv",
     "Expired" : "Utløpt",
     "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Saved" : "Lagret",
