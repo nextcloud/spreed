@@ -219,6 +219,16 @@ const actions = {
 		commit('updateParticipant', { token, index, updatedData })
 	},
 
+	updateUser({ commit, getters }, { token, participantIdentifier, updatedData }) {
+		const index = getters.getParticipantIndex(token, participantIdentifier)
+		if (index === -1) {
+			console.error('Participant not found', participantIdentifier)
+			return
+		}
+
+		commit('updateParticipant', { token, index, updatedData })
+	},
+
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
 		const index = getters.getParticipantIndex(token, participantIdentifier)
 		if (index === -1) {

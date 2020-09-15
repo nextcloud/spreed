@@ -30,6 +30,7 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import { PARTICIPANT } from '../../../../constants'
 import UserStatus from '../../../../mixins/userStatus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {
 	name: 'CurrentParticipants',
@@ -75,7 +76,28 @@ export default {
 		},
 	},
 
+	mounted() {
+		subscribe('user_status:status.updated', this.userStatusUpdated)
+	},
+
+	beforeDestroyed() {
+		unsubscribe('user_status:status.updated', this.userStatusUpdated)
+	},
+
 	methods: {
+		userStatusUpdated(state) {
+			this.$store.dispatch('updateUser', {
+				token: this.token,
+				participantIdentifier: {
+					userId: state.userId,
+				},
+				updatedData: {
+					status: state.status,
+					statusIcon: state.icon,
+					statusMessage: state.message,
+				},
+			})
+		},
 
 		/**
 		 * Sort two participants by:
