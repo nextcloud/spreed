@@ -100,16 +100,27 @@ class ConversationSearch implements IProvider {
 				continue;
 			}
 
-			if (stripos($room->getName(), $query->getTerm()) === false &&
-				stripos($room->getDisplayName($user->getUID()), $query->getTerm()) === false) {
-				// Neither name nor displayname (one-to-one) match, skip
-				continue;
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$otherUserId = str_replace(
+					json_encode($user->getUID()),
+					'',
+					$room->getName()
+				);
+				if (stripos($otherUserId, $query->getTerm()) === false
+					&& stripos($room->getDisplayName($user->getUID()), $query->getTerm()) === false) {
+					// Neither name nor displayname (one-to-one) match, skip
+					continue;
+				}
+			} else {
+				if (stripos($room->getName(), $query->getTerm()) === false) {
+					continue;
+				}
 			}
 
 			$icon = '';
 			$iconClass = '';
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$users = $room->getParticipantUserIds();
+				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
 					if ($participantId !== $user->getUID()) {
 						$icon = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [

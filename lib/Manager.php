@@ -552,32 +552,15 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getOne2OneRoom(string $participant1, string $participant2): Room {
+		$users = [$participant1, $participant2];
+		sort($users);
+		$name = json_encode($users);
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_rooms', 'r')
-			->leftJoin('r', 'talk_participants', 'p1', $query->expr()->andX(
-				$query->expr()->eq('p1.user_id', $query->createNamedParameter($participant1)),
-				$query->expr()->eq('p1.room_id', 'r.id')
-			))
-			->leftJoin('r', 'talk_participants', 'p2', $query->expr()->andX(
-				$query->expr()->eq('p2.user_id', $query->createNamedParameter($participant2)),
-				$query->expr()->eq('p2.room_id', 'r.id')
-			))
-			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->orX(
-				$query->expr()->andX(
-					$query->expr()->isNotNull('p1.user_id'),
-					$query->expr()->isNotNull('p2.user_id')
-				),
-				$query->expr()->andX(
-					$query->expr()->eq('r.name', $query->createNamedParameter($participant1)),
-					$query->expr()->isNotNull('p2.user_id')
-				),
-				$query->expr()->andX(
-					$query->expr()->isNotNull('p1.user_id'),
-					$query->expr()->eq('r.name', $query->createNamedParameter($participant2))
-				)
-			));
+			->from('talk_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('name', $query->createNamedParameter($name)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -743,7 +726,7 @@ class Manager {
 				return $this->l->t('Private conversation');
 			}
 
-			$users = $room->getParticipantUserIds();
+			$users = json_decode($room->getName(), true);
 			$otherParticipant = '';
 			$userIsParticipant = false;
 

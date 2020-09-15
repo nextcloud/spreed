@@ -238,6 +238,22 @@ class Room {
 	}
 
 	public function getName(): string {
+		if ($this->type === self::ONE_TO_ONE_CALL) {
+			if ($this->name === '') {
+				// Fill the room name with the participants for 1-to-1 conversations
+				$users = $this->getParticipantUserIds();
+				sort($users);
+				$this->setName(json_encode($users), '');
+			} elseif (strpos($this->name, '["') !== 0) {
+				// Not the json array, but the old fallback when someone left
+				$users = $this->getParticipantUserIds();
+				if (count($users) !== 2) {
+					$users[] = $this->name;
+				}
+				sort($users);
+				$this->setName(json_encode($users), '');
+			}
+		}
 		return $this->name;
 	}
 
@@ -391,10 +407,11 @@ class Room {
 
 	/**
 	 * @param string $newName Currently it is only allowed to rename: self::GROUP_CALL, self::PUBLIC_CALL
+	 * @param string|null $oldName
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setName(string $newName): bool {
-		$oldName = $this->getName();
+	public function setName(string $newName, ?string $oldName = null): bool {
+		$oldName = $oldName !== null ? $oldName : $this->getName();
 		if ($newName === $oldName) {
 			return false;
 		}
@@ -660,18 +677,18 @@ class Room {
 			return;
 		}
 
-		if ($this->getName() === '') {
-			return;
-		}
+		$users = json_decode($this->getName(), true);
+		$participants = $this->getParticipantUserIds();
+		$missingUsers = array_diff($users, $participants);
 
-		if ($this->manager->isValidParticipant($this->getName())) {
-			$this->addUsers([
-				'userId' => $this->getName(),
-				'participantType' => Participant::OWNER,
-			]);
+		foreach ($missingUsers as $userId) {
+			if ($this->manager->isValidParticipant($userId)) {
+				$this->addUsers([
+					'userId' => $userId,
+					'participantType' => Participant::OWNER,
+				]);
+			}
 		}
-
-		$this->setName('');
 	}
 
 	/**
@@ -746,10 +763,6 @@ class Room {
 
 		$event = new RemoveUserEvent($this, $participant, $user, $reason);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_USER_REMOVE, $event);
-
-		if ($this->getType() === self::ONE_TO_ONE_CALL) {
-			$this->setName($user->getUID());
-		}
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')

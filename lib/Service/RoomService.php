@@ -55,7 +55,9 @@ class RoomService {
 			$room = $this->manager->getOne2OneRoom($actor->getUID(), $targetUser->getUID());
 			$room->ensureOneToOneRoomIsFilled();
 		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL);
+			$users = [$actor->getUID(), $targetUser->getUID()];
+			sort($users);
+			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, json_encode($users));
 			$room->addUsers([
 				'userId' => $actor->getUID(),
 				'participantType' => Participant::OWNER,

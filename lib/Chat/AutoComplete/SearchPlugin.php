@@ -87,19 +87,21 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		$userIds = $guestSessionHashes = [];
-		$participants = $this->room->getParticipants();
-		foreach ($participants as $participant) {
-			if ($participant->isGuest()) {
-				$guestSessionHashes[] = sha1($participant->getSessionId());
-			} else {
-				$userIds[] = $participant->getUser();
-			}
-		}
-
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL
-			&& $this->room->getName() !== '') {
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
 			// Add potential leavers of one-to-one rooms again.
-			$userIds[] = $this->room->getName();
+			$participants = json_decode($this->room->getName(), true);
+			foreach ($participants as $userId) {
+				$userIds[] = $userId;
+			}
+		} else {
+			$participants = $this->room->getParticipants();
+			foreach ($participants as $participant) {
+				if ($participant->isGuest()) {
+					$guestSessionHashes[] = sha1($participant->getSessionId());
+				} else {
+					$userIds[] = $participant->getUser();
+				}
+			}
 		}
 
 		$this->searchUsers($search, $userIds, $searchResult);

@@ -512,11 +512,10 @@ class RoomController extends AEnvironmentAwareController {
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$participants = $room->getParticipants();
+			$participants = json_decode($room->getName(), true);
 			foreach ($participants as $participant) {
-				$user = $this->userManager->get($participant->getUser());
-				if ($user instanceof IUser && $user->getUID() !== $currentParticipant->getUser()) {
-					$roomData['name'] = $user->getUID();
+				if ($participant !== $currentParticipant->getUser()) {
+					$roomData['name'] = $participant;
 				}
 			}
 		}
