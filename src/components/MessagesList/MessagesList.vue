@@ -60,7 +60,7 @@ import LoadingMessage from './LoadingMessage'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
-import { subscribe } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
@@ -213,18 +213,15 @@ export default {
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 
-		subscribe('networkOffline', () => {
-			console.debug('Canceling message request as we are offline')
-			this.cancelLookForNewMessages()
-		})
-		subscribe('networkOnline', () => {
-			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages()
-		})
+		subscribe('networkOffline', this.handleNetworkOffline)
+		subscribe('networkOnline', this.handleNetworkOnline)
 	},
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		this.cancelLookForNewMessages()
+
+		unsubscribe('networkOffline', this.handleNetworkOffline)
+		unsubscribe('networkOnline', this.handleNetworkOnline)
 	},
 
 	methods: {
@@ -574,6 +571,16 @@ export default {
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
+		},
+
+		handleNetworkOffline() {
+			console.debug('Canceling message request as we are offline')
+			this.cancelLookForNewMessages()
+		},
+
+		handleNetworkOnline() {
+			console.debug('Restarting polling of new chat messages')
+			this.getNewMessages()
 		},
 	},
 }
