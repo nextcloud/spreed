@@ -237,6 +237,7 @@ OC.L10N.register(
     "Your screen" : "Din skjerm",
     "{participantName}'s screen" : "{participantName}'s skjerm",
     "Guest's screen" : "Gjestens skjerm",
+    "Limit app usage to groups." : "Begrens app-bruk til grupper",
     "Contacts" : "Kontakter",
     "Signaling server URL" : "Sender signal til servers URL"
 },
