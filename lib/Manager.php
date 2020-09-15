@@ -129,15 +129,7 @@ class Manager {
 
 		$lastMessage = null;
 		if (!empty($row['comment_id'])) {
-			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, [
-				'id' => $row['comment_id'],
-				'object_type' => $row['comment_object_type'],
-				'object_id' => $row['comment_object_id'],
-				'parent_id' => '',
-				'topmost_parent_id' => '',
-				'latest_child_timestamp' => null,
-				'children_count' => 0,
-			]));
+			$lastMessage = $this->createCommentObject($row);
 		}
 
 		$assignedSignalingServer = $row['assigned_hpb'];
@@ -197,6 +189,24 @@ class Manager {
 			(int) $row['last_mention_message'],
 			$lastJoinedCall
 		);
+	}
+
+	public function createCommentObject(array $row): ?IComment {
+		return $this->commentsManager->getCommentFromData([
+			'id'              => $row['comment_id'],
+			'parent_id'        => $row['comment_parent_id'],
+			'topmost_parent_id' => $row['comment_topmost_parent_id'],
+			'children_count'   => $row['comment_children_count'],
+			'message'         => $row['comment_message'],
+			'verb'            => $row['comment_verb'],
+			'actor_type'       => $row['comment_actor_type'],
+			'actor_id'         => $row['comment_actor_id'],
+			'object_type'      => $row['comment_object_type'],
+			'object_id'        => $row['comment_object_id'],
+//			'reference_id'        => $row['comment_reference_id'] ?? null,
+			'creation_timestamp'        => $row['comment_creation_timestamp'],
+			'latest_child_timestamp'        => $row['comment_latest_child_timestamp'],
+		]);
 	}
 
 	public function loadLastCommentInfo(int $id): ?IComment {
@@ -864,8 +874,18 @@ class Manager {
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {
 		$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 		$query->selectAlias('c.id', 'comment_id');
-		$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.verb');
+		$query->selectAlias('c.parent_id', 'comment_parent_id');
+		$query->selectAlias('c.topmost_parent_id', 'comment_topmost_parent_id');
+		$query->selectAlias('c.children_count', 'comment_children_count');
+		$query->selectAlias('c.message', 'comment_message');
+		$query->selectAlias('c.verb', 'comment_verb');
+		$query->selectAlias('c.actor_type', 'comment_actor_type');
+		$query->selectAlias('c.actor_id', 'comment_actor_id');
+		$query->selectAlias('c.message', 'comment_message');
 		$query->selectAlias('c.object_type', 'comment_object_type');
 		$query->selectAlias('c.object_id', 'comment_object_id');
+		//$query->selectAlias('c.reference_id', 'comment_reference_id');
+		$query->selectAlias('c.creation_timestamp', 'comment_creation_timestamp');
+		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
 	}
 }
