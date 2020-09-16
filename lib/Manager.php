@@ -865,7 +865,6 @@ class Manager {
 		$query->selectAlias('c.verb', 'comment_verb');
 		$query->selectAlias('c.actor_type', 'comment_actor_type');
 		$query->selectAlias('c.actor_id', 'comment_actor_id');
-		$query->selectAlias('c.message', 'comment_message');
 		$query->selectAlias('c.object_type', 'comment_object_type');
 		$query->selectAlias('c.object_id', 'comment_object_id');
 		if ($this->config->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
