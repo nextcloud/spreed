@@ -79,6 +79,19 @@ export default function CallParticipantModel(options) {
 
 CallParticipantModel.prototype = {
 
+	destroy: function() {
+		if (this.get('peer')) {
+			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		}
+
+		this._webRtc.off('peerStreamAdded', this._handlePeerStreamAddedBound)
+		this._webRtc.off('peerStreamRemoved', this._handlePeerStreamRemovedBound)
+		this._webRtc.off('nick', this._handleNickBound)
+		this._webRtc.off('mute', this._handleMuteBound)
+		this._webRtc.off('unmute', this._handleUnmuteBound)
+		this._webRtc.off('channelMessage', this._handleChannelMessageBound)
+	},
+
 	get: function(key) {
 		return this.attributes[key]
 	},
