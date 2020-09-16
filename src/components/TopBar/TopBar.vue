@@ -358,9 +358,7 @@ export default {
 		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		// Add call layout hint listener
-		EventBus.$on('toggleLayoutHint', (display) => {
-			this.showLayoutHint = display
-		})
+		EventBus.$on('toggleLayoutHint', this.handleToggleLayoutHint)
 	},
 
 	beforeDestroy() {
@@ -369,9 +367,7 @@ export default {
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		// Remove call layout hint listener
-		EventBus.$off('toggleLayoutHint', (display) => {
-			this.showLayoutHint = display
-		})
+		EventBus.$off('toggleLayoutHint', this.handleToggleLayoutHint)
 	},
 
 	methods: {
@@ -487,6 +483,9 @@ export default {
 		handleRenameConversation() {
 			this.$store.dispatch('isRenamingConversation', true)
 			this.$store.dispatch('showSidebar')
+		},
+		handleToggleLayoutHint(display) {
+			this.showLayoutHint = display
 		},
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
