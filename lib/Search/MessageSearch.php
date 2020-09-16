@@ -200,12 +200,17 @@ class MessageSearch implements IProvider {
 			]);
 		}
 
+		$subline = $this->getSublineTemplate();
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$subline = '{user}';
+		}
+
 		return new SearchResultEntry(
 			$iconUrl,
 			str_replace(
 				['{user}', '{conversation}'],
 				[$message->getActorDisplayName(), $room->getDisplayName($user->getUID())],
-				$this->getSublineTemplate()
+				$subline
 			),
 			$messageStr,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $comment->getId(),
