@@ -129,15 +129,7 @@ class Manager {
 
 		$lastMessage = null;
 		if (!empty($row['comment_id'])) {
-			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, [
-				'id' => $row['comment_id'],
-				'object_type' => $row['comment_object_type'],
-				'object_id' => $row['comment_object_id'],
-				'parent_id' => '',
-				'topmost_parent_id' => '',
-				'latest_child_timestamp' => null,
-				'children_count' => 0,
-			]));
+			$lastMessage = $this->createCommentObject($row);
 		}
 
 		$assignedSignalingServer = $row['assigned_hpb'];
@@ -197,6 +189,25 @@ class Manager {
 			(int) $row['last_mention_message'],
 			$lastJoinedCall
 		);
+	}
+
+	public function createCommentObject(array $row): ?IComment {
+		return $this->commentsManager->getCommentFromData([
+			'id'				=> $row['comment_id'],
+			'parent_id'			=> $row['comment_parent_id'],
+			'topmost_parent_id'	=> $row['comment_topmost_parent_id'],
+			'children_count'	=> $row['comment_children_count'],
+			'message'			=> $row['comment_message'],
+			'verb'				=> $row['comment_verb'],
+			'actor_type'		=> $row['comment_actor_type'],
+			'actor_id'			=> $row['comment_actor_id'],
+			'object_type'		=> $row['comment_object_type'],
+			'object_id'			=> $row['comment_object_id'],
+			// Reference id column might not be there, so we need to fallback to null
+			'reference_id'		=> $row['comment_reference_id'] ?? null,
+			'creation_timestamp'		=> $row['comment_creation_timestamp'],
+			'latest_child_timestamp'	=> $row['comment_latest_child_timestamp'],
+		]);
 	}
 
 	public function loadLastCommentInfo(int $id): ?IComment {
@@ -542,32 +553,15 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getOne2OneRoom(string $participant1, string $participant2): Room {
+		$users = [$participant1, $participant2];
+		sort($users);
+		$name = json_encode($users);
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_rooms', 'r')
-			->leftJoin('r', 'talk_participants', 'p1', $query->expr()->andX(
-				$query->expr()->eq('p1.user_id', $query->createNamedParameter($participant1)),
-				$query->expr()->eq('p1.room_id', 'r.id')
-			))
-			->leftJoin('r', 'talk_participants', 'p2', $query->expr()->andX(
-				$query->expr()->eq('p2.user_id', $query->createNamedParameter($participant2)),
-				$query->expr()->eq('p2.room_id', 'r.id')
-			))
-			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->orX(
-				$query->expr()->andX(
-					$query->expr()->isNotNull('p1.user_id'),
-					$query->expr()->isNotNull('p2.user_id')
-				),
-				$query->expr()->andX(
-					$query->expr()->eq('r.name', $query->createNamedParameter($participant1)),
-					$query->expr()->isNotNull('p2.user_id')
-				),
-				$query->expr()->andX(
-					$query->expr()->isNotNull('p1.user_id'),
-					$query->expr()->eq('r.name', $query->createNamedParameter($participant2))
-				)
-			));
+			->from('talk_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('name', $query->createNamedParameter($name)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -733,7 +727,7 @@ class Manager {
 				return $this->l->t('Private conversation');
 			}
 
-			$users = $room->getParticipantUserIds();
+			$users = json_decode($room->getName(), true);
 			$otherParticipant = '';
 			$userIsParticipant = false;
 
@@ -864,8 +858,20 @@ class Manager {
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {
 		$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 		$query->selectAlias('c.id', 'comment_id');
-		$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.verb');
+		$query->selectAlias('c.parent_id', 'comment_parent_id');
+		$query->selectAlias('c.topmost_parent_id', 'comment_topmost_parent_id');
+		$query->selectAlias('c.children_count', 'comment_children_count');
+		$query->selectAlias('c.message', 'comment_message');
+		$query->selectAlias('c.verb', 'comment_verb');
+		$query->selectAlias('c.actor_type', 'comment_actor_type');
+		$query->selectAlias('c.actor_id', 'comment_actor_id');
 		$query->selectAlias('c.object_type', 'comment_object_type');
 		$query->selectAlias('c.object_id', 'comment_object_id');
+		if ($this->config->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
+			// Only try to load the reference_id column when it should be there
+			$query->selectAlias('c.reference_id', 'comment_reference_id');
+		}
+		$query->selectAlias('c.creation_timestamp', 'comment_creation_timestamp');
+		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
 	}
 }
