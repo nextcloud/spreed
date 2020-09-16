@@ -50,6 +50,9 @@ function LocalMedia(opts) {
 	this._log = this.logger.log.bind(this.logger, 'LocalMedia:')
 	this._logerror = this.logger.error.bind(this.logger, 'LocalMedia:')
 
+	this._audioEnabled = true
+	this._videoEnabled = true
+
 	this.localStreams = []
 	this._audioMonitorStreams = []
 	this.localScreens = []
@@ -156,6 +159,11 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._audioMonitorStreams.push(audioMonitorStream)
 
 		stream.getTracks().forEach(function(track) {
+			if ((track.kind === 'audio' && !self._audioEnabled)
+				|| (track.kind === 'video' && !self._videoEnabled)) {
+				track.enabled = false
+			}
+
 			track.addEventListener('ended', function() {
 				if (isAllTracksEnded(stream)) {
 					self._removeStream(stream)
@@ -290,6 +298,10 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 				this._setupAudioMonitor(audioMonitorStream, this.config.harkOptions)
 			}
 
+			if (!this._audioEnabled) {
+				clonedTrack.enabled = false
+			}
+
 			clonedTrack.addEventListener('ended', () => {
 				if (isAllTracksEnded(stream)) {
 					this._removeStream(stream)
@@ -405,6 +417,10 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			stream.addTrack(clonedTrack)
+
+			if (!this._videoEnabled) {
+				clonedTrack.enabled = false
+			}
 
 			clonedTrack.addEventListener('ended', () => {
 				if (isAllTracksEnded(stream)) {
@@ -530,11 +546,11 @@ LocalMedia.prototype.unmute = function() {
 
 // Video controls
 LocalMedia.prototype.pauseVideo = function() {
-	this._videoEnabled(false)
+	this._setVideoEnabled(false)
 	this.emit('videoOff')
 }
 LocalMedia.prototype.resumeVideo = function() {
-	this._videoEnabled(true)
+	this._setVideoEnabled(true)
 	this.emit('videoOn')
 }
 
@@ -558,7 +574,9 @@ LocalMedia.prototype._setAudioEnabled = function(bool) {
 		})
 	})
 }
-LocalMedia.prototype._videoEnabled = function(bool) {
+LocalMedia.prototype._setVideoEnabled = function(bool) {
+	this._videoEnabled = bool
+
 	this.localStreams.forEach(function(stream) {
 		stream.getVideoTracks().forEach(function(track) {
 			track.enabled = !!bool
