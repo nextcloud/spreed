@@ -219,6 +219,9 @@ export default {
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		this.cancelLookForNewMessages()
+		// Prevent further lookForNewMessages requests after the component was
+		// destroyed.
+		this.cancelLookForNewMessages = null
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
@@ -335,7 +338,7 @@ export default {
 				} else {
 					this.getMessages(false)
 				}
-			} else {
+			} else if (this.cancelLookForNewMessages) {
 				this.cancelLookForNewMessages()
 			}
 		},
@@ -423,6 +426,10 @@ export default {
 		 * Creates a long polling request for a new message.
 		 */
 		async getNewMessages() {
+			if (!this.cancelLookForNewMessages) {
+				return
+			}
+
 			// Clear previous requests if there's one pending
 			this.cancelLookForNewMessages('canceled')
 			// Get a new cancelable request function and cancel function pair
@@ -575,7 +582,9 @@ export default {
 
 		handleNetworkOffline() {
 			console.debug('Canceling message request as we are offline')
-			this.cancelLookForNewMessages()
+			if (this.cancelLookForNewMessages) {
+				this.cancelLookForNewMessages()
+			}
 		},
 
 		handleNetworkOnline() {
