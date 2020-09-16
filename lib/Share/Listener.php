@@ -79,7 +79,23 @@ class Listener {
 		}
 
 		if ($event->getParent() === RoomShareProvider::TALK_FOLDER_PLACEHOLDER) {
-			$parent = $this->config->getAttachmentFolder($view->getOwner('/'));
+			try {
+				$userId = $view->getOwner('/');
+			} catch (\Exception $e) {
+				// If we fail to get the owner of the view from the cache,
+				// e.g. because the user never logged in but a cron job runs
+				// We fallback to calculating the owner from the root of the view:
+				if (substr_count($view->getRoot(), '/') >= 2) {
+					// /37c09aa0-1b92-4cf6-8c66-86d8cac8c1d0/files
+					[, $userId, ] = explode('/', $view->getRoot(), 3);
+				} else {
+					// Something weird is going on, we can't fallback more
+					// so for now we don't overwrite the share path ¯\_(ツ)_/¯
+					return;
+				}
+			}
+
+			$parent = $this->config->getAttachmentFolder($userId);
 			$event->setParent($parent);
 			if (!$event->getView()->is_dir($parent)) {
 				$event->getView()->mkdir($parent);
