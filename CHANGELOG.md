@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.0-rc.1 – 2020-09-17
+### Added
+- Keyboard navigation for conversation search
+  [#3955](https://github.com/nextcloud/spreed/pull/3955)
+
+### Fixed
+- Don't leak the status to users that can't use the user status app
+  [#4137](https://github.com/nextcloud/spreed/pull/4137)
+- Installation on Oracle fails
+  [#4127](https://github.com/nextcloud/spreed/pull/4127)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4139](https://github.com/nextcloud/spreed/pull/4139)
+  [#4140](https://github.com/nextcloud/spreed/pull/4140)
+  [#4154](https://github.com/nextcloud/spreed/pull/4154)
+  [#4155](https://github.com/nextcloud/spreed/pull/4155)
+- Try to be more safe again errors when trying to get the Talk folder for attachments
+  [#4165](https://github.com/nextcloud/spreed/pull/4165)
+- Reduce the load when refreshing the conversation list
+  [#4152](https://github.com/nextcloud/spreed/pull/4152)
+- Immediately reflect changes on the own user status
+  [#4153](https://github.com/nextcloud/spreed/pull/4153)
+- Some fixes to the Matterbridge component
+  [#4117](https://github.com/nextcloud/spreed/pull/4117)
+  [#4118](https://github.com/nextcloud/spreed/pull/4118)
+  [#4119](https://github.com/nextcloud/spreed/pull/4119)
+  [#4120](https://github.com/nextcloud/spreed/pull/4120)
+  [#4121](https://github.com/nextcloud/spreed/pull/4121)
+  [#4122](https://github.com/nextcloud/spreed/pull/4122)
+
 ## 10.0.0-beta.2 – 2020-09-03
 ### Added
 - Show keyboard shortcuts in the settings
@@ -51,6 +80,37 @@ All notable changes to this project will be documented in this file.
   [#3958](https://github.com/nextcloud/spreed/pull/3958)
 - Prevent infinite loop in datachannel open re-transmission
   [#3882](https://github.com/nextcloud/spreed/pull/3882)
+
+## 9.0.4 – 2020-09-17
+### Added
+- Moderators can now mute all participants with a single button in the moderator menu
+  [#4054](https://github.com/nextcloud/spreed/pull/4054)
+
+### Fixed
+- Prevent infinite loop when opening a data channel and retransmitting old messages
+  [#4069](https://github.com/nextcloud/spreed/pull/4069)
+- Installation on Oracle fails
+  [#4129](https://github.com/nextcloud/spreed/pull/4129)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4148](https://github.com/nextcloud/spreed/pull/4148)
+  [#4156](https://github.com/nextcloud/spreed/pull/4156)
+  [#4160](https://github.com/nextcloud/spreed/pull/4160)
+  [#4162](https://github.com/nextcloud/spreed/pull/4162)
+
+## 8.0.11 – 2020-09-17
+### Fixed
+- Internet Explorer 11 unable to load the interface
+  [#3983](https://github.com/nextcloud/spreed/pull/3983)
+- Speaker promotion with newer Janus versions
+  [#3952](https://github.com/nextcloud/spreed/pull/3952)
+- Prevent infinite loop when opening a data channel and retransmitting old messages
+  [#4070](https://github.com/nextcloud/spreed/pull/4070)
+- Installation on Oracle fails
+  [#4130](https://github.com/nextcloud/spreed/pull/4130)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4149](https://github.com/nextcloud/spreed/pull/4149)
+  [#4161](https://github.com/nextcloud/spreed/pull/4161)
+  [#4163](https://github.com/nextcloud/spreed/pull/4163)
 
 ## 9.0.3 – 2020-08-04
 ### Fixed
