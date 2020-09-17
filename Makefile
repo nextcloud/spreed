@@ -38,7 +38,7 @@ lint-fix:
 	npm run lint:fix
 
 npm-init:
-	npm install
+	npm ci
 
 npm-update:
 	npm update
