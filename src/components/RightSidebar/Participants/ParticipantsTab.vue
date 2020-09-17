@@ -61,6 +61,7 @@ import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults'
 
 export default {
@@ -228,6 +229,8 @@ export default {
 				this.cancelGetParticipants = cancel
 				const participants = await request(token)
 				this.$store.dispatch('purgeParticipantsStore', token)
+
+				const hasUserStatuses = !!participants.headers['x-nextcloud-has-user-statuses']
 				participants.data.ocs.data.forEach(participant => {
 					this.$store.dispatch('addParticipant', {
 						token: token,
@@ -239,6 +242,14 @@ export default {
 							token: token,
 							actorId: Hex.stringify(SHA1(participant.sessionId)),
 							actorDisplayName: participant.displayName,
+						})
+					} else if (hasUserStatuses) {
+						emit('user_status:status.updated', {
+							status: participant.status,
+							message: participant.statusMessage,
+							icon: participant.statusIcon,
+							clearAt: participant.statusClearAt,
+							userId: participant.userId,
 						})
 					}
 				})
