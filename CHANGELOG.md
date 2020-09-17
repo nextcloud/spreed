@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.11 – 2020-09-17
+### Fixed
+- Internet Explorer 11 unable to load the interface
+  [#3983](https://github.com/nextcloud/spreed/pull/3983)
+- Speaker promotion with newer Janus versions
+  [#3952](https://github.com/nextcloud/spreed/pull/3952)
+- Prevent infinite loop when opening a data channel and retransmitting old messages
+  [#4070](https://github.com/nextcloud/spreed/pull/4070)
+- Installation on Oracle fails
+  [#4130](https://github.com/nextcloud/spreed/pull/4130)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4149](https://github.com/nextcloud/spreed/pull/4149)
+  [#4161](https://github.com/nextcloud/spreed/pull/4161)
+  [#4163](https://github.com/nextcloud/spreed/pull/4163)
+
 ## 8.0.10 – 2020-07-21
 ### Added
 - Warn the user when their connection or computer is busy and others might not be able to see or hear them correctly anymore.
