@@ -249,7 +249,6 @@ class PageController extends Controller {
 		}
 
 		$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
-		$this->initialStateService->provideInitialState('talk', 'enable_matterbridge', $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1');
 
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());

@@ -102,6 +102,11 @@ trait TInitialState {
 			'talk', 'attachment_folder',
 			$attachmentFolder
 		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'enable_matterbridge',
+			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
+		);
 	}
 
 	protected function publishInitialStateForGuest(): void {
@@ -120,6 +125,11 @@ trait TInitialState {
 		$this->initialStateService->provideInitialState(
 			'talk', 'attachment_folder',
 			''
+		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'enable_matterbridge',
+			false
 		);
 	}
 }
