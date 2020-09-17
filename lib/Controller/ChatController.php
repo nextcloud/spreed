@@ -488,6 +488,7 @@ class ChatController extends AEnvironmentAwareController {
 					$data['status'] = $statuses[$data['id']]->getStatus();
 					$data['statusIcon'] = $statuses[$data['id']]->getIcon();
 					$data['statusMessage'] = $statuses[$data['id']]->getMessage();
+					$data['statusClearAt'] = $statuses[$data['id']]->getClearAt();
 				}
 
 				$output[] = $data;

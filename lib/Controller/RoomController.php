@@ -838,15 +838,16 @@ class RoomController extends AEnvironmentAwareController {
 
 		$maxPingAge = $this->timeFactory->getTime() - 100;
 		$participants = $this->room->getParticipantsLegacy();
-		$results = [];
+		$results = $headers = $statuses = [];
 
-		$statuses = [];
 		if ($this->userId !== null
 			&& $includeStatus
 			&& count($participants['users']) < 100
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_map('strval', array_keys($participants['users']));
 			$statuses = $this->statusManager->getUserStatuses($userIds);
+
+			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
 		foreach ($participants['users'] as $userId => $participant) {
@@ -867,6 +868,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant['status'] = $statuses[$userId]->getStatus();
 				$participant['statusIcon'] = $statuses[$userId]->getIcon();
 				$participant['statusMessage'] = $statuses[$userId]->getMessage();
+				$participant['statusClearAt'] = $statuses[$userId]->getClearAt();
 			}
 
 			$results[] = $participant;
@@ -895,7 +897,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->room->cleanGuestParticipants();
 		}
 
-		return new DataResponse($results);
+		return new DataResponse($results, Http::STATUS_OK, $headers);
 	}
 
 	/**
