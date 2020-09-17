@@ -1,6 +1,37 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.4 – 2020-09-17
+### Added
+- Moderators can now mute all participants with a single button in the moderator menu
+  [#4054](https://github.com/nextcloud/spreed/pull/4054)
+
+### Fixed
+- Prevent infinite loop when opening a data channel and retransmitting old messages
+  [#4069](https://github.com/nextcloud/spreed/pull/4069)
+- Installation on Oracle fails
+  [#4129](https://github.com/nextcloud/spreed/pull/4129)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4148](https://github.com/nextcloud/spreed/pull/4148)
+  [#4156](https://github.com/nextcloud/spreed/pull/4156)
+  [#4160](https://github.com/nextcloud/spreed/pull/4160)
+  [#4162](https://github.com/nextcloud/spreed/pull/4162)
+
+## 8.0.11 – 2020-09-17
+### Fixed
+- Internet Explorer 11 unable to load the interface
+  [#3983](https://github.com/nextcloud/spreed/pull/3983)
+- Speaker promotion with newer Janus versions
+  [#3952](https://github.com/nextcloud/spreed/pull/3952)
+- Prevent infinite loop when opening a data channel and retransmitting old messages
+  [#4070](https://github.com/nextcloud/spreed/pull/4070)
+- Installation on Oracle fails
+  [#4130](https://github.com/nextcloud/spreed/pull/4130)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4149](https://github.com/nextcloud/spreed/pull/4149)
+  [#4161](https://github.com/nextcloud/spreed/pull/4161)
+  [#4163](https://github.com/nextcloud/spreed/pull/4163)
+
 ## 9.0.3 – 2020-08-04
 ### Fixed
 - Fix compatibility with Janus 0.10.4 and the newest High-performance backend
