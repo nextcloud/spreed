@@ -121,7 +121,7 @@ function SimpleWebRTC(opts) {
 			}
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
-				if (message.sid) {
+				if (message.sid && !self.connection.hasFeature('mcu')) {
 					if (peer.sid === message.sid) {
 						peer.handleMessage(message)
 					}
