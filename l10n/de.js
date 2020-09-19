@@ -772,7 +772,7 @@ OC.L10N.register(
     "Unfocus the chat input to use shortcuts" : "Chat-Eingabe in den Hintergrund",
     "Fullscreen the chat or call" : "Vollbild des Chats oder Anrufs",
     "Search" : "Suche",
-    "Shortcuts while in a call" : "Schortcuts während eines Anrufs",
+    "Shortcuts while in a call" : "Tastaturkürzel während eines Anrufs",
     "Video on and off" : "Video ein- und ausschalten",
     "Microphone on and off" : "Mikrofon an- und ausschalten",
     "Select location for attachments" : "Speicherort für Anhänge auswählen",
