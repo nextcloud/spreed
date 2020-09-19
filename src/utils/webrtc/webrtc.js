@@ -158,6 +158,13 @@ function sendCurrentMediaState() {
 	}
 }
 
+// TODO The participant name should be got from the participant list, but it is
+// not currently possible to associate a Nextcloud ID with a standalone
+// signaling ID for guests.
+function sendCurrentNick() {
+	webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
+}
+
 function sendCurrentStateWithRepetition(timeout) {
 	if (!timeout) {
 		timeout = 0
@@ -167,6 +174,7 @@ function sendCurrentStateWithRepetition(timeout) {
 
 	sendCurrentStateWithRepetitionTimeout = setTimeout(function() {
 		sendCurrentMediaState()
+		sendCurrentNick()
 
 		if (!timeout) {
 			timeout = 1000
@@ -497,39 +505,11 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		webrtc.sendDirectlyToAll(channel, message, payload)
 	}
 
-	// The nick name below the avatar is distributed through the DataChannel
-	// of the PeerConnection and only sent once during establishment. For
-	// the MCU case, the sending PeerConnection is created once and then
-	// never changed when more participants join. For this, we periodically
-	// send the nick to all other participants through the sending
-	// PeerConnection.
-	//
-	// TODO: The name for the avatar should come from the participant list
-	// which already has all information and get rid of using the
-	// DataChannel for this.
-	function stopSendingNick() {
-		if (!ownPeer.nickInterval) {
-			return
-		}
-
-		clearInterval(ownPeer.nickInterval)
-		ownPeer.nickInterval = null
-	}
-	function startSendingNick() {
-		if (!signaling.hasFeature('mcu')) {
-			return
-		}
-
-		stopSendingNick()
-		ownPeer.nickInterval = setInterval(function() {
-			webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
-		}, 1000)
-	}
-
 	function handleIceConnectionStateConnected(peer) {
-		// Send the current information about the video and microphone
-		// state.
+		// Send the current information about the state.
 		if (!signaling.hasFeature('mcu')) {
+			// Only the media state needs to be sent, the nick was already sent
+			// in the offer/answer.
 			sendCurrentMediaState()
 		} else {
 			sendCurrentStateWithRepetition()
@@ -700,8 +680,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (peer.type === 'video') {
 			if (peer.id === signaling.getSessionId()) {
 				console.debug('Not adding ICE connection state handler for own peer', peer)
-
-				startSendingNick()
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 			}
@@ -823,10 +801,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	webrtc.on('peerStreamRemoved', function(peer) {
 		stopPeerCheckMedia(peer)
-
-		if (peer.id === signaling.getSessionId()) {
-			stopSendingNick()
-		}
 	})
 
 	webrtc.webrtc.on('videoOn', function() {
