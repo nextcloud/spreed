@@ -486,14 +486,14 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		// Send the current information about the video and microphone
 		// state.
 		if (!webrtc.webrtc.isVideoEnabled()) {
-			webrtc.emit('videoOff')
+			webrtc.webrtc.emit('videoOff')
 		} else {
-			webrtc.emit('videoOn')
+			webrtc.webrtc.emit('videoOn')
 		}
 		if (!webrtc.webrtc.isAudioEnabled()) {
-			webrtc.emit('audioOff')
+			webrtc.webrtc.emit('audioOff')
 		} else {
-			webrtc.emit('audioOn')
+			webrtc.webrtc.emit('audioOn')
 		}
 		if (signaling.settings.userId === null) {
 			const currentGuestNick = store.getters.getDisplayName()
