@@ -141,6 +141,19 @@ function checkStartPublishOwnPeer(signaling) {
 	localCallParticipantModel.setPeer(ownPeer)
 }
 
+function sendCurrentMediaState() {
+	if (!webrtc.webrtc.isVideoEnabled()) {
+		webrtc.webrtc.emit('videoOff')
+	} else {
+		webrtc.webrtc.emit('videoOn')
+	}
+	if (!webrtc.webrtc.isAudioEnabled()) {
+		webrtc.webrtc.emit('audioOff')
+	} else {
+		webrtc.webrtc.emit('audioOn')
+	}
+}
+
 function userHasStreams(user) {
 	let flags = user
 	if (flags.hasOwnProperty('inCall')) {
@@ -485,16 +498,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the video and microphone
 		// state.
-		if (!webrtc.webrtc.isVideoEnabled()) {
-			webrtc.webrtc.emit('videoOff')
-		} else {
-			webrtc.webrtc.emit('videoOn')
-		}
-		if (!webrtc.webrtc.isAudioEnabled()) {
-			webrtc.webrtc.emit('audioOff')
-		} else {
-			webrtc.webrtc.emit('audioOn')
-		}
+		sendCurrentMediaState()
+
 		if (signaling.settings.userId === null) {
 			const currentGuestNick = store.getters.getDisplayName()
 			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
