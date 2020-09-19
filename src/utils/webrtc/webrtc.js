@@ -43,6 +43,7 @@ const delayedConnectionToPeer = []
 let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
+let sendCurrentMediaStateWithRepetitionTimeout = null
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -152,6 +153,31 @@ function sendCurrentMediaState() {
 	} else {
 		webrtc.webrtc.emit('audioOn')
 	}
+}
+
+function sendCurrentMediaStateWithRepetition(timeout) {
+	if (!timeout) {
+		timeout = 0
+
+		clearTimeout(sendCurrentMediaStateWithRepetitionTimeout)
+	}
+
+	sendCurrentMediaStateWithRepetitionTimeout = setTimeout(function() {
+		sendCurrentMediaState()
+
+		if (!timeout) {
+			timeout = 1000
+		} else {
+			timeout *= 2
+		}
+
+		if (timeout > 16000) {
+			sendCurrentMediaStateWithRepetitionTimeout = null
+			return
+		}
+
+		sendCurrentMediaStateWithRepetition(timeout)
+	}, timeout)
 }
 
 function userHasStreams(user) {
@@ -498,7 +524,11 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the video and microphone
 		// state.
-		sendCurrentMediaState()
+		if (!signaling.hasFeature('mcu')) {
+			sendCurrentMediaState()
+		} else {
+			sendCurrentMediaStateWithRepetition()
+		}
 
 		if (signaling.settings.userId === null) {
 			const currentGuestNick = store.getters.getDisplayName()
