@@ -142,6 +142,10 @@ class GuestManager {
 	 * @return string[]
 	 */
 	public function getNamesBySessionHashes(array $sessionHashes): array {
+		if (empty($sessionHashes)) {
+			return [];
+		}
+
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('talk_guests')
