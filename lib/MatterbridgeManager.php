@@ -434,7 +434,7 @@ class MatterbridgeManager {
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
 				if ($part['nickservnick']) {
 					$content .= sprintf('	NickServNick = "%s"', $part['nickservnick']) . "\n";
-					$content .= sprintf('	NickServNick = "%s"', $part['nickservnick']) . "\n";
+					$content .= sprintf('	NickServPassword = "%s"', $part['nickservpassword']) . "\n";
 				}
 				if ($part['usetls']) {
 					$content .= sprintf('	UseTLS = true') . "\n";
