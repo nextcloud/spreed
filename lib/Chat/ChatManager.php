@@ -37,6 +37,7 @@ use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
 
@@ -62,6 +63,8 @@ class ChatManager {
 	private $commentsManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
+	/** @var IDBConnection */
+	private $connection;
 	/** @var INotificationManager */
 	private $notificationManager;
 	/** @var Notifier */
@@ -73,12 +76,14 @@ class ChatManager {
 
 	public function __construct(CommentsManager $commentsManager,
 								IEventDispatcher $dispatcher,
+								IDBConnection $connection,
 								INotificationManager $notificationManager,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
+		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
@@ -313,6 +318,7 @@ class ChatManager {
 		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
+			$this->connection->close();
 			sleep(1);
 			$elapsedTime++;
 
