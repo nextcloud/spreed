@@ -690,17 +690,26 @@ class MatterbridgeManager {
 
 		// get list of what should be running
 		$expectedPidList = [];
-		$this->manager->forAllRooms(function ($room) use (&$expectedPidList) {
-			$bridge = $this->getBridgeOfRoom($room);
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_bridges')
+			->where($query->expr()->like('json_values', $query->createNamedParameter(
+				$this->db->escapeLikeParameter('{"enabled":true') . '%'
+			)));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$bridge = json_decode($row['json_values'], true);
 			if ($bridge['enabled'] && $bridge['pid'] !== 0) {
-				array_push($expectedPidList, intval($bridge['pid']));
+				$expectedPidList[] = $bridge['pid'];
 			}
-		});
+		}
+		$result->closeCursor();
+
 		// kill what should not be running
-		foreach ($runningPidList as $runningPid) {
-			if (!in_array($runningPid, $expectedPidList)) {
-				$this->killPid($runningPid);
-			}
+		$toKill = array_diff($runningPidList, $expectedPidList);
+		foreach ($toKill as $toKillPid) {
+			$this->killPid($toKillPid);
 		}
 	}
 
