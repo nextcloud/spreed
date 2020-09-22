@@ -190,21 +190,32 @@ class MatterbridgeManager {
 	 * For each room, check mattermost process respects desired state
 	 */
 	public function checkAllBridges(): void {
-		// TODO call this from time to time to make sure everything is running fine
-		$this->manager->forAllRooms(function ($room) {
-			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
-				$this->checkBridge($room);
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_bridges')
+			->where($query->expr()->like('json_values', $query->createNamedParameter(
+				$this->db->escapeLikeParameter('{"enabled":true') . '%'
+			)));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$bridge = json_decode($row['json_values'], true);
+			if ($bridge['enabled']) {
+				$room = $this->manager->getRoomById((int) $row['room_id']);
+				$this->checkBridge($room, $bridge);
 			}
-		});
+		}
+		$result->closeCursor();
 	}
 
 	/**
 	 * For one room, check mattermost process respects desired state
 	 * @param Room $room the room
+	 * @param array|null $bridge
 	 * @return int the bridge process ID
 	 */
-	public function checkBridge(Room $room): int {
-		$bridge = $this->getBridgeOfRoom($room);
+	public function checkBridge(Room $room, ?array $bridge = null): int {
+		$bridge = $bridge ?: $this->getBridgeOfRoom($room);
 		$pid = $this->checkBridgeProcess($room, $bridge);
 		if ($pid !== $bridge['pid']) {
 			// save the new PID if necessary
