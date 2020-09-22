@@ -33,11 +33,15 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICacheFactory;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
+/**
+ * @group DB
+ */
 class ChatManagerTest extends TestCase {
 
 	/** @var CommentsManager|ICommentsManager|MockObject */
@@ -61,12 +65,15 @@ class ChatManagerTest extends TestCase {
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$cacheFactory = $this->createMock(ICacheFactory::class);
 
 		$this->chatManager = new ChatManager(
 			$this->commentsManager,
 			$this->dispatcher,
+			\OC::$server->getDatabaseConnection(),
 			$this->notificationManager,
 			$this->notifier,
+			$cacheFactory,
 			$this->timeFactory
 		);
 	}
