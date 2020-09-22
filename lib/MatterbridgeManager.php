@@ -193,17 +193,17 @@ class MatterbridgeManager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_bridges')
-			->where($query->expr()->like('json_values', $query->createNamedParameter(
-				$this->db->escapeLikeParameter('{"enabled":true') . '%'
-			)));
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$bridge = json_decode($row['json_values'], true);
-			if ($bridge['enabled']) {
-				$room = $this->manager->getRoomById((int) $row['room_id']);
-				$this->checkBridge($room, $bridge);
-			}
+			$bridge = [
+				'enabled' => true,
+				'pid' => (int) $row['pid'],
+				'parts' => json_decode($row['json_values'], true),
+			];
+			$room = $this->manager->getRoomById((int) $row['room_id']);
+			$this->checkBridge($room, $bridge);
 		}
 		$result->closeCursor();
 	}
@@ -693,14 +693,16 @@ class MatterbridgeManager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_bridges')
-			->where($query->expr()->like('json_values', $query->createNamedParameter(
-				$this->db->escapeLikeParameter('{"enabled":true') . '%'
-			)));
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$bridge = json_decode($row['json_values'], true);
-			if ($bridge['enabled'] && $bridge['pid'] !== 0) {
+			$bridge = [
+				'enabled' => true,
+				'pid' => (int) $row['pid'],
+				'parts' => json_decode($row['json_values'], true),
+			];
+			if ($bridge['pid'] !== 0) {
 				$expectedPidList[] = $bridge['pid'];
 			}
 		}
@@ -754,17 +756,16 @@ class MatterbridgeManager {
 
 		$query->select('*')
 			->from('talk_bridges')
-			->where($query->expr()->like('json_values', $query->createNamedParameter(
-				$this->db->escapeLikeParameter('{"enabled":true') . '%'
-			)));
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$bridge = json_decode($row['json_values'], true);
-			if ($bridge['enabled']) {
-				$bridge['enabled'] = false;
-				$this->saveBridgeToDb((int) $row['room_id'], $bridge);
-			}
+			$bridge = [
+				'enabled' => false,
+				'pid' => (int) $row['pid'],
+				'parts' => json_decode($row['json_values'], true),
+			];
+			$this->saveBridgeToDb((int) $row['room_id'], $bridge);
 		}
 		$result->closeCursor();
 
@@ -783,20 +784,28 @@ class MatterbridgeManager {
 		$roomId = $room->getId();
 
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('json_values')
+		$qb->select('json_values', 'enabled', 'pid')
 			->from('talk_bridges')
 			->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			)
 			->setMaxResults(1);
 		$result = $qb->execute();
-		$jsonValues = '{"enabled":false,"pid":0,"parts":[]}';
+		$enabled = false;
+		$pid = 0;
+		$jsonValues = '[]';
 		if ($row = $result->fetch()) {
+			$pid = (int) $row['pid'];
+			$enabled = ((int) $row['enabled'] === 1);
 			$jsonValues = $row['json_values'];
 		}
 		$result->closeCursor();
 
-		return json_decode($jsonValues, true);
+		return [
+			'enabled' => $enabled,
+			'pid' => $pid,
+			'parts' => json_decode($jsonValues, true),
+		];
 	}
 
 	/**
@@ -806,7 +815,8 @@ class MatterbridgeManager {
 	 * @param array $bridge bridge values
 	 */
 	private function saveBridgeToDb(int $roomId, array $bridge): void {
-		$jsonValues = json_encode($bridge);
+		$jsonValues = json_encode($bridge['parts']);
+		$intEnabled = $bridge['enabled'] ? 1 : 0;
 
 		$qb = $this->db->getQueryBuilder();
 		try {
@@ -814,12 +824,16 @@ class MatterbridgeManager {
 				->values([
 					'room_id' => $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 					'json_values' => $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR),
+					'enabled' => $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT),
+					'pid' => $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT),
 				]);
 			$qb->execute();
 		} catch (UniqueConstraintViolationException $e) {
 			$qb = $this->db->getQueryBuilder();
 			$qb->update('talk_bridges');
 			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
+			$qb->set('enabled', $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT));
+			$qb->set('pid', $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT));
 			$qb->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			);
