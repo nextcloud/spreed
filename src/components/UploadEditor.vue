@@ -57,7 +57,7 @@
 				Dismiss
 			</button>
 			<button class="primary" @click="handleUpload">
-				Upload
+				Send
 			</button>
 		</div>
 	</Modal>
