@@ -48,7 +48,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
-	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
+	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
@@ -78,13 +78,13 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
 	 * @param array $options
 	 */
-	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options) {
-		$qb = $this->connection->getQueryBuilder();
+	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+		$query = $this->connection->getQueryBuilder();
 
 		$bridges = [];
-		$qb->select('id', 'json_values')
+		$query->select('id', 'json_values')
 			->from('talk_bridges');
-		$result = $qb->execute();
+		$result = $query->execute();
 		while ($row = $result->fetch()) {
 			$bridges[] = [
 				'id' => $row['id'],
@@ -93,21 +93,28 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
+		if (empty($bridges)) {
+			return;
+		}
+
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_bridges')
+			->set('enabled', $query->createParameter('enabled'))
+			->set('pid', $query->createParameter('pid'))
+			->set('json_values', $query->createParameter('json_values'))
+			->where($query->expr()->eq('id', $query->createParameter('id')));
+
 		foreach ($bridges as $bridge) {
 			$values = json_decode($bridge['json_values'], true);
-			if ($values && isset($values['pid']) && isset($values['enabled'])) {
+			if (isset($values['pid'], $values['enabled'])) {
 				$intEnabled = $values['enabled'] ? 1 : 0;
 				$newValues = $values['parts'] ?: [];
 				$encodedNewValues = json_encode($newValues);
-				$qb = $qb->resetQueryParts();
-				$qb->update('talk_bridges')
-					->set('enabled', $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT))
-					->set('pid', $qb->createNamedParameter($values['pid'], IQueryBuilder::PARAM_INT))
-					->set('json_values', $qb->createNamedParameter($encodedNewValues, IQueryBuilder::PARAM_STR))
-					->where(
-						$qb->expr()->eq('id', $qb->createNamedParameter($bridge['id'], IQueryBuilder::PARAM_INT))
-					);
-				$qb->execute();
+
+				$query->setParameter('enabled', $intEnabled, IQueryBuilder::PARAM_INT)
+					->setParameter('pid', $values['pid'], IQueryBuilder::PARAM_INT)
+					->setParameter('json_values', $encodedNewValues, IQueryBuilder::PARAM_STR)
+				$query->execute();
 			}
 		}
 	}
