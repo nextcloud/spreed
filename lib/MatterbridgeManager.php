@@ -160,7 +160,7 @@ class MatterbridgeManager {
 		$newBridge['pid'] = $pid;
 
 		// save config
-		$this->saveBridgeToDb($room, $newBridge);
+		$this->saveBridgeToDb($room->getId(), $newBridge);
 
 		$logContent = $this->getBridgeLog($room);
 		return [
@@ -209,7 +209,7 @@ class MatterbridgeManager {
 		if ($pid !== $bridge['pid']) {
 			// save the new PID if necessary
 			$bridge['pid'] = $pid;
-			$this->saveBridgeToDb($room, $bridge);
+			$this->saveBridgeToDb($room->getId(), $bridge);
 		}
 		return $pid;
 	}
@@ -730,16 +730,23 @@ class MatterbridgeManager {
 	 * @return bool success
 	 */
 	public function stopAllBridges(): bool {
-		$this->manager->forAllRooms(function ($room) {
-			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
-				$bridge = $this->getBridgeOfRoom($room);
-				// disable bridge in stored config
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('*')
+			->from('talk_bridges')
+			->where($query->expr()->like('json_values', $query->createNamedParameter(
+				$this->db->escapeLikeParameter('{"enabled":true') . '%'
+			)));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$bridge = json_decode($row['json_values'], true);
+			if ($bridge['enabled']) {
 				$bridge['enabled'] = false;
-				$this->saveBridgeToDb($room, $bridge);
-				// this will kill the bridge process
-				$this->checkBridgeProcess($room, $bridge);
+				$this->saveBridgeToDb((int) $row['room_id'], $bridge);
 			}
-		});
+		}
+		$result->closeCursor();
 
 		// finally kill all potential zombie matterbridge processes
 		$this->killZombieBridges(true);
@@ -757,7 +764,7 @@ class MatterbridgeManager {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('json_values')
-			->from('talk_bridges', 'b')
+			->from('talk_bridges')
 			->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			)
@@ -775,11 +782,10 @@ class MatterbridgeManager {
 	/**
 	 * Save bridge information for one room
 	 *
-	 * @param Room $room the room
+	 * @param int $roomId the room ID
 	 * @param array $bridge bridge values
 	 */
-	private function saveBridgeToDb(Room $room, array $bridge): void {
-		$roomId = $room->getId();
+	private function saveBridgeToDb(int $roomId, array $bridge): void {
 		$jsonValues = json_encode($bridge);
 
 		$qb = $this->db->getQueryBuilder();
