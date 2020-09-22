@@ -654,8 +654,9 @@ class MatterbridgeManager {
 
 	/**
 	 * kill the mattermost processes (owned by web server unix user) that do not match with any room
+	 * @param bool $killAll
 	 */
-	public function killZombieBridges(): void {
+	public function killZombieBridges(bool $killAll = false): void {
 		// get list of running matterbridge processes
 		$cmd = 'ps -ux | grep "commands/matterbridge" | grep -v grep | awk \'{print $2}\'';
 		exec($cmd, $output, $ret);
@@ -666,6 +667,13 @@ class MatterbridgeManager {
 
 		if (empty($runningPidList)) {
 			// No processes running, so also no zombies
+			return;
+		}
+
+		if ($killAll) {
+			foreach ($runningPidList as $runningPid) {
+				$this->killPid($runningPid);
+			}
 			return;
 		}
 
@@ -734,7 +742,7 @@ class MatterbridgeManager {
 		});
 
 		// finally kill all potential zombie matterbridge processes
-		$this->killZombieBridges();
+		$this->killZombieBridges(true);
 		return true;
 	}
 
