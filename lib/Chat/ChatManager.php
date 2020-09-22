@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OC\Memcache\ArrayCache;
+use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Participant;
@@ -33,6 +35,9 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
 
@@ -58,20 +63,30 @@ class ChatManager {
 	private $commentsManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
+	/** @var IDBConnection */
+	private $connection;
+	/** @var INotificationManager */
+	private $notificationManager;
 	/** @var Notifier */
 	private $notifier;
 	/** @var ITimeFactory */
 	protected $timeFactory;
+	/** @var ICache */
+	protected $cache;
 
 	public function __construct(CommentsManager $commentsManager,
 								IEventDispatcher $dispatcher,
+								IDBConnection $connection,
 								INotificationManager $notificationManager,
 								Notifier $notifier,
+								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
+		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->notifier = $notifier;
+		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -111,6 +126,7 @@ class ChatManager {
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
+		$this->cache->remove($chat->getToken());
 
 		return $comment;
 	}
@@ -140,6 +156,7 @@ class ChatManager {
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
+		$this->cache->remove($chat->getToken());
 
 		return $comment;
 	}
@@ -200,6 +217,7 @@ class ChatManager {
 			$this->dispatcher->dispatch(self::EVENT_AFTER_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
+		$this->cache->remove($chat->getToken());
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
 		}
@@ -275,6 +293,82 @@ class ChatManager {
 		if ($user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
+
+		if ($this->cache instanceof NullCache
+			|| $this->cache instanceof ArrayCache) {
+			return $this->waitForNewMessagesWithDatabase($chat, $offset, $limit, $timeout, $includeLastKnown);
+		}
+
+		return $this->waitForNewMessagesWithCache($chat, $offset, $limit, $timeout, $includeLastKnown);
+	}
+
+	/**
+	 * Check the cache until we found new messages, or the timeout was reached
+	 *
+	 * @param Room $chat
+	 * @param int $offset
+	 * @param int $limit
+	 * @param int $timeout
+	 * @param bool $includeLastKnown
+	 * @return IComment[]
+	 */
+	protected function waitForNewMessagesWithCache(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
+		$elapsedTime = 0;
+
+		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
+
+		while (empty($comments) && $elapsedTime < $timeout) {
+			$this->connection->close();
+			sleep(1);
+			$elapsedTime++;
+
+			$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
+		}
+
+		return $comments;
+	}
+
+	/**
+	 * Check the cache for the last message id or check the database for updates
+	 *
+	 * @param Room $chat
+	 * @param int $offset
+	 * @param int $limit
+	 * @param bool $includeLastKnown
+	 * @return IComment[]
+	 */
+	protected function checkCacheOrDatabase(Room $chat, int $offset, int $limit, bool $includeLastKnown): array {
+		$cachedId = $this->cache->get($chat->getToken());
+		if ($offset === $cachedId) {
+			// Cache hit, nothing new ¯\_(ツ)_/¯
+			return [];
+		}
+
+		// Load data from the database
+		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+
+		if (empty($comments)) {
+			// We only write the cache when there were no new comments,
+			// otherwise it could happen that this is not the last message,
+			// but the last within $limit
+			$this->cache->set($chat->getToken(), $offset, 30);
+			return [];
+		}
+
+		return $comments;
+	}
+
+	/**
+	 * Check the database for new messages until there a new messages or we exceeded the timeout
+	 *
+	 * @param Room $chat
+	 * @param int $offset
+	 * @param int $limit
+	 * @param int $timeout
+	 * @param bool $includeLastKnown
+	 * @return array
+	 */
+	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
 		$elapsedTime = 0;
 
 		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
