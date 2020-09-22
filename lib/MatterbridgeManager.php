@@ -789,7 +789,7 @@ class MatterbridgeManager {
 					'room_id' => $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 					'json_values' => $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR),
 				]);
-			$req = $qb->execute();
+			$qb->execute();
 		} catch (UniqueConstraintViolationException $e) {
 			$qb = $this->db->getQueryBuilder();
 			$qb->update('talk_bridges');
@@ -797,7 +797,7 @@ class MatterbridgeManager {
 			$qb->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			);
-			$req = $qb->execute();
+			$qb->execute();
 		}
 	}
 
