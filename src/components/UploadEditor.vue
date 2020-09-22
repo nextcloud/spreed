@@ -54,10 +54,10 @@
 		</transition-group>
 		<div class="upload-editor__actions">
 			<button @click="handleDismiss">
-				Dismiss
+				{{ t('spreed', 'Dismiss') }}
 			</button>
 			<button class="primary" @click="handleUpload">
-				Send
+				{{ t('spreed', 'Send') }}
 			</button>
 		</div>
 	</Modal>
