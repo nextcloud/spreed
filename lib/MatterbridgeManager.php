@@ -26,11 +26,7 @@ namespace OCA\Talk;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IL10N;
 use OCP\IUserManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
@@ -50,24 +46,27 @@ class MatterbridgeManager {
 	private $db;
 	/** @var IConfig */
 	private $config;
-	/** @var IAppData */
-	private $appData;
-	/** @var IL10N */
-	private $l;
+	/** @var IURLGenerator */
+	private $urlGenerator;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var Manager */
+	private $manager;
+	/** @var ChatManager */
+	private $chatManager;
 	/** @var IAuthTokenProvider */
 	private $tokenProvider;
 	/** @var ISecureRandom */
 	private $random;
-	/** @var ChatManager */
-	private $chatManager;
+	/** @var IAvatarManager */
+	private $avatarManager;
+	/** @var LoggerInterface */
+	private $logger;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
-								IAppData $appData,
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								Manager $manager,
@@ -76,20 +75,17 @@ class MatterbridgeManager {
 								ISecureRandom $random,
 								IAvatarManager $avatarManager,
 								LoggerInterface $logger,
-								IL10N $l,
 								ITimeFactory $timeFactory) {
 		$this->avatarManager = $avatarManager;
 		$this->db = $db;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
-		$this->appData = $appData;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->chatManager = $chatManager;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->logger = $logger;
-		$this->l = $l;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -216,14 +212,6 @@ class MatterbridgeManager {
 			$this->saveBridgeToDb($room, $bridge);
 		}
 		return $pid;
-	}
-
-	private function getDataFolder(): ISimpleFolder {
-		try {
-			return $this->appData->getFolder('bridge');
-		} catch (NotFoundException $e) {
-			return $this->appData->newFolder('bridge');
-		}
 	}
 
 	/**
