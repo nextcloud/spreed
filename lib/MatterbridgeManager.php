@@ -760,14 +760,14 @@ class MatterbridgeManager {
 			->from('talk_bridges', 'b')
 			->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
-			);
-		$req = $qb->execute();
+			)
+			->setMaxResults(1);
+		$result = $qb->execute();
 		$jsonValues = '{"enabled":false,"pid":0,"parts":[]}';
-		while ($row = $req->fetch()) {
+		if ($row = $result->fetch()) {
 			$jsonValues = $row['json_values'];
-			break;
 		}
-		$req->closeCursor();
+		$result->closeCursor();
 
 		return json_decode($jsonValues, true);
 	}
