@@ -1023,6 +1023,7 @@ class NotifierTest extends \Test\TestCase {
 		return [
 			['Incorrect app', 'invalid-app', null, null, null, null, null],
 			'User can not use Talk' => [AlreadyProcessedException::class, 'spreed', true, null, null, null, null],
+			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null, '12345'],
 			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null],
 			['Unknown subject', 'spreed', false, true, 'invalid-subject', null, null],
 			['Unknown object type', 'spreed', false, true, 'invitation', null, 'invalid-object-type'],
@@ -1041,8 +1042,9 @@ class NotifierTest extends \Test\TestCase {
 	 * @param string|null $subject
 	 * @param array|null $params
 	 * @param string|null $objectType
+	 * @param string $token
 	 */
-	public function testPrepareThrows($message, $app, $isDisabledForUser, $validRoom, $subject, $params, $objectType) {
+	public function testPrepareThrows($message, $app, $isDisabledForUser, $validRoom, $subject, $params, $objectType, $token = 'roomToken') {
 		/** @var INotification|MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
@@ -1056,20 +1058,20 @@ class NotifierTest extends \Test\TestCase {
 				->method('getType');
 			$n->expects($this->once())
 				->method('getObjectId')
-				->willReturn('roomToken');
+				->willReturn($token);
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')
-				->with('roomToken')
+				->with($token)
 				->willReturn($room);
 		} elseif ($validRoom === false) {
 			$n->expects($this->once())
 				->method('getObjectId')
-				->willReturn('roomToken');
+				->willReturn($token);
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')
-				->with('roomToken')
+				->with($token)
 				->willThrowException(new RoomNotFoundException());
-			$this->manager->expects($this->once())
+			$this->manager->expects($token !== 'roomToken' ? $this->once() : $this->never())
 				->method('getRoomById')
 				->willThrowException(new RoomNotFoundException());
 		}
