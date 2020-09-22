@@ -242,7 +242,8 @@ class PageController extends Controller {
 			}
 		} else {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
-			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
+			if ($response->getStatus() === Http::STATUS_OK
+				|| $response->getStatus() === Http::STATUS_CREATED) {
 				$data = $response->getData();
 				return $this->redirectToConversation($data['token']);
 			}
