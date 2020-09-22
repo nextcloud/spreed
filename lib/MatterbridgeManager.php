@@ -183,9 +183,9 @@ class MatterbridgeManager {
 		// first potentially kill the process
 		$currentBridge = $this->getBridgeOfRoom($room);
 		$currentBridge['enabled'] = false;
-		$this->checkBridgeProcess($token, $currentBridge);
+		$this->checkBridgeProcess($room, $currentBridge);
 		// then actually delete the config
-		$bridgeJSON = $this->config->deleteAppValue('spreed', 'bridge_' . $token);
+		$this->config->deleteAppValue('spreed', 'bridge_' . $room->getToken());
 		return true;
 	}
 
@@ -511,7 +511,7 @@ class MatterbridgeManager {
 	 *
 	 * @param Room $room the room
 	 * @param array $bridge bridge information
-	 * @param $relaunch whether to launch the process if it's down but bridge is enabled
+	 * @param bool $relaunch whether to launch the process if it's down but bridge is enabled
 	 * @return int the corresponding matterbridge process ID, 0 if none
 	 */
 	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
@@ -717,7 +717,7 @@ class MatterbridgeManager {
 			if (count(preg_split('/\n/', $result)) > 2) {
 				return true;
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 		}
 		return false;
 	}
@@ -735,7 +735,7 @@ class MatterbridgeManager {
 				$bridge['enabled'] = false;
 				$this->saveBridgeToDb($room, $bridge);
 				// this will kill the bridge process
-				$this->checkBridgeProcess($token, $currentBridge);
+				$this->checkBridgeProcess($room, $bridge);
 			}
 		});
 
