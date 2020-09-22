@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\MatterbridgeManager;
 use Psr\Log\LoggerInterface;
@@ -40,8 +41,11 @@ class CheckMatterbridges extends TimedJob {
 	/** @var LoggerInterface */
 	protected $logger;
 
-	public function __construct(MatterbridgeManager $bridgeManager,
+	public function __construct(ITimeFactory $time,
+								MatterbridgeManager $bridgeManager,
 								LoggerInterface $logger) {
+		parent::__construct($time);
+
 		// Every 15 minutes
 		$this->setInterval(60 * 15);
 
