@@ -153,7 +153,7 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function create(IShare $share): IShare {
 		try {
-			$room = $this->manager->getRoomByToken($share->getSharedWith());
+			$room = $this->manager->getRoomByToken($share->getSharedWith(), $share->getSharedBy());
 		} catch (RoomNotFoundException $e) {
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}

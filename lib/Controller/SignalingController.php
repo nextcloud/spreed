@@ -505,7 +505,7 @@ class SignalingController extends OCSController {
 		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
 
 		try {
-			$room = $this->manager->getRoomByToken($roomId);
+			$room = $this->manager->getRoomByToken($roomId, $userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([
 				'type' => 'error',
