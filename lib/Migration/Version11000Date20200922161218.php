@@ -113,7 +113,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 
 				$query->setParameter('enabled', $intEnabled, IQueryBuilder::PARAM_INT)
 					->setParameter('pid', $values['pid'], IQueryBuilder::PARAM_INT)
-					->setParameter('json_values', $encodedNewValues, IQueryBuilder::PARAM_STR)
+					->setParameter('json_values', $encodedNewValues, IQueryBuilder::PARAM_STR);
 				$query->execute();
 			}
 		}
