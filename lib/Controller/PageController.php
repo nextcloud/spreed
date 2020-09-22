@@ -185,7 +185,7 @@ class PageController extends Controller {
 		if ($token !== '') {
 			$room = null;
 			try {
-				$room = $this->manager->getRoomByToken($token);
+				$room = $this->manager->getRoomByToken($token, $this->userId);
 				$notification = $this->notificationManager->createNotification();
 				$shouldFlush = $this->notificationManager->defer();
 				try {

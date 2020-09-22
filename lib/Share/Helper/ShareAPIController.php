@@ -79,7 +79,7 @@ class ShareAPIController {
 		$result = [];
 
 		try {
-			$room = $this->manager->getRoomByToken($share->getSharedWith());
+			$room = $this->manager->getRoomByToken($share->getSharedWith(), $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return $result;
 		}
@@ -161,7 +161,7 @@ class ShareAPIController {
 	 */
 	public function canAccessShare(IShare $share, string $user): bool {
 		try {
-			$room = $this->manager->getRoomByToken($share->getSharedWith());
+			$room = $this->manager->getRoomByToken($share->getSharedWith(), $user);
 		} catch (RoomNotFoundException $e) {
 			return false;
 		}
