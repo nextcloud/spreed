@@ -198,7 +198,7 @@ class MatterbridgeManager {
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
 			$bridge = [
-				'enabled' => true,
+				'enabled' => (bool) $row['enabled'],
 				'pid' => (int) $row['pid'],
 				'parts' => json_decode($row['json_values'], true),
 			];
@@ -229,7 +229,8 @@ class MatterbridgeManager {
 	 * Edit the mattermost configuration file for one room
 	 * This method takes care of connecting the bridge to the Talk room with a bot user
 	 *
-	 * @param Room $room the room
+	 * @param Room $room
+	 * @param array $newBridge
 	 */
 	private function editBridgeConfig(Room $room, array $newBridge): void {
 		// check bot user exists and is member of the room
@@ -693,18 +694,12 @@ class MatterbridgeManager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_bridges')
-			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->gt('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$bridge = [
-				'enabled' => true,
-				'pid' => (int) $row['pid'],
-				'parts' => json_decode($row['json_values'], true),
-			];
-			if ($bridge['pid'] !== 0) {
-				$expectedPidList[] = $bridge['pid'];
-			}
+			$expectedPidList[] = (int) $row['pid'];
 		}
 		$result->closeCursor();
 
@@ -754,20 +749,10 @@ class MatterbridgeManager {
 	public function stopAllBridges(): bool {
 		$query = $this->db->getQueryBuilder();
 
-		$query->select('*')
-			->from('talk_bridges')
-			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
-
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$bridge = [
-				'enabled' => false,
-				'pid' => (int) $row['pid'],
-				'parts' => json_decode($row['json_values'], true),
-			];
-			$this->saveBridgeToDb((int) $row['room_id'], $bridge);
-		}
-		$result->closeCursor();
+		$query->update('talk_bridges')
+			->set('enabled', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT));
+		$query->execute();
 
 		// finally kill all potential zombie matterbridge processes
 		$this->killZombieBridges(true);
