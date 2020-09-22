@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -202,7 +203,11 @@ class MatterbridgeManager {
 				'pid' => (int) $row['pid'],
 				'parts' => json_decode($row['json_values'], true),
 			];
-			$room = $this->manager->getRoomById((int) $row['room_id']);
+			try {
+				$room = $this->manager->getRoomById((int) $row['room_id']);
+			} catch (RoomNotFoundException $e) {
+				continue;
+			}
 			$this->checkBridge($room, $bridge);
 		}
 		$result->closeCursor();
