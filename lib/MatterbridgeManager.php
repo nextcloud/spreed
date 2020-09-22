@@ -134,6 +134,7 @@ class MatterbridgeManager {
 	 * Edit bridge information for a room
 	 *
 	 * @param Room $room the room
+	 * @param string $userId
 	 * @param bool $enabled desired state of the bridge
 	 * @param array $parts parts of the bridge (what it connects to)
 	 * @return array bridge state
@@ -147,7 +148,7 @@ class MatterbridgeManager {
 		}
 		$newBridge = [
 			'enabled' => $enabled,
-			'pid' => isset($currentBridge['pid']) ? $currentBridge['pid'] : 0,
+			'pid' => $currentBridge['pid'] ?? 0,
 			'parts' => $parts,
 		];
 
@@ -244,7 +245,7 @@ class MatterbridgeManager {
 
 		// TODO adapt that to use appData
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
-		$configContent = $this->generateConfig($room, $newBridge);
+		$configContent = $this->generateConfig($newBridge);
 		file_put_contents($configPath, $configContent);
 	}
 
@@ -263,7 +264,7 @@ class MatterbridgeManager {
 			'password' => $botInfo['password'],
 			'channel' => $room->getToken(),
 		];
-		array_push($bridge['parts'], $localPart);
+		$bridge['parts'][] = $localPart;
 		return $bridge;
 	}
 
@@ -281,7 +282,7 @@ class MatterbridgeManager {
 		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
-			$pass = md5(strval(rand()));
+			$pass = md5((string)mt_rand());
 			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 			// set avatar
@@ -338,10 +339,10 @@ class MatterbridgeManager {
 	 * Actually generate the matterbridge configuration file content for one bridge (one room)
 	 * It basically add a pair of sections for each part: authentication and target channel
 	 *
-	 * @param Room $room the room
+	 * @param array $bridge
 	 * @return string config file content
 	 */
-	private function generateConfig(Room $room, array $bridge): string {
+	private function generateConfig(array $bridge): string {
 		$content = '';
 		foreach ($bridge['parts'] as $k => $part) {
 			$type = $part['type'];
@@ -401,8 +402,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
 				// do not include # in channel
-				if (preg_match('/^#/', $part['channel'])) {
-					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
+				if (strpos($part['channel'], '#') === 0) {
+					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -410,8 +411,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'discord') {
 				// do not include # in channel
-				if (preg_match('/^#/', $part['channel'])) {
-					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
+				if (strpos($part['channel'], '#') === 0) {
+					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -498,6 +499,9 @@ class MatterbridgeManager {
 
 	/**
 	 * Remove the scheme from an URL and add port
+	 *
+	 * @param string $url
+	 * @return string
 	 */
 	private function cleanUrl(string $url): string {
 		$uo = parse_url($url);
@@ -522,7 +526,7 @@ class MatterbridgeManager {
 	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
 		$pid = 0;
 
-		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
+		if (isset($bridge['pid']) && (int) $bridge['pid'] !== 0) {
 			// config : there is a PID stored
 			$isRunning = $this->isRunning($bridge['pid']);
 			// if bridge running and enabled is false : kill it
@@ -576,11 +580,11 @@ class MatterbridgeManager {
 	private function notify(Room $room, string $userId, array $currentBridge, array $newBridge): void {
 		$currentParts = $currentBridge['parts'];
 		$newParts = $newBridge['parts'];
-		if (count($currentParts) === 0 && count($newParts) > 0) {
+		if (empty($currentParts) && !empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_added');
-		} elseif (count($currentParts) > 0 && count($newParts) === 0) {
+		} elseif (!empty($currentParts) && empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_removed');
-		} elseif (count($currentParts) !== count($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
+		} elseif (empty($currentParts) !== empty($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_edited');
 		}
 	}
@@ -662,7 +666,7 @@ class MatterbridgeManager {
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$cmd = sprintf('%s -conf %s', $binaryPath, $configPath);
 		$pid = exec(sprintf('nice -n19 %s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
-		$pid = intval($pid);
+		$pid = (int) $pid;
 		if ($ret !== 0) {
 			$pid = 0;
 		}
@@ -679,7 +683,7 @@ class MatterbridgeManager {
 		exec($cmd, $output, $ret);
 		$runningPidList = [];
 		foreach ($output as $o) {
-			array_push($runningPidList, intval($o));
+			$runningPidList[] = (int) $o;
 		}
 
 		if (empty($runningPidList)) {
@@ -726,7 +730,7 @@ class MatterbridgeManager {
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
 		// check the process is gone
 		$isStillRunning = $this->isRunning($pid);
-		return (intval($ret) === 0 && !$isStillRunning);
+		return (int) $ret === 0 && !$isStillRunning;
 	}
 
 	/**
@@ -738,7 +742,7 @@ class MatterbridgeManager {
 	private function isRunning(int $pid): bool {
 		try {
 			$result = shell_exec(sprintf('ps %d', $pid));
-			if (count(preg_split('/\n/', $result)) > 2) {
+			if (count(explode("\n", $result)) > 2) {
 				return true;
 			}
 		} catch (\Exception $e) {
