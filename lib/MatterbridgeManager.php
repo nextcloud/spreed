@@ -663,6 +663,12 @@ class MatterbridgeManager {
 		foreach ($output as $o) {
 			array_push($runningPidList, intval($o));
 		}
+
+		if (empty($runningPidList)) {
+			// No processes running, so also no zombies
+			return;
+		}
+
 		// get list of what should be running
 		$expectedPidList = [];
 		$this->manager->forAllRooms(function ($room) use (&$expectedPidList) {
