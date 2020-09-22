@@ -446,14 +446,25 @@ class Manager {
 
 	/**
 	 * @param string $token
+	 * @param string|null $preloadParticipant Load this participants information if possible
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByToken(string $token): Room {
+	public function getRoomByToken(string $token, ?string $preloadParticipant = null): Room {
+		$preloadParticipant = $preloadParticipant === '' ? null : $preloadParticipant;
+
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_rooms')
-			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+		$query->select('r.*')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		if ($preloadParticipant !== null) {
+			$query->addSelect('p.*')
+				->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
+					$query->expr()->eq('p.user_id', $query->createNamedParameter($preloadParticipant)),
+					$query->expr()->eq('p.room_id', 'r.id')
+				));
+		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -468,7 +479,12 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return $this->createRoomObject($row);
+		$room = $this->createRoomObject($row);
+		if ($preloadParticipant !== null && isset($row['user_id'])) {
+			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
+		}
+
+		return $room;
 	}
 
 	/**

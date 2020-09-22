@@ -54,8 +54,9 @@ class ConversationProvider implements IProvider {
 
 	public function getResourceRichObject(IResource $resource): array {
 		try {
-			$room = $this->manager->getRoomByToken($resource->getId());
 			$user = $this->userSession->getUser();
+			$userId = $user instanceof IUser ? $user->getUID() : '';
+			$room = $this->manager->getRoomByToken($resource->getId(), $userId);
 
 			$iconURL = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
 			/**
@@ -68,7 +69,7 @@ class ConversationProvider implements IProvider {
 			return [
 				'type' => 'room',
 				'id' => $resource->getId(),
-				'name' => $room->getDisplayName($user instanceof IUser ? $user->getUID() : ''),
+				'name' => $room->getDisplayName($userId),
 				'call-type' => $this->getRoomType($room),
 				'iconUrl' => $iconURL,
 				'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()])

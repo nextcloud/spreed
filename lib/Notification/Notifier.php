@@ -124,10 +124,11 @@ class Notifier implements INotifier {
 
 	/**
 	 * @param string $objectId
+	 * @param string $userId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	protected function getRoom(string $objectId): Room {
+	protected function getRoom(string $objectId, string $userId): Room {
 		if (array_key_exists($objectId, $this->rooms)) {
 			if ($this->rooms[$objectId] === null) {
 				throw new RoomNotFoundException('Room does not exist');
@@ -137,10 +138,16 @@ class Notifier implements INotifier {
 		}
 
 		try {
-			$room = $this->manager->getRoomByToken($objectId);
+			$room = $this->manager->getRoomByToken($objectId, $userId);
 			$this->rooms[$objectId] = $room;
 			return $room;
 		} catch (RoomNotFoundException $e) {
+			if (!is_numeric($objectId)) {
+				// Room does not exist
+				$this->rooms[$objectId] = null;
+				throw $e;
+			}
+
 			try {
 				// Before 3.2.3 the id was passed in notifications
 				$room = $this->manager->getRoomById((int) $objectId);
@@ -206,7 +213,7 @@ class Notifier implements INotifier {
 		}
 
 		try {
-			$room = $this->getRoom($notification->getObjectId());
+			$room = $this->getRoom($notification->getObjectId(), $userId);
 		} catch (RoomNotFoundException $e) {
 			// Room does not exist
 			throw new AlreadyProcessedException();
