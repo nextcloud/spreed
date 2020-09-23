@@ -23,14 +23,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IL10N;
 use OCP\IUserManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
@@ -50,24 +47,27 @@ class MatterbridgeManager {
 	private $db;
 	/** @var IConfig */
 	private $config;
-	/** @var IAppData */
-	private $appData;
-	/** @var IL10N */
-	private $l;
+	/** @var IURLGenerator */
+	private $urlGenerator;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var Manager */
+	private $manager;
+	/** @var ChatManager */
+	private $chatManager;
 	/** @var IAuthTokenProvider */
 	private $tokenProvider;
 	/** @var ISecureRandom */
 	private $random;
-	/** @var ChatManager */
-	private $chatManager;
+	/** @var IAvatarManager */
+	private $avatarManager;
+	/** @var LoggerInterface */
+	private $logger;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
-								IAppData $appData,
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								Manager $manager,
@@ -76,20 +76,17 @@ class MatterbridgeManager {
 								ISecureRandom $random,
 								IAvatarManager $avatarManager,
 								LoggerInterface $logger,
-								IL10N $l,
 								ITimeFactory $timeFactory) {
 		$this->avatarManager = $avatarManager;
 		$this->db = $db;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
-		$this->appData = $appData;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->chatManager = $chatManager;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
 		$this->logger = $logger;
-		$this->l = $l;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -137,6 +134,7 @@ class MatterbridgeManager {
 	 * Edit bridge information for a room
 	 *
 	 * @param Room $room the room
+	 * @param string $userId
 	 * @param bool $enabled desired state of the bridge
 	 * @param array $parts parts of the bridge (what it connects to)
 	 * @return array bridge state
@@ -150,7 +148,7 @@ class MatterbridgeManager {
 		}
 		$newBridge = [
 			'enabled' => $enabled,
-			'pid' => isset($currentBridge['pid']) ? $currentBridge['pid'] : 0,
+			'pid' => $currentBridge['pid'] ?? 0,
 			'parts' => $parts,
 		];
 
@@ -164,7 +162,7 @@ class MatterbridgeManager {
 		$newBridge['pid'] = $pid;
 
 		// save config
-		$this->saveBridgeToDb($room, $newBridge);
+		$this->saveBridgeToDb($room->getId(), $newBridge);
 
 		$logContent = $this->getBridgeLog($room);
 		return [
@@ -183,9 +181,9 @@ class MatterbridgeManager {
 		// first potentially kill the process
 		$currentBridge = $this->getBridgeOfRoom($room);
 		$currentBridge['enabled'] = false;
-		$this->checkBridgeProcess($token, $currentBridge);
+		$this->checkBridgeProcess($room, $currentBridge);
 		// then actually delete the config
-		$bridgeJSON = $this->config->deleteAppValue('spreed', 'bridge_' . $token);
+		$this->config->deleteAppValue('spreed', 'bridge_' . $room->getToken());
 		return true;
 	}
 
@@ -194,43 +192,51 @@ class MatterbridgeManager {
 	 * For each room, check mattermost process respects desired state
 	 */
 	public function checkAllBridges(): void {
-		// TODO call this from time to time to make sure everything is running fine
-		$this->manager->forAllRooms(function ($room) {
-			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
-				$this->checkBridge($room);
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_bridges')
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$bridge = [
+				'enabled' => (bool) $row['enabled'],
+				'pid' => (int) $row['pid'],
+				'parts' => json_decode($row['json_values'], true),
+			];
+			try {
+				$room = $this->manager->getRoomById((int) $row['room_id']);
+			} catch (RoomNotFoundException $e) {
+				continue;
 			}
-		});
+			$this->checkBridge($room, $bridge);
+		}
+		$result->closeCursor();
 	}
 
 	/**
 	 * For one room, check mattermost process respects desired state
 	 * @param Room $room the room
+	 * @param array|null $bridge
 	 * @return int the bridge process ID
 	 */
-	public function checkBridge(Room $room): int {
-		$bridge = $this->getBridgeOfRoom($room);
+	public function checkBridge(Room $room, ?array $bridge = null): int {
+		$bridge = $bridge ?: $this->getBridgeOfRoom($room);
 		$pid = $this->checkBridgeProcess($room, $bridge);
 		if ($pid !== $bridge['pid']) {
 			// save the new PID if necessary
 			$bridge['pid'] = $pid;
-			$this->saveBridgeToDb($room, $bridge);
+			$this->saveBridgeToDb($room->getId(), $bridge);
 		}
 		return $pid;
-	}
-
-	private function getDataFolder(): ISimpleFolder {
-		try {
-			return $this->appData->getFolder('bridge');
-		} catch (NotFoundException $e) {
-			return $this->appData->newFolder('bridge');
-		}
 	}
 
 	/**
 	 * Edit the mattermost configuration file for one room
 	 * This method takes care of connecting the bridge to the Talk room with a bot user
 	 *
-	 * @param Room $room the room
+	 * @param Room $room
+	 * @param array $newBridge
 	 */
 	private function editBridgeConfig(Room $room, array $newBridge): void {
 		// check bot user exists and is member of the room
@@ -239,7 +245,7 @@ class MatterbridgeManager {
 
 		// TODO adapt that to use appData
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
-		$configContent = $this->generateConfig($room, $newBridge);
+		$configContent = $this->generateConfig($newBridge);
 		file_put_contents($configPath, $configContent);
 	}
 
@@ -258,7 +264,7 @@ class MatterbridgeManager {
 			'password' => $botInfo['password'],
 			'channel' => $room->getToken(),
 		];
-		array_push($bridge['parts'], $localPart);
+		$bridge['parts'][] = $localPart;
 		return $bridge;
 	}
 
@@ -276,7 +282,7 @@ class MatterbridgeManager {
 		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
-			$pass = md5(strval(rand()));
+			$pass = md5((string)mt_rand());
 			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 			// set avatar
@@ -333,10 +339,10 @@ class MatterbridgeManager {
 	 * Actually generate the matterbridge configuration file content for one bridge (one room)
 	 * It basically add a pair of sections for each part: authentication and target channel
 	 *
-	 * @param Room $room the room
+	 * @param array $bridge
 	 * @return string config file content
 	 */
-	private function generateConfig(Room $room, array $bridge): string {
+	private function generateConfig(array $bridge): string {
 		$content = '';
 		foreach ($bridge['parts'] as $k => $part) {
 			$type = $part['type'];
@@ -396,8 +402,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
 				// do not include # in channel
-				if (preg_match('/^#/', $part['channel'])) {
-					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
+				if (strpos($part['channel'], '#') === 0) {
+					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -405,8 +411,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'discord') {
 				// do not include # in channel
-				if (preg_match('/^#/', $part['channel'])) {
-					$bridge['parts'][$k]['channel'] = preg_replace('/^#+/', '', $part['channel']);
+				if (strpos($part['channel'], '#') === 0) {
+					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -493,6 +499,9 @@ class MatterbridgeManager {
 
 	/**
 	 * Remove the scheme from an URL and add port
+	 *
+	 * @param string $url
+	 * @return string
 	 */
 	private function cleanUrl(string $url): string {
 		$uo = parse_url($url);
@@ -511,13 +520,13 @@ class MatterbridgeManager {
 	 *
 	 * @param Room $room the room
 	 * @param array $bridge bridge information
-	 * @param $relaunch whether to launch the process if it's down but bridge is enabled
+	 * @param bool $relaunch whether to launch the process if it's down but bridge is enabled
 	 * @return int the corresponding matterbridge process ID, 0 if none
 	 */
 	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
 		$pid = 0;
 
-		if (isset($bridge['pid']) && intval($bridge['pid']) !== 0) {
+		if (isset($bridge['pid']) && (int) $bridge['pid'] !== 0) {
 			// config : there is a PID stored
 			$isRunning = $this->isRunning($bridge['pid']);
 			// if bridge running and enabled is false : kill it
@@ -571,11 +580,11 @@ class MatterbridgeManager {
 	private function notify(Room $room, string $userId, array $currentBridge, array $newBridge): void {
 		$currentParts = $currentBridge['parts'];
 		$newParts = $newBridge['parts'];
-		if (count($currentParts) === 0 && count($newParts) > 0) {
+		if (empty($currentParts) && !empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_added');
-		} elseif (count($currentParts) > 0 && count($newParts) === 0) {
+		} elseif (!empty($currentParts) && empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_removed');
-		} elseif (count($currentParts) !== count($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
+		} elseif (empty($currentParts) !== empty($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_edited');
 		}
 	}
@@ -657,7 +666,7 @@ class MatterbridgeManager {
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$cmd = sprintf('%s -conf %s', $binaryPath, $configPath);
 		$pid = exec(sprintf('nice -n19 %s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
-		$pid = intval($pid);
+		$pid = (int) $pid;
 		if ($ret !== 0) {
 			$pid = 0;
 		}
@@ -666,28 +675,47 @@ class MatterbridgeManager {
 
 	/**
 	 * kill the mattermost processes (owned by web server unix user) that do not match with any room
+	 * @param bool $killAll
 	 */
-	public function killZombieBridges(): void {
+	public function killZombieBridges(bool $killAll = false): void {
 		// get list of running matterbridge processes
 		$cmd = 'ps -ux | grep "commands/matterbridge" | grep -v grep | awk \'{print $2}\'';
 		exec($cmd, $output, $ret);
 		$runningPidList = [];
 		foreach ($output as $o) {
-			array_push($runningPidList, intval($o));
+			$runningPidList[] = (int) $o;
 		}
-		// get list of what should be running
-		$expectedPidList = [];
-		$this->manager->forAllRooms(function ($room) use (&$expectedPidList) {
-			$bridge = $this->getBridgeOfRoom($room);
-			if ($bridge['enabled'] && $bridge['pid'] !== 0) {
-				array_push($expectedPidList, intval($bridge['pid']));
-			}
-		});
-		// kill what should not be running
-		foreach ($runningPidList as $runningPid) {
-			if (!in_array($runningPid, $expectedPidList)) {
+
+		if (empty($runningPidList)) {
+			// No processes running, so also no zombies
+			return;
+		}
+
+		if ($killAll) {
+			foreach ($runningPidList as $runningPid) {
 				$this->killPid($runningPid);
 			}
+			return;
+		}
+
+		// get list of what should be running
+		$expectedPidList = [];
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_bridges')
+			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->gt('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$expectedPidList[] = (int) $row['pid'];
+		}
+		$result->closeCursor();
+
+		// kill what should not be running
+		$toKill = array_diff($runningPidList, $expectedPidList);
+		foreach ($toKill as $toKillPid) {
+			$this->killPid($toKillPid);
 		}
 	}
 
@@ -702,7 +730,7 @@ class MatterbridgeManager {
 		exec(sprintf('kill -9 %d', $pid), $output, $ret);
 		// check the process is gone
 		$isStillRunning = $this->isRunning($pid);
-		return (intval($ret) === 0 && !$isStillRunning);
+		return (int) $ret === 0 && !$isStillRunning;
 	}
 
 	/**
@@ -714,10 +742,10 @@ class MatterbridgeManager {
 	private function isRunning(int $pid): bool {
 		try {
 			$result = shell_exec(sprintf('ps %d', $pid));
-			if (count(preg_split('/\n/', $result)) > 2) {
+			if (count(explode("\n", $result)) > 2) {
 				return true;
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 		}
 		return false;
 	}
@@ -728,19 +756,15 @@ class MatterbridgeManager {
 	 * @return bool success
 	 */
 	public function stopAllBridges(): bool {
-		$this->manager->forAllRooms(function ($room) {
-			if ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) {
-				$bridge = $this->getBridgeOfRoom($room);
-				// disable bridge in stored config
-				$bridge['enabled'] = false;
-				$this->saveBridgeToDb($room, $bridge);
-				// this will kill the bridge process
-				$this->checkBridgeProcess($token, $currentBridge);
-			}
-		});
+		$query = $this->db->getQueryBuilder();
+
+		$query->update('talk_bridges')
+			->set('enabled', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT));
+		$query->execute();
 
 		// finally kill all potential zombie matterbridge processes
-		$this->killZombieBridges();
+		$this->killZombieBridges(true);
 		return true;
 	}
 
@@ -754,31 +778,39 @@ class MatterbridgeManager {
 		$roomId = $room->getId();
 
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('json_values')
-			->from('talk_bridges', 'b')
+		$qb->select('json_values', 'enabled', 'pid')
+			->from('talk_bridges')
 			->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
-			);
-		$req = $qb->execute();
-		$jsonValues = '{"enabled":false,"pid":0,"parts":[]}';
-		while ($row = $req->fetch()) {
+			)
+			->setMaxResults(1);
+		$result = $qb->execute();
+		$enabled = false;
+		$pid = 0;
+		$jsonValues = '[]';
+		if ($row = $result->fetch()) {
+			$pid = (int) $row['pid'];
+			$enabled = ((int) $row['enabled'] === 1);
 			$jsonValues = $row['json_values'];
-			break;
 		}
-		$req->closeCursor();
+		$result->closeCursor();
 
-		return json_decode($jsonValues, true);
+		return [
+			'enabled' => $enabled,
+			'pid' => $pid,
+			'parts' => json_decode($jsonValues, true),
+		];
 	}
 
 	/**
 	 * Save bridge information for one room
 	 *
-	 * @param Room $room the room
+	 * @param int $roomId the room ID
 	 * @param array $bridge bridge values
 	 */
-	private function saveBridgeToDb(Room $room, array $bridge): void {
-		$roomId = $room->getId();
-		$jsonValues = json_encode($bridge);
+	private function saveBridgeToDb(int $roomId, array $bridge): void {
+		$jsonValues = json_encode($bridge['parts']);
+		$intEnabled = $bridge['enabled'] ? 1 : 0;
 
 		$qb = $this->db->getQueryBuilder();
 		try {
@@ -786,16 +818,20 @@ class MatterbridgeManager {
 				->values([
 					'room_id' => $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 					'json_values' => $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR),
+					'enabled' => $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT),
+					'pid' => $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT),
 				]);
-			$req = $qb->execute();
+			$qb->execute();
 		} catch (UniqueConstraintViolationException $e) {
 			$qb = $this->db->getQueryBuilder();
 			$qb->update('talk_bridges');
 			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
+			$qb->set('enabled', $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT));
+			$qb->set('pid', $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT));
 			$qb->where(
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			);
-			$req = $qb->execute();
+			$qb->execute();
 		}
 	}
 

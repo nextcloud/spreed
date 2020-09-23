@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\MatterbridgeManager;
+use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -34,24 +36,36 @@ use Psr\Log\LoggerInterface;
  */
 class CheckMatterbridges extends TimedJob {
 
+	/** @var IConfig */
+	protected $serverConfig;
+
 	/** @var MatterbridgeManager */
 	protected $bridgeManager;
 
 	/** @var LoggerInterface */
 	protected $logger;
 
-	public function __construct(MatterbridgeManager $bridgeManager,
+	public function __construct(ITimeFactory $time,
+								IConfig $serverConfig,
+								MatterbridgeManager $bridgeManager,
 								LoggerInterface $logger) {
+		parent::__construct($time);
+
 		// Every 15 minutes
 		$this->setInterval(60 * 15);
 
+		$this->serverConfig = $serverConfig;
 		$this->bridgeManager = $bridgeManager;
 		$this->logger = $logger;
 	}
 
 	protected function run($argument): void {
-		$this->bridgeManager->checkAllBridges();
-		$this->bridgeManager->killZombieBridges();
+		if ($this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1') {
+			$this->bridgeManager->checkAllBridges();
+			$this->bridgeManager->killZombieBridges();
+		} else {
+			$this->bridgeManager->stopAllBridges();
+		}
 		$this->logger->info('Checked if Matterbridge instances are running correctly.');
 	}
 }
