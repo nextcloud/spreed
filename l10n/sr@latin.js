@@ -47,6 +47,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
     "Grid view" : "Prikaz mreže",
+    "Send" : "Pošalji",
     "Start a conversation" : "Započni razgovor",
     "Default" : "Podrazumevano",
     "Copy" : "Kopiraj",
@@ -60,7 +61,6 @@ OC.L10N.register(
     "Change password" : "Izmeni lozinku",
     "Set password" : "Postavi lozinku",
     "Rename" : "Rename",
-    "Send" : "Pošalji",
     "Share" : "Deljenje",
     "Error while sharing" : "Greška pri deljenju"
 },
