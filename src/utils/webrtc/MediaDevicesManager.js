@@ -19,6 +19,14 @@
  *
  */
 
+import BrowserStorage from '../../services/BrowserStorage'
+
+/**
+ * Special string to set null device ids in local storage (as only strings are
+ * allowed).
+ */
+const LOCAL_STORAGE_NULL_DEVICE_ID = 'local-storage-null-device-id'
+
 /**
  * Wrapper for MediaDevices to simplify its use.
  *
@@ -57,7 +65,9 @@
  * modified.
  *
  * The selected devices will be automatically cleared if they are no longer
- * available. When no device of certain kind is selected and there are other
+ * available, and they will be restored once they are again available
+ * (immediately if events are enabled, or otherwise the next time that devices
+ * are got). When no device of certain kind is selected and there are other
  * devices of that kind the selected device will fall back to the first one
  * found, or to the one with the "default" id (if any). It is possible to
  * explicitly disable devices of certain kind by setting xxxInputId to "null"
@@ -83,6 +93,13 @@ export default function MediaDevicesManager() {
 	this._tracks = []
 
 	this._updateDevicesBound = this._updateDevices.bind(this)
+
+	if (BrowserStorage.getItem('audioInputId') === LOCAL_STORAGE_NULL_DEVICE_ID) {
+		this.attributes.audioInputId = null
+	}
+	if (BrowserStorage.getItem('videoInputId') === LOCAL_STORAGE_NULL_DEVICE_ID) {
+		this.attributes.videoInputId = null
+	}
 }
 MediaDevicesManager.prototype = {
 
@@ -94,6 +111,24 @@ MediaDevicesManager.prototype = {
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
+
+		this._storeDeviceId(key, value)
+	},
+
+	_storeDeviceId: function(key, value) {
+		if (key !== 'audioInputId' && key !== 'videoInputId') {
+			return
+		}
+
+		if (value === null) {
+			value = LOCAL_STORAGE_NULL_DEVICE_ID
+		}
+
+		if (value) {
+			BrowserStorage.setItem(key, value)
+		} else {
+			BrowserStorage.removeItem(key)
+		}
 	},
 
 	on: function(event, handler) {
@@ -274,9 +309,13 @@ MediaDevicesManager.prototype = {
 		// Always refresh the known device with the latest values.
 		this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId] = addedDevice
 
-		// Set first available device as fallback, and override any
-		// fallback previously set if the default device is added.
+		// Restore previously selected device if it becomes available again.
+		// Additionally, set first available device as fallback, and override
+		// any fallback previously set if the default device is added.
 		if (addedDevice.kind === 'audioinput') {
+			if (BrowserStorage.getItem('audioInputId') === addedDevice.deviceId) {
+				this.attributes.audioInputId = addedDevice.deviceId
+			}
 			if (!this._fallbackAudioInputId || addedDevice.deviceId === 'default') {
 				this._fallbackAudioInputId = addedDevice.deviceId
 			}
@@ -284,6 +323,9 @@ MediaDevicesManager.prototype = {
 				this.attributes.audioInputId = this._fallbackAudioInputId
 			}
 		} else if (addedDevice.kind === 'videoinput') {
+			if (BrowserStorage.getItem('videoInputId') === addedDevice.deviceId) {
+				this.attributes.videoInputId = addedDevice.deviceId
+			}
 			if (!this._fallbackVideoInputId || addedDevice.deviceId === 'default') {
 				this._fallbackVideoInputId = addedDevice.deviceId
 			}
