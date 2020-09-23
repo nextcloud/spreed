@@ -117,14 +117,6 @@ export default {
 		 * @returns {number}
 		 */
 		sortParticipants(participant1, participant2) {
-			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1
-			const moderator2 = moderatorTypes.indexOf(participant2.participantType) !== -1
-
-			if (moderator1 !== moderator2) {
-				return moderator1 ? -1 : 1
-			}
-
 			let session1 = participant1.sessionId
 			let session2 = participant2.sessionId
 			if (participant1.status === 'offline') {
@@ -139,6 +131,14 @@ export default {
 				}
 			} else if (session2 === '0') {
 				return -1
+			}
+
+			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
+			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1
+			const moderator2 = moderatorTypes.indexOf(participant2.participantType) !== -1
+
+			if (moderator1 !== moderator2) {
+				return moderator1 ? -1 : 1
 			}
 
 			const participant1Away = this.isNotAvailable(participant1)
