@@ -50,7 +50,7 @@
 
 			<span class="mention-suggestion">
 				<span>{{ scope.item.label }}</span>
-				<em v-if="isNotAvailable(scope.item)"
+				<em v-if="getStatusMessage(scope.item)"
 					class="user-status">
 					{{ getStatusMessage(scope.item) }}
 				</em>

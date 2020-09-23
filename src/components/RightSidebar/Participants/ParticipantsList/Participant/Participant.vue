@@ -42,7 +42,7 @@
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
-			<div v-if="isNotAvailable(participant)"
+			<div v-if="getStatusMessage(participant)"
 				class="participant-row__status">
 				<span>{{ getStatusMessage(participant) }}</span>
 			</div>
