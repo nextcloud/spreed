@@ -45,6 +45,7 @@ OC.L10N.register(
     "Share link" : "Холбоос хуваалцах",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Send" : "илгээх",
     "Copy" : "Хуулах",
     "Copied!" : "Хуулсан!",
     "Not supported!" : "Дэмжигдэхгүй",
@@ -54,7 +55,6 @@ OC.L10N.register(
     "Submit" : "мэдэгдэх",
     "Change password" : "Нууц үг солих",
     "Rename" : "Нэрлэнэ үү",
-    "Send" : "илгээх",
     "Share" : "Түгээх",
     "Error while sharing" : "Түгээхэд алдаа гарлаа",
     "Contacts" : "Харилцагчид"
