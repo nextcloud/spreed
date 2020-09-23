@@ -44,8 +44,8 @@
 		</template>
 		<template v-slot:empty-content>
 			<EmptyContent icon="icon-talk">
-				{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 				<template #desc>
+					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 					<button
 						@click="clickStartNew">
 						{{ t('spreed', 'Start a conversation') }}
