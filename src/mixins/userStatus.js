@@ -23,10 +23,6 @@
 const userStatus = {
 	methods: {
 		getStatusMessage(userData) {
-			if (!this.isNotAvailable(userData)) {
-				return ''
-			}
-
 			let status = ''
 			if (userData.statusIcon) {
 				status = userData.statusIcon + ' '
@@ -36,7 +32,7 @@ const userStatus = {
 				status += userData.statusMessage
 			} else if (userData.status === 'dnd') {
 				status += t('spreed', 'Do not disturb')
-			} else {
+			} else if (userData.status === 'away') {
 				status += t('spreed', 'Away')
 			}
 
