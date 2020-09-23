@@ -39,6 +39,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -72,6 +73,8 @@ class ChatControllerTest extends TestCase {
 	protected $searchPlugin;
 	/** @var ISearchResult|MockObject */
 	protected $searchResult;
+	/** @var IEventDispatcher|MockObject */
+	protected $eventDispatcher;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var IL10N|MockObject */
@@ -100,6 +103,7 @@ class ChatControllerTest extends TestCase {
 		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
+		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
 
@@ -130,6 +134,7 @@ class ChatControllerTest extends TestCase {
 			$this->statusManager,
 			$this->searchPlugin,
 			$this->searchResult,
+			$this->eventDispatcher,
 			$this->timeFactory,
 			$this->l
 		);
