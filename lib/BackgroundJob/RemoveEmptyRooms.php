@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
@@ -43,8 +44,11 @@ class RemoveEmptyRooms extends TimedJob {
 
 	protected $numDeletedRooms = 0;
 
-	public function __construct(Manager $manager,
+	public function __construct(ITimeFactory $timeFactory,
+								Manager $manager,
 								LoggerInterface $logger) {
+		parent::__construct($timeFactory);
+
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
 
