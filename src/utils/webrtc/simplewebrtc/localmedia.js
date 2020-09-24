@@ -165,7 +165,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			}
 
 			track.addEventListener('ended', function() {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !self._pendingAudioInputIdChangedCount && !self._pendingVideoInputIdChangedCount) {
 					self._removeStream(stream)
 				}
 			})
@@ -261,6 +261,14 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		if (audioInputIdChangedAgain) {
 			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
 		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
@@ -303,7 +311,7 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
 					this._removeStream(stream)
 				}
 			})
@@ -394,6 +402,14 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		if (videoInputIdChangedAgain) {
 			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
 		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
@@ -423,7 +439,7 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
 					this._removeStream(stream)
 				}
 			})
