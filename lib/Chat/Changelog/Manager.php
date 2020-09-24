@@ -27,12 +27,15 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager as RoomManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IL10N;
 
 class Manager {
 
 	/** @var IConfig */
 	protected $config;
+	/** @var IDBConnection */
+	protected $connection;
 	/** @var RoomManager */
 	protected $roomManager;
 	/** @var ChatManager */
@@ -43,11 +46,13 @@ class Manager {
 	protected $l;
 
 	public function __construct(IConfig $config,
+								IDBConnection $connection,
 								RoomManager $roomManager,
 								ChatManager $chatManager,
 								ITimeFactory $timeFactory,
 								IL10N $l) {
 		$this->config = $config;
+		$this->connection = $connection;
 		$this->roomManager = $roomManager;
 		$this->chatManager = $chatManager;
 		$this->timeFactory = $timeFactory;
@@ -79,6 +84,15 @@ class Manager {
 	}
 
 	public function getChangelogs(): array {
+		$emojis = $this->l->t('- Spice up your messages with emojis from the emoji picker');
+		if ($this->connection->supports4ByteText()) {
+			$emojis = str_replace(
+				'{emoji}',
+				'😍',
+				$this->l->t('- Spice up your messages with emojis from the emoji picker {emoji}')
+			);
+		}
+
 		return [
 			$this->l->t(
 				"Welcome to Nextcloud Talk!\n"
@@ -102,6 +116,10 @@ class Manager {
 			$this->l->t('- Check out the new grid and call view'),
 			$this->l->t('- You can now upload and drag\'n\'drop files directly from your device into the chat'),
 			$this->l->t('- Shared files are now opened directly inside the chat view with the viewer apps'),
+			$this->l->t('New in Talk 10'),
+			$this->l->t('- You can now search for chats and messages in the unified search in the top bar'),
+			$emojis,
+			$this->l->t('- You can now change your camera and microphone while being in a call'),
 		];
 	}
 }
