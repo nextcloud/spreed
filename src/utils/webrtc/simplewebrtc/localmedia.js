@@ -204,6 +204,26 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		return
 	}
 
+	this._pendingAudioInputIdChangedCount = 1
+
+	const resetPendingAudioInputIdChangedCount = () => {
+		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
+
+		this._pendingAudioInputIdChangedCount = 0
+
+		if (audioInputIdChangedAgain) {
+			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
+		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
+	}
+
 	const localStreamsChanged = []
 	const localTracksReplaced = []
 
@@ -244,31 +264,15 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
 
+		resetPendingAudioInputIdChangedCount()
+
 		return
 	}
 
 	if (localTracksReplaced.length === 0) {
+		resetPendingAudioInputIdChangedCount()
+
 		return
-	}
-
-	this._pendingAudioInputIdChangedCount = 1
-
-	const resetPendingAudioInputIdChangedCount = () => {
-		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
-
-		this._pendingAudioInputIdChangedCount = 0
-
-		if (audioInputIdChangedAgain) {
-			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
-		}
-
-		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-			this.localStreams.forEach(stream => {
-				if (isAllTracksEnded(stream)) {
-					this._removeStream(stream)
-				}
-			})
-		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
@@ -345,6 +349,26 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		return
 	}
 
+	this._pendingVideoInputIdChangedCount = 1
+
+	const resetPendingVideoInputIdChangedCount = () => {
+		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
+
+		this._pendingVideoInputIdChangedCount = 0
+
+		if (videoInputIdChangedAgain) {
+			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
+		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
+	}
+
 	const localStreamsChanged = []
 	const localTracksReplaced = []
 
@@ -385,31 +409,15 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
 
+		resetPendingVideoInputIdChangedCount()
+
 		return
 	}
 
 	if (localTracksReplaced.length === 0) {
+		resetPendingVideoInputIdChangedCount()
+
 		return
-	}
-
-	this._pendingVideoInputIdChangedCount = 1
-
-	const resetPendingVideoInputIdChangedCount = () => {
-		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
-
-		this._pendingVideoInputIdChangedCount = 0
-
-		if (videoInputIdChangedAgain) {
-			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
-		}
-
-		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-			this.localStreams.forEach(stream => {
-				if (isAllTracksEnded(stream)) {
-					this._removeStream(stream)
-				}
-			})
-		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
