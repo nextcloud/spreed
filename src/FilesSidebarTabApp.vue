@@ -403,6 +403,19 @@ export default {
 	flex-direction: column;
 }
 
+.emptycontent {
+	/* Override default top margin set in server and center vertically
+	 * instead. */
+	margin-top: unset;
+
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
 .call-button {
 	/* Center button horizontally. */
 	margin-left: auto;
