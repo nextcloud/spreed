@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.0-rc.2 – 2020-09-24
+### Added
+- Remember the selected camera and microphone for future visits
+  [#4224](https://github.com/nextcloud/spreed/pull/4224)
+
+### Changed
+- Online users are now sorted above offline moderators in the participant list, because we think it's more important what you do than who you are
+  [#4211](https://github.com/nextcloud/spreed/pull/4211)
+
+### Fixed
+- Various fixes to the Matterbridge component
+  [#4206](https://github.com/nextcloud/spreed/pull/4206)
+  [#4173](https://github.com/nextcloud/spreed/pull/4173)
+- "Talk to …" button in avatar only works on first use
+  [#4194](https://github.com/nextcloud/spreed/pull/4194)
+- Fix chat scrolling in the sidebar of the files app
+  [#4225](https://github.com/nextcloud/spreed/pull/4225)
+- Reduce the load of various requests
+  [#4205](https://github.com/nextcloud/spreed/pull/4205)
+  [#4204](https://github.com/nextcloud/spreed/pull/4204)
+  [#4201](https://github.com/nextcloud/spreed/pull/4201)
+
 ## 10.0.0-rc.1 – 2020-09-17
 ### Added
 - Keyboard navigation for conversation search
