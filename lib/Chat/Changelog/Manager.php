@@ -84,9 +84,13 @@ class Manager {
 	}
 
 	public function getChangelogs(): array {
-		$emojis = '';
+		$emojis = $this->l->t('- Spice up your messages with emojis from the emoji picker');
 		if ($this->connection->supports4ByteText()) {
-			$emojis = ' 😍';
+			$emojis = str_replace(
+				'{emoji}',
+				'😍',
+				$this->l->t('- Spice up your messages with emojis from the emoji picker {emoji}')
+			);
 		}
 
 		return [
@@ -114,7 +118,7 @@ class Manager {
 			$this->l->t('- Shared files are now opened directly inside the chat view with the viewer apps'),
 			$this->l->t('New in Talk 10'),
 			$this->l->t('- You can now search for chats and messages in the unified search in the top bar'),
-			$this->l->t('- Spice up your messages with emojis from the emoji picker') . $emojis,
+			$emojis,
 			$this->l->t('- You can now change your camera and microphone while being in a call'),
 		];
 	}
