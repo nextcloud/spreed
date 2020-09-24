@@ -94,6 +94,8 @@ export default function MediaDevicesManager() {
 
 	this._updateDevicesBound = this._updateDevices.bind(this)
 
+	this._pendingEnumerateDevicesPromise = null
+
 	if (BrowserStorage.getItem('audioInputId') === LOCAL_STORAGE_NULL_DEVICE_ID) {
 		this.attributes.audioInputId = null
 	}
@@ -206,7 +208,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_updateDevices: function() {
-		navigator.mediaDevices.enumerateDevices().then(devices => {
+		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then(devices => {
 			const previousAudioInputId = this.attributes.audioInputId
 			const previousVideoInputId = this.attributes.videoInputId
 
@@ -232,8 +234,12 @@ MediaDevicesManager.prototype = {
 			if (previousVideoInputId !== this.attributes.videoInputId) {
 				this._trigger('change:videoInputId', [this.attributes.videoInputId])
 			}
+
+			this._pendingEnumerateDevicesPromise = null
 		}).catch(function(error) {
 			console.error('Could not update known media devices: ' + error.name + ': ' + error.message)
+
+			this._pendingEnumerateDevicesPromise = null
 		})
 	},
 
@@ -360,6 +366,18 @@ MediaDevicesManager.prototype = {
 			})
 		}
 
+		if (!this._pendingEnumerateDevicesPromise) {
+			return this._getUserMediaInternal(constraints)
+		}
+
+		return this._pendingEnumerateDevicesPromise.then(() => {
+			return this._getUserMediaInternal(constraints)
+		}).catch(() => {
+			return this._getUserMediaInternal(constraints)
+		})
+	},
+
+	_getUserMediaInternal: function(constraints) {
 		if (constraints.audio && !constraints.audio.deviceId) {
 			if (this.attributes.audioInputId) {
 				if (!(constraints.audio instanceof Object)) {
