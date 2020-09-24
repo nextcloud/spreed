@@ -352,10 +352,10 @@ export default {
 		},
 
 		/**
-		 * Dirty hack to set the style in the tabs content container.
+		 * Dirty hack to set the style in the tabs container.
 		 *
-		 * This is needed to force the scroll bars on the tab content instead of
-		 * on the whole sidebar.
+		 * This is needed to force the scroll bars on the tabs container instead
+		 * of on the whole sidebar.
 		 *
 		 * Additionally a minimum height is forced to ensure that the height of
 		 * the chat view will be at least 300px, even if the info view is large
@@ -367,20 +367,25 @@ export default {
 		 *        chat tab or not.
 		 */
 		forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab) {
+			const tabs = document.querySelector('.app-sidebar-tabs')
 			const tabsContent = document.querySelector('.app-sidebar-tabs__content')
 
 			if (isChatTheActiveTab) {
-				this.savedTabsContentMinHeight = tabsContent.style.minHeight
+				this.savedTabsMinHeight = tabs.style.minHeight
+				this.savedTabsOverflow = tabs.style.overflow
 				this.savedTabsContentOverflow = tabsContent.style.overflow
 				this.savedTabsContentStyle = true
 
-				tabsContent.style.minHeight = '300px'
+				tabs.style.minHeight = '300px'
+				tabs.style.overflow = 'hidden'
 				tabsContent.style.overflow = 'hidden'
 			} else if (this.savedTabsContentStyle) {
-				tabsContent.style.minHeight = this.savedTabsContentMinHeight
+				tabs.style.minHeight = this.savedTabsMinHeight
+				tabs.style.overflow = this.savedTabsOverflow
 				tabsContent.style.overflow = this.savedTabsContentOverflow
 
-				delete this.savedTabsContentMinHeight
+				delete this.savedTabsMinHeight
+				delete this.savedTabsOverflow
 				delete this.savedTabsContentOverflow
 				this.savedTabsContentStyle = false
 			}
@@ -396,6 +401,19 @@ export default {
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;
+}
+
+.emptycontent {
+	/* Override default top margin set in server and center vertically
+	 * instead. */
+	margin-top: unset;
+
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 .call-button {
