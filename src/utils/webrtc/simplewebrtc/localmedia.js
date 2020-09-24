@@ -138,6 +138,12 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this.emit('localStreamRequested', constraints, context)
 
+	if (!context) {
+		// Try to get the devices list before getting user media.
+		webrtcIndex.mediaDevicesManager.enableDeviceEvents()
+		webrtcIndex.mediaDevicesManager.disableDeviceEvents()
+	}
+
 	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
@@ -165,7 +171,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			}
 
 			track.addEventListener('ended', function() {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !self._pendingAudioInputIdChangedCount && !self._pendingVideoInputIdChangedCount) {
 					self._removeStream(stream)
 				}
 			})
@@ -202,6 +208,26 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		this._pendingAudioInputIdChangedCount++
 
 		return
+	}
+
+	this._pendingAudioInputIdChangedCount = 1
+
+	const resetPendingAudioInputIdChangedCount = () => {
+		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
+
+		this._pendingAudioInputIdChangedCount = 0
+
+		if (audioInputIdChangedAgain) {
+			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
+		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
 	}
 
 	const localStreamsChanged = []
@@ -244,23 +270,15 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
 
+		resetPendingAudioInputIdChangedCount()
+
 		return
 	}
 
 	if (localTracksReplaced.length === 0) {
+		resetPendingAudioInputIdChangedCount()
+
 		return
-	}
-
-	this._pendingAudioInputIdChangedCount = 1
-
-	const resetPendingAudioInputIdChangedCount = () => {
-		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
-
-		this._pendingAudioInputIdChangedCount = 0
-
-		if (audioInputIdChangedAgain) {
-			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
-		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
@@ -303,7 +321,7 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
 					this._removeStream(stream)
 				}
 			})
@@ -335,6 +353,26 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		this._pendingVideoInputIdChangedCount++
 
 		return
+	}
+
+	this._pendingVideoInputIdChangedCount = 1
+
+	const resetPendingVideoInputIdChangedCount = () => {
+		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
+
+		this._pendingVideoInputIdChangedCount = 0
+
+		if (videoInputIdChangedAgain) {
+			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
+		}
+
+		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
+			this.localStreams.forEach(stream => {
+				if (isAllTracksEnded(stream)) {
+					this._removeStream(stream)
+				}
+			})
+		}
 	}
 
 	const localStreamsChanged = []
@@ -377,23 +415,15 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
 		})
 
+		resetPendingVideoInputIdChangedCount()
+
 		return
 	}
 
 	if (localTracksReplaced.length === 0) {
+		resetPendingVideoInputIdChangedCount()
+
 		return
-	}
-
-	this._pendingVideoInputIdChangedCount = 1
-
-	const resetPendingVideoInputIdChangedCount = () => {
-		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
-
-		this._pendingVideoInputIdChangedCount = 0
-
-		if (videoInputIdChangedAgain) {
-			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
-		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
@@ -423,7 +453,7 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream)) {
+				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
 					this._removeStream(stream)
 				}
 			})
