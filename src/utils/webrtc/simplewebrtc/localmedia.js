@@ -138,6 +138,12 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this.emit('localStreamRequested', constraints, context)
 
+	if (!context) {
+		// Try to get the devices list before getting user media.
+		webrtcIndex.mediaDevicesManager.enableDeviceEvents()
+		webrtcIndex.mediaDevicesManager.disableDeviceEvents()
+	}
+
 	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
