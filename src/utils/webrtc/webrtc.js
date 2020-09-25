@@ -759,11 +759,19 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		})
 	}
 
-	function stopPeerCheckMedia(peer) {
+	function stopPeerCheckAudioMedia(peer) {
 		clearInterval(peer.check_audio_interval)
 		peer.check_audio_interval = null
+	}
+
+	function stopPeerCheckVideoMedia(peer) {
 		clearInterval(peer.check_video_interval)
 		peer.check_video_interval = null
+	}
+
+	function stopPeerCheckMedia(peer) {
+		stopPeerCheckAudioMedia(peer)
+		stopPeerCheckVideoMedia(peer)
 		stopSendingNick(peer)
 	}
 
@@ -772,8 +780,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		peer.check_video_interval = setInterval(function() {
 			stream.getVideoTracks().forEach(function(video) {
 				checkPeerMedia(peer, video, 'video').then(function() {
-					clearInterval(peer.check_video_interval)
-					peer.check_video_interval = null
+					stopPeerCheckVideoMedia(peer)
 				}).catch(() => {
 				})
 			})
@@ -781,8 +788,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		peer.check_audio_interval = setInterval(function() {
 			stream.getAudioTracks().forEach(function(audio) {
 				checkPeerMedia(peer, audio, 'audio').then(function() {
-					clearInterval(peer.check_audio_interval)
-					peer.check_audio_interval = null
+					stopPeerCheckAudioMedia(peer)
 				}).catch(() => {
 				})
 			})
