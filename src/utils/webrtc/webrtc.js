@@ -760,14 +760,10 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	}
 
 	function stopPeerCheckMedia(peer) {
-		if (peer.check_audio_interval) {
-			clearInterval(peer.check_audio_interval)
-			peer.check_audio_interval = null
-		}
-		if (peer.check_video_interval) {
-			clearInterval(peer.check_video_interval)
-			peer.check_video_interval = null
-		}
+		clearInterval(peer.check_audio_interval)
+		peer.check_audio_interval = null
+		clearInterval(peer.check_video_interval)
+		peer.check_video_interval = null
 		stopSendingNick(peer)
 	}
 
