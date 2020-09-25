@@ -634,19 +634,11 @@ export default {
 	width: 44px;
 	height: 44px;
 
-	background-color: var(--color-primary-element);
-	color: var(--color-primary-text);
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
 	padding: 0;
 	margin: 0;
-	&:hover,
-	&:focus {
-		background-color: var(--color-primary-element-light);
-		opacity: 1 !important;
-		border: none;
-	}
 }
 
 </style>
