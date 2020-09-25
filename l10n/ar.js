@@ -129,6 +129,7 @@ OC.L10N.register(
     "Command" : "الأمر",
     "General settings" : "الإعدادات العامة",
     "All messages" : "كافة الرسائل",
+    "Off" : "إيقاف",
     "Language" : "اللغة",
     "Country" : "البلد",
     "Status" : "الحالة",
