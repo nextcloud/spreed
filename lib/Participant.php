@@ -48,6 +48,9 @@ class Participant {
 	public const NOTIFY_MENTION = 2;
 	public const NOTIFY_NEVER = 3;
 
+	public const PRIVACY_PRIVATE = 'private';
+	public const PRIVACY_PUBLIC = 'public';
+
 	/** @var Room */
 	protected $room;
 	/** @var Attendee */

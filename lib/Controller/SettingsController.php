@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Files_Sharing\SharedStorage;
+use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -101,6 +102,11 @@ class SettingsController extends OCSController {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 			return false;
+		}
+
+		if ($setting === 'read_status_privacy') {
+			return $value === Participant::PRIVACY_PUBLIC ||
+				$value === Participant::PRIVACY_PRIVATE;
 		}
 
 		return false;

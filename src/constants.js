@@ -96,3 +96,7 @@ export const FLOW = {
 		ROOM_MENTION: 3,
 	},
 }
+export const PRIVACY = {
+	PRIVATE: 'private',
+	PUBLIC: 'public',
+}

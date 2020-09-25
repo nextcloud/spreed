@@ -23,18 +23,19 @@
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import actorStore from './actorStore'
+import callViewStore from './callViewStore'
 import conversationsStore from './conversationsStore'
+import fileUploadStore from './fileUploadStore'
 import guestNameStore from './guestNameStore'
 import messagesStore from './messagesStore'
+import newGroupConversationStore from './newGroupConversationStore'
 import participantsStore from './participantsStore'
 import quoteReplyStore from './quoteReplyStore'
+import settingsStore from './settingsStore'
 import sidebarStore from './sidebarStore'
+import talkHashStore from './talkHashStore'
 import tokenStore from './tokenStore'
 import windowVisibilityStore from './windowVisibilityStore'
-import fileUploadStore from './fileUploadStore'
-import newGroupConversationStore from './newGroupConversationStore'
-import callViewStore from './callViewStore'
-import talkHashStore from './talkHashStore'
 
 Vue.use(Vuex)
 
@@ -43,18 +44,19 @@ const mutations = {}
 export default new Store({
 	modules: {
 		actorStore,
+		callViewStore,
 		conversationsStore,
+		fileUploadStore,
 		guestNameStore,
 		messagesStore,
+		newGroupConversationStore,
 		participantsStore,
 		quoteReplyStore,
+		settingsStore,
 		sidebarStore,
+		talkHashStore,
 		tokenStore,
 		windowVisibilityStore,
-		fileUploadStore,
-		newGroupConversationStore,
-		callViewStore,
-		talkHashStore,
 	},
 
 	mutations,
