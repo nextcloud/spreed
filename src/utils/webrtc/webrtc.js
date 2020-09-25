@@ -769,6 +769,28 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		peer.check_video_interval = null
 	}
 
+	function stopPeerIdCheckMediaType(peerId, mediaType) {
+		// There should be just one video peer with that id, but iterating is
+		// safer.
+		const peers = webrtc.getPeers(peerId, 'video')
+		peers.forEach(function(peer) {
+			if (mediaType === 'audio') {
+				stopPeerCheckAudioMedia(peer)
+			} else if (mediaType === 'video') {
+				stopPeerCheckVideoMedia(peer)
+			}
+		})
+	}
+
+	if (signaling.hasFeature('mcu')) {
+		webrtc.on('mute', function(data) {
+			stopPeerIdCheckMediaType(data.id, data.name)
+		})
+		webrtc.on('unmute', function(data) {
+			stopPeerIdCheckMediaType(data.id, data.name)
+		})
+	}
+
 	function stopPeerCheckMedia(peer) {
 		stopPeerCheckAudioMedia(peer)
 		stopPeerCheckVideoMedia(peer)
