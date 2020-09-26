@@ -42,9 +42,11 @@ use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 
@@ -86,6 +88,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ISearchResult */
 	private $searchResult;
 
+	/** @var IEventDispatcher */
+	private $eventDispatcher;
+
 	/** @var IL10N */
 	private $l;
 	/** @var ITimeFactory */
@@ -104,6 +109,7 @@ class ChatController extends AEnvironmentAwareController {
 								IUserStatusManager $statusManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
+								IEventDispatcher $eventDispatcher,
 								ITimeFactory $timeFactory,
 								IL10N $l) {
 		parent::__construct($appName, $request);
@@ -119,6 +125,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->statusManager = $statusManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
+		$this->eventDispatcher = $eventDispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
@@ -267,6 +274,16 @@ class ChatController extends AEnvironmentAwareController {
 			]);
 			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
 				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
+
+				if ($lookIntoFuture) {
+					// Bump the user status again
+					$event = new UserLiveStatusEvent(
+						$this->userManager->get($this->participant->getUser()),
+						IUserStatus::ONLINE,
+						$this->timeFactory->getTime()
+					);
+					$this->eventDispatcher->dispatchTyped($event);
+				}
 			}
 		}
 
