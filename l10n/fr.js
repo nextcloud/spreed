@@ -33,6 +33,8 @@ OC.L10N.register(
     "- Check out the new grid and call view" : "- Découvrez la nouvelle vue en grille des appels",
     "- You can now upload and drag'n'drop files directly from your device into the chat" : "- Vous pouvez maintenant téléverser et glisser-déposer des fichiers directement depuis votre appareil vers la discussion.",
     "- Shared files are now opened directly inside the chat view with the viewer apps" : "Les fichiers partagés sont maintenant ouverts directement à l'intérieur de la conversation avec les applications de visionnage",
+    "- You can now search for chats and messages in the unified search in the top bar" : "- Vous pouvez maintenant rechercher dans les discussions et les messages depuis la recherche unifiée de la barre supérieure",
+    "- You can now change your camera and microphone while being in a call" : "- Vous pouvez maintenant modifier votre micro et votre caméra pendant l'appel",
     "There are currently no commands available." : "Aucune commande n'est disponible actuellement.",
     "The command does not exist" : "Cette commande n'existe pas.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Une erreur s'est produite lors de l'exécution de la commande. Veuillez demander à un administrateur de vérifier les logs.",
