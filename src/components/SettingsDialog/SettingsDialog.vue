@@ -126,7 +126,7 @@ export default {
 		},
 
 		locationHint() {
-			return t('spreed', `Choose in which folder attachments should be saved.`)
+			return t('spreed', 'Choose in which folder attachments should be saved.')
 		},
 
 		isGuest() {
@@ -152,7 +152,7 @@ export default {
 				.build()
 			picker.pick()
 				.then(async(path) => {
-					console.debug(`Path '${path}' selected for talk attachments`)
+					console.debug('Path '${path}' selected for talk attachments')
 					if (path !== '' && !path.startsWith('/')) {
 						throw new Error(t('spreed', 'Invalid path selected'))
 					}
