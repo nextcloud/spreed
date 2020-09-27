@@ -489,6 +489,8 @@ OC.L10N.register(
     "Link to a conversation" : "Линк до разговорот",
     "Select conversation" : "Избери разговор",
     "Join a conversation or start a new one" : "Приклучи се кон разговор или започни нов",
+    "Do not disturb" : "Не вознемирувај",
+    "Away" : "Далеку",
     "Error while sharing file" : "Грешка при споделување на датотека",
     "Error while uploading file" : "Грешка при прикачување на датотека",
     "Default" : "Стандардно",
