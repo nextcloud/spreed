@@ -544,11 +544,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			sendCurrentMediaStateWithRepetition()
 		}
 
-		if (signaling.settings.userId === null) {
-			const currentGuestNick = store.getters.getDisplayName()
-			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
-		}
-
 		// Reset ice restart counter for peer
 		if (spreedPeerConnectionTable[peer.id] > 0) {
 			spreedPeerConnectionTable[peer.id] = 0
