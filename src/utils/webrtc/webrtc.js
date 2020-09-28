@@ -47,7 +47,7 @@ const delayedConnectionToPeer = []
 let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
-let sendCurrentMediaStateWithRepetitionTimeout = null
+let sendCurrentStateWithRepetitionTimeout = null
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -159,14 +159,14 @@ function sendCurrentMediaState() {
 	}
 }
 
-function sendCurrentMediaStateWithRepetition(timeout) {
+function sendCurrentStateWithRepetition(timeout) {
 	if (!timeout) {
 		timeout = 0
 
-		clearTimeout(sendCurrentMediaStateWithRepetitionTimeout)
+		clearTimeout(sendCurrentStateWithRepetitionTimeout)
 	}
 
-	sendCurrentMediaStateWithRepetitionTimeout = setTimeout(function() {
+	sendCurrentStateWithRepetitionTimeout = setTimeout(function() {
 		sendCurrentMediaState()
 
 		if (!timeout) {
@@ -176,11 +176,11 @@ function sendCurrentMediaStateWithRepetition(timeout) {
 		}
 
 		if (timeout > 16000) {
-			sendCurrentMediaStateWithRepetitionTimeout = null
+			sendCurrentStateWithRepetitionTimeout = null
 			return
 		}
 
-		sendCurrentMediaStateWithRepetition(timeout)
+		sendCurrentStateWithRepetition(timeout)
 	}, timeout)
 }
 
@@ -246,7 +246,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 			// video not available on the other end, so there is no need to send
 			// the media state.
 			if (signaling.hasFeature('mcu')) {
-				sendCurrentMediaStateWithRepetition()
+				sendCurrentStateWithRepetition()
 			}
 		}
 
@@ -534,7 +534,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (!signaling.hasFeature('mcu')) {
 			sendCurrentMediaState()
 		} else {
-			sendCurrentMediaStateWithRepetition()
+			sendCurrentStateWithRepetition()
 		}
 
 		// Reset ice restart counter for peer
