@@ -780,6 +780,7 @@ OC.L10N.register(
     "Shortcuts while in a call" : "Klávesové zkratky při volání",
     "Video on and off" : "Video zapnout a vypnout",
     "Microphone on and off" : "Mikrofon zapnout a vypnout",
+    "Choose in which folder attachments should be saved." : "Zvolte do které složky by přílohy měly být uloženy.",
     "Select location for attachments" : "Vyberte umístění pro přílohy",
     "Error while setting attachment folder" : "Chyba při nastavování složky pro přílohy",
     "Start call" : "Zavolat",
