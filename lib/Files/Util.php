@@ -25,6 +25,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Files;
 
 use OCA\GroupFolders\Mount\GroupFolderStorage;
+use OCA\Files_Sharing\SharedStorage;
+use OCP\Files\Config\ICachedMountInfo;
+use OCP\Files\Config\IUserMountCache;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -42,15 +45,19 @@ class Util {
 	private $session;
 	/** @var IShareManager */
 	private $shareManager;
+	/** @var IUserMountCache */
+	private $userMountCache;
 	/** @var array[] */
 	private $accessLists = [];
 
 	public function __construct(IRootFolder $rootFolder,
 			ISession $session,
-			IShareManager $shareManager) {
+			IShareManager $shareManager,
+			IUserMountCache $userMountCache) {
 		$this->rootFolder = $rootFolder;
 		$this->session = $session;
 		$this->shareManager = $shareManager;
+		$this->userMountCache = $userMountCache;
 	}
 
 	public function getUsersWithAccessFile(string $fileId): array {
@@ -63,6 +70,16 @@ class Util {
 
 			$node = array_shift($nodes);
 			$accessList = $this->shareManager->getAccessList($node);
+			if (!$node->getStorage()->instanceOfStorage(SharedStorage::class)) {
+				// The file is not a shared file,
+				// let's check the accesslist for mount points of groupfolders and external storages
+				$mountsForFile = $this->userMountCache->getMountsForFileId($fileId);
+				$affectedUserIds = array_map(function (ICachedMountInfo $mount) {
+					return $mount->getUser()->getUID();
+				}, $mountsForFile);
+
+				$accessList['users'] = array_unique(array_merge($affectedUserIds, $accessList['users']));
+			}
 
 			$this->accessLists[$fileId] = $accessList['users'];
 		}

@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Files;
 
 use OCA\GroupFolders\Mount\GroupFolderStorage;
 use OCA\Talk\Files\Util;
+use OCP\Files\Config\IUserMountCache;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\Node;
@@ -100,10 +101,14 @@ class UtilTest extends TestCase {
 		/** @var IManager|MockObject $shareManager */
 		$shareManager = $this->createMock(IManager::class);
 
+		/** @var IUserMountCache|MockObject $userMountCache */
+		$userMountCache = $this->createMock(IUserMountCache::class);
+
 		$util = new Util(
 			$rootFolder,
 			$session,
-			$shareManager
+			$shareManager,
+			$userMountCache
 		);
 		$result = $util->getGroupFolderNode($fileId, $userId);
 		if ($return !== false) {
