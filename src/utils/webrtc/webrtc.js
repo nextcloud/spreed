@@ -524,16 +524,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 		stopSendingNick()
 		ownPeer.nickInterval = setInterval(function() {
-			let payload
-			if (signaling.settings.userId === null) {
-				payload = store.getters.getDisplayName()
-			} else {
-				payload = {
-					'name': store.getters.getDisplayName(),
-					'userid': signaling.settings.userId,
-				}
-			}
-			ownPeer.sendDirectly('status', 'nickChanged', payload)
+			webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
 		}, 1000)
 	}
 
@@ -1008,6 +999,21 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	})
 	webrtc.on('videoOff', function() {
 		sendDataChannelToAll('status', 'videoOff')
+	})
+
+	// Send the nick changed event via data channel
+	webrtc.on('nickChanged', function(name) {
+		let payload
+		if (signaling.settings.userId === null) {
+			payload = name
+		} else {
+			payload = {
+				'name': name,
+				'userid': signaling.settings.userId,
+			}
+		}
+
+		sendDataChannelToAll('status', 'nickChanged', payload)
 	})
 
 	// Local screen added.
