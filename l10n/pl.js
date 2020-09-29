@@ -780,6 +780,7 @@ OC.L10N.register(
     "Shortcuts while in a call" : "Skróty podczas połączenia",
     "Video on and off" : "Włączanie i wyłączanie wideo",
     "Microphone on and off" : "Włączanie i wyłączanie mikrofonu",
+    "Choose in which folder attachments should be saved." : "Wybierz, w którym katalogu mają być zapisywane załączniki.",
     "Select location for attachments" : "Wybierz lokalizację dla załączników",
     "Error while setting attachment folder" : "Błąd podczas ustawiania katalogu dla załącznika",
     "Start call" : "Rozpocznij połączenie",
