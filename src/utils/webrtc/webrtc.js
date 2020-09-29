@@ -954,7 +954,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		sendDataChannelToAll('status', 'videoOff')
 	})
 
-	// Send the nick changed event via data channel
+	// Send the nick changed event via data channel and signaling
 	webrtc.on('nickChanged', function(name) {
 		let payload
 		if (signaling.settings.userId === null) {
@@ -967,6 +967,27 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 
 		sendDataChannelToAll('status', 'nickChanged', payload)
+
+		// "webrtc.sendToAll" can not be used, as it only sends the signaling
+		// message to participants for which there is a Peer object, so the
+		// message may not be sent to participants without audio and video.
+		for (const sessionId in usersInCallMapping) {
+			if (!usersInCallMapping[sessionId].inCall) {
+				continue
+			} else if (sessionId === signaling.getSessionId()) {
+				continue
+			}
+
+			const message = {
+				to: sessionId,
+				roomType: 'video',
+				type: 'nickChanged',
+				payload: {
+					name: name,
+				},
+			}
+			signaling.emit('message', message)
+		}
 	})
 
 	// Local screen added.

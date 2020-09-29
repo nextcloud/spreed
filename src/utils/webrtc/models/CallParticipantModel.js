@@ -170,7 +170,8 @@ CallParticipantModel.prototype = {
 	},
 
 	_handleNick: function(data) {
-		if (!this.get('peer') || this.get('peer').id !== data.id) {
+		// The nick could be changed even if there is no Peer object.
+		if (this.get('peerId') !== data.id) {
 			return
 		}
 

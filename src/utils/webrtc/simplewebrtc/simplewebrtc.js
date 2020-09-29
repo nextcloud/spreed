@@ -119,6 +119,10 @@ function SimpleWebRTC(opts) {
 					self.emit('mute', { id: message.payload.peerId })
 				}
 			}
+		} else if (message.type === 'nickChanged') {
+			// "nickChanged" can be received from a participant without a Peer
+			// object if that participant is not sending audio nor video.
+			self.emit('nick', { id: message.from, name: message.payload.name })
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
 				if (message.sid && !self.connection.hasFeature('mcu')) {
