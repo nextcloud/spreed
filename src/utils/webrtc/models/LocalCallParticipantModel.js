@@ -125,7 +125,7 @@ LocalCallParticipantModel.prototype = {
 
 		this.set('guestName', guestName)
 
-		this._webRtc.sendDirectlyToAll('status', 'nickChanged', guestName)
+		this._webRtc.webrtc.emit('nickChanged', guestName)
 	},
 
 	_handleForcedMute: function() {
