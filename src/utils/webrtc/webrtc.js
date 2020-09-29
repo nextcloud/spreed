@@ -937,12 +937,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			} else if (data.type === 'videoOff') {
 				webrtc.emit('mute', { id: peer.id, name: 'video' })
 			} else if (data.type === 'nickChanged') {
-				const payload = data.payload || ''
-				if (typeof (payload) === 'string') {
-					webrtc.emit('nick', { id: peer.id, name: data.payload })
-				} else {
-					webrtc.emit('nick', { id: peer.id, name: payload.name, userid: payload.userid })
-				}
+				const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
+				webrtc.emit('nick', { id: peer.id, name: name })
 			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
 				// Valid known messages, but handled elsewhere
 			} else {

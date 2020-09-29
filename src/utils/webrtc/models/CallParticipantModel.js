@@ -174,7 +174,6 @@ CallParticipantModel.prototype = {
 			return
 		}
 
-		this.set('userId', data.userid || null)
 		this.set('name', data.name || null)
 	},
 
