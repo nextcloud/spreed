@@ -246,15 +246,17 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				|| (!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !webrtc.webrtc.localStreams.length)) {
 			callParticipantModel.setPeer(null)
 
-			// As there is no Peer for the other participant the current media
-			// state will not be sent once it is connected, so it needs to be
-			// sent now.
-			// When there is no MCU this is not needed; as the local participant
-			// has no streams it will be automatically marked with audio and
-			// video not available on the other end, so there is no need to send
-			// the media state.
+			// As there is no Peer for the other participant the current state
+			// will not be sent once it is connected, so it needs to be sent
+			// now.
+			// When there is no MCU this is only needed for the nick; as the
+			// local participant has no streams it will be automatically marked
+			// with audio and video not available on the other end, so there is
+			// no need to send the media state.
 			if (signaling.hasFeature('mcu')) {
 				sendCurrentStateWithRepetition()
+			} else {
+				sendCurrentNick()
 			}
 		}
 
