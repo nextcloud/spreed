@@ -81,7 +81,6 @@ class Util {
 			}
 
 			$this->accessLists[$fileId] = $accessList['users'];
-			$this->publicAccessLists[$fileId] = $accessList['public'];
 		}
 
 		return $this->accessLists[$fileId];
@@ -92,9 +91,18 @@ class Util {
 	}
 
 	public function canGuestsAccessFile(string $fileId): bool {
-		$this->getUsersWithAccessFile($fileId);
-		$publicShared = $this->publicAccessLists[$fileId] ?? false;
-		return $publicShared === true;
+		if (!isset($this->publicAccessLists[$fileId])) {
+			$nodes = $this->rootFolder->getById($fileId);
+
+			if (empty($nodes)) {
+				return false;
+			}
+
+			$node = array_shift($nodes);
+			$accessList = $this->shareManager->getAccessList($node, false);
+			$this->publicAccessLists[$fileId] = $accessList['public'];
+		}
+		return $this->publicAccessLists[$fileId] === true;
 	}
 
 	public function canGuestAccessFile(string $shareToken): bool {
