@@ -138,6 +138,11 @@ class FilesIntegrationController extends OCSController {
 			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
 		}
 
+		$users = $this->util->getUsersWithAccessFile($fileId);
+		if (count($users) <= 1 && !$this->util->canGuestsAccessFile($fileId)) {
+			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+		}
+
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
 		} catch (RoomNotFoundException $e) {
