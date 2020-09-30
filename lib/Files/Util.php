@@ -24,18 +24,15 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Files;
 
-use OCA\GroupFolders\Mount\GroupFolderStorage;
 use OCA\Files_Sharing\SharedStorage;
 use OCP\Files\Config\ICachedMountInfo;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
-use OCP\Files\NotFoundException;
 use OCP\ISession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
-use OCP\Share\IShare;
 
 class Util {
 
@@ -127,125 +124,5 @@ class Util {
 		}
 
 		return array_shift($nodes);
-	}
-
-	/**
-	 * Returns any public share of the node (like a link share) created by the
-	 * user.
-	 *
-	 * @param Node $node
-	 * @param string $userId
-	 * @return IShare|null
-	 */
-	private function getAnyPublicShareOfNodeOwnedByUser(Node $node, string $userId): ?IShare {
-		$reshares = false;
-		$limit = 1;
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_LINK, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_EMAIL, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns any share of the node that the user has direct access to.
-	 *
-	 * @param Node $node
-	 * @param string $userId
-	 * @return IShare|null
-	 */
-	private function getAnyDirectShareOfNodeAccessibleByUser(Node $node, string $userId): ?IShare {
-		$reshares = false;
-		$limit = 1;
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_USER, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_GROUP, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_CIRCLE, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_ROOM, $node, $reshares, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		// If the node is not shared then there is no need for further checks.
-		// Note that "isShared()" returns false for owned shares, so the check
-		// can not be moved above.
-		if (!$node->isShared()) {
-			return null;
-		}
-
-		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_USER, $node, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_GROUP, $node, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_CIRCLE, $node, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_ROOM, $node, $limit);
-		if (!empty($shares)) {
-			return $shares[0];
-		}
-
-		return null;
-	}
-
-	/**
-	 * ...
-	 *
-	 * @param string $fileId
-	 * @param string $userId
-	 * @return Node|null
-	 */
-	public function getGroupFolderNode(string $fileId, string $userId): ?Node {
-		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$nodes = $userFolder->getById($fileId);
-		if (empty($nodes)) {
-			return null;
-		}
-
-		$nodes = array_filter($nodes, function (Node $node) {
-			return $node->getType() === FileInfo::TYPE_FILE;
-		});
-		if (empty($nodes)) {
-			return null;
-		}
-
-		/** @var Node $node */
-		$node = array_shift($nodes);
-		try {
-			$storage = $node->getStorage();
-			if ($storage->instanceOfStorage(GroupFolderStorage::class)) {
-				return $node;
-			}
-		} catch (NotFoundException $e) {
-		}
-
-		return null;
 	}
 }
