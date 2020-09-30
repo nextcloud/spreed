@@ -58,7 +58,9 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IConfig;
+use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
+use OCP\UserStatus\IUserStatus;
 
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
@@ -154,11 +156,29 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @NoAdminRequired
 	 *
+	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @return DataResponse
 	 */
-	public function getRooms(): DataResponse {
+	public function getRooms(int $noStatusUpdate = 0): DataResponse {
 		$event = new UserEvent($this->userId);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
+
+		if ($noStatusUpdate === 0) {
+			$isMobileApp = $this->request->isUserAgent([
+				IRequest::USER_AGENT_TALK_ANDROID,
+				IRequest::USER_AGENT_TALK_IOS,
+			]);
+
+			if ($isMobileApp) {
+				// Bump the user status again
+				$event = new UserLiveStatusEvent(
+					$this->userManager->get($this->userId),
+					IUserStatus::ONLINE,
+					$this->timeFactory->getTime()
+				);
+				$this->dispatcher->dispatchTyped($event);
+			}
+		}
 
 		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
