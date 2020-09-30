@@ -126,12 +126,9 @@ class Listener {
 			return;
 		}
 
-		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
-		if (!$share) {
-			$groupFolder = $this->util->getGroupFolderNode($room->getObjectId(), $userId);
-			if (!$groupFolder) {
-				throw new UnauthorizedException('User does not have access to the file');
-			}
+		$node = $this->util->getAnyNodeOfFileAccessibleByUser($room->getObjectId(), $userId);
+		if ($node === null) {
+			throw new UnauthorizedException('User does not have access to the file');
 		}
 	}
 
@@ -152,7 +149,7 @@ class Listener {
 			return;
 		}
 
-		if (!$this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId)) {
+		if ($this->util->getAnyNodeOfFileAccessibleByUser($room->getObjectId(), $userId) === null) {
 			return;
 		}
 

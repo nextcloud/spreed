@@ -107,59 +107,26 @@ class Util {
 	}
 
 	/**
-	 * Returns any share of the file that is public and owned by the user, or
+	 * Returns any node of the file that is public and owned by the user, or
 	 * that the user has direct access to.
-	 *
-	 * A public share is one accessible by any user, including guests, like a
-	 * share by link. Note that only a share of the file itself is taken into
-	 * account; if an ancestor folder is shared publicly that share will not be
-	 * returned.
-	 *
-	 * A user has direct access to a share and, thus, to a file, if she received
-	 * the file through a user, group, circle or room share (but not through a
-	 * public link, for example), or if she is the owner of such a share.
-	 * Note that this includes too files received as a descendant of a folder
-	 * that meets the above conditions.
-	 *
-	 * Only files are taken into account; folders are ignored.
 	 *
 	 * @param string $fileId
 	 * @param string $userId
-	 * @return IShare|null
+	 * @return Node|null
 	 */
-	public function getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId): ?IShare {
+	public function getAnyNodeOfFileAccessibleByUser(string $fileId, string $userId): ?Node {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$nodes = $userFolder->getById($fileId);
+		$nodes = $userFolder->getById((int) $fileId);
+
+		$nodes = array_filter($nodes, static function (Node $node) {
+			return $node->getType() === FileInfo::TYPE_FILE;
+		});
+
 		if (empty($nodes)) {
 			return null;
 		}
 
-		$nodes = array_filter($nodes, function ($node) {
-			return $node->getType() === FileInfo::TYPE_FILE;
-		});
-
-		if (!empty($nodes)) {
-			$share = $this->getAnyPublicShareOfNodeOwnedByUser($nodes[0], $userId);
-			if ($share) {
-				return $share;
-			}
-		}
-
-		while (!empty($nodes)) {
-			$node = array_pop($nodes);
-
-			$share = $this->getAnyDirectShareOfNodeAccessibleByUser($node, $userId);
-			if ($share) {
-				return $share;
-			}
-
-			try {
-				$nodes[] = $node->getParent();
-			} catch (NotFoundException $e) {
-			}
-		}
-
-		return null;
+		return array_shift($nodes);
 	}
 
 	/**

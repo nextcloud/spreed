@@ -45,7 +45,6 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
-use OCP\Share\IShare;
 
 class FilesIntegrationController extends OCSController {
 
@@ -134,27 +133,15 @@ class FilesIntegrationController extends OCSController {
 		}
 
 
-		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($fileId, $currentUser->getUID());
-		$groupFolder = null;
-		if (!$share) {
-			$groupFolder = $this->util->getGroupFolderNode($fileId, $currentUser->getUID());
-			if (!$groupFolder) {
-				throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
-			}
+		$node = $this->util->getAnyNodeOfFileAccessibleByUser($fileId, $currentUser->getUID());
+		if ($node === null) {
+			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
 		}
 
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
 		} catch (RoomNotFoundException $e) {
-			if ($share) {
-				try {
-					$name = $this->getFileName($share, $fileId);
-				} catch (NotFoundException $e) {
-					throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
-				}
-			} else {
-				$name = $groupFolder->getName();
-			}
+			$name = $node->getName();
 			$name = $this->roomService->prepareConversationName($name);
 			$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
 		}
@@ -243,33 +230,5 @@ class FilesIntegrationController extends OCSController {
 			'userId' => $currentUserId,
 			'userDisplayName' => $currentUserDisplayName,
 		]);
-	}
-
-	/**
-	 * Returns the name of the file in the share.
-	 *
-	 * If the given share itself is a file its name is returned; otherwise the
-	 * file is looked for in the given shared folder and its name is returned.
-	 *
-	 * @param IShare $share
-	 * @param string $fileId
-	 * @return string
-	 * @throws NotFoundException
-	 */
-	private function getFileName(IShare $share, string $fileId): string {
-		$node = $share->getNode();
-
-		if ($node->getType() === FileInfo::TYPE_FILE) {
-			return $node->getName();
-		}
-
-		$fileById = $node->getById($fileId);
-
-		if (empty($fileById)) {
-			throw new NotFoundException('File not found in share');
-		}
-
-		$file = array_shift($fileById);
-		return $file->getName();
 	}
 }
