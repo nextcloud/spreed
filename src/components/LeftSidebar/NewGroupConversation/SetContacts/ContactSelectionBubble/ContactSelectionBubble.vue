@@ -87,7 +87,8 @@ $bubble-height: 24px;
 	}
 	// Limit the length of the username
 	&__username {
-		max-width: 80px;
+		max-width: 190px;
+		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
