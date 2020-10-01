@@ -341,7 +341,7 @@ OC.L10N.register(
     "This conversation has ended" : "Овој разговор е завршен",
     "Limit to groups" : "Ограничување на групи",
     "When a call has started, everyone with access to the conversation can join the call." : "Кога повикот е започнат, секој со пристап до разговорот може да се приклучи кон повикот.",
-    "Everyone" : "Секој",
+    "Everyone" : "Сите",
     "Users and moderators" : "Корисници и модератори",
     "Moderators only" : "Само модераторите",
     "Save changes" : "Зачувај ги промените",
