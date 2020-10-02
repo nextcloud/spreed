@@ -6,14 +6,14 @@
 
 ## Why is this so awesome?
 
-* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat, allowing you to share files from your Nextcloud and mentioning other participants.
+* 💬 **Chat** Nextcloud Talk comes with a simple text chat, allowing you to share or upload files from your Nextcloud Files app or local device and mentioning other participants.
 * 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.
 * 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
-* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck, with more to come.
-* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
+* 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Contacts and Deck, with more to come.
+* 🎡 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
+* 🌉 **Sync with other chat solutions** With the [Matterbridge](https://github.com/42wim/matterbridge/) you can sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
 
-And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* 🙋 [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds.
+More in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/).
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
@@ -96,10 +96,9 @@ This is only off close to releases of the server, to allow easier finishing of f
 
 #### Milestones
 
-* 5.0.0 - **Numeric** milestones are settled and waiting for their release or some final polishing
-* 💙 Next Minor (15) - The **next minor** milestone is for issues/PR that go into the next Dot-Release for the given Nextcloud version (in the example 15 - e.g. 5.0.1)
-* 💚 Next Major - The **next major** milestone is for issues/PR that go into the next feature release for the new Major Nextcloud version (as there are Minors for 15, this would be 16)
-* 💛 Following Major - The **following major** milestone is for issues/PR that should be worked towards/on but didn't make it into the next major due to timing constraints
+* 10.0.0 - **Numeric** milestones are settled and waiting for their release or some final polishing
+* 💛 Next Minor (20) - The **next minor** milestone is for issues/PR that go into the next Dot-Release for the given Nextcloud version (in the example 20 - e.g. 10.0.1)
+* 💚 Next Major (21) - The **next major** milestone is for issues/PR that go into the next feature release for the new Major Nextcloud version (as there are Minors for 20, this would be 21)
 * 💔 Backlog - The **backlog** milestone is assigned to all remaining issues
 
 You can always pick a task of any of the milestones and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
