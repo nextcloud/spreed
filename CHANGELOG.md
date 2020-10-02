@@ -1,75 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 10.0.0-rc.2 – 2020-09-24
-### Added
-- Remember the selected camera and microphone for future visits
-  [#4224](https://github.com/nextcloud/spreed/pull/4224)
-
-### Changed
-- Online users are now sorted above offline moderators in the participant list, because we think it's more important what you do than who you are
-  [#4211](https://github.com/nextcloud/spreed/pull/4211)
-
-### Fixed
-- Various fixes to the Matterbridge component
-  [#4206](https://github.com/nextcloud/spreed/pull/4206)
-  [#4173](https://github.com/nextcloud/spreed/pull/4173)
-- "Talk to …" button in avatar only works on first use
-  [#4194](https://github.com/nextcloud/spreed/pull/4194)
-- Fix chat scrolling in the sidebar of the files app
-  [#4225](https://github.com/nextcloud/spreed/pull/4225)
-- Reduce the load of various requests
-  [#4205](https://github.com/nextcloud/spreed/pull/4205)
-  [#4204](https://github.com/nextcloud/spreed/pull/4204)
-  [#4201](https://github.com/nextcloud/spreed/pull/4201)
-
-## 10.0.0-rc.1 – 2020-09-17
-### Added
-- Keyboard navigation for conversation search
-  [#3955](https://github.com/nextcloud/spreed/pull/3955)
-
-### Fixed
-- Don't leak the status to users that can't use the user status app
-  [#4137](https://github.com/nextcloud/spreed/pull/4137)
-- Installation on Oracle fails
-  [#4127](https://github.com/nextcloud/spreed/pull/4127)
-- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
-  [#4139](https://github.com/nextcloud/spreed/pull/4139)
-  [#4140](https://github.com/nextcloud/spreed/pull/4140)
-  [#4154](https://github.com/nextcloud/spreed/pull/4154)
-  [#4155](https://github.com/nextcloud/spreed/pull/4155)
-- Try to be more safe again errors when trying to get the Talk folder for attachments
-  [#4165](https://github.com/nextcloud/spreed/pull/4165)
-- Reduce the load when refreshing the conversation list
-  [#4152](https://github.com/nextcloud/spreed/pull/4152)
-- Immediately reflect changes on the own user status
-  [#4153](https://github.com/nextcloud/spreed/pull/4153)
-- Some fixes to the Matterbridge component
-  [#4117](https://github.com/nextcloud/spreed/pull/4117)
-  [#4118](https://github.com/nextcloud/spreed/pull/4118)
-  [#4119](https://github.com/nextcloud/spreed/pull/4119)
-  [#4120](https://github.com/nextcloud/spreed/pull/4120)
-  [#4121](https://github.com/nextcloud/spreed/pull/4121)
-  [#4122](https://github.com/nextcloud/spreed/pull/4122)
-
-## 10.0.0-beta.2 – 2020-09-03
-### Added
-- Show keyboard shortcuts in the settings
-  [#4089](https://github.com/nextcloud/spreed/pull/4089)
-
-### Fixed
-- Remove old "hark" data channel
-  [#4068](https://github.com/nextcloud/spreed/pull/4068)
-- Show a message when enabling matterbridge if the binary is not executable
-  [#4079](https://github.com/nextcloud/spreed/pull/4079)
-- Show other participants video when they share their screen
-  [#4082](https://github.com/nextcloud/spreed/pull/4082)
-- Show the status of the matterbridge in the sidebar tab
-  [#4083](https://github.com/nextcloud/spreed/pull/4083)
-- Don't leak the statuses to guests
-  [#4092](https://github.com/nextcloud/spreed/pull/4092)
-
-## 10.0.0-beta.1 – 2020-08-27
+## 10.0.0 – 2020-10-02
 ### Added
 - Implement unified search for messages
   [#4017](https://github.com/nextcloud/spreed/pull/4017)
@@ -87,15 +19,43 @@ All notable changes to this project will be documented in this file.
   [#3994](https://github.com/nextcloud/spreed/pull/3994)
 - Hosted high-performance backend trial option in the admin settings
   [#3620](https://github.com/nextcloud/spreed/pull/3620)
+- Remember the selected camera and microphone for future visits
+  [#4224](https://github.com/nextcloud/spreed/pull/4224)
+- Keyboard navigation for conversation search
+  [#3955](https://github.com/nextcloud/spreed/pull/3955)
+- Show keyboard shortcuts in the settings
+  [#4089](https://github.com/nextcloud/spreed/pull/4089)
 - 🚧 TechPreview: Matterbridge integration
   [#4010](https://github.com/nextcloud/spreed/pull/4010)
 - Compatibility with Nextcloud 20
 
 ### Changed
-- Allow to select your own video
+- Online users are now sorted above offline moderators in the participant list, because we think it's more important what you do than who you are
+  [#4211](https://github.com/nextcloud/spreed/pull/4211)
+- Allow to select your own video in the speaker view
   [#3814](https://github.com/nextcloud/spreed/pull/3814)
 
 ### Fixed
+- "Talk to …" button in avatar only works on first use
+  [#4194](https://github.com/nextcloud/spreed/pull/4194)
+- Reduce the load of various requests
+  [#4205](https://github.com/nextcloud/spreed/pull/4205)
+  [#4204](https://github.com/nextcloud/spreed/pull/4204)
+  [#4201](https://github.com/nextcloud/spreed/pull/4201)
+  [#4152](https://github.com/nextcloud/spreed/pull/4152)
+- Fix clientside memory leaks due to missing unsubscribe of events when destroying interface components
+  [#4139](https://github.com/nextcloud/spreed/pull/4139)
+  [#4140](https://github.com/nextcloud/spreed/pull/4140)
+  [#4154](https://github.com/nextcloud/spreed/pull/4154)
+  [#4155](https://github.com/nextcloud/spreed/pull/4155)
+- Installation on Oracle fails
+  [#4127](https://github.com/nextcloud/spreed/pull/4127)
+- Try to be more safe again errors when trying to get the Talk folder for attachments
+  [#4165](https://github.com/nextcloud/spreed/pull/4165)
+- Remove old "hark" data channel
+  [#4068](https://github.com/nextcloud/spreed/pull/4068)
+- Show other participants video when they share their screen
+  [#4082](https://github.com/nextcloud/spreed/pull/4082)
 - Scroll to the original message when clicking on a quota
   [#4037](https://github.com/nextcloud/spreed/pull/4037)
 - Fix transparency issue with the avatar menu in the participant list
