@@ -210,6 +210,7 @@ const actions = {
 	 * @param {object} uploadId The unique uploadId
 	 */
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
+		EventBus.$emit('uploadStart')
 
 		// Tag the previously indexed files and add the temporary messages to the
 		// messages list
@@ -266,6 +267,7 @@ const actions = {
 				}
 			}
 		}
+		EventBus.$emit('uploadFinished')
 	},
 	/**
 	 * Set the folder to store new attachments in
