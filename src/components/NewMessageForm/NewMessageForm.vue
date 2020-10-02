@@ -80,6 +80,7 @@
 						ref="advancedInput"
 						v-model="text"
 						:token="token"
+						:submit-with-shift-enter="submitWithShiftEnter"
 						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit"
 						@files-pasted="handleFiles" />
@@ -104,7 +105,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION, SEND_MESSAGE_KEY } from '../../constants'
 import createTemporaryMessage from '../../utils/temporaryMessage'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 
@@ -142,6 +143,10 @@ export default {
 			return this.$store.getters.getToken()
 		},
 
+		submitWithShiftEnter() {
+			return this.$store.getters.getSendMessageKey() === SEND_MESSAGE_KEY.SHIFT_ENTER
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				readOnly: CONVERSATION.STATE.READ_WRITE,
@@ -158,10 +163,6 @@ export default {
 
 		canShareAndUploadFiles() {
 			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-		},
-
-		attachmentFolder() {
-			return this.$store.getters.getAttachmentFolder()
 		},
 	},
 
