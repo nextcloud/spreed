@@ -33,6 +33,7 @@
 			:disable-tooltip="true"
 			:size="44"
 			:show-user-status="!isSearched"
+			:show-user-status-compact="false"
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
@@ -209,7 +210,7 @@ export default {
 		},
 
 		isOffline() {
-			return this.participant.status === 'offline' || this.sessionId === '0'
+			return /* this.participant.status === 'offline' || */ this.sessionId === '0'
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1

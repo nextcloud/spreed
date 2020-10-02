@@ -44,7 +44,7 @@ const userStatus = {
 				return false
 			}
 
-			return userData.status === 'away' || userData.status === 'dnd'
+			return userData.status === 'dnd'
 		},
 	},
 }
