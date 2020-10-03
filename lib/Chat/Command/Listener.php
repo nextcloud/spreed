@@ -69,7 +69,7 @@ class Listener {
 				$arguments = trim($message->getMessage());
 			}
 
-			$listener->executor->exec($event->getRoom(), $message, $command, $arguments);
+			$listener->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
 		});
 	}
 
