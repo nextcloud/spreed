@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat\Command;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\CommandEvent;
 use OCA\Talk\Model\Command;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -67,6 +68,22 @@ class Executor {
 		$this->commandService = $commandService;
 		$this->logger = $logger;
 		$this->l = $l;
+	}
+
+	public function isCommandAvailableForParticipant(Command $command, Participant $participant): bool {
+		if ($command->getEnabled() === Command::ENABLED_OFF) {
+			return false;
+		}
+
+		if ($command->getEnabled() === Command::ENABLED_MODERATOR && !$participant->hasModeratorPermissions()) {
+			return false;
+		}
+
+		if ($command->getEnabled() === Command::ENABLED_USERS && $participant->isGuest()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public function exec(Room $room, IComment $message, Command $command, string $arguments): void {
