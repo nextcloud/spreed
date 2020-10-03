@@ -86,7 +86,7 @@ class Executor {
 		return true;
 	}
 
-	public function exec(Room $room, IComment $message, Command $command, string $arguments): void {
+	public function exec(Room $room, IComment $message, Command $command, string $arguments, Participant $participant): void {
 		try {
 			$command = $this->commandService->resolveAlias($command);
 		} catch (DoesNotExistException $e) {
@@ -102,7 +102,7 @@ class Executor {
 		}
 
 		if ($command->getApp() === '' && $command->getCommand() === 'help') {
-			$output = $this->execHelp($room, $message, $arguments);
+			$output = $this->execHelp($room, $message, $arguments, $participant);
 		} elseif ($command->getApp() !== '') {
 			$output = $this->execApp($room, $message, $command, $arguments);
 		} else {
@@ -119,7 +119,7 @@ class Executor {
 		$message->setVerb('command');
 	}
 
-	protected function execHelp(Room $room, IComment $message, string $arguments): string {
+	protected function execHelp(Room $room, IComment $message, string $arguments, Participant $participant): string {
 		if ($arguments !== '' && $arguments !== 'help') {
 			return $this->execHelpSingleCommand($room, $message, $arguments);
 		}
@@ -131,7 +131,8 @@ class Executor {
 			if ($command->getApp() !== '') {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
-				if ($command->getCommand() === 'help' || strpos($command->getScript(),'alias:') !== false) {
+				if ($command->getCommand() === 'help' || strpos($command->getScript(),'alias:') !== false ||
+						!$this->isCommandAvailableForParticipant($command, $participant)) {
 					continue;
 				}
 				$response = $this->execHelpSingleCommand($room, $message, $command->getCommand());
