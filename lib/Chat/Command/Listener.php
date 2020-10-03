@@ -64,16 +64,9 @@ class Listener {
 				return;
 			}
 
-			if ($command->getEnabled() === Command::ENABLED_OFF) {
-				return;
-			}
-
-			if ($command->getEnabled() === Command::ENABLED_MODERATOR && !$participant->hasModeratorPermissions()) {
-				return;
-			}
-
-			if ($command->getEnabled() === Command::ENABLED_USERS && $participant->isGuest()) {
-				return;
+			if (!$listener->executor->isCommandAvailableForParticipant($command, $participant)) {
+				$command = $listener->commandService->find('', 'help');
+				$arguments = trim($message->getMessage());
 			}
 
 			$listener->executor->exec($event->getRoom(), $message, $command, $arguments);
