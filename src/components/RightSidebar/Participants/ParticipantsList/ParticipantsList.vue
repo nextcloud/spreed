@@ -27,6 +27,7 @@
 				:key="generateKey(item)"
 				:participant="item"
 				:is-selectable="participantsSelectable"
+				:show-user-status="showUserStatus"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
 		<template v-if="loading">
@@ -67,6 +68,10 @@ export default {
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		showUserStatus() {
+			return this.items.length < 100
 		},
 
 		dummyParticipants() {
