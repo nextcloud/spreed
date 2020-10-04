@@ -32,7 +32,7 @@
 			:id="computedId"
 			:disable-tooltip="true"
 			:size="44"
-			:show-user-status="!isSearched"
+			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
 			:name="computedName"
 			:source="participant.source"
@@ -99,6 +99,10 @@ export default {
 		participant: {
 			type: Object,
 			required: true,
+		},
+		showUserStatus: {
+			type: Boolean,
+			default: true,
 		},
 		// Toggles the bulk selection state of this component
 		isSelectable: {
