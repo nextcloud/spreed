@@ -24,8 +24,7 @@
 	<Tab
 		:id="id"
 		:icon="icon"
-		:name="name"
-		:class="{ 'icon-loading': loading }">
+		:name="name">
 		<div id="talk-tab-mount" />
 	</Tab>
 </template>
@@ -49,10 +48,8 @@ export default {
 	data() {
 		return {
 			icon: 'icon-talk',
-			loading: false,
 			name: t('spreed', 'Chat'),
 			tab: null,
-			token: null,
 		}
 	},
 
@@ -78,9 +75,6 @@ export default {
 		},
 	},
 
-	beforeMount() {
-
-	},
 	mounted() {
 		try {
 			OCA.Talk.fileInfo = this.fileInfo
