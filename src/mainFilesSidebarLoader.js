@@ -20,6 +20,7 @@
  *
  */
 
+import Vue from 'vue'
 import FilesSidebarCallView from './views/FilesSidebarCallView'
 import FilesSidebarTab from './views/FilesSidebarTab'
 import { leaveConversation } from './services/participantsService'
@@ -46,9 +47,39 @@ const isEnabled = function(fileInfo) {
 	return false
 }
 
+const View = Vue.extend(FilesSidebarTab)
+// It might be enough to keep the instance only in the Tab object itself,
+// without using a shared variable that can be destroyed if a new tab is
+// mounted and the previous one was not destroyed yet, as the tabs seem to
+// always be properly destroyed. However, this is how it is done for tabs in
+// server, so it is done here too just to be safe.
+let tabInstance = null
+
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
 		OCA.Files.Sidebar.registerSecondaryView(new FilesSidebarCallView())
-		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('tab-chat', FilesSidebarTab, isEnabled))
+		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
+			id: 'chat',
+			name: t('spreed', 'Chat'),
+			icon: 'icon-talk',
+			enabled: isEnabled,
+
+			async mount(el, fileInfo, context) {
+				if (tabInstance) {
+					tabInstance.$destroy()
+				}
+				tabInstance = new View()
+				// Only mount after we have all the info we need
+				await tabInstance.update(fileInfo)
+				tabInstance.$mount(el)
+			},
+			update(fileInfo) {
+				tabInstance.update(fileInfo)
+			},
+			destroy() {
+				tabInstance.$destroy()
+				tabInstance = null
+			},
+		}))
 	}
 })

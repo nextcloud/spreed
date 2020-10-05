@@ -21,61 +21,25 @@
   -->
 
 <template>
-	<Tab
-		:id="id"
-		:icon="icon"
-		:name="name">
-		<div id="talk-tab-mount" />
-	</Tab>
+	<div id="talk-tab-mount" />
 </template>
 
 <script>
-import Tab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-
 export default {
 	name: 'FilesSidebarTab',
-	components: {
-		Tab,
-	},
-	props: {
-		// fileInfo will be given by the Sidebar
-		fileInfo: {
-			type: Object,
-			default: () => {},
-			required: true,
-		},
-	},
 	data() {
 		return {
-			icon: 'icon-talk',
-			name: t('spreed', 'Chat'),
+			fileInfo: null,
 			tab: null,
 		}
 	},
-
-	computed: {
-		/**
-		 * Needed to differenciate the tabs
-		 * pulled from the AppSidebarTab component
-		 *
-		 * @returns {string}
-		 */
-		id() {
-			return 'chat'
-		},
-
-		/**
-		 * Returns the current active tab
-		 * needed because AppSidebarTab also uses $parent.activeTab
-		 *
-		 * @returns {string}
-		 */
-		activeTab() {
-			return this.$parent.activeTab
-		},
-	},
-
 	mounted() {
+		// Dirty hack to force the style on parent component
+		const tabChat = document.querySelector('#tab-chat')
+		tabChat.style.height = '100%'
+		// Remove paddding to maximize space for the chat view
+		tabChat.style.padding = '0'
+
 		try {
 			OCA.Talk.fileInfo = this.fileInfo
 			this.tab = OCA.Talk.newTab()
@@ -92,14 +56,15 @@ export default {
 			console.error('Unable to unmount Chat tab', error)
 		}
 	},
+	methods: {
+		/**
+		 * Update current fileInfo and fetch new data
+		 * @param {Object} fileInfo the current file FileInfo
+		 */
+		async update(fileInfo) {
+			this.fileInfo = fileInfo
+			OCA.Talk.fileInfo = this.fileInfo
+		},
+	},
 }
 </script>
-
-<style scoped>
-#tab-chat {
-	height: 100%;
-
-	/* Remove padding to maximize the space for the chat view. */
-	padding: 0;
-}
-</style>
