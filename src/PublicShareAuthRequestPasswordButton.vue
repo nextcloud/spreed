@@ -40,6 +40,7 @@
 <script>
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService'
 import browserCheck from './mixins/browserCheck'
+import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
 

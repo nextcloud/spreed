@@ -62,6 +62,7 @@ import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
+import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
 
