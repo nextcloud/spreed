@@ -65,6 +65,7 @@ import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
+import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
 	name: 'App',
