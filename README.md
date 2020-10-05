@@ -11,7 +11,7 @@
 * 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
 * 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Contacts and Deck, with more to come.
 * 🎡 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
-* 🌉 **Sync with other chat solutions** With the [Matterbridge](https://github.com/42wim/matterbridge/) you can sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
+* 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
 
 More in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/).
 
