@@ -29,15 +29,17 @@
 				class="observer"
 				@notify="setBlur" />
 		</div>
-		<img
-			v-if="hasPicture"
-			:src="backgroundImage"
-			:style="gridBlur ? gridBlur : blur"
-			class="video-background__picture"
-			alt="">
-		<div v-else
-			:style="{'background-color': backgroundColor }"
-			class="video-background" />
+		<transition name="fade">
+			<img
+				v-if="hasPicture && (gridBlur || blur)"
+				:src="backgroundImage"
+				:style="gridBlur ? gridBlur : blur"
+				class="video-background__picture"
+				alt="">
+			<div v-else
+				:style="{'background-color': backgroundColor }"
+				class="video-background" />
+		</transition>
 	</div>
 </template>
 
@@ -70,6 +72,7 @@ export default {
 
 	data() {
 		return {
+			backgroundImage: null,
 			hasPicture: false,
 			blur: '',
 		}
@@ -86,20 +89,34 @@ export default {
 				return `rgb(${color.r}, ${color.g}, ${color.b})`
 			}
 		},
-		backgroundImage() {
-			return generateUrl(`avatar/${this.user}/300`)
-		},
 	},
 
 	async beforeMount() {
+		console.log('VideoBackground: beforeMount', this.user)
 		if (!this.user) {
 			return
 		}
 
 		try {
-			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
+			const response = await axios.get(generateUrl(`avatar/${this.user}/300`), {
+				responseType: 'arraybuffer',
+			})
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
-				this.hasPicture = true
+				const backgroundImage = generateUrl(`avatar/${this.user}/300`)
+				//const mimeType = response.headers['content-type']
+				//const backgroundImage = 'data:' + mimeType + ';base64,' + Buffer.from(response.data, 'binary').toString('base64')
+
+				console.log('preloading image', backgroundImage)
+				const img = new Image()
+				img.onload = () => {
+					console.log('done loading')
+					this.hasPicture = true
+					this.backgroundImage = backgroundImage
+				}
+				img.onerror = () => {
+					console.error('error loading image', arguments)
+				}
+				img.src = backgroundImage
 			}
 		} catch (exception) {
 			console.debug(exception)
@@ -119,6 +136,7 @@ export default {
 	methods: {
 		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
+			console.log('VideoBackground: setBlur', this.user, width, height)
 			this.blur = this.$store.getters.getBlurFilter(width, height)
 		},
 	},
