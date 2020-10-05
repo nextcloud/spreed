@@ -64,6 +64,7 @@ import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import browserCheck from './mixins/browserCheck'
+import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
 
