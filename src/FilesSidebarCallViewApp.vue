@@ -37,6 +37,7 @@ import PreventUnload from 'vue-prevent-unload'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
+import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
 
