@@ -258,6 +258,16 @@ export default {
 	display: flex;
 }
 
+/**
+ * Replace padding with margin to make the participant list scroll
+ * properly behind the top field
+ */
+#tab-participants {
+	margin-top: 10px;
+	padding-top: 0;
+	outline: none; /* remove the weird border that appears on focus */
+}
+
 /* Force scroll bars in tabs content instead of in whole sidebar. */
 ::v-deep .app-sidebar-tabs {
 	height: calc(100% - 80px);
