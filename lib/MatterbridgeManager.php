@@ -486,8 +486,8 @@ class MatterbridgeManager {
 			$content .= sprintf('	account = "%s.%s"', $type, $k) . "\n";
 			if (in_array($type, ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n";
-				if ($type === 'irc' && $part['channelPassword']) {
-					$content .= sprintf('	options = { key = "%s" }', $part['channelPassword']) . "\n";
+				if ($type === 'irc' && $part['channelpassword']) {
+					$content .= sprintf('	options = { key = "%s" }', $part['channelpassword']) . "\n";
 				}
 				$content .= "\n";
 			} elseif ($type === 'msteams') {
