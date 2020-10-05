@@ -43,7 +43,7 @@
 		</transition>
 		<transition-group name="fade">
 			<div
-				v-if="showBackgroundAndAvatar"
+				v-show="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
 				<VideoBackground

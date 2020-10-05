@@ -27,7 +27,7 @@
 			<div v-if="showPromoted" ref="videoContainer" class="video__promoted autopilot">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
-						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+						v-show="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 						:key="callParticipantModel.attributes.peerId"
 						:token="token"
 						:model="callParticipantModel"
@@ -44,7 +44,7 @@
 			<div v-if="showSelected" ref="videoContainer" class="video__promoted override">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
-						v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
+						v-show="callParticipantModel.attributes.peerId === selectedVideoPeerId"
 						:key="callParticipantModel.attributes.selectedVideoPeerId"
 						:token="token"
 						:model="callParticipantModel"
