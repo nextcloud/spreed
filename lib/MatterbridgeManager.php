@@ -437,6 +437,9 @@ class MatterbridgeManager {
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
+				if ($part['password']) {
+					$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				}
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
 				if ($part['nickservnick']) {
 					$content .= sprintf('	NickServNick = "%s"', $part['nickservnick']) . "\n";
@@ -483,8 +486,8 @@ class MatterbridgeManager {
 			$content .= sprintf('	account = "%s.%s"', $type, $k) . "\n";
 			if (in_array($type, ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
 				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n";
-				if ($type === 'irc' && $part['password']) {
-					$content .= sprintf('	options = { key = "%s" }', $part['password']) . "\n";
+				if ($type === 'irc' && $part['channelPassword']) {
+					$content .= sprintf('	options = { key = "%s" }', $part['channelPassword']) . "\n";
 				}
 				$content .= "\n";
 			} elseif ($type === 'msteams') {
