@@ -351,6 +351,11 @@ export default {
 							placeholder: t('spreed', 'IRC channel'),
 							icon: 'icon-group',
 						},
+						channelpassword: {
+							type: 'password',
+							placeholder: t('spreed', 'Channel password'),
+							icon: 'icon-category-auth',
+						},
 						nickservnick: {
 							type: 'text',
 							placeholder: t('spreed', 'NickServ nickname'),
