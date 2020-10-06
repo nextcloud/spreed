@@ -65,8 +65,8 @@ class Listener {
 			$participants = $event->getParticipants();
 			foreach ($participants as $participant) {
 				$user = null;
-				if ($participant['user_id'] !== '') {
-					$user = $userManager->get($participant['user_id']);
+				if ($participant['userId'] !== '') {
+					$user = $userManager->get($participant['userId']);
 				}
 
 				$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
