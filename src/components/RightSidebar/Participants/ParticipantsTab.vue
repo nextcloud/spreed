@@ -24,7 +24,7 @@
 		<SearchBox
 			v-if="displaySearchBox"
 			v-model="searchText"
-			:placeholder-text="t('spreed', 'Add participants to the conversation')"
+			:placeholder-text="t('spreed', 'Search or add participants to the conversation')"
 			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
