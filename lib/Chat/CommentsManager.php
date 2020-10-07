@@ -30,7 +30,7 @@ use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class CommentsManager extends Manager {
 
@@ -39,7 +39,7 @@ class CommentsManager extends Manager {
 
 	public function __construct(
 		IDBConnection $db,
-		ILogger $logger,
+		LoggerInterface $logger,
 		IConfig $config,
 		ITimeFactory $timeFactory
 	) {
