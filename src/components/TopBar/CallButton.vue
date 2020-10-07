@@ -231,10 +231,6 @@ export default {
 .top-bar__button .icon {
 	opacity: 1;
 	margin-right: 4px;
-
-	&.icon-incoming-call {
-		animation: pulse 2s infinite;
-	}
 }
 
 .success {
@@ -246,18 +242,6 @@ export default {
 	&:focus,
 	&:active {
 		border: 1px solid var(--color-success) !important;
-	}
-}
-
-@keyframes pulse {
-	0% {
-		opacity: .5;
-	}
-	50% {
-		opacity: 1;
-	}
-	100% {
-		opacity: .5;
 	}
 }
 </style>
