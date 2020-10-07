@@ -139,7 +139,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Додати користувачів, групи або кола",
     "Add users or groups" : "Додати користувачів або групи",
     "Add users or circles" : "Додати користувачів або кола",
-    "Add participants to the conversation" : "Додати учасників до розмови",
     "Participants" : "Учасники",
     "Chat" : "Чат",
     "Edit" : "Редагувати",
@@ -193,6 +192,7 @@ OC.L10N.register(
     "Select participants" : "Виберіть учасників",
     "Search conversations or contacts" : "Пошук розмов та контактів",
     "Search for more contacts" : "Шукати більше контактів",
+    "Add participants to the conversation" : "Додати учасників до розмови",
     "Default location for attachments" : "Типове розташування для вкладень",
     "Select default location for attachments" : "Виберіть типове розташування для вкладень"
 },
