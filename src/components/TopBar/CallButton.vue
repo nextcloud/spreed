@@ -181,25 +181,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-.top-bar__button .icon {
-	opacity: 1;
-
-	&.icon-incoming-call {
-		animation: pulse 2s infinite;
-	}
-}
-
-@keyframes pulse {
-	0% {
-		opacity: .5;
-	}
-	50% {
-		opacity: 1;
-	}
-	100% {
-		opacity: .5;
-	}
-}
-</style>
