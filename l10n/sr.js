@@ -501,7 +501,6 @@ OC.L10N.register(
     "Searching …" : "Тражим…",
     "No results" : "Нема резултата",
     "Add users or groups" : "Додај кориснике или групе",
-    "Add participants to the conversation" : "Додај учеснике на разговор",
     "Participants" : "Учесници",
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
     "Chat" : "Ћаскање",
@@ -615,6 +614,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
     "Contacts" : "Контакти",
     "Search conversations or contacts" : "Претражи разговоре или контакте",
+    "Add participants to the conversation" : "Додај учеснике на разговор",
     "Signaling server URL" : "Адреса сигнализационог сервера"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

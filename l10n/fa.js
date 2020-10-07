@@ -305,7 +305,6 @@ OC.L10N.register(
     "Searching …" : "جستجوکردن …",
     "No results" : "نتیجه ای یافت نشد",
     "Add users or groups" : "کاربران یا گروه ها را اضافه کنید",
-    "Add participants to the conversation" : "افزودن عضو به گفتگو",
     "Participants" : "شركت كنندگان",
     "Edit" : "ویرایش",
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
@@ -344,6 +343,7 @@ OC.L10N.register(
     "Add participant …" : "افزودن اعضا ...",
     "Favorited" : "برگزیده شده",
     "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- مکالمات اکنون می توانند یک لابی داشته باشند. این به مدیران اجازه می دهد تا برای تهیه جلسه به چت بپیوندند و از قبل تماس بگیرند ، در حالی که کاربران و میهمانان باید منتظر بمانند.",
-    "Contacts" : "مخاطبین"
+    "Contacts" : "مخاطبین",
+    "Add participants to the conversation" : "افزودن عضو به گفتگو"
 },
 "nplurals=2; plural=(n > 1);");
