@@ -238,8 +238,8 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
-
 			if (this.parsedText !== '') {
+				const oldMessage = this.parsedText
 				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
@@ -270,7 +270,28 @@ export default {
 						})
 					}
 				} catch (error) {
-					console.debug(`error while submitting message ${error}`)
+					let statusCode = null
+					console.debug(`error while submitting message ${error}`, error)
+					if (error.isAxiosError) {
+						statusCode = error.response.status
+					}
+					// 403 when room is read-only, 412 when switched to lobby mode
+					if (statusCode === 403 || statusCode === 412) {
+						OC.Notification.show(
+							t('spreed', 'No permission to post messages in this room'),
+							{ type: 'error' }
+						)
+					} else {
+						OC.Notification.show(
+							t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }),
+							{ type: 'error' }
+						)
+					}
+
+					// restore message to allow re-sending
+					this.$store.dispatch('deleteMessage', temporaryMessage)
+					this.text = oldMessage
+					this.parsedText = oldMessage
 				}
 			}
 		},
