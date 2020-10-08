@@ -203,7 +203,26 @@ export default {
 		 * @returns {String} the parsed text
 		 */
 		rawToParsed(text) {
+			// first div doesn't count
+			text = text.replace(/^<div>/g, '')
+
+			// newlines from enter key
+			//   extra newlines
+			text = text.replace(/<div><br><\/div>/g, '\n')
+			//   regular newlines
+			text = text.replace(/<div>/g, '\n')
+
+			// newlines from shift+enter key
 			text = text.replace(/<br>/g, '\n')
+
+			// clear formatting tags (for now)i
+			// some browsers natively allow users to insert those with ctrl+b or ctrl+i
+			text = text.replace(/<\/?i>/g, '')
+			text = text.replace(/<\/?b>/g, '')
+
+			// clean up
+			text = text.replace(/<\/div>/g, '')
+
 			text = text.replace(/&nbsp;/g, ' ')
 
 			// Since we used innerHTML to get the content of the div.contenteditable

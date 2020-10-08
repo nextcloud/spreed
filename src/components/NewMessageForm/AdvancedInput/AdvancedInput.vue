@@ -405,11 +405,6 @@ export default {
 div[contenteditable] {
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
-	/*
-		Prevent implicit insertion of divs when pressing Enter
-		https://stackoverflow.com/a/24689420
-	 */
-	display: inline-block;
 }
 
 // Support for the placeholder text in the div contenteditable
