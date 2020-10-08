@@ -113,15 +113,15 @@
 							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
-					<AdvancedInput ref="advancedInput"
-						v-model="text"
-						:token="token"
+					<NcRichContenteditable ref="richContenteditable"
+						:value.sync="text"
+						:auto-complete="autoComplete"
 						:active-input="!disabled"
+						:user-data="userData"
 						:placeholder-text="placeholderText"
 						:aria-label="placeholderText"
-						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit({ silent: false })"
-						@files-pasted="handlePastedFiles" />
+						@update:value="parsedText = arguments[0]" />
 				</div>
 
 				<AudioRecorder v-if="showAudioRecorder"
@@ -214,14 +214,15 @@
 </template>
 
 <script>
-import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
+import { searchPossibleMentions } from '../../services/mentionsService.js'
 import Quote from '../Quote.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -254,13 +255,13 @@ export default {
 	name: 'NewMessageForm',
 
 	components: {
-		AdvancedInput,
 		Quote,
 		NcActions,
 		NcActionButton,
 		NcButton,
 		Paperclip,
 		NcEmojiPicker,
+		NcRichContenteditable,
 		EmoticonOutline,
 		Send,
 		AudioRecorder,
@@ -320,6 +321,7 @@ export default {
 
 			// Check empty template by default
 			checked: -1,
+			userData: {},
 		}
 	},
 
@@ -456,8 +458,8 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined() {
-			this.$refs.advancedInput.focusInput()
+		currentConversationIsJoined(newValue) {
+			this.$refs.richContenteditable.$refs.contenteditable.focus()
 		},
 
 		text(newValue) {
@@ -503,54 +505,7 @@ export default {
 		handleUploadStart() {
 			// refocus on upload start as the user might want to type again
 			// while the upload is running
-			this.$refs.advancedInput.focusInput()
-		},
-
-		contentEditableToParsed(contentEditable) {
-			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
-			mentions.forEach(mention => {
-				// FIXME Adding a space after the mention should be improved to
-				// do it or not based on the next element instead of always
-				// adding it.
-				mention.replaceWith(' @' + mention.firstElementChild.attributes['data-mention-id'].value + ' ')
-			})
-
-			this.parsedText = this.rawToParsed(contentEditable.innerHTML)
-		},
-		/**
-		 * Returns a parsed version of the given raw text of the content
-		 * editable div.
-		 *
-		 * The given raw text contains a plain text representation of HTML
-		 * content (like "first&nbsp;line<br>second&nbsp;line"). The returned
-		 * parsed text replaces the (known) HTML content with the format
-		 * expected by the server (like "first line\nsecond line").
-		 *
-		 * The parsed text is also trimmed.
-		 *
-		 * @param {string} text the raw text
-		 * @return {string} the parsed text
-		 */
-		rawToParsed(text) {
-			text = text.replace(/<br>/g, '\n')
-			text = text.replace(/<div>/g, '\n')
-			text = text.replace(/<\/div>/g, '')
-			text = text.replace(/&nbsp;/g, ' ')
-
-			// Since we used innerHTML to get the content of the div.contenteditable
-			// it is escaped. With this little trick from https://stackoverflow.com/a/7394787
-			// We unescape the code again, so if you write `<strong>` we can display
-			// it again instead of `&lt;strong&gt;`
-			const temp = document.createElement('textarea')
-			temp.innerHTML = text
-			text = temp.value
-
-			// Although the text is fully trimmed, at the very least the last
-			// "\n" occurrence should be always removed, as browsers add a
-			// "<br>" element as soon as some rich text is written in a content
-			// editable div (for example, if a new line is added the div content
-			// will be "<br><br>").
-			return text.trim()
+			this.$refs.richContenteditable.$refs.contenteditable.focus()
 		},
 
 		/**
@@ -577,12 +532,9 @@ export default {
 				}
 				this.text = ''
 				this.parsedText = ''
-
-				if (!this.breakoutRoom) {
-					// Scrolls the message list to the last added message
-					EventBus.$emit('smooth-scroll-chat-to-bottom')
-				}
-
+				this.userData = {}
+				// Scrolls the message list to the last added message
+				EventBus.$emit('smooth-scroll-chat-to-bottom')
 				// Also remove the message to be replied for this conversation
 				await this.$store.dispatch('removeMessageToBeReplied', this.token)
 
@@ -667,8 +619,8 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					await shareFile(path, this.token)
-					this.$refs.advancedInput.focusInput()
+					shareFile(path, this.token)
+					this.$refs.richContenteditable.$refs.contenteditable.focus()
 				})
 
 			// FIXME Remove this hack once it is possible to set the parent
@@ -739,7 +691,7 @@ export default {
 		addEmoji(emoji) {
 			const selection = document.getSelection()
 
-			const contentEditable = this.$refs.advancedInput.$refs.contentEditable
+			const contentEditable = this.$refs.richContenteditable.$refs.contenteditable
 
 			// There is no select, or current selection does not start in the
 			// content editable element, so just append the emoji at the end.
@@ -865,7 +817,50 @@ export default {
 		focusTextDialogInput() {
 			// this.$refs.textFileTitleInput.$refs.inputField.$refs.input.focus()
 			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
+		},
 
+		async autoComplete(search, callback) {
+			const response = await searchPossibleMentions(this.token, search)
+			if (!response) {
+				// It was not possible to get the candidate mentions, so just
+				// keep the previous ones.
+				return
+			}
+
+			const possibleMentions = response.data.ocs.data
+
+			possibleMentions.forEach(possibleMention => {
+				// Wrap mention ids with spaces in quotes.
+				if (possibleMention.id.indexOf(' ') !== -1
+					|| possibleMention.id.indexOf('/') !== -1) {
+					possibleMention.id = '"' + possibleMention.id + '"'
+				}
+
+				// Set icon for candidate mentions that are not for users.
+				if (possibleMention.source === 'calls') {
+					possibleMention.icon = 'icon-group-forced-white'
+				} else if (possibleMention.source === 'guests') {
+					possibleMention.icon = 'icon-user-forced-white'
+				} else {
+					// The avatar is automatically shown for users, but an icon
+					// is nevertheless required as fallback.
+					possibleMention.icon = 'icon-user-forced-white'
+				}
+
+				// Convert status properties to an object.
+				if (possibleMention.status) {
+					const status = {
+						status: possibleMention.status,
+						icon: possibleMention.statusIcon,
+					}
+					possibleMention.status = status
+					possibleMention.subline = possibleMention.statusMessage
+				}
+				// Caching the user id data for each possible mention
+				this.userData[possibleMention.id] = possibleMention
+			})
+
+			callback(possibleMentions)
 		},
 	},
 }
@@ -897,7 +892,6 @@ export default {
 		margin: 0 4px;
 		&__emoji-picker {
 			position: absolute;
-			left: 5px;
 			bottom: 1px;
 			z-index: 1;
 		}
@@ -906,7 +900,12 @@ export default {
 			flex-grow: 1;
 			overflow: hidden;
 			position: relative;
-			padding: 2px;
+
+			.rich-contenteditable__input {
+				border: none;
+				word-break: break-word;
+				white-space: pre-wrap;
+			}
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;
@@ -973,5 +972,12 @@ export default {
 			justify-content: center;
 		}
 	}
+}
+
+// Custom talk input styles
+::v-deep .rich-contenteditable__input {
+	border: 1px solid var(--color-border-dark) !important;
+	border-radius: 22px;
+	padding-left: 44px;
 }
 </style>

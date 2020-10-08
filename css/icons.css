@@ -67,12 +67,16 @@
 	background-image: url(../img/changelog.svg);
 }
 
-/* The atwho panel is a direct child of the body, so it is not affected by
+/* The tribute panel is a direct child of the body, so it is not affected by
  * .app-Talk rules above.
  * "forced-white" needs to be included in the class name as the Avatar does
  * not accept several classes. */
-.talk.candidate-mentions.atwho-panel .icon-group-forced-white {
+.tribute-container .icon-group-forced-white {
 	background-image: url(../img/icon-contacts-white.svg);
+}
+
+.tribute-container .icon-user-forced-white {
+	background-image: url(../img/icon-user-white.svg)
 }
 
 /* Needed to use white color also in dark mode. */
