@@ -119,6 +119,12 @@
 				</ActionInput>
 				<ActionSeparator />
 				<ActionCheckbox
+					:checked="isReadOnly"
+					:disabled="readOnlyStateLoading"
+					@change="toggleReadOnly">
+					{{ t('spreed', 'Lock conversation') }}
+				</ActionCheckbox>
+				<ActionCheckbox
 					:checked="hasLobbyEnabled"
 					@change="toggleLobby">
 					{{ t('spreed', 'Enable lobby') }}
@@ -204,6 +210,7 @@ export default {
 			// Switch for the password-editing operation
 			isEditingPassword: false,
 			lobbyTimerLoading: false,
+			readOnlyStateLoading: false,
 		}
 	},
 
@@ -316,6 +323,9 @@ export default {
 		},
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+		isReadOnly() {
+			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 		isPasswordProtected() {
 			return this.conversation.hasPassword
@@ -457,6 +467,16 @@ export default {
 
 			this.lobbyTimerLoading = false
 		},
+
+		async toggleReadOnly() {
+			this.readOnlyStateLoading = true
+			await this.$store.dispatch('setReadOnlyState', {
+				token: this.token,
+				readOnly: this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY,
+			})
+			this.readOnlyStateLoading = false
+		},
+
 		async handlePasswordDisable() {
 			// disable the password protection for the current conversation
 			if (this.conversation.hasPassword) {
