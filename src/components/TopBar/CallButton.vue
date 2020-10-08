@@ -117,6 +117,7 @@ export default {
 			return (!this.conversation.canStartCall
 					&& !this.conversation.hasCall)
 				|| this.isBlockedByLobby
+				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
 		},
 

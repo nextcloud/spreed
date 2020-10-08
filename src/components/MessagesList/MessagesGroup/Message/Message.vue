@@ -59,7 +59,7 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions
-					v-show="showActions && hasActions"
+					v-show="showActions && hasActions && !isConversationReadOnly"
 					class="message__main__right__actions">
 					<ActionButton
 						v-if="isReplyable"
@@ -86,7 +86,7 @@ import RichText from '@juliushaertl/vue-richtext'
 import Quote from '../../../Quote'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { PARTICIPANT } from '../../../../constants'
+import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
 
 export default {
@@ -218,6 +218,11 @@ export default {
 	computed: {
 		hasActions() {
 			return this.isReplyable
+		},
+
+		isConversationReadOnly() {
+			const conversation = this.$store.getters.conversation(this.token)
+			return conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isSystemMessage() {
