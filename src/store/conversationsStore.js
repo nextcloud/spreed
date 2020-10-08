@@ -26,6 +26,7 @@ import {
 	changeLobbyState,
 	addToFavorites,
 	removeFromFavorites,
+	setConversationName,
 } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR } from '../constants'
@@ -189,6 +190,18 @@ const actions = {
 			await changeLobbyState(token, WEBINAR.LOBBY.NONE)
 			conversation.lobbyState = WEBINAR.LOBBY.NONE
 		}
+
+		commit('addConversation', conversation)
+	},
+
+	async setConversationName({ commit, getters }, { token, name }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		await setConversationName(token, name)
+		conversation.displayName = name
 
 		commit('addConversation', conversation)
 	},
