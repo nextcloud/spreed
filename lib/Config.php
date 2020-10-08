@@ -71,6 +71,10 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	public function getDialInInfo(): string {
+		return $this->config->getAppValue('spreed', 'sip_bridge_dial-in_info', '');
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

@@ -21,31 +21,48 @@
  -->
 
 <template>
-	<div id="sip_bridge" class="videocalls section">
+	<div id="sip-bridge" class="videocalls section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
 		<p class="settings-hint">
 			{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 		</p>
 
-		<p class="sip_bridge__groups-settings-content">
-			<Multiselect v-model="sipGroups"
-				class="allowed-groups-select"
-				:options="groups"
-				:placeholder="t('spreed', 'Enable SIP configuration')"
-				:disabled="loading"
-				:multiple="true"
-				:searchable="true"
-				:tag-width="60"
-				:loading="loadingGroups"
-				:show-no-options="false"
-				:close-on-select="false"
-				@search-change="searchGroup" />
+		<Multiselect
+			v-model="sipGroups"
+			class="sip-bridge__sip-groups-select"
+			:options="groups"
+			:placeholder="t('spreed', 'Enable SIP configuration')"
+			:disabled="loading"
+			:multiple="true"
+			:searchable="true"
+			:tag-width="60"
+			:loading="loadingGroups"
+			:show-no-options="false"
+			:close-on-select="false"
+			track-by="id"
+			label="displayname"
+			@search-change="searchGroup" />
 
+		<h3>{{ t('spreed', 'Dial-in information') }}</h3>
+
+		<p class="settings-hint">
+			{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
+		</p>
+
+		<textarea
+			v-model="dialInInfo"
+			name="message"
+			class="sip-bridge__dialin-info"
+			rows="4"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Phone number (Country)')" />
+
+		<p>
 			<button class="button primary"
 				:disabled="loading"
-				@click="saveSIPGroups">
-				{{ saveLabelSIPGroups }}
+				@click="saveSIPSettings">
+				{{ saveLabel }}
 			</button>
 		</p>
 	</div>
@@ -71,16 +88,19 @@ export default {
 			loadingGroups: false,
 			groups: [],
 			sipGroups: [],
-			saveLabelSIPGroups: t('spreed', 'Save changes'),
+			saveLabel: t('spreed', 'Save changes'),
+			dialInInfo: '',
 		}
 	},
 
 	mounted() {
 		this.loading = true
-		this.sipGroups = loadState('talk', 'sip_bridge_groups')
-		this.groups = [...new Set(this.sipGroups.concat(this.canStartConversations))].sort(function(a, b) {
-			return a.localeCompare(b)
+		this.groups = loadState('talk', 'sip_bridge_groups').sort(function(a, b) {
+			return a.displayname.localeCompare(b.displayname)
 		})
+		this.sipGroups = this.groups
+		this.dialInInfo = loadState('talk', 'sip_bridge_dial-in_info')
+		this.searchGroup('')
 		this.loading = false
 	},
 
@@ -88,14 +108,13 @@ export default {
 		searchGroup: debounce(async function(query) {
 			this.loadingGroups = true
 			try {
-				const res = await axios.get(generateOcsUrl('cloud', 2) + 'groups', {
+				const response = await axios.get(generateOcsUrl('cloud', 2) + 'groups/details', {
 					search: query,
 					limit: 20,
 					offset: 0,
 				})
-				// remove duplicates and sort
-				this.groups = [...new Set(res.data.ocs.data.groups)].sort(function(a, b) {
-					return a.localeCompare(b)
+				this.groups = response.data.ocs.data.groups.sort(function(a, b) {
+					return a.displayname.localeCompare(b.displayname)
 				})
 			} catch (err) {
 				console.error('Could not fetch groups', err)
@@ -104,20 +123,26 @@ export default {
 			}
 		}, 500),
 
-		saveSIPGroups() {
+		saveSIPSettings() {
 			this.loading = true
-			this.loadingGroups = true
-			this.saveLabelSIPGroups = t('spreed', 'Saving …')
+			this.saveLabel = t('spreed', 'Saving …')
 
-			OCP.AppConfig.setValue('spreed', 'sip_bridge_groups', JSON.stringify(this.sipGroups), {
-				success: function() {
-					this.loading = false
-					this.loadingGroups = false
-					this.saveLabelSIPGroups = t('spreed', 'Saved!')
-					setTimeout(function() {
-						this.saveLabelSIPGroups = t('spreed', 'Save changes')
-					}.bind(this), 5000)
-				}.bind(this),
+			const groups = this.sipGroups.map(group => {
+				return group.id
+			})
+
+			OCP.AppConfig.setValue('spreed', 'sip_bridge_groups', JSON.stringify(groups), {
+				success: () => {
+					OCP.AppConfig.setValue('spreed', 'sip_bridge_dial-in_info', this.dialInInfo, {
+						success: () => {
+							this.loading = false
+							this.saveLabel = t('spreed', 'Saved!')
+							setTimeout(() => {
+								this.saveLabel = t('spreed', 'Save changes')
+							}, 5000)
+						},
+					})
+				},
 			})
 		},
 	},
@@ -125,22 +150,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sip_bridge {
-	&__groups-settings-content {
-		display: flex;
-		align-items: center;
-
-		.allowed-groups-select {
-			width: 300px;
-		}
-		button {
-			margin-left: 10px;
-		}
-	}
-
-	.multiselect {
-		flex-grow: 1;
-		max-width: 300px;
+.sip-bridge {
+	&__sip-groups-select,
+	&__dialin-info {
+		width: 480px;
 	}
 }
 

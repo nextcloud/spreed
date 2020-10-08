@@ -33,6 +33,8 @@ use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IUser;
@@ -52,6 +54,8 @@ class AdminSettings implements ISettings {
 	private $initialStateService;
 	/** @var ICacheFactory */
 	private $memcacheFactory;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var MatterbridgeManager */
 	private $bridgeManager;
 	/** @var IUser */
@@ -66,6 +70,7 @@ class AdminSettings implements ISettings {
 								CommandService $commandService,
 								IInitialStateService $initialStateService,
 								ICacheFactory $memcacheFactory,
+								IGroupManager $groupManager,
 								MatterbridgeManager $bridgeManager,
 								IUserSession $userSession,
 								IL10N $l10n,
@@ -75,6 +80,7 @@ class AdminSettings implements ISettings {
 		$this->commandService = $commandService;
 		$this->initialStateService = $initialStateService;
 		$this->memcacheFactory = $memcacheFactory;
+		$this->groupManager = $groupManager;
 		$this->bridgeManager = $bridgeManager;
 		$this->currentUser = $userSession->getUser();
 		$this->l10n = $l10n;
@@ -469,7 +475,20 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initSIPBridge(): void {
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $this->talkConfig->getSIPGroups());
+		$gids = $this->talkConfig->getSIPGroups();
+		$groups = [];
+		foreach ($gids as $gid) {
+			$group = $this->groupManager->get($gid);
+			if ($group instanceof IGroup) {
+				$groups[] = [
+					'id' => $group->getGID(),
+					'displayname' => $group->getDisplayName(),
+				];
+			}
+		}
+
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $groups);
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_dial-in_info', $this->talkConfig->getDialInInfo());
 	}
 
 	/**
