@@ -62,6 +62,15 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	/**
+	 * @return string[]
+	 */
+	public function getSIPGroups(): array {
+		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {
