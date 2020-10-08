@@ -804,9 +804,17 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
+		$sipConfig = $this->config->getAppValue('spreed', 'sip_config', ''); // FIXME adjust config name
 		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 		$entropy = max(8, $entropy); // For update cases
+
+		if ($sipConfig === '') {
+			$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
+		} else {
+			$chars = ISecureRandom::CHAR_DIGITS;
+			// Increase default token length as we only use numbers
+			$entropy = max(10, $entropy);
+		}
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
