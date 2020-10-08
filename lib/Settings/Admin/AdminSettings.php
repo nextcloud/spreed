@@ -93,6 +93,7 @@ class AdminSettings implements ISettings {
 		$this->initTurnServers();
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
+		$this->initSIPBridge();
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}
@@ -465,6 +466,10 @@ class AdminSettings implements ISettings {
 			'languages' => $languages,
 			'countries' => $countries,
 		]);
+	}
+
+	protected function initSIPBridge(): void {
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $this->talkConfig->getSIPGroups());
 	}
 
 	/**
