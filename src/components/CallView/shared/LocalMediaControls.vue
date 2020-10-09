@@ -19,7 +19,8 @@
   -->
 
 <template>
-	<div>
+	<div v-shortkey.push="['space']"
+		@shortkey="toggleAudio">
 		<div v-if="!isBig" class="nameIndicator">
 			<div id="muteWrapper">
 				<button
