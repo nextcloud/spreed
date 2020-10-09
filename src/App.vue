@@ -286,7 +286,11 @@ export default {
 				this.setPageTitle(nextConversationName)
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', to.params.token)
+			} else if (to.name === 'notfound') {
+				this.setPageTitle('')
+				this.$store.dispatch('updateToken', '')
 			}
+
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
