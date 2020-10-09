@@ -445,9 +445,17 @@ export default {
 					singleConversation: true,
 				})
 			} catch (exception) {
-				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push('/apps/spreed/not-found')
-				this.$store.dispatch('hideSidebar')
+				if (exception.response && exception.response.status === 404) {
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
+					this.$router.push('/apps/spreed/not-found')
+					this.$store.dispatch('hideSidebar')
+
+					return
+				}
+
+				// TODO Maybe progressively increase debouncing time to avoid
+				// hammering the server if it is already loaded?
+				this.debounceRefreshCurrentConversation()
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
