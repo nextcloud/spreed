@@ -59,7 +59,7 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions
-					v-show="showActions && hasActions && !isConversationReadOnly"
+					v-show="showActions && hasActions"
 					class="message__main__right__actions">
 					<ActionButton
 						v-if="isReplyable"
@@ -217,7 +217,7 @@ export default {
 
 	computed: {
 		hasActions() {
-			return this.isReplyable
+			return this.isReplyable && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {

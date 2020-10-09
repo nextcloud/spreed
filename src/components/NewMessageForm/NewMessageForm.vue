@@ -96,7 +96,7 @@
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -277,15 +277,9 @@ export default {
 					}
 					// 403 when room is read-only, 412 when switched to lobby mode
 					if (statusCode === 403 || statusCode === 412) {
-						OC.Notification.show(
-							t('spreed', 'No permission to post messages in this room'),
-							{ type: 'error' }
-						)
+						showError(t('spreed', 'No permission to post messages in this conversation'))
 					} else {
-						OC.Notification.show(
-							t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }),
-							{ type: 'error' }
-						)
+						showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
 					}
 
 					// restore message to allow re-sending
