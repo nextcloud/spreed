@@ -62,6 +62,7 @@ import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
 import talkHashCheck from './mixins/talkHashCheck'
+import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
@@ -92,6 +93,7 @@ export default {
 			defaultPageTitle: false,
 			loading: false,
 			isRefreshingCurrentConversation: false,
+			errorUpdatingConversationToast: null,
 		}
 	},
 
@@ -433,6 +435,11 @@ export default {
 				 */
 				const response = await fetchConversation(token)
 
+				if (this.errorUpdatingConversationToast) {
+					this.errorUpdatingConversationToast.hideToast()
+					this.errorUpdatingConversationToast = null
+				}
+
 				// this.$store.dispatch('purgeConversationsStore')
 				this.$store.dispatch('addConversation', response.data.ocs.data)
 				this.$store.dispatch('markConversationRead', token)
@@ -456,6 +463,10 @@ export default {
 				// TODO Maybe progressively increase debouncing time to avoid
 				// hammering the server if it is already loaded?
 				this.debounceRefreshCurrentConversation()
+
+				if (!this.errorUpdatingConversationToast) {
+					this.errorUpdatingConversationToast = showError(t('spreed', 'An error occurred while updating the conversation'))
+				}
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
