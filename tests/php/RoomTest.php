@@ -29,9 +29,9 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RoomTest extends TestCase {
@@ -39,7 +39,7 @@ class RoomTest extends TestCase {
 		$dispatcher = new EventDispatcher(
 			new \Symfony\Component\EventDispatcher\EventDispatcher(),
 			\OC::$server,
-			$this->createMock(ILogger::class)
+			$this->createMock(LoggerInterface::class)
 		);
 		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function (VerifyRoomPasswordEvent $event) {
 			$password = $event->getPassword();
