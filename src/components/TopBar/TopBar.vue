@@ -328,7 +328,7 @@ export default {
 
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			return this.conversation.lobbyTimer * 1000
+			return new Date(this.conversation.lobbyTimer * 1000)
 		},
 
 		dateTimePickerAttrs() {
