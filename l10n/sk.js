@@ -711,6 +711,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Pripojte sa k rozhovoru, alebo začnite nový",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Prehliadač, ktorý používate, nie je službou Nextcloud Talk plne podporovaný. Použite najnovšiu verziu prehliadača Mozilla Firefox, Microsoft Edge, Google Chrome alebo Apple Safari.",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk bolo aktualizované, znova načítajte stránku",
+    "Do not disturb" : "Nerušiť",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud je v režime údržby, znova načítajte stránku",
     "Error while sharing file" : "Pri zdieľaní súboru došlo k chybe",
     "Failed to join the conversation. Try to reload the page." : "K rozhovoru sa nepodarilo pripojiť. Skúste stránku načítať znova.",
