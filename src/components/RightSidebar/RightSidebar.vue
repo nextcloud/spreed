@@ -82,7 +82,6 @@ import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
-import { setConversationName } from '../../services/conversationsService'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
@@ -231,7 +230,10 @@ export default {
 		async handleSubmitTitle(event) {
 			const name = event.target[0].value.trim()
 			try {
-				await setConversationName(this.token, name)
+				await this.$store.dispatch('setConversationName', {
+					token: this.token,
+					name: name,
+				})
 				this.dismissEditing()
 			} catch (exception) {
 				console.debug(exception)
