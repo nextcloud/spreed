@@ -26,4 +26,7 @@ namespace OCA\Talk;
 class Webinary {
 	public const LOBBY_NONE = 0;
 	public const LOBBY_NON_MODERATORS = 1;
+
+	public const SIP_DISABLED = 0;
+	public const SIP_ENABLED = 1;
 }
