@@ -38,6 +38,7 @@ import {
 import {
 	showError,
 	showWarning,
+	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 
 const Signaling = {
@@ -356,9 +357,7 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		}.bind(this))
 		.catch(function(err) {
 			console.error(err)
-			showError(t('spreed', 'Sending signaling message has failed.'), {
-				timeout: 15,
-			})
+			showError(t('spreed', 'Sending signaling message has failed.'))
 		})
 }
 
@@ -453,7 +452,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
-						timeout: -1,
+						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 				}
 				if (this.pullMessagesFails === 30) {
@@ -463,7 +462,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 
 					// Giving up after 5 minutes
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
-						timeout: -1,
+						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 					return
 				}
@@ -558,7 +557,7 @@ Signaling.Standalone.prototype.connect = function() {
 		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
 			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 2000)
 	}
@@ -601,7 +600,7 @@ Signaling.Standalone.prototype.connect = function() {
 		}
 		if (this.signalingConnectionError === null) {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
 		this.reconnect()
