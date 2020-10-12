@@ -102,6 +102,7 @@ import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
+import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
 import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
@@ -173,9 +174,21 @@ export default {
 
 	mounted() {
 		this.isCurrentConversationIsFirstInList()
+
+		EventBus.$on('uploadStart', this.handleUploadStart)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('uploadStart', this.handleUploadStart)
 	},
 
 	methods: {
+		handleUploadStart() {
+			// refocus on upload start as the user might want to type again
+			// while the upload is running
+			this.$refs.advancedInput.focusInput()
+		},
+
 		contentEditableToParsed(contentEditable) {
 			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
 			mentions.forEach(mention => {
@@ -270,6 +283,7 @@ export default {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
 					shareFile(path, this.token)
+					this.$refs.advancedInput.focusInput()
 				})
 		},
 
@@ -292,11 +306,11 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 */
-		handleFiles(files) {
+		async handleFiles(files) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			processFiles(files, this.token, uploadId)
+			await processFiles(files, this.token, uploadId)
 		},
 
 		/**
