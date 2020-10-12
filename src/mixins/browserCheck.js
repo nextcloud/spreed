@@ -20,7 +20,7 @@
  *
  */
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import UAParser from 'ua-parser-js'
 
 const browserCheck = {
@@ -31,7 +31,7 @@ const browserCheck = {
 				showError(
 					this.unsupportedWarning,
 					{
-						timeout: -1,
+						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 			}
 		},

@@ -23,7 +23,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
-import { showError } from '@nextcloud/dialogs'
+import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import store from '../store/index'
 
 let maintenanceWarning = null
@@ -46,7 +46,7 @@ const fetchConversations = async function() {
 	} catch (error) {
 		if (error.response && error.response.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
 		throw error
@@ -72,7 +72,7 @@ const fetchConversation = async function(token) {
 	} catch (error) {
 		if (error.response && error.response.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
 		throw error

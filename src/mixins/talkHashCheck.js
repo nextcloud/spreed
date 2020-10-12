@@ -20,7 +20,7 @@
  *
  */
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 const talkHashCheck = {
 	data() {
@@ -51,7 +51,7 @@ const talkHashCheck = {
 
 			this.reloadWarningShown = true
 			showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		},
 	},

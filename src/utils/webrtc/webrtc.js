@@ -29,7 +29,10 @@
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
-import { showError } from '@nextcloud/dialogs'
+import {
+	showError,
+	TOAST_PERMANENT_TIMEOUT,
+} from '@nextcloud/dialogs'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -539,7 +542,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 					.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
 					.replace('{linkend}', ' ↗</a>'),
 				{
-					timeout: -1,
+					timeout: TOAST_PERMANENT_TIMEOUT,
 					isHTML: true,
 				}
 			)
@@ -819,7 +822,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			// FIXME emit an event and handle it as needed instead of
 			// calling UI code from here.
 			localStreamRequestedTimeoutNotification = showError(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
-				timeout: -1,
+				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 10000)
 	})
@@ -865,7 +868,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 
 		showError(message, {
-			timeout: -1,
+			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
 	})
 
