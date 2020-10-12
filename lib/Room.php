@@ -125,6 +125,8 @@ class Room {
 	private $readOnly;
 	/** @var int */
 	private $lobbyState;
+	/** @var int */
+	private $sipStatus;
 	/** @var int|null */
 	private $assignedSignalingServer;
 	/** @var \DateTime|null */
@@ -165,6 +167,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $lobbyState,
+								int $sipStatus,
 								?int $assignedSignalingServer,
 								string $token,
 								string $name,
@@ -187,6 +190,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->lobbyState = $lobbyState;
+		$this->sipStatus = $sipStatus;
 		$this->assignedSignalingServer = $assignedSignalingServer;
 		$this->token = $token;
 		$this->name = $name;
@@ -216,6 +220,10 @@ class Room {
 	public function getLobbyState(): int {
 		$this->validateTimer();
 		return $this->lobbyState;
+	}
+
+	public function getSIPStatus(): int {
+		return $this->sipStatus;
 	}
 
 	public function getLobbyTimer(): ?\DateTime {
