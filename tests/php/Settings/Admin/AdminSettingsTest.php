@@ -29,6 +29,7 @@ use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IUserSession;
@@ -47,6 +48,8 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $initialState;
 	/** @var ICacheFactory|MockObject */
 	protected $cacheFactory;
+	/** @var IGroupManager|MockObject  */
+	protected $groupManager;
 	/** @var MatterbridgeManager|MockObject  */
 	protected $matterbridgeManager;
 	/** @var IUserSession|MockObject  */
@@ -66,6 +69,7 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialStateService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->l10n = $this->createMock(IL10N::class);
@@ -86,6 +90,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
+				$this->groupManager,
 				$this->matterbridgeManager,
 				$this->userSession,
 				$this->l10n,
@@ -100,6 +105,7 @@ class AdminSettingsTest extends \Test\TestCase {
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
+				$this->groupManager,
 				$this->matterbridgeManager,
 				$this->userSession,
 				$this->l10n,
