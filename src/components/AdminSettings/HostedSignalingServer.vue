@@ -21,7 +21,10 @@
  -->
 
 <template>
-	<div id="hosted_signaling_server" class="videocalls section">
+	<div
+		v-if="showForm"
+		id="hosted_signaling_server"
+		class="videocalls section">
 		<h2>
 			{{ t('spreed', 'Hosted high-performance backend') }}
 		</h2>
@@ -147,6 +150,7 @@ export default {
 			hostedHPBCountry: '',
 			requestError: '',
 			loading: false,
+			showForm: true,
 			trialAccount: [],
 			languages: [],
 			countries: [],
@@ -203,6 +207,10 @@ export default {
 		const languagesAndCountries = loadState('talk', 'hosted_signaling_server_language_data')
 		this.languages = languagesAndCountries['languages'] // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
 		this.countries = languagesAndCountries['countries'] // list of {code: "France", name: "France"}
+
+		const signaling = loadState('talk', 'signaling_servers')
+		this.showForm = this.trialAccount.length !== 0
+			|| signaling.servers.length === 0
 	},
 
 	methods: {
