@@ -1,2 +1,612 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.16@d03e5ef057d6adc656c0ff7e166c50b73b4f48f3"/>
+<files psalm-version="3.16@d03e5ef057d6adc656c0ff7e166c50b73b4f48f3">
+  <file src="lib/AppInfo/Application.php">
+    <UndefinedClass occurrences="2">
+      <code>BeforeTemplateRenderedEvent</code>
+      <code>BeforeTemplateRenderedEvent</code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>getSettingsManager</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
+    <UndefinedClass occurrences="1">
+      <code>SchemaWrapper</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Chat/AutoComplete/Sorter.php">
+    <MissingDependency occurrences="3">
+      <code>$this-&gt;commentsManager</code>
+      <code>CommentsManager</code>
+      <code>CommentsManager</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/Chat/ChatManager.php">
+    <MissingDependency occurrences="18">
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>CommentsManager</code>
+      <code>CommentsManager|ICommentsManager</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>NullCache</code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod occurrences="3">
+      <code>getLastCommentBeforeDate</code>
+      <code>getNumberOfCommentsForObjectSinceComment</code>
+      <code>searchForObjects</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Chat/CommentsManager.php">
+    <UndefinedClass occurrences="1">
+      <code>Manager</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Chat/MessageParser.php">
+    <UndefinedVariable occurrences="1">
+      <code>$guestNames</code>
+    </UndefinedVariable>
+  </file>
+  <file src="lib/Chat/Parser/SystemMessage.php">
+    <MissingDependency occurrences="4">
+      <code>$this-&gt;rootFolder</code>
+      <code>IRootFolder</code>
+      <code>IRootFolder</code>
+      <code>\OCP\Share\Exceptions\ShareNotFound</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>\OC_Util</code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>getById</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Command/ActiveCalls.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Command/Add.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Command/AddSamples.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Command/Delete.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Command/ListCommand.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Command/Update.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Add.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Create.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Delete.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Demote.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Promote.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Remove.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Room/Update.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Signaling/Add.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Signaling/Delete.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Signaling/ListCommand.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Stun/Add.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Stun/Delete.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Stun/ListCommand.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Turn/Add.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Turn/Delete.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Turn/ListCommand.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Config.php">
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
+    <ParadoxicalCondition occurrences="1">
+      <code>\in_array($mode, $validModes, true)</code>
+    </ParadoxicalCondition>
+  </file>
+  <file src="lib/Controller/ChatController.php">
+    <InvalidArrayOffset occurrences="1">
+      <code>$commentIdToIndex[$parentId]</code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="lib/Controller/FilesIntegrationController.php">
+    <MissingDependency occurrences="2">
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/Controller/GuestController.php">
+    <UndefinedClass occurrences="1">
+      <code>DBALException</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/MatterbridgeController.php">
+    <InvalidArgument occurrences="1">
+      <code>$success</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/Controller/MatterbridgeSettingsController.php">
+    <InvalidArgument occurrences="1">
+      <code>$success</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/Controller/PageController.php">
+    <MissingDependency occurrences="2">
+      <code>IRootFolder</code>
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedDocblockClass occurrences="4">
+      <code>HintException</code>
+      <code>HintException</code>
+      <code>HintException</code>
+      <code>HintException</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Controller/PublicShareAuthController.php">
+    <MissingDependency occurrences="1">
+      <code>ShareNotFound</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/Controller/RoomController.php">
+    <UndefinedClass occurrences="2">
+      <code>Circles</code>
+      <code>Circles</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="2"/>
+  </file>
+  <file src="lib/Controller/SettingsController.php">
+    <MissingDependency occurrences="3">
+      <code>$this-&gt;rootFolder</code>
+      <code>IRootFolder</code>
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>SharedStorage</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/SignalingController.php">
+    <InvalidArgument occurrences="2">
+      <code>'Internal signaling disabled.'</code>
+      <code>'Internal signaling disabled.'</code>
+    </InvalidArgument>
+    <UndefinedClass occurrences="1">
+      <code>\GuzzleHttp\Exception\ConnectException</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Files/TemplateLoader.php">
+    <MissingDependency occurrences="2">
+      <code>IRootFolder</code>
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="2">
+      <code>LoadSidebar</code>
+      <code>LoadSidebar</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Files/Util.php">
+    <MissingDependency occurrences="7">
+      <code>$this-&gt;rootFolder</code>
+      <code>$this-&gt;rootFolder</code>
+      <code>$this-&gt;rootFolder</code>
+      <code>IRootFolder</code>
+      <code>IRootFolder</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>GroupFolderStorage</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/GuestManager.php">
+    <UndefinedDocblockClass occurrences="1">
+      <code>\Doctrine\DBAL\DBALException</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Manager.php">
+    <InvalidArgument occurrences="4"/>
+    <MissingDependency occurrences="4">
+      <code>$this-&gt;commentsManager</code>
+      <code>$this-&gt;commentsManager</code>
+      <code>CommentsManager</code>
+      <code>CommentsManager</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/MatterbridgeManager.php">
+    <UndefinedClass occurrences="4">
+      <code>IAuthTokenProvider</code>
+      <code>IToken</code>
+      <code>IToken</code>
+      <code>UniqueConstraintViolationException</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="4">
+      <code>$this-&gt;tokenProvider</code>
+      <code>$this-&gt;tokenProvider</code>
+      <code>$this-&gt;tokenProvider</code>
+      <code>IAuthTokenProvider</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Migration/Version10000Date20200819121721.php">
+    <UndefinedClass occurrences="3">
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version11000Date20200922161218.php">
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2000Date20170707093535.php">
+    <UndefinedClass occurrences="14">
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20170707115443.php">
+    <InvalidArrayAccess occurrences="1">
+      <code>$return['num_rooms']</code>
+    </InvalidArrayAccess>
+    <UndefinedClass occurrences="3">
+      <code>PostgreSqlPlatform</code>
+      <code>PostgreSqlPlatform</code>
+      <code>Type</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="2">
+      <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
+      <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20170913104501.php">
+    <UndefinedClass occurrences="4">
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20170921145301.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20171009132424.php">
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20171026134605.php">
+    <UndefinedClass occurrences="20">
+      <code>PostgreSqlPlatform</code>
+      <code>TableNotFoundException</code>
+      <code>TableNotFoundException</code>
+      <code>TableNotFoundException</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="1">
+      <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20171031102049.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version2001Date20180103144447.php">
+    <UndefinedClass occurrences="9">
+      <code>PostgreSqlPlatform</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="1">
+      <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Migration/Version3002Date20180319104030.php">
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180707222130.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180718112436.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180718133519.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180720162342.php">
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180722152849.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version3003Date20180730080327.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version4099Date20181001123058.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version5099Date20190121102337.php">
+    <UndefinedClass occurrences="7">
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version5099Date20190319134820.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version6099Date20190627172429.php">
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version7000Date20190717141457.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version7000Date20190724121136.php">
+    <InvalidArgument occurrences="1"/>
+    <UndefinedClass occurrences="2">
+      <code>Type</code>
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version7000Date20190724121137.php">
+    <InvalidArgument occurrences="1"/>
+  </file>
+  <file src="lib/Migration/Version8000Date20200407115318.php">
+    <UndefinedClass occurrences="1">
+      <code>Type</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Notification/Notifier.php">
+    <InvalidPropertyAssignmentValue occurrences="3">
+      <code>$this-&gt;participants</code>
+      <code>$this-&gt;rooms</code>
+      <code>$this-&gt;rooms</code>
+    </InvalidPropertyAssignmentValue>
+    <MissingDependency occurrences="4">
+      <code>$this-&gt;commentManager</code>
+      <code>CommentsManager</code>
+      <code>CommentsManager</code>
+      <code>ShareNotFound</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/PublicShare/TemplateLoader.php">
+    <UndefinedClass occurrences="1">
+      <code>BeforeTemplateRenderedEvent</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/PublicShareAuth/TemplateLoader.php">
+    <UndefinedClass occurrences="1">
+      <code>BeforeTemplateRenderedEvent</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Service/HostedSignalingServerService.php">
+    <UndefinedClass occurrences="4">
+      <code>ClientException</code>
+      <code>ClientException</code>
+      <code>ClientException</code>
+      <code>SecureRandom</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="4">
+      <code>$this-&gt;secureRandom</code>
+      <code>$this-&gt;secureRandom</code>
+      <code>$this-&gt;secureRandom</code>
+      <code>SecureRandom</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Settings/Admin/AdminSettings.php">
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>getLanguages</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Share/Listener.php">
+    <UndefinedClass occurrences="7">
+      <code>$event-&gt;getView()</code>
+      <code>$event-&gt;getView()</code>
+      <code>$event-&gt;getView()</code>
+      <code>$view</code>
+      <code>$view</code>
+      <code>$view</code>
+      <code>Filesystem</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Share/RoomShareProvider.php">
+    <InvalidArgument occurrences="2">
+      <code>new GenericEvent($existingShare)</code>
+      <code>self::class . '::' . 'share_file_again'</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="1">
+      <code>$shares</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>IShare[]</code>
+    </InvalidReturnType>
+    <MissingDependency occurrences="15">
+      <code>GenericShareException</code>
+      <code>GenericShareException</code>
+      <code>GenericShareException</code>
+      <code>GenericShareException</code>
+      <code>GenericShareException</code>
+      <code>GenericShareException</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+      <code>ShareNotFound</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>Cache</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Signaling/BackendNotifier.php">
+    <InvalidClass occurrences="2">
+      <code>IURLGenerator</code>
+      <code>IUrlGenerator</code>
+    </InvalidClass>
+  </file>
+  <file src="lib/TInitialState.php">
+    <MissingDependency occurrences="1">
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>HintException</code>
+    </UndefinedClass>
+  </file>
+</files>
