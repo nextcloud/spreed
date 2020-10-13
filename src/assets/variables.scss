@@ -101,3 +101,26 @@ $chat-line-height: 1.6em;
 		transition: all 150ms ease-in-out;
 	}
 }
+
+.slide-down {
+	&-enter {
+		transform: translateY(50%);
+		opacity: 0;
+	}
+	&-enter-to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	&-leave {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	&-leave-to {
+		transform: translateY(50%);
+		opacity: 0;
+	}
+	&-enter-active,
+	&-leave-active {
+		transition: all 150ms ease-in-out;
+	}
+}

@@ -545,6 +545,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	top: 0;
+	overflow: hidden;
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
