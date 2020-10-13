@@ -10,21 +10,27 @@ on:
 jobs:
   static-psalm-analysis:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         ocp-version: [ 'dev-master' ]
+
     name: Nextcloud ${{ matrix.ocp-version }}
     steps:
       - name: Checkout
-          uses: actions/checkout@master
+        uses: actions/checkout@master
+
       - name: Set up php
-          uses: shivammathur/setup-php@master
-          with:
-            php-version: 7.4
-            coverage: none
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: 7.4
+          coverage: none
+
       - name: Install dependencies
-          run: composer i
+        run: composer i
+
       - name: Install dependencies
-          run: composer require --dev christophwurst/nextcloud:${{ matrix.ocp-version }}
+        run: composer require --dev christophwurst/nextcloud:${{ matrix.ocp-version }}
+
       - name: Run coding standards check
-          run: composer run psalm
+        run: composer run psalm
