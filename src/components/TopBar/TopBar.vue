@@ -39,11 +39,12 @@
 				{{ layoutHintText }}
 				<div class="hint__actions">
 					<button
+						class="hint__button"
 						@click="showLayoutHint=false, hintDismissed=true">
 						{{ t('spreed', 'Dismiss') }}
 					</button>
 					<button
-						class="primary"
+						class="hint__button primary"
 						@click="changeView">
 						{{ t('spreed', 'Use speaker view') }}
 					</button>
@@ -528,6 +529,9 @@ export default {
 .hint {
 	padding: 4px;
 	text-align: left;
+	&__button {
+		height: $clickable-area;
+	}
 	&__actions{
 		display: flex;
 		justify-content: space-between;
