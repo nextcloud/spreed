@@ -535,7 +535,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $userId
 	 * @param Folder $node
 	 * @param bool $reshares Also get the shares where $user is the owner instead of just the shares where $user is the initiator
-	 * @return IShare[]
+	 * @return IShare[][]
+	 * @psalm-return array<array-key, non-empty-list<IShare>>
 	 */
 	public function getSharesInFolder($userId, Folder $node, $reshares): array {
 		$qb = $this->dbConnection->getQueryBuilder();
