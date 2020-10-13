@@ -112,12 +112,13 @@
 					<div class="hint__actions">
 						<button
 							v-if="qualityWarningTooltip.action"
-							class="primary"
+							class="primary hint__button"
 							@click="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
 						</button>
 						<button
 							v-if="!isQualityWarningTooltipDismissed"
+							class="hint__button"
 							@click="isQualityWarningTooltipDismissed = true">
 							{{ t('spreed', 'Dismiss') }}
 						</button>
@@ -484,6 +485,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
+
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
@@ -597,6 +600,9 @@ export default {
 		flex-direction: row-reverse;
 		justify-content: space-between;
 		padding-top:4px;
+	}
+	&__button {
+		height: $clickable-area;
 	}
 }
 
