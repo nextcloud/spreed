@@ -679,7 +679,7 @@ class MatterbridgeManager {
 	 */
 	public function killZombieBridges(bool $killAll = false): void {
 		// get list of running matterbridge processes
-		$cmd = 'ps -ux | grep "commands/matterbridge" | grep -v grep | awk \'{print $2}\'';
+		$cmd = 'ps x -o user,pid,args | grep "commands/matterbridge" | grep -v grep | awk \'{print $2}\'';
 		exec($cmd, $output, $ret);
 		$runningPidList = [];
 		foreach ($output as $o) {
