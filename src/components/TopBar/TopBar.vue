@@ -526,7 +526,8 @@ export default {
 }
 
 .hint {
-	padding: 4px;
+	padding: 12px;
+	max-width: 300px;
 	text-align: left;
 	&__actions{
 		display: flex;
