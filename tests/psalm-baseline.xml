@@ -534,18 +534,11 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/HostedSignalingServerService.php">
-    <UndefinedClass occurrences="4">
+    <UndefinedClass occurrences="3">
       <code>ClientException</code>
       <code>ClientException</code>
       <code>ClientException</code>
-      <code>SecureRandom</code>
     </UndefinedClass>
-    <UndefinedDocblockClass occurrences="4">
-      <code>$this-&gt;secureRandom</code>
-      <code>$this-&gt;secureRandom</code>
-      <code>$this-&gt;secureRandom</code>
-      <code>SecureRandom</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="lib/Settings/Admin/AdminSettings.php">
     <UndefinedInterfaceMethod occurrences="1">
@@ -568,12 +561,6 @@
       <code>new GenericEvent($existingShare)</code>
       <code>self::class . '::' . 'share_file_again'</code>
     </InvalidArgument>
-    <InvalidReturnStatement occurrences="1">
-      <code>$shares</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>IShare[]</code>
-    </InvalidReturnType>
     <MissingDependency occurrences="15">
       <code>GenericShareException</code>
       <code>GenericShareException</code>
