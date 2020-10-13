@@ -136,7 +136,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		return $update->execute();
+		return (int) $update->execute();
 	}
 
 	/**
@@ -160,6 +160,6 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		return $update->execute();
+		return (int) $update->execute();
 	}
 }
