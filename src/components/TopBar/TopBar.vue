@@ -527,7 +527,8 @@ export default {
 }
 
 .hint {
-	padding: 4px;
+	padding: 12px;
+	max-width: 300px;
 	text-align: left;
 	&__button {
 		height: $clickable-area;
