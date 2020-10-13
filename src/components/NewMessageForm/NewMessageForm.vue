@@ -58,6 +58,7 @@
 					</Actions>
 				</div>
 				<div
+					v-if="!isReadOnly"
 					class="new-message-form__button">
 					<EmojiPicker @select="addEmoji">
 						<button
@@ -80,11 +81,14 @@
 						ref="advancedInput"
 						v-model="text"
 						:token="token"
+						:active-input="!isReadOnly"
+						:placeholder-text="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit"
 						@files-pasted="handleFiles" />
 				</div>
 				<button
+					:disabled="isReadOnly"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
 					class="new-message-form__button submit icon-confirm-fade"
@@ -149,6 +153,16 @@ export default {
 			}
 		},
 
+		isReadOnly() {
+			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		placeholderText() {
+			return this.isReadOnly
+				? t('spreed', 'This conversation has been locked')
+				: t('spreed', 'Write message, @ to mention someone …')
+		},
+
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
@@ -158,7 +172,7 @@ export default {
 		},
 
 		canShareAndUploadFiles() {
-			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
+			return !this.currentUserIsGuest && !this.isReadOnly
 		},
 
 		attachmentFolder() {

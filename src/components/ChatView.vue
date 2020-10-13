@@ -44,7 +44,7 @@
 		</transition>
 		<MessagesList
 			:token="token" />
-		<NewMessageForm v-if="!isReadOnly" />
+		<NewMessageForm />
 	</div>
 </template>
 

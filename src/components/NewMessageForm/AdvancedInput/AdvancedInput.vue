@@ -175,7 +175,7 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Write message, @ to mention someone …'),
+			default: '',
 		},
 
 		/**
