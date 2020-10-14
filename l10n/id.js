@@ -56,20 +56,9 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "Contacts" : "Kontak",
     "Projects" : "Proyek",
-    "Copy" : "Salin",
-    "Copied!" : "Tersalin!",
-    "Not supported!" : "Tidak didukung!",
-    "Press ⌘-C to copy." : "Tekan ⌘-C untuk menyalin.",
-    "Press Ctrl-C to copy." : "Tekan CTRL-C untuk menyalin.",
     "Password required" : "Kata sandi diperlukan",
-    "Cancel" : "Membatalkan",
-    "Change password" : "Ubah kata sandi",
-    "Set password" : "Atur kata sandi",
-    "Rename" : "Ubah nama",
-    "Share" : "Bagikan",
-    "Error while sharing" : "Kesalahan saat membagikan",
-    "Favorited" : "Difavoritkan",
-    "Contacts" : "Kontak"
+    "Cancel" : "Membatalkan"
 },
 "nplurals=1; plural=0;");

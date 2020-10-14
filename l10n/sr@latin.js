@@ -50,18 +50,8 @@ OC.L10N.register(
     "Send" : "Pošalji",
     "Start a conversation" : "Započni razgovor",
     "Default" : "Podrazumevano",
-    "Copy" : "Kopiraj",
-    "Copied!" : "Копирано!",
-    "Not supported!" : "Није подржано!",
-    "Press ⌘-C to copy." : "Притисни ⌘-C за копирање.",
-    "Press Ctrl-C to copy." : "Притисни Ctrl-C за копирање.",
-    "Password required" : "Potrebna je lozinka",
-    "Cancel" : "Cancel",
     "Webinar" : "Vebinar",
-    "Change password" : "Izmeni lozinku",
-    "Set password" : "Postavi lozinku",
-    "Rename" : "Rename",
-    "Share" : "Deljenje",
-    "Error while sharing" : "Greška pri deljenju"
+    "Password required" : "Potrebna je lozinka",
+    "Cancel" : "Cancel"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

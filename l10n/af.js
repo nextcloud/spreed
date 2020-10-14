@@ -282,19 +282,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
-    "Copy" : "Kopieer",
-    "Copied!" : "Gekopieer!",
-    "Not supported!" : "Word nie ondersteun nie!",
-    "Press ⌘-C to copy." : "Druk ⌘-C om te kopieer.",
-    "Press Ctrl-C to copy." : "Druk Ctrl-C om te kopieer.",
-    "Cancel" : "Kanselleer",
+    "Contacts" : "Kontakte",
     "Guests" : "Gaste",
-    "Change password" : "Verander wagwoord",
-    "Set password" : "Stel wagwoord",
-    "Rename" : "Hernoem",
-    "Share" : "Deel",
-    "Error while sharing" : "Fout terwyl deel",
-    "Favorited" : "As gunsteling ",
-    "Contacts" : "Kontakte"
+    "Cancel" : "Kanselleer"
 },
 "nplurals=2; plural=(n != 1);");

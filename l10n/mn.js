@@ -46,17 +46,8 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
     "Send" : "илгээх",
-    "Copy" : "Хуулах",
-    "Copied!" : "Хуулсан!",
-    "Not supported!" : "Дэмжигдэхгүй",
-    "Press ⌘-C to copy." : "Хуулахын тулд ⌘-C дарна уу.",
-    "Press Ctrl-C to copy." : "Хуулахын тулд Ctrl-C дарна уу.",
+    "Contacts" : "Харилцагчид",
     "Cancel" : "болиулах",
-    "Submit" : "мэдэгдэх",
-    "Change password" : "Нууц үг солих",
-    "Rename" : "Нэрлэнэ үү",
-    "Share" : "Түгээх",
-    "Error while sharing" : "Түгээхэд алдаа гарлаа",
-    "Contacts" : "Харилцагчид"
+    "Submit" : "мэдэгдэх"
 },
 "nplurals=2; plural=(n != 1);");

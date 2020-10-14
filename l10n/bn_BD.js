@@ -43,11 +43,7 @@ OC.L10N.register(
     "Send" : "পাঠাও",
     "Default" : "পূর্বনির্ধারিত",
     "The password is wrong. Try again." : "কুটশব্দটি ভুল। আবার চেষ্টা করুন।",
-    "Cancel" : "বাতির",
-    "Change password" : "কূটশব্দ পরিবর্তন করুন",
-    "Rename" : "পূনঃনামকরণ",
-    "Share" : "ভাগাভাগি কর",
-    "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  ",
-    "Contacts" : "পরিচিতজন"
+    "Contacts" : "পরিচিতজন",
+    "Cancel" : "বাতির"
 },
 "nplurals=2; plural=(n != 1);");

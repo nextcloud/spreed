@@ -46,17 +46,7 @@
     "The password is wrong. Try again." : "รหัสผ่านที่ไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
-    "Copy" : "คัดลอก",
-    "Copied!" : "คัดลอกแล้ว",
-    "Not supported!" : "ไม่สนับสนุน",
-    "Press ⌘-C to copy." : "กด ⌘-C เพื่อคัดลอก",
-    "Press Ctrl-C to copy." : "กด Ctrl-C เพื่อคัดลอก",
-    "Cancel" : "ยกเลิก",
-    "Change password" : "เปลี่ยนรหัสผ่าน",
-    "Rename" : "เปลี่ยนชื่อ",
-    "Share" : "แชร์",
-    "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
-    "Favorited" : "รายการโปรด",
-    "Contacts" : "ข้อมูลผู้ติดต่อ"
+    "Contacts" : "ข้อมูลผู้ติดต่อ",
+    "Cancel" : "ยกเลิก"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
