@@ -35,6 +35,12 @@
 				decorative
 				:size="24" />
 		</button>
+		<LocalMediaControls
+			class="local-media-controls"
+			:model="localMediaModel"
+			:local-call-participant-model="localCallParticipantModel"
+			:screen-sharing-button-hidden="isSidebar"
+			@switch-screen-to-id="$emit('switchScreenToId', $event)" />
 		<transition name="slide-down">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
@@ -143,6 +149,7 @@
 import debounce from 'debounce'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
+import LocalMediaControls from '../shared/LocalMediaControls'
 import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
@@ -157,6 +164,7 @@ export default {
 	components: {
 		Video,
 		LocalVideo,
+		LocalMediaControls,
 		EmptyCallView,
 		ChevronRight,
 		ChevronLeft,
@@ -216,6 +224,10 @@ export default {
 		 * To be set to true when the grid is in the promoted view.
 		 */
 		isStripe: {
+			type: Boolean,
+			default: false,
+		},
+		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
@@ -813,6 +825,15 @@ export default {
 	z-index: 10;
 	border: 0;
 	background: none;
+}
+
+.local-media-controls {
+	position: absolute;
+	width: 300px; /* same as .video-container-stripe */
+	text-align: center;
+	right: 0;
+	bottom: 4px;
+	z-index: 1;
 }
 
 </style>

@@ -92,6 +92,7 @@
 			<Grid
 				v-if="showGrid"
 				v-bind="$attrs"
+				:is-sidebar="isSidebar"
 				:is-stripe="!isGrid"
 				:token="token"
 				:fit-video="true"
