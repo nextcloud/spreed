@@ -21,8 +21,10 @@
  -->
 
 <template>
-	<div id="sip-bridge" class="videocalls section">
+	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
+
+		<h3>{{ t('spreed', 'Restrict SIP configuration') }}</h3>
 
 		<p class="settings-hint">
 			{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
@@ -43,6 +45,16 @@
 			track-by="id"
 			label="displayname"
 			@search-change="searchGroup" />
+
+		<h3>{{ t('spreed', 'Shared secret') }}</h3>
+
+		<input v-model="sharedSecret"
+			type="text"
+			name="shared-secret"
+			class="sip-bridge__shared-secret"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:aria-label="t('spreed', 'Shared secret')">
 
 		<h3>{{ t('spreed', 'Dial-in information') }}</h3>
 
@@ -74,6 +86,7 @@ import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
+import { setSIPSettings } from '../../services/settingsService'
 
 export default {
 	name: 'SIPBridge',
@@ -90,6 +103,7 @@ export default {
 			sipGroups: [],
 			saveLabel: t('spreed', 'Save changes'),
 			dialInInfo: '',
+			sharedSecret: '',
 		}
 	},
 
@@ -100,6 +114,7 @@ export default {
 		})
 		this.sipGroups = this.groups
 		this.dialInInfo = loadState('talk', 'sip_bridge_dial-in_info')
+		this.sharedSecret = loadState('talk', 'sip_bridge_shared_secret')
 		this.searchGroup('')
 		this.loading = false
 	},
@@ -123,7 +138,7 @@ export default {
 			}
 		}, 500),
 
-		saveSIPSettings() {
+		async saveSIPSettings() {
 			this.loading = true
 			this.saveLabel = t('spreed', 'Saving …')
 
@@ -131,19 +146,13 @@ export default {
 				return group.id
 			})
 
-			OCP.AppConfig.setValue('spreed', 'sip_bridge_groups', JSON.stringify(groups), {
-				success: () => {
-					OCP.AppConfig.setValue('spreed', 'sip_bridge_dial-in_info', this.dialInInfo, {
-						success: () => {
-							this.loading = false
-							this.saveLabel = t('spreed', 'Saved!')
-							setTimeout(() => {
-								this.saveLabel = t('spreed', 'Save changes')
-							}, 5000)
-						},
-					})
-				},
-			})
+			await setSIPSettings(groups, this.sharedSecret, this.dialInInfo)
+
+			this.loading = false
+			this.saveLabel = t('spreed', 'Saved!')
+			setTimeout(() => {
+				this.saveLabel = t('spreed', 'Save changes')
+			}, 5000)
 		},
 	},
 }
@@ -152,6 +161,7 @@ export default {
 <style lang="scss" scoped>
 .sip-bridge {
 	&__sip-groups-select,
+	&__shared-secret,
 	&__dialin-info {
 		width: 480px;
 	}

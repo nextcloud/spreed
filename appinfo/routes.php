@@ -495,8 +495,16 @@ return [
 		],
 
 		/**
-		 * UserSettings
+		 * Settings
 		 */
+		[
+			'name' => 'Settings#setSIPSettings',
+			'url' => '/api/{apiVersion}/settings/sip',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 		[
 			'name' => 'Settings#setUserSetting',
 			'url' => '/api/{apiVersion}/settings/user',
