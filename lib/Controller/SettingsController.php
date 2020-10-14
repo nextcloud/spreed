@@ -116,7 +116,6 @@ class SettingsController extends OCSController {
 		array $sipGroups = [],
 		string $dialInInfo = '',
 		string $sharedSecret = ''): DataResponse {
-
 		$groups = [];
 		foreach ($sipGroups as $gid) {
 			$group = $this->groupManager->get($gid);
