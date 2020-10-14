@@ -701,7 +701,9 @@ class Room {
 			return false;
 		}
 
-		$event = new ModifyRoomEvent($this, 'sipStatus', $newSipEnabled, $oldSipEnabled);
+		// FIXME check if SIP is enabled/configured
+
+		$event = new ModifyRoomEvent($this, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);
 
 		$query = $this->db->getQueryBuilder();

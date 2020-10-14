@@ -50,6 +50,8 @@ class Manager {
 	private $db;
 	/** @var IConfig */
 	private $config;
+	/** @var Config */
+	private $talkConfig;
 	/** @var ISecureRandom */
 	private $secureRandom;
 	/** @var IUserManager */
@@ -69,6 +71,7 @@ class Manager {
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
+								Config $talkConfig,
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
 								CommentsManager $commentsManager,
@@ -79,6 +82,7 @@ class Manager {
 								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
+		$this->talkConfig = $talkConfig;
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
@@ -805,10 +809,9 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$sipConfig = $this->config->getAppValue('spreed', 'sip_config', ''); // FIXME adjust config name
 		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 		$entropy = max(8, $entropy); // For update cases
-		$digitsOnly = $sipConfig !== '';
+		$digitsOnly = $this->talkConfig->isSIPConfigured();
 		if ($digitsOnly) {
 			// Increase default token length as we only use numbers
 			$entropy = max(10, $entropy);
