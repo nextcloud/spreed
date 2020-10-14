@@ -808,11 +808,8 @@ class Manager {
 		$sipConfig = $this->config->getAppValue('spreed', 'sip_config', ''); // FIXME adjust config name
 		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 		$entropy = max(8, $entropy); // For update cases
-
-		if ($sipConfig === '') {
-			$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		} else {
-			$chars = ISecureRandom::CHAR_DIGITS;
+		$digitsOnly = $sipConfig !== '';
+		if ($digitsOnly) {
 			// Increase default token length as we only use numbers
 			$entropy = max(10, $entropy);
 		}
@@ -825,7 +822,7 @@ class Manager {
 		$i = 0;
 		while ($i < 1000) {
 			try {
-				$token = $this->generateNewToken($query, $entropy, $chars);
+				$token = $this->generateNewToken($query, $entropy, $digitsOnly);
 				if (\in_array($token, ['settings', 'backend'], true)) {
 					throw new \OutOfBoundsException('Reserved word');
 				}
@@ -841,27 +838,33 @@ class Manager {
 
 		$entropy++;
 		$this->config->setAppValue('spreed', 'token_entropy', $entropy);
-		return $this->generateNewToken($query, $entropy, $chars);
+		return $this->generateNewToken($query, $entropy, $digitsOnly);
 	}
 
 	/**
 	 * @param IQueryBuilder $query
 	 * @param int $entropy
-	 * @param string $chars
+	 * @param bool $digitsOnly
 	 * @return string
 	 * @throws \OutOfBoundsException
 	 */
-	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
-		$event = new CreateRoomTokenEvent($entropy, $chars);
-		$this->dispatcher->dispatch(self::EVENT_TOKEN_GENERATE, $event);
-		try {
-			$token = $event->getToken();
-			if ($token === '') {
-				// Will generate default token below.
-				throw new \InvalidArgumentException('token may not be empty');
-			}
-		} catch (\InvalidArgumentException $e) {
+	protected function generateNewToken(IQueryBuilder $query, int $entropy, bool $digitsOnly): string {
+		if (!$digitsOnly) {
+			$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 			$token = $this->secureRandom->generate($entropy, $chars);
+		} else {
+			$chars = ISecureRandom::CHAR_DIGITS;
+			$token = '';
+			// Do not allow to start with a '0' as that is a special mode on the phone server
+			// Also there are issues with some providers when you enter the same number twice
+			// consecutive too fast, so we avoid this as well.
+			$lastDigit = '0';
+			for ($i = 0; $i < $entropy; $i++) {
+				$lastDigit = $this->secureRandom->generate(1,
+					str_replace($lastDigit, '', $chars)
+				);
+				$token .= $lastDigit;
+			}
 		}
 
 		$query->setParameter('token', $token);
