@@ -211,6 +211,8 @@ class RoomController extends AEnvironmentAwareController {
 			'unreadMention' => false,
 			'isFavorite' => false,
 			'notificationLevel' => Participant::NOTIFY_NEVER,
+			'lobbyState' => Webinary::LOBBY_NONE,
+			'lobbyTimer' => 0,
 			'lastPing' => 0,
 			'sessionId' => '0',
 			'participants' => [],
