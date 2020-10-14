@@ -329,6 +329,7 @@ class Room {
 			'lobby-timer' => $this->getLobbyTimer(),
 			'read-only' => $this->getReadOnly(),
 			'active-since' => $this->getActiveSince(),
+			'sip-enabled' => $this->getSIPEnabled(),
 		];
 
 		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
