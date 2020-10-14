@@ -67,4 +67,21 @@ class WebinarController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setSIPEnabled(int $state): DataResponse {
+		// TODO Check if user is in "SIP groups"
+
+		if (!$this->room->setSIPEnabled($state)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
 }

@@ -81,6 +81,8 @@ class Room {
 	public const EVENT_AFTER_READONLY_SET = self::class . '::postSetReadOnly';
 	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
+	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
+	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
 	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
@@ -126,7 +128,7 @@ class Room {
 	/** @var int */
 	private $lobbyState;
 	/** @var int */
-	private $sipStatus;
+	private $sipEnabled;
 	/** @var int|null */
 	private $assignedSignalingServer;
 	/** @var \DateTime|null */
@@ -167,7 +169,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $lobbyState,
-								int $sipStatus,
+								int $sipEnabled,
 								?int $assignedSignalingServer,
 								string $token,
 								string $name,
@@ -190,7 +192,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->lobbyState = $lobbyState;
-		$this->sipStatus = $sipStatus;
+		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
 		$this->token = $token;
 		$this->name = $name;
@@ -222,8 +224,8 @@ class Room {
 		return $this->lobbyState;
 	}
 
-	public function getSIPStatus(): int {
-		return $this->sipStatus;
+	public function getSIPEnabled(): int {
+		return $this->sipEnabled;
 	}
 
 	public function getLobbyTimer(): ?\DateTime {
@@ -676,6 +678,42 @@ class Room {
 				$this->changeInCall($participant, Participant::FLAG_DISCONNECTED);
 			}
 		}
+
+		return true;
+	}
+
+	public function setSIPEnabled(int $newSipEnabled): bool {
+		$oldSipEnabled = $this->sipEnabled;
+
+		if ($newSipEnabled === $oldSipEnabled) {
+			return false;
+		}
+
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+			return false;
+		}
+
+		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
+			return false;
+		}
+
+		if (!preg_match('/^\d+$/', $this->token)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($this, 'sipStatus', $newSipEnabled, $oldSipEnabled);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('sip_enabled', $query->createNamedParameter($newSipEnabled, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->sipEnabled = $newSipEnabled;
+
+		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
+
 
 		return true;
 	}
