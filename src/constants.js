@@ -69,6 +69,10 @@ export const WEBINAR = {
 		NONE: 0,
 		NON_MODERATORS: 1,
 	},
+	SIP: {
+		DISABLED: 0,
+		ENABLED: 1,
+	},
 }
 export const SHARE = {
 	TYPE: {

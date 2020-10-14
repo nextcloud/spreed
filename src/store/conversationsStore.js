@@ -23,6 +23,7 @@ import Vue from 'vue'
 import {
 	makePublic,
 	makePrivate,
+	setSIPEnabled,
 	changeLobbyState,
 	addToFavorites,
 	removeFromFavorites,
@@ -202,6 +203,19 @@ const actions = {
 		// The backend requires the state and timestamp to be set together.
 		await changeLobbyState(token, conversation.lobbyState, timestamp)
 		conversation.lobbyTimer = timestamp
+
+		commit('addConversation', conversation)
+	},
+
+	async setSIPEnabled({ commit, getters }, { token, state }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		// The backend requires the state and timestamp to be set together.
+		await setSIPEnabled(token, state)
+		conversation.sipEnabled = state
 
 		commit('addConversation', conversation)
 	},

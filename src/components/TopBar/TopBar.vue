@@ -133,6 +133,11 @@
 					@change="setLobbyTimer">
 					{{ t('spreed', 'Start time (optional)') }}
 				</ActionInput>
+				<ActionCheckbox
+					:checked="hasSIPEnabled"
+					@change="toggleSIPEnabled">
+					{{ t('spreed', 'Enable SIP dial-in') }}
+				</ActionCheckbox>
 			</template>
 			<template
 				v-if="showModerationOptions && canFullModerate && isInCall">
@@ -349,6 +354,9 @@ export default {
 				confirm: true,
 			}
 		},
+		hasSIPEnabled() {
+			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+		},
 		isGrid() {
 			return this.$store.getters.isGrid
 		},
@@ -438,6 +446,19 @@ export default {
 				token: this.token,
 				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
 			})
+		},
+
+		async toggleSIPEnabled(checked) {
+			try {
+				await this.$store.dispatch('setSIPEnabled', {
+					token: this.token,
+					state: checked ? WEBINAR.SIP.ENABLED : WEBINAR.SIP.DISABLED,
+				})
+			} catch (e) {
+				// TODO check "precondition failed"
+				// TODO showError()
+				console.error(e)
+			}
 		},
 
 		async setLobbyTimer(date) {
