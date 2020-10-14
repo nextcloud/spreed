@@ -53,18 +53,7 @@ OC.L10N.register(
     "TURN server" : "servitor TURN",
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
-    "Copy" : "Copiar",
-    "Copied!" : "Copiate!",
-    "Not supported!" : "Non supportate!",
-    "Press ⌘-C to copy." : "Pulsa ⌘-C pro copiar.",
-    "Press Ctrl-C to copy." : "Pulsa Ctrl-C pro copiar.",
-    "Cancel" : "Cancellar",
-    "Change password" : "Cambiar contrasigno",
-    "Rename" : "Renominar",
-    "Share" : "Compartir",
-    "Error while sharing" : "Error al compartir",
-    "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
-    "Favorited" : "Favorite",
-    "Contacts" : "Contactos"
+    "Contacts" : "Contactos",
+    "Cancel" : "Cancellar"
 },
 "nplurals=2; plural=(n != 1);");

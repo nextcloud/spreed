@@ -43,16 +43,7 @@
     "The password is wrong. Try again." : "Den Passwuert ass incorrect. Probeier ed nach eng keier.",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
-    "Copied!" : "Kopéiert!",
-    "Not supported!" : "Nët ennerstëtzt!",
-    "Press ⌘-C to copy." : "Dréck ⌘-C fir ze kopéieren.",
-    "Press Ctrl-C to copy." : "Dréck CTRL-C fir ze kopéieren.",
-    "Cancel" : "Ofbriechen",
-    "Change password" : "Passwuert änneren",
-    "Rename" : "Ëmbenennen",
-    "Share" : "Deelen",
-    "Error while sharing" : "Feeler beim Deelen",
-    "Favorited" : "Favoriséiert",
-    "Contacts" : "Kontakter"
+    "Contacts" : "Kontakter",
+    "Cancel" : "Ofbriechen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
