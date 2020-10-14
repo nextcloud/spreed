@@ -35,19 +35,11 @@ OC.L10N.register(
     "Share link" : "分享連結",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Send" : "發送",
     "Default" : "預設",
     "Android app" : "Android 應用程式",
     "iOS app" : "iOS 應用程式",
-    "Copied!" : "已複製!",
-    "Not supported!" : "不支援!",
-    "Press ⌘-C to copy." : "按下 ⌘-C 複製",
-    "Press Ctrl-C to copy." : "按下 Ctrl-C 複製",
-    "Cancel" : "取消",
-    "Change password" : "更改密碼",
-    "Rename" : "重新命名",
-    "Send" : "發送",
-    "Share" : "分享",
-    "Error while sharing" : "分享時發生錯誤",
-    "Contacts" : "聯絡人"
+    "Contacts" : "聯絡人",
+    "Cancel" : "取消"
 },
 "nplurals=1; plural=0;");
