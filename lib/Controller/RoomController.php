@@ -201,8 +201,14 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getSingleRoom(string $token): DataResponse {
+		$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
+		if ($isSIPBridgeRequest && $this->getAPIVersion() === 1) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+		$includeLastMessage = !$isSIPBridgeRequest;
+
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, $includeLastMessage);
 
 			$participant = null;
 			try {
@@ -214,22 +220,55 @@ class RoomController extends AEnvironmentAwareController {
 				}
 			}
 
-			return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $this->getTalkHashHeader());
+			return new DataResponse($this->formatRoom($room, $participant, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 	}
 
 	/**
-	 * @param string $apiVersion
+	 * Check if the current request is coming from an allowed backend.
+	 *
+	 * The SIP bridge is sending the custom header "Talk-SIPBridge-Random"
+	 * containing at least 32 bytes random data, and the header
+	 * "Talk-SIPBridge-Checksum", which is the SHA256-HMAC of the random data
+	 * and the body of the request, calculated with the shared secret from the
+	 * configuration.
+	 *
+	 * @param string $data
+	 * @return bool
+	 */
+	private function validateSIPBridgeRequest(string $data): bool {
+		if (!isset($_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'],
+			$_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'])) {
+			return false;
+		}
+		$random = $_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'];
+		if (empty($random) || strlen($random) < 32) {
+			return false;
+		}
+		$checksum = $_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'];
+		if (empty($checksum)) {
+			return false;
+		}
+		$secret = $this->talkConfig->getSIPSharedSecret();
+		if (empty($secret)) {
+			return false;
+		}
+		$hash = hash_hmac('sha256', $random . $data, $secret);
+		return hash_equals($hash, strtolower($checksum));
+	}
+
+	/**
 	 * @param Room $room
-	 * @param Participant $currentParticipant
+	 * @param Participant|null $currentParticipant
+	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, ?Participant $currentParticipant): array {
+	protected function formatRoom(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
 		if ($this->getAPIVersion() === 2) {
-			return $this->formatRoomV2($room, $currentParticipant);
+			return $this->formatRoomV2($room, $currentParticipant, $isSIPBridgeRequest);
 		}
 
 		return $this->formatRoomV1($room, $currentParticipant);
@@ -237,7 +276,7 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @param Room $room
-	 * @param Participant $currentParticipant
+	 * @param Participant|null $currentParticipant
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
@@ -416,11 +455,12 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @param Room $room
-	 * @param Participant $currentParticipant
+	 * @param Participant|null $currentParticipant
+	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoomV2(Room $room, ?Participant $currentParticipant): array {
+	protected function formatRoomV2(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -451,10 +491,6 @@ class RoomController extends AEnvironmentAwareController {
 			'lastMessage' => [],
 		];
 
-		if (!$currentParticipant instanceof Participant) {
-			return $roomData;
-		}
-
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
 			$lastActivity = $lastActivity->getTimestamp();
@@ -467,6 +503,24 @@ class RoomController extends AEnvironmentAwareController {
 			$lobbyTimer = $lobbyTimer->getTimestamp();
 		} else {
 			$lobbyTimer = 0;
+		}
+
+		if ($isSIPBridgeRequest) {
+			return array_merge($roomData, [
+				'name' => $room->getName(),
+				'displayName' => $room->getDisplayName(''),
+				'objectType' => $room->getObjectType(),
+				'objectId' => $room->getObjectId(),
+				'readOnly' => $room->getReadOnly(),
+				'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+				'lastActivity' => $lastActivity,
+				'lobbyState' => $room->getLobbyState(),
+				'lobbyTimer' => $lobbyTimer,
+			]);
+		}
+
+		if (!$currentParticipant instanceof Participant) {
+			return $roomData;
 		}
 
 		$roomData = array_merge($roomData, [
