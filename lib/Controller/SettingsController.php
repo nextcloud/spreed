@@ -34,6 +34,8 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -43,6 +45,8 @@ class SettingsController extends OCSController {
 	protected $rootFolder;
 	/** @var IConfig */
 	protected $config;
+	/** @var IGroupManager */
+	protected $groupManager;
 	/** @var LoggerInterface */
 	protected $logger;
 	/** @var string|null */
@@ -52,11 +56,13 @@ class SettingsController extends OCSController {
 								IRequest $request,
 								IRootFolder $rootFolder,
 								IConfig $config,
+								IGroupManager $groupManager,
 								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->rootFolder = $rootFolder;
 		$this->config = $config;
+		$this->groupManager = $groupManager;
 		$this->logger = $logger;
 		$this->userId = $userId;
 	}
@@ -98,5 +104,31 @@ class SettingsController extends OCSController {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param string[] $sipGroups
+	 * @param string $dialInInfo
+	 * @param string $sharedSecret
+	 * @return DataResponse
+	 */
+	public function setSIPSettings(
+		array $sipGroups = [],
+		string $dialInInfo = '',
+		string $sharedSecret = ''): DataResponse {
+
+		$groups = [];
+		foreach ($sipGroups as $gid) {
+			$group = $this->groupManager->get($gid);
+			if ($group instanceof IGroup) {
+				$groups[] = $group->getGID();
+			}
+		}
+
+		$this->config->setAppValue('spreed', 'sip_bridge_groups', json_encode($groups));
+		$this->config->setAppValue('spreed', 'sip_bridge_dial-in_info', $dialInInfo);
+		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
+
+		return new DataResponse();
 	}
 }

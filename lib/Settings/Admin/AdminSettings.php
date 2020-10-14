@@ -488,6 +488,7 @@ class AdminSettings implements ISettings {
 		}
 
 		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $groups);
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
 		$this->initialStateService->provideInitialState('talk', 'sip_bridge_dial-in_info', $this->talkConfig->getDialInInfo());
 	}
 
