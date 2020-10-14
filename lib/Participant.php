@@ -41,6 +41,7 @@ class Participant {
 	public const FLAG_IN_CALL = 1;
 	public const FLAG_WITH_AUDIO = 2;
 	public const FLAG_WITH_VIDEO = 4;
+	public const FLAG_WITH_PHONE = 8;
 
 	public const NOTIFY_DEFAULT = 0;
 	public const NOTIFY_ALWAYS = 1;
