@@ -148,7 +148,7 @@ class Manager {
 			(int) $row['type'],
 			(int) $row['read_only'],
 			(int) $row['lobby_state'],
-			(int) $row['sip_status'],
+			(int) $row['sip_enabled'],
 			$assignedSignalingServer,
 			(string) $row['token'],
 			(string) $row['name'],

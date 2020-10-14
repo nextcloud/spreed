@@ -493,6 +493,16 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Webinar#setSIPEnabled',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/sip',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(1|2)',
+				'webinar' => 'webinary?',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 		/**
 		 * Settings
