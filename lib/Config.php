@@ -71,6 +71,11 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	public function isSIPConfigured(): bool {
+		return $this->getSIPSharedSecret() !== ''
+			&& $this->getDialInInfo() !== '';
+	}
+
 	public function getDialInInfo(): string {
 		return $this->config->getAppValue('spreed', 'sip_bridge_dial-in_info');
 	}

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -34,12 +35,16 @@ class WebinarController extends AEnvironmentAwareController {
 
 	/** @var ITimeFactory */
 	protected $timeFactory;
+	/** @var Config */
+	protected $talkConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								Config $talkConfig) {
 		parent::__construct($appName, $request);
 		$this->timeFactory = $timeFactory;
+		$this->talkConfig = $talkConfig;
 	}
 
 	/**
@@ -76,8 +81,11 @@ class WebinarController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setSIPEnabled(int $state): DataResponse {
-		// TODO Check if user is in "SIP groups"
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
 
+		// TODO Check if user is in "SIP groups"
 		if (!$this->room->setSIPEnabled($state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
