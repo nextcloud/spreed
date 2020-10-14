@@ -67,17 +67,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
-    "Copy" : "Kopeeri",
-    "Copied!" : "Kopeeritud!",
-    "Not supported!" : "Pole toetatud!",
-    "Press ⌘-C to copy." : "Kopeerimiseks vajuta ⌘+C.",
-    "Press Ctrl-C to copy." : "Kopeerimiseks vajuta Ctrl+C.",
-    "Cancel" : "Loobu",
-    "Change password" : "Muuda parooli",
-    "Rename" : "Nimeta ümber",
-    "Share" : "Jaga",
-    "Error while sharing" : "Viga jagamisel",
-    "Favorited" : "Lemmikud",
-    "Contacts" : "Kontaktid"
+    "Contacts" : "Kontaktid",
+    "Cancel" : "Loobu"
 },
 "nplurals=2; plural=(n != 1);");

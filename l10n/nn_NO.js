@@ -41,15 +41,7 @@ OC.L10N.register(
     "Send" : "Send",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
-    "Copied!" : "Kopiert!",
-    "Not supported!" : "Ikkje støtta!",
-    "Press ⌘-C to copy." : "Trykk  ⌘-C for å kopiere.",
-    "Press Ctrl-C to copy." : "Trykk Ctrl-C for å kopiere.",
-    "Cancel" : "Avbryt",
-    "Change password" : "Endra passord",
-    "Rename" : "Gje nytt namn",
-    "Share" : "Del",
-    "Error while sharing" : "Feil ved deling",
-    "Contacts" : "Kontaktar"
+    "Contacts" : "Kontaktar",
+    "Cancel" : "Avbryt"
 },
 "nplurals=2; plural=(n != 1);");
