@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use GuzzleHttp\Exception\ClientException;
-use OC\Security\SecureRandom;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
@@ -35,6 +34,7 @@ use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerService {
@@ -49,14 +49,14 @@ class HostedSignalingServerService {
 	private $logger;
 	/** @var IL10N */
 	private $l10n;
-	/** @var SecureRandom */
+	/** @var ISecureRandom */
 	private $secureRandom;
 
 	public function __construct(IConfig $config,
 								IClientService $clientService,
 								LoggerInterface $logger,
 								IL10N $l10n,
-								SecureRandom $secureRandom) {
+								ISecureRandom $secureRandom) {
 		$this->config = $config;
 		$this->clientService = $clientService;
 		$this->logger = $logger;

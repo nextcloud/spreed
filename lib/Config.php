@@ -235,7 +235,7 @@ class Config {
 		];
 	}
 
-	public function getSignalingMode($cleanExternalSignaling = true): string {
+	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
 		$validModes = [
 			self::SIGNALING_INTERNAL,
 			self::SIGNALING_EXTERNAL,
