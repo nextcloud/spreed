@@ -889,6 +889,7 @@
     "Select default location for attachments" : "Wybierz domyślną lokalizację dla załączników",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Usługa Nextcloud Talk została zaktualizowana, przeładuj stronę, aby rozpocząć lub dołączyć do rozmowy.",
     "Use promoted view" : "Użyj widoku polecanego",
-    "Promoted view" : "Polecany widok"
+    "Promoted view" : "Polecany widok",
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Za dużo obrazów wideo, aby zmieścić się w oknie. Zmaksymalizuj okno lub przełącz się na "
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }
