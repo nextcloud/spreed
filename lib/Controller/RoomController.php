@@ -180,7 +180,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
+		$rooms = $this->manager->getRoomsForUser($this->userId, true);
 
 		$return = [];
 		foreach ($rooms as $room) {

@@ -68,9 +68,8 @@ class ActiveCalls extends Base {
 
 		$query = $this->connection->getQueryBuilder();
 		$query->select($query->func()->count('*', 'num_participants'))
-			->from('talk_participants')
+			->from('talk_sessions')
 			->where($query->expr()->gt('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)))
-			->andWhere($query->expr()->neq('session_id', $query->createNamedParameter('0')))
 			->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)));
 
 		$result = $query->execute();

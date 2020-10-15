@@ -182,11 +182,11 @@ class Manager {
 			$this->db,
 			$this->config,
 			$room,
-			(string) $row['user_id'],
+			(string) $row['actor_id'],
 			(int) $row['participant_type'],
-			(int) $row['last_ping'],
-			(string) $row['session_id'],
-			(int) $row['in_call'],
+			0, // FIXME this is in talk_sessions now (int) $row['last_ping'],
+			'0', // FIXME this is in talk_sessions now (string) $row['session_id'],
+			Participant::FLAG_DISCONNECTED, // FIXME this is in talk_sessions now (int) $row['in_call'],
 			(int) $row['notification_level'],
 			(bool) $row['favorite'],
 			(int) $row['last_read_message'],
@@ -241,8 +241,8 @@ class Manager {
 
 	/**
 	 * @param string $searchToken
-	 * @param int $limit
-	 * @param int $offset
+	 * @param int|null $limit
+	 * @param int|null $offset
 	 * @return Room[]
 	 */
 	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
@@ -282,14 +282,23 @@ class Manager {
 	 * @return Room[]
 	 */
 	public function getRoomsForParticipant(string $participant, bool $includeLastMessage = false): array {
+		return [];
+	}
+
+	/**
+	 * @param string $userId
+	 * @param bool $includeLastMessage
+	 * @return Room[]
+	 */
+	public function getRoomsForUser(string $userId, bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.*')->addSelect('p.*')
+		$query->select('r.*')->addSelect('a.*')
 			->from('talk_rooms', 'r')
-			->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
-				$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
-				$query->expr()->eq('p.room_id', 'r.id')
-			))
-			->where($query->expr()->isNotNull('p.user_id'));
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+				$query->expr()->eq('a.room_id', 'r.id')
+			));
 
 		if ($includeLastMessage) {
 			$this->loadLastMessageInfo($query);
@@ -304,8 +313,8 @@ class Manager {
 			}
 
 			$room = $this->createRoomObject($row);
-			if ($participant !== null && isset($row['user_id'])) {
-				$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
+			if ($userId !== null && isset($row['actor_id'])) {
+				$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 			}
 			$rooms[] = $room;
 		}
@@ -323,18 +332,30 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomForParticipant(int $roomId, ?string $participant): Room {
+		throw new RoomNotFoundException();
+	}
+
+	/**
+	 * Does *not* return public rooms for participants that have not been invited
+	 *
+	 * @param int $roomId
+	 * @param string|null $userId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForUser(int $roomId, ?string $userId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
-		if ($participant !== null) {
+		if ($userId !== null) {
 			// Non guest user
-			$query->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
-					$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
-					$query->expr()->eq('p.room_id', 'r.id')
-				))
-				->andWhere($query->expr()->isNotNull('p.user_id'));
+			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.room_id', 'r.id')
+				));
 		}
 
 		$result = $query->execute();
@@ -351,11 +372,11 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if ($participant !== null && isset($row['user_id'])) {
-			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
+		if ($userId !== null && isset($row['actor_id'])) {
+			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
-		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
+		if ($userId === null && $room->getType() !== Room::PUBLIC_CALL) {
 			throw new RoomNotFoundException();
 		}
 
@@ -373,18 +394,33 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomForParticipantByToken(string $token, ?string $participant, bool $includeLastMessage = false): Room {
+		throw new RoomNotFoundException();
+	}
+
+	/**
+	 * Also returns public rooms for participants that have not been invited,
+	 * so they can join.
+	 *
+	 * @param string $token
+	 * @param string|null $userId
+	 * @param bool $includeLastMessage
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForUserByToken(string $token, ?string $userId, bool $includeLastMessage = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)))
 			->setMaxResults(1);
 
-		if ($participant !== null) {
+		if ($userId !== null) {
 			// Non guest user
 			$query->addSelect('p.*')
-				->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
-					$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
-					$query->expr()->eq('p.room_id', 'r.id')
+				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.room_id', 'r.id')
 				));
 		}
 
@@ -406,15 +442,15 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if ($participant !== null && isset($row['user_id'])) {
-			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
+		if ($userId !== null && isset($row['actor_id'])) {
+			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			return $room;
 		}
 
-		if ($participant !== null && $row['user_id'] === $participant) {
+		if ($userId !== null && $row['actor_id'] === $userId) {
 			return $room;
 		}
 
@@ -450,23 +486,24 @@ class Manager {
 
 	/**
 	 * @param string $token
-	 * @param string|null $preloadParticipant Load this participants information if possible
+	 * @param string|null $preloadUserId Load this participants information if possible
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByToken(string $token, ?string $preloadParticipant = null): Room {
-		$preloadParticipant = $preloadParticipant === '' ? null : $preloadParticipant;
+	public function getRoomByToken(string $token, ?string $preloadUserId = null): Room {
+		$preloadUserId = $preloadUserId === '' ? null : $preloadUserId;
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
-		if ($preloadParticipant !== null) {
-			$query->addSelect('p.*')
-				->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
-					$query->expr()->eq('p.user_id', $query->createNamedParameter($preloadParticipant)),
-					$query->expr()->eq('p.room_id', 'r.id')
+		if ($preloadUserId !== null) {
+			$query->addSelect('a.*')
+				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+					$query->expr()->eq('a.actor_id', $query->createNamedParameter($preloadUserId)),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.room_id', 'r.id')
 				));
 		}
 
@@ -484,8 +521,8 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if ($preloadParticipant !== null && isset($row['user_id'])) {
-			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
+		if ($preloadUserId !== null && isset($row['actor_id'])) {
+			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
 		return $room;
@@ -668,61 +705,6 @@ class Manager {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
 
 		return $room;
-	}
-
-	/**
-	 * @param string|null $userId
-	 * @return string|null
-	 */
-	public function getCurrentSessionId(?string $userId): ?string {
-		if (empty($userId)) {
-			return null;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
-			->andWhere($query->expr()->neq('session_id', $query->createNamedParameter('0')))
-			->orderBy('last_ping', 'DESC')
-			->setMaxResults(1);
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		if ($row === false) {
-			return null;
-		}
-
-		return $row['session_id'];
-	}
-
-	/**
-	 * @param string $userId
-	 * @return string[]
-	 */
-	public function getSessionIdsForUser(?string $userId): array {
-		if (!is_string($userId) || $userId === '') {
-			// No deleting messages for guests
-			return [];
-		}
-
-		// Delete all messages from or to the current user
-		$query = $this->db->getQueryBuilder();
-		$query->select('session_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
-		$result = $query->execute();
-
-		$sessionIds = [];
-		while ($row = $result->fetch()) {
-			if ($row['session_id'] !== '0') {
-				$sessionIds[] = $row['session_id'];
-			}
-		}
-		$result->closeCursor();
-
-		return $sessionIds;
 	}
 
 	public function resolveRoomDisplayName(Room $room, string $userId): string {
