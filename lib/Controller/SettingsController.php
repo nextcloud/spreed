@@ -125,7 +125,7 @@ class SettingsController extends OCSController {
 		}
 
 		$this->config->setAppValue('spreed', 'sip_bridge_groups', json_encode($groups));
-		$this->config->setAppValue('spreed', 'sip_bridge_dial-in_info', $dialInInfo);
+		$this->config->setAppValue('spreed', 'sip_bridge_dialin_info', $dialInInfo);
 		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
 
 		return new DataResponse();
