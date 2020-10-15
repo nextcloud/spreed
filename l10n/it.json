@@ -24,7 +24,7 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Con i progetti puoi creare collegamenti rapidi tra conversazioni, file e altri elementi ",
     "New in Talk 7" : "Nuovo in Talk 7",
     "- You can now mention guests in the chat" : "- Ora puoi menzionare gli ospiti nella chat",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait" : "- Le conversazioni ora possono avere un'anticamera. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait" : "- Le conversazioni ora possono avere un ingresso. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
     "New in Talk 8" : "Nuovo in Talk 8",
     "- You can now directly reply to messages giving the other users more context what your message is about" : "- Ora puoi rispondere direttamente ai messaggi fornendo agli altri utenti altre informazioni sul contesto relativo al tuo messaggio",
     "- Searching for conversations and participants will now also filter your existing conversations, making it much easier to find previous conversations" : "- La ricerca di conversazioni e partecipanti ora filtreranno anche le tue conversazioni esistenti, rendendo più semplice trovare conversazioni precedenti",
@@ -792,7 +792,7 @@
     "Share link" : "Condividi collegamento",
     "Password protection" : "Protezione con password",
     "Enter a password" : "Digita una password",
-    "Enable lobby" : "Abilita anticamera",
+    "Enable lobby" : "Abilita ingresso",
     "Start time (optional)" : "Ora iniziale (facoltativa)",
     "Mute others" : "Silenzia gli altri",
     "Exit fullscreen (f)" : "Esci da schermo intero (t)",
@@ -889,6 +889,7 @@
     "Select default location for attachments" : "Seleziona la posizione predefinita per gli allegati",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk è stato aggiornato, devi ricaricare la pagina prima di poter iniziare o partecipare a una chiamata",
     "Use promoted view" : "Utilizza vista dei promossi",
-    "Promoted view" : "Vista dei promossi"
+    "Promoted view" : "Vista dei promossi",
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Troppi video per entrare nella finestra. Massimizza la finestra o passa alla "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
