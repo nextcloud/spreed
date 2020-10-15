@@ -23,6 +23,12 @@
 	<div id="call-container">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
+			<LocalMediaControls
+				class="local-media-controls"
+				:model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:screen-sharing-button-hidden="isSidebar"
+				@switch-screen-to-id="$emit('switchScreenToId', $event)" />
 			<!-- Promoted "autopilot" mode -->
 			<div v-if="showPromoted" ref="videoContainer" class="video__promoted autopilot">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
@@ -92,7 +98,6 @@
 			<Grid
 				v-if="showGrid"
 				v-bind="$attrs"
-				:is-sidebar="isSidebar"
 				:is-stripe="!isGrid"
 				:token="token"
 				:fit-video="true"
@@ -125,6 +130,7 @@
 <script>
 import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import LocalMediaControls from './shared/LocalMediaControls'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
 import LocalVideo from './shared/LocalVideo'
@@ -138,6 +144,7 @@ export default {
 		EmptyCallView,
 		Video,
 		LocalVideo,
+		LocalMediaControls,
 		Screen,
 	},
 
@@ -704,5 +711,14 @@ export default {
 	100% {
 		opacity: 1;
 	}
+}
+
+.local-media-controls {
+	position: absolute;
+	width: 300px; /* same as .video-container-stripe */
+	text-align: center;
+	right: 0;
+	bottom: 4px;
+	z-index: 10;
 }
 </style>
