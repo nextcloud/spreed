@@ -77,7 +77,7 @@ class Config {
 	}
 
 	public function getDialInInfo(): string {
-		return $this->config->getAppValue('spreed', 'sip_bridge_dial-in_info');
+		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
 	}
 
 	public function getSIPSharedSecret(): string {

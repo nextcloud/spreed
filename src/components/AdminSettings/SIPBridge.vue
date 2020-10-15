@@ -113,7 +113,7 @@ export default {
 			return a.displayname.localeCompare(b.displayname)
 		})
 		this.sipGroups = this.groups
-		this.dialInInfo = loadState('talk', 'sip_bridge_dial-in_info')
+		this.dialInInfo = loadState('talk', 'sip_bridge_dialin_info')
 		this.sharedSecret = loadState('talk', 'sip_bridge_shared_secret')
 		this.searchGroup('')
 		this.loading = false
