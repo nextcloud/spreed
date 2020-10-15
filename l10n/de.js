@@ -891,6 +891,7 @@ OC.L10N.register(
     "Select default location for attachments" : "Standardspeicherort für Anhänge auswählen",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst.",
     "Use promoted view" : "Sprecheransicht verwenden",
-    "Promoted view" : "Sprecheransicht"
+    "Promoted view" : "Sprecheransicht",
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Zu viele Videos, um in das Fenster zu passen. Maximiere das Fenster oder wechsle zu"
 },
 "nplurals=2; plural=(n != 1);");
