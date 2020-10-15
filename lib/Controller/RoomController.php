@@ -201,7 +201,12 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getSingleRoom(string $token): DataResponse {
-		$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
+		try {
+			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
 		if ($isSIPBridgeRequest && $this->getAPIVersion() === 1) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -237,26 +242,35 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $data
 	 * @return bool
+	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but failed
 	 */
 	private function validateSIPBridgeRequest(string $data): bool {
-		if (!isset($_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'],
-			$_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'])) {
+		if (!isset($_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'])
+			&& !isset($_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'])) {
 			return false;
 		}
-		$random = $_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'];
-		if (empty($random) || strlen($random) < 32) {
-			return false;
+
+		$random = $_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'] ?? '';
+		if (strlen($random) < 32) {
+			throw new UnauthorizedException('Invalid random provided');
 		}
-		$checksum = $_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'];
+
+		$checksum = $_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'] ?? '';
 		if (empty($checksum)) {
-			return false;
+			throw new UnauthorizedException('Invalid checksum provided');
 		}
+
 		$secret = $this->talkConfig->getSIPSharedSecret();
 		if (empty($secret)) {
-			return false;
+			throw new UnauthorizedException('No shared SIP secret provided');
 		}
 		$hash = hash_hmac('sha256', $random . $data, $secret);
-		return hash_equals($hash, strtolower($checksum));
+
+		if (hash_equals($hash, strtolower($checksum))) {
+			return true;
+		}
+
+		throw new UnauthorizedException('Invalid HMAC provided');
 	}
 
 	/**
