@@ -47,6 +47,19 @@ import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 
+// note: this info is shared with the Avatar component
+function getUserHasAvatar(userId) {
+	const flag = window.sessionStorage.getItem('userHasAvatar-' + userId)
+	if (typeof flag === 'string') {
+		return Boolean(flag)
+	}
+	return null
+}
+
+function setUserHasAvatar(userId, flag) {
+	window.sessionStorage.setItem('userHasAvatar-' + userId, flag)
+}
+
 export default {
 	name: 'VideoBackground',
 	components: {
@@ -96,10 +109,20 @@ export default {
 			return
 		}
 
+		// check if hasAvatar info is already known
+		const userHasAvatar = getUserHasAvatar(this.user)
+		if (typeof userHasAvatar === 'boolean') {
+			this.hasPicture = userHasAvatar
+			return
+		}
+
 		try {
 			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
 			if (response.headers[`x-nc-iscustomavatar`] === '1') {
 				this.hasPicture = true
+				setUserHasAvatar(this.user, true)
+			} else {
+				setUserHasAvatar(this.user, false)
 			}
 		} catch (exception) {
 			console.debug(exception)
