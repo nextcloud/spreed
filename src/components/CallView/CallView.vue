@@ -269,7 +269,7 @@ export default {
 
 		// Show selected video (other than local)
 		showSelected() {
-			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showLocalVideo
+			return !this.isGrid && this.hasSelectedVideo && !this.showLocalScreen && !this.showLocalVideo && !this.showRemoteScreen
 		},
 
 		// Show the current automatically promoted video
