@@ -297,6 +297,22 @@ const changeLobbyState = async function(token, newState, timestamp) {
 	}
 }
 
+/**
+ * Change the read-only state
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} readOnly The new read-only state to set
+ */
+const changeReadOnlyState = async function(token, readOnly) {
+	try {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/read-only`, {
+			state: readOnly,
+		})
+		return response
+	} catch (error) {
+		console.debug('Error while updating read-only state: ', error)
+	}
+}
+
 export {
 	fetchConversations,
 	fetchConversation,
@@ -312,6 +328,7 @@ export {
 	makePublic,
 	makePrivate,
 	changeLobbyState,
+	changeReadOnlyState,
 	setConversationPassword,
 	setConversationName,
 }

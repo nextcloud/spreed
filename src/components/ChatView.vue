@@ -84,7 +84,7 @@ export default {
 			if (this.isGuest) {
 				return t('spreed', 'You need to be logged in to upload files')
 			} else if (this.isReadOnly) {
-				return t('spreed', 'This conversation is read only')
+				return t('spreed', 'This conversation is read-only')
 			} else {
 				return t('spreed', 'Drop your files to upload')
 			}

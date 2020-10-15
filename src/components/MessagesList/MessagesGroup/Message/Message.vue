@@ -86,7 +86,7 @@ import RichText from '@juliushaertl/vue-richtext'
 import Quote from '../../../Quote'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { PARTICIPANT } from '../../../../constants'
+import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
 
 export default {
@@ -217,7 +217,12 @@ export default {
 
 	computed: {
 		hasActions() {
-			return this.isReplyable
+			return this.isReplyable && !this.isConversationReadOnly
+		},
+
+		isConversationReadOnly() {
+			const conversation = this.$store.getters.conversation(this.token)
+			return conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isSystemMessage() {

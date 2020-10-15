@@ -24,6 +24,7 @@ import {
 	makePublic,
 	makePrivate,
 	changeLobbyState,
+	changeReadOnlyState,
 	addToFavorites,
 	removeFromFavorites,
 	setConversationName,
@@ -202,6 +203,18 @@ const actions = {
 
 		await setConversationName(token, name)
 		conversation.displayName = name
+
+		commit('addConversation', conversation)
+	},
+
+	async setReadOnlyState({ commit, getters }, { token, readOnly }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		await changeReadOnlyState(token, readOnly)
+		conversation.readOnly = readOnly
 
 		commit('addConversation', conversation)
 	},

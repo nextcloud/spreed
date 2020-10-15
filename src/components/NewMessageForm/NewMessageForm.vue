@@ -58,6 +58,7 @@
 					</Actions>
 				</div>
 				<div
+					v-if="!isReadOnly"
 					class="new-message-form__button">
 					<EmojiPicker @select="addEmoji">
 						<button
@@ -80,11 +81,14 @@
 						ref="advancedInput"
 						v-model="text"
 						:token="token"
+						:active-input="!isReadOnly"
+						:placeholder-text="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit"
 						@files-pasted="handleFiles" />
 				</div>
 				<button
+					:disabled="isReadOnly"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
 					class="new-message-form__button submit icon-confirm-fade"
@@ -96,7 +100,7 @@
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -149,6 +153,16 @@ export default {
 			}
 		},
 
+		isReadOnly() {
+			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		placeholderText() {
+			return this.isReadOnly
+				? t('spreed', 'This conversation has been locked')
+				: t('spreed', 'Write message, @ to mention someone …')
+		},
+
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
@@ -158,7 +172,7 @@ export default {
 		},
 
 		canShareAndUploadFiles() {
-			return !this.currentUserIsGuest && this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
+			return !this.currentUserIsGuest && !this.isReadOnly
 		},
 
 		attachmentFolder() {
@@ -238,8 +252,8 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
-
 			if (this.parsedText !== '') {
+				const oldMessage = this.parsedText
 				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
@@ -270,7 +284,22 @@ export default {
 						})
 					}
 				} catch (error) {
-					console.debug(`error while submitting message ${error}`)
+					let statusCode = null
+					console.debug(`error while submitting message ${error}`, error)
+					if (error.isAxiosError) {
+						statusCode = error.response.status
+					}
+					// 403 when room is read-only, 412 when switched to lobby mode
+					if (statusCode === 403 || statusCode === 412) {
+						showError(t('spreed', 'No permission to post messages in this conversation'))
+					} else {
+						showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
+					}
+
+					// restore message to allow re-sending
+					this.$store.dispatch('deleteMessage', temporaryMessage)
+					this.text = oldMessage
+					this.parsedText = oldMessage
 				}
 			}
 		},
