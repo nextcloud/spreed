@@ -117,7 +117,7 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
 
 		$participant = $room->getParticipant($this->userId);
@@ -136,7 +136,7 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
 
 		if ($this->userId !== null) {

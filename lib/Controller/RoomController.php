@@ -40,6 +40,8 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -79,6 +81,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $manager;
 	/** @var RoomService */
 	protected $roomService;
+	/** @var AttendeeMapper */
+	protected $attendeeMapper;
 	/** @var GuestManager */
 	protected $guestManager;
 	/** @var IUserStatusManager */
@@ -107,6 +111,7 @@ class RoomController extends AEnvironmentAwareController {
 								IGroupManager $groupManager,
 								Manager $manager,
 								RoomService $roomService,
+								AttendeeMapper $attendeeMapper,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
 								ChatManager $chatManager,
@@ -124,6 +129,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
+		$this->attendeeMapper = $attendeeMapper;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
 		$this->chatManager = $chatManager;
@@ -332,6 +338,9 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
+		$attendee = $currentParticipant->getAttendee();
+		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
 			$lastActivity = $lastActivity->getTimestamp();
@@ -348,24 +357,30 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($currentParticipant->getUser()),
+			'displayName' => $room->getDisplayName($userId),
 			'objectType' => $room->getObjectType(),
 			'objectId' => $room->getObjectId(),
-			'participantType' => $currentParticipant->getParticipantType(),
-			// Deprecated, use participantFlags instead.
-			'participantInCall' => ($currentParticipant->getInCallFlags() & Participant::FLAG_IN_CALL) !== 0,
-			'participantFlags' => $currentParticipant->getInCallFlags(),
+			'participantType' => $attendee->getParticipantType(),
 			'readOnly' => $room->getReadOnly(),
 			'count' => 0, // Deprecated, remove in future API version
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
-			'isFavorite' => $currentParticipant->isFavorite(),
-			'notificationLevel' => $currentParticipant->getNotificationLevel(),
+			'isFavorite' => $attendee->isFavorite(),
+			'notificationLevel' => $attendee->getNotificationLevel(),
 			'lobbyState' => $room->getLobbyState(),
 			'lobbyTimer' => $lobbyTimer,
-			'lastPing' => $currentParticipant->getLastPing(),
-			'sessionId' => $currentParticipant->getSessionId(),
 		]);
+
+		$session = $currentParticipant->getSession();
+		if ($session instanceof Session) {
+			$roomData = array_merge($roomData, [
+				// Deprecated, use participantFlags instead.
+				'participantInCall' => ($session->getInCall() & Participant::FLAG_IN_CALL) !== 0,
+				'participantFlags' => $session->getInCall(),
+				'lastPing' => $session->getLastPing(),
+				'sessionId' => $session->getSessionId(),
+			]);
+		}
 
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
@@ -390,62 +405,65 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomData['canStartCall'] = $currentParticipant->canStartCall();
 
-		$currentUser = $this->userManager->get($currentParticipant->getUser());
-		if ($currentUser instanceof IUser) {
-			$lastReadMessage = $currentParticipant->getLastReadMessage();
-			if ($lastReadMessage === -1) {
-				/*
-				 * Because the migration from the old comment_read_markers was
-				 * not possible in a programmatic way with a reasonable O(1) or O(n)
-				 * but only with O(user×chat), we do the conversion here.
-				 */
-				$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
-				$currentParticipant->setLastReadMessage($lastReadMessage);
-			}
-			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+		if ($userId !== '') {
+			$currentUser = $this->userManager->get($userId);
+			if ($currentUser instanceof IUser) {
+				$lastReadMessage = $attendee->getLastReadMessage();
+				if ($lastReadMessage === -1) {
+					/*
+					 * Because the migration from the old comment_read_markers was
+					 * not possible in a programmatic way with a reasonable O(1) or O(n)
+					 * but only with O(user×chat), we do the conversion here.
+					 */
+					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
+					$attendee->setLastReadMessage($lastReadMessage);
+					$this->attendeeMapper->update($attendee);
+				}
+				$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 
-			$lastMention = $currentParticipant->getLastMentionMessage();
-			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
-			$roomData['lastReadMessage'] = $lastReadMessage;
+				$lastMention = $attendee->getLastMentionMessage();
+				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+				$roomData['lastReadMessage'] = $lastReadMessage;
+			}
 		}
 
 		$numActiveGuests = 0;
 		$cleanGuests = false;
 		$participantList = [];
 		$participants = $room->getParticipants();
-		uasort($participants, function (Participant $participant1, Participant $participant2) {
-			return $participant2->getLastPing() - $participant1->getLastPing();
-		});
-
-		foreach ($participants as $participant) {
-			if ($participant->isGuest()) {
-				if ($participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
-					$cleanGuests = true;
-				} else {
-					$numActiveGuests++;
-				}
-			} else {
-				$user = $this->userManager->get($participant->getUser());
-				if ($user instanceof IUser) {
-					$participantList[(string)$user->getUID()] = [
-						'name' => $user->getDisplayName(),
-						'type' => $participant->getParticipantType(),
-						'call' => $participant->getInCallFlags(),
-						'sessionId' => $participant->getSessionId(),
-					];
-
-					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
-						  $user->getUID() !== $currentParticipant->getUser()) {
-						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
-						$roomData['name'] = $user->getUID();
-					}
-				}
-
-				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
-					$room->leaveRoom($participant->getUser());
-				}
-			}
-		}
+//		uasort($participants, function (Participant $participant1, Participant $participant2) {
+//			return $participant2->getLastPing() - $participant1->getLastPing();
+//		});
+//
+//		foreach ($participants as $participant) {
+//			if ($participant->isGuest()) {
+//				if ($participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
+//					$cleanGuests = true;
+//				} else {
+//					$numActiveGuests++;
+//				}
+//			} else {
+//				$user = $this->userManager->get($participant->getUser());
+//				if ($user instanceof IUser) {
+//					$participantList[(string)$user->getUID()] = [
+//						'name' => $user->getDisplayName(),
+//						'type' => $participant->getParticipantType(),
+//						'call' => $participant->getInCallFlags(),
+//						'sessionId' => $participant->getSessionId(),
+//					];
+//
+//					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
+//						  $user->getUID() !== $currentParticipant->getUser()) {
+//						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
+//						$roomData['name'] = $user->getUID();
+//					}
+//				}
+//
+//				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
+//					$room->leaveRoom($participant->getUser());
+//				}
+//			}
+//		}
 
 		if ($cleanGuests) {
 			$room->cleanGuestParticipants();
@@ -539,24 +557,33 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
+		$attendee = $currentParticipant->getAttendee();
+		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($currentParticipant->getUser()),
+			'displayName' => $room->getDisplayName($userId),
 			'objectType' => $room->getObjectType(),
 			'objectId' => $room->getObjectId(),
-			'participantType' => $currentParticipant->getParticipantType(),
-			'participantFlags' => $currentParticipant->getInCallFlags(),
+			'participantType' => $attendee->getParticipantType(),
 			'readOnly' => $room->getReadOnly(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
-			'isFavorite' => $currentParticipant->isFavorite(),
-			'notificationLevel' => $currentParticipant->getNotificationLevel(),
+			'isFavorite' => $attendee->isFavorite(),
+			'notificationLevel' => $attendee->getNotificationLevel(),
 			'lobbyState' => $room->getLobbyState(),
 			'lobbyTimer' => $lobbyTimer,
 			'sipEnabled' => $room->getSIPEnabled(),
-			'lastPing' => $currentParticipant->getLastPing(),
-			'sessionId' => $currentParticipant->getSessionId(),
 		]);
+
+		$session = $currentParticipant->getSession();
+		if ($session instanceof Session) {
+			$roomData = array_merge($roomData, [
+				'participantFlags' => $session->getInCall(),
+				'lastPing' => $session->getLastPing(),
+				'sessionId' => $session->getSessionId(),
+			]);
+		}
 
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
@@ -581,40 +608,43 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomData['canStartCall'] = $currentParticipant->canStartCall();
 
-		$currentUser = $this->userManager->get($currentParticipant->getUser());
-		if ($currentUser instanceof IUser) {
-			$lastReadMessage = $currentParticipant->getLastReadMessage();
-			if ($lastReadMessage === -1) {
-				/*
-				 * Because the migration from the old comment_read_markers was
-				 * not possible in a programmatic way with a reasonable O(1) or O(n)
-				 * but only with O(user×chat), we do the conversion here.
-				 */
-				$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
-				$currentParticipant->setLastReadMessage($lastReadMessage);
-			}
-			if ($room->getLastMessage() && $lastReadMessage === (int) $room->getLastMessage()->getId()) {
-				// When the last message is the last read message, there are no unread messages,
-				// so we can save the query.
-				$roomData['unreadMessages'] = 0;
-			} else {
-				$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
-			}
+		if ($attendee->getActorType() === 'users') {
+			$currentUser = $this->userManager->get($attendee->getActorId());
+			if ($currentUser instanceof IUser) {
+				$lastReadMessage = $attendee->getLastReadMessage();
+				if ($lastReadMessage === -1) {
+					/*
+					 * Because the migration from the old comment_read_markers was
+					 * not possible in a programmatic way with a reasonable O(1) or O(n)
+					 * but only with O(user×chat), we do the conversion here.
+					 */
+					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
+					$attendee->setLastReadMessage($lastReadMessage);
+					$this->attendeeMapper->update($attendee);
+				}
+				if ($room->getLastMessage() && $lastReadMessage === (int) $room->getLastMessage()->getId()) {
+					// When the last message is the last read message, there are no unread messages,
+					// so we can save the query.
+					$roomData['unreadMessages'] = 0;
+				} else {
+					$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+				}
 
-			$lastMention = $currentParticipant->getLastMentionMessage();
-			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
-			$roomData['lastReadMessage'] = $lastReadMessage;
+				$lastMention = $attendee->getLastMentionMessage();
+				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+				$roomData['lastReadMessage'] = $lastReadMessage;
 
-			$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
-				&& $currentParticipant->hasModeratorPermissions(false);
-			$roomData['canLeaveConversation'] = true;
+				$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
+					&& $currentParticipant->hasModeratorPermissions(false);
+				$roomData['canLeaveConversation'] = true;
+			}
 		}
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$participants = json_decode($room->getName(), true);
 			foreach ($participants as $participant) {
-				if ($participant !== $currentParticipant->getUser()) {
+				if ($participant !== $attendee->getActorId()) {
 					$roomData['name'] = $participant;
 				}
 			}
@@ -861,7 +891,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function addToFavorites(): DataResponse {
-		$this->participant->setFavorite(true);
+		$attendee = $this->participant->getAttendee();
+		$attendee->setFavorite(true);
+		$this->attendeeMapper->update($attendee);
 		return new DataResponse([]);
 	}
 
@@ -872,7 +904,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function removeFromFavorites(): DataResponse {
-		$this->participant->setFavorite(false);
+		$attendee = $this->participant->getAttendee();
+		$attendee->setFavorite(false);
+		$this->attendeeMapper->update($attendee);
 		return new DataResponse([]);
 	}
 
@@ -884,9 +918,17 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setNotificationLevel(int $level): DataResponse {
-		if (!$this->participant->setNotificationLevel($level)) {
+		if (!\in_array($level, [
+			Participant::NOTIFY_ALWAYS,
+			Participant::NOTIFY_MENTION,
+			Participant::NOTIFY_NEVER
+		], true)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
+
+		$attendee = $this->participant->getAttendee();
+		$attendee->setNotificationLevel($level);
+		$this->attendeeMapper->update($attendee);
 
 		return new DataResponse();
 	}

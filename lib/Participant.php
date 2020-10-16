@@ -25,7 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCP\IConfig;
 use OCP\IDBConnection;
 
@@ -54,180 +55,43 @@ class Participant {
 	protected $config;
 	/** @var Room */
 	protected $room;
-	/** @var string */
-	protected $user;
-	/** @var int */
-	protected $participantType;
-	/** @var int */
-	protected $lastPing;
-	/** @var string */
-	protected $sessionId;
-	/** @var int */
-	protected $inCall;
-	/** @var int */
-	protected $notificationLevel;
-	/** @var bool */
-	private $isFavorite;
-	/** @var int */
-	private $lastReadMessage;
-	/** @var int */
-	private $lastMentionMessage;
-	/** @var \DateTime|null */
-	private $lastJoinedCall;
+	/** @var Attendee */
+	protected $attendee;
+	/** @var Session|null */
+	protected $session;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								Room $room,
-								string $user,
-								int $participantType,
-								int $lastPing,
-								string $sessionId,
-								int $inCall,
-								int $notificationLevel,
-								bool $isFavorite,
-								int $lastReadMessage,
-								int $lastMentionMessage,
-								\DateTime $lastJoinedCall = null) {
+								Attendee $attendee,
+								?Session $session) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->room = $room;
-		$this->user = $user;
-		$this->participantType = $participantType;
-		$this->lastPing = $lastPing;
-		$this->sessionId = $sessionId;
-		$this->inCall = $inCall;
-		$this->notificationLevel = $notificationLevel;
-		$this->isFavorite = $isFavorite;
-		$this->lastReadMessage = $lastReadMessage;
-		$this->lastMentionMessage = $lastMentionMessage;
-		$this->lastJoinedCall = $lastJoinedCall;
+		$this->attendee = $attendee;
+		$this->session = $session;
 	}
 
-	public function getUser(): string {
-		return $this->user;
+	public function getAttendee(): Attendee {
+		return $this->attendee;
 	}
 
-	public function getParticipantType(): int {
-		return $this->participantType;
+	public function getSession(): ?Session {
+		return $this->session;
 	}
 
 	public function isGuest(): bool {
-		return \in_array($this->participantType, [self::GUEST, self::GUEST_MODERATOR], true);
+		$participantType = $this->attendee->getParticipantType();
+		return \in_array($participantType, [self::GUEST, self::GUEST_MODERATOR], true);
 	}
 
 	public function hasModeratorPermissions(bool $guestModeratorAllowed = true): bool {
+		$participantType = $this->attendee->getParticipantType();
 		if (!$guestModeratorAllowed) {
-			return \in_array($this->participantType, [self::OWNER, self::MODERATOR], true);
+			return \in_array($participantType, [self::OWNER, self::MODERATOR], true);
 		}
 
-		return \in_array($this->participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
-	}
-
-	public function getLastPing(): int {
-		return $this->lastPing;
-	}
-
-	public function getSessionId(): string {
-		return $this->sessionId;
-	}
-
-	public function getInCallFlags(): int {
-		return $this->inCall;
-	}
-
-	/**
-	 * @return \DateTime|null
-	 */
-	public function getJoinedCall(): ?\DateTime {
-		return $this->lastJoinedCall;
-	}
-
-	public function isFavorite(): bool {
-		return $this->isFavorite;
-	}
-
-	public function setFavorite(bool $favor): bool {
-		if (!$this->user) {
-			return false;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('favorite', $query->createNamedParameter((int) $favor, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
-		$query->execute();
-
-		$this->isFavorite = $favor;
-		return true;
-	}
-
-	public function getNotificationLevel(): int {
-		return $this->notificationLevel;
-	}
-
-	public function setNotificationLevel(int $notificationLevel): bool {
-		if (!$this->user) {
-			return false;
-		}
-
-		if (!\in_array($notificationLevel, [
-			self::NOTIFY_ALWAYS,
-			self::NOTIFY_MENTION,
-			self::NOTIFY_NEVER
-		], true)) {
-			return false;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
-		$query->execute();
-
-		$this->notificationLevel = $notificationLevel;
-		return true;
-	}
-
-	public function getLastReadMessage(): int {
-		return $this->lastReadMessage;
-	}
-
-	public function setLastReadMessage(int $messageId): bool {
-		if (!$this->user) {
-			return false;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('last_read_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
-		$query->execute();
-
-		$this->lastReadMessage = $messageId;
-		return true;
-	}
-
-	public function getLastMentionMessage(): int {
-		return $this->lastMentionMessage;
-	}
-
-	public function setLastMentionMessage(int $messageId): bool {
-		if (!$this->user) {
-			return false;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
-		$query->execute();
-
-		$this->lastMentionMessage = $messageId;
-		return true;
+		return \in_array($participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
 	public function canStartCall(): bool {
