@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div :class="{'grid-main-wrapper': true, 'is-grid': !isStripe}">
+	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwo}">
 		<button v-if="isStripe"
 			class="stripe--collapse"
 			@click="stripeOpen = !stripeOpen">
@@ -50,7 +50,7 @@
 						:style="gridStyle"
 						@mousemove="handleMovement"
 						@keydown="handleMovement">
-						<template v-if="!devMode">
+						<template v-if="!devMode && (!isLessThanTwo || !isStripe)">
 							<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
 								<Video
@@ -83,7 +83,7 @@
 								@click-video="handleClickLocalVideo" />
 						</template>
 						<!-- Grid developer mode -->
-						<template v-else>
+						<template v-if="devMode">
 							<div
 								v-for="video in displayedVideos"
 								:key="video"
@@ -107,6 +107,7 @@
 					class="video"
 					:fit-video="true"
 					:is-stripe="true"
+					:show-controls="false"
 					:local-media-model="localMediaModel"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
@@ -304,6 +305,11 @@ export default {
 		videoHeight() {
 			return this.gridHeight / this.rows
 		},
+
+		isLessThanTwo() {
+			return this.callParticipantModels.length <= 1
+		},
+
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
@@ -689,6 +695,10 @@ export default {
 	position: relative;
 	width: 100%;
 	background-color: var(--color-text-maxcontrast);
+}
+
+.grid-main-wrapper.transparent {
+	background: transparent;
 }
 
 .grid-main-wrapper.is-grid {
