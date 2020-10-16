@@ -46,10 +46,13 @@ import axios from '@nextcloud/axios'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
+import { getBuilder } from '@nextcloud/browser-storage'
+
+const browserStorage = getBuilder('nextcloud').persist().build()
 
 // note: this info is shared with the Avatar component
 function getUserHasAvatar(userId) {
-	const flag = window.sessionStorage.getItem('userHasAvatar-' + userId)
+	const flag = browserStorage.getItem('user-has-avatar.' + userId)
 	if (typeof flag === 'string') {
 		return Boolean(flag)
 	}
@@ -57,7 +60,7 @@ function getUserHasAvatar(userId) {
 }
 
 function setUserHasAvatar(userId, flag) {
-	window.sessionStorage.setItem('userHasAvatar-' + userId, flag)
+	browserStorage.setItem('user-has-avatar.' + userId, flag)
 }
 
 export default {
