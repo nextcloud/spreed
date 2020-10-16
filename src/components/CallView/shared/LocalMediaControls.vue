@@ -587,7 +587,7 @@ export default {
 	border-bottom-color: transparent;
 }
 
-.buttons-bar button {
+.buttons-bar button, .buttons-bar button:active {
 	background-color: transparent;
 	border: none;
 	margin: 0;

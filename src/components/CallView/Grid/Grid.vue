@@ -824,13 +824,26 @@ export default {
 }
 
 /** FIXME: replace with nextcloud-vue button */
-.stripe--collapse, .stripe--collapse:active {
+button.stripe--collapse {
 	position: absolute;
 	top: -50px;
 	right: 0;
+	width: 44px;
+	height: 44px;
 	z-index: 10;
 	border: 0;
 	background: none;
+	opacity: .7;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+
+	&:active {
+		/* needed again to override default active button style */
+		background: none;
+	}
 }
 
 </style>
