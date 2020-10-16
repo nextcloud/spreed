@@ -421,7 +421,6 @@
     "You" : "Jūs",
     "Show screen" : "Rodyti ekraną",
     "Mute" : "Nutildyti",
-    "This conversation is read only" : "Šis pokalbis yra tik skaitymui",
     "Favorite" : "Mėgstamas",
     "Conversation settings" : "Pokalbio nustatymai",
     "Chat notifications" : "Pokalbio pranešimai",
@@ -474,10 +473,10 @@
     "Today" : "Šiandien",
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Write message, @ to mention someone …" : "Rašykite žinutę, naudokite @ norėdami kažką paminėti…",
     "Share from Files" : "Bendrinti iš Failų",
     "Send message" : "Siųsti žinutę",
     "File to share" : "Failas, kurį bendrinti",
+    "Write message, @ to mention someone …" : "Rašykite žinutę, naudokite @ norėdami kažką paminėti…",
     "Invalid path selected" : "Pasirinktas neteisingas kelias",
     "Enabled" : "Įjungta",
     "Save" : "Įrašyti",
@@ -598,6 +597,7 @@
     "Cancel" : "Atsisakyti",
     "Submit" : "Pateikti",
     "Signaling server URL" : "Signalinio serverio URL",
+    "This conversation is read only" : "Šis pokalbis yra tik skaitymui",
     "Default location for attachments" : "Numatytoji priedų vieta",
     "Select default location for attachments" : "Pasirinkti numatytąją vietą priedams"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
