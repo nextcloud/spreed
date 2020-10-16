@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="grid-main-wrapper">
+	<div :class="{'grid-main-wrapper': true, 'is-grid': !isStripe}">
 		<button v-if="isStripe"
 			class="stripe--collapse"
 			@click="stripeOpen = !stripeOpen">
@@ -689,6 +689,10 @@ export default {
 	position: relative;
 	width: 100%;
 	background-color: var(--color-text-maxcontrast);
+}
+
+.grid-main-wrapper.is-grid {
+	height: 100%;
 }
 
 .wrapper {

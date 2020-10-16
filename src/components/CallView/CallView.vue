@@ -24,6 +24,7 @@
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
 			<LocalMediaControls
+				v-if="!isGrid"
 				class="local-media-controls"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
@@ -115,6 +116,7 @@
 				ref="localVideo"
 				class="local-video"
 				:class="{ 'local-video--sidebar': isSidebar }"
+				:show-controls="false"
 				:fit-video="true"
 				:is-stripe="true"
 				:local-media-model="localMediaModel"
@@ -224,10 +226,10 @@ export default {
 		},
 
 		gridTargetAspectRatio() {
-			if (this.isStripe) {
-				return 1
-			} else {
+			if (this.isGrid) {
 				return 1.5
+			} else {
+				return 1
 			}
 		},
 
@@ -721,4 +723,5 @@ export default {
 	bottom: 4px;
 	z-index: 10;
 }
+
 </style>
