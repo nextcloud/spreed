@@ -741,7 +741,7 @@ class MatterbridgeManager {
 	 */
 	private function isRunning(int $pid): bool {
 		try {
-			$result = shell_exec(sprintf('ps x -o user,pid,args | awk \'{print $2}\' | grep %d | wc -l', $pid));
+			$result = shell_exec(sprintf('ps x -o user,pid,args | awk \'{print $2}\' | grep "^%d$" | wc -l', $pid));
 			if ((int) $result > 0) {
 				return true;
 			}
