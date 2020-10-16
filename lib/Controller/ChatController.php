@@ -29,6 +29,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -67,6 +68,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ChatManager */
 	private $chatManager;
 
+	/** @var AttendeeMapper */
+	private $attendeeMapper;
+
 	/** @var GuestManager */
 	private $guestManager;
 
@@ -103,6 +107,7 @@ class ChatController extends AEnvironmentAwareController {
 								TalkSession $session,
 								IAppManager $appManager,
 								ChatManager $chatManager,
+								AttendeeMapper $attendeeMapper,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
@@ -119,6 +124,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->session = $session;
 		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
+		$this->attendeeMapper = $attendeeMapper;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
@@ -206,7 +212,9 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_CREATED);
 		}
 
-		$this->participant->setLastReadMessage((int) $comment->getId());
+		$attendee = $this->participant->getAttendee();
+		$attendee->setLastReadMessage((int) $comment->getId());
+		$this->attendeeMapper->update($attendee);
 
 		$data = $chatMessage->toArray();
 		if ($parentMessage instanceof Message) {
@@ -299,9 +307,12 @@ class ChatController extends AEnvironmentAwareController {
 		 * we only update the read marker to the last known id, when it is higher
 		 * then the current read marker.
 		 */
+
+		$attendee = $this->participant->getAttendee();
 		if ($lookIntoFuture && $setReadMarker === 1 &&
-			$lastKnownMessageId > $this->participant->getLastReadMessage()) {
-			$this->participant->setLastReadMessage($lastKnownMessageId);
+			$lastKnownMessageId > $attendee->getLastReadMessage()) {
+			$attendee->setLastReadMessage($lastKnownMessageId);
+			$this->attendeeMapper->update($attendee);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -393,14 +404,16 @@ class ChatController extends AEnvironmentAwareController {
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
 			/**
-			 * This false set the read marker on new messages although you
+			 * This falsely set the read marker on new messages although you
 			 * navigated away to a different chat already. So we removed this
 			 * and instead update the read marker before your next waiting.
 			 * So when you are still there, it will just have a wrong read
 			 * marker for the time until your next request starts, while it will
 			 * not update the value, when you actually left the chat already.
 			 * if ($setReadMarker === 1 && $lookIntoFuture) {
-			 * $this->participant->setLastReadMessage((int) $newLastKnown->getId());
+			 * $attendee = $this->participant->getAttendee();
+			 * $attendee->setLastReadMessage((int) $newLastKnown->getId());
+			 * $this->attendeeMapper->update($attendee);
 			 * }
 			 */
 		}
@@ -416,7 +429,9 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setReadMarker(int $lastReadMessage): DataResponse {
-		$this->participant->setLastReadMessage($lastReadMessage);
+		$attendee = $this->participant->getAttendee();
+		$attendee->setLastReadMessage($lastReadMessage);
+		$this->attendeeMapper->update($attendee);
 		return new DataResponse();
 	}
 
@@ -464,7 +479,9 @@ class ChatController extends AEnvironmentAwareController {
 
 		$results = $this->prepareResultArray($results, $statuses);
 
-		$roomDisplayName = $this->room->getDisplayName($this->participant->getUser());
+		$attendee = $this->participant->getAttendee();
+		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$roomDisplayName = $this->room->getDisplayName($userId);
 		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
 			if ($search === '' ||
 				stripos($roomDisplayName, $search) === 0 ||

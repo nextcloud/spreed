@@ -118,7 +118,7 @@ class UserMention {
 				$messageParameters[$mentionParameterId] = [
 					'type' => $mention['type'],
 					'id' => $chatMessage->getRoom()->getToken(),
-					'name' => $chatMessage->getRoom()->getDisplayName($chatMessage->getParticipant()->getUser()),
+					'name' => $chatMessage->getRoom()->getDisplayName($chatMessage->getParticipant()->getAttendee()->getActorId()),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
 				];
 			} elseif ($mention['type'] === 'guest') {

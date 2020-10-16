@@ -27,6 +27,8 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\SessionMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -51,6 +53,10 @@ class Manager {
 	private $config;
 	/** @var Config */
 	private $talkConfig;
+	/** @var AttendeeMapper */
+	private $attendeeMapper;
+	/** @var SessionMapper */
+	private $sessionMapper;
 	/** @var ISecureRandom */
 	private $secureRandom;
 	/** @var IUserManager */
@@ -71,6 +77,8 @@ class Manager {
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								Config $talkConfig,
+								AttendeeMapper $attendeeMapper,
+								SessionMapper $sessionMapper,
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
 								CommentsManager $commentsManager,
@@ -82,6 +90,8 @@ class Manager {
 		$this->db = $db;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
+		$this->attendeeMapper = $attendeeMapper;
+		$this->sessionMapper = $sessionMapper;
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
@@ -147,7 +157,7 @@ class Manager {
 			$this->dispatcher,
 			$this->timeFactory,
 			$this->hasher,
-			(int) $row['id'],
+			(int) $row['r_id'],
 			(int) $row['type'],
 			(int) $row['read_only'],
 			(int) $row['lobby_state'],
@@ -173,25 +183,18 @@ class Manager {
 	 * @return Participant
 	 */
 	public function createParticipantObject(Room $room, array $row): Participant {
-		$lastJoinedCall = null;
-		if (!empty($row['last_joined_call'])) {
-			$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call']);
+		$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+		$session = null;
+		if (!empty($row['s_id'])) {
+			$session = $this->sessionMapper->createSessionFromRow($row);
 		}
 
 		return new Participant(
 			$this->db,
 			$this->config,
 			$room,
-			(string) $row['actor_id'],
-			(int) $row['participant_type'],
-			0, // FIXME this is in talk_sessions now (int) $row['last_ping'],
-			'0', // FIXME this is in talk_sessions now (string) $row['session_id'],
-			Participant::FLAG_DISCONNECTED, // FIXME this is in talk_sessions now (int) $row['in_call'],
-			(int) $row['notification_level'],
-			(bool) $row['favorite'],
-			(int) $row['last_read_message'],
-			(int) $row['last_mention_message'],
-			$lastJoinedCall
+			$attendee,
+			$session
 		);
 	}
 
@@ -249,6 +252,7 @@ class Manager {
 	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms')
 			->setMaxResults(1);
 
@@ -293,7 +297,10 @@ class Manager {
 	 */
 	public function getRoomsForUser(string $userId, bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.*')->addSelect('a.*')
+		$query->select('r.*')
+			->addSelect('a.*')
+			->selectAlias('r.id', 'r_id')
+			->selectAlias('a.id', 'a_id')
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
@@ -346,12 +353,15 @@ class Manager {
 	 */
 	public function getRoomForUser(int $roomId, ?string $userId): Room {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		if ($userId !== null) {
 			// Non guest user
+			$query->addSelect('a.*')
+				->selectAlias('a.id', 'a_id');
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
@@ -411,14 +421,16 @@ class Manager {
 	public function getRoomForUserByToken(string $token, ?string $userId, bool $includeLastMessage = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)))
 			->setMaxResults(1);
 
 		if ($userId !== null) {
 			// Non guest user
-			$query->addSelect('p.*')
-				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+			$query->addSelect('a.*')
+				->selectAlias('a.id', 'a_id');
+			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
 					$query->expr()->eq('a.room_id', 'r.id')
@@ -466,6 +478,7 @@ class Manager {
 	public function getRoomById(int $roomId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
@@ -496,12 +509,15 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
 		if ($preloadUserId !== null) {
+
 			$query->addSelect('a.*')
-				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				->selectAlias('a.id', 'a_id');
+			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($preloadUserId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
 					$query->expr()->eq('a.room_id', 'r.id')
@@ -538,6 +554,7 @@ class Manager {
 	public function getRoomByObject(string $objectType, string $objectId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
 			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)));
@@ -617,6 +634,7 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('name', $query->createNamedParameter($name)));
@@ -646,6 +664,7 @@ class Manager {
 	public function getChangelogRoom(string $userId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));

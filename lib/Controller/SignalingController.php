@@ -32,6 +32,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
@@ -60,6 +61,8 @@ class SignalingController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
+	/** @var SessionService */
+	private $sessionService;
 	/** @var IDBConnection */
 	private $dbConnection;
 	/** @var Messages */
@@ -81,6 +84,7 @@ class SignalingController extends OCSController {
 								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
 								Manager $manager,
+								SessionService $sessionService,
 								IDBConnection $connection,
 								Messages $messages,
 								IUserManager $userManager,
@@ -94,6 +98,7 @@ class SignalingController extends OCSController {
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
+		$this->sessionService = $sessionService;
 		$this->messages = $messages;
 		$this->userManager = $userManager;
 		$this->dispatcher = $dispatcher;
@@ -597,7 +602,7 @@ class SignalingController extends OCSController {
 		}
 
 		// Ping all active sessions with one query
-		$room->pingSessionIds($pingSessionIds, $now);
+		$this->sessionService->updateMultipleLastPings($pingSessionIds, $now);
 
 		$response = [
 			'type' => 'room',

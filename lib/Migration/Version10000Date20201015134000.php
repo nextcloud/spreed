@@ -101,8 +101,11 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				'default' => Participant::NOTIFY_DEFAULT,
 				'notnull' => false,
 			]);
-			$table->addColumn('last_joined_call', Type::DATETIME, [
-				'notnull' => false,
+			$table->addColumn('last_joined_call', Type::INTEGER, [
+				'notnull' => true,
+				'length' => 11,
+				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('last_read_message', Type::BIGINT, [
 				'default' => 0,
@@ -194,9 +197,9 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$lastJoinedCall = null;
+			$lastJoinedCall = 0;
 			if (!empty($row['last_joined_call'])) {
-				$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call']);
+				$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call'])->getTimestamp();
 			}
 
 			$insert
@@ -206,7 +209,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				->setParameter('participant_type', (int) $row['participant_type'], IQueryBuilder::PARAM_INT)
 				->setParameter('favorite', (bool) $row['favorite'], IQueryBuilder::PARAM_BOOL)
 				->setParameter('notification_level', (int) $row['notification_level'], IQueryBuilder::PARAM_INT)
-				->setParameter('last_joined_call', $lastJoinedCall, IQueryBuilder::PARAM_DATE)
+				->setParameter('last_joined_call', $lastJoinedCall, IQueryBuilder::PARAM_INT)
 				->setParameter('last_read_message', (int) $row['last_read_message'], IQueryBuilder::PARAM_INT)
 				->setParameter('last_mention_message', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
 				;
