@@ -622,6 +622,7 @@ OC.L10N.register(
     "Mute" : "Ztlumit",
     "Stop following" : "Přestat následovat",
     "You need to be logged in to upload files" : "Pro nahrávání souborů je třeba, abyste byli přihlášení",
+    "This conversation is read-only" : "Tato konverzace je pouze pro čtení",
     "Drop your files to upload" : "Přetáhněte sem soubor, které chcete nahrát",
     "Call in progress" : "Probíhá hovor",
     "Favorite" : "Oblíbený",
@@ -690,7 +691,10 @@ OC.L10N.register(
     "Add emoji" : "Přidat emoji",
     "Send message" : "Poslat zprávu",
     "File to share" : "Soubor ke sdílení",
+    "This conversation has been locked" : "Tato konverzace byla uzamčena",
     "Write message, @ to mention someone …" : "Napište zprávu, někoho zmíníte pomocí @ (zavináč) před jeho jménem…",
+    "No permission to post messages in this conversation" : "Nemáte oprávnění odesílat zprávy do této konverzace",
+    "Could not post message: {errorMessage}" : "Zprávu se nedaří odeslat: {errorMessage}",
     "Invalid path selected" : "Vybrán neplatný popis umístění",
     "Bridge with other services" : "Můstek na další služby",
     "You can bridge channels from various instant messaging systems with Matterbridge." : "Pomocí Matterbridge je možné napojit můstkem kanály z různých systémů pro okamžité posílání zpráv.",
@@ -793,6 +797,7 @@ OC.L10N.register(
     "Share link" : "Odkaz na sdílení",
     "Password protection" : "Ochrana heslem",
     "Enter a password" : "Zadejte heslo",
+    "Lock conversation" : "Uzamknout konverzaci",
     "Enable lobby" : "Zapnout čekárnu",
     "Start time (optional)" : "Čas začátku (volitelný)",
     "Mute others" : "Ztlumit ostatní",
@@ -891,6 +896,7 @@ OC.L10N.register(
     "Select default location for attachments" : "Vyberte výchozí umístění pro přílohy",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu",
     "Use promoted view" : "Použít povýšený pohled",
-    "Promoted view" : "Povýšený pohled"
+    "Promoted view" : "Povýšený pohled",
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Příliš mnoho videí na to, aby se vešly do okna. Okno maximalizujte nebo přepněte do"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
