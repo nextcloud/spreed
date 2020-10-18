@@ -622,6 +622,7 @@ OC.L10N.register(
     "Mute" : "Silenciar",
     "Stop following" : "Dejar de seguir",
     "You need to be logged in to upload files" : "Necesita estar conectado para subir archivos",
+    "This conversation is read-only" : "Esta conversación es de sólo lectura",
     "Drop your files to upload" : "Arrastra tus archivos para subir",
     "Call in progress" : "Llamada en progreso",
     "Favorite" : "Favorito",
@@ -690,7 +691,10 @@ OC.L10N.register(
     "Add emoji" : "Añadir emoji",
     "Send message" : "Enviar mensaje",
     "File to share" : "Archivo que compartir",
+    "This conversation has been locked" : "Esta conversación ha sido bloqueada",
     "Write message, @ to mention someone …" : "Escribe un mensaje, @ para mencionar a alguien…",
+    "No permission to post messages in this conversation" : "No tiene permisos para publicar mensajes en esta conversación",
+    "Could not post message: {errorMessage}" : "No se pudo publicar el mensaje: {errorMessage}",
     "Invalid path selected" : "Ruta de archivo seleccionada inválida.",
     "Bridge with other services" : "Enlace con otros servicios",
     "You can bridge channels from various instant messaging systems with Matterbridge." : "Puedes enlazar canales de varios sistemas de mensajería instantánea con Matterbridge.",
@@ -793,6 +797,7 @@ OC.L10N.register(
     "Share link" : "Compartir enlace",
     "Password protection" : "Protección por contraseña",
     "Enter a password" : "Introduzca una contraseña",
+    "Lock conversation" : "Bloquear conversación",
     "Enable lobby" : "Activar sala",
     "Start time (optional)" : "Hora de inicio (opcional)",
     "Mute others" : "Silenciar a los demás",
@@ -891,6 +896,7 @@ OC.L10N.register(
     "Select default location for attachments" : "Seleccione la localización predeterminada para los adjuntos",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada",
     "Use promoted view" : "Usar la vista ampliada",
-    "Promoted view" : "Vista ampliada"
+    "Promoted view" : "Vista ampliada",
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Demasiados vídeos para que quepan en la ventana. Maximiza la ventana o cambia a"
 },
 "nplurals=2; plural=(n != 1);");
