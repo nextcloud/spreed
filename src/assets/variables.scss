@@ -122,5 +122,7 @@ $chat-line-height: 1.6em;
 	&-enter-active,
 	&-leave-active {
 		transition: all 150ms ease-in-out;
+		/* force top container to resize during animation */
+		position: absolute !important;
 	}
 }
