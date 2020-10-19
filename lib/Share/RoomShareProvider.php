@@ -771,7 +771,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomsForParticipant($userId);
+		$allRooms = $this->manager->getRoomsForUser($userId);
 
 		/** @var IShare[] $shares */
 		$shares = [];

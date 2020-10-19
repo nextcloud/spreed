@@ -282,15 +282,6 @@ class Manager {
 	}
 
 	/**
-	 * @param string $participant
-	 * @param bool $includeLastMessage
-	 * @return Room[]
-	 */
-	public function getRoomsForParticipant(string $participant, bool $includeLastMessage = false): array {
-		return [];
-	}
-
-	/**
 	 * @param string $userId
 	 * @param bool $includeLastMessage
 	 * @return Room[]
@@ -329,18 +320,6 @@ class Manager {
 		$result->closeCursor();
 
 		return $rooms;
-	}
-
-	/**
-	 * Does *not* return public rooms for participants that have not been invited
-	 *
-	 * @param int $roomId
-	 * @param string $participant
-	 * @return Room
-	 * @throws RoomNotFoundException
-	 */
-	public function getRoomForParticipant(int $roomId, ?string $participant): Room {
-		throw new RoomNotFoundException();
 	}
 
 	/**
@@ -392,20 +371,6 @@ class Manager {
 		}
 
 		return $room;
-	}
-
-	/**
-	 * Also returns public rooms for participants that have not been invited,
-	 * so they can join.
-	 *
-	 * @param string $token
-	 * @param string $participant
-	 * @param bool $includeLastMessage
-	 * @return Room
-	 * @throws RoomNotFoundException
-	 */
-	public function getRoomForParticipantByToken(string $token, ?string $participant, bool $includeLastMessage = false): Room {
-		throw new RoomNotFoundException();
 	}
 
 	/**

@@ -205,7 +205,7 @@ class PageController extends Controller {
 
 				// If the room is not a public room, check if the user is in the participants
 				if ($room->getType() !== Room::PUBLIC_CALL) {
-					$this->manager->getRoomForParticipant($room->getId(), $this->userId);
+					$this->manager->getRoomForUser($room->getId(), $this->userId);
 				}
 			} catch (RoomNotFoundException $e) {
 				// Room not found, redirect to main page

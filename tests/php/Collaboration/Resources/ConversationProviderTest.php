@@ -81,7 +81,7 @@ class ConversationProviderTest extends TestCase {
 			->willReturn('token');
 
 		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
+			->method('getRoomForUserByToken')
 			->with('token', 'uid')
 			->willThrowException(new RoomNotFoundException());
 
@@ -105,7 +105,7 @@ class ConversationProviderTest extends TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 
 		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
+			->method('getRoomForUserByToken')
 			->with('token', 'uid')
 			->willReturn($room);
 
@@ -134,7 +134,7 @@ class ConversationProviderTest extends TestCase {
 			->willReturn($participant);
 
 		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
+			->method('getRoomForUserByToken')
 			->with('token', 'uid')
 			->willReturn($room);
 
@@ -174,7 +174,7 @@ class ConversationProviderTest extends TestCase {
 			->willReturn($participant);
 
 		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
+			->method('getRoomForUserByToken')
 			->with('token', 'uid')
 			->willReturn($room);
 
