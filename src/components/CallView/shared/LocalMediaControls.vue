@@ -20,7 +20,7 @@
 
 <template>
 	<div v-shortkey.push="['space']"
-		@shortkey="toggleAudio">
+		@shortkey="handleShortkey">
 		<div class="buttons-bar">
 			<div id="muteWrapper">
 				<button
@@ -170,6 +170,8 @@ export default {
 			mouseover: false,
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
+			audioEnabledBeforeSpacebarKeydown: undefined,
+			spacebarKeyDown: false,
 		}
 	},
 
@@ -430,6 +432,29 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * This method executes on spacebar keydown and keyup
+		 */
+		handleShortkey() {
+			if (!this.model.attributes.audioAvailable) {
+				return
+			}
+
+			if (!this.spacebarKeyDown) {
+				this.audioEnabledBeforeSpacebarKeydown = this.model.attributes.audioEnabled
+				this.spacebarKeyDown = true
+				this.toggleAudio()
+			} else {
+				this.spacebarKeyDown = false
+				if (this.audioEnabledBeforeSpacebarKeydown) {
+					this.model.enableAudio()
+				} else {
+					this.model.disableAudio()
+				}
+				this.audioEnabledBeforeSpacebarKeydown = undefined
+			}
+
+		},
 
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
