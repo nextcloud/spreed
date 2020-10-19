@@ -32,6 +32,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
+		/**
+		 * @psalm-suppress UndefinedClass
+		 */
 		$dispatcher->addListener('OCP\Share::preShare', [self::class, 'listenPreShare'], 1000);
 		$dispatcher->addListener(VerifyMountPointEvent::class, [self::class, 'listenVerifyMountPointEvent'], 1000);
 	}
