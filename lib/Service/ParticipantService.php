@@ -35,7 +35,9 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDBConnection;
 use OCP\IUser;
 
 class ParticipantService {
@@ -45,16 +47,20 @@ class ParticipantService {
 	protected $sessionMapper;
 	/** @var SessionService */
 	protected $sessionService;
+	/** @var IDBConnection */
+	protected $connection;
 	/** @var IEventDispatcher */
 	private $dispatcher;
 
 	public function __construct(AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								SessionService $sessionService,
+								IDBConnection $connection,
 								IEventDispatcher $dispatcher) {
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->sessionService = $sessionService;
+		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -139,5 +145,39 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+	}
+
+	public function getParticipantsForRoom(Room $room): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$query->select('a.*')
+			->selectAlias('a.id', 'a_id')
+			->addSelect('s.*')
+			->selectAlias('s.id', 's_id')
+			->from('talk_attendees', 'a')
+			->leftJoin(
+				'a', 'talk_sessions', 's',
+				$query->expr()->eq('s.attendee_id', 'a.id')
+			)
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+
+		$participants = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+			if (isset($row['s_id'])) {
+				$session = $this->sessionMapper->createSessionFromRow($row);
+			} else {
+				$session = null;
+			}
+
+			$participants[] = new Participant(
+				\OC::$server->getDatabaseConnection(), // FIXME
+				\OC::$server->getConfig(), // FIXME
+				$room, $attendee, $session);
+		}
+		$result->closeCursor();
+
+		return $participants;
 	}
 }

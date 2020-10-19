@@ -985,65 +985,90 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getParticipants(bool $includeStatus = false): DataResponse {
-		if ($this->participant->getParticipantType() === Participant::GUEST) {
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$maxPingAge = $this->timeFactory->getTime() - 100;
-		$participants = $this->room->getParticipantsLegacy();
+		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		$results = $headers = $statuses = [];
 
 		if ($this->userId !== null
 			&& $includeStatus
-			&& count($participants['users']) < 100
+			&& count($participants) < 100
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_map('strval', array_keys($participants['users']));
+			$userIds = array_filter(array_map(function(Participant $participant) {
+				if ($participant->getAttendee()->getActorType() === 'users') {
+					return $participant->getAttendee()->getActorId();
+				}
+				return null;
+			}, $participants));
+
 			$statuses = $this->statusManager->getUserStatuses($userIds);
 
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
-		foreach ($participants['users'] as $userId => $participant) {
-			$userId = (string) $userId;
-			if ($participant['sessionId'] !== '0' && $participant['lastPing'] <= $maxPingAge) {
-				$this->room->leaveRoom($userId);
+		$guestSessions = array_filter(array_map(function(Participant $participant) {
+			$session = $participant->getSession();
+			if (!$session || $participant->getAttendee()->getActorType() !== 'guests') {
+				return null;
 			}
 
-			$user = $this->userManager->get($userId);
-			if (!$user instanceof IUser) {
+			return sha1($session->getSessionId());
+		}, $participants));
+
+		$cleanGuests = false;
+		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
+
+		/** @var Participant[] $participants */
+		foreach ($participants as $participant) {
+			$result = [
+				'inCall' => Participant::FLAG_DISCONNECTED,
+				'lastPing' => 0,
+				'sessionId' => '0', // FIXME empty string or null?
+				'participantType' => $participant->getAttendee()->getParticipantType(),
+			];
+			if ($participant->getSession() instanceof Session) {
+				$result['inCall'] = $participant->getSession()->getInCall();
+				$result['lastPing'] = $participant->getSession()->getLastPing();
+				$result['sessionId'] = $participant->getSession()->getSessionId();
+			}
+
+			if ($participant->getAttendee()->getActorType() === 'users') {
+				$userId = $participant->getAttendee()->getActorId();
+				$user = $this->userManager->get($userId);
+				if (!$user instanceof IUser) {
+					continue;
+				}
+
+				if ($result['lastPing'] > 0 && $result['lastPing'] <= $maxPingAge) {
+					$this->room->leaveRoom($userId);
+				}
+
+				$result['userId'] = $participant->getAttendee()->getActorId();
+				$result['displayName'] = (string) $user->getDisplayName();
+
+				if (isset($statuses[$userId])) {
+					$result['status'] = $statuses[$userId]->getStatus();
+					$result['statusIcon'] = $statuses[$userId]->getIcon();
+					$result['statusMessage'] = $statuses[$userId]->getMessage();
+					$result['statusClearAt'] = $statuses[$userId]->getClearAt();
+				}
+			} elseif ($participant->getAttendee()->getActorType() === 'guests') {
+				if ($result['lastPing'] <= $maxPingAge) {
+					$cleanGuests = true;
+					continue;
+				}
+
+				$result['userId'] = '';
+				$result['displayName'] = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
+			} else {
+				// Skip unknown actor types
 				continue;
 			}
 
-			$participant['userId'] = $userId;
-			$participant['displayName'] = (string) $user->getDisplayName();
-
-			if (isset($statuses[$userId])) {
-				$participant['status'] = $statuses[$userId]->getStatus();
-				$participant['statusIcon'] = $statuses[$userId]->getIcon();
-				$participant['statusMessage'] = $statuses[$userId]->getMessage();
-				$participant['statusClearAt'] = $statuses[$userId]->getClearAt();
-			}
-
-			$results[] = $participant;
-		}
-
-		$guestSessions = [];
-		foreach ($participants['guests'] as $participant) {
-			$guestSessions[] = sha1($participant['sessionId']);
-		}
-		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
-
-		$cleanGuests = false;
-		foreach ($participants['guests'] as $participant) {
-			if ($participant['lastPing'] <= $maxPingAge) {
-				$cleanGuests = true;
-			}
-
-			$sessionHash = sha1($participant['sessionId']);
-			$results[] = array_merge($participant, [
-				'userId' => '',
-				'displayName' => $guestNames[$sessionHash] ?? '',
-			]);
+			$results[] = $result;
 		}
 
 		if ($cleanGuests) {
