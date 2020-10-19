@@ -112,7 +112,7 @@ class MessageSearch implements IProvider {
 			$title = $this->l->t('Messages in other conversations');
 		}
 
-		$rooms = $this->roomManager->getRoomsForParticipant($user->getUID());
+		$rooms = $this->roomManager->getRoomsForUser($user->getUID());
 
 		$roomMap = [];
 		foreach ($rooms as $room) {

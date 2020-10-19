@@ -116,7 +116,7 @@ class SignalingController extends OCSController {
 	public function getSettings(string $token = ''): DataResponse {
 		try {
 			if ($token !== '') {
-				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 			} else {
 				// FIXME Soft-fail for legacy support in mobile apps
 				$room = null;
@@ -324,7 +324,7 @@ class SignalingController extends OCSController {
 
 			// Was the session killed or the complete conversation?
 			try {
-				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 				if ($this->userId) {
 					// For logged in users we check if they are still part of the public conversation,
 					// if not they were removed instead of having a conflict.

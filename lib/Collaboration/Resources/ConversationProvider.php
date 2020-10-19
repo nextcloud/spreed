@@ -86,7 +86,7 @@ class ConversationProvider implements IProvider {
 		}
 
 		try {
-			$room = $this->manager->getRoomForParticipantByToken(
+			$room = $this->manager->getRoomForUserByToken(
 				$resource->getId(),
 				$userId
 			);

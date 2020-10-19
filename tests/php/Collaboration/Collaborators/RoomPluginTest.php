@@ -234,7 +234,7 @@ class RoomPluginTest extends \Test\TestCase {
 		bool $expectedHasMoreResults
 	) {
 		$this->manager->expects($this->any())
-			->method('getRoomsForParticipant')
+			->method('getRoomsForUser')
 			->with('user0')
 			->willReturn($roomsForParticipant);
 

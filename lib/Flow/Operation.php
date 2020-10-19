@@ -244,7 +244,7 @@ class Operation implements IOperation {
 	 * @throws RoomNotFoundException
 	 */
 	protected function getRoom(string $token, string $uid): Room {
-		return $this->talkManager->getRoomForParticipantByToken($token, $uid);
+		return $this->talkManager->getRoomForUserByToken($token, $uid);
 	}
 
 	/**

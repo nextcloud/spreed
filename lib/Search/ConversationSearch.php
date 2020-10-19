@@ -83,7 +83,7 @@ class ConversationSearch implements IProvider {
 	 * @inheritDoc
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
-		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
+		$rooms = $this->manager->getRoomsForUser($user->getUID());
 
 		$result = [];
 		foreach ($rooms as $room) {

@@ -46,7 +46,7 @@ class UserDeletedListener implements IEventListener {
 
 		$user = $event->getUser();
 
-		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
+		$rooms = $this->manager->getRoomsForUser($user->getUID());
 
 		foreach ($rooms as $room) {
 			if ($room->getNumberOfParticipants() === 1) {
