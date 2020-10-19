@@ -44,6 +44,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -81,6 +82,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $manager;
 	/** @var RoomService */
 	protected $roomService;
+	/** @var ParticipantService */
+	protected $participantService;
 	/** @var AttendeeMapper */
 	protected $attendeeMapper;
 	/** @var GuestManager */
@@ -111,6 +114,7 @@ class RoomController extends AEnvironmentAwareController {
 								IGroupManager $groupManager,
 								Manager $manager,
 								RoomService $roomService,
+								ParticipantService $participantService,
 								AttendeeMapper $attendeeMapper,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
@@ -129,6 +133,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
+		$this->participantService = $participantService;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
@@ -219,7 +224,7 @@ class RoomController extends AEnvironmentAwareController {
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, $includeLastMessage);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $includeLastMessage);
 
 			$participant = null;
 			try {
@@ -1325,21 +1330,26 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		/** @var Participant|null $previousSession */
+		$previousParticipant = null;
+		/** @var Session|null $previousSession */
 		$previousSession = null;
 		if ($this->userId !== null) {
 			try {
-				$previousSession = $room->getParticipant($this->userId);
+				$previousParticipant = $room->getParticipant($this->userId);
+				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}
 		} else {
-			$session = $this->session->getSessionForRoom($token);
+			$sessionForToken = $this->session->getSessionForRoom($token);
 			try {
-				$previousSession = $room->getParticipantBySession($session);
+				$previousParticipant = $room->getParticipantBySession($sessionForToken);
+				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}
 		}
@@ -1349,29 +1359,31 @@ class RoomController extends AEnvironmentAwareController {
 				// Previous session was active in the call, show a warning
 				return new DataResponse([
 					'sessionId' => $previousSession->getSessionId(),
-					'inCall' => $previousSession->getInCallFlags(),
+					'inCall' => $previousSession->getInCall(),
 					'lastPing' => $previousSession->getLastPing(),
 				], Http::STATUS_CONFLICT);
 			}
 
-			if ($previousSession->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
-				$room->changeInCall($previousSession, Participant::FLAG_DISCONNECTED);
-			}
-
-			if ($this->userId === null) {
-				$room->removeParticipantBySession($previousSession, Room::PARTICIPANT_LEFT);
-			} else {
-				$room->leaveRoomAsParticipant($previousSession);
-			}
+//			if ($previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
+//				// FIXME Session vs Participant
+//				$room->changeInCall($previousSession, Participant::FLAG_DISCONNECTED);
+//			}
+//
+//			if ($this->userId === null) {
+//				$room->removeParticipantBySession($previousParticipant, Room::PARTICIPANT_LEFT);
+//			} else {
+//				$room->leaveRoomAsParticipant($previousSession);
+//			}
 		}
 
 		$user = $this->userManager->get($this->userId);
 		try {
 			$result = $room->verifyPassword((string) $this->session->getPasswordForRoom($token));
 			if ($user instanceof IUser) {
-				$newSessionId = $room->joinRoom($user, $password, $result['result']);
+				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
 			} else {
-				$newSessionId = $room->joinRoomGuest($password, $result['result']);
+// FIXME				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
+//				$newSessionId = $room->joinRoomGuest($password, $result['result']);
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -1380,11 +1392,10 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$this->session->removePasswordForRoom($token);
-		$this->session->setSessionForRoom($token, $newSessionId);
-		$room->ping($this->userId, $newSessionId, $this->timeFactory->getTime());
-		$currentParticipant = $room->getParticipantBySession($newSessionId);
+		$this->session->setSessionForRoom($token, $participant->getSession()->getSessionId());
+		$room->ping($this->userId, $participant->getSession()->getSessionId(), $this->timeFactory->getTime());
 
-		return new DataResponse($this->formatRoom($room, $currentParticipant));
+		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
 	/**
@@ -1399,7 +1410,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 
 			if ($this->userId === null) {
 				$participant = $room->getParticipantBySession($sessionId);

@@ -23,20 +23,28 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Security\ISecureRandom;
 
 class SessionService {
 	/** @var SessionMapper */
-	protected $mapper;
+	protected $sessionMapper;
 	/** @var IDBConnection */
 	protected $connection;
+	/** @var ISecureRandom */
+	protected $secureRandom;
 
-	public function __construct(SessionMapper $mapper,
-								IDBConnection $connection) {
-		$this->mapper = $mapper;
+	public function __construct(SessionMapper $sessionMapper,
+								IDBConnection $connection,
+								ISecureRandom $secureRandom) {
+		$this->sessionMapper = $sessionMapper;
 		$this->connection = $connection;
+		$this->secureRandom = $secureRandom;
 	}
 
 	/**
@@ -56,5 +64,26 @@ class SessionService {
 			->where($query->expr()->in('session_id', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 
 		$query->execute();
+	}
+
+	public function createSessionForAttendee(Attendee $attendee): Session {
+		// Currently a participant can only join once
+		$this->sessionMapper->deleteByAttendeeId($attendee->getId());
+
+		$session = new Session();
+		$session->setAttendeeId($attendee->getId());
+
+		while (true) {
+			$sessionId = $this->secureRandom->generate(255);
+			$session->setSessionId($sessionId);
+			try {
+				$this->sessionMapper->insert($session);
+				break;
+			} catch (UniqueConstraintViolationException $e) {
+				// 255 chars are not unique? Try again...
+			}
+		}
+
+		return $session;
 	}
 }
