@@ -35,7 +35,7 @@
 				decorative
 				:size="24" />
 		</button>
-		<transition name="slide-down">
+		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
 					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
@@ -438,16 +438,10 @@ export default {
 		 },
 		 */
 		isStripe() {
-			console.debug('isStripe: ', this.isStripe)
-			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
-			this.$nextTick(this.makeGrid)
-			if (this.hasPagination) {
-				this.setNumberOfPages()
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
+			this.rebuildGrid()
+		},
+		stripeOpen() {
+			this.rebuildGrid()
 		},
 		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
@@ -473,6 +467,21 @@ export default {
 	},
 
 	methods: {
+		rebuildGrid() {
+			console.debug('isStripe: ', this.isStripe)
+			console.debug('stripeOpen: ', this.stripeOpen)
+			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
+			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
+			if (!this.isStripe || this.stripeOpen) {
+				this.$nextTick(this.makeGrid)
+				if (this.hasPagination) {
+					this.setNumberOfPages()
+					// Set the current page to 0
+					// TODO: add support for keeping position in the videos array when resizing or collapsing
+					this.currentPage = 0
+				}
+			}
+		},
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
