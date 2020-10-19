@@ -776,7 +776,7 @@ OC.L10N.register(
     "Choose devices" : "Geräte auswählen",
     "Attachments folder" : "Ordner für Anhänge",
     "Keyboard shortcuts" : "Tastaturkürzel",
-    "Speed up your Talk experience with these quick shortcuts." : "Beschleunige Dein Gesprächserlebnis mit diesen Tastenkürzeln.",
+    "Speed up your Talk experience with these quick shortcuts." : "Beschleunige Dein Gesprächserlebnis mit diesen Tastaturkürzeln.",
     "Focus the chat input" : "Chat-Eingabe fokusieren",
     "Unfocus the chat input to use shortcuts" : "Chat-Eingabe in den Hintergrund",
     "Fullscreen the chat or call" : "Vollbild des Chats oder Anrufs",
@@ -897,6 +897,6 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst.",
     "Use promoted view" : "Sprecheransicht verwenden",
     "Promoted view" : "Sprecheransicht",
-    "Too many videos to fit in the window. Maximize the window or switch to " : "Zu viele Videos, um in das Fenster zu passen. Maximiere das Fenster oder wechsle zu"
+    "Too many videos to fit in the window. Maximize the window or switch to " : "Zu viele Videos, um in das Fenster zu passen. Maximiere das Fenster oder wechsle zu "
 },
 "nplurals=2; plural=(n != 1);");
