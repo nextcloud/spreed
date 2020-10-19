@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -50,6 +51,18 @@ class SessionMapper extends QBMapper {
 			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
 
 		return $this->findEntity($query);
+	}
+
+	/**
+	 * @param int $attendeeId
+	 * @return int Number of deleted entities
+	 */
+	public function deleteByAttendeeId(int $attendeeId): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('attendee_id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)));
+
+		return (int) $query->execute();
 	}
 
 	public function createSessionFromRow(array $row): Session {
