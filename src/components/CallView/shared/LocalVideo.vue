@@ -78,7 +78,7 @@ import SHA1 from 'crypto-js/sha1'
 import {
 	showError,
 	showInfo,
-	TOAST_PERMANENT_TIMEOUT,
+	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
@@ -208,7 +208,7 @@ export default {
 			handler: function(localStreamVideoError) {
 				if (localStreamVideoError) {
 					showError(t('spreed', 'Error while accessing camera'), {
-						timeout: TOAST_PERMANENT_TIMEOUT,
+						timeout: TOAST_DEFAULT_TIMEOUT,
 					})
 				}
 			},
