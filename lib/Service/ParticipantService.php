@@ -58,6 +58,19 @@ class ParticipantService {
 		$this->dispatcher = $dispatcher;
 	}
 
+	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
+		$attendee = $participant->getAttendee();
+		$oldType = $attendee->getParticipantType();
+
+		$event = new ModifyParticipantEvent($room, $participant, 'type', $participantType, $oldType);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
+
+		$attendee->setParticipantType($participantType);
+		$this->attendeeMapper->update($attendee);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
+	}
+
 	/**
 	 * @param Room $room
 	 * @param IUser $user
