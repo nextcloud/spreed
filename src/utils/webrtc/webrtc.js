@@ -43,6 +43,7 @@ const delayedConnectionToPeer = []
 let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
+let sendCurrentMediaStateWithRepetitionTimeout = null
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -141,6 +142,44 @@ function checkStartPublishOwnPeer(signaling) {
 	localCallParticipantModel.setPeer(ownPeer)
 }
 
+function sendCurrentMediaState() {
+	if (!webrtc.webrtc.isVideoEnabled()) {
+		webrtc.webrtc.emit('videoOff')
+	} else {
+		webrtc.webrtc.emit('videoOn')
+	}
+	if (!webrtc.webrtc.isAudioEnabled()) {
+		webrtc.webrtc.emit('audioOff')
+	} else {
+		webrtc.webrtc.emit('audioOn')
+	}
+}
+
+function sendCurrentMediaStateWithRepetition(timeout) {
+	if (!timeout) {
+		timeout = 0
+
+		clearTimeout(sendCurrentMediaStateWithRepetitionTimeout)
+	}
+
+	sendCurrentMediaStateWithRepetitionTimeout = setTimeout(function() {
+		sendCurrentMediaState()
+
+		if (!timeout) {
+			timeout = 1000
+		} else {
+			timeout *= 2
+		}
+
+		if (timeout > 16000) {
+			sendCurrentMediaStateWithRepetitionTimeout = null
+			return
+		}
+
+		sendCurrentMediaStateWithRepetition(timeout)
+	}, timeout)
+}
+
 function userHasStreams(user) {
 	let flags = user
 	if (flags.hasOwnProperty('inCall')) {
@@ -194,6 +233,17 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		if ((signaling.hasFeature('mcu') && user && !userHasStreams(user))
 				|| (!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !webrtc.webrtc.localStreams.length)) {
 			callParticipantModel.setPeer(null)
+
+			// As there is no Peer for the other participant the current media
+			// state will not be sent once it is connected, so it needs to be
+			// sent now.
+			// When there is no MCU this is not needed; as the local participant
+			// has no streams it will be automatically marked with audio and
+			// video not available on the other end, so there is no need to send
+			// the media state.
+			if (signaling.hasFeature('mcu')) {
+				sendCurrentMediaStateWithRepetition()
+			}
 		}
 
 		const createPeer = function() {
@@ -485,16 +535,12 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the video and microphone
 		// state.
-		if (!webrtc.webrtc.isVideoEnabled()) {
-			webrtc.emit('videoOff')
+		if (!signaling.hasFeature('mcu')) {
+			sendCurrentMediaState()
 		} else {
-			webrtc.emit('videoOn')
+			sendCurrentMediaStateWithRepetition()
 		}
-		if (!webrtc.webrtc.isAudioEnabled()) {
-			webrtc.emit('audioOff')
-		} else {
-			webrtc.emit('audioOn')
-		}
+
 		if (signaling.settings.userId === null) {
 			const currentGuestNick = store.getters.getDisplayName()
 			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
@@ -713,15 +759,41 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	function stopPeerCheckAudioMedia(peer) {
+		clearInterval(peer.check_audio_interval)
+		peer.check_audio_interval = null
+	}
+
+	function stopPeerCheckVideoMedia(peer) {
+		clearInterval(peer.check_video_interval)
+		peer.check_video_interval = null
+	}
+
+	function stopPeerIdCheckMediaType(peerId, mediaType) {
+		// There should be just one video peer with that id, but iterating is
+		// safer.
+		const peers = webrtc.getPeers(peerId, 'video')
+		peers.forEach(function(peer) {
+			if (mediaType === 'audio') {
+				stopPeerCheckAudioMedia(peer)
+			} else if (mediaType === 'video') {
+				stopPeerCheckVideoMedia(peer)
+			}
+		})
+	}
+
+	if (signaling.hasFeature('mcu')) {
+		webrtc.on('mute', function(data) {
+			stopPeerIdCheckMediaType(data.id, data.name)
+		})
+		webrtc.on('unmute', function(data) {
+			stopPeerIdCheckMediaType(data.id, data.name)
+		})
+	}
+
 	function stopPeerCheckMedia(peer) {
-		if (peer.check_audio_interval) {
-			clearInterval(peer.check_audio_interval)
-			peer.check_audio_interval = null
-		}
-		if (peer.check_video_interval) {
-			clearInterval(peer.check_video_interval)
-			peer.check_video_interval = null
-		}
+		stopPeerCheckAudioMedia(peer)
+		stopPeerCheckVideoMedia(peer)
 		stopSendingNick(peer)
 	}
 
@@ -730,8 +802,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		peer.check_video_interval = setInterval(function() {
 			stream.getVideoTracks().forEach(function(video) {
 				checkPeerMedia(peer, video, 'video').then(function() {
-					clearInterval(peer.check_video_interval)
-					peer.check_video_interval = null
+					stopPeerCheckVideoMedia(peer)
 				}).catch(() => {
 				})
 			})
@@ -739,8 +810,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		peer.check_audio_interval = setInterval(function() {
 			stream.getAudioTracks().forEach(function(audio) {
 				checkPeerMedia(peer, audio, 'audio').then(function() {
-					clearInterval(peer.check_audio_interval)
-					peer.check_audio_interval = null
+					stopPeerCheckAudioMedia(peer)
 				}).catch(() => {
 				})
 			})
