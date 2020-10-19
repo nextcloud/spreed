@@ -119,6 +119,7 @@ import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 import arrowNavigation from '../../mixins/arrowNavigation'
+import { emit } from '@nextcloud/event-bus'
 
 export default {
 
@@ -301,7 +302,7 @@ export default {
 		},
 
 		showSettings() {
-			EventBus.$emit('show-settings', true)
+			emit('show-settings')
 		},
 
 		handleClickSearchResult(selectedConversationToken) {
