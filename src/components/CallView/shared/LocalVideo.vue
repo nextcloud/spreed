@@ -50,16 +50,22 @@
 		</div>
 		<transition name="fade">
 			<LocalMediaControls
-				ref="localMediaControls"
-				:is-big="isBig"
+				v-if="showControls"
+				class="local-media-controls"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
-				:quality-warning-aria-label="qualityWarningAriaLabel"
-				:quality-warning-tooltip="qualityWarningTooltip"
-				@switchScreenToId="$emit('switchScreenToId', $event)" />
+				@switch-screen-to-id="$emit('switchScreenToId', $event)" />
 		</transition>
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
+		<div class="bottom-bar">
+			<button
+				v-if="isBig"
+				class="bottom-bar__button"
+				@click="handleStopFollowing">
+				{{ stopFollowingLabel }}
+			</button>
+		</div>
 	</div>
 </template>
 
@@ -76,8 +82,6 @@ import {
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
-import { callAnalyzer } from '../../../utils/webrtc/index'
-import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 
 export default {
 
@@ -112,13 +116,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-	},
-
-	data() {
-		return {
-			callAnalyzer: callAnalyzer,
-			qualityWarningInGracePeriodTimeout: null,
-		}
+		showControls: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	computed: {
@@ -168,94 +169,6 @@ export default {
 			return this.localMediaModel.attributes.localStream && this.localMediaModel.attributes.localStreamRequestVideoError
 		},
 
-		showQualityWarning() {
-			return this.senderConnectionQualityIsBad || this.qualityWarningInGracePeriodTimeout
-		},
-
-		senderConnectionQualityIsBad() {
-			return this.senderConnectionQualityAudioIsBad
-				|| this.senderConnectionQualityVideoIsBad
-				|| this.senderConnectionQualityScreenIsBad
-		},
-
-		senderConnectionQualityAudioIsBad() {
-			return callAnalyzer
-				&& (callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
-		},
-
-		senderConnectionQualityVideoIsBad() {
-			return callAnalyzer
-				&& (callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
-		},
-
-		senderConnectionQualityScreenIsBad() {
-			return callAnalyzer
-				&& (callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
-		},
-
-		qualityWarningAriaLabel() {
-			let label = ''
-			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
-				label = t('spreed', 'Bad sent video and screen quality.')
-			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
-				label = t('spreed', 'Bad sent screen quality.')
-			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
-				label = t('spreed', 'Bad sent video quality.')
-			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
-				label = t('spreed', 'Bad sent audio, video and screen quality.')
-			} else if (this.localMediaModel.attributes.localScreen) {
-				label = t('spreed', 'Bad sent audio and screen quality.')
-			} else if (this.localMediaModel.attributes.videoEnabled) {
-				label = t('spreed', 'Bad sent audio and video quality.')
-			} else {
-				label = t('spreed', 'Bad sent audio quality.')
-			}
-
-			return label
-		},
-
-		qualityWarningTooltip() {
-			if (!this.showQualityWarning) {
-				return null
-			}
-
-			const tooltip = {}
-			if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
-				tooltip.actionLabel = t('spreed', 'Disable video')
-				tooltip.action = 'disableVideo'
-			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen.')
-				tooltip.actionLabel = ''
-				tooltip.action = ''
-			} else if (!this.localMediaModel.attributes.audioEnabled && this.localMediaModel.attributes.videoEnabled) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
-				tooltip.actionLabel = ''
-				tooltip.action = ''
-			} else if (this.localMediaModel.attributes.videoEnabled && this.localMediaModel.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
-				tooltip.actionLabel = t('spreed', 'Disable video')
-				tooltip.action = 'disableVideo'
-			} else if (this.localMediaModel.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
-				tooltip.actionLabel = t('spreed', 'Disable screenshare')
-				tooltip.action = 'disableScreenShare'
-			} else if (this.localMediaModel.attributes.videoEnabled) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
-				tooltip.actionLabel = t('spreed', 'Disable video')
-				tooltip.action = 'disableVideo'
-			} else {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you.')
-				tooltip.actionLabel = ''
-				tooltip.action = ''
-			}
-
-			return tooltip
-		},
-
 		hasLocalVideo() {
 			return this.localMediaModel.attributes.videoEnabled
 		},
@@ -301,20 +214,6 @@ export default {
 			},
 		},
 
-		senderConnectionQualityIsBad: function(senderConnectionQualityIsBad) {
-			if (!senderConnectionQualityIsBad) {
-				return
-			}
-
-			if (this.qualityWarningInGracePeriodTimeout) {
-				window.clearTimeout(this.qualityWarningInGracePeriodTimeout)
-			}
-
-			this.qualityWarningInGracePeriodTimeout = window.setTimeout(() => {
-				this.qualityWarningInGracePeriodTimeout = null
-			}, 10000)
-		},
-
 	},
 
 	mounted() {
@@ -354,6 +253,9 @@ export default {
 			attachMediaStream(localStream, this.$refs.video, options)
 		},
 
+		handleStopFollowing() {
+			this.$store.dispatch('selectedVideoPeerId', null)
+		},
 	},
 
 }
@@ -417,4 +319,39 @@ export default {
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 }
+
+.bottom-bar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding: 0 20px 12px 24px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 40px;
+	&--big {
+		justify-content: center;
+		height: 48px;
+	}
+	&__button {
+		opacity: 0.8;
+		margin-left: 4px;
+		border: none;
+		&:hover,
+		&:focus {
+			opacity: 1;
+			border: none;
+		}
+	}
+}
+
+.local-media-controls {
+	position: absolute;
+	text-align: center;
+	right: 0;
+	bottom: 4px;
+	z-index: 10;
+	width: 100%;
+}
+
 </style>

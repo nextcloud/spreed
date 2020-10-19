@@ -23,8 +23,18 @@
 	<div id="call-container">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
 		<div id="videos">
+			<LocalMediaControls
+				v-if="!isGrid"
+				class="local-media-controls"
+				:model="localMediaModel"
+				:local-call-participant-model="localCallParticipantModel"
+				:screen-sharing-button-hidden="isSidebar"
+				@switch-screen-to-id="$emit('switchScreenToId', $event)" />
 			<!-- Promoted "autopilot" mode -->
-			<div v-if="showPromoted" ref="videoContainer" class="video__promoted autopilot">
+			<div v-if="showPromoted"
+				ref="videoContainer"
+				class="video__promoted autopilot"
+				:class="{'full-page': isOneToOne}">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
@@ -41,7 +51,10 @@
 				</template>
 			</div>
 			<!-- Selected override mode -->
-			<div v-if="showSelected" ref="videoContainer" class="video__promoted override">
+			<div v-if="showSelected"
+				ref="videoContainer"
+				class="video__promoted autopilot"
+				:class="{'full-page': isOneToOne}">
 				<template v-for="callParticipantModel in reversedCallParticipantModels">
 					<Video
 						v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
@@ -57,7 +70,10 @@
 				</template>
 			</div>
 			<!-- Local Video Override mode -->
-			<div v-if="showLocalVideo" ref="videoContainer" class="video__promoted override">
+			<div v-if="showLocalVideo"
+				ref="videoContainer"
+				class="video__promoted autopilot"
+				:class="{'full-page': isOneToOne}">
 				<LocalVideo
 					ref="localVideo"
 					:fit-video="true"
@@ -90,7 +106,7 @@
 			</div>
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
 			<Grid
-				v-if="showGrid"
+				v-if="!isSidebar"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
 				:token="token"
@@ -103,12 +119,13 @@
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo"
 				@click-local-video="handleClickLocalVideo" />
-			<!-- Local video if the conversation is 1to1 or if sidebar -->
+			<!-- Local video if sidebar -->
 			<LocalVideo
-				v-if="isOneToOneView && !showLocalVideo"
+				v-if="isSidebar && !showLocalVideo"
 				ref="localVideo"
 				class="local-video"
 				:class="{ 'local-video--sidebar': isSidebar }"
+				:show-controls="false"
 				:fit-video="true"
 				:is-stripe="true"
 				:local-media-model="localMediaModel"
@@ -124,6 +141,7 @@
 <script>
 import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import LocalMediaControls from './shared/LocalMediaControls'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
 import LocalVideo from './shared/LocalVideo'
@@ -137,6 +155,7 @@ export default {
 		EmptyCallView,
 		Video,
 		LocalVideo,
+		LocalMediaControls,
 		Screen,
 	},
 
@@ -206,20 +225,11 @@ export default {
 			return this.$store.getters.isGrid
 		},
 
-		showGrid() {
-			return !this.isSidebar
-				&& (
-					!this.isOneToOneView
-					|| this.showLocalScreen
-					|| (this.showRemoteScreen && this.hasRemoteVideo)
-				)
-		},
-
 		gridTargetAspectRatio() {
-			if (this.isStripe) {
-				return 1
-			} else {
+			if (this.isGrid) {
 				return 1.5
+			} else {
+				return 1
 			}
 		},
 
@@ -234,11 +244,6 @@ export default {
 		isOneToOne() {
 			return this.callParticipantModels.length === 1
 		},
-
-		isOneToOneView() {
-			return (this.isOneToOne && !this.isGrid) || this.isSidebar
-		},
-
 		hasLocalVideo() {
 			return this.localMediaModel.attributes.videoEnabled
 		},
@@ -545,6 +550,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	top: 0;
+	overflow: hidden;
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -562,6 +568,11 @@ export default {
 	height: 100%;
 	width: 100%;
 	display: block;
+}
+
+.video__promoted.full-page {
+	/* make the promoted video cover the whole call view */
+	position: static;
 }
 
 .local-video {
@@ -703,4 +714,14 @@ export default {
 		opacity: 1;
 	}
 }
+
+.local-media-controls {
+	position: absolute;
+	width: 300px; /* same as .video-container-stripe */
+	text-align: center;
+	right: 0;
+	bottom: 4px;
+	z-index: 10;
+}
+
 </style>

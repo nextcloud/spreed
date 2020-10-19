@@ -20,104 +20,123 @@
 -->
 
 <template>
-	<div class="wrapper" :style="wrapperStyle">
-		<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
-			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
-				class="grid-navigation grid-navigation__previous"
-				@click="handleClickPrevious">
-				<ChevronLeft decorative
-					:size="24" />
-			</button>
-			<div
-				ref="grid"
-				class="grid"
-				:style="gridStyle"
-				@mousemove="handleMovement"
-				@keydown="handleMovement">
-				<template v-if="!devMode">
-					<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
-					<template v-for="callParticipantModel in displayedVideos">
-						<Video
-							:key="callParticipantModel.attributes.peerId"
-							:class="{'video': !isStripe}"
-							:show-video-overlay="showVideoOverlay"
-							:token="token"
-							:model="callParticipantModel"
-							:is-grid="true"
-							:show-talking-highlight="!isStripe"
-							:is-stripe="isStripe"
-							:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
-							:is-selected="isSelected(callParticipantModel)"
-							:fit-video="false"
-							:video-container-aspect-ratio="videoContainerAspectRatio"
-							:video-background-blur="videoBackgroundBlur"
-							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-							@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
-					</template>
-					<LocalVideo
-						v-if="!isStripe"
-						ref="localVideo"
-						class="video"
-						:is-grid="true"
-						:fit-video="isStripe"
-						:local-media-model="localMediaModel"
-						:video-container-aspect-ratio="videoContainerAspectRatio"
-						:local-call-participant-model="localCallParticipantModel"
-						@switchScreenToId="1"
-						@click-video="handleClickLocalVideo" />
-				</template>
-				<!-- Grid developer mode -->
-				<template v-else>
+	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwo}">
+		<button v-if="isStripe"
+			class="stripe--collapse"
+			@click="stripeOpen = !stripeOpen">
+			<ChevronDown
+				v-if="stripeOpen"
+				fill-color="#ffffff"
+				decorative
+				:size="24" />
+			<ChevronUp
+				v-else
+				fill-color="#ffffff"
+				decorative
+				:size="24" />
+		</button>
+		<transition :name="isStripe ? 'slide-down' : ''">
+			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
+				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
+					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+						class="grid-navigation grid-navigation__previous"
+						@click="handleClickPrevious">
+						<ChevronLeft decorative
+							:size="24" />
+					</button>
 					<div
-						v-for="video in displayedVideos"
-						:key="video"
-						class="dev-mode-video video"
-						v-text="video" />
-					<h1 class="dev-mode__title">
-						Dev mode on ;-)
-					</h1>
-				</template>
+						ref="grid"
+						class="grid"
+						:style="gridStyle"
+						@mousemove="handleMovement"
+						@keydown="handleMovement">
+						<template v-if="!devMode && (!isLessThanTwo || !isStripe)">
+							<EmptyCallView v-if="videos.length === 0 &&!isStripe" class="video" :is-grid="true" />
+							<template v-for="callParticipantModel in displayedVideos">
+								<Video
+									:key="callParticipantModel.attributes.peerId"
+									:class="{'video': !isStripe}"
+									:show-video-overlay="showVideoOverlay"
+									:token="token"
+									:model="callParticipantModel"
+									:is-grid="true"
+									:show-talking-highlight="!isStripe"
+									:is-stripe="isStripe"
+									:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+									:is-selected="isSelected(callParticipantModel)"
+									:fit-video="false"
+									:video-container-aspect-ratio="videoContainerAspectRatio"
+									:video-background-blur="videoBackgroundBlur"
+									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+							</template>
+							<LocalVideo
+								v-if="!isStripe"
+								ref="localVideo"
+								class="video"
+								:is-grid="true"
+								:fit-video="isStripe"
+								:local-media-model="localMediaModel"
+								:video-container-aspect-ratio="videoContainerAspectRatio"
+								:local-call-participant-model="localCallParticipantModel"
+								@switchScreenToId="1"
+								@click-video="handleClickLocalVideo" />
+						</template>
+						<!-- Grid developer mode -->
+						<template v-if="devMode">
+							<div
+								v-for="video in displayedVideos"
+								:key="video"
+								class="dev-mode-video video"
+								v-text="video" />
+							<h1 class="dev-mode__title">
+								Dev mode on ;-)
+							</h1>
+						</template>
+					</div>
+					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+						class="grid-navigation grid-navigation__next"
+						@click="handleClickNext">
+						<ChevronRight decorative
+							:size="24" />
+					</button>
+				</div>
+				<LocalVideo
+					v-if="isStripe"
+					ref="localVideo"
+					class="video"
+					:fit-video="true"
+					:is-stripe="true"
+					:show-controls="false"
+					:local-media-model="localMediaModel"
+					:video-container-aspect-ratio="videoContainerAspectRatio"
+					:local-call-participant-model="localCallParticipantModel"
+					@switchScreenToId="1"
+					@click-video="handleClickLocalVideo" />
+				<!-- page indicator (disabled) -->
+				<div
+					v-if="numberOfPages !== 0 && hasPagination && false"
+					class="pages-indicator">
+					<div v-for="(page, index) in numberOfPages"
+						:key="index"
+						class="pages-indicator__dot"
+						:class="{'pages-indicator__dot--active': index === currentPage }" />
+				</div>
+				<div v-if="devMode" class="dev-mode__data">
+					<p>GRID INFO</p>
+					<p>Videos (total): {{ videosCount }}</p>
+					<p>Displayed videos n: {{ displayedVideos.length }}</p>
+					<p>Max per page: ~{{ videosCap }}</p>
+					<p>Grid width: {{ gridWidth }}</p>
+					<p>Grid height: {{ gridHeight }}</p>
+					<p>Min video width: {{ minWidth }} </p>
+					<p>Min video Height: {{ minHeight }} </p>
+					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
+					<p>Number of pages: {{ numberOfPages }}</p>
+					<p>Current page: {{ currentPage }}</p>
+				</div>
 			</div>
-			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
-				class="grid-navigation grid-navigation__next"
-				@click="handleClickNext">
-				<ChevronRight decorative
-					:size="24" />
-			</button>
-		</div>
-		<LocalVideo
-			v-if="isStripe"
-			ref="localVideo"
-			class="video"
-			:fit-video="true"
-			:is-stripe="true"
-			:local-media-model="localMediaModel"
-			:video-container-aspect-ratio="videoContainerAspectRatio"
-			:local-call-participant-model="localCallParticipantModel"
-			@switchScreenToId="1"
-			@click-video="handleClickLocalVideo" />
-		<!-- page indicator (disabled) -->
-		<div
-			v-if="numberOfPages !== 0 && hasPagination && false"
-			class="pages-indicator">
-			<div v-for="(page, index) in numberOfPages"
-				:key="index"
-				class="pages-indicator__dot"
-				:class="{'pages-indicator__dot--active': index === currentPage }" />
-		</div>
-		<div v-if="devMode" class="dev-mode__data">
-			<p>GRID INFO</p>
-			<p>Videos (total): {{ videosCount }}</p>
-			<p>Displayed videos n: {{ displayedVideos.length }}</p>
-			<p>Max per page: ~{{ videosCap }}</p>
-			<p>Grid width: {{ gridWidth }}</p>
-			<p>Grid height: {{ gridHeight }}</p>
-			<p>Min video width: {{ minWidth }} </p>
-			<p>Min video Height: {{ minHeight }} </p>
-			<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
-			<p>Number of pages: {{ numberOfPages }}</p>
-			<p>Current page: {{ currentPage }}</p>
-		</div>
+		</transition>
 	</div>
 </template>
 
@@ -130,6 +149,8 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
+import ChevronUp from 'vue-material-design-icons/ChevronUp'
+import ChevronDown from 'vue-material-design-icons/ChevronDown'
 
 export default {
 	name: 'Grid',
@@ -140,6 +161,8 @@ export default {
 		EmptyCallView,
 		ChevronRight,
 		ChevronLeft,
+		ChevronUp,
+		ChevronDown,
 	},
 
 	props: {
@@ -197,6 +220,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
 		callParticipantModels: {
 			type: Array,
 			required: true,
@@ -242,6 +269,8 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
+			// Whether the stripe is open (true) or collapsed (false)
+			stripeOpen: true,
 		}
 	},
 
@@ -276,6 +305,11 @@ export default {
 		videoHeight() {
 			return this.gridHeight / this.rows
 		},
+
+		isLessThanTwo() {
+			return this.callParticipantModels.length <= 1
+		},
+
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
@@ -404,16 +438,10 @@ export default {
 		 },
 		 */
 		isStripe() {
-			console.debug('isStripe: ', this.isStripe)
-			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
-			this.$nextTick(this.makeGrid)
-			if (this.hasPagination) {
-				this.setNumberOfPages()
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
+			this.rebuildGrid()
+		},
+		stripeOpen() {
+			this.rebuildGrid()
 		},
 		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
@@ -439,6 +467,21 @@ export default {
 	},
 
 	methods: {
+		rebuildGrid() {
+			console.debug('isStripe: ', this.isStripe)
+			console.debug('stripeOpen: ', this.stripeOpen)
+			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
+			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
+			if (!this.isStripe || this.stripeOpen) {
+				this.$nextTick(this.makeGrid)
+				if (this.hasPagination) {
+					this.setNumberOfPages()
+					// Set the current page to 0
+					// TODO: add support for keeping position in the videos array when resizing or collapsing
+					this.currentPage = 0
+				}
+			}
+		},
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
@@ -655,6 +698,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
+
+.grid-main-wrapper {
+	position: relative;
+	width: 100%;
+	background-color: var(--color-text-maxcontrast);
+}
+
+.grid-main-wrapper.transparent {
+	background: transparent;
+}
+
+.grid-main-wrapper.is-grid {
+	height: 100%;
+}
 
 .wrapper {
 	width: 100%;
@@ -771,6 +829,29 @@ export default {
 		&--active {
 			opacity: 100%;
 		}
+	}
+}
+
+/** FIXME: replace with nextcloud-vue button */
+button.stripe--collapse {
+	position: absolute;
+	top: -50px;
+	right: 0;
+	width: 44px;
+	height: 44px;
+	z-index: 10;
+	border: 0;
+	background: none;
+	opacity: .7;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+
+	&:active {
+		/* needed again to override default active button style */
+		background: none;
 	}
 }
 
