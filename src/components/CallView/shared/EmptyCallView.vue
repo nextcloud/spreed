@@ -147,7 +147,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .empty-call-view {
 	height: 100%;
@@ -157,7 +157,7 @@ export default {
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
-	color: var(--color-text-maxcontrast);
+	background-color: var(--color-loading-dark);
 	text-align: center;
 	.icon {
 		background-size: 64px;
@@ -168,5 +168,10 @@ export default {
 	button {
 		margin: 4px auto;
 	}
+
+	h2, p {
+		color: var(--color-primary-text);
+	}
 }
+
 </style>
