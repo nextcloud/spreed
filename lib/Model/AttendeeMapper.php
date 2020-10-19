@@ -39,17 +39,19 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
+	 * @param int $roomId
 	 * @param string $actorType
 	 * @param string $actorId
 	 * @return Attendee
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 */
-	public function findByActor(string $actorType, string $actorId): Attendee {
+	public function findByActor(int $roomId, string $actorType, string $actorId): Attendee {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
 
 		return $this->findEntity($query);
 	}
