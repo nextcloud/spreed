@@ -275,26 +275,26 @@ class ChatController extends AEnvironmentAwareController {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
-		if ($noStatusUpdate === 0 && $this->participant->getSessionId() !== '0') {
-			// The mobile apps dont do internal signaling unless in a call
-			$isMobileApp = $this->request->isUserAgent([
-				IRequest::USER_AGENT_TALK_ANDROID,
-				IRequest::USER_AGENT_TALK_IOS,
-			]);
-			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
-				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
-
-				if ($lookIntoFuture) {
-					// Bump the user status again
-					$event = new UserLiveStatusEvent(
-						$this->userManager->get($this->participant->getUser()),
-						IUserStatus::ONLINE,
-						$this->timeFactory->getTime()
-					);
-					$this->eventDispatcher->dispatchTyped($event);
-				}
-			}
-		}
+//		if ($noStatusUpdate === 0 && $this->participant->getSessionId() !== '0') {
+//			// The mobile apps dont do internal signaling unless in a call
+//			$isMobileApp = $this->request->isUserAgent([
+//				IRequest::USER_AGENT_TALK_ANDROID,
+//				IRequest::USER_AGENT_TALK_IOS,
+//			]);
+//			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+//				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
+//
+//				if ($lookIntoFuture) {
+//					// Bump the user status again
+//					$event = new UserLiveStatusEvent(
+//						$this->userManager->get($this->participant->getUser()),
+//						IUserStatus::ONLINE,
+//						$this->timeFactory->getTime()
+//					);
+//					$this->eventDispatcher->dispatchTyped($event);
+//				}
+//			}
+//		}
 
 		/**
 		 * Automatic last read message marking for old clients
