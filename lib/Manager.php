@@ -553,20 +553,25 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_participants', 'p')
-			->leftJoin('p', 'talk_rooms', 'r', $query->expr()->eq('p.room_id', 'r.id'))
-			->where($query->expr()->eq('p.session_id', $query->createNamedParameter($sessionId)))
+			->selectAlias('r.id', 'r_id')
+			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
+			->from('talk_sessions', 's')
+			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('a.id', 's.attendee_id'))
+			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
+			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
 			->setMaxResults(1);
 
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		if ($row === false || !$row['id']) {
+		if ($row === false || !$row['r_id']) {
 			throw new RoomNotFoundException();
 		}
 
-		if ((string) $userId !== $row['user_id']) {
+		if ((string) $userId !== $row['actor_id']) {
+			// FIXME check the actor type too and bail out for guests
 			throw new RoomNotFoundException();
 		}
 
@@ -577,9 +582,9 @@ class Manager {
 
 		$room = $this->createRoomObject($row);
 		$participant = $this->createParticipantObject($room, $row);
-		$room->setParticipant($row['user_id'], $participant);
+		$room->setParticipant($row['actor_id'], $participant);
 
-		if ($room->getType() === Room::PUBLIC_CALL || !in_array($participant->getParticipantType(), [Participant::GUEST, Participant::USER_SELF_JOINED], true)) {
+		if ($room->getType() === Room::PUBLIC_CALL || !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {
 			return $room;
 		}
 

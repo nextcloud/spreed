@@ -59,7 +59,7 @@ class AttendeeMapper extends QBMapper {
 	public function createAttendeeFromRow(array $row): Attendee {
 		return $this->mapRowToEntity([
 			'id' => $row['a_id'],
-			'room_id' => $row['id'],
+			'room_id' => $row['room_id'],
 			'actor_type' => $row['actor_type'],
 			'actor_id' => $row['actor_id'],
 			'pin' => $row['pin'],
