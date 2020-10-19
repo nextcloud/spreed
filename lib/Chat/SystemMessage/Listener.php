@@ -246,7 +246,7 @@ class Listener {
 			$room = $manager->getRoomByToken($share->getSharedWith());
 			$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId()]);
 		};
-		$dispatcher->addListener('OCP\Share::postShare', $listener);
+		$dispatcher->addListener(\OCP\Share::class . '::' . 'postShare', $listener);
 		$dispatcher->addListener(RoomShareProvider::class . '::' . 'share_file_again', $listener);
 	}
 
