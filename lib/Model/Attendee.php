@@ -80,16 +80,16 @@ class Attendee extends Entity {
 	protected $lastMentionMessage;
 
 	public function __construct() {
-		$this->addType('room_id', 'int');
-		$this->addType('actor_type', 'string');
-		$this->addType('actor_id', 'string');
+		$this->addType('roomId', 'int');
+		$this->addType('actorType', 'string');
+		$this->addType('actorId', 'string');
 		$this->addType('pin', 'string');
-		$this->addType('participant_type', 'int');
+		$this->addType('participantType', 'int');
 		$this->addType('favorite', 'bool');
-		$this->addType('notification_level', 'int');
-		$this->addType('last_joined_call', 'int');
-		$this->addType('last_read_message', 'int');
-		$this->addType('last_mention_message', 'int');
+		$this->addType('notificationLevel', 'int');
+		$this->addType('lastJoinedCall', 'int');
+		$this->addType('lastReadMessage', 'int');
+		$this->addType('lastMentionMessage', 'int');
 	}
 
 	/**

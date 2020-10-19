@@ -50,10 +50,10 @@ class Session extends Entity {
 	protected $lastPing;
 
 	public function __construct() {
-		$this->addType('attendee_id', 'int');
-		$this->addType('session_id', 'string');
-		$this->addType('in_call', 'int');
-		$this->addType('last_ping', 'int');
+		$this->addType('attendeeId', 'int');
+		$this->addType('sessionId', 'string');
+		$this->addType('inCall', 'int');
+		$this->addType('lastPing', 'int');
 	}
 
 	/**
