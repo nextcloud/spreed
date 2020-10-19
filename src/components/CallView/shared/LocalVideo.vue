@@ -69,7 +69,11 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
-import { showInfo, showError } from '@nextcloud/dialogs'
+import {
+	showError,
+	showInfo,
+	TOAST_DEFAULT_TIMEOUT,
+} from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
 import { callAnalyzer } from '../../../utils/webrtc/index'
@@ -291,7 +295,7 @@ export default {
 			handler: function(localStreamVideoError) {
 				if (localStreamVideoError) {
 					showError(t('spreed', 'Error while accessing camera'), {
-						timeout: -1,
+						timeout: TOAST_DEFAULT_TIMEOUT,
 					})
 				}
 			},
