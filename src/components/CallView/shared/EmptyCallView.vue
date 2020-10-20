@@ -157,7 +157,7 @@ export default {
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
-	background-color: var(--color-loading-dark);
+	background-color: #444;
 	text-align: center;
 	.icon {
 		background-size: 64px;
@@ -170,7 +170,7 @@ export default {
 	}
 
 	h2, p {
-		color: var(--color-primary-text);
+		color: #ffffff;
 	}
 }
 
