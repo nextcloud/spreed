@@ -245,9 +245,7 @@ export default {
 				this.text = ''
 				this.parsedText = ''
 				// Scrolls the message list to the last added message
-				this.$nextTick(function() {
-					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
-				})
+				EventBus.$emit('smoothScrollChatToBottom')
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
 				try {
