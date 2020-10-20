@@ -45,7 +45,7 @@
 					<button
 						class="primary"
 						@click="changeView">
-						{{ t('spreed', 'Use promoted view') }}
+						{{ t('spreed', 'Use speaker view') }}
 					</button>
 				</div>
 			</div>
@@ -237,7 +237,7 @@ export default {
 
 		changeViewText() {
 			if (this.isGrid) {
-				return t('spreed', 'Promoted view')
+				return t('spreed', 'Speaker view')
 			} else {
 				return t('spreed', 'Grid view')
 			}
@@ -251,7 +251,7 @@ export default {
 		},
 
 		layoutHintText() {
-			return t('Spreed', `Too many videos to fit in the window. Maximize the window or switch to 'promoted view' for a better experience.`)
+			return t('Spreed', 'Too many videos to fit in the window. Maximize the window or switch to "speaker view" for a better experience.')
 		},
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
