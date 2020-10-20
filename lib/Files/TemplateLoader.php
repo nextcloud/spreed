@@ -93,7 +93,6 @@ class TemplateLoader implements IEventListener {
 
 		Util::addStyle(Application::APP_ID, 'merged-files');
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
-		Util::addScript(Application::APP_ID, 'talk-files-sidebar-loader');
 
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser) {

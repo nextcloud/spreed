@@ -8,8 +8,10 @@ module.exports = {
 		'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
 		'collections': path.join(__dirname, 'src', 'collections.js'),
 		'talk': path.join(__dirname, 'src', 'main.js'),
-		'talk-files-sidebar': path.join(__dirname, 'src', 'mainFilesSidebar.js'),
-		'talk-files-sidebar-loader': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
+		'talk-files-sidebar': [
+			path.join(__dirname, 'src', 'mainFilesSidebar.js'),
+			path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
+		],
 		'talk-public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 		'talk-public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
 		'flow': path.join(__dirname, 'src', 'flow.js'),
