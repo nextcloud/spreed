@@ -671,6 +671,10 @@ export default {
 	width: 100%;
 }
 
+.empty-call-view {
+	position: relative;
+}
+
 .local-video-stripe {
 	width: 300px;
 }
