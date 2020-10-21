@@ -112,10 +112,11 @@ class ParticipantService {
 			}
 
 			// User joining a public room, without being invited
-			$this->addUsers($room, [
-				'userId' => $user->getUID(),
+			$this->addUsers($room, [[
+				'actorType' => 'users',
+				'actorId' => $user->getUID(),
 				'participantType' => Participant::USER_SELF_JOINED,
-			]);
+			]]);
 
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), 'users', $user->getUID());
 		}
@@ -181,9 +182,9 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
-	 * @param array ...$participants
+	 * @param array $participants
 	 */
-	public function addUsers(Room $room, array ...$participants): void {
+	public function addUsers(Room $room, array $participants): void {
 		$event = new AddParticipantsEvent($room, $participants);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USERS_ADD, $event);
 
@@ -195,8 +196,8 @@ class ParticipantService {
 		foreach ($participants as $participant) {
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
-			$attendee->setActorType('users');
-			$attendee->setActorId($participant['userId']);
+			$attendee->setActorType($participant['actorType']);
+			$attendee->setActorId($participant['actorId']);
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
 			$this->attendeeMapper->insert($attendee);

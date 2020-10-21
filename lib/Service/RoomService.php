@@ -34,9 +34,13 @@ class RoomService {
 
 	/** @var Manager */
 	protected $manager;
+	/** @var ParticipantService */
+	protected $participantService;
 
-	public function __construct(Manager $manager) {
+	public function __construct(Manager $manager,
+					ParticipantService $participantService) {
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 	}
 
 	/**
@@ -113,10 +117,11 @@ class RoomService {
 		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
 
 		if ($owner instanceof IUser) {
-			$room->addUsers([
-				'userId' => $owner->getUID(),
+			$this->participantService->addUsers($room, [[
+				'actorType' => 'users',
+				'actorId' => $owner->getUID(),
 				'participantType' => Participant::OWNER,
-			]);
+			]]);
 		}
 
 		return $room;

@@ -199,13 +199,18 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
+			if ($participant['actorType'] !== 'users') {
+				// No user => no activity
+				continue;
+			}
+
+			if ($actorId === $participant['actorId']) {
 				// No activity for self-joining and the creator
 				continue;
 			}
 
 			try {
-				$roomName = $room->getDisplayName($participant['userId']);
+				$roomName = $room->getDisplayName($participant['actorId']);
 				$event
 					->setObject('room', $room->getId(), $roomName)
 					->setSubject('invitation', [
@@ -213,7 +218,7 @@ class Listener {
 						'room' => $room->getId(),
 						'name' => $roomName,
 					])
-					->setAffectedUser($participant['userId']);
+					->setAffectedUser($participant['actorId']);
 				$this->activityManager->publish($event);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);

@@ -435,40 +435,47 @@ class RoomController extends AEnvironmentAwareController {
 		$numActiveGuests = 0;
 		$cleanGuests = false;
 		$participantList = [];
-		$participants = $room->getParticipants();
-//		uasort($participants, function (Participant $participant1, Participant $participant2) {
-//			return $participant2->getLastPing() - $participant1->getLastPing();
-//		});
-//
-//		foreach ($participants as $participant) {
-//			if ($participant->isGuest()) {
-//				if ($participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
-//					$cleanGuests = true;
-//				} else {
-//					$numActiveGuests++;
-//				}
-//			} else {
-//				$user = $this->userManager->get($participant->getUser());
-//				if ($user instanceof IUser) {
-//					$participantList[(string)$user->getUID()] = [
-//						'name' => $user->getDisplayName(),
-//						'type' => $participant->getParticipantType(),
-//						'call' => $participant->getInCallFlags(),
-//						'sessionId' => $participant->getSessionId(),
-//					];
-//
-//					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
-//						  $user->getUID() !== $currentParticipant->getUser()) {
-//						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
-//						$roomData['name'] = $user->getUID();
-//					}
-//				}
-//
-//				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
-//					$room->leaveRoom($participant->getUser());
-//				}
-//			}
-//		}
+		$participants = $this->participantService->getParticipantsForRoom($room);
+		uasort($participants, function (Participant $participant1, Participant $participant2) {
+			$s1 = $participant1->getSession() ? $participant1->getSession()->getLastPing() : 0;
+			$s2 = $participant2->getSession() ? $participant2->getSession()->getLastPing() : 0;
+			return $s2 - $s1;
+		});
+
+		foreach ($participants as $participant) {
+			/** @var Participant $participant */
+			if ($participant->isGuest()) {
+				if ($participant->getSession()) {
+					if ($participant->getSession()->getLastPing() <= $this->timeFactory->getTime() - 100) {
+						$cleanGuests = true;
+					} else {
+						$numActiveGuests++;
+					}
+				}
+			} else if ($participant->getAttendee()->getActorType() === 'users') {
+				$attendee = $participant->getAttendee();
+				$session = $participant->getSession();
+				$user = $this->userManager->get($attendee->getActorId());
+				if ($user instanceof IUser) {
+					$participantList[(string)$user->getUID()] = [
+						'name' => $user->getDisplayName(),
+						'type' => $attendee->getParticipantType(),
+						'call' => $session ? $session->getInCall() : Participant::FLAG_DISCONNECTED,
+						'sessionId' => $session ? $session->getSessionId() : '0',
+					];
+
+					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
+						  $user->getUID() !== $currentParticipant->getAttendee()->getActorId()) {
+						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
+						$roomData['name'] = $user->getUID();
+					}
+				}
+
+				if ($session && $session->getLastPing() <= $this->timeFactory->getTime() - 100) {
+					$this->participantService->leaveRoomAsSession($room, $participant);
+				}
+			}
+		}
 
 		if ($cleanGuests) {
 			$room->cleanGuestParticipants();
@@ -798,11 +805,12 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'userId' => $user->getUID(),
+				'actorType' => 'users',
+				'actorId' => $user->getUID(),
 			];
 		}
 
-		\call_user_func_array([$room, 'addUsers'], $participants);
+		$this->participantService->addUsers($room, $participants);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 	}
@@ -855,11 +863,12 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'userId' => $member->getUserId(),
+				'actorType' => 'users',
+				'actorId' => $member->getUserId(),
 			];
 		}
 
-		\call_user_func_array([$room, 'addUsers'], $participants);
+		$this->participantService->addUsers($room, $participants);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 	}
@@ -1104,9 +1113,10 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([]);
 			}
 
-			$this->room->addUsers([
-				'userId' => $newUser->getUID(),
-			]);
+			$this->participantService->addUsers($this->room, [[
+				'actorType' => 'users',
+				'actorId' => $newUser->getUID(),
+			]]);
 		} elseif ($source === 'groups') {
 			$group = $this->groupManager->get($newParticipant);
 			if (!$group instanceof IGroup) {
@@ -1120,7 +1130,8 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'userId' => $user->getUID(),
+					'actorType' => 'users',
+					'actorId' => $user->getUID(),
 				];
 			}
 
@@ -1128,7 +1139,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([]);
 			}
 
-			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
+			$this->participantService->addUsers($this->room, $participantsToAdd);
 		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1158,7 +1169,8 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'userId' => $member->getUserId(),
+					'actorType' => 'users',
+					'actorId' => $member->getUserId(),
 				];
 			}
 
@@ -1166,7 +1178,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([]);
 			}
 
-			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
+			$this->participantService->addUsers($this->room, $participantsToAdd);
 		} elseif ($source === 'emails') {
 			$data = [];
 			if ($this->room->setType(Room::PUBLIC_CALL)) {
