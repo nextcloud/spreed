@@ -894,9 +894,6 @@ OC.L10N.register(
     "This conversation is read only" : "Esta conversación es de sólo lectura",
     "Default location for attachments" : "Localización predeterminada para los adjuntos",
     "Select default location for attachments" : "Seleccione la localización predeterminada para los adjuntos",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada",
-    "Use promoted view" : "Usar la vista ampliada",
-    "Promoted view" : "Vista ampliada",
-    "Too many videos to fit in the window. Maximize the window or switch to " : "Demasiados vídeos para que quepan en la ventana. Maximiza la ventana o cambia a"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk ha sido actualizado. Necesita volver a cargar la página antes de que pueda iniciar o unirse a una llamada"
 },
 "nplurals=2; plural=(n != 1);");
