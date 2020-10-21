@@ -936,9 +936,10 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			message = t('spreed', 'WebRTC is not supported in your browser')
 			message += ': ' + t('spreed', 'Please use a different browser like Firefox or Chrome')
 		} else {
+			// Mostly happens in Chrome (NotFoundError): when no audio device available
+			// not sure what else can cause this
 			message = t('spreed', 'Error while accessing microphone & camera')
-			console.error('Error while accessing microphone & camera: ', error.message || error.name)
-			timeout = TOAST_DEFAULT_TIMEOUT
+			console.error('Error while accessing microphone & camera: ', error.message, error.name)
 		}
 
 		showError(message, {

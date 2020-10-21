@@ -72,7 +72,7 @@ import SHA1 from 'crypto-js/sha1'
 import {
 	showError,
 	showInfo,
-	TOAST_DEFAULT_TIMEOUT,
+	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
@@ -292,11 +292,21 @@ export default {
 		localStreamVideoError: {
 			immediate: true,
 
-			handler: function(localStreamVideoError) {
-				if (localStreamVideoError) {
-					showError(t('spreed', 'Error while accessing camera'), {
-						timeout: TOAST_DEFAULT_TIMEOUT,
-					})
+			handler: function(error) {
+				if (error) {
+					if (error.name === 'NotAllowedError') {
+						showError(t('spreed', 'Access to camera was denied'))
+					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
+						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
+						showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
+							timeout: TOAST_PERMANENT_TIMEOUT,
+						})
+					} else {
+						console.error('Error while accessing camera: ', error.message, error.name)
+						showError(t('spreed', 'Error while accessing camera'), {
+							timeout: TOAST_PERMANENT_TIMEOUT,
+						})
+					}
 				}
 			},
 		},
