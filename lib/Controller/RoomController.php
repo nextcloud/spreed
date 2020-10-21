@@ -1407,8 +1407,7 @@ class RoomController extends AEnvironmentAwareController {
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
 			} else {
-// FIXME				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
-//				$newSessionId = $room->joinRoomGuest($password, $result['result']);
+				$participant = $this->participantService->joinRoomAsNewGuest($room, $password, $result['result']);
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -1436,14 +1435,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-
-			if ($this->userId === null) {
-				$participant = $room->getParticipantBySession($sessionId);
-				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
-			} else {
-				$participant = $room->getParticipant($this->userId);
-				$room->leaveRoomAsParticipant($participant);
-			}
+			$participant = $room->getParticipantBySession($sessionId);
+			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {
 		}
