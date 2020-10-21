@@ -353,9 +353,14 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId())));
+			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter('users')))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
+			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -384,9 +389,13 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId())));
+			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
+			->from('talk_sessions', 's')
+			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('a.id', 's.attendee_id'))
+			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
+			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();

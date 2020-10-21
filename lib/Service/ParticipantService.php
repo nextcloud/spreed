@@ -24,12 +24,16 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ParticipantEvent;
+use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -39,6 +43,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\ISecureRandom;
 
 class ParticipantService {
 	/** @var AttendeeMapper */
@@ -47,6 +52,8 @@ class ParticipantService {
 	protected $sessionMapper;
 	/** @var SessionService */
 	protected $sessionService;
+	/** @var ISecureRandom */
+	private $secureRandom;
 	/** @var IDBConnection */
 	protected $connection;
 	/** @var IEventDispatcher */
@@ -55,11 +62,13 @@ class ParticipantService {
 	public function __construct(AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								SessionService $sessionService,
+								ISecureRandom $secureRandom,
 								IDBConnection $connection,
 								IEventDispatcher $dispatcher) {
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->sessionService = $sessionService;
+		$this->secureRandom = $secureRandom;
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 	}
@@ -123,6 +132,55 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param string $password
+	 * @param bool $passedPasswordProtection
+	 * @return Participant
+	 * @throws InvalidPasswordException
+	 * @throws UnauthorizedException
+	 */
+	public function joinRoomAsNewGuest(Room $room, string $password, bool $passedPasswordProtection = false): Participant {
+		$event = new JoinRoomGuestEvent($room, $password, $passedPasswordProtection);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUEST_CONNECT, $event);
+
+		if ($event->getCancelJoin()) {
+			throw new UnauthorizedException('Participant is not allowed to join');
+		}
+
+		if (!$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
+			throw new InvalidPasswordException();
+		}
+
+		$lastMessage = 0;
+		if ($room->getLastMessage() instanceof IComment) {
+			$lastMessage = (int) $room->getLastMessage()->getId();
+		}
+
+		$randomActorId = $this->secureRandom->generate(255);
+
+		$attendee = new Attendee();
+		$attendee->setRoomId($room->getId());
+		$attendee->setActorType('guests');
+		$attendee->setActorId($randomActorId);
+		$attendee->setParticipantType(Participant::GUEST);
+		$attendee->setLastReadMessage($lastMessage);
+		$this->attendeeMapper->insert($attendee);
+
+		$session = $this->sessionService->createSessionForAttendee($attendee);
+
+		// Update the random guest id
+		$attendee->setActorId(sha1($session->getSessionId()));
+		$this->attendeeMapper->update($attendee);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUEST_CONNECT, $event);
+
+		return new Participant(
+			\OC::$server->getDatabaseConnection(), // FIXME
+			\OC::$server->getConfig(), // FIXME
+			$room, $attendee, $session);
+	}
+
+	/**
+	 * @param Room $room
 	 * @param array ...$participants
 	 */
 	public function addUsers(Room $room, array ...$participants): void {
@@ -145,6 +203,34 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+	}
+
+	public function leaveRoomAsSession(Room $room, Participant $participant): void {
+		if (!$participant->isGuest()) {
+			$event = new ParticipantEvent($room, $participant);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
+		} else {
+			$event = new RemoveParticipantEvent($room, $participant, Room::PARTICIPANT_LEFT);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
+		}
+
+		$session = $participant->getSession();
+		if ($session instanceof Session) {
+			$this->sessionMapper->delete($session);
+		} else {
+			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
+		}
+
+		if ($participant->isGuest()
+			|| $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			$this->attendeeMapper->delete($participant->getAttendee());
+		}
+
+		if (!$participant->isGuest()) {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
+		} else {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+		}
 	}
 
 	public function getParticipantsForRoom(Room $room): array {

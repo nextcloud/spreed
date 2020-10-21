@@ -569,9 +569,14 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		if ((string) $userId !== $row['actor_id']) {
-			// FIXME check the actor type too and bail out for guests
-			throw new RoomNotFoundException();
+		if ($userId !== null) {
+			if ($row['actor_type'] !== 'users' || $userId !== $row['actor_id']) {
+				throw new RoomNotFoundException();
+			}
+		} else {
+			if ($row['actor_type'] !== 'guests') {
+				throw new RoomNotFoundException();
+			}
 		}
 
 		if ($row['token'] === null) {
