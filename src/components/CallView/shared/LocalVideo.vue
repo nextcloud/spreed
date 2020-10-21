@@ -122,6 +122,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			notificationHandle: null,
+		}
+	},
+
 	computed: {
 
 		videoContainerClass() {
@@ -208,15 +214,15 @@ export default {
 			handler: function(error) {
 				if (error) {
 					if (error.name === 'NotAllowedError') {
-						showError(t('spreed', 'Access to camera was denied'))
+						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))
 					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
 						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
-						showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
+						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					} else {
 						console.error('Error while accessing camera: ', error.message, error.name)
-						showError(t('spreed', 'Error while accessing camera'), {
+						this.notificationHandle = showError(t('spreed', 'Error while accessing camera'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					}
@@ -232,6 +238,9 @@ export default {
 	},
 
 	destroyed() {
+		if (this.notificationHandle) {
+			this.notificationHandle.hideToast()
+		}
 		if (this.localCallParticipantModel) {
 			this.localCallParticipantModel.off('forcedMute', this._handleForcedMute)
 		}

@@ -401,6 +401,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			return
 		}
 
+		clearErrorNotification()
 		webrtc.leaveCall()
 	})
 
@@ -871,6 +872,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	let localStreamRequestedTimeout = null
 	let localStreamRequestedTimeoutNotification = null
 
+	let errorNotificationHandle = null
+
 	const clearLocalStreamRequestedTimeoutAndHideNotification = function() {
 		clearTimeout(localStreamRequestedTimeout)
 		localStreamRequestedTimeout = null
@@ -878,6 +881,14 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (localStreamRequestedTimeoutNotification) {
 			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
+		}
+
+	}
+
+	const clearErrorNotification = function() {
+		if (errorNotificationHandle) {
+			errorNotificationHandle.hideToast()
+			errorNotificationHandle = null
 		}
 	}
 
@@ -901,6 +912,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	signaling.on('leaveRoom', function(token) {
 		if (signaling.currentRoomToken === token) {
 			clearLocalStreamRequestedTimeoutAndHideNotification()
+			clearErrorNotification()
 		}
 	})
 
@@ -942,7 +954,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			console.error('Error while accessing microphone & camera: ', error.message, error.name)
 		}
 
-		showError(message, {
+		errorNotificationHandle = showError(message, {
 			timeout: timeout,
 		})
 	})
