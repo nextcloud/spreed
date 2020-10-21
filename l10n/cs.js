@@ -894,9 +894,6 @@ OC.L10N.register(
     "This conversation is read only" : "Konverzace je pouze pro čtení",
     "Default location for attachments" : "Výchozí umístění pro přílohy",
     "Select default location for attachments" : "Vyberte výchozí umístění pro přílohy",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu",
-    "Use promoted view" : "Použít povýšený pohled",
-    "Promoted view" : "Povýšený pohled",
-    "Too many videos to fit in the window. Maximize the window or switch to " : "Příliš mnoho videí na to, aby se vešly do okna. Okno maximalizujte nebo přepněte do"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

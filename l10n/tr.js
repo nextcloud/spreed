@@ -894,9 +894,6 @@ OC.L10N.register(
     "This conversation is read only" : "Bu görüşme salt okunur",
     "Default location for attachments" : "Ek dosyalarının varsayılan yolu",
     "Select default location for attachments" : "Ek dosyalarının varsayılan yolunu seçin",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz",
-    "Use promoted view" : "Sorumlu görünümü kullanılsın",
-    "Promoted view" : "Sorumlu görünümü",
-    "Too many videos to fit in the window. Maximize the window or switch to " : "Pencereye sığdırılacak çok fazla görüntü var. Pencereyi büyütün ya da şu görünüme geçin"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk güncellenmiş. Bir görüşmeye başlamadan önce sayfayı yeniden yüklemelisiniz"
 },
 "nplurals=2; plural=(n > 1);");

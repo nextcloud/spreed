@@ -801,8 +801,6 @@ OC.L10N.register(
     "This conversation is read only" : "An diviz a zo da lenn-nemetken",
     "Default location for attachments" : "Lec'h dre ziouer evit ar stagadennoù",
     "Select default location for attachments" : "Choaz al lec'h stagadenn dre ziouer",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a zo bet adnevesaet, ret eo deoc'h freskaat ar bajenn a raok kregin pe mont en ur gemenadenn",
-    "Use promoted view" : "Implij ar gwellet herouezet",
-    "Promoted view" : "Gwellet herouezet"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a zo bet adnevesaet, ret eo deoc'h freskaat ar bajenn a raok kregin pe mont en ur gemenadenn"
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");

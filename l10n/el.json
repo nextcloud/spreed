@@ -846,8 +846,6 @@
     "This conversation is read only" : "Η συνομιλία είναι μόνο για ανάγνωση",
     "Default location for attachments" : "Προεπιλεγμένη θέση για συνημμένα",
     "Select default location for attachments" : "Επιλέξτε προεπιλεγμένη θέση για συνημμένα",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση",
-    "Use promoted view" : "Χρήση προβολής promoted",
-    "Promoted view" : "Προηγμένη εμφάνιση"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
