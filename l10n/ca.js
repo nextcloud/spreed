@@ -881,8 +881,6 @@ OC.L10N.register(
     "This conversation is read only" : "Aquesta conversa és només de lectura",
     "Default location for attachments" : "Ubicació per defecte per als fitxers adjunts",
     "Select default location for attachments" : "Seleccioneu la ubicació per defecte per als fitxers adjunts",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk s'ha actualitzat, heu de tornar a carregar la pàgina per poder iniciar o unir-vos a una trucada",
-    "Use promoted view" : "Utilitza la visualització promoguda",
-    "Promoted view" : "Vista promoguda"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk s'ha actualitzat, heu de tornar a carregar la pàgina per poder iniciar o unir-vos a una trucada"
 },
 "nplurals=2; plural=(n != 1);");

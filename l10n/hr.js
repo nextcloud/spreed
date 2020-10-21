@@ -791,8 +791,6 @@ OC.L10N.register(
     "This conversation is read only" : "Ovaj razgovor je samo za čitanje",
     "Default location for attachments" : "Zadana lokacija privitaka",
     "Select default location for attachments" : "Odaberi zadanu lokaciju privitaka",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru",
-    "Use promoted view" : "Koristi nadređeni prikaz",
-    "Promoted view" : "Nadređeni prikaz"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

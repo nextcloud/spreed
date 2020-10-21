@@ -891,8 +891,6 @@
     "This conversation is read only" : "Cette conversation est en lecture seule",
     "Default location for attachments" : "Emplacement par défaut des pièces jointes",
     "Select default location for attachments" : "Sélectionnez l'emplacement par défaut des pièces jointes",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel",
-    "Use promoted view" : "Utilisation de la vue promue",
-    "Promoted view" : "vue promue"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

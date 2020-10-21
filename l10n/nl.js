@@ -880,8 +880,6 @@ OC.L10N.register(
     "This conversation is read only" : "Dit gesprek is alleen-lezen",
     "Default location for attachments" : "Standaardlocatie voor bijlagen",
     "Select default location for attachments" : "Selecteer standaardlocatie voor bijlagen",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen",
-    "Use promoted view" : "Gebruik aanbevolen overzicht",
-    "Promoted view" : "Aanbevolen overzicht"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk is bijgewerkt, herlaad de pagina voordat je een gesprek kun starten of eraan meedoen"
 },
 "nplurals=2; plural=(n != 1);");

@@ -775,8 +775,6 @@ OC.L10N.register(
     "This conversation is read only" : "この会話は読み込みのみです",
     "Default location for attachments" : "添付ファイルのデフォルトの場所",
     "Select default location for attachments" : "添付ファイルのデフォルトの場所を選択",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。",
-    "Use promoted view" : "序列表示を使用",
-    "Promoted view" : "序列表示"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。"
 },
 "nplurals=1; plural=0;");
