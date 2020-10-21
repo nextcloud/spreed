@@ -137,13 +137,18 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
+			if ($participant['actorType'] !== 'users') {
+				// No user => no activity
+				continue;
+			}
+
+			if ($actorId === $participant['actorId']) {
 				// No activity for self-joining and the creator
 				continue;
 			}
 
 			try {
-				$notification->setUser($participant['userId']);
+				$notification->setUser($participant['actorId']);
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);

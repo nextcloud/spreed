@@ -190,10 +190,14 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			foreach ($participants as $participant) {
+				if ($participant['actorType'] !== 'users') {
+					continue;
+				}
+
 				$userJoinedFileRoom = $room->getObjectType() === 'file' &&
 						(!isset($participant['participantType']) || $participant['participantType'] !== Participant::USER_SELF_JOINED);
-				if ($userJoinedFileRoom || $userId !== $participant['userId']) {
-					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['userId']]);
+				if ($userJoinedFileRoom || $userId !== $participant['actorId']) {
+					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
 				}
 			}
 		});
@@ -214,19 +218,19 @@ class Listener {
 			if ($event->getNewValue() === Participant::MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $event->getParticipant()->getUser()]);
+				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $event->getParticipant()->getAttendee()->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::USER) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getParticipant()->getUser()]);
+				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getParticipant()->getAttendee()->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
+				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $event->getParticipant()->getAttendee()->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
+				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $event->getParticipant()->getAttendee()->getActorId()]);
 			}
 		});
 		$listener = function (GenericEvent $event) {
@@ -253,9 +257,7 @@ class Listener {
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null): void {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->isGuest() ? 'guests' : 'users';
-			$sessionId = $participant->getSessionId();
-			$sessionHash = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
-			$actorId = $participant->isGuest() ? $sessionHash : $participant->getUser();
+			$actorId = $participant->getAttendee()->getActorId();
 		} else {
 			$user = $this->userSession->getUser();
 			if ($user instanceof IUser) {
