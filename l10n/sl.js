@@ -807,7 +807,7 @@ OC.L10N.register(
     "Link to a conversation" : "Povezava do pogovora",
     "Select conversation" : "pogovora",
     "Duplicate session" : "Podvojena seja",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Odprtemu pogovoru ste se pridružili v novem oknu ali na drugi napravi. Nextcloud Talk trenutno te možnosti ne ponuja, zato je bila druga seja preklicana.",
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pogovoru ste se pridružili v novem oknu brskalnika, ali na drugi napravi. Nextcloud Talk te možnosti trenutno ne omogoča, zato je bila druga seja preklicana.",
     "Join a conversation or start a new one" : "Pridružite se pogovoru, ali pa začnite novega.",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Brskalnik, ki ga trenutno uporabljate, ni popolnoma podprt s programom Nextcloud Talk. Priporočljivo je uporabiti najnovejšo različico brskalnika Mozilla Firefox, Microsoft Edge, Google Chrome ali pa Apple Safari.",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran",
@@ -816,7 +816,7 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud Talk je v v zdrževalnem načinu, ponovno je treba naložiti stran",
     "Error while sharing file" : "Prišlo je do napake med souporabo datoteke",
     "Failed to join the conversation. Try to reload the page." : "Pridruženje pogovoru je spodletelo. Poskusite ponovno osvežiti stran.",
-    "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Odprtemu pogovoru ste se pridružili v novem oknu ali na drugi napravi. Nextcloud Talk trenutno te možnosti ne ponuja. Kako želite nadaljevati?",
+    "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Pogovoru ste se pridružili v novem oknu brskalnika, ali na drugi napravi. Nextcloud Talk te možnosti trenutno ne omogoča. Kako želite nadaljevati?",
     "Join here" : "Pridruži se v tem oknu",
     "Leave this page" : "Zapusti trenutno stran",
     "Error while uploading file" : "Prišlo je do napake med pošiljanjem datoteke",
@@ -881,8 +881,6 @@ OC.L10N.register(
     "This conversation is read only" : "Ta pogovor je le za branje",
     "Default location for attachments" : "Privzeto mesto za priloge",
     "Select default location for attachments" : "Izbor privzetega mesta za priloge",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor.",
-    "Use promoted view" : "Uporabi osprednji pogled",
-    "Promoted view" : "Osprednji pogled"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

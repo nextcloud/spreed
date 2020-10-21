@@ -866,8 +866,6 @@ OC.L10N.register(
     "This conversation is read only" : "Elkarrizketa hau irakurtzeko soilik da",
     "Default location for attachments" : "Eranskinen kokaleku lehenetsia",
     "Select default location for attachments" : "Hautatu eranskinen kokaleku lehenetsia",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk eguneratu egin da, orria berriro kargatu behar duzu dei bat hasi edo dei batera elkartu aurretik.",
-    "Use promoted view" : "Erabili gailentze ikuspegia",
-    "Promoted view" : "Gailentze ikuspegia"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk eguneratu egin da, orria berriro kargatu behar duzu dei bat hasi edo dei batera elkartu aurretik."
 },
 "nplurals=2; plural=(n != 1);");

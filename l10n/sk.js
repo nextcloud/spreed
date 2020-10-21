@@ -776,8 +776,6 @@ OC.L10N.register(
     "This conversation is read only" : "Táto konverzácia je iba na čítanie",
     "Default location for attachments" : "Predvolené umiestnenie príloh",
     "Select default location for attachments" : "Vyberte predvolené umiestnenie príloh",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku",
-    "Use promoted view" : "Použiť propagované zobrazenie",
-    "Promoted view" : "Propagované zobrazenie"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
