@@ -509,7 +509,7 @@ OC.L10N.register(
     "No search results" : "Inga sökresultat",
     "Groups" : "Grupper",
     "Circles" : "Cirklar",
-    "Settings" : "Inställnigar",
+    "Settings" : "Inställningar",
     "Users, groups and circles" : "Användare, grupper och cirklar",
     "Users and groups" : "Användare och grupper",
     "Users and circles" : "Användare och cirklar",
