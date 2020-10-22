@@ -693,6 +693,7 @@ OC.L10N.register(
     "File to share" : "Fichier à partager",
     "This conversation has been locked" : "Cette conversation a été verrouillée",
     "Write message, @ to mention someone …" : "Écrivez un message, utilisez @ pour mentionner quelqu'un …",
+    "No permission to post messages in this conversation" : "Interdit de publier un message dans cette conversation",
     "Could not post message: {errorMessage}" : "Impossible de publier le message : {errorMessage}",
     "Invalid path selected" : "Chemin sélectionné non valide",
     "Bridge with other services" : "Lier à d'autres services",
