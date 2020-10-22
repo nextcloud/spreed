@@ -751,7 +751,7 @@ class RoomController extends AEnvironmentAwareController {
 			// We are only doing this manually here to be able to return different status codes
 			// Actually createOneToOneConversation also checks it.
 			$room = $this->manager->getOne2OneRoom($currentUser->getUID(), $targetUser->getUID());
-			$room->ensureOneToOneRoomIsFilled();
+			$this->participantService->ensureOneToOneRoomIsFilled($room);
 			return new DataResponse(
 				$this->formatRoom($room, $room->getParticipant($currentUser->getUID())),
 				Http::STATUS_OK
@@ -1203,7 +1203,8 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function removeParticipantFromRoom(string $participant): DataResponse {
-		if ($this->participant->getUser() === $participant) {
+		$attendee = $this->participant->getAttendee();
+		if ($attendee->getActorType() === 'users' && $attendee->getActorId() === $participant) {
 			// Removing self, abusing moderator power
 			return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 		}
@@ -1222,7 +1223,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($targetParticipant->getParticipantType() === Participant::OWNER) {
+		if ($targetParticipant->getAttendee()->getParticipantType() === Participant::OWNER) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
@@ -1261,7 +1262,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse();
 		}
 
-		$currentUser = $this->userManager->get($participant->getUser());
+		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1289,7 +1290,11 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($targetParticipant->getSessionId() === $this->participant->getSessionId()) {
+		$targetSession = $targetParticipant->getSession();
+		$currentSession = $this->participant->getSession();
+		if ($targetSession instanceof Session
+			&& $currentSession instanceof Session
+			&& $targetSession->getSessionId() === $currentSession->getSessionId()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
@@ -1428,8 +1433,11 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$this->session->removePasswordForRoom($token);
-		$this->session->setSessionForRoom($token, $participant->getSession()->getSessionId());
-		$room->ping($this->userId, $participant->getSession()->getSessionId(), $this->timeFactory->getTime());
+		$session = $participant->getSession();
+		if ($session instanceof Session) {
+			$this->session->setSessionForRoom($token, $session->getSessionId());
+			$room->ping($this->userId, $session->getSessionId(), $this->timeFactory->getTime());
+		}
 
 		return new DataResponse($this->formatRoom($room, $participant));
 	}

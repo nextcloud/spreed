@@ -29,6 +29,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -57,6 +58,8 @@ class Manager {
 	private $attendeeMapper;
 	/** @var SessionMapper */
 	private $sessionMapper;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var ISecureRandom */
 	private $secureRandom;
 	/** @var IUserManager */
@@ -79,6 +82,7 @@ class Manager {
 								Config $talkConfig,
 								AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
+								ParticipantService $participantService,
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
 								CommentsManager $commentsManager,
@@ -92,6 +96,7 @@ class Manager {
 		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
+		$this->participantService = $participantService;
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
@@ -650,8 +655,12 @@ class Manager {
 
 		if ($row === false) {
 			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
-			$room->addUsers(['userId' => $userId]);
 			$room->setReadOnly(Room::READ_ONLY);
+
+			$this->participantService->addUsers($room,[[
+				'actorType' => 'users',
+				'actorId' => $userId,
+			]]);
 			return $room;
 		}
 
@@ -660,7 +669,10 @@ class Manager {
 		try {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
-			$room->addUsers(['userId' => $userId]);
+			$this->participantService->addUsers($room,[[
+				'actorType' => 'users',
+				'actorId' => $userId,
+			]]);
 		}
 
 		return $room;
