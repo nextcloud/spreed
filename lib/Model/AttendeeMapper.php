@@ -77,6 +77,30 @@ class AttendeeMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
+	/**
+	 * @param int $roomId
+	 * @param int[] $participantType
+	 * @return int
+	 */
+	public function countActorsByParticipantType(int $roomId, array $participantType): int {
+		$query = $this->db->getQueryBuilder();
+		$query->select($query->func()->count('*', 'num_actors'))
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		// TODO Should exclude groups and circles when we add them
+
+		if (!empty($participantType)) {
+			$query->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT_ARRAY)));
+		}
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (int) ($row['num_actors'] ?? 0);
+	}
+
 	public function createAttendeeFromRow(array $row): Attendee {
 		return $this->mapRowToEntity([
 			'id' => $row['a_id'],

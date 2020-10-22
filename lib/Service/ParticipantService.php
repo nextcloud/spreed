@@ -305,4 +305,35 @@ class ParticipantService {
 			return $attendee->getActorId();
 		}, $attendees);
 	}
+
+	/**
+	 * @param Room $room
+	 * @return int
+	 */
+	public function getNumberOfUsers(Room $room): int {
+		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), [
+			Participant::USER,
+			Participant::MODERATOR,
+			Participant::OWNER,
+		]);
+	}
+
+	/**
+	 * @param Room $room
+	 * @return int
+	 */
+	public function getNumberOfModerators(Room $room): int {
+		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), [
+			Participant::MODERATOR,
+			Participant::OWNER,
+		]);
+	}
+
+	/**
+	 * @param Room $room
+	 * @return int
+	 */
+	public function getNumberOfActors(Room $room): int {
+		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), []);
+	}
 }

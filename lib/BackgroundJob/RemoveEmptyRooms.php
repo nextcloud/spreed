@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
@@ -39,6 +40,9 @@ class RemoveEmptyRooms extends TimedJob {
 	/** @var Manager */
 	protected $manager;
 
+	/** @var ParticipantService */
+	protected $participantService;
+
 	/** @var LoggerInterface */
 	protected $logger;
 
@@ -46,6 +50,7 @@ class RemoveEmptyRooms extends TimedJob {
 
 	public function __construct(ITimeFactory $timeFactory,
 								Manager $manager,
+								ParticipantService $participantService,
 								LoggerInterface $logger) {
 		parent::__construct($timeFactory);
 
@@ -53,6 +58,7 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->setInterval(60 * 5);
 
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->logger = $logger;
 	}
 
@@ -71,7 +77,7 @@ class RemoveEmptyRooms extends TimedJob {
 			return;
 		}
 
-		if ($room->getNumberOfParticipants(false) === 0 && $room->getObjectType() !== 'file') {
+		if ($this->participantService->getNumberOfActors($room) === 0 && $room->getObjectType() !== 'file') {
 			$room->deleteRoom();
 			$this->numDeletedRooms++;
 		}
