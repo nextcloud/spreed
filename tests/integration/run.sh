@@ -11,8 +11,8 @@ PHPPID=$!
 echo $PHPPID
 
 cp -R ./spreedcheats ../../../spreedcheats
-${ROOT_DIR}/occ app:enable spreed
-${ROOT_DIR}/occ app:enable spreedcheats
+${ROOT_DIR}/occ app:enable spreed || exit 1
+${ROOT_DIR}/occ app:enable spreedcheats || exit 1
 ${ROOT_DIR}/occ app:list | grep spreed
 
 export TEST_SERVER_URL="http://localhost:8080/"
