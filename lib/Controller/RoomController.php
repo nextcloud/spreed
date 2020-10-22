@@ -1249,15 +1249,15 @@ class RoomController extends AEnvironmentAwareController {
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
 			if ($participant->hasModeratorPermissions(false)
-				&& $room->getNumberOfParticipants() > 1
-				&& $room->getNumberOfModerators() === 1) {
+				&& $this->participantService->getNumberOfUsers($room) > 1
+				&& $this->participantService->getNumberOfModerators($room) === 1) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 		}
 
 		if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
 			$room->getObjectType() !== 'file' &&
-			$room->getNumberOfParticipants() === 1) {
+			$this->participantService->getNumberOfUsers($room) === 1) {
 			$room->deleteRoom();
 			return new DataResponse();
 		}
