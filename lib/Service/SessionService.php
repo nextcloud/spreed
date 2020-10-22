@@ -66,6 +66,11 @@ class SessionService {
 		$query->execute();
 	}
 
+	public function updateLastPings(Session $session, int $lastPing): void {
+		$session->setLastPing($lastPing);
+		$this->sessionMapper->update($session);
+	}
+
 	public function createSessionForAttendee(Attendee $attendee): Session {
 		// Currently a participant can only join once
 		$this->sessionMapper->deleteByAttendeeId($attendee->getId());

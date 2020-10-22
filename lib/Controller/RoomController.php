@@ -46,6 +46,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -84,6 +85,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $roomService;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var SessionService */
+	protected $sessionService;
 	/** @var AttendeeMapper */
 	protected $attendeeMapper;
 	/** @var GuestManager */
@@ -115,6 +118,7 @@ class RoomController extends AEnvironmentAwareController {
 								Manager $manager,
 								RoomService $roomService,
 								ParticipantService $participantService,
+								SessionService $sessionService,
 								AttendeeMapper $attendeeMapper,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
@@ -134,6 +138,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->manager = $manager;
 		$this->roomService = $roomService;
 		$this->participantService = $participantService;
+		$this->sessionService = $sessionService;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
@@ -1436,7 +1441,7 @@ class RoomController extends AEnvironmentAwareController {
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
 			$this->session->setSessionForRoom($token, $session->getSessionId());
-			$room->ping($this->userId, $session->getSessionId(), $this->timeFactory->getTime());
+			$this->sessionService->updateLastPings($session, $this->timeFactory->getTime());
 		}
 
 		return new DataResponse($this->formatRoom($room, $participant));
