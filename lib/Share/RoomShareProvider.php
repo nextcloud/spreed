@@ -37,6 +37,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -81,6 +82,8 @@ class RoomShareProvider implements IShareProvider {
 	private $dispatcher;
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var ITimeFactory */
 	protected $timeFactory;
 	/** @var IL10N */
@@ -92,6 +95,7 @@ class RoomShareProvider implements IShareProvider {
 			IShareManager $shareManager,
 			EventDispatcherInterface $dispatcher,
 			Manager $manager,
+			ParticipantService $participantService,
 			ITimeFactory $timeFactory,
 			IL10N $l
 	) {
@@ -100,6 +104,7 @@ class RoomShareProvider implements IShareProvider {
 		$this->shareManager = $shareManager;
 		$this->dispatcher = $dispatcher;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
@@ -971,7 +976,7 @@ class RoomShareProvider implements IShareProvider {
 					continue;
 				}
 
-				$userList = $room->getParticipantUserIds();
+				$userList = $this->participantService->getParticipantUserIds($room);
 				foreach ($userList as $uid) {
 					$users[$uid] = $users[$uid] ?? [];
 					$users[$uid][$row['id']] = $row;

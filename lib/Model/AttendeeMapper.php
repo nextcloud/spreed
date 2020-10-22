@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -54,6 +55,26 @@ class AttendeeMapper extends QBMapper {
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
 
 		return $this->findEntity($query);
+	}
+
+	/**
+	 * @param int $roomId
+	 * @param string $actorType
+	 * @param \DateTime|null $lastJoinedCall
+	 * @return Attendee[]
+	 */
+	public function getActorsByType(int $roomId, string $actorType, ?\DateTime $lastJoinedCall = null): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)));
+
+		if ($lastJoinedCall instanceof \DateTimeInterface) {
+			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_DATE)));
+		}
+
+		return $this->findEntities($query);
 	}
 
 	public function createAttendeeFromRow(array $row): Attendee {

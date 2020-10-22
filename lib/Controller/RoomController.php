@@ -1100,7 +1100,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$participants = $this->room->getParticipantUserIds();
+		$participants = $this->participantService->getParticipantUserIds($this->room);
 
 		$participantsToAdd = [];
 		if ($source === 'users') {

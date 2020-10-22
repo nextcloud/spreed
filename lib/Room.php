@@ -42,6 +42,7 @@ use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -250,13 +251,17 @@ class Room {
 	public function getName(): string {
 		if ($this->type === self::ONE_TO_ONE_CALL) {
 			if ($this->name === '') {
+				// TODO use DI
+				$participantService = \OC::$server->get(ParticipantService::class);
 				// Fill the room name with the participants for 1-to-1 conversations
-				$users = $this->getParticipantUserIds();
+				$users = $participantService->getParticipantUserIds($this);
 				sort($users);
 				$this->setName(json_encode($users), '');
 			} elseif (strpos($this->name, '["') !== 0) {
+				// TODO use DI
+				$participantService = \OC::$server->get(ParticipantService::class);
 				// Not the json array, but the old fallback when someone left
-				$users = $this->getParticipantUserIds();
+				$users = $participantService->getParticipantUserIds($this);
 				if (count($users) !== 2) {
 					$users[] = $this->name;
 				}
@@ -1181,32 +1186,6 @@ class Room {
 			'users' => $users,
 			'guests' => $guests,
 		];
-	}
-
-	/**
-	 * @param null|\DateTime $maxLastJoined When the "last joined call" is older than the given DateTime, the user is ignored
-	 * @return string[]
-	 */
-	public function getParticipantUserIds(\DateTime $maxLastJoined = null): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('user_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->nonEmptyString('user_id'));
-
-		if ($maxLastJoined instanceof \DateTimeInterface) {
-			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($maxLastJoined, IQueryBuilder::PARAM_DATE)));
-		}
-
-		$result = $query->execute();
-
-		$users = [];
-		while ($row = $result->fetch()) {
-			$users[] = $row['user_id'];
-		}
-		$result->closeCursor();
-
-		return $users;
 	}
 
 	/**

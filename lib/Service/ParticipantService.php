@@ -217,7 +217,7 @@ class ParticipantService {
 		}
 
 		$users = json_decode($room->getName(), true);
-		$participants = $room->getParticipantUserIds();
+		$participants = $this->getParticipantUserIds($room);
 		$missingUsers = array_diff($users, $participants);
 
 		foreach ($missingUsers as $userId) {
@@ -291,5 +291,18 @@ class ParticipantService {
 		$result->closeCursor();
 
 		return $participants;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param \DateTime|null $maxLastJoined
+	 * @return string[]
+	 */
+	public function getParticipantUserIds(Room $room, \DateTime $maxLastJoined = null): array {
+		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), 'users', $maxLastJoined);
+
+		return array_map(function(Attendee $attendee) {
+			return $attendee->getActorId();
+		}, $attendees);
 	}
 }
