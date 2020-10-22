@@ -118,10 +118,10 @@ class RoomShareProvider implements IShareProvider {
 		$listener = static function (ParticipantEvent $event) {
 			$room = $event->getRoom();
 
-			if ($event->getParticipant()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			if ($event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 				/** @var self $roomShareProvider */
 				$roomShareProvider = \OC::$server->query(self::class);
-				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getUser());
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getAttendee()->getActorId());
 			}
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
