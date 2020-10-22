@@ -730,25 +730,6 @@ class Room {
 		return true;
 	}
 
-	public function ensureOneToOneRoomIsFilled(): void {
-		if ($this->getType() !== self::ONE_TO_ONE_CALL) {
-			return;
-		}
-
-		$users = json_decode($this->getName(), true);
-		$participants = $this->getParticipantUserIds();
-		$missingUsers = array_diff($users, $participants);
-
-		foreach ($missingUsers as $userId) {
-			if ($this->manager->isValidParticipant($userId)) {
-				$this->addUsers([
-					'userId' => $userId,
-					'participantType' => Participant::OWNER,
-				]);
-			}
-		}
-	}
-
 	/**
 	 * @param array ...$participants
 	 */

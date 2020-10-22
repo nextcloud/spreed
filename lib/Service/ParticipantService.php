@@ -43,6 +43,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
@@ -58,19 +59,23 @@ class ParticipantService {
 	protected $connection;
 	/** @var IEventDispatcher */
 	private $dispatcher;
+	/** @var IUserManager */
+	private $userManager;
 
 	public function __construct(AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								SessionService $sessionService,
 								ISecureRandom $secureRandom,
 								IDBConnection $connection,
-								IEventDispatcher $dispatcher) {
+								IEventDispatcher $dispatcher,
+								IUserManager $userManager) {
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->sessionService = $sessionService;
 		$this->secureRandom = $secureRandom;
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
+		$this->userManager = $userManager;
 	}
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
@@ -204,6 +209,26 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+	}
+
+	public function ensureOneToOneRoomIsFilled(Room $room): void {
+		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+			return;
+		}
+
+		$users = json_decode($room->getName(), true);
+		$participants = $room->getParticipantUserIds();
+		$missingUsers = array_diff($users, $participants);
+
+		foreach ($missingUsers as $userId) {
+			if ($this->userManager->userExists($userId)) {
+				$this->addUsers($room, [[
+					'actorType' => 'users',
+					'actorId' => $userId,
+					'participantType' => Participant::OWNER,
+				]]);
+			}
+		}
 	}
 
 	public function leaveRoomAsSession(Room $room, Participant $participant): void {

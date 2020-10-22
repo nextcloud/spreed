@@ -33,6 +33,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -71,6 +72,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var AttendeeMapper */
 	private $attendeeMapper;
 
+	/** @var ParticipantService */
+	private $participantService;
+
 	/** @var GuestManager */
 	private $guestManager;
 
@@ -92,9 +96,6 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ISearchResult */
 	private $searchResult;
 
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-
 	/** @var IL10N */
 	private $l;
 	/** @var ITimeFactory */
@@ -108,13 +109,13 @@ class ChatController extends AEnvironmentAwareController {
 								IAppManager $appManager,
 								ChatManager $chatManager,
 								AttendeeMapper $attendeeMapper,
+								ParticipantService $participantService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
 								IUserStatusManager $statusManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
-								IEventDispatcher $eventDispatcher,
 								ITimeFactory $timeFactory,
 								IL10N $l) {
 		parent::__construct($appName, $request);
@@ -125,13 +126,13 @@ class ChatController extends AEnvironmentAwareController {
 		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
 		$this->attendeeMapper = $attendeeMapper;
+		$this->participantService = $participantService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->statusManager = $statusManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
-		$this->eventDispatcher = $eventDispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
@@ -194,7 +195,7 @@ class ChatController extends AEnvironmentAwareController {
 			}
 		}
 
-		$this->room->ensureOneToOneRoomIsFilled();
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
