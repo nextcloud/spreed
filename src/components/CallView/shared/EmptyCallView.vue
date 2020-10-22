@@ -152,7 +152,7 @@ export default {
 .empty-call-view {
 	height: 100%;
 	width: 100%;
-	position: relative;
+	position: absolute;
 	display: flex;
 	flex-direction: column;
 	align-content: center;
