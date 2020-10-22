@@ -320,13 +320,18 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param bool $ignoreGuestModerators
 	 * @return int
 	 */
-	public function getNumberOfModerators(Room $room): int {
-		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), [
+	public function getNumberOfModerators(Room $room, bool $ignoreGuestModerators = true): int {
+		$participantTypes = [
 			Participant::MODERATOR,
 			Participant::OWNER,
-		]);
+		];
+		if (!$ignoreGuestModerators) {
+			$participantTypes[] = Participant::GUEST_MODERATOR;
+		}
+		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), $participantTypes);
 	}
 
 	/**
