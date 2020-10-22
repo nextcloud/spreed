@@ -28,6 +28,7 @@ namespace OCA\Talk\Signaling;
 use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Http\Client\IClientService;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
@@ -44,6 +45,8 @@ class BackendNotifier {
 	private $secureRandom;
 	/** @var Manager */
 	private $signalingManager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var IUrlGenerator */
 	private $urlGenerator;
 
@@ -52,12 +55,14 @@ class BackendNotifier {
 								IClientService $clientService,
 								ISecureRandom $secureRandom,
 								Manager $signalingManager,
+								ParticipantService $participantService,
 								IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;
 		$this->secureRandom = $secureRandom;
 		$this->signalingManager = $signalingManager;
+		$this->participantService = $participantService;
 		$this->urlGenerator = $urlGenerator;
 	}
 
@@ -149,7 +154,7 @@ class BackendNotifier {
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $room->getParticipantUserIds(),
+				'alluserids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
@@ -170,7 +175,7 @@ class BackendNotifier {
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $room->getParticipantUserIds(),
+				'alluserids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
@@ -191,7 +196,7 @@ class BackendNotifier {
 				'sessionids' => $sessionIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $room->getParticipantUserIds(),
+				'alluserids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
@@ -208,7 +213,7 @@ class BackendNotifier {
 		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
-				'userids' => $room->getParticipantUserIds(),
+				'userids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);

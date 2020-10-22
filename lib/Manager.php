@@ -777,7 +777,7 @@ class Manager {
 	}
 
 	protected function getRoomNameByParticipants(Room $room): string {
-		$users = $room->getParticipantUserIds();
+		$users = $this->participantService->getParticipantUserIds($room);
 		$displayNames = [];
 
 		foreach ($users as $participantId) {

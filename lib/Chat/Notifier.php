@@ -30,6 +30,7 @@ use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
@@ -49,6 +50,8 @@ class Notifier {
 	private $notificationManager;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var Manager */
 	private $manager;
 	/** @var IConfig */
@@ -58,11 +61,13 @@ class Notifier {
 
 	public function __construct(INotificationManager $notificationManager,
 								IUserManager $userManager,
+								ParticipantService $participantService,
 								Manager $manager,
 								IConfig $config,
 								Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
+		$this->participantService = $participantService;
 		$this->manager = $manager;
 		$this->config = $config;
 		$this->util = $util;
@@ -91,6 +96,7 @@ class Notifier {
 		$mentionedAll = array_search('all', $mentionedUserIds, true);
 
 		if ($mentionedAll !== false) {
+			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $this->participantService->getParticipantUserIds($chat)));
 			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $chat->getParticipantUserIds()));
 		}
 

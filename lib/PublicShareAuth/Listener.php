@@ -30,6 +30,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
 
 /**
@@ -83,13 +84,15 @@ class Listener {
 
 		try {
 			$participant = $room->getParticipant($userId);
-			if ($participant->getParticipantType() === Participant::OWNER) {
+			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
 				return;
 			}
 		} catch (ParticipantNotFoundException $e) {
 		}
 
-		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
+		$participantService = \OC::$server->get(ParticipantService::class);
+		$users = $participantService->getParticipantUserIds($room);
+		if ($room->getActiveGuests() > 0 || \count($users) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -108,7 +111,9 @@ class Listener {
 			return;
 		}
 
-		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
+		$participantService = \OC::$server->get(ParticipantService::class);
+		$users = $participantService->getParticipantUserIds($room);
+		if ($room->getActiveGuests() > 0 || \count($users) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
