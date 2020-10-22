@@ -340,7 +340,10 @@ class Notifier {
 				// so they can see the room in their room list and
 				// the notification can be parsed and links to an existing room,
 				// where they are a participant of.
-				$room->addUsers(['userId' => $userId]);
+				$this->participantService->addUsers($room, [[
+					'actorType' => 'users',
+					'actorId' => $userId,
+				]]);
 				return true;
 			}
 			return false;

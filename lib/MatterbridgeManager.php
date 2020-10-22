@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Service\ParticipantService;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -53,6 +54,8 @@ class MatterbridgeManager {
 	private $userManager;
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var ChatManager */
 	private $chatManager;
 	/** @var IAuthTokenProvider */
@@ -71,6 +74,7 @@ class MatterbridgeManager {
 								IURLGenerator $urlGenerator,
 								IUserManager $userManager,
 								Manager $manager,
+								ParticipantService $participantService,
 								ChatManager $chatManager,
 								IAuthTokenProvider $tokenProvider,
 								ISecureRandom $random,
@@ -83,6 +87,7 @@ class MatterbridgeManager {
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->chatManager = $chatManager;
 		$this->tokenProvider = $tokenProvider;
 		$this->random = $random;
@@ -297,10 +302,11 @@ class MatterbridgeManager {
 		try {
 			$participant = $room->getParticipant($botUserId);
 		} catch (ParticipantNotFoundException $e) {
-			$room->addUsers([
-				'userId' => $botUserId,
+			$this->participantService->addUsers($room, [[
+				'actorType' => 'users',
+				'actorId' => $botUserId,
 				'participantType' => Participant::USER,
-			]);
+			]]);
 		}
 
 		// delete old bot app tokens for this room
