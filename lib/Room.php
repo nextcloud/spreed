@@ -736,42 +736,6 @@ class Room {
 	}
 
 	/**
-	 * @param array ...$participants
-	 */
-	public function addUsers(array ...$participants): void {
-		$event = new AddParticipantsEvent($this, $participants);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_USERS_ADD, $event);
-
-		$lastMessage = 0;
-		if ($this->getLastMessage() instanceof IComment) {
-			$lastMessage = (int) $this->getLastMessage()->getId();
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->insert('talk_participants')
-			->values(
-				[
-					'user_id' => $query->createParameter('user_id'),
-					'session_id' => $query->createParameter('session_id'),
-					'participant_type' => $query->createParameter('participant_type'),
-					'room_id' => $query->createNamedParameter($this->getId()),
-					'last_ping' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
-					'last_read_message' => $query->createNamedParameter($lastMessage, IQueryBuilder::PARAM_INT),
-				]
-			);
-
-		foreach ($participants as $participant) {
-			$query->setParameter('user_id', $participant['userId'])
-				->setParameter('session_id', $participant['sessionId'] ?? '0')
-				->setParameter('participant_type', $participant['participantType'] ?? Participant::USER, IQueryBuilder::PARAM_INT);
-
-			$query->execute();
-		}
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_USERS_ADD, $event);
-	}
-
-	/**
 	 * @param Participant $participant
 	 * @param int $participantType
 	 */
@@ -838,57 +802,6 @@ class Room {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param string $password
-	 * @param bool $passedPasswordProtection
-	 * @return string
-	 * @throws InvalidPasswordException
-	 * @throws UnauthorizedException
-	 */
-	public function joinRoom(IUser $user, string $password, bool $passedPasswordProtection = false): string {
-		$event = new JoinRoomUserEvent($this, $user, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_CONNECT, $event);
-
-		if ($event->getCancelJoin() === true) {
-			$this->removeUser($user, self::PARTICIPANT_LEFT);
-			throw new UnauthorizedException('Participant is not allowed to join');
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('session_id', $query->createParameter('session_id'))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())));
-
-		$sessionId = $this->secureRandom->generate(255);
-		$query->setParameter('session_id', $sessionId);
-		$result = $query->execute();
-
-		if ($result === 0) {
-			if (!$event->getPassedPasswordProtection() && !$this->verifyPassword($password)['result']) {
-				throw new InvalidPasswordException();
-			}
-
-			// User joining a public room, without being invited
-			$this->addUsers([
-				'userId' => $user->getUID(),
-				'participantType' => Participant::USER_SELF_JOINED,
-				'sessionId' => $sessionId,
-			]);
-		}
-
-		while (!$this->isSessionUnique($sessionId)) {
-			$sessionId = $this->secureRandom->generate(255);
-			$query->setParameter('session_id', $sessionId);
-			$query->execute();
-		}
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_CONNECT, $event);
-
-		return $sessionId;
-	}
-
-	/**
 	 * @param string $userId
 	 * @param string|null $sessionId
 	 */
@@ -940,47 +853,6 @@ class Room {
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DISCONNECT, $event);
-	}
-
-	/**
-	 * @param string $password
-	 * @param bool $passedPasswordProtection
-	 * @return string
-	 * @throws InvalidPasswordException
-	 * @throws UnauthorizedException
-	 */
-	public function joinRoomGuest(string $password, bool $passedPasswordProtection = false): string {
-		$event = new JoinRoomGuestEvent($this, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_GUEST_CONNECT, $event);
-
-		if ($event->getCancelJoin()) {
-			throw new UnauthorizedException('Participant is not allowed to join');
-		}
-
-		if (!$event->getPassedPasswordProtection() && !$this->verifyPassword($password)['result']) {
-			throw new InvalidPasswordException();
-		}
-
-		$lastMessage = 0;
-		if ($this->getLastMessage() instanceof IComment) {
-			$lastMessage = (int) $this->getLastMessage()->getId();
-		}
-
-		$sessionId = $this->secureRandom->generate(255);
-		while (!$this->db->insertIfNotExist('*PREFIX*talk_participants', [
-			'user_id' => '',
-			'room_id' => $this->getId(),
-			'last_ping' => 0,
-			'session_id' => $sessionId,
-			'participant_type' => Participant::GUEST,
-			'last_read_message' => $lastMessage,
-		], ['session_id'])) {
-			$sessionId = $this->secureRandom->generate(255);
-		}
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_GUEST_CONNECT, $event);
-
-		return $sessionId;
 	}
 
 	public function changeInCall(Participant $participant, int $flags): void {
