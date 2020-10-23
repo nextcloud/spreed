@@ -457,7 +457,7 @@ class RoomController extends AEnvironmentAwareController {
 						$numActiveGuests++;
 					}
 				}
-			} else if ($participant->getAttendee()->getActorType() === 'users') {
+			} elseif ($participant->getAttendee()->getActorType() === 'users') {
 				$attendee = $participant->getAttendee();
 				$session = $participant->getSession();
 				$user = $this->userManager->get($attendee->getActorId());
@@ -1011,7 +1011,7 @@ class RoomController extends AEnvironmentAwareController {
 			&& $includeStatus
 			&& count($participants) < 100
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_filter(array_map(function(Participant $participant) {
+			$userIds = array_filter(array_map(static function (Participant $participant) {
 				if ($participant->getAttendee()->getActorType() === 'users') {
 					return $participant->getAttendee()->getActorId();
 				}
@@ -1023,7 +1023,7 @@ class RoomController extends AEnvironmentAwareController {
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
-		$guestSessions = array_filter(array_map(function(Participant $participant) {
+		$guestSessions = array_filter(array_map(static function (Participant $participant) {
 			$session = $participant->getSession();
 			if (!$session || $participant->getAttendee()->getActorType() !== 'guests') {
 				return null;

@@ -27,9 +27,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\JoinRoomGuestEvent;
-use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -39,9 +36,7 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
-use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
