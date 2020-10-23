@@ -484,7 +484,6 @@ class Manager {
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
 		if ($preloadUserId !== null) {
-
 			$query->addSelect('a.*')
 				->selectAlias('a.id', 'a_id');
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
