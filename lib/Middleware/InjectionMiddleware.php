@@ -139,11 +139,11 @@ class InjectionMiddleware extends Middleware {
 		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
 
-		if ($this->userId !== null) {
-			$participant = $room->getParticipant($this->userId);
-		} else {
-			$sessionId = $this->talkSession->getSessionForRoom($token);
+		$sessionId = $this->talkSession->getSessionForRoom($token);
+		if ($sessionId !== null) {
 			$participant = $room->getParticipantBySession($sessionId);
+		} else {
+			$participant = $room->getParticipant($this->userId);
 		}
 		$controller->setParticipant($participant);
 
