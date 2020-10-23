@@ -449,6 +449,7 @@ OC.L10N.register(
     "Enabled" : "Овозможен",
     "Save" : "Зачувај",
     "Password" : "Лозинка",
+    "API token" : "API токен",
     "Login" : "Login",
     "Nickname" : "Прекар",
     "Client ID" : "Клиент ИД",
