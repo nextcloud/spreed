@@ -1188,8 +1188,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($previousSession instanceof Participant && $previousSession->getSessionId() !== '0') {
-			// Previous session was active
-			if ($force === false) {
+			if ($force === false && $previousSession->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
+				// Previous session was active in the call, show a warning
 				return new DataResponse([
 					'sessionId' => $previousSession->getSessionId(),
 					'inCall' => $previousSession->getInCallFlags(),
