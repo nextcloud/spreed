@@ -1411,16 +1411,11 @@ class RoomController extends AEnvironmentAwareController {
 				], Http::STATUS_CONFLICT);
 			}
 
-//			if ($previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
-//				// FIXME Session vs Participant
-//				$room->changeInCall($previousSession, Participant::FLAG_DISCONNECTED);
-//			}
-//
-//			if ($this->userId === null) {
-//				$room->removeParticipantBySession($previousParticipant, Room::PARTICIPANT_LEFT);
-//			} else {
-//				$room->leaveRoomAsParticipant($previousSession);
-//			}
+			if ($previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
+				$this->participantService->changeInCall($room, $previousParticipant, Participant::FLAG_DISCONNECTED);
+			}
+
+			$this->participantService->leaveRoomAsSession($room, $previousParticipant);
 		}
 
 		$user = $this->userManager->get($this->userId);

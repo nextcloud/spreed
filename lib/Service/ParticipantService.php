@@ -38,6 +38,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -61,6 +62,8 @@ class ParticipantService {
 	private $dispatcher;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var ITimeFactory */
+	private $timeFactory;
 
 	public function __construct(AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
@@ -68,7 +71,8 @@ class ParticipantService {
 								ISecureRandom $secureRandom,
 								IDBConnection $connection,
 								IEventDispatcher $dispatcher,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								ITimeFactory $timeFactory) {
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->sessionService = $sessionService;
@@ -76,6 +80,7 @@ class ParticipantService {
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
+		$this->timeFactory = $timeFactory;
 	}
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
@@ -259,6 +264,39 @@ class ParticipantService {
 		}
 	}
 
+	public function changeInCall(Room $room, Participant $participant, int $flags): void {
+		$session = $participant->getSession();
+		if (!$session instanceof Session) {
+			return;
+		}
+
+		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
+		} else {
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
+		}
+
+		$session->setInCall($flags);
+		$this->sessionMapper->update($session);
+
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
+			$attendee = $participant->getAttendee();
+			$attendee->setLastJoinedCall($this->timeFactory->getTime());
+			$this->attendeeMapper->update($attendee);
+		}
+
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_JOIN_CALL, $event);
+		} else {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
+		}
+	}
+
+	/**
+	 * @param Room $room
+	 * @return Participant[]
+	 */
 	public function getParticipantsForRoom(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
@@ -282,6 +320,41 @@ class ParticipantService {
 			} else {
 				$session = null;
 			}
+
+			$participants[] = new Participant(
+				\OC::$server->getDatabaseConnection(), // FIXME
+				\OC::$server->getConfig(), // FIXME
+				$room, $attendee, $session);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @param Room $room
+	 * @return Participant[]
+	 */
+	public function getParticipantsInCall(Room $room): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$query->select('a.*')
+			->selectAlias('a.id', 'a_id')
+			->addSelect('s.*')
+			->selectAlias('s.id', 's_id')
+			->from('talk_sessions', 's')
+			->leftJoin(
+				's', 'talk_attendees', 'a',
+				$query->expr()->eq('s.attendee_id', 'a.id')
+			)
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
+
+		$participants = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+			$session = $this->sessionMapper->createSessionFromRow($row);
 
 			$participants[] = new Participant(
 				\OC::$server->getDatabaseConnection(), // FIXME

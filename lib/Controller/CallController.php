@@ -27,7 +27,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -35,13 +37,17 @@ use OCP\IRequest;
 
 class CallController extends AEnvironmentAwareController {
 
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
 	public function __construct(string $appName,
 								IRequest $request,
+								ParticipantService $participantService,
 								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
+		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -56,18 +62,25 @@ class CallController extends AEnvironmentAwareController {
 	public function getPeersForCall(): DataResponse {
 		$timeout = $this->timeFactory->getTime() - 30;
 		$result = [];
-		$participants = $this->room->getParticipantsInCall();
+		$participants = $this->participantService->getParticipantsInCall($this->room);
 		foreach ($participants as $participant) {
-			if ($participant->getLastPing() < $timeout) {
+			/** @var Session $session */
+			$session = $participant->getSession();
+			if ($session->getLastPing() < $timeout) {
 				// User is not active in call
 				continue;
 			}
 
+			$userId = '';
+			if ($participant->getAttendee()->getActorType() === 'users') {
+				$userId = $participant->getAttendee()->getActorId();
+			}
+
 			$result[] = [
-				'userId' => $participant->getUser(),
+				'userId' => $userId,
 				'token' => $this->room->getToken(),
-				'lastPing' => $participant->getLastPing(),
-				'sessionId' => $participant->getSessionId(),
+				'lastPing' => $session->getLastPing(),
+				'sessionId' => $session->getSessionId(),
 			];
 		}
 
@@ -84,10 +97,10 @@ class CallController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function joinCall(?int $flags): DataResponse {
-		$this->room->ensureOneToOneRoomIsFilled();
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
-		$sessionId = $this->participant->getSessionId();
-		if ($sessionId === '0') {
+		$session = $this->participant->getSession();
+		if (!$session instanceof Session) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -96,7 +109,7 @@ class CallController extends AEnvironmentAwareController {
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
 
-		$this->room->changeInCall($this->participant, $flags);
+		$this->participantService->changeInCall($this->room, $this->participant, $flags);
 
 		return new DataResponse();
 	}
@@ -108,12 +121,12 @@ class CallController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function leaveCall(): DataResponse {
-		$sessionId = $this->participant->getSessionId();
-		if ($sessionId === '0') {
+		$session = $this->participant->getSession();
+		if (!$session instanceof Session) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->room->changeInCall($this->participant, Participant::FLAG_DISCONNECTED);
+		$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
 
 		return new DataResponse();
 	}
