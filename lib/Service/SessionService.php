@@ -66,7 +66,7 @@ class SessionService {
 		$query->execute();
 	}
 
-	public function updateLastPings(Session $session, int $lastPing): void {
+	public function updateLastPing(Session $session, int $lastPing): void {
 		$session->setLastPing($lastPing);
 		$this->sessionMapper->update($session);
 	}

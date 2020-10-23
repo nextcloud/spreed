@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -97,7 +98,6 @@ class Notifier {
 
 		if ($mentionedAll !== false) {
 			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $this->participantService->getParticipantUserIds($chat)));
-			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $chat->getParticipantUserIds()));
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
@@ -173,7 +173,7 @@ class Notifier {
 				continue;
 			}
 
-			$notification->setUser($participant->getUser());
+			$notification->setUser($participant->getAttendee()->getActorId());
 			$this->notificationManager->notify($notification);
 		}
 
@@ -185,7 +185,7 @@ class Notifier {
 					continue;
 				}
 
-				$notification->setUser($participant->getUser());
+				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
 		}
@@ -307,7 +307,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return bool
 	 */
-	protected function shouldMentionedUserBeNotified($userId, IComment $comment): bool {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment): bool {
 		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
@@ -325,8 +325,8 @@ class Notifier {
 
 		try {
 			$participant = $room->getParticipant($userId);
-			$notificationLevel = $participant->getNotificationLevel();
-			if ($participant->getNotificationLevel() === Participant::NOTIFY_DEFAULT) {
+			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 					$notificationLevel = Participant::NOTIFY_ALWAYS;
 				} else {
@@ -364,20 +364,21 @@ class Notifier {
 	 * @return bool
 	 */
 	protected function shouldParticipantBeNotified(Participant $participant, IComment $comment, array $alreadyNotifiedUsers): bool {
-		if ($participant->isGuest()) {
+		if ($participant->getAttendee()->getActorType() !== 'users') {
 			return false;
 		}
 
-		if ($comment->getActorType() === 'users' && $participant->getUser() === $comment->getActorId()) {
+		$userId = $participant->getAttendee()->getActorId();
+		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
 			// Do not notify the author
 			return false;
 		}
 
-		if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
+		if (\in_array($userId, $alreadyNotifiedUsers, true)) {
 			return false;
 		}
 
-		if ($participant->getSessionId() !== '0') {
+		if ($participant->getSession() instanceof Session) {
 			// User is online
 			return false;
 		}
