@@ -855,35 +855,6 @@ class Room {
 		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DISCONNECT, $event);
 	}
 
-	public function changeInCall(Participant $participant, int $flags): void {
-		$event = new ModifyParticipantEvent($this, $participant, 'inCall', $flags, $participant->getInCallFlags());
-		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$this->dispatcher->dispatch(self::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
-		} else {
-			$this->dispatcher->dispatch(self::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('in_call', $query->createNamedParameter($flags, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-
-		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$query->set('last_joined_call', $query->createNamedParameter(
-				$this->timeFactory->getDateTime(), IQueryBuilder::PARAM_DATE
-			));
-		}
-
-		$query->execute();
-
-		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$this->dispatcher->dispatch(self::EVENT_AFTER_SESSION_JOIN_CALL, $event);
-		} else {
-			$this->dispatcher->dispatch(self::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
-		}
-	}
-
 	/**
 	 * @param string $password
 	 * @return array
