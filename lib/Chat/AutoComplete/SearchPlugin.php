@@ -96,10 +96,11 @@ class SearchPlugin implements ISearchPlugin {
 		} else {
 			$participants = $this->room->getParticipants();
 			foreach ($participants as $participant) {
-				if ($participant->isGuest()) {
-					$guestSessionHashes[] = sha1($participant->getSessionId());
-				} else {
-					$userIds[] = $participant->getUser();
+				$attendee = $participant->getAttendee();
+				if ($attendee->getActorType() === 'guests') {
+					$guestSessionHashes[] = $attendee->getActorId();
+				} elseif ($attendee->getActorType() === 'users')  {
+					$userIds[] = $attendee->getActorId();
 				}
 			}
 		}
