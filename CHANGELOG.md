@@ -1,6 +1,51 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.1 – 2020-10-23
+### Fixed
+- Fix automated scrolling behaviour which sometimes jumped into the middle of the message list
+  [#4417](https://github.com/nextcloud/spreed/pull/4417)
+- Remove pulse animation from call button to reduce CPU load in chrome-based browsers
+  [#4301](https://github.com/nextcloud/spreed/pull/4301)
+- Only show the "Session conflict" dialog when in a call
+  [#4442](https://github.com/nextcloud/spreed/pull/4442)
+- Fix minimum length calculation of the call token
+  [#4369](https://github.com/nextcloud/spreed/pull/4369)
+- Fix duplicate session issue in files sidebar
+  [#4426](https://github.com/nextcloud/spreed/pull/4426)
+- Lobby date not shown in the moderator menu
+  [#4322](https://github.com/nextcloud/spreed/pull/4322)
+- Don't load the session information in rooms with more than 100 participants
+  [#4278](https://github.com/nextcloud/spreed/pull/4278)
+- Improve setting the initial status of audio/video when the high-performance backend is used
+  [#4375](https://github.com/nextcloud/spreed/pull/4375)
+- Fix syntax to check for matterbridge processes to work on more systems
+  [#4415](https://github.com/nextcloud/spreed/pull/4415)
+- Don't render an additional video when selecting the already promoted video
+  [#4419](https://github.com/nextcloud/spreed/pull/4419)
+
+## 9.0.5 – 2020-10-23
+### Fixed
+- Remove pulse animation from call button to reduce CPU load in chrome-based browsers
+  [#4302](https://github.com/nextcloud/spreed/pull/4302)
+- Only show the "Session conflict" dialog when in a call
+  [#4443](https://github.com/nextcloud/spreed/pull/4443)
+- Fix minimum length calculation of the call token
+  [#4370](https://github.com/nextcloud/spreed/pull/4370)
+- Fix duplicate session issue in files sidebar
+  [#4427](https://github.com/nextcloud/spreed/pull/4427)
+- Lobby date not shown in the moderator menu
+  [#4323](https://github.com/nextcloud/spreed/pull/4323)
+
+## 8.0.12 – 2020-10-23
+### Fixed
+- Remove pulse animation from call button to reduce CPU load in chrome-based browsers
+  [#4303](https://github.com/nextcloud/spreed/pull/4303)
+- Fix minimum length calculation of the call token
+  [#4371](https://github.com/nextcloud/spreed/pull/4371)
+- Fix duplicate session issue in files sidebar
+  [#4428](https://github.com/nextcloud/spreed/pull/4428)
+
 ## 10.0.0 – 2020-10-02
 ### Added
 - Implement unified search for messages
