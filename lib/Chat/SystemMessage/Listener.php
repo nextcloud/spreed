@@ -31,6 +31,7 @@ use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
@@ -84,7 +85,8 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 
-			if ($event->getParticipant()->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+			$session = $event->getParticipant()->getSession();
+			if (!$session instanceof Session || $session->getInCall() === Participant::FLAG_DISCONNECTED) {
 				// This happens in case the user was kicked/lobbied
 				return;
 			}
