@@ -29,7 +29,9 @@ use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
+use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -110,7 +112,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_CONNECT, $event);
 
 		if ($event->getCancelJoin() === true) {
-			// FIXME $this->removeUser($user, self::PARTICIPANT_LEFT);
+			$this->removeUser($room, $user, Room::PARTICIPANT_LEFT);
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
@@ -262,6 +264,27 @@ class ParticipantService {
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
 		}
+	}
+
+	public function removeUser(Room $room, IUser $user, string $reason): void {
+		try {
+			$participant = $room->getParticipant($user->getUID());
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
+		$event = new RemoveUserEvent($room, $participant, $user, $reason);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
+
+		$session = $participant->getSession();
+		if ($session instanceof Session) {
+			$this->sessionMapper->delete($session);
+		}
+
+		$attendee = $participant->getAttendee();
+		$this->attendeeMapper->delete($attendee);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags): void {
