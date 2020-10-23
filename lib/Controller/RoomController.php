@@ -483,7 +483,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($cleanGuests) {
-			$room->cleanGuestParticipants();
+			$this->participantService->cleanGuestParticipants($room);
 		}
 
 		$lastMessage = $room->getLastMessage();
@@ -1086,7 +1086,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($cleanGuests) {
-			$this->room->cleanGuestParticipants();
+			$this->participantService->cleanGuestParticipants($this->room);
 		}
 
 		return new DataResponse($results, Http::STATUS_OK, $headers);

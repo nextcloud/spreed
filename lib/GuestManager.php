@@ -86,7 +86,7 @@ class GuestManager {
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
-		$sessionHash = sha1($participant->getSessionId());
+		$sessionHash = $participant->getAttendee()->getActorId();
 		$dispatchEvent = true;
 
 		try {

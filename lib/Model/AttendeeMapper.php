@@ -101,6 +101,18 @@ class AttendeeMapper extends QBMapper {
 		return (int) ($row['num_actors'] ?? 0);
 	}
 
+	/**
+	 * @param int[] $ids
+	 * @return int Number of deleted entities
+	 */
+	public function deleteByIds(array $ids): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return (int) $query->execute();
+	}
+
 	public function createAttendeeFromRow(array $row): Attendee {
 		return $this->mapRowToEntity([
 			'id' => $row['a_id'],

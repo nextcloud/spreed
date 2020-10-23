@@ -71,6 +71,13 @@ class SessionService {
 		$this->sessionMapper->update($session);
 	}
 
+	/**
+	 * @param int[] $ids
+	 */
+	public function deleteSessionsById(array $ids): void {
+		$this->sessionMapper->deleteByIds($ids);
+	}
+
 	public function createSessionForAttendee(Attendee $attendee): Session {
 		// Currently a participant can only join once
 		$this->sessionMapper->deleteByAttendeeId($attendee->getId());
