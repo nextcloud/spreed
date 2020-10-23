@@ -31,8 +31,11 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Session;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -43,9 +46,11 @@ use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 
@@ -72,6 +77,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ParticipantService */
 	private $participantService;
 
+	/** @var SessionService */
+	private $sessionService;
+
 	/** @var GuestManager */
 	private $guestManager;
 
@@ -93,10 +101,14 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ISearchResult */
 	private $searchResult;
 
-	/** @var IL10N */
-	private $l;
 	/** @var ITimeFactory */
 	protected $timeFactory;
+
+	/** @var IEventDispatcher */
+	protected $eventDispatcher;
+
+	/** @var IL10N */
+	private $l;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -107,6 +119,7 @@ class ChatController extends AEnvironmentAwareController {
 								ChatManager $chatManager,
 								AttendeeMapper $attendeeMapper,
 								ParticipantService $participantService,
+								SessionService $sessionService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
@@ -114,6 +127,7 @@ class ChatController extends AEnvironmentAwareController {
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
 								ITimeFactory $timeFactory,
+								IEventDispatcher $eventDispatcher,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -124,6 +138,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->chatManager = $chatManager;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->participantService = $participantService;
+		$this->sessionService = $sessionService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
@@ -131,6 +146,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->timeFactory = $timeFactory;
+		$this->eventDispatcher = $eventDispatcher;
 		$this->l = $l;
 	}
 
@@ -273,26 +289,30 @@ class ChatController extends AEnvironmentAwareController {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
-//		if ($noStatusUpdate === 0 && $this->participant->getSessionId() !== '0') {
-//			// The mobile apps dont do internal signaling unless in a call
-//			$isMobileApp = $this->request->isUserAgent([
-//				IRequest::USER_AGENT_TALK_ANDROID,
-//				IRequest::USER_AGENT_TALK_IOS,
-//			]);
-//			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
-//				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
-//
-//				if ($lookIntoFuture) {
-//					// Bump the user status again
-//					$event = new UserLiveStatusEvent(
-//						$this->userManager->get($this->participant->getUser()),
-//						IUserStatus::ONLINE,
-//						$this->timeFactory->getTime()
-//					);
-//					$this->eventDispatcher->dispatchTyped($event);
-//				}
-//			}
-//		}
+		$session = $this->participant->getSession();
+		if ($noStatusUpdate === 0 && $session instanceof Session) {
+			// The mobile apps dont do internal signaling unless in a call
+			$isMobileApp = $this->request->isUserAgent([
+				IRequest::USER_AGENT_TALK_ANDROID,
+				IRequest::USER_AGENT_TALK_IOS,
+			]);
+			if ($isMobileApp && $session->getInCall() === Participant::FLAG_DISCONNECTED) {
+				$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
+
+				if ($lookIntoFuture) {
+					$attendee = $this->participant->getAttendee();
+					if ($attendee->getActorType() === 'users') {
+						// Bump the user status again
+						$event = new UserLiveStatusEvent(
+							$this->userManager->get($attendee->getActorId()),
+							IUserStatus::ONLINE,
+							$this->timeFactory->getTime()
+						);
+						$this->eventDispatcher->dispatchTyped($event);
+					}
+				}
+			}
+		}
 
 		/**
 		 * Automatic last read message marking for old clients

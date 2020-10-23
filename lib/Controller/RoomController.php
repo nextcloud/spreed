@@ -1436,7 +1436,7 @@ class RoomController extends AEnvironmentAwareController {
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
 			$this->session->setSessionForRoom($token, $session->getSessionId());
-			$this->sessionService->updateLastPings($session, $this->timeFactory->getTime());
+			$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 		}
 
 		return new DataResponse($this->formatRoom($room, $participant));
