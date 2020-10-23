@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.12 – 2020-10-23
+### Fixed
+- Remove pulse animation from call button to reduce CPU load in chrome-based browsers
+  [#4303](https://github.com/nextcloud/spreed/pull/4303)
+- Fix minimum length calculation of the call token
+  [#4371](https://github.com/nextcloud/spreed/pull/4371)
+- Fix duplicate session issue in files sidebar
+  [#4428](https://github.com/nextcloud/spreed/pull/4428)
+
 ## 8.0.11 – 2020-09-17
 ### Fixed
 - Internet Explorer 11 unable to load the interface
