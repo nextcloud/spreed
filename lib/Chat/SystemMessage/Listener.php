@@ -216,23 +216,28 @@ class Listener {
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
+			$attendee = $event->getParticipant()->getAttendee();
+
+			if ($attendee->getActorType() !== 'users' && $attendee->getActorType() !== 'guests') {
+				return;
+			}
 
 			if ($event->getNewValue() === Participant::MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $event->getParticipant()->getAttendee()->getActorId()]);
+				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::USER) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getParticipant()->getAttendee()->getActorId()]);
+				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $event->getParticipant()->getAttendee()->getActorId()]);
+				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $event->getParticipant()->getAttendee()->getActorId()]);
+				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 			}
 		});
 		$listener = function (GenericEvent $event) {
@@ -261,7 +266,7 @@ class Listener {
 
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null): void {
 		if ($participant instanceof Participant) {
-			$actorType = $participant->isGuest() ? 'guests' : 'users';
+			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();
 		} else {
 			$user = $this->userSession->getUser();
