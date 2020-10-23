@@ -104,7 +104,7 @@ class SearchPlugin implements ISearchPlugin {
 				$attendee = $participant->getAttendee();
 				if ($attendee->getActorType() === 'guests') {
 					$guestSessionHashes[] = $attendee->getActorId();
-				} elseif ($attendee->getActorType() === 'users')  {
+				} elseif ($attendee->getActorType() === 'users') {
 					$userIds[] = $attendee->getActorId();
 				}
 			}
