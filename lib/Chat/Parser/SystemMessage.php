@@ -340,7 +340,7 @@ class SystemMessage {
 						// 1. Only be executed on "Waiting for new messages"
 						// 2. Once per request
 						\OC_Util::tearDownFS();
-						\OC_Util::setupFS($participant->ggetAttendee()->getActorId());
+						\OC_Util::setupFS($participant->getAttendee()->getActorId());
 						$userNodes = $userFolder->getById($node->getId());
 					}
 
