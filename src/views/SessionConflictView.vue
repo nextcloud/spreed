@@ -11,5 +11,15 @@
 <script>
 export default {
 	name: 'SessionConflictView',
+
+	mounted() {
+		this.setPageTitle()
+	},
+
+	methods: {
+		setPageTitle() {
+			window.document.title = t('spreed', 'Duplicate session') + ' - ' + window.document.title
+		},
+	},
 }
 </script>
