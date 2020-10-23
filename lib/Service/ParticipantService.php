@@ -30,6 +30,7 @@ use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -285,6 +286,47 @@ class ParticipantService {
 		$this->attendeeMapper->delete($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
+	}
+
+	public function cleanGuestParticipants(Room $room): void {
+		$event = new RoomEvent($room);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUESTS_CLEAN, $event);
+
+		$query = $this->connection->getQueryBuilder();
+		$query->selectAlias('s.id', 's_id')
+			->from('talk_sessions', 's')
+			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('s.attendee_id', 'a.id'))
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter('guests')))
+			->andWhere($query->expr()->lte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
+
+		$sessionTableIds = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$sessionTableIds[] = (int) $row['s_id'];
+		}
+		$result->closeCursor();
+
+		$this->sessionService->deleteSessionsById($sessionTableIds);
+
+		$query = $this->connection->getQueryBuilder();
+		$query->selectAlias('a.id', 'a_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('s.attendee_id', 'a.id'))
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter('guests')))
+			->andWhere($query->expr()->isNull('s.id'));
+
+		$attendeeIds = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$attendeeIds[] = (int) $row['a_id'];
+		}
+		$result->closeCursor();
+
+		$this->attendeeMapper->deleteByIds($attendeeIds);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUESTS_CLEAN, $event);
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags): void {

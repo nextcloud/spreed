@@ -872,61 +872,6 @@ class Room {
 	}
 
 	/**
-	 * @param string $sessionId
-	 * @return bool
-	 */
-	protected function isSessionUnique(string $sessionId): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_sessions')
-			->from('talk_participants')
-			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
-		$result = $query->execute();
-		$numSessions = (int) $result->fetchColumn();
-		$result->closeCursor();
-
-		return $numSessions === 1;
-	}
-
-	public function cleanGuestParticipants(): void {
-		$event = new RoomEvent($this);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_GUESTS_CLEAN, $event);
-
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->emptyString('user_id'))
-			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_GUESTS_CLEAN, $event);
-	}
-
-	/**
-	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return Participant[]
-	 */
-	public function getParticipants(int $lastPing = 0): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-
-		if ($lastPing > 0) {
-			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
-		}
-
-		$result = $query->execute();
-
-		$participants = [];
-		while ($row = $result->fetch()) {
-			$participants[] = $this->manager->createParticipantObject($this, $row);
-		}
-		$result->closeCursor();
-
-		return $participants;
-	}
-
-	/**
 	 * @param string $search
 	 * @param int $limit
 	 * @param int $offset
@@ -1129,22 +1074,6 @@ class Room {
 			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->in('user_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
-		$query->execute();
-	}
-
-	/**
-	 * @param string|null $userId
-	 * @param string $sessionId
-	 * @param int $timestamp
-	 */
-	public function ping(?string $userId, string $sessionId, int $timestamp): void {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('last_ping', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter((string) $userId)))
-			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-
 		$query->execute();
 	}
 }

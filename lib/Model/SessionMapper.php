@@ -65,6 +65,18 @@ class SessionMapper extends QBMapper {
 		return (int) $query->execute();
 	}
 
+	/**
+	 * @param int[] $ids
+	 * @return int Number of deleted entities
+	 */
+	public function deleteByIds(array $ids): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return (int) $query->execute();
+	}
+
 	public function createSessionFromRow(array $row): Session {
 		return $this->mapRowToEntity([
 			'id' => $row['s_id'],

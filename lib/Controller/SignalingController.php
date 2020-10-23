@@ -30,8 +30,10 @@ use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
@@ -61,6 +63,8 @@ class SignalingController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var SessionService */
 	private $sessionService;
 	/** @var IDBConnection */
@@ -84,6 +88,7 @@ class SignalingController extends OCSController {
 								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
 								Manager $manager,
+								ParticipantService $participantService,
 								SessionService $sessionService,
 								IDBConnection $connection,
 								Messages $messages,
@@ -98,6 +103,7 @@ class SignalingController extends OCSController {
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
 		$this->messages = $messages;
 		$this->userManager = $userManager;
@@ -276,9 +282,12 @@ class SignalingController extends OCSController {
 			}
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$participant = $room->getParticipantBySession($sessionId); // FIXME this causes another query
 
 			$pingTimestamp = $this->timeFactory->getTime();
-			$room->ping($this->userId, $sessionId, $pingTimestamp);
+			if ($participant->getSession() instanceof Session) {
+				$this->sessionService->updateLastPing($participant->getSession(), $pingTimestamp);
+			}
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 		}
@@ -359,19 +368,25 @@ class SignalingController extends OCSController {
 		$timestamp = min($this->timeFactory->getTime() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
 		// "- 1" is needed because only the participants whose last ping is
 		// greater than the given timestamp are returned.
-		$participants = $room->getParticipants($timestamp - 1);
+		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
-			if ($participant->getSessionId() === '0') {
+			$session = $participant->getSession();
+			if ($session instanceof Session) {
 				// User is not active
 				continue;
 			}
 
+			$userId = '';
+			if ($participant->getAttendee()->getActorType() === 'users') {
+				$userId = $participant->getAttendee()->getActorId();
+			}
+
 			$usersInRoom[] = [
-				'userId' => $participant->getUser(),
+				'userId' => $userId,
 				'roomId' => $room->getId(),
-				'lastPing' => $participant->getLastPing(),
-				'sessionId' => $participant->getSessionId(),
-				'inCall' => $participant->getInCallFlags(),
+				'lastPing' => $session->getLastPing(),
+				'sessionId' => $session->getSessionId(),
+				'inCall' => $session->getInCall(),
 			];
 		}
 
@@ -522,33 +537,30 @@ class SignalingController extends OCSController {
 		}
 
 		$participant = null;
-		if (!empty($userId)) {
-			// User trying to join room.
-			try {
-				$participant = $room->getParticipant($userId);
-			} catch (ParticipantNotFoundException $e) {
-				// Ignore, will check for public rooms below.
-			}
-		}
-
-		if (!$participant instanceof Participant) {
-			// User was not invited to the room, check for access to public room.
-			try {
-				$participant = $room->getParticipantBySession($sessionId);
-			} catch (ParticipantNotFoundException $e) {
-				// Return generic error to avoid leaking which rooms exist.
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'no_such_room',
-						'message' => 'The user is not invited to this room.',
-					],
-				]);
+		try {
+			$participant = $room->getParticipantBySession($sessionId);
+		} catch (ParticipantNotFoundException $e) {
+			if (!empty($userId)) {
+				// User trying to join room.
+				try {
+					$participant = $room->getParticipant($userId);
+				} catch (ParticipantNotFoundException $e) {
+					// Return generic error to avoid leaking which rooms exist.
+					return new DataResponse([
+						'type' => 'error',
+						'error' => [
+							'code' => 'no_such_room',
+							'message' => 'The user is not invited to this room.',
+						],
+					]);
+				}
 			}
 		}
 
 		if ($action === 'join') {
-			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
+			if ($participant->getSession() instanceof Session) {
+				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
+			}
 		} elseif ($action === 'leave') {
 			if (!empty($userId)) {
 				$room->leaveRoom($userId, $sessionId);
