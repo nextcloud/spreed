@@ -369,7 +369,11 @@ export default {
 			this.$store.dispatch('setWindowVisibility', !document.hidden)
 			if (this.windowIsVisible) {
 				// Remove the potential "*" marker for unread chat messages
-				this.setPageTitle(this.getConversationName(this.token), false)
+				let title = this.getConversationName(this.token)
+				if (window.document.title.indexOf(t('spreed', 'Duplicate session')) === 0) {
+					title = t('spreed', 'Duplicate session')
+				}
+				this.setPageTitle(title, false)
 			} else {
 				// Copy the last message map to the saved version,
 				// this will be our reference to check if any chat got a new
@@ -388,6 +392,10 @@ export default {
 				// On the first load we store the current page title "Talk - Nextcloud",
 				// so we can append it every time again
 				this.defaultPageTitle = window.document.title
+				// Coming from a "Duplicate session - Talk - …" page?
+				if (this.defaultPageTitle.indexOf(' - ' + t('spreed', 'Talk') + ' - ') !== -1) {
+					this.defaultPageTitle = this.defaultPageTitle.substring(this.defaultPageTitle.indexOf(' - ' + t('spreed', 'Talk') + ' - ') + 3)
+				}
 				// When a conversation is opened directly, the "Talk - " part is
 				// missing from the title
 				if (this.defaultPageTitle.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
