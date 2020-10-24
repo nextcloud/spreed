@@ -550,6 +550,7 @@ OC.L10N.register(
     "Search conversations or contacts" : "Претражи разговоре или контакте",
     "[Unknown user name]" : "[непознато корисничко име]",
     "Add participants to the conversation" : "Додај учеснике на разговор",
+    "Add contacts" : "Додај контакт",
     "Guests" : "Гости",
     "Webinar" : "Вебинар",
     "Projects" : "Пројекти",
