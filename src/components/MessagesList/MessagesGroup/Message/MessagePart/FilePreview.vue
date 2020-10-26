@@ -54,6 +54,7 @@
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Close from 'vue-material-design-icons/Close'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 	name: 'FilePreview',
@@ -167,8 +168,9 @@ export default {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 
-			// TODO: make this maximum configurable
-			if (this.mimetype === 'image/gif' && this.size <= 3145728) {
+			// max size of a gif for which we allow direct embedding
+			const maxGifSize = getCapabilities()?.caps?.spreed?.config?.previews?.['max-gif-size'] || 3145728
+			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
 				// return direct image so it can be animated
 				if (userId === null) {
 					// guest mode, use public link download URL

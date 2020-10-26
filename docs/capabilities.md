@@ -51,3 +51,6 @@ title: Capabilities
 * `force-mute` - "forceMute" signaling messages can be sent to mute other participants.
 * `conversation-v2` - The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).
 * `chat-reference-id` - an optional referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message
+
+## 11.0
+* `config => previews => max-gif-size` - Maximum size in bytes below which a GIF can be embedded directly in the page at render time. Bigger files will be rendered statically using the preview endpoint instead. Can be set with `occ config:app:set spreed max-gif-size --value=X` where X is the new value in bytes. Defaults to 3 MB.

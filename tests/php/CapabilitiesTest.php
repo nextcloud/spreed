@@ -64,10 +64,12 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->expects($this->never())
 			->method('isDisabledForUser');
 
-		$this->serverConfig->expects($this->once())
+		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
-			->with('spreed', 'has_reference_id', 'no')
-			->willReturn('no');
+			->willReturnMap([
+				['spreed', 'has_reference_id', 'no', 'no'],
+				['spreed', 'max-gif-size', '3145728', '200000'],
+			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
@@ -107,6 +109,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => false,
+					],
+					'previews' => [
+						'max-gif-size' => 200000,
 					],
 				],
 			],
@@ -155,10 +160,12 @@ class CapabilitiesTest extends TestCase {
 			->with($user)
 			->willReturn($isNotAllowed);
 
-		$this->serverConfig->expects($this->once())
+		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
-			->with('spreed', 'has_reference_id', 'no')
-			->willReturn('yes');
+			->willReturnMap([
+				['spreed', 'has_reference_id', 'no', 'yes'],
+				['spreed', 'max-gif-size', '3145728', '200000'],
+			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
@@ -200,6 +207,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
+					],
+					'previews' => [
+						'max-gif-size' => 200000,
 					],
 				],
 			],
