@@ -115,10 +115,6 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$public && $room->hasPassword()) {
-			throw new InvalidArgumentException('Unable to change password protected public room to private room.');
-		}
-
 		if (!$room->setType($public ? Room::PUBLIC_CALL : Room::GROUP_CALL)) {
 			throw new InvalidArgumentException('Unable to change room type.');
 		}
@@ -175,7 +171,7 @@ trait TRoomCommand {
 
 		$this->unsetRoomOwner($room);
 
-		$room->setParticipantType($participant, Participant::OWNER);
+		$this->participantService->updateParticipantType($room, $participant, Participant::OWNER);
 	}
 
 	/**
@@ -184,9 +180,10 @@ trait TRoomCommand {
 	 * @throws InvalidArgumentException
 	 */
 	protected function unsetRoomOwner(Room $room): void {
-		foreach ($room->getParticipants() as $participant) {
-			if ($participant->getParticipantType() === Participant::OWNER) {
-				$room->setParticipantType($participant, Participant::USER);
+		$participants = $this->participantService->getParticipantsForRoom($room);
+		foreach ($participants as $participant) {
+			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
+				$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 			}
 		}
 	}
@@ -216,7 +213,7 @@ trait TRoomCommand {
 			$users = array_merge($users, array_values($groupUsers));
 		}
 
-		$this->addRoomParticipants($room, $users);
+		$this->addRoomParticipants($room, array_unique($users));
 	}
 
 	/**
@@ -251,12 +248,13 @@ trait TRoomCommand {
 				// we expect the user not to be a participant yet
 			}
 
-			$participants[$user->getUID()] = [
-				'userId' => $user->getUID(),
+			$participants[] = [
+				'actorType' => 'users',
+				'actorId' => $user->getUID(),
 			];
 		}
 
-		\call_user_func_array([$room, 'addUsers'], $participants);
+		$this->participantService->addUsers($room, $participants);
 	}
 
 	/**
@@ -297,13 +295,13 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			if ($participant->getParticipantType() !== Participant::OWNER) {
+			if ($participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
 				$participants[] = $participant;
 			}
 		}
 
 		foreach ($participants as $participant) {
-			$room->setParticipantType($participant, Participant::MODERATOR);
+			$this->participantService->updateParticipantType($room, $participant, Participant::MODERATOR);
 		}
 	}
 
@@ -322,13 +320,13 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			if ($participant->getParticipantType() === Participant::MODERATOR) {
+			if ($participant->getAttendee()->getParticipantType() === Participant::MODERATOR) {
 				$participants[] = $participant;
 			}
 		}
 
 		foreach ($participants as $participant) {
-			$room->setParticipantType($participant, Participant::USER);
+			$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 		}
 	}
 
