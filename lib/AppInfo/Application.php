@@ -36,7 +36,6 @@ use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
-use OCA\Talk\Dashboard\TalkWidget2;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -103,7 +102,6 @@ class Application extends App implements IBootstrap {
 		$context->registerSearchProvider(MessageSearch::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
-		$context->registerDashboardWidget(TalkWidget2::class);
 	}
 
 	public function boot(IBootContext $context): void {
