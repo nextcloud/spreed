@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -47,6 +48,9 @@ trait TRoomCommand {
 	/** @var RoomService */
 	protected $roomService;
 
+	/** @var ParticipantService */
+	protected $participantService;
+
 	/** @var IUserManager */
 	protected $userManager;
 
@@ -55,12 +59,14 @@ trait TRoomCommand {
 
 	public function __construct(Manager $manager,
 								RoomService $roomService,
+								ParticipantService $participantService,
 								IUserManager $userManager,
 								IGroupManager $groupManager) {
 		parent::__construct();
 
 		$this->manager = $manager;
 		$this->roomService = $roomService;
+		$this->participantService = $participantService;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 	}
@@ -272,7 +278,7 @@ trait TRoomCommand {
 		}
 
 		foreach ($users as $user) {
-			$room->removeUser($user, Room::PARTICIPANT_REMOVED);
+			$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
 		}
 	}
 
@@ -371,9 +377,11 @@ trait TRoomCommand {
 		}
 
 		$users = [];
-		foreach ($room->searchParticipants($context->getCurrentWord()) as $participant) {
-			if (!$participant->isGuest()) {
-				$users[] = $participant->getUser();
+		$participants = $this->participantService->getParticipantsForRoom($room);
+		foreach ($participants as $participant) {
+			if ($participant->getAttendee()->getActorType() === 'users'
+				&& stripos($participant->getAttendee()->getActorId(), $context->getCurrentWord()) !== false) {
+				$users[] = $participant->getAttendee()->getActorId();
 			}
 		}
 

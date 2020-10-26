@@ -28,11 +28,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\ModifyLobbyEvent;
-use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
-use OCA\Talk\Events\ParticipantEvent;
-use OCA\Talk\Events\RemoveParticipantEvent;
-use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -43,7 +39,6 @@ use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
-use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
@@ -720,30 +715,6 @@ class Room {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param string $reason
-	 */
-	public function removeUser(IUser $user, string $reason): void {
-		try {
-			$participant = $this->getParticipant($user->getUID());
-		} catch (ParticipantNotFoundException $e) {
-			return;
-		}
-
-		$event = new RemoveUserEvent($this, $participant, $user, $reason);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_USER_REMOVE, $event);
-
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_attendees')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($user->getUID())))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter('users')));
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_USER_REMOVE, $event);
-	}
-
-	/**
 	 * @param string $password
 	 * @return array
 	 */
@@ -762,89 +733,5 @@ class Room {
 			'result' => !$this->hasPassword() || $this->hasher->verify($password, $this->password),
 			'url' => '',
 		];
-	}
-
-	/**
-	 * @param string $search
-	 * @param int $limit
-	 * @param int $offset
-	 * @return Participant[]
-	 */
-	public function searchParticipants(string $search = '', int $limit = null, int $offset = null): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId())));
-
-		if ($search !== '') {
-			$query->where($query->expr()->iLike('user_id', $query->createNamedParameter(
-				'%' . $this->db->escapeLikeParameter($search) . '%'
-			)));
-		}
-
-		if ($limit !== null) {
-			$query->setMaxResults($limit);
-		}
-		if ($offset !== null) {
-			$query->setFirstResult($offset);
-		}
-		$query->orderBy('user_id', 'ASC');
-		$result = $query->execute();
-
-		$participants = [];
-		while ($row = $result->fetch()) {
-			$participants[] = $this->manager->createParticipantObject($this, $row);
-		}
-		$result->closeCursor();
-
-		return $participants;
-	}
-
-	/**
-	 * Get all user ids which are participants in a room but currently not in the call
-	 * @return string[]
-	 */
-	public function getNotInCallUserIds(): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('user_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->nonEmptyString('user_id'))
-			->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
-		$result = $query->execute();
-
-		$userIds = [];
-		while ($row = $result->fetch()) {
-			$userIds[] = $row['user_id'];
-		}
-		$result->closeCursor();
-
-		return $userIds;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function hasSessionsInCall(): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->select('session_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT)))
-			->setMaxResults(1);
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		return (bool) $row;
-	}
-
-	public function markUsersAsMentioned(array $userIds, int $messageId): void {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->in('user_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
-		$query->execute();
 	}
 }

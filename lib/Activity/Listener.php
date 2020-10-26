@@ -108,7 +108,7 @@ class Listener {
 	 */
 	public function generateCallActivity(Room $room): bool {
 		$activeSince = $room->getActiveSince();
-		if (!$activeSince instanceof \DateTime || $room->hasSessionsInCall()) {
+		if (!$activeSince instanceof \DateTime || $this->participantService->hasActiveSessionsInCall($room)) {
 			return false;
 		}
 
