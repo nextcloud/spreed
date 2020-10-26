@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use OCA\Talk\Model\Session;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -33,12 +35,17 @@ class Messages {
 	/** @var IDBConnection */
 	protected $db;
 
+	/** @var ParticipantService */
+	protected $participantService;
+
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
 	public function __construct(IDBConnection $db,
+								ParticipantService $participantService,
 								ITimeFactory $timeFactory) {
 		$this->db = $db;
+		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -88,10 +95,14 @@ class Messages {
 				]
 			);
 
-		foreach ($room->getActiveSessions() as $sessionId) {
-			$query->setParameter('sender', $sessionId)
-				->setParameter('recipient', $sessionId)
-				->execute();
+		$participants = $this->participantService->getParticipantsWithSession($room);
+		foreach ($participants as $participant) {
+			$session = $participant->getSession();
+			if ($session instanceof Session) {
+				$query->setParameter('sender', $session->getSessionId())
+					->setParameter('recipient', $session->getSessionId())
+					->execute();
+			}
 		}
 	}
 

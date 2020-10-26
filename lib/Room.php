@@ -678,17 +678,6 @@ class Room {
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
 
-		if ($newState === Webinary::LOBBY_NON_MODERATORS) {
-			$participants = $this->getParticipantsInCall();
-			foreach ($participants as $participant) {
-				if ($participant->hasModeratorPermissions()) {
-					continue;
-				}
-
-				$this->changeInCall($participant, Participant::FLAG_DISCONNECTED);
-			}
-		}
-
 		return true;
 	}
 
@@ -731,31 +720,6 @@ class Room {
 	}
 
 	/**
-	 * @param Participant $participant
-	 * @param int $participantType
-	 */
-	public function setParticipantType(Participant $participant, int $participantType): void {
-		$event = new ModifyParticipantEvent($this, $participant, 'type', $participantType, $participant->getParticipantType());
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_attendees')
-			->set('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($participant->getUser())))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter('users')));
-
-		if ($participant->getUser() === '') {
-			// FIXME
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
-		}
-
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
-	}
-
-	/**
 	 * @param IUser $user
 	 * @param string $reason
 	 */
@@ -777,77 +741,6 @@ class Room {
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_USER_REMOVE, $event);
-	}
-
-	/**
-	 * @param Participant $participant
-	 * @param string $reason
-	 */
-	public function removeParticipantBySession(Participant $participant, string $reason): void {
-		$event = new RemoveParticipantEvent($this, $participant, $reason);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
-
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
-	}
-
-	/**
-	 * @param string $userId
-	 * @param string|null $sessionId
-	 */
-	public function leaveRoom(string $userId, ?string $sessionId = null): void {
-		try {
-			$participant = $this->getParticipant($userId);
-		} catch (ParticipantNotFoundException $e) {
-			return;
-		}
-
-		$this->leaveRoomAsParticipant($participant, $sessionId);
-	}
-
-	/**
-	 * @param Participant $participant
-	 * @param string|null $sessionId
-	 */
-	public function leaveRoomAsParticipant(Participant $participant, ?string $sessionId = null): void {
-		$event = new ParticipantEvent($this, $participant);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DISCONNECT, $event);
-
-		// Reset session when leaving a normal room
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('session_id', $query->createNamedParameter('0'))
-			->set('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if ($sessionId !== null && $sessionId !== '0') {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
-		} elseif ($participant->getSessionId() !== '0') {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
-		}
-		$query->execute();
-
-		// And kill session when leaving a self joined room
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_attendees')
-			->where($query->expr()->eq('actor_id', $query->createNamedParameter($participant->getUser())))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter('users')))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		if ($sessionId !== null && $sessionId !== '0') {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
-		} elseif ($participant->getSessionId() !== '0') {
-			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
-		}
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DISCONNECT, $event);
 	}
 
 	/**
@@ -905,128 +798,6 @@ class Room {
 		$result->closeCursor();
 
 		return $participants;
-	}
-
-	/**
-	 * @return Participant[]
-	 */
-	public function getParticipantsInCall(): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
-
-		$result = $query->execute();
-
-		$participants = [];
-		while ($row = $result->fetch()) {
-			$participants[] = $this->manager->createParticipantObject($this, $row);
-		}
-		$result->closeCursor();
-
-		return $participants;
-	}
-
-	/**
-	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
-	 * @deprecated Use self::getParticipants() instead
-	 */
-	public function getParticipantsLegacy(int $lastPing = 0): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-
-		if ($lastPing > 0) {
-			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
-		}
-
-		$result = $query->execute();
-
-		$users = $guests = [];
-		while ($row = $result->fetch()) {
-			if ($row['user_id'] !== '' && $row['user_id'] !== null) {
-				$users[$row['user_id']] = [
-					'inCall' => (int) $row['in_call'],
-					'lastPing' => (int) $row['last_ping'],
-					'sessionId' => $row['session_id'],
-					'participantType' => (int) $row['participant_type'],
-				];
-			} else {
-				$guests[] = [
-					'inCall' => (int) $row['in_call'],
-					'lastPing' => (int) $row['last_ping'],
-					'participantType' => (int) $row['participant_type'],
-					'sessionId' => $row['session_id'],
-				];
-			}
-		}
-		$result->closeCursor();
-
-		return [
-			'users' => $users,
-			'guests' => $guests,
-		];
-	}
-
-	/**
-	 * @param int $notificationLevel
-	 * @return Participant[] Array of participants
-	 */
-	public function getParticipantsByNotificationLevel(int $notificationLevel): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
-		$result = $query->execute();
-
-		$participants = [];
-		while ($row = $result->fetch()) {
-			$participants[] = $this->manager->createParticipantObject($this, $row);
-		}
-		$result->closeCursor();
-
-		return $participants;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function hasActiveSessions(): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->select('room_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('session_id', $query->createNamedParameter('0')))
-			->setMaxResults(1);
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		return (bool) $row;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	public function getActiveSessions(): array {
-		$query = $this->db->getQueryBuilder();
-		$query->select('session_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('session_id', $query->createNamedParameter('0')));
-		$result = $query->execute();
-
-		$sessions = [];
-		while ($row = $result->fetch()) {
-			$sessions[] = $row['session_id'];
-		}
-		$result->closeCursor();
-
-		return $sessions;
 	}
 
 	/**

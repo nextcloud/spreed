@@ -239,7 +239,7 @@ class Manager {
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
 			$room = $this->createRoomObject($row);
-			if (!$room->hasActiveSessions()) {
+			if (!$this->participantService->hasActiveSessions($room)) {
 				$room->setAssignedSignalingServer(null);
 				$cache->remove($room->getToken());
 			}
