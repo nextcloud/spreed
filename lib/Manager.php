@@ -301,7 +301,8 @@ class Manager {
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
 				$query->expr()->eq('a.room_id', 'r.id')
-			));
+			))
+			->where($query->expr()->isNotNull('a.id'));
 
 		if ($includeLastMessage) {
 			$this->loadLastMessageInfo($query);
@@ -344,12 +345,13 @@ class Manager {
 		if ($userId !== null) {
 			// Non guest user
 			$query->addSelect('a.*')
-				->selectAlias('a.id', 'a_id');
-			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				->selectAlias('a.id', 'a_id')
+				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
 					$query->expr()->eq('a.room_id', 'r.id')
-				));
+				))
+				->andWhere($query->expr()->isNotNull('a.id'));
 		}
 
 		$result = $query->execute();
