@@ -292,6 +292,7 @@ export default {
 
 	.loading {
 		display: inline-block;
+		width: 100%;
 		margin-left: 32px;
 	}
 
