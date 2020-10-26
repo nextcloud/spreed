@@ -138,10 +138,7 @@ class ParticipantService {
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CONNECT, $event);
 
-		return new Participant(
-			\OC::$server->getDatabaseConnection(), // FIXME
-			\OC::$server->getConfig(), // FIXME
-			$room, $attendee, $session);
+		return new Participant($room, $attendee, $session);
 	}
 
 	/**
@@ -187,10 +184,7 @@ class ParticipantService {
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUEST_CONNECT, $event);
 
-		return new Participant(
-			\OC::$server->getDatabaseConnection(), // FIXME
-			\OC::$server->getConfig(), // FIXME
-			$room, $attendee, $session);
+		return new Participant($room, $attendee, $session);
 	}
 
 	/**
@@ -396,24 +390,7 @@ class ParticipantService {
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 
-		$participants = [];
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
-			if (isset($row['s_id'])) {
-				$session = $this->sessionMapper->createSessionFromRow($row);
-			} else {
-				$session = null;
-			}
-
-			$participants[] = new Participant(
-				\OC::$server->getDatabaseConnection(), // FIXME
-				\OC::$server->getConfig(), // FIXME
-				$room, $attendee, $session);
-		}
-		$result->closeCursor();
-
-		return $participants;
+		return $this->getParticipantsFromQuery($query, $room);
 	}
 
 	/**
@@ -435,20 +412,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('s.id'));
 
-		$participants = [];
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
-			$session = $this->sessionMapper->createSessionFromRow($row);
-
-			$participants[] = new Participant(
-				\OC::$server->getDatabaseConnection(), // FIXME
-				\OC::$server->getConfig(), // FIXME
-				$room, $attendee, $session);
-		}
-		$result->closeCursor();
-
-		return $participants;
+		return $this->getParticipantsFromQuery($query, $room);
 	}
 
 	/**
@@ -470,20 +434,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
 
-		$participants = [];
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
-			$session = $this->sessionMapper->createSessionFromRow($row);
-
-			$participants[] = new Participant(
-				\OC::$server->getDatabaseConnection(), // FIXME
-				\OC::$server->getConfig(), // FIXME
-				$room, $attendee, $session);
-		}
-		$result->closeCursor();
-
-		return $participants;
+		return $this->getParticipantsFromQuery($query, $room);
 	}
 
 	/**
@@ -506,16 +457,25 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
 
+		return $this->getParticipantsFromQuery($query, $room);
+	}
+
+	/**
+	 * @param IQueryBuilder $query
+	 * @return Participant[]
+	 */
+	protected function getParticipantsFromQuery(IQueryBuilder $query, Room $room): array {
 		$participants = [];
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
 			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
-			$session = $this->sessionMapper->createSessionFromRow($row);
+			if (isset($row['s_id'])) {
+				$session = $this->sessionMapper->createSessionFromRow($row);
+			} else {
+				$session = null;
+			}
 
-			$participants[] = new Participant(
-				\OC::$server->getDatabaseConnection(), // FIXME
-				\OC::$server->getConfig(), // FIXME
-				$room, $attendee, $session);
+			$participants[] = new Participant($room, $attendee, $session);
 		}
 		$result->closeCursor();
 

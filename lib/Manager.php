@@ -194,13 +194,7 @@ class Manager {
 			$session = $this->sessionMapper->createSessionFromRow($row);
 		}
 
-		return new Participant(
-			$this->db,
-			$this->config,
-			$room,
-			$attendee,
-			$session
-		);
+		return new Participant($room, $attendee, $session);
 	}
 
 	public function createCommentObject(array $row): ?IComment {

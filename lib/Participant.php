@@ -28,7 +28,6 @@ namespace OCA\Talk;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCP\IConfig;
-use OCP\IDBConnection;
 
 class Participant {
 	public const OWNER = 1;
@@ -49,10 +48,6 @@ class Participant {
 	public const NOTIFY_MENTION = 2;
 	public const NOTIFY_NEVER = 3;
 
-	/** @var IDBConnection */
-	protected $db;
-	/** @var IConfig */
-	protected $config;
 	/** @var Room */
 	protected $room;
 	/** @var Attendee */
@@ -60,13 +55,9 @@ class Participant {
 	/** @var Session|null */
 	protected $session;
 
-	public function __construct(IDBConnection $db,
-								IConfig $config,
-								Room $room,
+	public function __construct(Room $room,
 								Attendee $attendee,
 								?Session $session) {
-		$this->db = $db;
-		$this->config = $config;
 		$this->room = $room;
 		$this->attendee = $attendee;
 		$this->session = $session;
@@ -94,8 +85,8 @@ class Participant {
 		return \in_array($participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
-	public function canStartCall(): bool {
-		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
+	public function canStartCall(IConfig $config): bool {
+		$defaultStartCall = (int) $config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
 
 		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
 			return true;
