@@ -843,7 +843,7 @@ OC.L10N.register(
     "Camera {number}" : "Kamera {number}",
     "Speaker {number}" : "Reproduktor {number}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Zdá se, že mluvíte a přitom máte ztlumeno – zrušte ztlumení, aby vás ostatní slyšeli",
-    "Could not establish a connection with at least one participant. A TURN server might be needed for your scenario. Please ask your administrator to set one up following {linkstart}this documentation{linkend}." : "Nedaří se navázat spojení s přinejmenším jedním účastníkem. Pro váš scénář může být zapotřebí TURN server. Požádejte správce o nastavení nějakého podle {linkstart}jtéto dokumentace{linkend}.",
+    "Could not establish a connection with at least one participant. A TURN server might be needed for your scenario. Please ask your administrator to set one up following {linkstart}this documentation{linkend}." : "Nedaří se navázat spojení přinejmenším s jedním účastníkem. Pro váš scénář může být zapotřebí TURN server. Požádejte správce o nastavení nějakého podle {linkstart}této dokumentace{linkend}.",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Toto trvá déle než by mělo. Udělili už jste oprávnění pro přístup k médiím (nebo snad zamítli)? Pokud jsou oprávnění udělena, restartujte webový prohlížeč, protože zvuk a video se nedaří",
     "Access to microphone & camera is only possible with HTTPS" : "Přístup k mikrofonu a kameře je možný pouze přes HTTPS",
     "Please move your setup to HTTPS" : "Přesuňte svou instalaci na HTTPS",
