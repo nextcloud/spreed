@@ -74,6 +74,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var SharingContext */
 	private $sharingContext;
 
+	use CommandLineTrait;
+
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
 	}
