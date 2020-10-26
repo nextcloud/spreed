@@ -94,7 +94,7 @@ export default {
 		},
 		previewSize: {
 			type: Number,
-			default: 128,
+			default: 384,
 		},
 		// In case this component is used to display a file that is being uploaded
 		// this parameter is used to access the file upload status in the store
@@ -292,13 +292,12 @@ export default {
 
 	.loading {
 		display: inline-block;
-		height: 128px;
 		margin-left: 32px;
 	}
 
 	.preview {
 		display: inline-block;
-		height: 128px;
+		height: 384px;
 	}
 	.preview-64 {
 		display: inline-block;
