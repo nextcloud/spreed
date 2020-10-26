@@ -162,9 +162,9 @@ export default {
 			}
 
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
-			return generateUrl('/core/preview?fileId={fileId}&x={width}&y={height}', {
+			// expand width but keep a max height
+			return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
 				fileId: this.id,
-				width: previewSize,
 				height: previewSize,
 			})
 		},
@@ -290,14 +290,18 @@ export default {
 		object-fit: cover;
 	}
 
+	.loading {
+		display: inline-block;
+		height: 128px;
+		margin-left: 32px;
+	}
+
 	.preview {
-		display: block;
-		width: 128px;
+		display: inline-block;
 		height: 128px;
 	}
 	.preview-64 {
-		display: block;
-		width: 64px;
+		display: inline-block;
 		height: 64px;
 	}
 
@@ -308,7 +312,6 @@ export default {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
-		margin-top: 4px;
 	}
 
 	&:not(.file-preview--viewer-available) {
