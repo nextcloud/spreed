@@ -28,7 +28,7 @@
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click="handleClick"
 		@keydown.enter="handleClick">
-		<img v-if="(!isLoading && !failed) || hasTemporaryImageUrl"
+		<img v-if="(!isLoading && !failed)"
 			:class="previewSizeClass"
 			class="file-preview__image"
 			alt=""
@@ -94,7 +94,7 @@ export default {
 		},
 		previewSize: {
 			type: Number,
-			default: 128,
+			default: 384,
 		},
 		// In case this component is used to display a file that is being uploaded
 		// this parameter is used to access the file upload status in the store
@@ -109,6 +109,7 @@ export default {
 			default: '',
 		},
 		// True if this component is used in the upload editor
+		// FIXME: file-preview should be encapsulated and not be aware of its surroundings
 		isUploadEditor: {
 			type: Boolean,
 			default: false,
@@ -162,9 +163,9 @@ export default {
 			}
 
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
-			return generateUrl('/core/preview?fileId={fileId}&x={width}&y={height}', {
+			// expand width but keep a max height
+			return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
 				fileId: this.id,
-				width: previewSize,
 				height: previewSize,
 			})
 		},
@@ -290,14 +291,19 @@ export default {
 		object-fit: cover;
 	}
 
+	.loading {
+		display: inline-block;
+		width: 100%;
+	}
+
 	.preview {
-		display: block;
-		width: 128px;
-		height: 128px;
+		display: inline-block;
+		max-width: 100%;
+		height: 384px;
 	}
 	.preview-64 {
-		display: block;
-		width: 64px;
+		display: inline-block;
+		max-width: 100%;
 		height: 64px;
 	}
 
@@ -308,7 +314,6 @@ export default {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
-		margin-top: 4px;
 	}
 
 	&:not(.file-preview--viewer-available) {
@@ -323,6 +328,11 @@ export default {
 		padding: 12px;
 		.preview {
 			margin: auto;
+			width: 128px;
+			height: 128px;
+		}
+		.loading {
+			width: 100%;
 		}
 	}
 }
