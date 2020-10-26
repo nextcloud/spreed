@@ -323,6 +323,7 @@ class SystemMessage {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
 		$name = $node->getName();
+		$size = $node->getSize();
 		$path = $name;
 
 		if (!$participant->isGuest()) {
@@ -349,6 +350,7 @@ class SystemMessage {
 					$fullPath = $userNode->getPath();
 					$pathSegments = explode('/', $fullPath, 4);
 					$name = $userNode->getName();
+					$size = $userNode->getSize();
 					$path = $pathSegments[3] ?? $path;
 				}
 			} else {
@@ -370,6 +372,7 @@ class SystemMessage {
 			'type' => 'file',
 			'id' => (string) $node->getId(),
 			'name' => $name,
+			'size' => $size,
 			'path' => $path,
 			'link' => $url,
 			'mimetype' => $node->getMimeType(),
