@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { generateUrl, imagePath } from '@nextcloud/router'
+import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Close from 'vue-material-design-icons/Close'
 
@@ -79,6 +79,10 @@ export default {
 		path: {
 			type: String,
 			default: '',
+		},
+		size: {
+			type: Number,
+			default: -1,
 		},
 		link: {
 			type: String,
@@ -154,20 +158,42 @@ export default {
 			return 'preview'
 		},
 		previewUrl() {
+			const userId = this.$store.getters.getUserId()
 			if (this.hasTemporaryImageUrl) {
 				return this.localUrl
 			}
 
-			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
+			if (this.previewAvailable !== 'yes') {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 
+			// TODO: make this maximum configurable
+			if (this.mimetype === 'image/gif' && this.size <= 3145728) {
+				// return direct image so it can be animated
+				if (userId === null) {
+					// guest mode, use public link download URL
+					return this.link + '/download/' + this.name
+				} else {
+					// use direct DAV URL
+					return generateRemoteUrl(`dav/files/${userId}`) + this.internalAbsolutePath
+				}
+			}
+
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
-			// expand width but keep a max height
-			return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
-				fileId: this.id,
-				height: previewSize,
-			})
+			if (userId === null) {
+				// guest mode: grab token from the link URL
+				// FIXME: use a cleaner way...
+				const token = this.link.substr(this.link.lastIndexOf('/') + 1)
+				return generateUrl('/apps/files_sharing/publicpreview/{token}?x=-1&y={height}&a=1', {
+					token: token,
+					height: previewSize,
+				})
+			} else {
+				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
+					fileId: this.id,
+					height: previewSize,
+				})
+			}
 		},
 		isViewerAvailable() {
 			if (!OCA.Viewer) {
