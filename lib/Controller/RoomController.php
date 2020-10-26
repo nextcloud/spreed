@@ -1057,7 +1057,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				if ($result['lastPing'] > 0 && $result['lastPing'] <= $maxPingAge) {
-					$this->room->leaveRoom($userId);
+					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 
 				$result['userId'] = $participant->getAttendee()->getActorId();
@@ -1303,7 +1303,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->room->removeParticipantBySession($targetParticipant, Room::PARTICIPANT_REMOVED);
+		$this->participantService->removeAttendee($this->room, $targetParticipant, Room::PARTICIPANT_REMOVED);
 		return new DataResponse([]);
 	}
 

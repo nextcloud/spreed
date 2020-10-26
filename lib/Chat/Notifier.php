@@ -165,7 +165,7 @@ class Notifier {
 	 * @param string[] $alreadyNotifiedUsers
 	 */
 	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers): void {
-		$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_ALWAYS);
+		$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_ALWAYS);
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
 		foreach ($participants as $participant) {
@@ -179,7 +179,7 @@ class Notifier {
 
 		// Also notify default participants in one2one chats or when the admin default is "always"
 		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::ONE_TO_ONE_CALL) {
-			$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_DEFAULT);
+			$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_DEFAULT);
 			foreach ($participants as $participant) {
 				if (!$this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers)) {
 					continue;

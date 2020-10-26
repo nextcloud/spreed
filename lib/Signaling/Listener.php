@@ -37,6 +37,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
@@ -99,12 +100,15 @@ class Listener {
 
 			/** @var Messages $messages */
 			$messages = \OC::$server->query(Messages::class);
-			$participants = $room->getParticipantsLegacy();
-			foreach ($participants['users'] as $participant) {
-				$messages->addMessage($participant['sessionId'], $participant['sessionId'], 'refresh-participant-list');
-			}
-			foreach ($participants['guests'] as $participant) {
-				$messages->addMessage($participant['sessionId'], $participant['sessionId'], 'refresh-participant-list');
+			/** @var ParticipantService $participantService */
+			$participantService = \OC::$server->query(ParticipantService::class);
+
+			$participants = $participantService->getParticipantsForRoom($room);
+			foreach ($participants as $participant) {
+				$session = $participant->getSession();
+				if ($session instanceof Session) {
+					$messages->addMessage($session->getSessionId(), $session->getSessionId(), 'refresh-participant-list');
+				}
 			}
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, $listener);
@@ -167,10 +171,11 @@ class Listener {
 
 			/** @var BackendNotifier $notifier */
 			$notifier = \OC::$server->query(BackendNotifier::class);
+			/** @var ParticipantService $participantService */
+			$participantService = \OC::$server->query(ParticipantService::class);
 
 			$room = $event->getRoom();
-			$participants = $room->getParticipantsLegacy();
-			$notifier->roomDeleted($room, $participants);
+			$notifier->roomDeleted($room, $participantService->getParticipantUserIds($room));
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function (RemoveUserEvent $event) {
 			if (self::isUsingInternalSignaling()) {

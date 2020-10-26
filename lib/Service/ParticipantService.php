@@ -267,6 +267,16 @@ class ParticipantService {
 		}
 	}
 
+	public function removeAttendee(Room $room, Participant $participant, string $reason): void {
+		$event = new RemoveParticipantEvent($room, $participant, $reason);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
+
+		$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
+		$this->attendeeMapper->delete($participant->getAttendee());
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+	}
+
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
 			$participant = $room->getParticipant($user->getUID());
@@ -400,6 +410,41 @@ class ParticipantService {
 	 * @param Room $room
 	 * @return Participant[]
 	 */
+	public function getParticipantsWithSession(Room $room): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$query->select('a.*')
+			->selectAlias('a.id', 'a_id')
+			->addSelect('s.*')
+			->selectAlias('s.id', 's_id')
+			->from('talk_attendees', 'a')
+			->leftJoin(
+				'a', 'talk_sessions', 's',
+				$query->expr()->eq('s.attendee_id', 'a.id')
+			)
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNotNull('s.id'));
+
+		$participants = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+			$session = $this->sessionMapper->createSessionFromRow($row);
+
+			$participants[] = new Participant(
+				\OC::$server->getDatabaseConnection(), // FIXME
+				\OC::$server->getConfig(), // FIXME
+				$room, $attendee, $session);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @param Room $room
+	 * @return Participant[]
+	 */
 	public function getParticipantsInCall(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
@@ -414,6 +459,42 @@ class ParticipantService {
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)));
+
+		$participants = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+			$session = $this->sessionMapper->createSessionFromRow($row);
+
+			$participants[] = new Participant(
+				\OC::$server->getDatabaseConnection(), // FIXME
+				\OC::$server->getConfig(), // FIXME
+				$room, $attendee, $session);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param int $notificationLevel
+	 * @return Participant[]
+	 */
+	public function getParticipantsByNotificationLevel(Room $room, int $notificationLevel): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$query->select('a.*')
+			->selectAlias('a.id', 'a_id')
+			->addSelect('s.*')
+			->selectAlias('s.id', 's_id')
+			->from('talk_sessions', 's')
+			->leftJoin(
+				's', 'talk_attendees', 'a',
+				$query->expr()->eq('s.attendee_id', 'a.id')
+			)
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
 
 		$participants = [];
 		$result = $query->execute();
@@ -478,5 +559,26 @@ class ParticipantService {
 	 */
 	public function getNumberOfActors(Room $room): int {
 		return $this->attendeeMapper->countActorsByParticipantType($room->getId(), []);
+	}
+
+	/**
+	 * @param Room $room
+	 * @return bool
+	 */
+	public function hasActiveSessions(Room $room): bool {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('a.room_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq(
+				'a.id', 's.attendee_id'
+			))
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNotNull('s.id'))
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (bool) $row;
 	}
 }

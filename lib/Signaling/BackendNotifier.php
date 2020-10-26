@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Signaling;
 
 use OCA\Talk\Config;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -223,12 +224,11 @@ class BackendNotifier {
 	 * The given room has been deleted.
 	 *
 	 * @param Room $room
-	 * @param array $participants
+	 * @param string[] $userIds
 	 * @throws \Exception
 	 */
-	public function roomDeleted(Room $room, array $participants): void {
+	public function roomDeleted(Room $room, array $userIds): void {
 		$this->logger->info('Room deleted: ' . $room->getToken());
-		$userIds = array_keys($participants['users']);
 		$this->backendRequest($room, [
 			'type' => 'delete',
 			'delete' => [
@@ -248,29 +248,45 @@ class BackendNotifier {
 		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipantsLegacy();
-		foreach ($participants['users'] as $userId => $participant) {
-			$participant['userId'] = $userId;
-			$users[] = $participant;
-			if (\in_array($participant['sessionId'], $sessionIds, true)) {
-				$participant['permissions'] = ['publish-media', 'publish-screen'];
-				if ($participant['participantType'] === Participant::OWNER ||
-						$participant['participantType'] === Participant::MODERATOR) {
-					$participant['permissions'][] = 'control';
+		$participants = $this->participantService->getParticipantsForRoom($room);
+		foreach ($participants as $participant) {
+			$attendee = $participant->getAttendee();
+			if ($attendee->getActorType() !== 'users'
+				&& $attendee->getActorType() !== 'guests') {
+				continue;
+			}
+
+			$data = [
+				'inCall' => Participant::FLAG_DISCONNECTED,
+				'lastPing' => 0,
+				'sessionId' => '0',
+				'participantType' => $attendee->getParticipantType(),
+			];
+			if ($attendee->getActorType() !== 'users') {
+				$data['userId'] = $attendee->getActorId();
+			}
+			$users[] = $data;
+
+			$session = $participant->getSession();
+			if ($session instanceof Session) {
+				$data['inCall'] = $session->getInCall();
+				$data['lastPing'] = $session->getLastPing();
+				$data['sessionId'] = $session->getSessionId();
+				$users[] = $data;
+
+				if (\in_array($session->getSessionId(), $sessionIds, true)) {
+					$data['permissions'] = ['publish-media', 'publish-screen'];
+					if ($attendee->getParticipantType() === Participant::OWNER ||
+						$attendee->getParticipantType() === Participant::MODERATOR) {
+						$data['permissions'][] = 'control';
+					}
+					$changed[] = $data;
 				}
-				$changed[] = $participant;
+			} else {
+				$users[] = $data;
 			}
 		}
-		foreach ($participants['guests'] as $participant) {
-			if (!isset($participant['participantType'])) {
-				$participant['participantType'] = Participant::GUEST;
-			}
-			$users[] = $participant;
-			if (\in_array($participant['sessionId'], $sessionIds, true)) {
-				$participant['permissions'] = ['publish-media', 'publish-screen'];
-				$changed[] = $participant;
-			}
-		}
+
 		$this->backendRequest($room, [
 			'type' => 'participants',
 			'participants' => [
@@ -292,25 +308,38 @@ class BackendNotifier {
 		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipantsLegacy();
-		foreach ($participants['users'] as $userId => $participant) {
-			$participant['userId'] = $userId;
-			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
-				$users[] = $participant;
+
+		$participants = $this->participantService->getParticipantsForRoom($room);
+		foreach ($participants as $participant) {
+			$attendee = $participant->getAttendee();
+			if ($attendee->getActorType() !== 'users'
+				&& $attendee->getActorType() !== 'guests') {
+				continue;
 			}
-			if (\in_array($participant['sessionId'], $sessionIds, true)) {
-				$changed[] = $participant;
+
+			$data = [
+				'inCall' => Participant::FLAG_DISCONNECTED,
+				'lastPing' => 0,
+				'sessionId' => '0',
+				'participantType' => $attendee->getParticipantType(),
+			];
+			if ($attendee->getActorType() !== 'users') {
+				$data['userId'] = $attendee->getActorId();
 			}
-		}
-		foreach ($participants['guests'] as $participant) {
-			if (!isset($participant['participantType'])) {
-				$participant['participantType'] = Participant::GUEST;
-			}
-			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
-				$users[] = $participant;
-			}
-			if (\in_array($participant['sessionId'], $sessionIds, true)) {
-				$changed[] = $participant;
+
+			$session = $participant->getSession();
+			if ($session instanceof Session) {
+				$data['inCall'] = $session->getInCall();
+				$data['lastPing'] = $session->getLastPing();
+				$data['sessionId'] = $session->getSessionId();
+
+				if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					$users[] = $data;
+				}
+
+				if (\in_array($session->getSessionId(), $sessionIds, true)) {
+					$changed[] = $data;
+				}
 			}
 		}
 
