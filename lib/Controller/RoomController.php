@@ -413,7 +413,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall();
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->config);
 
 		if ($userId !== '') {
 			$currentUser = $this->userManager->get($userId);
@@ -623,7 +623,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall();
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->config);
 
 		if ($attendee->getActorType() === 'users') {
 			$currentUser = $this->userManager->get($attendee->getActorId());

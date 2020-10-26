@@ -60,7 +60,7 @@ class RestrictStartingCalls {
 		$room = $event->getRoom();
 		$participant = $event->getParticipant();
 
-		if (!$participant->canStartCall() && !$this->participantService->hasActiveSessionsInCall($room)) {
+		if (!$participant->canStartCall($this->config) && !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}
