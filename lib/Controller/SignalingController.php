@@ -371,7 +371,7 @@ class SignalingController extends OCSController {
 		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$session = $participant->getSession();
-			if ($session instanceof Session) {
+			if (!$session instanceof Session) {
 				// User is not active
 				continue;
 			}
