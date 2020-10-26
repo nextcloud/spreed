@@ -26,6 +26,7 @@ namespace OCA\Talk\Listener;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 
@@ -34,8 +35,13 @@ class RestrictStartingCalls {
 	/** @var IConfig */
 	protected $config;
 
-	public function __construct(IConfig $config) {
+	/** @var ParticipantService */
+	protected $participantService;
+
+	public function __construct(IConfig $config,
+								ParticipantService $participantService) {
 		$this->config = $config;
+		$this->participantService = $participantService;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -54,7 +60,7 @@ class RestrictStartingCalls {
 		$room = $event->getRoom();
 		$participant = $event->getParticipant();
 
-		if (!$participant->canStartCall() && !$room->hasSessionsInCall()) {
+		if (!$participant->canStartCall() && !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}

@@ -32,6 +32,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -64,6 +65,8 @@ class Notifier implements INotifier {
 	private $shareManager;
 	/** @var Manager */
 	protected $manager;
+	/** @var ParticipantService */
+	protected $participantService;
 	/** @var INotificationManager */
 	protected $notificationManager;
 	/** @var CommentsManager */
@@ -85,6 +88,7 @@ class Notifier implements INotifier {
 								GuestManager $guestManager,
 								IShareManager $shareManager,
 								Manager $manager,
+								ParticipantService $participantService,
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
@@ -96,6 +100,7 @@ class Notifier implements INotifier {
 		$this->guestManager = $guestManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
@@ -487,7 +492,7 @@ class Notifier implements INotifier {
 		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} invited you to a private conversation');
-			if ($room->hasSessionsInCall()) {
+			if ($this->participantService->hasActiveSessionsInCall($room)) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 			} else {
 				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
@@ -512,7 +517,7 @@ class Notifier implements INotifier {
 				);
 		} elseif (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
-			if ($room->hasSessionsInCall()) {
+			if ($this->participantService->hasActiveSessionsInCall($room)) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 			} else {
 				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
@@ -561,7 +566,7 @@ class Notifier implements INotifier {
 			$calleeId = $parameters['callee'];
 			$user = $this->userManager->get($calleeId);
 			if ($user instanceof IUser) {
-				if ($this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall()) {
+				if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
 					$notification = $this->addActionButton($notification, $l->t('Answer call'));
 					$subject = $l->t('{user} wants to talk with you');
 				} else {
@@ -590,7 +595,7 @@ class Notifier implements INotifier {
 				throw new AlreadyProcessedException();
 			}
 		} elseif (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall()) {
+			if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 				$subject = $l->t('A group call has started in {call}');
 			} else {
@@ -646,7 +651,7 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		$callIsActive = $this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall();
+		$callIsActive = $this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room);
 		if ($callIsActive) {
 			$notification = $this->addActionButton($notification, $l->t('Answer call'));
 		} else {

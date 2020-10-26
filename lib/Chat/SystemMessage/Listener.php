@@ -34,6 +34,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -75,8 +76,10 @@ class Listener {
 			$room = $event->getRoom();
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
+			/** @var ParticipantService $participantService */
+			$participantService = \OC::$server->query(ParticipantService::class);
 
-			if ($room->hasSessionsInCall()) {
+			if ($participantService->hasActiveSessionsInCall($room)) {
 				$listener->sendSystemMessage($room, 'call_joined');
 			} else {
 				$listener->sendSystemMessage($room, 'call_started');

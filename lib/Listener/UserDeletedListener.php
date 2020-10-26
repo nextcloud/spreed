@@ -57,7 +57,7 @@ class UserDeletedListener implements IEventListener {
 			if ($this->participantService->getNumberOfUsers($room) === 1) {
 				$room->deleteRoom();
 			} else {
-				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
 			}
 		}
 	}

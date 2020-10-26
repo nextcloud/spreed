@@ -1237,7 +1237,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->room->removeUser($targetUser, Room::PARTICIPANT_REMOVED);
+		$this->participantService->removeUser($this->room, $targetUser, Room::PARTICIPANT_REMOVED);
 		return new DataResponse([]);
 	}
 
@@ -1272,7 +1272,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->removeUser($currentUser, Room::PARTICIPANT_LEFT);
+		$this->participantService->removeUser($room, $currentUser, Room::PARTICIPANT_LEFT);
 
 		return new DataResponse();
 	}
