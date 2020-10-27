@@ -24,8 +24,11 @@ namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IL10N;
@@ -41,6 +44,8 @@ class SearchPluginTest extends \Test\TestCase {
 	protected $guestManager;
 	/** @var TalkSession|MockObject */
 	protected $talkSession;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var Util|MockObject */
 	protected $util;
 	/** @var IL10N|MockObject */
@@ -56,6 +61,7 @@ class SearchPluginTest extends \Test\TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->util = $this->createMock(Util::class);
 		$this->userId = 'current';
 		$this->l = $this->createMock(IL10N::class);
@@ -76,6 +82,7 @@ class SearchPluginTest extends \Test\TestCase {
 				$this->userManager,
 				$this->guestManager,
 				$this->talkSession,
+				$this->participantService,
 				$this->util,
 				$this->userId,
 				$this->l
@@ -87,6 +94,7 @@ class SearchPluginTest extends \Test\TestCase {
 				$this->userManager,
 				$this->guestManager,
 				$this->talkSession,
+				$this->participantService,
 				$this->util,
 				$this->userId,
 				$this->l,
@@ -98,15 +106,24 @@ class SearchPluginTest extends \Test\TestCase {
 	protected function createParticipantMock(string $uid, string $session = ''): Participant {
 		/** @var Participant|MockObject $p */
 		$p = $this->createMock(Participant::class);
+		$a = Attendee::fromRow([
+			'actor_type' => $uid ? 'users' : 'guests',
+			'actor_id' => $uid ? $uid : sha1($session),
+		]);
+		$s = Session::fromRow([
+			'session_id' => $session,
+		]);
 		$p->expects($this->any())
-			->method('getUser')
-			->willReturn($uid);
+			->method('getAttendee')
+			->willReturn($a);
+		$p->expects($this->any())
+			->method('getSession')
+			->willReturn($s);
+
 		$p->expects($this->any())
 			->method('isGuest')
 			->willReturn($uid === '');
-		$p->expects($this->any())
-			->method('getSessionId')
-			->willReturn($session);
+
 		return $p;
 	}
 
@@ -114,8 +131,9 @@ class SearchPluginTest extends \Test\TestCase {
 		$result = $this->createMock(ISearchResult::class);
 		$room = $this->createMock(Room::class);
 
-		$room->expects($this->once())
-			->method('getParticipants')
+		$this->participantService->expects($this->once())
+			->method('getParticipantsForRoom')
+			->with($room)
 			->willReturn([
 				$this->createParticipantMock('123'),
 				$this->createParticipantMock('foo'),

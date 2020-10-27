@@ -27,6 +27,7 @@ use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Collaboration\Resources\IResource;
@@ -124,9 +125,14 @@ class ConversationProviderTest extends TestCase {
 			->willReturn('token');
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getParticipantType')
-			->willReturn(Participant::USER_SELF_JOINED);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'uid',
+			'participant_type' => Participant::USER_SELF_JOINED,
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 		$room = $this->createMock(Room::class);
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -164,9 +170,14 @@ class ConversationProviderTest extends TestCase {
 			->willReturn('token');
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getParticipantType')
-			->willReturn($participantType);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'uid',
+			'participant_type' => $participantType,
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 		$room = $this->createMock(Room::class);
 		$room->expects($this->once())
 			->method('getParticipant')

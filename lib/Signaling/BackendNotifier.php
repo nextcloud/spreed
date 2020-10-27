@@ -147,7 +147,9 @@ class BackendNotifier {
 		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
-			$userIds[] = $user['userId'];
+			if ($user['actorType'] === 'users') {
+				$userIds[] = $user['actorId'];
+			}
 		}
 		$this->backendRequest($room, [
 			'type' => 'invite',
@@ -262,10 +264,9 @@ class BackendNotifier {
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 			];
-			if ($attendee->getActorType() !== 'users') {
+			if ($attendee->getActorType() === 'users') {
 				$data['userId'] = $attendee->getActorId();
 			}
-			$users[] = $data;
 
 			$session = $participant->getSession();
 			if ($session instanceof Session) {
@@ -323,7 +324,7 @@ class BackendNotifier {
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 			];
-			if ($attendee->getActorType() !== 'users') {
+			if ($attendee->getActorType() === 'users') {
 				$data['userId'] = $attendee->getActorId();
 			}
 
