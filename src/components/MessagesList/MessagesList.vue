@@ -596,14 +596,13 @@ export default {
 		 * @returns {string} The last known message id.
 		 */
 		getLastKnownMessageId() {
-			// Reverse a copy of the messages array
-			const reversedMessages = this.messagesList.slice().reverse()
-			// Get the id of the last non-temporary message
-			for (const message of reversedMessages) {
-				const id = message.id.toString()
-				if (!id.startsWith('temp-')) {
-					return id
+			let i = this.messagesList.length - 1
+
+			while (i >= 0) {
+				if (!this.messagesList[i].id.toString().startsWith('temp-')) {
+					return this.messagesList[i].id
 				}
+				i--
 			}
 			return '0'
 		},
