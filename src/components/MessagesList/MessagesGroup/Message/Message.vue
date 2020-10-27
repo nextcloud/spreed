@@ -68,6 +68,13 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<ActionButton
+						v-if="isReplyable"
+						icon="icon-user"
+						:close-after-click="true"
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply private') }}
+					</ActionButton>
 				</Actions>
 			</div>
 		</div>
@@ -181,6 +188,13 @@ export default {
 		 * Specifies if the message can be replied to.
 		 */
 		isReplyable: {
+			type: Boolean,
+			required: true,
+		},
+		/**
+		 * Specifies if the message can be private replied to.
+		 */
+		isPrivateReplyable: {
 			type: Boolean,
 			required: true,
 		},
@@ -340,6 +354,21 @@ export default {
 
 	methods: {
 		handleReply() {
+			this.$store.dispatch('addMessageToBeReplied', {
+				id: this.id,
+				actorId: this.actorId,
+				actorType: this.actorType,
+				actorDisplayName: this.actorDisplayName,
+				timestamp: this.timestamp,
+				systemMessage: this.systemMessage,
+				messageType: this.messageType,
+				message: this.message,
+				messageParameters: this.messageParameters,
+				token: this.token,
+			})
+			EventBus.$emit('focusChatInput')
+		},
+		handlePrivateReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
 				id: this.id,
 				actorId: this.actorId,
