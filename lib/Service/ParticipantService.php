@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -34,6 +35,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Session;
@@ -49,6 +51,7 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use OCP\Util;
 
 class ParticipantService {
 	/** @var AttendeeMapper */
@@ -82,6 +85,7 @@ class ParticipantService {
 		$this->secureRandom = $secureRandom;
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
+		$this->userManager = $userManager;
 		$this->userManager = $userManager;
 		$this->timeFactory = $timeFactory;
 	}
@@ -211,6 +215,33 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string $email
+	 * @return Participant
+	 */
+	public function inviteEmailAddress(Room $room, string $email): Participant {
+		$lastMessage = 0;
+		if ($room->getLastMessage() instanceof IComment) {
+			$lastMessage = (int) $room->getLastMessage()->getId();
+		}
+
+		$attendee = new Attendee();
+		$attendee->setRoomId($room->getId());
+		$attendee->setActorType('emails');
+		$attendee->setActorId($email);
+
+		// FIXME Only do this when SIP is enabled?
+		$attendee->setPin($this->generatePin());
+
+		$attendee->setParticipantType(Participant::GUEST);
+		$attendee->setLastReadMessage($lastMessage);
+		$this->attendeeMapper->insert($attendee);
+		// FIXME handle duplicate invites gracefully
+
+		return new Participant($room, $attendee, null);
 	}
 
 	public function ensureOneToOneRoomIsFilled(Room $room): void {
@@ -602,5 +633,21 @@ class ParticipantService {
 		$result->closeCursor();
 
 		return (bool) $row;
+	}
+
+	protected function generatePin(int $entropy = 7): string {
+		$pin = '';
+		// Do not allow to start with a '0' as that is a special mode on the phone server
+		// Also there are issues with some providers when you enter the same number twice
+		// consecutive too fast, so we avoid this as well.
+		$lastDigit = '0';
+		for ($i = 0; $i < $entropy; $i++) {
+			$lastDigit = $this->secureRandom->generate(1,
+				str_replace($lastDigit, '', ISecureRandom::CHAR_DIGITS)
+			);
+			$pin .= $lastDigit;
+		}
+
+		return $pin;
 	}
 }
