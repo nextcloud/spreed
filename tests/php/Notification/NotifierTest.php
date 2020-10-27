@@ -32,6 +32,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -61,6 +62,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $shareManager;
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
 	/** @var CommentsManager|MockObject */
@@ -82,6 +85,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -95,6 +99,7 @@ class NotifierTest extends \Test\TestCase {
 			$this->guestManager,
 			$this->shareManager,
 			$this->manager,
+			$this->participantService,
 			$this->notificationManager,
 			$this->commentsManager,
 			$this->messageParser,

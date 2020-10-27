@@ -97,10 +97,10 @@ class SystemMessage {
 				$participant->getAttendee()->getActorType() === 'users' &&
 				$currentActorId === $parsedParameters['actor']['id'];
 		} else {
+			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
 				$participant->getAttendee()->getActorType() === 'guest' &&
 				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
-			$currentActorId = null;
 		}
 		$cliIsActor = $parsedParameters['actor']['type'] === 'guest' &&
 			'guest/cli' === $parsedParameters['actor']['id'];

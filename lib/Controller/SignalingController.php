@@ -537,24 +537,30 @@ class SignalingController extends OCSController {
 		}
 
 		$participant = null;
-		try {
-			$participant = $room->getParticipantBySession($sessionId);
-		} catch (ParticipantNotFoundException $e) {
-			if (!empty($userId)) {
-				// User trying to join room.
-				try {
-					$participant = $room->getParticipant($userId);
-				} catch (ParticipantNotFoundException $e) {
-					// Return generic error to avoid leaking which rooms exist.
-					return new DataResponse([
-						'type' => 'error',
-						'error' => [
-							'code' => 'no_such_room',
-							'message' => 'The user is not invited to this room.',
-						],
-					]);
-				}
+		if ($sessionId) {
+			try {
+				$participant = $room->getParticipantBySession($sessionId);
+			} catch (ParticipantNotFoundException $e) {
 			}
+		}
+
+		if (!empty($userId)) {
+			// User trying to join room.
+			try {
+				$participant = $room->getParticipant($userId);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		}
+
+		if (!$participant instanceof Participant) {
+			// Return generic error to avoid leaking which rooms exist.
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'The user is not invited to this room.',
+				],
+			]);
 		}
 
 		if ($action === 'join') {
