@@ -68,6 +68,13 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<ActionButton
+						v-if="isReplyable"
+						icon="icon-star"
+						:close-after-click="true"
+						@click.stop="togglePin">
+						{{ t('spreed', 'Pin') }}
+					</ActionButton>
 				</Actions>
 			</div>
 		</div>
@@ -353,6 +360,20 @@ export default {
 				token: this.token,
 			})
 			EventBus.$emit('focusChatInput')
+		},
+		tooglePin() {
+			this.$store.dispatch('togglePinMessage', {
+				id: this.id,
+				actorId: this.actorId,
+				actorType: this.actorType,
+				actorDisplayName: this.actorDisplayName,
+				timestamp: this.timestamp,
+				systemMessage: this.systemMessage,
+				messageType: this.messageType,
+				message: this.message,
+				messageParameters: this.messageParameters,
+				token: this.token,
+			})
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)

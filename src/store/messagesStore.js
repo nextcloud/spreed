@@ -146,6 +146,14 @@ const mutations = {
 	setLastKnownMessageId(state, { token, id }) {
 		Vue.set(state.lastKnown, token, id)
 	},
+
+	/**
+	 * @param {object} state current store state;
+	 * @param {object} message the message;
+	 */
+	togglePinMessage(state, message) {
+
+	},
 }
 
 const actions = {
@@ -215,6 +223,14 @@ const actions = {
 	 */
 	setLastKnownMessageId(context, { token, id }) {
 		context.commit('setLastKnownMessageId', { token, id })
+	},
+
+	/**
+	 * @param {object} context default store context;
+	 * @param {string} message the message to be deleted;
+	 */
+	togglePinMessage(context, message) {
+		context.commit('togglePinMessage', message)
 	},
 }
 
