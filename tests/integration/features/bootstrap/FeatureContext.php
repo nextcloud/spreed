@@ -164,12 +164,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$participantNames[$lastParticipantKey] .= ' [exact order]';
 			}
 
-			return [
-				'id' => self::$tokenToIdentifier[$room['token']],
-				'type' => (string) $room['type'],
-				'participantType' => (string) $room['participantType'],
-				'participants' => implode(', ', $participantNames),
-			];
+			$data = [];
+			if (isset($expectedRoom['id'])) {
+				$data['id'] = self::$tokenToIdentifier[$room['token']];
+			}
+			if (isset($expectedRoom['name'])) {
+				$data['name'] = $room['name'];
+			}
+			if (isset($expectedRoom['type'])) {
+				$data['type'] = (string) $room['type'];
+			}
+			if (isset($expectedRoom['hasPassword'])) {
+				$data['hasPassword'] = (string) $room['hasPassword'];
+			}
+			if (isset($expectedRoom['readOnly'])) {
+				$data['readOnly'] = (string) $room['readOnly'];
+			}
+			if (isset($expectedRoom['participantType'])) {
+				$data['participantType'] = (string) $room['participantType'];
+			}
+			if (isset($expectedRoom['participants'])) {
+				$data['participants'] = implode(', ', $participantNames);
+			}
+
+			return $data;
 		}, $rooms, $formData->getHash()));
 	}
 
