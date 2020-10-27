@@ -23,6 +23,8 @@
  *
  */
 
+use PHPUnit\Framework\Assert;
+
 require __DIR__ . '/../../vendor/autoload.php';
 
 trait CommandLineTrait {
@@ -97,25 +99,6 @@ trait CommandLineTrait {
 	}
 
 	/**
-	 * Finds all lines containing the given text
-	 *
-	 * @param string $input stdout or stderr output
-	 * @param string $text text to search for
-	 * @return array array of lines that matched
-	 */
-	public function findLines($input, $text) {
-		$results = [];
-		// the exception text usually appears after an "[Exception"] row
-		foreach (explode("\n", $input) as $line) {
-			if (strpos($line, $text) !== false) {
-				$results[] = $line;
-			}
-		}
-
-		return $results;
-	}
-
-	/**
 	 * @Then /^the command was successful$/
 	 */
 	public function theCommandWasSuccessful() {
@@ -136,9 +119,7 @@ trait CommandLineTrait {
 	 * @Then /^the command failed with exit code ([0-9]+)$/
 	 */
 	public function theCommandFailedWithExitCode($exitCode) {
-		if ($this->lastCode !== (int)$exitCode) {
-			throw new \Exception('The command was expected to fail with exit code ' . $exitCode . ' but got ' . $this->lastCode);
-		}
+		Assert::assertEquals($exitCode, $this->lastCode, 'The commands exit code did not match');
 	}
 
 	/**
@@ -159,19 +140,23 @@ trait CommandLineTrait {
 	 * @Then /^the command output contains the text "([^"]*)"$/
 	 */
 	public function theCommandOutputContainsTheText($text) {
-		$lines = $this->findLines($this->lastStdOut, $text);
-		if (empty($lines)) {
-			throw new \Exception('The command did not output the expected text on stdout "' . $text . '"');
+		if ($this->lastStdOut === '' && $this->lastStdErr !== '') {
+			Assert::assertContains($text, $this->lastStdErr, 'The command did not output the expected text on stdout');
+			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
 		}
+
+		Assert::assertContains($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
 	}
 
 	/**
 	 * @Then /^the command error output contains the text "([^"]*)"$/
 	 */
 	public function theCommandErrorOutputContainsTheText($text) {
-		$lines = $this->findLines($this->lastStdErr, $text);
-		if (empty($lines)) {
-			throw new \Exception('The command did not output the expected text on stderr "' . $text . '"');
+		if ($this->lastStdErr === '' && $this->lastStdOut !== '') {
+			Assert::assertContains($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
+			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
 		}
+
+		Assert::assertContains($text, $this->lastStdErr, 'The command did not output the expected text on stderr');
 	}
 }
