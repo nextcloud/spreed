@@ -354,6 +354,16 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#getParticipantByDialInPin',
+			'url' => '/api/{apiVersion}/room/{token}/pin/{pin}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v2',
+				'token' => '^[a-z0-9]{4,30}$',
+				'pin' => '^\d{7,32}$',
+			],
+		],
+		[
 			'name' => 'Room#setNotificationLevel',
 			'url' => '/api/{apiVersion}/room/{token}/notify',
 			'verb' => 'POST',

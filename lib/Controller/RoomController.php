@@ -1444,6 +1444,30 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
+	 *
+	 * @param string $pin
+	 * @return DataResponse
+	 */
+	public function getParticipantByDialInPin(string $pin): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			}
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$participant = $this->room->getParticipantByPin($pin);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * @PublicPage
 	 * @UseSession
 	 *
 	 * @param string $token
