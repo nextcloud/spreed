@@ -1190,7 +1190,9 @@ class RoomController extends AEnvironmentAwareController {
 				$data = ['type' => $this->room->getType()];
 			}
 
-			$this->guestManager->inviteByEmail($this->room, $newParticipant);
+			$participant = $this->participantService->inviteEmailAddress($this->room, $newParticipant);
+
+			$this->guestManager->sendEmailInvitation($this->room, $participant);
 
 			return new DataResponse($data);
 		} else {

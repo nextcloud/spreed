@@ -167,7 +167,10 @@ class GuestManager {
 		return $map;
 	}
 
-	public function inviteByEmail(Room $room, string $email): void {
+	public function sendEmailInvitation(Room $room, Participant $participant): void {
+		$email = $participant->getAttendee()->getActorId();
+		$pin = $participant->getAttendee()->getPin();
+
 		$event = new AddEmailEvent($room, $email);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_EMAIL_INVITE, $event);
 
@@ -182,6 +185,8 @@ class GuestManager {
 			'invitee' => $invitee,
 			'roomName' => $room->getDisplayName(''),
 			'roomLink' => $link,
+			'email' => $email,
+			'pin' => $pin,
 		]);
 
 		if ($user instanceof IUser) {
@@ -199,6 +204,11 @@ class GuestManager {
 			htmlspecialchars($subject . ' ' . $this->l->t('Click the button below to join.')),
 			$subject
 		);
+
+		if ($pin) {
+			// FIXME wrap in text
+			$template->addBodyText($pin);
+		}
 
 		$template->addBodyButton(
 			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
