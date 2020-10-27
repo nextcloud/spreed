@@ -31,6 +31,8 @@
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
+			<NewGroupConversationQuick
+				v-if="canStartConversations" />
 		</div>
 		<template #list class="left-sidebar__list">
 			<Caption v-if="isSearching"
@@ -118,6 +120,7 @@ import {
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
+import NewGroupConversationQuick from './NewGroupConversation/NewGroupConversationQuick'
 import arrowNavigation from '../../mixins/arrowNavigation'
 
 export default {
@@ -132,6 +135,7 @@ export default {
 		Hint,
 		SearchBox,
 		NewGroupConversation,
+		NewGroupConversationQuick,
 	},
 
 	mixins: [
