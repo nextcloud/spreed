@@ -595,6 +595,8 @@ OC.L10N.register(
     "Link to a conversation" : "链接到一个会话",
     "Select conversation" : "选择会话",
     "Join a conversation or start a new one" : "加入一个会话或开始新会话",
+    "Do not disturb" : "请勿打扰",
+    "Away" : "离开",
     "Error while sharing file" : "共享文件时出错",
     "Error while uploading file" : "上传文件时出错",
     "Sending signaling message has failed." : "发送信令消息失败。",
