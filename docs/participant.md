@@ -190,6 +190,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
 
+## Get a participant by their pin
+
+Note: This is only allowed with validate SIP bridge requests
+
+* Method: `GET`
+* Endpoint: `/room/{token}/pin/{pin}`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` When the validation as SIP bridge failed
+        + `404 Not Found` When the conversation or participant could not be found
+
+    - Data: See array definition in `Get user´s conversations`
+
 ## Set display name as a guest
 
 * Method: `POST`
