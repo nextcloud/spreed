@@ -713,6 +713,8 @@ OC.L10N.register(
     "Login" : "Hasi saioa",
     "Nickname" : "Ezizena",
     "IRC channel" : "IRC kanala",
+    "Use TLS" : "Erabili TLS",
+    "Use SASL" : "Erabili SASL",
     "Tenant ID" : "Tenant IDa",
     "Client ID" : "Bezeroaren IDa",
     "Team ID" : "Taldearen IDa",
