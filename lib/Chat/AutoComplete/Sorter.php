@@ -23,15 +23,15 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\AutoComplete;
 
-use OCP\Comments\ICommentsManager;
+use OCA\Talk\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
 
 class Sorter implements ISorter {
 
-	/** @var ICommentsManager */
+	/** @var CommentsManager */
 	protected $commentsManager;
 
-	public function __construct(ICommentsManager $commentsManager) {
+	public function __construct(CommentsManager $commentsManager) {
 		$this->commentsManager = $commentsManager;
 	}
 
