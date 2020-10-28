@@ -297,8 +297,8 @@ class RoomController extends AEnvironmentAwareController {
 	 * @throws RoomNotFoundException
 	 */
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
-		if ($this->getAPIVersion() === 2) {
-			return $this->formatRoomV2($room, $currentParticipant, $isSIPBridgeRequest);
+		if ($this->getAPIVersion() !== 1) {
+			return $this->formatRoomV2andV3($room, $currentParticipant, $isSIPBridgeRequest);
 		}
 
 		return $this->formatRoomV1($room, $currentParticipant);
@@ -509,7 +509,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoomV2(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
+	protected function formatRoomV2andV3(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -540,6 +540,12 @@ class RoomController extends AEnvironmentAwareController {
 			'guestList' => '',
 			'lastMessage' => [],
 		];
+		if ($this->getAPIVersion() === 3) {
+			$roomData = array_merge($roomData, [
+				'actorType' => '',
+				'actorId' => '',
+			]);
+		}
 
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
@@ -592,6 +598,12 @@ class RoomController extends AEnvironmentAwareController {
 			'lobbyTimer' => $lobbyTimer,
 			'sipEnabled' => $room->getSIPEnabled(),
 		]);
+		if ($this->getAPIVersion() === 3) {
+			$roomData = array_merge($roomData, [
+				'actorType' => $attendee->getActorType(),
+				'actorId' => $attendee->getActorId(),
+			]);
+		}
 
 		$session = $currentParticipant->getSession();
 		if ($session instanceof Session) {
@@ -1043,6 +1055,10 @@ class RoomController extends AEnvironmentAwareController {
 				'sessionId' => '0', // FIXME empty string or null?
 				'participantType' => $participant->getAttendee()->getParticipantType(),
 			];
+			if ($this->getAPIVersion() === 3) {
+				$result['actorId'] = $participant->getAttendee()->getActorId();
+				$result['actorType'] = $participant->getAttendee()->getActorType();
+			}
 			if ($participant->getSession() instanceof Session) {
 				$result['inCall'] = $participant->getSession()->getInCall();
 				$result['lastPing'] = $participant->getSession()->getLastPing();
@@ -1060,7 +1076,9 @@ class RoomController extends AEnvironmentAwareController {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 
-				$result['userId'] = $participant->getAttendee()->getActorId();
+				if ($this->getAPIVersion() !== 3) {
+					$result['userId'] = $participant->getAttendee()->getActorId();
+				}
 				$result['displayName'] = (string) $user->getDisplayName();
 
 				if (isset($statuses[$userId])) {
@@ -1075,8 +1093,13 @@ class RoomController extends AEnvironmentAwareController {
 					continue;
 				}
 
-				$result['userId'] = '';
+				if ($this->getAPIVersion() !== 3) {
+					$result['userId'] = '';
+				}
 				$result['displayName'] = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
+			} elseif ($this->getAPIVersion() === 3) {
+				// Other types are only reported on V3
+				$result['displayName'] = $participant->getAttendee()->getActorId();
 			} else {
 				// Skip unknown actor types
 				continue;
