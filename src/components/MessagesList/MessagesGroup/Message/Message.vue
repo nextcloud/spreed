@@ -65,7 +65,7 @@ the main body of the message as well as a quote.
 						v-if="isReplyable"
 						icon="icon-reply"
 						:close-after-click="true"
-						@click.stop="handleReply">
+						@click.stop="handleReply(token)">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
 					<ActionButton
@@ -95,6 +95,8 @@ import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
+import { createOneToOneConversation } from '../../../../services/conversationsService'
+import createTemporaryMessage from '../../../../utils/temporaryMessage'
 
 export default {
 	name: 'Message',
@@ -353,7 +355,7 @@ export default {
 	},
 
 	methods: {
-		handleReply() {
+		handleReply(t) {
 			this.$store.dispatch('addMessageToBeReplied', {
 				id: this.id,
 				actorId: this.actorId,
@@ -364,24 +366,21 @@ export default {
 				messageType: this.messageType,
 				message: this.message,
 				messageParameters: this.messageParameters,
-				token: this.token,
+				token: t,
 			})
 			EventBus.$emit('focusChatInput')
 		},
-		handlePrivateReply() {
-			this.$store.dispatch('addMessageToBeReplied', {
-				id: this.id,
-				actorId: this.actorId,
-				actorType: this.actorType,
-				actorDisplayName: this.actorDisplayName,
-				timestamp: this.timestamp,
-				systemMessage: this.systemMessage,
-				messageType: this.messageType,
-				message: this.message,
-				messageParameters: this.messageParameters,
-				token: this.token,
-			})
-			EventBus.$emit('focusChatInput')
+		async handlePrivateReply() {
+			// open the 1:1 conversation
+			const response = await createOneToOneConversation(this.actorId)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+
+			// quoted message
+			const temporaryMessage = createTemporaryMessage('> 123', conversation.token)
+			this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
