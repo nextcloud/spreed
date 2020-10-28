@@ -1446,6 +1446,7 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
+	 * @RequireRoom
 	 *
 	 * @param string $pin
 	 * @return DataResponse

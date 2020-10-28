@@ -101,6 +101,10 @@ class InjectionMiddleware extends Middleware {
 			$this->getLoggedInOrGuest($controller, true);
 		}
 
+		if ($this->reflector->hasAnnotation('RequireRoom')) {
+			$this->getRoom($controller);
+		}
+
 		if ($this->reflector->hasAnnotation('RequireReadWriteConversation')) {
 			$this->checkReadOnlyState($controller);
 		}
@@ -108,6 +112,15 @@ class InjectionMiddleware extends Middleware {
 		if ($this->reflector->hasAnnotation('RequireModeratorOrNoLobby')) {
 			$this->checkLobbyState($controller);
 		}
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 */
+	protected function getRoom(AEnvironmentAwareController $controller): void {
+		$token = $this->request->getParam('token');
+		$room = $this->manager->getRoomByToken($token, $this->userId);
+		$controller->setRoom($room);
 	}
 
 	/**
