@@ -163,7 +163,7 @@ export default {
 					this.roomOptions = importantRooms.slice(0, 7)
 					this.hasImportantConversations = true
 				} else {
-					this.roomOptions = rooms.sort(propertySort(['-lastActivity'])).slice(0, 5)
+					this.roomOptions = rooms.sort(propertySort(['-isFavorite', '-lastActivity'])).slice(0, 5)
 					this.hasImportantConversations = false
 				}
 
