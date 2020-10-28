@@ -33,7 +33,7 @@ let maintenanceWarning = null
  */
 const fetchConversations = async function() {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room')
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'room')
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
@@ -59,7 +59,7 @@ const fetchConversations = async function() {
  */
 const fetchConversation = async function(token) {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}`)
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}`)
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()

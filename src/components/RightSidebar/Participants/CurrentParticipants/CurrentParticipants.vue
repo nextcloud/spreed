@@ -89,7 +89,8 @@ export default {
 			this.$store.dispatch('updateUser', {
 				token: this.token,
 				participantIdentifier: {
-					userId: state.userId,
+					actorType: 'users',
+					actorId: state.userId,
 				},
 				updatedData: {
 					status: state.status,

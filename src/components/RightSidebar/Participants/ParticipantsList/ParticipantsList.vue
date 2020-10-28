@@ -92,8 +92,8 @@ export default {
 
 		generateKey(participant) {
 			let key = 'i#' + participant.id
-			if (participant.userId) {
-				key = 'u#' + participant.userId
+			if (participant.actorType === 'users') {
+				key = 'u#' + participant.actorId
 			} else if (participant.sessionId) {
 				key = 's#' + participant.sessionId
 			}
