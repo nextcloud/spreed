@@ -62,8 +62,8 @@ const getters = {
 
 		let index
 
-		if (participantIdentifier.hasOwnProperty('userId')) {
-			index = state.participants[token].findIndex(participant => participant.userId === participantIdentifier.userId)
+		if (participantIdentifier.hasOwnProperty('actorId') && participantIdentifier.hasOwnProperty('actorType')) {
+			index = state.participants[token].findIndex(participant => participant.actorId === participantIdentifier.actorId && participant.actorType === participantIdentifier.actorType)
 		} else {
 			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
 		}
@@ -189,8 +189,8 @@ const actions = {
 		}
 
 		const participant = getters.getParticipant(token, index)
-		if (participant.userId) {
-			await removeUserFromConversation(token, participant.userId)
+		if (participant.actorType === 'users') {
+			await removeUserFromConversation(token, participant.actorId)
 		} else {
 			await removeGuestFromConversation(token, participant.sessionId)
 		}

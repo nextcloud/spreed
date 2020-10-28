@@ -243,13 +243,13 @@ export default {
 							actorId: Hex.stringify(SHA1(participant.sessionId)),
 							actorDisplayName: participant.displayName,
 						})
-					} else if (hasUserStatuses) {
+					} else if (participant.actorType === 'users' && hasUserStatuses) {
 						emit('user_status:status.updated', {
 							status: participant.status,
 							message: participant.statusMessage,
 							icon: participant.statusIcon,
 							clearAt: participant.statusClearAt,
-							userId: participant.userId,
+							userId: participant.actorId,
 						})
 					}
 				})

@@ -112,6 +112,8 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionId: conversation.sessionId,
 				participantType: conversation.participantType,
+				actorType: conversation.actorType,
+				actorId: conversation.actorId, // FIXME check public share page handling
 				userId: currentUser ? currentUser.uid : '',
 				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '', // TODO guest name from localstore?
 			},

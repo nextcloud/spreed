@@ -35,7 +35,7 @@
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
 			:name="computedName"
-			:source="participant.source"
+			:source="participant.source || participant.actorType"
 			:offline="isOffline" />
 		<div class="participant-row__user-wrapper">
 			<div class="participant-row__user-descriptor">
@@ -156,7 +156,7 @@ export default {
 		 * @returns {boolean}
 		 */
 		isSearched() {
-			return this.participant.userId === undefined
+			return this.participant.label !== undefined
 		},
 		computedName() {
 			if (!this.isSearched) {
@@ -176,7 +176,7 @@ export default {
 		},
 		computedId() {
 			if (!this.isSearched) {
-				return this.participant.userId
+				return this.participant.actorId
 			}
 			return this.participant.id
 		},
@@ -269,7 +269,8 @@ export default {
 				}
 			} else {
 				data = {
-					userId: this.computedId,
+					actorType: 'users',
+					actorId: this.computedId,
 				}
 			}
 			return data
