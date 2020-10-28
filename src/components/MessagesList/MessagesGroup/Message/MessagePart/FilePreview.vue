@@ -326,13 +326,15 @@ export default {
 
 	.preview {
 		display: inline-block;
+		border-radius: var(--border-radius);
 		max-width: 100%;
-		height: 384px;
+		max-height: 384px;
 	}
 	.preview-64 {
 		display: inline-block;
+		border-radius: var(--border-radius);
 		max-width: 100%;
-		height: 64px;
+		max-height: 64px;
 	}
 
 	strong {
