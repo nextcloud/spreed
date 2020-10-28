@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
-use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
@@ -39,7 +38,13 @@ use OCP\IUserManager;
  */
 class UserMention {
 
-	/** @var ICommentsManager */
+	/**
+	 * Do NOT inject OCA\Talk\Chat\CommentsManager here
+	 * otherwise the display name resolvers are lost
+	 * and mentions are not replaced anymore.
+	 *
+	 * @var ICommentsManager
+	 */
 	private $commentsManager;
 	/** @var IUserManager */
 	private $userManager;
