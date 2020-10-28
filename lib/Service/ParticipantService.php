@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -35,7 +34,6 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Session;
@@ -51,7 +49,6 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
-use OCP\Util;
 
 class ParticipantService {
 	/** @var AttendeeMapper */
