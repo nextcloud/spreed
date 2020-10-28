@@ -36,7 +36,7 @@ const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) =>
 			'file': file,
 			'mimetype': file.type,
 			'id': tempId,
-			'name': file.name,
+			'name': file.newName || file.name,
 			// index, will be the id from now on
 			uploadId,
 			localUrl,
