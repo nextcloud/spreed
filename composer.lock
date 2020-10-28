@@ -163,12 +163,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "40fb20d0ac2cc24a275937b19c7760821ce23b45"
+                "reference": "b2289bc625ef59b11e2342aebe3afd8328431e9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/40fb20d0ac2cc24a275937b19c7760821ce23b45",
-                "reference": "40fb20d0ac2cc24a275937b19c7760821ce23b45",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/b2289bc625ef59b11e2342aebe3afd8328431e9b",
+                "reference": "b2289bc625ef59b11e2342aebe3afd8328431e9b",
                 "shasum": ""
             },
             "require": {
@@ -191,7 +191,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2020-10-08T22:05:35+00:00"
+            "time": "2020-10-27T23:43:29+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
