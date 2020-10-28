@@ -59,7 +59,7 @@ class ChatManager {
 
 	public const MAX_CHAT_LENGTH = 32000;
 
-	/** @var CommentsManager|ICommentsManager */
+	/** @var ICommentsManager */
 	private $commentsManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
