@@ -260,23 +260,6 @@ export default {
 		canBePromoted() {
 			return this.canModerate && !this.isModerator
 		},
-
-		participantIdentifier() {
-
-			let data = {}
-			if (this.isGuest) {
-				data = {
-					sessionId: this.sessionId,
-				}
-			} else {
-				data = {
-					actorType: 'users',
-					actorId: this.computedId,
-				}
-			}
-			return data
-		},
-
 	},
 
 	methods: {
@@ -305,7 +288,7 @@ export default {
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 	},

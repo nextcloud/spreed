@@ -210,6 +210,15 @@ const removeGuestFromConversation = async function(token, sessionId) {
 	}
 }
 
+const removeAttendeeFromConversation = async function(token, attendeeId) {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/attendees`, {
+		params: {
+			attendeeId,
+		},
+	})
+	return response
+}
+
 const promoteToModerator = async(token, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/moderators', options)
 	return response
@@ -246,6 +255,7 @@ export {
 	removeCurrentUserFromConversation,
 	removeUserFromConversation,
 	removeGuestFromConversation,
+	removeAttendeeFromConversation,
 	promoteToModerator,
 	demoteFromModerator,
 	fetchParticipants,

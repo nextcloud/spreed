@@ -1336,6 +1336,37 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $attendeeId
+	 * @return DataResponse
+	 */
+	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
+		try {
+			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getAttendee()->getId() === $targetParticipant->getAttendee()->getId()) {
+			// FIXME switch to removeSelfFromRoomLogic()
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($targetParticipant->getAttendee()->getParticipantType() === Participant::OWNER) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->participantService->removeAttendee($this->room, $targetParticipant, Room::PARTICIPANT_REMOVED);
+		return new DataResponse([]);
+	}
+
+	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
 	 *
