@@ -83,6 +83,11 @@
 			<ActionSeparator />
 
 			<ActionButton v-if="canLeaveConversation"
+				:icon="iconArchive"
+				@click.prevent.exact="toggleArchiveConversation">
+				{{ labelArchive }}
+			</ActionButton>
+			<ActionButton v-if="canLeaveConversation"
 				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
 				{{ t('spreed', 'Leave conversation') }}
@@ -137,6 +142,7 @@ export default {
 					type: 0,
 					displayName: '',
 					isFavorite: false,
+					isArchived: false,
 					notificationLevel: 0,
 					lastMessage: {},
 				}
@@ -162,6 +168,14 @@ export default {
 
 		labelFavorite() {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
+		},
+
+		iconArchive() {
+			return this.item.isArchived ? 'icon-star-dark' : 'icon-starred'
+		},
+
+		labelArchive() {
+			return this.item.isArchived ? t('spreed', 'Remove from archive') : t('spreed', 'Archive conversation')
 		},
 
 		isNotifyAlways() {
@@ -344,6 +358,9 @@ export default {
 					console.debug(`error while removing yourself from conversation ${error}`)
 				}
 			}
+		},
+		async toggleArchiveConversation() {
+			this.$store.dispatch('toggleArchive', this.item)
 		},
 		async toggleFavoriteConversation() {
 			this.$store.dispatch('toggleFavorite', this.item)

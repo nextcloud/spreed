@@ -178,6 +178,22 @@ const actions = {
 		commit('addConversation', conversation)
 	},
 
+	async toggleArchive({ commit, getters }, { token, isArchived }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		// if (isArchived) {
+		// 	await DearchiveConversation(token)
+		// } else {
+		// 	await archiveConversation(token)
+		// }
+		conversation.isArchived = !isArchived
+
+		commit('addConversation', conversation)
+	},
+
 	async toggleLobby({ commit, getters }, { token, enableLobby }) {
 		const conversation = Object.assign({}, getters.conversations[token])
 		if (!conversation) {
