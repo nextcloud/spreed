@@ -544,6 +544,7 @@ class RoomController extends AEnvironmentAwareController {
 			$roomData = array_merge($roomData, [
 				'actorType' => '',
 				'actorId' => '',
+				'attendeeId' => 0,
 			]);
 		}
 
@@ -602,6 +603,7 @@ class RoomController extends AEnvironmentAwareController {
 			$roomData = array_merge($roomData, [
 				'actorType' => $attendee->getActorType(),
 				'actorId' => $attendee->getActorId(),
+				'attendeeId' => $attendee->getId(),
 			]);
 		}
 
@@ -1056,6 +1058,7 @@ class RoomController extends AEnvironmentAwareController {
 				'participantType' => $participant->getAttendee()->getParticipantType(),
 			];
 			if ($this->getAPIVersion() === 3) {
+				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
 			}
@@ -1518,106 +1521,79 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 *
+	 * @param int|null $attendeeId
 	 * @param string|null $participant
 	 * @param string|null $sessionId
 	 * @return DataResponse
 	 */
-	public function promoteModerator(?string $participant, ?string $sessionId): DataResponse {
-		if ($participant !== null) {
-			return $this->promoteUserToModerator($this->room, $participant);
-		}
-
-		return $this->promoteGuestToModerator($this->room, $sessionId);
-	}
-
-	protected function promoteUserToModerator(Room $room, string $participant): DataResponse {
-		try {
-			$targetParticipant = $room->getParticipant($participant);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$attendee = $targetParticipant->getAttendee();
-		if ($attendee->getParticipantType() !== Participant::USER) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->participantService->updateParticipantType($room, $targetParticipant, Participant::MODERATOR);
-
-		return new DataResponse();
-	}
-
-	protected function promoteGuestToModerator(Room $room, string $sessionId): DataResponse {
-		try {
-			$targetParticipant = $room->getParticipantBySession($sessionId);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$attendee = $targetParticipant->getAttendee();
-		if ($attendee->getParticipantType() !== Participant::GUEST) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->participantService->updateParticipantType($room, $targetParticipant, Participant::GUEST_MODERATOR);
-
-		return new DataResponse();
+	public function promoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
+		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
 	}
 
 	/**
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 *
+	 * @param int|null $attendeeId
 	 * @param string|null $participant
 	 * @param string|null $sessionId
 	 * @return DataResponse
 	 */
-	public function demoteModerator(?string $participant, ?string $sessionId): DataResponse {
-		if ($participant !== null) {
-			return $this->demoteUserFromModerator($this->room, $participant);
-		}
-
-		return $this->demoteGuestFromModerator($this->room, $sessionId);
+	public function demoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
+		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
 	}
 
-	protected function demoteUserFromModerator(Room $room, string $participant): DataResponse {
-		if ($this->userId === $participant) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
+	/**
+	 * Toggle a user/guest to moderator/guest-moderator or vice-versa based on
+	 * attendeeId (v3) or userId/sessionId (v1+v2)
+	 *
+	 * @param int|null $attendeeId
+	 * @param string|null $userId
+	 * @param string|null $sessionId
+	 * @return DataResponse
+	 */
+	protected function toggleParticipantType(?int $attendeeId, ?string $userId, ?string $sessionId): DataResponse {
 		try {
-			$targetParticipant = $room->getParticipant($participant);
+			if ($attendeeId !== null) {
+				$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
+			} elseif ($userId !== null) {
+				$targetParticipant = $this->room->getParticipant($userId);
+			} else {
+				$targetParticipant =  $this->room->getParticipantBySession($sessionId);
+			}
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$attendee = $targetParticipant->getAttendee();
-		if ($attendee->getParticipantType() !== Participant::MODERATOR) {
+
+		// Prevent users/moderators modifying themselves
+		if ($attendee->getActorType() === 'users') {
+			if ($attendee->getActorId() === $this->userId) {
+				return new DataResponse([], Http::STATUS_FORBIDDEN);
+			}
+		} elseif ($attendee->getActorType() === 'guests') {
+			$session = $targetParticipant->getSession();
+			$currentSessionId = $this->session->getSessionForRoom($this->room->getToken());
+
+			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
+				return new DataResponse([], Http::STATUS_FORBIDDEN);
+			}
+		}
+
+		if ($attendee->getParticipantType() === Participant::USER) {
+			$newType = Participant::MODERATOR;
+		} elseif ($attendee->getParticipantType() === Participant::GUEST) {
+			$newType = Participant::GUEST_MODERATOR;
+		} elseif ($attendee->getParticipantType() === Participant::MODERATOR) {
+			$newType = Participant::USER;
+		} elseif ($attendee->getParticipantType() === Participant::GUEST_MODERATOR) {
+			$newType = Participant::GUEST;
+		} else {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updateParticipantType($room, $targetParticipant, Participant::USER);
-
-		return new DataResponse();
-	}
-
-	protected function demoteGuestFromModerator(Room $room, string $sessionId): DataResponse {
-		if ($this->session->getSessionForRoom($room->getToken()) === $sessionId) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		try {
-			$targetParticipant = $room->getParticipantBySession($sessionId);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$attendee = $targetParticipant->getAttendee();
-		if ($attendee->getParticipantType() !== Participant::GUEST_MODERATOR) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->participantService->updateParticipantType($room, $targetParticipant, Participant::GUEST);
+		$this->participantService->updateParticipantType($this->room, $targetParticipant, $newType);
 
 		return new DataResponse();
 	}

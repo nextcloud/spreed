@@ -62,7 +62,9 @@ const getters = {
 
 		let index
 
-		if (participantIdentifier.hasOwnProperty('actorId') && participantIdentifier.hasOwnProperty('actorType')) {
+		if (participantIdentifier.hasOwnProperty('attendeeId')) {
+			index = state.participants[token].findIndex(participant => participant.attendeeId === participantIdentifier.attendeeId)
+		} else if (participantIdentifier.hasOwnProperty('actorId') && participantIdentifier.hasOwnProperty('actorType')) {
 			index = state.participants[token].findIndex(participant => participant.actorId === participantIdentifier.actorId && participant.actorType === participantIdentifier.actorType)
 		} else {
 			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
@@ -138,21 +140,15 @@ const actions = {
 			commit('addParticipant', { token, participant })
 		}
 	},
-	async promoteToModerator({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async promoteToModerator({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		if (participantIdentifier.userId) {
-			// Moderation endpoint requires "participant" instead of "userId"
-			await promoteToModerator(token, {
-				participant: participantIdentifier.userId,
-			})
-		} else {
-			// Guests are identified by sessionId in both cases
-			await promoteToModerator(token, participantIdentifier)
-		}
+		await promoteToModerator(token, {
+			attendeeId,
+		})
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
@@ -160,21 +156,15 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
-	async demoteFromModerator({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async demoteFromModerator({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		if (participantIdentifier.userId) {
-			// Moderation endpoint requires "participant" instead of "userId"
-			await demoteFromModerator(token, {
-				participant: participantIdentifier.userId,
-			})
-		} else {
-			// Guests are identified by sessionId in both cases
-			await demoteFromModerator(token, participantIdentifier)
-		}
+		await demoteFromModerator(token, {
+			attendeeId,
+		})
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
