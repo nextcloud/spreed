@@ -1,6 +1,8 @@
 # Participant API
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
 ## Get list of participants in a conversation
 
@@ -22,16 +24,19 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
         Array of participants, each participant has at least:
 
-        field | type | Description
-        ------|------|------------
-        `userId` | string | Is empty for guests
-        `displayName` | string | Can be empty for guests
-        `participantType` | int | Permissions level of the participant
-        `lastPing` | int | Timestamp of the last ping of the user (should be used for sorting)
-        `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
-        `status` | string | Optional: Only available with `includeStatus=true` and for users with a set status
-        `statusIcon` | string | Optional: Only available with `includeStatus=true` and for users with a set status
-        `statusMessage` | string | Optional: Only available with `includeStatus=true` and for users with a set status
+        field | type | API | Description
+        ------|------|-----|------------
+        `userId` | string | v1 + v2| Is empty for guests
+        `attendeeId` | int | v3 | Unique attendee id
+        `actorType` | string | v3 | Currently known `users|guests|emails|groups`
+        `actorId` | string | v3 | The unique identifier for the given actor type
+        `displayName` | string | | Can be empty for guests
+        `participantType` | int | | Permissions level of the participant
+        `lastPing` | int | | Timestamp of the last ping of the user (should be used for sorting)
+        `sessionId` | string | | `'0'` if not connected, otherwise a 512 character long string
+        `status` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusIcon` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
+        `statusMessage` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
 
 ## Add a participant to a conversation
 
@@ -59,8 +64,30 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         ------|------|------------
         `type` | int | In case the conversation type changed, the new value is returned
 
+## Delete an attendee by id from a conversation
+
+* API: Only `v3` or later
+* Method: `DELETE`
+* Endpoint: `/room/{token}/attendees`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `attendeeId` | int | The participant to delete
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the participant is a moderator or owner
+        + `400 Bad Request` When there are no other moderators or owners left
+        + `403 Forbidden` When the current user is not a moderator or owner
+        + `403 Forbidden` When the participant to remove is an owner
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `404 Not Found` When the participant to remove could not be found
+
 ## Delete a participant from a conversation
 
+* API: Only `v1` and `v2`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants`
 * Data:
@@ -92,6 +119,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Remove a guest from a conversation
 
+* API: Only `v1` and `v2`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/guests`
 * Data:
@@ -156,10 +184,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | Description
-    ------|------|------------
-    `participant` | string or null | User to promote
-    `sessionId` | string or null | Guest session to promote
+    field | type | API | Description
+    ------|------|-----|------------
+    `participant` | string or null | v1 + v2 | User to demote
+    `sessionId` | string or null | v1 + v2 | Guest session to demote
+    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
@@ -176,10 +205,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | Description
-    ------|------|------------
-    `participant` | string or null | User to demote
-    `sessionId` | string or null | Guest session to demote
+    field | type | API | Description
+    ------|------|-----|------------
+    `participant` | string or null | v1 + v2 | User to demote
+    `sessionId` | string or null | v1 + v2 | Guest session to demote
+    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
@@ -194,6 +224,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 Note: This is only allowed with validate SIP bridge requests
 
+* API: Only `v3` or later
 * Method: `GET`
 * Endpoint: `/room/{token}/pin/{pin}`
 
