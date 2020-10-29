@@ -32,6 +32,7 @@ import store from '../../store/index.js'
 import {
 	showError,
 	TOAST_PERMANENT_TIMEOUT,
+	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 
 let webrtc
@@ -400,6 +401,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			return
 		}
 
+		clearErrorNotification()
 		webrtc.leaveCall()
 	})
 
@@ -870,6 +872,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	let localStreamRequestedTimeout = null
 	let localStreamRequestedTimeoutNotification = null
 
+	let errorNotificationHandle = null
+
 	const clearLocalStreamRequestedTimeoutAndHideNotification = function() {
 		clearTimeout(localStreamRequestedTimeout)
 		localStreamRequestedTimeout = null
@@ -877,6 +881,14 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (localStreamRequestedTimeoutNotification) {
 			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
+		}
+
+	}
+
+	const clearErrorNotification = function() {
+		if (errorNotificationHandle) {
+			errorNotificationHandle.hideToast()
+			errorNotificationHandle = null
 		}
 	}
 
@@ -900,6 +912,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	signaling.on('leaveRoom', function(token) {
 		if (signaling.currentRoomToken === token) {
 			clearLocalStreamRequestedTimeoutAndHideNotification()
+			clearErrorNotification()
 		}
 	})
 
@@ -919,6 +932,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
 		let message
+		let timeout = TOAST_PERMANENT_TIMEOUT
 		if ((error.name === 'NotSupportedError'
 				&& webrtc.capabilities.supportRTCPeerConnection)
 			|| (error.name === 'NotAllowedError'
@@ -927,18 +941,21 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			message += ': ' + t('spreed', 'Please move your setup to HTTPS')
 		} else if (error.name === 'NotAllowedError') {
 			message = t('spreed', 'Access to microphone & camera was denied')
+			timeout = TOAST_DEFAULT_TIMEOUT
 		} else if (!webrtc.capabilities.support) {
 			console.error('WebRTC not supported')
 
 			message = t('spreed', 'WebRTC is not supported in your browser')
 			message += ': ' + t('spreed', 'Please use a different browser like Firefox or Chrome')
 		} else {
+			// Mostly happens in Chrome (NotFoundError): when no audio device available
+			// not sure what else can cause this
 			message = t('spreed', 'Error while accessing microphone & camera')
-			console.error('Error while accessing microphone & camera: ', error.message || error.name)
+			console.error('Error while accessing microphone & camera: ', error.message, error.name)
 		}
 
-		showError(message, {
-			timeout: TOAST_PERMANENT_TIMEOUT,
+		errorNotificationHandle = showError(message, {
+			timeout: timeout,
 		})
 	})
 
