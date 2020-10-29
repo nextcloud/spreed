@@ -401,17 +401,18 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
+	position: sticky;
+	bottom: 0;
+	background-color: var(--color-main-background);
+	display: flex;
+	justify-content: center;
 	border-top: 1px solid var(--color-border-dark);
 	padding: 4px 0;
 }
 
 .new-message {
-	margin: auto;
 	max-width: $messages-list-max-width;
-	position: sticky;
-	position: -webkit-sticky;
-	bottom: 0;
-	background-color: var(--color-main-background);
+	flex: 1 1 100%;
 	&-form {
 		display: flex;
 		align-items: center;
