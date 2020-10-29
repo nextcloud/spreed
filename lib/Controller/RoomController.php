@@ -1056,7 +1056,9 @@ class RoomController extends AEnvironmentAwareController {
 				&& $room->getNumberOfModerators() === 1) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
-		} elseif ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
+		}
+
+		if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
 			$room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
 			return new DataResponse();
