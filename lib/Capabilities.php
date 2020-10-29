@@ -89,6 +89,9 @@ class Capabilities implements IPublicCapability {
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 				],
 				'conversations' => [],
+				'previews' => [
+					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728')
+				],
 			],
 		];
 

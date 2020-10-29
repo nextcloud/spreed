@@ -28,7 +28,7 @@
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click="handleClick"
 		@keydown.enter="handleClick">
-		<img v-if="(!isLoading && !failed) || hasTemporaryImageUrl"
+		<img v-if="(!isLoading && !failed)"
 			:class="previewSizeClass"
 			class="file-preview__image"
 			alt=""
@@ -51,9 +51,10 @@
 </template>
 
 <script>
-import { generateUrl, imagePath } from '@nextcloud/router'
+import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Close from 'vue-material-design-icons/Close'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 	name: 'FilePreview',
@@ -80,6 +81,10 @@ export default {
 			type: String,
 			default: '',
 		},
+		size: {
+			type: Number,
+			default: -1,
+		},
 		link: {
 			type: String,
 			default: '',
@@ -94,7 +99,7 @@ export default {
 		},
 		previewSize: {
 			type: Number,
-			default: 128,
+			default: 384,
 		},
 		// In case this component is used to display a file that is being uploaded
 		// this parameter is used to access the file upload status in the store
@@ -109,6 +114,7 @@ export default {
 			default: '',
 		},
 		// True if this component is used in the upload editor
+		// FIXME: file-preview should be encapsulated and not be aware of its surroundings
 		isUploadEditor: {
 			type: Boolean,
 			default: false,
@@ -153,20 +159,43 @@ export default {
 			return 'preview'
 		},
 		previewUrl() {
+			const userId = this.$store.getters.getUserId()
 			if (this.hasTemporaryImageUrl) {
 				return this.localUrl
 			}
 
-			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
+			if (this.previewAvailable !== 'yes') {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 
+			// max size of a gif for which we allow direct embedding
+			const maxGifSize = getCapabilities()?.caps?.spreed?.config?.previews?.['max-gif-size'] || 3145728
+			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
+				// return direct image so it can be animated
+				if (userId === null) {
+					// guest mode, use public link download URL
+					return this.link + '/download/' + this.name
+				} else {
+					// use direct DAV URL
+					return generateRemoteUrl(`dav/files/${userId}`) + this.internalAbsolutePath
+				}
+			}
+
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
-			return generateUrl('/core/preview?fileId={fileId}&x={width}&y={height}', {
-				fileId: this.id,
-				width: previewSize,
-				height: previewSize,
-			})
+			if (userId === null) {
+				// guest mode: grab token from the link URL
+				// FIXME: use a cleaner way...
+				const token = this.link.substr(this.link.lastIndexOf('/') + 1)
+				return generateUrl('/apps/files_sharing/publicpreview/{token}?x=-1&y={height}&a=1', {
+					token: token,
+					height: previewSize,
+				})
+			} else {
+				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
+					fileId: this.id,
+					height: previewSize,
+				})
+			}
 		},
 		isViewerAvailable() {
 			if (!OCA.Viewer) {
@@ -290,15 +319,22 @@ export default {
 		object-fit: cover;
 	}
 
+	.loading {
+		display: inline-block;
+		width: 100%;
+	}
+
 	.preview {
-		display: block;
-		width: 128px;
-		height: 128px;
+		display: inline-block;
+		border-radius: var(--border-radius);
+		max-width: 100%;
+		max-height: 384px;
 	}
 	.preview-64 {
-		display: block;
-		width: 64px;
-		height: 64px;
+		display: inline-block;
+		border-radius: var(--border-radius);
+		max-width: 100%;
+		max-height: 64px;
 	}
 
 	strong {
@@ -308,7 +344,6 @@ export default {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
-		margin-top: 4px;
 	}
 
 	&:not(.file-preview--viewer-available) {
@@ -323,6 +358,11 @@ export default {
 		padding: 12px;
 		.preview {
 			margin: auto;
+			width: 128px;
+			height: 128px;
+		}
+		.loading {
+			width: 100%;
 		}
 	}
 }

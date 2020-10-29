@@ -433,6 +433,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getMimeType')
 			->willReturn('text/plain');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(65530);
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -469,6 +472,7 @@ class SystemMessageTest extends TestCase {
 			'type' => 'file',
 			'id' => '54',
 			'name' => 'name',
+			'size' => 65530,
 			'path' => 'name',
 			'link' => 'absolute-link',
 			'mimetype' => 'text/plain',
@@ -490,6 +494,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getMimeType')
 			->willReturn('httpd/unix-directory');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(65520);
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -529,6 +536,7 @@ class SystemMessageTest extends TestCase {
 			'type' => 'file',
 			'id' => '54',
 			'name' => 'name',
+			'size' => 65520,
 			'path' => 'path/to/file/name',
 			'link' => 'absolute-link-owner',
 			'mimetype' => 'httpd/unix-directory',
@@ -547,6 +555,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getMimeType')
 			->willReturn('application/octet-stream');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(65510);
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -573,6 +584,9 @@ class SystemMessageTest extends TestCase {
 		$file->expects($this->once())
 			->method('getPath')
 			->willReturn('/user/files/Shared/different');
+		$file->expects($this->once())
+			->method('getSize')
+			->willReturn(65515);
 
 		$userFolder = $this->createMock(Folder::class);
 		$userFolder->expects($this->once())
@@ -602,6 +616,7 @@ class SystemMessageTest extends TestCase {
 			'type' => 'file',
 			'id' => '54',
 			'name' => 'different',
+			'size' => 65515,
 			'path' => 'Shared/different',
 			'link' => 'absolute-link-owner',
 			'mimetype' => 'application/octet-stream',
