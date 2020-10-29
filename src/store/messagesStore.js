@@ -92,6 +92,12 @@ const getters = {
 		}
 		return null
 	},
+
+	getPinnedMessages: (state) => (token) => {
+		return Object.values(state.messages[token]).filter(message => {
+			return message.isPinned
+		})
+	},
 }
 
 const mutations = {
@@ -147,12 +153,8 @@ const mutations = {
 		Vue.set(state.lastKnown, token, id)
 	},
 
-	/**
-	 * @param {object} state current store state;
-	 * @param {object} message the message;
-	 */
-	togglePinMessage(state, message) {
-
+	togglePinned(state, { token, id }) {
+		Vue.set(state.messages[token][id].isPinned = !state.messages[token][id].isPinned)
 	},
 }
 
@@ -225,12 +227,8 @@ const actions = {
 		context.commit('setLastKnownMessageId', { token, id })
 	},
 
-	/**
-	 * @param {object} context default store context;
-	 * @param {string} message the message to be deleted;
-	 */
-	togglePinMessage(context, message) {
-		context.commit('togglePinMessage', message)
+	togglePinned(context, { token, id }) {
+		context.commit('togglePinned', { token, id })
 	},
 }
 

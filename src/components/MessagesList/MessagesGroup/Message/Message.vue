@@ -56,7 +56,7 @@ the main body of the message as well as a quote.
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
 				<h6 v-if="hasDate"
 					v-tooltip.auto="messageDate">
-					{{ messageTime }}
+					{{ messageTime }} - {{ isPinned }}
 				</h6>
 				<Actions
 					v-show="showActions && hasActions"
@@ -69,7 +69,7 @@ the main body of the message as well as a quote.
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
 					<ActionButton
-						v-if="isReplyable"
+						v-if="showModerationOptions"
 						icon="icon-star"
 						:close-after-click="true"
 						@click.stop="togglePin">
@@ -212,6 +212,13 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		/**
+		 * Specifies if the message is pinned
+		 */
+		isPinned: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -331,6 +338,26 @@ export default {
 		isTemporaryUpload() {
 			return this.isTemporary && this.messageParameters.file
 		},
+
+		showModerationOptions() {
+			return this.isOneToOneConversation || this.canModerate
+		},
+
+		canModerate() {
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
+
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		participantType() {
+			return this.conversation.participantType
+		},
+
+		isOneToOneConversation() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
 	},
 
 	watch: {
@@ -361,17 +388,9 @@ export default {
 			})
 			EventBus.$emit('focusChatInput')
 		},
-		tooglePin() {
-			this.$store.dispatch('togglePinMessage', {
+		togglePin() {
+			this.$store.dispatch('togglePinned', {
 				id: this.id,
-				actorId: this.actorId,
-				actorType: this.actorType,
-				actorDisplayName: this.actorDisplayName,
-				timestamp: this.timestamp,
-				systemMessage: this.systemMessage,
-				messageType: this.messageType,
-				message: this.message,
-				messageParameters: this.messageParameters,
 				token: this.token,
 			})
 		},
