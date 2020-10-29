@@ -147,14 +147,17 @@ class SignalingController extends OCSController {
 		$turn = [];
 		$turnSettings = $this->talkConfig->getTurnSettings();
 		if (!empty($turnSettings['server'])) {
+			$schemes = explode(',', $turnSettings['schemes']);
 			$protocols = explode(',', $turnSettings['protocols']);
-			foreach ($protocols as $proto) {
-				$turn[] = [
-					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'username' => $turnSettings['username'],
-					'credential' => $turnSettings['password'],
-				];
+			foreach ($schemes as $scheme) {
+				foreach ($protocols as $proto) {
+					$turn[] = [
+						'url' => [$scheme . ':' . $turnSettings['server'] . '?transport=' . $proto],
+						'urls' => [$scheme . ':' . $turnSettings['server'] . '?transport=' . $proto],
+						'username' => $turnSettings['username'],
+						'credential' => $turnSettings['password'],
+					];
+				}
 			}
 		}
 
