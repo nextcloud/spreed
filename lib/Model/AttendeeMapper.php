@@ -60,18 +60,18 @@ class AttendeeMapper extends QBMapper {
 	/**
 	 * @param int $roomId
 	 * @param string $actorType
-	 * @param \DateTime|null $lastJoinedCall
+	 * @param int|null $lastJoinedCall
 	 * @return Attendee[]
 	 */
-	public function getActorsByType(int $roomId, string $actorType, ?\DateTime $lastJoinedCall = null): array {
+	public function getActorsByType(int $roomId, string $actorType, ?int $lastJoinedCall = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)));
 
-		if ($lastJoinedCall instanceof \DateTimeInterface) {
-			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_DATE)));
+		if ($lastJoinedCall !== null) {
+			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_INT)));
 		}
 
 		return $this->findEntities($query);
