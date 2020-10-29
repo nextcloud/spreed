@@ -516,7 +516,11 @@ class ParticipantService {
 	 * @return string[]
 	 */
 	public function getParticipantUserIds(Room $room, \DateTime $maxLastJoined = null): array {
-		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), 'users', $maxLastJoined);
+		$maxLastJoinedTimestamp = null;
+		if ($maxLastJoined !== null) {
+			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
+		}
+		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), 'users', $maxLastJoinedTimestamp);
 
 		return array_map(static function (Attendee $attendee) {
 			return $attendee->getActorId();
