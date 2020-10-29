@@ -29,7 +29,6 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
-use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -70,9 +69,6 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var ChatManager */
 	private $chatManager;
-
-	/** @var AttendeeMapper */
-	private $attendeeMapper;
 
 	/** @var ParticipantService */
 	private $participantService;
@@ -117,7 +113,6 @@ class ChatController extends AEnvironmentAwareController {
 								TalkSession $session,
 								IAppManager $appManager,
 								ChatManager $chatManager,
-								AttendeeMapper $attendeeMapper,
 								ParticipantService $participantService,
 								SessionService $sessionService,
 								GuestManager $guestManager,
@@ -136,7 +131,6 @@ class ChatController extends AEnvironmentAwareController {
 		$this->session = $session;
 		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
-		$this->attendeeMapper = $attendeeMapper;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
 		$this->guestManager = $guestManager;
@@ -226,9 +220,7 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_CREATED);
 		}
 
-		$attendee = $this->participant->getAttendee();
-		$attendee->setLastReadMessage((int) $comment->getId());
-		$this->attendeeMapper->update($attendee);
+		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
 
 		$data = $chatMessage->toArray();
 		if ($parentMessage instanceof Message) {
@@ -329,8 +321,7 @@ class ChatController extends AEnvironmentAwareController {
 		$attendee = $this->participant->getAttendee();
 		if ($lookIntoFuture && $setReadMarker === 1 &&
 			$lastKnownMessageId > $attendee->getLastReadMessage()) {
-			$attendee->setLastReadMessage($lastKnownMessageId);
-			$this->attendeeMapper->update($attendee);
+			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -429,9 +420,7 @@ class ChatController extends AEnvironmentAwareController {
 			 * marker for the time until your next request starts, while it will
 			 * not update the value, when you actually left the chat already.
 			 * if ($setReadMarker === 1 && $lookIntoFuture) {
-			 * $attendee = $this->participant->getAttendee();
-			 * $attendee->setLastReadMessage((int) $newLastKnown->getId());
-			 * $this->attendeeMapper->update($attendee);
+			 * $this->participantService->updateLastReadMessage($this->participant, (int) $newLastKnown->getId());
 			 * }
 			 */
 		}
@@ -447,9 +436,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setReadMarker(int $lastReadMessage): DataResponse {
-		$attendee = $this->participant->getAttendee();
-		$attendee->setLastReadMessage($lastReadMessage);
-		$this->attendeeMapper->update($attendee);
+		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
 		return new DataResponse();
 	}
 
