@@ -569,7 +569,11 @@ class SignalingController extends OCSController {
 			}
 		} elseif ($action === 'leave') {
 			if ($participant instanceof Participant) {
-				$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+				if (!empty($userId)) {
+					$this->participantService->leaveRoomAsSession($room, $participant);
+				} else {
+					$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+				}
 			}
 		}
 
