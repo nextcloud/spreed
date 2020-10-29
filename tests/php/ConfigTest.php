@@ -116,11 +116,13 @@ class ConfigTest extends TestCase {
 			->with('spreed', 'turn_servers', '')
 			->willReturn(json_encode([
 				[
+					// No scheme explicitly given
 					'server' => 'turn.example.org',
 					'secret' => 'thisisasupersecretsecret',
 					'protocols' => 'udp,tcp',
 				],
 				[
+					'schemes' => 'turn,turns',
 					'server' => 'turn2.example.com',
 					'secret' => 'ThisIsAlsoSuperSecret',
 					'protocols' => 'tcp',
@@ -150,6 +152,7 @@ class ConfigTest extends TestCase {
 		$server = $helper->getTurnSettings();
 		if ($server['server'] === 'turn.example.org') {
 			$this->assertSame([
+				'schemes' => 'turn',
 				'server' => 'turn.example.org',
 				'username' => '1479829425:abcdefghijklmnop',
 				'password' => '4VJLVbihLzuxgMfDrm5C3zy8kLQ=',
@@ -157,6 +160,7 @@ class ConfigTest extends TestCase {
 			], $server);
 		} else {
 			$this->assertSame([
+				'schemes' => 'turn,turns',
 				'server' => 'turn2.example.com',
 				'username' => '1479829425:abcdefghijklmnop',
 				'password' => 'Ol9DEqnvyN4g+IAM+vFnqhfWUTE=',
