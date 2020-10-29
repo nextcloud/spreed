@@ -32,6 +32,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -66,7 +67,7 @@ class Notifier implements INotifier {
 	protected $manager;
 	/** @var INotificationManager */
 	protected $notificationManager;
-	/** @var CommentsManager */
+	/** @var ICommentsManager */
 	protected $commentManager;
 	/** @var MessageParser */
 	protected $messageParser;

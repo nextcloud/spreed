@@ -14,46 +14,9 @@
       <code>SchemaWrapper</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Chat/AutoComplete/Sorter.php">
-    <MissingDependency occurrences="3">
-      <code>$this-&gt;commentsManager</code>
-      <code>CommentsManager</code>
-      <code>CommentsManager</code>
-    </MissingDependency>
-  </file>
   <file src="lib/Chat/ChatManager.php">
-    <MissingDependency occurrences="18">
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>CommentsManager</code>
-      <code>CommentsManager|ICommentsManager</code>
-    </MissingDependency>
     <UndefinedClass occurrences="1">
       <code>NullCache</code>
-    </UndefinedClass>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>getLastCommentBeforeDate</code>
-      <code>getNumberOfCommentsForObjectSinceComment</code>
-      <code>searchForObjects</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="lib/Chat/CommentsManager.php">
-    <UndefinedClass occurrences="1">
-      <code>Manager</code>
     </UndefinedClass>
   </file>
   <file src="lib/Chat/MessageParser.php">
@@ -293,12 +256,6 @@
   </file>
   <file src="lib/Manager.php">
     <InvalidArgument occurrences="4"/>
-    <MissingDependency occurrences="4">
-      <code>$this-&gt;commentsManager</code>
-      <code>$this-&gt;commentsManager</code>
-      <code>CommentsManager</code>
-      <code>CommentsManager</code>
-    </MissingDependency>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="4">
@@ -516,10 +473,7 @@
       <code>$this-&gt;rooms</code>
       <code>$this-&gt;rooms</code>
     </InvalidPropertyAssignmentValue>
-    <MissingDependency occurrences="4">
-      <code>$this-&gt;commentManager</code>
-      <code>CommentsManager</code>
-      <code>CommentsManager</code>
+    <MissingDependency occurrences="1">
       <code>ShareNotFound</code>
     </MissingDependency>
   </file>

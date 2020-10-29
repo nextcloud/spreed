@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Chat\Changelog;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\CreateRoomTokenEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -31,6 +30,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -54,7 +54,7 @@ class Manager {
 	private $secureRandom;
 	/** @var IUserManager */
 	private $userManager;
-	/** @var CommentsManager */
+	/** @var ICommentsManager */
 	private $commentsManager;
 	/** @var TalkSession */
 	private $talkSession;
@@ -192,6 +192,7 @@ class Manager {
 	}
 
 	public function createCommentObject(array $row): ?IComment {
+		/** @psalm-suppress UndefinedInterfaceMethod */
 		return $this->commentsManager->getCommentFromData([
 			'id'				=> $row['comment_id'],
 			'parent_id'			=> $row['comment_parent_id'],

@@ -38,7 +38,13 @@ use OCP\IUserManager;
  */
 class UserMention {
 
-	/** @var ICommentsManager */
+	/**
+	 * Do NOT inject OCA\Talk\Chat\CommentsManager here
+	 * otherwise the display name resolvers are lost
+	 * and mentions are not replaced anymore.
+	 *
+	 * @var ICommentsManager
+	 */
 	private $commentsManager;
 	/** @var IUserManager */
 	private $userManager;
