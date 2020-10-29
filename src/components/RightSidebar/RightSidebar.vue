@@ -27,6 +27,7 @@
 		:title="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
+		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
 		@update:starred="onFavoriteChange"
 		@update:title="handleUpdateTitle"
@@ -112,7 +113,7 @@ export default {
 
 	data() {
 		return {
-			activeTab: null,
+			activeTab: 'participants',
 			contactsLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
@@ -258,31 +259,6 @@ export default {
  * nextcloud-vue for ".app-sidebar". */
 #app-sidebar {
 	display: flex;
-}
-
-/**
- * Replace padding with margin to make the participant list scroll
- * properly behind the top field
- */
-#tab-participants {
-	margin-top: 10px;
-	padding-top: 0;
-	outline: none; /* remove the weird border that appears on focus */
-}
-
-/* Force scroll bars in tabs content instead of in whole sidebar. */
-::v-deep .app-sidebar-tabs {
-	height: calc(100% - 80px);
-
-	&__content {
-		overflow: hidden;
-
-		section {
-			height: 100%;
-
-			overflow-y: auto;
-		}
-	}
 }
 
 .app-sidebar-tabs__content #tab-chat {

@@ -287,4 +287,14 @@ export default {
 	right: 6px !important;
 }
 
+/*
+ * The field will fully overlap the top of the sidebar content so
+ * that elements will scroll behind it
+ */
+.app-navigation-search {
+	top: -10px;
+	margin: -10px;
+	padding: 10px;
+}
+
 </style>
