@@ -428,6 +428,32 @@ class Room {
 		return $this->manager->createParticipantObject($this, $row);
 	}
 
+	/**
+	 * @param int $attendeeId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
+	 */
+	public function getParticipantByAttendeeId(int $attendeeId): Participant {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
+			->andWhere($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new ParticipantNotFoundException('User is not a participant');
+		}
+
+		return $this->manager->createParticipantObject($this, $row);
+	}
+
 	public function deleteRoom(): void {
 		$event = new RoomEvent($this);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DELETE, $event);

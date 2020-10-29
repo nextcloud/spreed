@@ -262,6 +262,7 @@ export default {
 		},
 
 		participantIdentifier() {
+
 			let data = {}
 			if (this.isGuest) {
 				data = {
@@ -292,13 +293,13 @@ export default {
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async removeParticipant() {
