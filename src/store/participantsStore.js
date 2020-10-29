@@ -23,8 +23,7 @@ import Vue from 'vue'
 import {
 	promoteToModerator,
 	demoteFromModerator,
-	removeUserFromConversation,
-	removeGuestFromConversation,
+	removeAttendeeFromConversation,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -172,18 +171,13 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
-	async removeParticipant({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async removeParticipant({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		const participant = getters.getParticipant(token, index)
-		if (participant.actorType === 'users') {
-			await removeUserFromConversation(token, participant.actorId)
-		} else {
-			await removeGuestFromConversation(token, participant.sessionId)
-		}
+		await removeAttendeeFromConversation(token, attendeeId)
 		commit('deleteParticipant', { token, index })
 	},
 	/**

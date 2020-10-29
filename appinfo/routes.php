@@ -300,6 +300,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#removeAttendeeFromRoom',
+			'url' => '/api/{apiVersion}/room/{token}/attendees',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v3',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#joinRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'POST',

@@ -290,13 +290,25 @@ class ParticipantService {
 	}
 
 	public function removeAttendee(Room $room, Participant $participant, string $reason): void {
-		$event = new RemoveParticipantEvent($room, $participant, $reason);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
+		$isUser = $participant->getAttendee()->getActorType() === 'users';
+
+		if ($isUser) {
+			$user = $this->userManager->get($participant->getAttendee()->getActorId());
+			$event = new RemoveUserEvent($room, $participant, $user, $reason);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
+		} else {
+			$event = new RemoveParticipantEvent($room, $participant, $reason);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
+		}
 
 		$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		$this->attendeeMapper->delete($participant->getAttendee());
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+		if ($isUser) {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
+		} else {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+		}
 	}
 
 	public function removeUser(Room $room, IUser $user, string $reason): void {
