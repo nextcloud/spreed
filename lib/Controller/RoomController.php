@@ -40,7 +40,6 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
-use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -87,8 +86,6 @@ class RoomController extends AEnvironmentAwareController {
 	protected $participantService;
 	/** @var SessionService */
 	protected $sessionService;
-	/** @var AttendeeMapper */
-	protected $attendeeMapper;
 	/** @var GuestManager */
 	protected $guestManager;
 	/** @var IUserStatusManager */
@@ -119,7 +116,6 @@ class RoomController extends AEnvironmentAwareController {
 								RoomService $roomService,
 								ParticipantService $participantService,
 								SessionService $sessionService,
-								AttendeeMapper $attendeeMapper,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
 								ChatManager $chatManager,
@@ -139,7 +135,6 @@ class RoomController extends AEnvironmentAwareController {
 		$this->roomService = $roomService;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
-		$this->attendeeMapper = $attendeeMapper;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
 		$this->chatManager = $chatManager;
@@ -426,8 +421,7 @@ class RoomController extends AEnvironmentAwareController {
 					 * but only with O(user×chat), we do the conversion here.
 					 */
 					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
-					$attendee->setLastReadMessage($lastReadMessage);
-					$this->attendeeMapper->update($attendee);
+					$this->participantService->updateLastReadMessage($currentParticipant, $lastReadMessage);
 				}
 				$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 
@@ -650,8 +644,7 @@ class RoomController extends AEnvironmentAwareController {
 					 * but only with O(user×chat), we do the conversion here.
 					 */
 					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
-					$attendee->setLastReadMessage($lastReadMessage);
-					$this->attendeeMapper->update($attendee);
+					$this->participantService->updateLastReadMessage($currentParticipant, $lastReadMessage);
 				}
 				if ($room->getLastMessage() && $lastReadMessage === (int) $room->getLastMessage()->getId()) {
 					// When the last message is the last read message, there are no unread messages,
@@ -924,9 +917,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function addToFavorites(): DataResponse {
-		$attendee = $this->participant->getAttendee();
-		$attendee->setFavorite(true);
-		$this->attendeeMapper->update($attendee);
+		$this->participantService->updateFavoriteStatus($this->participant, true);
 		return new DataResponse([]);
 	}
 
@@ -937,9 +928,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function removeFromFavorites(): DataResponse {
-		$attendee = $this->participant->getAttendee();
-		$attendee->setFavorite(false);
-		$this->attendeeMapper->update($attendee);
+		$this->participantService->updateFavoriteStatus($this->participant, false);
 		return new DataResponse([]);
 	}
 
@@ -951,17 +940,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setNotificationLevel(int $level): DataResponse {
-		if (!\in_array($level, [
-			Participant::NOTIFY_ALWAYS,
-			Participant::NOTIFY_MENTION,
-			Participant::NOTIFY_NEVER
-		], true)) {
+		try {
+			$this->participantService->updateNotificationLevel($this->participant, $level);
+		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-
-		$attendee = $this->participant->getAttendee();
-		$attendee->setNotificationLevel($level);
-		$this->attendeeMapper->update($attendee);
 
 		return new DataResponse();
 	}

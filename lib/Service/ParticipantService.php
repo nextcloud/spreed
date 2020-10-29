@@ -83,7 +83,6 @@ class ParticipantService {
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
-		$this->userManager = $userManager;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -98,6 +97,37 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
+	}
+
+	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setLastReadMessage($lastReadMessage);
+		$this->attendeeMapper->update($attendee);
+	}
+
+	public function updateFavoriteStatus(Participant $participant, bool $isFavorite): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setFavorite($isFavorite);
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
+	 * @param int $level
+	 * @throws \InvalidArgumentException When the notification level is invalid
+	 */
+	public function updateNotificationLevel(Participant $participant, int $level): void {
+		if (!\in_array($level, [
+			Participant::NOTIFY_ALWAYS,
+			Participant::NOTIFY_MENTION,
+			Participant::NOTIFY_NEVER
+		], true)) {
+			throw new \InvalidArgumentException('Invalid notification level');
+		}
+
+		$attendee = $participant->getAttendee();
+		$attendee->setNotificationLevel($level);
+		$this->attendeeMapper->update($attendee);
 	}
 
 	/**
