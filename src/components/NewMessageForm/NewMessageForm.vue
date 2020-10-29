@@ -337,7 +337,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			await processFiles(files, this.token, uploadId)
+			await processFiles(files, this.token, uploadId, true)
 		},
 
 		/**

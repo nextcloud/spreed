@@ -231,7 +231,7 @@ const actions = {
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
 			// Candidate rest of the path
-			const path = getters.getAttachmentFolder() + '/' + currentFile.name
+			const path = getters.getAttachmentFolder() + '/' + (currentFile.newName || currentFile.name)
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
