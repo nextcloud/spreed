@@ -162,6 +162,7 @@ OC.L10N.register(
     "Your screen" : "내 화면",
     "Contacts" : "연락처",
     "[Unknown user name]" : "[알 수 없는 사용자 이름]",
+    "Add contacts" : "연락처 추가",
     "Guests" : "손님",
     "Projects" : "프로젝트",
     "Please enter the password for this call" : "이 통화의 암호를 입력하십시오",
