@@ -83,6 +83,11 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 255,
 			]);
+			$table->addColumn('display_name', Type::STRING, [
+				'notnull' => false,
+				'default' => '',
+				'length' => 64,
+			]);
 
 			$table->addColumn('pin', Type::STRING, [
 				'notnull' => false,
