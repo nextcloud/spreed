@@ -32,6 +32,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
+ * @method void setDisplayName(string $displayName)
+ * @method string getDisplayName()
  * @method void setPin(string $pin)
  * @method string getPin()
  * @method void setParticipantType(int $participantType)
@@ -59,6 +61,9 @@ class Attendee extends Entity {
 	protected $actorId;
 
 	/** @var string */
+	protected $displayName;
+
+	/** @var string */
 	protected $pin;
 
 	/** @var int */
@@ -83,6 +88,7 @@ class Attendee extends Entity {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
+		$this->addType('displayName', 'string');
 		$this->addType('pin', 'string');
 		$this->addType('participantType', 'int');
 		$this->addType('favorite', 'bool');
@@ -101,6 +107,7 @@ class Attendee extends Entity {
 			'room_id' => $this->getRoomId(),
 			'actor_type' => $this->getActorType(),
 			'actor_id' => $this->getActorId(),
+			// FIXME 'display_name' => $this->getDisplayName(),
 			'pin' => $this->getPin(),
 			'participant_type' => $this->getParticipantType(),
 			'favorite' => $this->isFavorite(),
