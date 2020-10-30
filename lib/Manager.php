@@ -467,12 +467,12 @@ class Manager {
 
 	/**
 	 * @param string $token
-	 * @param string $actorId
 	 * @param string $actorType
+	 * @param string $actorId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByActor(string $token, string $actorId, string $actorType): Room {
+	public function getRoomByActor(string $token, string $actorType, string $actorId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->addSelect('a.*')
@@ -480,8 +480,8 @@ class Manager {
 			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
-				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
@@ -500,7 +500,7 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if (isset($row['actor_id'])) {
+		if ($actorType === Attendee::ACTOR_USERS && isset($row['actor_id'])) {
 			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
@@ -516,7 +516,7 @@ class Manager {
 	public function getRoomByToken(string $token, ?string $preloadUserId = null): Room {
 		$preloadUserId = $preloadUserId === '' ? null : $preloadUserId;
 		if ($preloadUserId !== null) {
-			return $this->getRoomByActor($token, $preloadUserId, Attendee::ACTOR_USERS);
+			return $this->getRoomByActor($token, Attendee::ACTOR_USERS, $preloadUserId);
 		}
 
 		$query = $this->db->getQueryBuilder();

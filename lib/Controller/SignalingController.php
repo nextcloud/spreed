@@ -520,16 +520,17 @@ class SignalingController extends OCSController {
 	}
 
 	private function backendRoom(array $roomRequest): DataResponse {
-		$roomId = $roomRequest['roomid'];
+		$token = $roomRequest['roomid']; // It's actually the room token
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
 		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
 		$actorId = $roomRequest['actorid'] ?? null;
 		$actorType = $roomRequest['actortype'] ?? null;
 
-		if ($actorId && $actorType) {
+		$participant = null;
+		if ($actorId !== null && $actorType !== null) {
 			try {
-				$room = $this->manager->getRoomByActor($roomId, $actorId, $actorType);
+				$room = $this->manager->getRoomByActor($token, $actorType, $actorId);
 			} catch (RoomNotFoundException $e) {
 				return new DataResponse([
 					'type' => 'error',
@@ -540,14 +541,13 @@ class SignalingController extends OCSController {
 				]);
 			}
 
-			$participant = null;
 			try {
-				$participant = $room->getParticipant($actorId);
+				$participant = $room->getParticipantByActor($actorType, $actorId);
 			} catch (ParticipantNotFoundException $e) {
 			}
 		} else {
 			try {
-				$room = $this->manager->getRoomByToken($roomId, $userId);
+				$room = $this->manager->getRoomByToken($token, $userId);
 			} catch (RoomNotFoundException $e) {
 				return new DataResponse([
 					'type' => 'error',
@@ -558,7 +558,6 @@ class SignalingController extends OCSController {
 				]);
 			}
 
-			$participant = null;
 			if ($sessionId) {
 				try {
 					$participant = $room->getParticipantBySession($sessionId);
