@@ -152,7 +152,7 @@ class Room {
 
 	/** @var string */
 	protected $currentUser;
-	/** @var Participant */
+	/** @var Participant|null */
 	protected $participant;
 
 	public function __construct(Manager $manager,
@@ -1058,9 +1058,13 @@ class Room {
 			)));
 		}
 
-		$query->setMaxResults($limit)
-			->setFirstResult($offset)
-			->orderBy('user_id', 'ASC');
+		if ($limit !== null) {
+			$query->setMaxResults($limit);
+		}
+		if ($offset !== null) {
+			$query->setFirstResult($offset);
+		}
+		$query->orderBy('user_id', 'ASC');
 		$result = $query->execute();
 
 		$participants = [];

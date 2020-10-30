@@ -79,6 +79,7 @@ appstore:
 	--exclude=package-lock.json \
 	--exclude=.php_cs.dist \
 	--exclude=.php_cs.cache \
+	--exclude=psalm.xml \
 	--exclude=README.md \
 	--exclude=src \
 	--exclude=.stylelintignore \
