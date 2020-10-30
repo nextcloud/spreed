@@ -524,32 +524,54 @@ class SignalingController extends OCSController {
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
 		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
+		$actorId = $roomRequest['actorid'] ?? null;
+		$actorType = $roomRequest['actortype'] ?? null;
 
-		try {
-			$room = $this->manager->getRoomByToken($roomId, $userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([
-				'type' => 'error',
-				'error' => [
-					'code' => 'no_such_room',
-					'message' => 'The user is not invited to this room.',
-				],
-			]);
-		}
-
-		$participant = null;
-		if ($sessionId) {
+		if ($actorId && $actorType) {
 			try {
-				$participant = $room->getParticipantBySession($sessionId);
+				$room = $this->manager->getRoomByActor($roomId, $actorId, $actorType);
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse([
+					'type' => 'error',
+					'error' => [
+						'code' => 'no_such_room',
+						'message' => 'The user is not invited to this room.',
+					],
+				]);
+			}
+
+			$participant = null;
+			try {
+				$participant = $room->getParticipant($actorId);
 			} catch (ParticipantNotFoundException $e) {
 			}
-		}
-
-		if (!empty($userId)) {
-			// User trying to join room.
+		} else {
 			try {
-				$participant = $room->getParticipant($userId);
-			} catch (ParticipantNotFoundException $e) {
+				$room = $this->manager->getRoomByToken($roomId, $userId);
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse([
+					'type' => 'error',
+					'error' => [
+						'code' => 'no_such_room',
+						'message' => 'The user is not invited to this room.',
+					],
+				]);
+			}
+
+			$participant = null;
+			if ($sessionId) {
+				try {
+					$participant = $room->getParticipantBySession($sessionId);
+				} catch (ParticipantNotFoundException $e) {
+				}
+			}
+
+			if (!empty($userId)) {
+				// User trying to join room.
+				try {
+					$participant = $room->getParticipant($userId);
+				} catch (ParticipantNotFoundException $e) {
+				}
 			}
 		}
 
