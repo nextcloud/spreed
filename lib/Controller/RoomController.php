@@ -221,6 +221,8 @@ class RoomController extends AEnvironmentAwareController {
 		if ($isSIPBridgeRequest && $this->getAPIVersion() < 3) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
+
+		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
