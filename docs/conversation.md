@@ -2,6 +2,7 @@
 
 * Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
 * Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
 ## Get user´s conversations
 
@@ -29,6 +30,9 @@
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
         `participantType` | int | * | Permissions level of the current user
+        `attendeeId` | int | v3 | Unique attendee id
+        `actorType` | string | v3 | Currently known `users|guests|emails|groups`
+        `actorId` | string | v3 | The unique identifier for the given actor type
         `participantInCall` | bool | 🏴 v1 | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
         `participantFlags` | int | * | Flags of the current user (only available with `in-call-flags` capability)
         `readOnly` | int | * | Read-only state for the current user (only available with `read-only-rooms` capability)

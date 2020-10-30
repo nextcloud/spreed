@@ -27,6 +27,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -37,12 +38,16 @@ class BeforeUserLoggedOutListener implements IEventListener {
 
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var TalkSession */
 	private $talkSession;
 
 	public function __construct(Manager $manager,
+								ParticipantService $participantService,
 								TalkSession $talkSession) {
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->talkSession = $talkSession;
 	}
 
@@ -63,10 +68,10 @@ class BeforeUserLoggedOutListener implements IEventListener {
 			try {
 				$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
 				$participant = $room->getParticipant($user->getUID());
-				if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
-					$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+				if ($participant->getSession() && $participant->getSession()->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					$this->participantService->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 				}
-				$room->leaveRoom($user->getUID(), $sessionId);
+				$this->participantService->leaveRoomAsSession($room, $participant);
 			} catch (RoomNotFoundException $e) {
 			} catch (ParticipantNotFoundException $e) {
 			}

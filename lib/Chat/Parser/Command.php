@@ -44,7 +44,8 @@ class Command {
 
 		$participant = $message->getParticipant();
 		if ($data['visibility'] !== \OCA\Talk\Model\Command::RESPONSE_ALL &&
-			  $data['user'] !== $participant->getUser()) {
+			($participant->getAttendee()->getActorType() !== 'users'
+				|| $data['user'] !== $participant->getAttendee()->getActorId())) {
 			$message->setVisibility(false);
 			return;
 		}

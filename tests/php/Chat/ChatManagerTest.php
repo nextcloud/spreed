@@ -29,6 +29,7 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -50,6 +51,8 @@ class ChatManagerTest extends TestCase {
 	protected $dispatcher;
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var Notifier|MockObject */
 	protected $notifier;
 	/** @var ITimeFactory|MockObject */
@@ -63,6 +66,7 @@ class ChatManagerTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$cacheFactory = $this->createMock(ICacheFactory::class);
@@ -72,6 +76,7 @@ class ChatManagerTest extends TestCase {
 			$this->dispatcher,
 			\OC::$server->getDatabaseConnection(),
 			$this->notificationManager,
+			$this->participantService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory

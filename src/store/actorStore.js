@@ -61,11 +61,13 @@ const getters = {
 	getParticipantIdentifier: (state) => () => {
 		if (state.actorType === 'guests') {
 			return {
+				actorType: 'guests',
 				sessionId: state.sessionId,
 			}
 		}
 		return {
-			userId: state.userId,
+			actorType: 'users',
+			actorId: state.actorId,
 		}
 	},
 }
@@ -134,6 +136,7 @@ const actions = {
 		context.commit('setUserId', user.uid)
 		context.commit('setDisplayName', user.displayName || user.uid)
 		context.commit('setActorType', 'users')
+		context.commit('setActorId', user.uid)
 	},
 
 	/**

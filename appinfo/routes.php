@@ -180,7 +180,7 @@ return [
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 			],
 		],
 		[
@@ -188,7 +188,7 @@ return [
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 			],
 		],
 		[
@@ -196,7 +196,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -205,7 +205,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -214,7 +214,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -223,7 +223,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -232,7 +232,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -241,7 +241,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/read-only',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -250,7 +250,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/password',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -259,7 +259,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -268,7 +268,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -277,7 +277,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -286,7 +286,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/self',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -295,7 +295,16 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/guests',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#removeAttendeeFromRoom',
+			'url' => '/api/{apiVersion}/room/{token}/attendees',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v3',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -304,7 +313,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -313,7 +322,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -322,7 +331,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/moderators',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -331,7 +340,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/moderators',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -340,7 +349,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -349,8 +358,18 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#getParticipantByDialInPin',
+			'url' => '/api/{apiVersion}/room/{token}/pin/{pin}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v(2|3)', // FIXME v3 only?
+				'token' => '^[a-z0-9]{4,30}$',
+				'pin' => '^\d{7,32}$',
 			],
 		],
 		[
@@ -358,7 +377,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/notify',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -493,10 +512,28 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Webinar#setSIPEnabled',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/sip',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(1|2)',// FIXME v2 only?
+				'webinar' => 'webinary?',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 		/**
-		 * UserSettings
+		 * Settings
 		 */
+		[
+			'name' => 'Settings#setSIPSettings',
+			'url' => '/api/{apiVersion}/settings/sip',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 		[
 			'name' => 'Settings#setUserSetting',
 			'url' => '/api/{apiVersion}/settings/user',

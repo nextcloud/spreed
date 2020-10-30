@@ -35,7 +35,7 @@
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
 			:name="computedName"
-			:source="participant.source"
+			:source="participant.source || participant.actorType"
 			:offline="isOffline" />
 		<div class="participant-row__user-wrapper">
 			<div class="participant-row__user-descriptor">
@@ -48,7 +48,21 @@
 				<span>{{ getStatusMessage(participant) }}</span>
 			</div>
 		</div>
-		<div v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
+		<div v-if="callIcon"
+			class="participant-row__callstate-icon">
+			<Microphone
+				v-if="callIcon === 'audio'"
+				:size="24"
+				decorative />
+			<Phone
+				v-if="callIcon === 'phone'"
+				:size="24"
+				decorative />
+			<Video
+				v-if="callIcon === 'video'"
+				:size="24"
+				decorative />
+		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
@@ -77,6 +91,9 @@
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import Microphone from 'vue-material-design-icons/Microphone'
+import Phone from 'vue-material-design-icons/Phone'
+import Video from 'vue-material-design-icons/Video'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import isEqual from 'lodash/isEqual'
@@ -89,6 +106,9 @@ export default {
 		Actions,
 		ActionButton,
 		AvatarWrapper,
+		Microphone,
+		Phone,
+		Video,
 	},
 
 	mixins: [
@@ -136,7 +156,7 @@ export default {
 		 * @returns {boolean}
 		 */
 		isSearched() {
-			return this.participant.userId === undefined
+			return this.participant.label !== undefined
 		},
 		computedName() {
 			if (!this.isSearched) {
@@ -156,7 +176,7 @@ export default {
 		},
 		computedId() {
 			if (!this.isSearched) {
-				return this.participant.userId
+				return this.participant.actorId
 			}
 			return this.participant.id
 		},
@@ -166,15 +186,19 @@ export default {
 		label() {
 			return this.participant.label
 		},
-		callIconClass() {
+		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
 			}
-			const hasVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			if (hasVideo) {
-				return 'icon-video'
+			const withVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			if (withVideo) {
+				return 'video'
 			}
-			return 'icon-audio'
+			const withPhone = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE
+			if (withPhone) {
+				return 'phone'
+			}
+			return 'audio'
 		},
 		participantType() {
 			return this.participant.participantType
@@ -236,21 +260,6 @@ export default {
 		canBePromoted() {
 			return this.canModerate && !this.isModerator
 		},
-
-		participantIdentifier() {
-			let data = {}
-			if (this.isGuest) {
-				data = {
-					sessionId: this.sessionId,
-				}
-			} else {
-				data = {
-					userId: this.computedId,
-				}
-			}
-			return data
-		},
-
 	},
 
 	methods: {
@@ -267,19 +276,19 @@ export default {
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 	},
@@ -336,7 +345,7 @@ export default {
 		margin-right: 28px;
 	}
 
-	.callstate-icon {
+	&__callstate-icon {
 		opacity: .4;
 		display: inline-block;
 		height: 44px;

@@ -25,6 +25,7 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
@@ -33,9 +34,13 @@ class UserDeletedListener implements IEventListener {
 
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 
-	public function __construct(Manager $manager) {
+	public function __construct(Manager $manager,
+								ParticipantService $participantService) {
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 	}
 
 	public function handle(Event $event): void {
@@ -46,13 +51,13 @@ class UserDeletedListener implements IEventListener {
 
 		$user = $event->getUser();
 
-		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
+		$rooms = $this->manager->getRoomsForUser($user->getUID());
 
 		foreach ($rooms as $room) {
-			if ($room->getNumberOfParticipants() === 1) {
+			if ($this->participantService->getNumberOfUsers($room) === 1) {
 				$room->deleteRoom();
 			} else {
-				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
 			}
 		}
 	}

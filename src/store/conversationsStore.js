@@ -23,6 +23,7 @@ import Vue from 'vue'
 import {
 	makePublic,
 	makePrivate,
+	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
 	addToFavorites,
@@ -111,6 +112,8 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionId: conversation.sessionId,
 				participantType: conversation.participantType,
+				actorType: conversation.actorType,
+				actorId: conversation.actorId, // FIXME check public share page handling
 				userId: currentUser ? currentUser.uid : '',
 				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '', // TODO guest name from localstore?
 			},
@@ -228,6 +231,19 @@ const actions = {
 		// The backend requires the state and timestamp to be set together.
 		await changeLobbyState(token, conversation.lobbyState, timestamp)
 		conversation.lobbyTimer = timestamp
+
+		commit('addConversation', conversation)
+	},
+
+	async setSIPEnabled({ commit, getters }, { token, state }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		// The backend requires the state and timestamp to be set together.
+		await setSIPEnabled(token, state)
+		conversation.sipEnabled = state
 
 		commit('addConversation', conversation)
 	},

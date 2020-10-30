@@ -37,6 +37,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -81,6 +82,8 @@ class RoomShareProvider implements IShareProvider {
 	private $dispatcher;
 	/** @var Manager */
 	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var ITimeFactory */
 	protected $timeFactory;
 	/** @var IL10N */
@@ -92,6 +95,7 @@ class RoomShareProvider implements IShareProvider {
 			IShareManager $shareManager,
 			EventDispatcherInterface $dispatcher,
 			Manager $manager,
+			ParticipantService $participantService,
 			ITimeFactory $timeFactory,
 			IL10N $l
 	) {
@@ -100,6 +104,7 @@ class RoomShareProvider implements IShareProvider {
 		$this->shareManager = $shareManager;
 		$this->dispatcher = $dispatcher;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
@@ -108,10 +113,10 @@ class RoomShareProvider implements IShareProvider {
 		$listener = static function (ParticipantEvent $event) {
 			$room = $event->getRoom();
 
-			if ($event->getParticipant()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			if ($event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 				/** @var self $roomShareProvider */
 				$roomShareProvider = \OC::$server->query(self::class);
-				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getUser());
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getAttendee()->getActorId());
 			}
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
@@ -771,7 +776,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomsForParticipant($userId);
+		$allRooms = $this->manager->getRoomsForUser($userId);
 
 		/** @var IShare[] $shares */
 		$shares = [];
@@ -971,7 +976,7 @@ class RoomShareProvider implements IShareProvider {
 					continue;
 				}
 
-				$userList = $room->getParticipantUserIds();
+				$userList = $this->participantService->getParticipantUserIds($room);
 				foreach ($userList as $uid) {
 					$users[$uid] = $users[$uid] ?? [];
 					$users[$uid][$row['id']] = $row;

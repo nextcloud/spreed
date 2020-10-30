@@ -76,7 +76,7 @@ class CurrentMessageSearch extends MessageSearch {
 		}
 
 		try {
-			$room = $this->roomManager->getRoomForParticipantByToken(
+			$room = $this->roomManager->getRoomForUserByToken(
 				$currentToken,
 				$user->getUID()
 			);

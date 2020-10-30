@@ -101,6 +101,10 @@ class InjectionMiddleware extends Middleware {
 			$this->getLoggedInOrGuest($controller, true);
 		}
 
+		if ($this->reflector->hasAnnotation('RequireRoom')) {
+			$this->getRoom($controller);
+		}
+
 		if ($this->reflector->hasAnnotation('RequireReadWriteConversation')) {
 			$this->checkReadOnlyState($controller);
 		}
@@ -112,12 +116,21 @@ class InjectionMiddleware extends Middleware {
 
 	/**
 	 * @param AEnvironmentAwareController $controller
+	 */
+	protected function getRoom(AEnvironmentAwareController $controller): void {
+		$token = $this->request->getParam('token');
+		$room = $this->manager->getRoomByToken($token, $this->userId);
+		$controller->setRoom($room);
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
 	 * @param bool $moderatorRequired
 	 * @throws NotAModeratorException
 	 */
 	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
 
 		$participant = $room->getParticipant($this->userId);
@@ -136,14 +149,14 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
 
-		if ($this->userId !== null) {
-			$participant = $room->getParticipant($this->userId);
-		} else {
-			$sessionId = $this->talkSession->getSessionForRoom($token);
+		$sessionId = $this->talkSession->getSessionForRoom($token);
+		if ($sessionId !== null) {
 			$participant = $room->getParticipantBySession($sessionId);
+		} else {
+			$participant = $room->getParticipant($this->userId);
 		}
 		$controller->setParticipant($participant);
 

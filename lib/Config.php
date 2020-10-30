@@ -62,6 +62,28 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	/**
+	 * @return string[]
+	 */
+	public function getSIPGroups(): array {
+		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	public function isSIPConfigured(): bool {
+		return $this->getSIPSharedSecret() !== ''
+			&& $this->getDialInInfo() !== '';
+	}
+
+	public function getDialInInfo(): string {
+		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
+	}
+
+	public function getSIPSharedSecret(): string {
+		return $this->config->getAppValue('spreed', 'sip_bridge_shared_secret');
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

@@ -25,6 +25,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
+use OCA\Talk\Participant;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -34,12 +38,20 @@ class WebinarController extends AEnvironmentAwareController {
 
 	/** @var ITimeFactory */
 	protected $timeFactory;
+	/** @var ParticipantService */
+	protected $participantService;
+	/** @var Config */
+	protected $talkConfig;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								ParticipantService $participantService,
+								Config $talkConfig) {
 		parent::__construct($appName, $request);
 		$this->timeFactory = $timeFactory;
+		$this->participantService = $participantService;
+		$this->talkConfig = $talkConfig;
 	}
 
 	/**
@@ -62,6 +74,37 @@ class WebinarController extends AEnvironmentAwareController {
 		}
 
 		if (!$this->room->setLobby($state, $timerDateTime)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($state === Webinary::LOBBY_NON_MODERATORS) {
+			$participants = $this->participantService->getParticipantsInCall($this->room);
+			foreach ($participants as $participant) {
+				if ($participant->hasModeratorPermissions()) {
+					continue;
+				}
+
+				$this->participantService->changeInCall($this->room, $participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setSIPEnabled(int $state): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		// TODO Check if user is in "SIP groups"
+		if (!$this->room->setSIPEnabled($state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

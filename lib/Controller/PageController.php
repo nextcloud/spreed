@@ -205,7 +205,7 @@ class PageController extends Controller {
 
 				// If the room is not a public room, check if the user is in the participants
 				if ($room->getType() !== Room::PUBLIC_CALL) {
-					$this->manager->getRoomForParticipant($room->getId(), $this->userId);
+					$this->manager->getRoomForUser($room->getId(), $this->userId);
 				}
 			} catch (RoomNotFoundException $e) {
 				// Room not found, redirect to main page
@@ -216,7 +216,7 @@ class PageController extends Controller {
 				// If the user joined themselves or is not found, they need the password.
 				try {
 					$participant = $room->getParticipant($this->userId);
-					$requirePassword = $participant->getParticipantType() === Participant::USER_SELF_JOINED;
+					$requirePassword = $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED;
 				} catch (ParticipantNotFoundException $e) {
 					$requirePassword = true;
 				}

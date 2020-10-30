@@ -34,9 +34,13 @@ class RoomService {
 
 	/** @var Manager */
 	protected $manager;
+	/** @var ParticipantService */
+	protected $participantService;
 
-	public function __construct(Manager $manager) {
+	public function __construct(Manager $manager,
+					ParticipantService $participantService) {
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 	}
 
 	/**
@@ -53,17 +57,23 @@ class RoomService {
 		try {
 			// If room exists: Reuse that one, otherwise create a new one.
 			$room = $this->manager->getOne2OneRoom($actor->getUID(), $targetUser->getUID());
-			$room->ensureOneToOneRoomIsFilled();
+			$this->participantService->ensureOneToOneRoomIsFilled($room);
 		} catch (RoomNotFoundException $e) {
 			$users = [$actor->getUID(), $targetUser->getUID()];
 			sort($users);
 			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, json_encode($users));
-			$room->addUsers([
-				'userId' => $actor->getUID(),
-				'participantType' => Participant::OWNER,
-			], [
-				'userId' => $targetUser->getUID(),
-				'participantType' => Participant::OWNER,
+
+			$this->participantService->addUsers($room, [
+				[
+					'actorType' => 'users',
+					'actorId' => $actor->getUID(),
+					'participantType' => Participant::OWNER,
+				],
+				[
+					'actorType' => 'users',
+					'actorId' => $targetUser->getUID(),
+					'participantType' => Participant::OWNER,
+				],
 			]);
 		}
 
@@ -113,10 +123,11 @@ class RoomService {
 		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
 
 		if ($owner instanceof IUser) {
-			$room->addUsers([
-				'userId' => $owner->getUID(),
+			$this->participantService->addUsers($room, [[
+				'actorType' => 'users',
+				'actorId' => $owner->getUID(),
 				'participantType' => Participant::OWNER,
-			]);
+			]]);
 		}
 
 		return $room;

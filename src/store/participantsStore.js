@@ -23,8 +23,7 @@ import Vue from 'vue'
 import {
 	promoteToModerator,
 	demoteFromModerator,
-	removeUserFromConversation,
-	removeGuestFromConversation,
+	removeAttendeeFromConversation,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -62,8 +61,10 @@ const getters = {
 
 		let index
 
-		if (participantIdentifier.hasOwnProperty('userId')) {
-			index = state.participants[token].findIndex(participant => participant.userId === participantIdentifier.userId)
+		if (participantIdentifier.hasOwnProperty('attendeeId')) {
+			index = state.participants[token].findIndex(participant => participant.attendeeId === participantIdentifier.attendeeId)
+		} else if (participantIdentifier.hasOwnProperty('actorId') && participantIdentifier.hasOwnProperty('actorType')) {
+			index = state.participants[token].findIndex(participant => participant.actorId === participantIdentifier.actorId && participant.actorType === participantIdentifier.actorType)
 		} else {
 			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
 		}
@@ -138,21 +139,15 @@ const actions = {
 			commit('addParticipant', { token, participant })
 		}
 	},
-	async promoteToModerator({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async promoteToModerator({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		if (participantIdentifier.userId) {
-			// Moderation endpoint requires "participant" instead of "userId"
-			await promoteToModerator(token, {
-				participant: participantIdentifier.userId,
-			})
-		} else {
-			// Guests are identified by sessionId in both cases
-			await promoteToModerator(token, participantIdentifier)
-		}
+		await promoteToModerator(token, {
+			attendeeId,
+		})
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
@@ -160,21 +155,15 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
-	async demoteFromModerator({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async demoteFromModerator({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		if (participantIdentifier.userId) {
-			// Moderation endpoint requires "participant" instead of "userId"
-			await demoteFromModerator(token, {
-				participant: participantIdentifier.userId,
-			})
-		} else {
-			// Guests are identified by sessionId in both cases
-			await demoteFromModerator(token, participantIdentifier)
-		}
+		await demoteFromModerator(token, {
+			attendeeId,
+		})
 
 		const participant = getters.getParticipant(token, index)
 		const updatedData = {
@@ -182,18 +171,13 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
-	async removeParticipant({ commit, getters }, { token, participantIdentifier }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
+	async removeParticipant({ commit, getters }, { token, attendeeId }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
 			return
 		}
 
-		const participant = getters.getParticipant(token, index)
-		if (participant.userId) {
-			await removeUserFromConversation(token, participant.userId)
-		} else {
-			await removeGuestFromConversation(token, participant.sessionId)
-		}
+		await removeAttendeeFromConversation(token, attendeeId)
 		commit('deleteParticipant', { token, index })
 	},
 	/**

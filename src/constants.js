@@ -47,6 +47,7 @@ export const PARTICIPANT = {
 		IN_CALL: 1,
 		WITH_AUDIO: 2,
 		WITH_VIDEO: 4,
+		WITH_PHONE: 8,
 	},
 	NOTIFY: {
 		DEFAULT: 0,
@@ -67,6 +68,10 @@ export const WEBINAR = {
 	LOBBY: {
 		NONE: 0,
 		NON_MODERATORS: 1,
+	},
+	SIP: {
+		DISABLED: 0,
+		ENABLED: 1,
 	},
 }
 export const SHARE = {

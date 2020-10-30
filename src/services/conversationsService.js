@@ -33,7 +33,7 @@ let maintenanceWarning = null
  */
 const fetchConversations = async function() {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room')
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'room')
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
@@ -59,7 +59,7 @@ const fetchConversations = async function() {
  */
 const fetchConversation = async function(token) {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}`)
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}`)
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
@@ -280,6 +280,17 @@ const makePrivate = async function(token) {
 }
 
 /**
+ * Change the SIP enabled
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} newState The new SIP state to set
+ */
+const setSIPEnabled = async function(token, newState) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v2', 2) + `room/${token}/webinar/sip`, {
+		state: newState,
+	})
+}
+
+/**
  * Change the lobby state
  * @param {string} token The token of the conversation to be modified
  * @param {int} newState The new lobby state to set
@@ -327,6 +338,7 @@ export {
 	setNotificationLevel,
 	makePublic,
 	makePrivate,
+	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
 	setConversationPassword,
