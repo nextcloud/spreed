@@ -71,6 +71,10 @@ class Participant {
 		return $this->session;
 	}
 
+	public function setSession(Session $session): void {
+		$this->session = $session;
+	}
+
 	public function isGuest(): bool {
 		$participantType = $this->attendee->getParticipantType();
 		return \in_array($participantType, [self::GUEST, self::GUEST_MODERATOR], true);

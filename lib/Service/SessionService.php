@@ -78,21 +78,37 @@ class SessionService {
 		$this->sessionMapper->deleteByIds($ids);
 	}
 
-	public function createSessionForAttendee(Attendee $attendee): Session {
+	/**
+	 * @param Attendee $attendee
+	 * @param string $forceSessionId
+	 * @return Session
+	 * @throws UniqueConstraintViolationException
+	 */
+	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
 		// Currently a participant can only join once
 		$this->sessionMapper->deleteByAttendeeId($attendee->getId());
 
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
 
-		while (true) {
-			$sessionId = $this->secureRandom->generate(255);
-			$session->setSessionId($sessionId);
+		if ($forceSessionId !== '') {
+			$session->setSessionId($forceSessionId);
 			try {
 				$this->sessionMapper->insert($session);
-				break;
 			} catch (UniqueConstraintViolationException $e) {
-				// 255 chars are not unique? Try again...
+				// The HPB told us to use a session which exists already…
+				throw $e;
+			}
+		} else {
+			while (true) {
+				$sessionId = $this->secureRandom->generate(255);
+				$session->setSessionId($sessionId);
+				try {
+					$this->sessionMapper->insert($session);
+					break;
+				} catch (UniqueConstraintViolationException $e) {
+					// 255 chars are not unique? Try again...
+				}
 			}
 		}
 
