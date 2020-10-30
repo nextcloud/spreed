@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 
 class Changelog {
@@ -32,7 +33,7 @@ class Changelog {
 	 * @throws \OutOfBoundsException
 	 */
 	public function parseMessage(Message $chatMessage): void {
-		if ($chatMessage->getActorType() !== 'guests' ||
+		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS ||
 			$chatMessage->getActorId() !== 'changelog') {
 			throw new \OutOfBoundsException('Not a changelog');
 		}

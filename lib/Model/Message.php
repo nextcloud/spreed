@@ -158,7 +158,7 @@ class Message {
 	public function isReplyable(): bool {
 		return $this->getMessageType() !== 'system' &&
 			$this->getMessageType() !== 'command' &&
-			\in_array($this->getActorType(), ['users', 'guests']);
+			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
 	public function toArray(): array {

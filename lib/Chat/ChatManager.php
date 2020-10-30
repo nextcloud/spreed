@@ -28,6 +28,7 @@ use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -144,7 +145,7 @@ class ChatManager {
 	 * @return IComment
 	 */
 	public function addChangelogMessage(Room $chat, string $message): IComment {
-		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
+		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, 'changelog', 'chat', (string) $chat->getId());
 
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());

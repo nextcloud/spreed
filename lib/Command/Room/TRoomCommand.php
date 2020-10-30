@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -249,7 +250,7 @@ trait TRoomCommand {
 			}
 
 			$participants[] = [
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
 			];
 		}
@@ -377,7 +378,7 @@ trait TRoomCommand {
 		$users = [];
 		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
-			if ($participant->getAttendee()->getActorType() === 'users'
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
 				&& stripos($participant->getAttendee()->getActorId(), $context->getCurrentWord()) !== false) {
 				$users[] = $participant->getAttendee()->getActorId();
 			}

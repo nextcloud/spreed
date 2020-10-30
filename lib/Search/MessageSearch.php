@@ -29,6 +29,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager as RoomManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
@@ -193,7 +194,7 @@ class MessageSearch implements IProvider {
 		}
 
 		$iconUrl = '';
-		if ($message->getActorType() === 'users') {
+		if ($message->getActorType() === Attendee::ACTOR_USERS) {
 			$iconUrl = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
 				'userId' => $message->getActorId(),
 				'size' => 64,

@@ -28,6 +28,7 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
@@ -293,7 +294,7 @@ class Manager {
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
-				$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
 			->where($query->expr()->isNotNull('a.id'));
@@ -342,7 +343,7 @@ class Manager {
 				->selectAlias('a.id', 'a_id')
 				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
 				))
 				->andWhere($query->expr()->isNotNull('a.id'));
@@ -397,7 +398,7 @@ class Manager {
 				->selectAlias('a.id', 'a_id');
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
 				));
 		}
@@ -483,7 +484,7 @@ class Manager {
 				->selectAlias('a.id', 'a_id');
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($preloadUserId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter('users')),
+					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
 				));
 		}
@@ -570,11 +571,11 @@ class Manager {
 		}
 
 		if ($userId !== null) {
-			if ($row['actor_type'] !== 'users' || $userId !== $row['actor_id']) {
+			if ($row['actor_type'] !== Attendee::ACTOR_USERS || $userId !== $row['actor_id']) {
 				throw new RoomNotFoundException();
 			}
 		} else {
-			if ($row['actor_type'] !== 'guests') {
+			if ($row['actor_type'] !== Attendee::ACTOR_GUESTS) {
 				throw new RoomNotFoundException();
 			}
 		}
@@ -652,7 +653,7 @@ class Manager {
 			$room->setReadOnly(Room::READ_ONLY);
 
 			$this->participantService->addUsers($room,[[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
 			]]);
 			return $room;
@@ -664,7 +665,7 @@ class Manager {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
 			$this->participantService->addUsers($room,[[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
 			]]);
 		}

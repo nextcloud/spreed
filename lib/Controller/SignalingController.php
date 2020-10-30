@@ -30,6 +30,7 @@ use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -377,7 +378,7 @@ class SignalingController extends OCSController {
 			}
 
 			$userId = '';
-			if ($participant->getAttendee()->getActorType() === 'users') {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
 			}
 

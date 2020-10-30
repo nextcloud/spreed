@@ -27,6 +27,7 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use Doctrine\DBAL\Types\Type;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\ISchemaWrapper;
@@ -209,7 +210,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 			$insert
 				->setParameter('room_id', (int) $row['room_id'], IQueryBuilder::PARAM_INT)
-				->setParameter('actor_type', 'users')
+				->setParameter('actor_type', Attendee::ACTOR_USERS)
 				->setParameter('actor_id', $row['user_id'])
 				->setParameter('participant_type', (int) $row['participant_type'], IQueryBuilder::PARAM_INT)
 				->setParameter('favorite', (bool) $row['favorite'], IQueryBuilder::PARAM_BOOL)

@@ -33,6 +33,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -352,7 +353,7 @@ class Room {
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
-			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter('users')))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);

@@ -28,6 +28,7 @@ use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
@@ -154,7 +155,7 @@ class Listener {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
 			$this->participantService->addUsers($room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
 			]]);
 		}

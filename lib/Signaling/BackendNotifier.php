@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Signaling;
 
 use OCA\Talk\Config;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -147,7 +148,7 @@ class BackendNotifier {
 		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
-			if ($user['actorType'] === 'users') {
+			if ($user['actorType'] === Attendee::ACTOR_USERS) {
 				$userIds[] = $user['actorId'];
 			}
 		}
@@ -253,8 +254,8 @@ class BackendNotifier {
 		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
-			if ($attendee->getActorType() !== 'users'
-				&& $attendee->getActorType() !== 'guests') {
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
+				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
 				continue;
 			}
 
@@ -264,7 +265,7 @@ class BackendNotifier {
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 			];
-			if ($attendee->getActorType() === 'users') {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
 			}
 
@@ -313,8 +314,8 @@ class BackendNotifier {
 		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
-			if ($attendee->getActorType() !== 'users'
-				&& $attendee->getActorType() !== 'guests') {
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
+				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
 				continue;
 			}
 
@@ -324,7 +325,7 @@ class BackendNotifier {
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 			];
-			if ($attendee->getActorType() === 'users') {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
 			}
 

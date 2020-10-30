@@ -26,6 +26,7 @@ namespace OCA\Talk\Notification;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -142,7 +143,7 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($participant['actorType'] !== 'users') {
+			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
 				// No user => no activity
 				continue;
 			}
