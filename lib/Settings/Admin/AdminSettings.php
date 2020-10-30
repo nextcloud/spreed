@@ -99,7 +99,7 @@ class AdminSettings implements ISettings {
 		$this->initTurnServers();
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
-//		$this->initSIPBridge();
+		$this->initSIPBridge();
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}

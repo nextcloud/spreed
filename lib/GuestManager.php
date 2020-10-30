@@ -205,10 +205,10 @@ class GuestManager {
 			$subject
 		);
 
-//		if ($pin) {
-//			// FIXME wrap in text
-//			$template->addBodyText($pin);
-//		}
+		if ($pin) {
+			// FIXME wrap in text
+			$template->addBodyText($pin);
+		}
 
 		$template->addBodyButton(
 			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
