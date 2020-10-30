@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -586,6 +587,21 @@ class SignalingController extends OCSController {
 		}
 
 		if ($action === 'join') {
+			if ($sessionId && !$participant->getSession() instanceof Session) {
+				try {
+					$session = $this->sessionService->createSessionForAttendee($participant->getAttendee(), $sessionId);
+				} catch (UniqueConstraintViolationException $e) {
+					return new DataResponse([
+						'type' => 'error',
+						'error' => [
+							'code' => 'duplicate_session',
+							'message' => 'The given session is already in use.',
+						],
+					]);
+				}
+				$participant->setSession($session);
+			}
+
 			if ($participant->getSession() instanceof Session) {
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}
