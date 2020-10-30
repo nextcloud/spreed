@@ -254,21 +254,21 @@ class RoomController extends AEnvironmentAwareController {
 	 * configuration.
 	 *
 	 * @param string $data
-	 * @return bool
-	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but failed
+	 * @return bool True if the request is from the SIP bridge and valid, false if not from SIP bridge
+	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but is not valid
 	 */
 	private function validateSIPBridgeRequest(string $data): bool {
-		if (!isset($_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'])
-			&& !isset($_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'])) {
+		$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
+		$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
+
+		if ($random === '' && $checksum === '') {
 			return false;
 		}
 
-		$random = $_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'] ?? '';
 		if (strlen($random) < 32) {
 			throw new UnauthorizedException('Invalid random provided');
 		}
 
-		$checksum = $_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'] ?? '';
 		if (empty($checksum)) {
 			throw new UnauthorizedException('Invalid checksum provided');
 		}
