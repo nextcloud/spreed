@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
@@ -72,7 +73,7 @@ class CallController extends AEnvironmentAwareController {
 			}
 
 			$userId = '';
-			if ($participant->getAttendee()->getActorType() === 'users') {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
 			}
 

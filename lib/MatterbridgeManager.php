@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -303,7 +304,7 @@ class MatterbridgeManager {
 			$participant = $room->getParticipant($botUserId);
 		} catch (ParticipantNotFoundException $e) {
 			$this->participantService->addUsers($room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $botUserId,
 				'participantType' => Participant::USER,
 			]]);
@@ -654,7 +655,7 @@ class MatterbridgeManager {
 	private function sendSystemMessage(Room $room, string $userId, string $message): void {
 		$this->chatManager->addSystemMessage(
 			$room,
-			'users',
+			Attendee::ACTOR_USERS,
 			$userId,
 			json_encode(['message' => $message, 'parameters' => []]),
 			$this->timeFactory->getDateTime(),

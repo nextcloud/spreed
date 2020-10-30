@@ -29,6 +29,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -165,7 +166,7 @@ class ChatController extends AEnvironmentAwareController {
 	 */
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0): DataResponse {
 		if ($this->userId === null) {
-			$actorType = 'guests';
+			$actorType = Attendee::ACTOR_GUESTS;
 			$sessionId = $this->session->getSessionForRoom($this->room->getToken());
 			// The character limit for actorId is 64, but the spreed-session is
 			// 256 characters long, so it has to be hashed to get an ID that
@@ -178,7 +179,7 @@ class ChatController extends AEnvironmentAwareController {
 				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
 		} else {
-			$actorType = 'users';
+			$actorType = Attendee::ACTOR_USERS;
 			$actorId = $this->userId;
 		}
 
@@ -293,7 +294,7 @@ class ChatController extends AEnvironmentAwareController {
 
 				if ($lookIntoFuture) {
 					$attendee = $this->participant->getAttendee();
-					if ($attendee->getActorType() === 'users') {
+					if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 						// Bump the user status again
 						$event = new UserLiveStatusEvent(
 							$this->userManager->get($attendee->getActorId()),
@@ -485,7 +486,7 @@ class ChatController extends AEnvironmentAwareController {
 		$results = $this->prepareResultArray($results, $statuses);
 
 		$attendee = $this->participant->getAttendee();
-		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 		$roomDisplayName = $this->room->getDisplayName($userId);
 		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
 			if ($search === '' ||
@@ -524,7 +525,7 @@ class ChatController extends AEnvironmentAwareController {
 					'source' => $type,
 				];
 
-				if ($type === 'users' && isset($statuses[$data['id']])) {
+				if ($type === Attendee::ACTOR_USERS && isset($statuses[$data['id']])) {
 					$data['status'] = $statuses[$data['id']]->getStatus();
 					$data['statusIcon'] = $statuses[$data['id']]->getIcon();
 					$data['statusMessage'] = $statuses[$data['id']]->getMessage();

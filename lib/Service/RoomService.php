@@ -26,6 +26,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IUser;
@@ -65,12 +66,12 @@ class RoomService {
 
 			$this->participantService->addUsers($room, [
 				[
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $actor->getUID(),
 					'participantType' => Participant::OWNER,
 				],
 				[
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $targetUser->getUID(),
 					'participantType' => Participant::OWNER,
 				],
@@ -124,7 +125,7 @@ class RoomService {
 
 		if ($owner instanceof IUser) {
 			$this->participantService->addUsers($room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $owner->getUID(),
 				'participantType' => Participant::OWNER,
 			]]);

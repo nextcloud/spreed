@@ -25,6 +25,7 @@ namespace OCA\Talk\Chat\AutoComplete;
 
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
@@ -102,9 +103,9 @@ class SearchPlugin implements ISearchPlugin {
 			$participants = $this->participantService->getParticipantsForRoom($this->room);
 			foreach ($participants as $participant) {
 				$attendee = $participant->getAttendee();
-				if ($attendee->getActorType() === 'guests') {
+				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 					$guestSessionHashes[] = $attendee->getActorId();
-				} elseif ($attendee->getActorType() === 'users') {
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$userIds[] = $attendee->getActorId();
 				}
 			}

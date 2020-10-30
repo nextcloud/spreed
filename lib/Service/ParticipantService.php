@@ -149,7 +149,7 @@ class ParticipantService {
 		}
 
 		try {
-			$attendee = $this->attendeeMapper->findByActor($room->getId(), 'users', $user->getUID());
+			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		} catch (DoesNotExistException $e) {
 			if (!$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
 				throw new InvalidPasswordException('Provided password is invalid');
@@ -157,12 +157,12 @@ class ParticipantService {
 
 			// User joining a public room, without being invited
 			$this->addUsers($room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
 				'participantType' => Participant::USER_SELF_JOINED,
 			]]);
 
-			$attendee = $this->attendeeMapper->findByActor($room->getId(), 'users', $user->getUID());
+			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		}
 
 		$session = $this->sessionService->createSessionForAttendee($attendee);
@@ -201,7 +201,7 @@ class ParticipantService {
 
 		$attendee = new Attendee();
 		$attendee->setRoomId($room->getId());
-		$attendee->setActorType('guests');
+		$attendee->setActorType(Attendee::ACTOR_GUESTS);
 		$attendee->setActorId($randomActorId);
 		$attendee->setParticipantType(Participant::GUEST);
 		$attendee->setLastReadMessage($lastMessage);
@@ -257,7 +257,7 @@ class ParticipantService {
 
 		$attendee = new Attendee();
 		$attendee->setRoomId($room->getId());
-		$attendee->setActorType('emails');
+		$attendee->setActorType(Attendee::ACTOR_EMAILS);
 		$attendee->setActorId($email);
 
 		// FIXME Only do this when SIP is enabled?
@@ -283,7 +283,7 @@ class ParticipantService {
 		foreach ($missingUsers as $userId) {
 			if ($this->userManager->userExists($userId)) {
 				$this->addUsers($room, [[
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $userId,
 					'participantType' => Participant::OWNER,
 				]]);
@@ -320,7 +320,7 @@ class ParticipantService {
 	}
 
 	public function removeAttendee(Room $room, Participant $participant, string $reason): void {
-		$isUser = $participant->getAttendee()->getActorType() === 'users';
+		$isUser = $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
 
 		if ($isUser) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
@@ -371,7 +371,7 @@ class ParticipantService {
 			->from('talk_sessions', 's')
 			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('s.attendee_id', 'a.id'))
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter('guests')))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_GUESTS)))
 			->andWhere($query->expr()->lte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
 
 		$sessionTableIds = [];
@@ -388,7 +388,7 @@ class ParticipantService {
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('s.attendee_id', 'a.id'))
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter('guests')))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_GUESTS)))
 			->andWhere($query->expr()->isNull('s.id'));
 
 		$attendeeIds = [];
@@ -437,7 +437,7 @@ class ParticipantService {
 		$query->update('talk_attendees')
 			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter('users')))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$query->execute();
 	}
@@ -562,7 +562,7 @@ class ParticipantService {
 		if ($maxLastJoined !== null) {
 			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
 		}
-		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), 'users', $maxLastJoinedTimestamp);
+		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_USERS, $maxLastJoinedTimestamp);
 
 		return array_map(static function (Attendee $attendee) {
 			return $attendee->getActorId();
@@ -583,7 +583,7 @@ class ParticipantService {
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter('users')))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->orX(
 				$query->expr()->eq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
 				$query->expr()->isNull('s.in_call')

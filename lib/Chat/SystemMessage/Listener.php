@@ -31,6 +31,7 @@ use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -221,7 +222,7 @@ class Listener {
 			$room = $event->getRoom();
 			$attendee = $event->getParticipant()->getAttendee();
 
-			if ($attendee->getActorType() !== 'users' && $attendee->getActorType() !== 'guests') {
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
 				return;
 			}
 
@@ -277,10 +278,10 @@ class Listener {
 				$actorType = 'users';
 				$actorId = $user->getUID();
 			} elseif (\OC::$CLI) {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$actorId = 'cli';
 			} else {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 			}

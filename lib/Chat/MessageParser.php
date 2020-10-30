@@ -27,6 +27,7 @@ namespace OCA\Talk\Chat;
 use OCA\Talk\Events\ChatMessageEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -79,10 +80,10 @@ class MessageParser {
 		$comment = $message->getComment();
 
 		$displayName = '';
-		if ($comment->getActorType() === 'users') {
+		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
 			$user = $this->userManager->get($comment->getActorId());
 			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
-		} elseif ($comment->getActorType() === 'guests') {
+		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			if (isset($guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {

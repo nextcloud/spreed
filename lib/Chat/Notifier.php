@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -135,7 +136,7 @@ class Notifier {
 	 * @return string[] Users that were mentioned
 	 */
 	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo): array {
-		if ($replyTo->getActorType() !== 'users') {
+		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
 			// No reply notification when the replyTo-author was not a user
 			return [];
 		}
@@ -308,7 +309,7 @@ class Notifier {
 	 * @return bool
 	 */
 	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment): bool {
-		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
+		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
 		}
@@ -341,7 +342,7 @@ class Notifier {
 				// the notification can be parsed and links to an existing room,
 				// where they are a participant of.
 				$this->participantService->addUsers($room, [[
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $userId,
 				]]);
 				return true;
@@ -364,12 +365,12 @@ class Notifier {
 	 * @return bool
 	 */
 	protected function shouldParticipantBeNotified(Participant $participant, IComment $comment, array $alreadyNotifiedUsers): bool {
-		if ($participant->getAttendee()->getActorType() !== 'users') {
+		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
 			return false;
 		}
 
 		$userId = $participant->getAttendee()->getActorId();
-		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
+		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the author
 			return false;
 		}

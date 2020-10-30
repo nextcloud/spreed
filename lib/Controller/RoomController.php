@@ -40,6 +40,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -346,7 +347,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $currentParticipant->getAttendee();
-		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
@@ -453,7 +454,7 @@ class RoomController extends AEnvironmentAwareController {
 						$numActiveGuests++;
 					}
 				}
-			} elseif ($participant->getAttendee()->getActorType() === 'users') {
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$attendee = $participant->getAttendee();
 				$session = $participant->getSession();
 				$user = $this->userManager->get($attendee->getActorId());
@@ -578,7 +579,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $currentParticipant->getAttendee();
-		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
@@ -635,7 +636,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->config);
 
-		if ($attendee->getActorType() === 'users') {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
 			if ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
@@ -819,7 +820,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
 			];
 		}
@@ -877,7 +878,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $member->getUserId(),
 			];
 		}
@@ -1011,7 +1012,7 @@ class RoomController extends AEnvironmentAwareController {
 			&& count($participants) < 100
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(static function (Participant $participant) {
-				if ($participant->getAttendee()->getActorType() === 'users') {
+				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 					return $participant->getAttendee()->getActorId();
 				}
 				return null;
@@ -1024,7 +1025,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$guestSessions = array_filter(array_map(static function (Participant $participant) {
 			$session = $participant->getSession();
-			if (!$session || $participant->getAttendee()->getActorType() !== 'guests') {
+			if (!$session || $participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
 				return null;
 			}
 
@@ -1053,7 +1054,7 @@ class RoomController extends AEnvironmentAwareController {
 				$result['sessionId'] = $participant->getSession()->getSessionId();
 			}
 
-			if ($participant->getAttendee()->getActorType() === 'users') {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
 				$user = $this->userManager->get($userId);
 				if (!$user instanceof IUser) {
@@ -1075,7 +1076,7 @@ class RoomController extends AEnvironmentAwareController {
 					$result['statusMessage'] = $statuses[$userId]->getMessage();
 					$result['statusClearAt'] = $statuses[$userId]->getClearAt();
 				}
-			} elseif ($participant->getAttendee()->getActorType() === 'guests') {
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
 				if ($result['lastPing'] <= $maxPingAge) {
 					$cleanGuests = true;
 					continue;
@@ -1130,7 +1131,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$this->participantService->addUsers($this->room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $newUser->getUID(),
 			]]);
 		} elseif ($source === 'groups') {
@@ -1146,7 +1147,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
 				];
 			}
@@ -1185,7 +1186,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $member->getUserId(),
 				];
 			}
@@ -1222,7 +1223,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function removeParticipantFromRoom(string $participant): DataResponse {
 		$attendee = $this->participant->getAttendee();
-		if ($attendee->getActorType() === 'users' && $attendee->getActorId() === $participant) {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $participant) {
 			// Removing self, abusing moderator power
 			return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 		}
@@ -1585,11 +1586,11 @@ class RoomController extends AEnvironmentAwareController {
 		$attendee = $targetParticipant->getAttendee();
 
 		// Prevent users/moderators modifying themselves
-		if ($attendee->getActorType() === 'users') {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			if ($attendee->getActorId() === $this->userId) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
-		} elseif ($attendee->getActorType() === 'guests') {
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 			$session = $targetParticipant->getSession();
 			$currentSessionId = $this->session->getSessionForRoom($this->room->getToken());
 
