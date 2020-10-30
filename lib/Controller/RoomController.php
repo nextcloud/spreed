@@ -1543,7 +1543,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function promoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
-		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
+		return $this->changeParticipantType($attendeeId, $participant, $sessionId, true);
 	}
 
 	/**
@@ -1556,7 +1556,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function demoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
-		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
+		return $this->changeParticipantType($attendeeId, $participant, $sessionId, false);
 	}
 
 	/**
@@ -1566,9 +1566,10 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int|null $attendeeId
 	 * @param string|null $userId
 	 * @param string|null $sessionId
+	 * @param bool $promote Shall the attendee be promoted or demoted
 	 * @return DataResponse
 	 */
-	protected function toggleParticipantType(?int $attendeeId, ?string $userId, ?string $sessionId): DataResponse {
+	protected function changeParticipantType(?int $attendeeId, ?string $userId, ?string $sessionId, bool $promote): DataResponse {
 		try {
 			if ($attendeeId !== null) {
 				$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
@@ -1595,6 +1596,11 @@ class RoomController extends AEnvironmentAwareController {
 			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
+		}
+
+		if ($promote === $targetParticipant->hasModeratorPermissions()) {
+			// Prevent concurrent changes
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($attendee->getParticipantType() === Participant::USER) {
