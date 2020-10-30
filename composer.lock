@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e279f7ddc109e01558906e07932f81b2",
+    "content-hash": "6210fa1ffc32a969b94bf6fb8086e75e",
     "packages": [],
     "packages-dev": [
         {
@@ -159,16 +159,16 @@
         },
         {
             "name": "christophwurst/nextcloud",
-            "version": "dev-master",
+            "version": "v20.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "40fb20d0ac2cc24a275937b19c7760821ce23b45"
+                "reference": "898b3b7feda1d8a761dffeaeda6fccace44eb649"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/40fb20d0ac2cc24a275937b19c7760821ce23b45",
-                "reference": "40fb20d0ac2cc24a275937b19c7760821ce23b45",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/898b3b7feda1d8a761dffeaeda6fccace44eb649",
+                "reference": "898b3b7feda1d8a761dffeaeda6fccace44eb649",
                 "shasum": ""
             },
             "require": {
@@ -177,7 +177,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "21.0.0-dev"
+                    "dev-master": "20.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -191,7 +191,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2020-10-08T22:05:35+00:00"
+            "time": "2020-10-05T12:40:45+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -2554,9 +2554,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "christophwurst/nextcloud": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
