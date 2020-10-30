@@ -1,5 +1,5 @@
 <!--
- - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ - @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  -
  - @author Joas Schilling <coding@schilljs.com>
  -
