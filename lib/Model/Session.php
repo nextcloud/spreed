@@ -26,6 +26,14 @@ namespace OCA\Talk\Model;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * A session is the "I'm online in this conversation" state of Talk, you get one
+ * when opening the conversation while the inCall flag tells if you are just
+ * online (chatting), or in a call (with audio, camera or even sip).
+ * Currently it's limited to 1 per attendee, but the plan is to remove this
+ * restriction in the future, so e.g. in the future you can join with your phone
+ * on the SIP bridge, have your video/screenshare on the laptop and chat in the
+ * mobile app.
+ *
  * @method void setAttendeeId(int $attendeeId)
  * @method string getAttendeeId()
  * @method void setSessionId(string $sessionId)
