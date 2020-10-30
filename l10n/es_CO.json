@@ -1,4 +1,5 @@
 { "translations": {
+    "a conversation" : "una conversación",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Tomaste una llamda con {user1}",
     "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados"],
@@ -8,8 +9,11 @@
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Tuviste una llamada con {user1}, {user2}, {user3}, {user4} y {user5}",
     "_%n other_::_%n others_" : ["%n otro","otros %n"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
+    "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Te invitaron a una <strong>conversación</strong> o recibiste una <strong>llamada</strong>",
     "Talk" : "Hablar",
     "Guest" : "Invitado",
+    "- Spice up your messages with emojis from the emoji picker" : "Dale sabor a tus mensajes con emojis del selector de emoji",
+    "- Spice up your messages with emojis from the emoji picker {emoji}" : "Dale sabor a tus mensajes con emojis del selector de emoji {emoji}",
     "Talk to %s" : "Hablar con %s",
     "Join call" : "Unirse a la llamada",
     "{user} wants to talk with you" : "{user} quiere hablar contigo",
