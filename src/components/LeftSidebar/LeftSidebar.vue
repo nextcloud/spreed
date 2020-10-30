@@ -31,6 +31,10 @@
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
+			<ActionButton
+				icon="icon-filter"
+				:close-after-click="true"
+				@click.stop="showArchived=!showArchived" />
 		</div>
 		<template #list class="left-sidebar__list">
 			<Caption v-if="isSearching"
@@ -119,6 +123,7 @@ import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 import arrowNavigation from '../../mixins/arrowNavigation'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 export default {
 
@@ -132,6 +137,7 @@ export default {
 		Hint,
 		SearchBox,
 		NewGroupConversation,
+		ActionButton,
 	},
 
 	mixins: [
@@ -149,6 +155,7 @@ export default {
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
 			initialisedConversations: false,
+			showArchived: false,
 		}
 	},
 
@@ -159,6 +166,12 @@ export default {
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
 				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
+			}
+
+			console.log(conversations)
+			conversations.forEach(conversation => console.log(conversation.isArchived))
+			if (this.showArchived === false) {
+				conversations = conversations.filter(conversation => conversation.isArchived == undefined || conversation.isArchived === false)
 			}
 
 			return conversations.sort(this.sortConversations)
