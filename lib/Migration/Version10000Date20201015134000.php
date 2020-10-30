@@ -150,7 +150,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			// Unique key to avoid duplication issues
 			$table->addColumn('session_id', Type::STRING, [
 				'notnull' => true,
-				'length' => 255,
+				'length' => 512,
 			]);
 
 			$table->addColumn('in_call', Type::INTEGER, [
