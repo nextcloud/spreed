@@ -467,28 +467,24 @@ class Manager {
 
 	/**
 	 * @param string $token
-	 * @param string|null $preloadUserId Load this participants information if possible
+	 * @param string $actorId
+	 * @param string $actorType
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByToken(string $token, ?string $preloadUserId = null): Room {
-		$preloadUserId = $preloadUserId === '' ? null : $preloadUserId;
-
+	public function getRoomByActor(string $token, string $actorId, string $actorType): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
+			->addSelect('a.*')
+			->selectAlias('a.id', 'a_id')
 			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
-
-		if ($preloadUserId !== null) {
-			$query->addSelect('a.*')
-				->selectAlias('a.id', 'a_id');
-			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
-					$query->expr()->eq('a.actor_id', $query->createNamedParameter($preloadUserId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
-					$query->expr()->eq('a.room_id', 'r.id')
-				));
-		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -504,11 +500,45 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if ($preloadUserId !== null && isset($row['actor_id'])) {
+		if (isset($row['actor_id'])) {
 			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
 		return $room;
+	}
+
+	/**
+	 * @param string $token
+	 * @param string|null $preloadUserId Load this participants information if possible
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByToken(string $token, ?string $preloadUserId = null): Room {
+		$preloadUserId = $preloadUserId === '' ? null : $preloadUserId;
+		if ($preloadUserId !== null) {
+			return $this->getRoomByActor($token, $preloadUserId, Attendee::ACTOR_USERS);
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
+		return $this->createRoomObject($row);
 	}
 
 	/**
