@@ -536,6 +536,8 @@ OC.L10N.register(
     "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Une erreur est survenue lors de l'installation de Talk Matterbridge. Veuillez l'installer manuellement.",
     "Failed to execute Matterbridge binary." : "Impossible d'exécuter le binaire Matterbridge.",
     "Shared secret" : "Secret partagé",
+    "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Cette information est présente dans les e-mails d'invitation et affichée à tous les participants dans la barre latérale.",
+    "Phone number (Country)" : "Numéro de téléphone (pays)",
     "High-performance backend URL" : "URL vers l'infrastructure de haute performance",
     "Validate SSL certificate" : "Valider le certificat SSL",
     "Delete this server" : "Supprimer ce serveur",
