@@ -606,12 +606,14 @@ class SignalingController extends OCSController {
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}
 		} elseif ($action === 'leave') {
-			if ($participant instanceof Participant) {
-				if (!empty($userId)) {
-					$this->participantService->leaveRoomAsSession($room, $participant);
-				} else {
-					$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
-				}
+			// Guests are removed completely as they don't reuse attendees,
+			// but this is only true for guests that joined directly.
+			// Emails are retained as their PIN needs to remain and stay
+			// valid.
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
+				$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+			} else {
+				$this->participantService->leaveRoomAsSession($room, $participant);
 			}
 		}
 
