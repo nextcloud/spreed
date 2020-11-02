@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -40,6 +41,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -51,6 +53,8 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
+	/** @var Config */
+	protected $talkConfig;
 	/** @var AttendeeMapper */
 	protected $attendeeMapper;
 	/** @var SessionMapper */
@@ -68,7 +72,8 @@ class ParticipantService {
 	/** @var ITimeFactory */
 	private $timeFactory;
 
-	public function __construct(AttendeeMapper $attendeeMapper,
+	public function __construct(Config $talkConfig,
+								AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								SessionService $sessionService,
 								ISecureRandom $secureRandom,
@@ -76,6 +81,7 @@ class ParticipantService {
 								IEventDispatcher $dispatcher,
 								IUserManager $userManager,
 								ITimeFactory $timeFactory) {
+		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->sessionService = $sessionService;
@@ -260,8 +266,10 @@ class ParticipantService {
 		$attendee->setActorType(Attendee::ACTOR_EMAILS);
 		$attendee->setActorId($email);
 
-		// FIXME Only do this when SIP is enabled?
-		$attendee->setPin($this->generatePin());
+		if ($room->getSIPEnabled() === Webinary::SIP_ENABLED
+			&& $this->talkConfig->isSIPConfigured()) {
+			$attendee->setPin($this->generatePin());
+		}
 
 		$attendee->setParticipantType(Participant::GUEST);
 		$attendee->setLastReadMessage($lastMessage);
