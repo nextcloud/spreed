@@ -192,6 +192,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+
 		$rooms = $this->manager->getRoomsForUser($this->userId, true);
 
 		$return = [];
@@ -542,6 +543,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorType' => '',
 				'actorId' => '',
 				'attendeeId' => 0,
+				'canEnableSIP' => false,
 			]);
 		}
 
@@ -664,6 +666,12 @@ class RoomController extends AEnvironmentAwareController {
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = true;
+				if ($this->getAPIVersion() >= 3) {
+					$roomData['canEnableSIP'] =
+						($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
+						&& $currentParticipant->hasModeratorPermissions(false)
+						&& $this->talkConfig->canUserEnableSIP($currentUser);
+				}
 			}
 		}
 

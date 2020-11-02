@@ -43,6 +43,9 @@ class Config {
 	/** @var ISecureRandom */
 	private $secureRandom;
 
+	/** @var array */
+	protected $canEnableSIP = [];
+
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								IGroupManager $groupManager,
@@ -82,6 +85,24 @@ class Config {
 
 	public function getSIPSharedSecret(): string {
 		return $this->config->getAppValue('spreed', 'sip_bridge_shared_secret');
+	}
+
+	public function canUserEnableSIP(IUser $user): bool {
+		if (isset($this->canEnableSIP[$user->getUID()])) {
+			return $this->canEnableSIP[$user->getUID()];
+		}
+
+		$this->canEnableSIP[$user->getUID()] = false;
+
+		$allowedGroups = $this->getSIPGroups();
+		if (empty($allowedGroups)) {
+			$this->canEnableSIP[$user->getUID()] = true;
+		} else {
+			$userGroups = $this->groupManager->getUserGroupIds($user);
+			$this->canEnableSIP[$user->getUID()] = !empty(array_intersect($allowedGroups, $userGroups));
+		}
+
+		return $this->canEnableSIP[$user->getUID()];
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
