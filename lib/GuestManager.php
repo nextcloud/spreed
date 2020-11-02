@@ -45,6 +45,9 @@ class GuestManager {
 	/** @var IDBConnection */
 	protected $connection;
 
+	/** @var Config */
+	protected $talkConfig;
+
 	/** @var IMailer */
 	protected $mailer;
 
@@ -64,6 +67,7 @@ class GuestManager {
 	protected $dispatcher;
 
 	public function __construct(IDBConnection $connection,
+								Config $talkConfig,
 								IMailer $mailer,
 								Defaults $defaults,
 								IUserSession $userSession,
@@ -71,6 +75,7 @@ class GuestManager {
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
 		$this->connection = $connection;
+		$this->talkConfig = $talkConfig;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->userSession = $userSession;
@@ -205,15 +210,32 @@ class GuestManager {
 			$subject
 		);
 
-		if ($pin) {
-			// FIXME wrap in text
-			$template->addBodyText($pin);
-		}
-
 		$template->addBodyButton(
 			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
 			$link
 		);
+
+		if ($pin) {
+			$template->addBodyText($this->l->t('You can also dial-in via phone with the following details'));
+
+			$template->addBodyListItem(
+				$this->talkConfig->getDialInInfo(),
+				$this->l->t('Dial-in information'),
+				$this->url->getAbsoluteURL($this->url->imagePath('spreed', 'phone.png'))
+			);
+
+			$template->addBodyListItem(
+				$room->getToken(),
+				$this->l->t('Meeting ID'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'places/calendar-dark.png'))
+			);
+
+			$template->addBodyListItem(
+				$pin,
+				$this->l->t('PIN'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/password.png'))
+			);
+		}
 
 		$template->addFooter();
 
