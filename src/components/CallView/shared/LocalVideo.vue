@@ -69,7 +69,11 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
-import { showInfo, showError } from '@nextcloud/dialogs'
+import {
+	showError,
+	showInfo,
+	TOAST_PERMANENT_TIMEOUT,
+} from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
 import { callAnalyzer } from '../../../utils/webrtc/index'
@@ -114,6 +118,7 @@ export default {
 		return {
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
+			notificationHandle: null,
 		}
 	},
 
@@ -288,11 +293,21 @@ export default {
 		localStreamVideoError: {
 			immediate: true,
 
-			handler: function(localStreamVideoError) {
-				if (localStreamVideoError) {
-					showError(t('spreed', 'Error while accessing camera'), {
-						timeout: -1,
-					})
+			handler: function(error) {
+				if (error) {
+					if (error.name === 'NotAllowedError') {
+						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))
+					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
+						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
+						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
+							timeout: TOAST_PERMANENT_TIMEOUT,
+						})
+					} else {
+						console.error('Error while accessing camera: ', error.message, error.name)
+						this.notificationHandle = showError(t('spreed', 'Error while accessing camera'), {
+							timeout: TOAST_PERMANENT_TIMEOUT,
+						})
+					}
 				}
 			},
 		},
@@ -319,6 +334,9 @@ export default {
 	},
 
 	destroyed() {
+		if (this.notificationHandle) {
+			this.notificationHandle.hideToast()
+		}
 		if (this.localCallParticipantModel) {
 			this.localCallParticipantModel.off('forcedMute', this._handleForcedMute)
 		}
