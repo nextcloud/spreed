@@ -20,6 +20,11 @@
  *
  */
 
+import BrowserStorage from '../services/BrowserStorage'
+import {
+	CONVERSATION,
+} from '../constants'
+
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
@@ -49,11 +54,29 @@ const mutations = {
 }
 
 const actions = {
+	/**
+	 * Sets the current grid mode and saves it in preferences.
+	 *
+	 * @param {object} context default store context;
+	 * @param {bool} value true for enabled grid mode, false for speaker view;
+	 */
 	isGrid(context, value) {
+		BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', value)
 		context.commit('isGrid', value)
 	},
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
+	},
+
+	joinCall(context, { token }) {
+		let isGrid = BrowserStorage.getItem('callprefs-' + token + '-isgrid')
+		if (isGrid === null) {
+			const conversationType = context.getters.conversations[token].type
+			// default to grid view for group/public calls, otherwise speaker view
+			isGrid = (conversationType === CONVERSATION.GROUP
+				|| conversationType === CONVERSATION.PUBLIC)
+		}
+		context.dispatch('isGrid', isGrid)
 	},
 }
 
