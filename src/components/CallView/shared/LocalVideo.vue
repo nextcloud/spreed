@@ -118,11 +118,6 @@ export default {
 		return {
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
-		}
-	},
-
-	data() {
-		return {
 			notificationHandle: null,
 		}
 	},
