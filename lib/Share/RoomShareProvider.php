@@ -41,6 +41,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
+use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -85,6 +86,8 @@ class RoomShareProvider implements IShareProvider {
 	protected $timeFactory;
 	/** @var IL10N */
 	private $l;
+	/** @var IMimeTypeLoader */
+	private $mimeTypeLoader;
 
 	public function __construct(
 			IDBConnection $connection,
@@ -93,7 +96,8 @@ class RoomShareProvider implements IShareProvider {
 			EventDispatcherInterface $dispatcher,
 			Manager $manager,
 			ITimeFactory $timeFactory,
-			IL10N $l
+			IL10N $l,
+			IMimeTypeLoader $mimeTypeLoader
 	) {
 		$this->dbConnection = $connection;
 		$this->secureRandom = $secureRandom;
@@ -102,6 +106,7 @@ class RoomShareProvider implements IShareProvider {
 		$this->manager = $manager;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
+		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -316,7 +321,7 @@ class RoomShareProvider implements IShareProvider {
 			$entryData['permissions'] = $entryData['f_permissions'];
 			$entryData['parent'] = $entryData['f_parent'];
 			$share->setNodeCacheEntry(Cache::cacheEntryFromData($entryData,
-				\OC::$server->getMimeTypeLoader()));
+				$this->mimeTypeLoader));
 		}
 
 		return $share;
