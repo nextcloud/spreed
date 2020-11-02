@@ -509,6 +509,16 @@
       <code>$view</code>
       <code>Filesystem</code>
     </UndefinedClass>
+    <InvalidArgument occurrences="1"/>
+  </file>
+  <file src="lib/Chat/SystemMessage/Listener.php">
+    <InvalidArgument occurrences="2">
+      <code>$listener</code>
+      <code>$listener</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/Flow/Operation.php">
+    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
     <InvalidArgument occurrences="2">
