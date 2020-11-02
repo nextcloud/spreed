@@ -134,6 +134,7 @@
 					{{ t('spreed', 'Start time (optional)') }}
 				</ActionInput>
 				<ActionCheckbox
+					v-if="canUserEnableSIP"
 					:checked="hasSIPEnabled"
 					@change="toggleSIPEnabled">
 					{{ t('spreed', 'Enable SIP dial-in') }}
@@ -288,6 +289,9 @@ export default {
 		showModerationOptions() {
 			return !this.isOneToOneConversation && this.canModerate
 		},
+		canUserEnableSIP() {
+			return this.conversation.canEnableSIP
+		},
 		token() {
 			return this.$store.getters.getToken()
 		},
@@ -303,6 +307,7 @@ export default {
 				displayName: '',
 				isFavorite: false,
 				hasPassword: false,
+				canEnableSIP: false,
 				type: CONVERSATION.TYPE.PUBLIC,
 				lobbyState: WEBINAR.LOBBY.NONE,
 				lobbyTimer: 0,
