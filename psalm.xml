@@ -34,5 +34,10 @@
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 			</errorLevel>
 		</UndefinedDocblockClass>
+		<InvalidThrow>
+			<errorLevel type="suppress">
+				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
+			</errorLevel>
+		</InvalidThrow>
 	</issueHandlers>
 </psalm>
