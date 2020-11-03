@@ -527,6 +527,7 @@ class SignalingController extends OCSController {
 		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
 		$actorId = $roomRequest['actorid'] ?? null;
 		$actorType = $roomRequest['actortype'] ?? null;
+		$inCall = $roomRequest['inCall'] ?? null;
 
 		$participant = null;
 		if ($actorId !== null && $actorType !== null) {
@@ -603,6 +604,9 @@ class SignalingController extends OCSController {
 			}
 
 			if ($participant->getSession() instanceof Session) {
+				if ($inCall !== null) {
+					$this->participantService->changeInCall($room, $participant, $inCall);
+				}
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}
 		} elseif ($action === 'leave') {
