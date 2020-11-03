@@ -535,7 +535,6 @@ class RoomController extends AEnvironmentAwareController {
 			'notificationLevel' => Participant::NOTIFY_NEVER,
 			'lobbyState' => Webinary::LOBBY_NONE,
 			'lobbyTimer' => 0,
-			'sipEnabled' => Webinary::SIP_DISABLED,
 			'lastPing' => 0,
 			'sessionId' => '0',
 			'guestList' => '',
@@ -543,6 +542,7 @@ class RoomController extends AEnvironmentAwareController {
 		];
 		if ($this->getAPIVersion() >= 3) {
 			$roomData = array_merge($roomData, [
+				'sipEnabled' => Webinary::SIP_DISABLED,
 				'actorType' => '',
 				'actorId' => '',
 				'attendeeId' => 0,
@@ -600,14 +600,17 @@ class RoomController extends AEnvironmentAwareController {
 			'notificationLevel' => $attendee->getNotificationLevel(),
 			'lobbyState' => $room->getLobbyState(),
 			'lobbyTimer' => $lobbyTimer,
-			'sipEnabled' => $room->getSIPEnabled(),
 		]);
 		if ($this->getAPIVersion() >= 3) {
+			if ($this->talkConfig->isSIPConfigured()) {
+				$roomData['sipEnabled'] = $room->getSIPEnabled();
+				$roomData['attendeePin'] = $attendee->getPin();
+			}
+
 			$roomData = array_merge($roomData, [
 				'actorType' => $attendee->getActorType(),
 				'actorId' => $attendee->getActorId(),
 				'attendeeId' => $attendee->getId(),
-				'attendeePin' => $attendee->getPin(),
 			]);
 		}
 
@@ -673,7 +676,8 @@ class RoomController extends AEnvironmentAwareController {
 				$roomData['canLeaveConversation'] = true;
 				if ($this->getAPIVersion() >= 3) {
 					$roomData['canEnableSIP'] =
-						($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
+						$this->talkConfig->isSIPConfigured()
+						&& ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
 						&& $currentParticipant->hasModeratorPermissions(false)
 						&& $this->talkConfig->canUserEnableSIP($currentUser);
 				}
@@ -1060,8 +1064,9 @@ class RoomController extends AEnvironmentAwareController {
 				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
-				if ($this->participant->hasModeratorPermissions(false)
-					|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId()) {
+				if ($this->talkConfig->isSIPConfigured()
+					&& ($this->participant->hasModeratorPermissions(false)
+						|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
 					$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
 				}
 			}
