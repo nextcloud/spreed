@@ -440,7 +440,7 @@ export default {
 		},
 
 		changeView() {
-			this.$store.dispatch('isGrid', !this.isGrid)
+			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid })
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.showLayoutHint = false
 		},

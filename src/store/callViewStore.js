@@ -27,14 +27,20 @@ import {
 
 const state = {
 	isGrid: false,
+	isStripeOpen: true,
+	lastIsGrid: null,
+	lastIsStripeOpen: null,
+	presentationStarted: false,
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
 }
 
 const getters = {
-	isGrid: (state) => {
-		return state.isGrid
-	},
+	isGrid: (state) => state.isGrid,
+	isStripeOpen: (state) => state.isStripeOpen,
+	lastIsGrid: (state) => state.lastIsGrid,
+	lastIsStripeOpen: (state) => state.lastIsStripeOpen,
+	presentationStarted: (state) => state.presentationStarted,
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
@@ -48,22 +54,24 @@ const mutations = {
 	isGrid(state, value) {
 		state.isGrid = value
 	},
+	isStripeOpen(state, value) {
+		state.isStripeOpen = value
+	},
+	lastIsGrid(state, value) {
+		state.lastIsGrid = value
+	},
+	lastIsStripeOpen(state, value) {
+		state.lastIsStripeOpen = value
+	},
 	selectedVideoPeerId(state, value) {
 		state.selectedVideoPeerId = value
+	},
+	presentationStarted(state, value) {
+		state.presentationStarted = value
 	},
 }
 
 const actions = {
-	/**
-	 * Sets the current grid mode and saves it in preferences.
-	 *
-	 * @param {object} context default store context;
-	 * @param {bool} value true for enabled grid mode, false for speaker view;
-	 */
-	isGrid(context, value) {
-		BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', value)
-		context.commit('isGrid', value)
-	},
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
 	},
@@ -79,7 +87,89 @@ const actions = {
 			// BrowserStorage.getItem returns a string instead of a boolean
 			isGrid = (isGrid === 'true')
 		}
-		context.dispatch('isGrid', isGrid)
+		let isStripeOpen = BrowserStorage.getItem('callprefs-' + token + '-isstripeopen')
+		if (isStripeOpen === null) {
+			isStripeOpen = true
+		} else {
+			isStripeOpen = isStripeOpen === 'true'
+		}
+		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: isStripeOpen })
+	},
+
+	/**
+	 * Sets the current call view mode and saves it in preferences.
+	 * If clearLast is false, also remembers it in separate properties.
+	 *
+	 * @param {object} context default store context;
+	 * @param {bool} isGrid=null true for enabled grid mode, false for speaker view;
+	 * @param {bool} isStripeOpen=null true for visible stripel mode, false for speaker view;
+	 * @param {bool} clearLast=true set to false to not reset last temporary remembered state;
+	 */
+	setCallViewMode(context, { isGrid = null, isStripeOpen = null, clearLast = true }) {
+		if (clearLast) {
+			context.commit('lastIsGrid', null)
+			context.commit('lastIsStripeOpen', null)
+		} else {
+			context.commit('lastIsGrid', context.getters.isGrid)
+			context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
+		}
+
+		if (isGrid !== null) {
+			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', isGrid)
+			context.commit('isGrid', isGrid)
+		}
+
+		if (isStripeOpen !== null) {
+			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isstripeopen', isStripeOpen)
+			context.commit('isStripeOpen', isStripeOpen)
+		}
+	},
+
+	/**
+	 * Starts presentation mode.
+	 *
+	 * Switches off grid mode and closes the stripe.
+	 * Remembers the call view state for after the end of the presentation.
+	 *
+	 * @param {object} context default store context;
+	 */
+	startPresentation(context) {
+		// don't start twice, this would prevent multiple
+		// screen shares to clear the last call view state
+		if (context.getters.presentationStarted) {
+			return
+		}
+
+		context.commit('presentationStarted', true)
+		// switch off grid mode during presentation and collapse
+		// the stripe to focus on the screen share, but continue remembering
+		// the last state
+		context.dispatch('setCallViewMode', {
+			isGrid: false,
+			isStripeOpen: false,
+			clearLast: false,
+		})
+	},
+
+	/**
+	 * Stops presentation mode.
+	 *
+	 * Restores call view state from before starting the presentation, given
+	 * that the last state was not cleared manually.
+	 *
+	 * @param {object} context default store context;
+	 */
+	stopPresentation(context) {
+		if (!context.getters.presentationStarted) {
+			return
+		}
+
+		// restore previous state
+		context.dispatch('setCallViewMode', {
+			isGrid: context.getters.lastIsGrid,
+			isStripeOpen: context.getters.lastIsStripeOpen,
+		})
+		context.commit('presentationStarted', false)
 	},
 }
 
