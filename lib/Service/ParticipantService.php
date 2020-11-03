@@ -300,7 +300,7 @@ class ParticipantService {
 	}
 
 	public function leaveRoomAsSession(Room $room, Participant $participant): void {
-		if (!$participant->isGuest()) {
+		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
 			$event = new ParticipantEvent($room, $participant);
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 		} else {
@@ -315,12 +315,12 @@ class ParticipantService {
 			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		}
 
-		if ($participant->isGuest()
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS
 			|| $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			$this->attendeeMapper->delete($participant->getAttendee());
 		}
 
-		if (!$participant->isGuest()) {
+		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
