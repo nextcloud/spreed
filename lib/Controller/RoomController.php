@@ -544,6 +544,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => '',
 				'attendeeId' => 0,
 				'canEnableSIP' => false,
+				'attendeePin' => '',
 			]);
 		}
 
@@ -603,6 +604,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorType' => $attendee->getActorType(),
 				'actorId' => $attendee->getActorId(),
 				'attendeeId' => $attendee->getId(),
+				'attendeePin' => $attendee->getPin(),
 			]);
 		}
 
@@ -1055,6 +1057,10 @@ class RoomController extends AEnvironmentAwareController {
 				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
+				if ($this->participant->hasModeratorPermissions(false)
+					|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId()) {
+					$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
+				}
 			}
 			if ($participant->getSession() instanceof Session) {
 				$result['inCall'] = $participant->getSession()->getInCall();
