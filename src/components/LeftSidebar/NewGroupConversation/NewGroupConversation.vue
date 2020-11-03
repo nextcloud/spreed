@@ -35,7 +35,6 @@
 		<!-- New group form -->
 		<Modal
 			v-if="modal"
-			size="full"
 			@close="closeModal">
 			<!-- Wrapper for content & navigation -->
 			<div
