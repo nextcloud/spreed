@@ -232,7 +232,7 @@ class GuestManager {
 
 			$template->addBodyListItem(
 				$pin,
-				$this->l->t('PIN'),
+				$this->l->t('Your PIN'),
 				$this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/password.png'))
 			);
 		}

@@ -67,6 +67,11 @@ trait TInitialState {
 			'talk', 'signaling_mode',
 			$this->talkConfig->getSignalingMode()
 		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'sip_dialin_info',
+			$this->talkConfig->getDialInInfo()
+		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
