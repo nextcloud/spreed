@@ -1476,6 +1476,7 @@ class RoomController extends AEnvironmentAwareController {
 			$result = $room->verifyPassword((string) $this->session->getPasswordForRoom($token));
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
+				$this->participantService->generatePinForParticipant($room, $participant);
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($room, $password, $result['result']);
 			}
