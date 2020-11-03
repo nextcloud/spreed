@@ -279,6 +279,16 @@ class ParticipantService {
 		return new Participant($room, $attendee, null);
 	}
 
+	public function generatePinForParticipant(Room $room, Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		if ($room->getSIPEnabled() === Webinary::SIP_ENABLED
+			&& $this->talkConfig->isSIPConfigured()
+			&& !$attendee->getPin()) {
+			$attendee->setPin($this->generatePin());
+			$this->attendeeMapper->update($attendee);
+		}
+	}
+
 	public function ensureOneToOneRoomIsFilled(Room $room): void {
 		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
 			return;
