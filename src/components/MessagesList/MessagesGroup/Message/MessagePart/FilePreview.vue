@@ -29,17 +29,20 @@
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<img v-if="(!isLoading && !failed)"
+			v-tooltip.auto="previewTooltip"
 			:class="previewImageClass"
 			class="file-preview__image"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
+			v-tooltip.auto="previewTooltip"
 			:class="previewImageClass"
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
+			v-tooltip.auto="previewTooltip"
 			class="preview loading" />
-		<strong>{{ name }}</strong>
+		<strong v-if="isUploadEditor">{{ name }}</strong>
 		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
@@ -53,6 +56,7 @@
 <script>
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Close from 'vue-material-design-icons/Close'
 import { getCapabilities } from '@nextcloud/capabilities'
 
@@ -69,6 +73,10 @@ export default {
 	components: {
 		ProgressBar,
 		Close,
+	},
+
+	directives: {
+		tooltip: Tooltip,
 	},
 
 	props: {
@@ -139,6 +147,13 @@ export default {
 		}
 	},
 	computed: {
+		previewTooltip() {
+			if (this.isUploadEditor) {
+				// no tooltip as the file name is already visible directly
+				return null
+			}
+			return this.name
+		},
 		// This is used to decide which outer element type to use
 		// a or div
 		filePreview() {
