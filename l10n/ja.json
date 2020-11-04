@@ -10,7 +10,7 @@
     "_%n other_::_%n others_" : ["他 %n 名"],
     "{actor} invited you to {call}" : "{actor} から {call} に招待されました",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "<strong>会話</strong>への招待、または<strong>着信</strong>がありました",
-    "Talk" : "通話",
+    "Talk" : "トーク",
     "Guest" : "ゲスト",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Nextcloud Talkへようこそ!\nこの会話では、Nextcloud Talkで利用できる新機能について説明します。",
     "New in Talk 6" : "トークの6つの新機能",
