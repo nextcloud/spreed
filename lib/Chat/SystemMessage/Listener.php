@@ -81,9 +81,9 @@ class Listener {
 			$participantService = \OC::$server->query(ParticipantService::class);
 
 			if ($participantService->hasActiveSessionsInCall($room)) {
-				$listener->sendSystemMessage($room, 'call_joined');
+				$listener->sendSystemMessage($room, 'call_joined', [], $event->getParticipant());
 			} else {
-				$listener->sendSystemMessage($room, 'call_started');
+				$listener->sendSystemMessage($room, 'call_started', [], $event->getParticipant());
 			}
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
