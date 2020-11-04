@@ -549,7 +549,8 @@ class SignalingController extends OCSController {
 			}
 		} else {
 			try {
-				$room = $this->manager->getRoomByToken($token, $userId);
+				// FIXME Don't preload with the user as that misses the session, kinda meh.
+				$room = $this->manager->getRoomByToken($token);
 			} catch (RoomNotFoundException $e) {
 				return new DataResponse([
 					'type' => 'error',
