@@ -131,10 +131,12 @@ export default {
 
 <style lang="scss" scoped>
 .chatView {
+	width: 100%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	position: absolute;
 }
 
 .dragover {
