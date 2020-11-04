@@ -90,7 +90,7 @@ class Listener {
 			$room = $event->getRoom();
 
 			$session = $event->getParticipant()->getSession();
-			if (!$session instanceof Session || $session->getInCall() === Participant::FLAG_DISCONNECTED) {
+			if (!$session instanceof Session) {
 				// This happens in case the user was kicked/lobbied
 				return;
 			}
