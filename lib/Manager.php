@@ -111,6 +111,7 @@ class Manager {
 	public function forAllRooms(callable $callback): void {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
+			->selectAlias('id', 'r_id')
 			->from('talk_rooms');
 
 		$result = $query->execute();
