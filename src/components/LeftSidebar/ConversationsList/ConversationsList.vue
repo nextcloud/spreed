@@ -75,13 +75,25 @@ export default {
 
 	mounted() {
 		EventBus.$on('routeChange', this.onRouteChange)
+		EventBus.$on('newMessagePosted', this.onMessagePosted)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('newMessagePosted', this.onMessagePosted)
 	},
 
 	methods: {
+		onMessagePosted({ token }) {
+			const conversation = document.getElementById(`conversation_${token}`)
+			this.$nextTick(() => {
+				conversation.scrollIntoView({
+					behavior: 'smooth',
+					block: 'start',
+					inline: 'nearest',
+				})
+			})
+		},
 		onRouteChange({ from, to }) {
 			if (from.name === 'conversation') {
 				leaveConversation(from.params.token)
