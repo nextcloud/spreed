@@ -30,8 +30,7 @@ get the messagesList array and loop through the list to generate the messages.
 	are outside of the viewport -->
 	<div
 		ref="scroller"
-		class="scroller"
-		@scroll="debounceHandleScroll">
+		class="scroller">
 		<div
 			v-if="displayMessagesLoader"
 			class="scroller__loading"
@@ -96,6 +95,18 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		/**
+		 * The scroll container.
+		 *
+		 * Can be different depending on containment,
+		 * defaults to the local ".scroller" element.
+		 */
+		scrollContainer: {
+			type: HTMLElement,
+			required: false,
+			default: null,
+		},
 	},
 
 	data: function() {
@@ -130,6 +141,12 @@ export default {
 			previousScrollTopValue: null,
 
 			pollingErrorTimeout: 1,
+
+			/**
+			 * Scroller element which defaults to this.$refs.scroller but can be supplied
+			 * from outside through the scrollContainer property
+			 */
+			scroller: null,
 		}
 	},
 
@@ -215,13 +232,31 @@ export default {
 		scrollToBottomAriaLabel() {
 			return t('spreed', 'Scroll to bottom')
 		},
-
-		scroller() {
-			return this.$refs.scroller
-		},
 	},
 
 	watch: {
+		scrollContainer(newContainer) {
+			// when the property changes, assign it to scroller
+			// or fall back to the internal scroller component
+			if (newContainer) {
+				this.scroller = newContainer
+			} else {
+				this.scroller = this.$refs.scroller
+			}
+		},
+
+		scroller(newContainer, oldContainer) {
+			// when the scroller is assigned, either through the property
+			// or initially, setup event listeners
+			if (oldContainer) {
+				oldContainer.removeEventListener('scroll', this.debounceHandleScroll)
+			}
+			if (newContainer) {
+				newContainer.addEventListener('scroll', this.debounceHandleScroll)
+				this.scrollToBottom()
+			}
+		},
+
 		chatIdentifier: {
 			immediate: true,
 			handler() {
@@ -230,7 +265,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.scrollToBottom()
+		this.scroller = this.scrollContainer || this.$refs.scroller
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
 		subscribe('networkOffline', this.handleNetworkOffline)

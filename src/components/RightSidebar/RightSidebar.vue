@@ -37,10 +37,11 @@
 		<AppSidebarTab
 			v-if="showChatInSidebar"
 			id="chat"
+			ref="chatTab"
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
-			<ChatView :token="token" />
+			<ChatView :token="token" :scroll-container="scrollContainer" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
 			id="participants"
@@ -124,6 +125,16 @@ export default {
 	},
 
 	computed: {
+		scrollContainer() {
+			// note: these conditions are needed for reactivity to make sure
+			// the chatTab is actually rendered at this time
+			if (this.opened && this.showChatInSidebar && this.$refs.chatTab) {
+				return this.$refs.chatTab.$el
+			} else {
+				return null
+			}
+		},
+
 		show() {
 			return this.$store.getters.getSidebarStatus
 		},

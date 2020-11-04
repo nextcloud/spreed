@@ -43,7 +43,8 @@
 			</div>
 		</transition>
 		<MessagesList
-			:token="token" />
+			:token="token"
+			:scroll-container="scrollContainer" />
 		<NewMessageForm />
 	</div>
 </template>
@@ -67,6 +68,17 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		/**
+		 * The scroll container.
+		 *
+		 * Can be different depending on containment
+		 */
+		scrollContainer: {
+			type: HTMLElement,
+			required: false,
+			default: null,
 		},
 	},
 
