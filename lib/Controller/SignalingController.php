@@ -527,7 +527,7 @@ class SignalingController extends OCSController {
 		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
 		$actorId = $roomRequest['actorid'] ?? null;
 		$actorType = $roomRequest['actortype'] ?? null;
-		$inCall = $roomRequest['inCall'] ?? null;
+		$inCall = $roomRequest['incall'] ?? null;
 
 		$participant = null;
 		if ($actorId !== null && $actorType !== null) {
