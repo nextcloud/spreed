@@ -56,6 +56,13 @@ import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Close from 'vue-material-design-icons/Close'
 import { getCapabilities } from '@nextcloud/capabilities'
 
+const PREVIEW_TYPE = {
+	TEMPORARY: 0,
+	MIME_ICON: 1,
+	DIRECT: 2,
+	PREVIEW: 3,
+}
+
 export default {
 	name: 'FilePreview',
 
@@ -158,20 +165,33 @@ export default {
 			}
 			return 'preview'
 		},
-		previewUrl() {
-			const userId = this.$store.getters.getUserId()
+		previewType() {
 			if (this.hasTemporaryImageUrl) {
-				return this.localUrl
+				return PREVIEW_TYPE.TEMPORARY
 			}
 
 			if (this.previewAvailable !== 'yes') {
-				return OC.MimeType.getIconUrl(this.mimetype)
+				return PREVIEW_TYPE.MIME_ICON
 			}
 
-			// max size of a gif for which we allow direct embedding
 			const maxGifSize = getCapabilities()?.caps?.spreed?.config?.previews?.['max-gif-size'] || 3145728
 			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
-				// return direct image so it can be animated
+				return PREVIEW_TYPE.DIRECT
+			}
+
+			return PREVIEW_TYPE.PREVIEW
+		},
+		previewUrl() {
+			const userId = this.$store.getters.getUserId()
+
+			switch (this.previewType) {
+			case PREVIEW_TYPE.TEMPORARY:
+				return this.localUrl
+			case PREVIEW_TYPE.MIME_ICON:
+				return OC.MimeType.getIconUrl(this.mimetype)
+			// whether to embed/render the file directly
+			case PREVIEW_TYPE.DIRECT:
+				// return direct image
 				if (userId === null) {
 					// guest mode, use public link download URL
 					return this.link + '/download/' + this.name
@@ -181,6 +201,7 @@ export default {
 				}
 			}
 
+			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
