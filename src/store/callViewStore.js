@@ -75,6 +75,9 @@ const actions = {
 			// default to grid view for group/public calls, otherwise speaker view
 			isGrid = (conversationType === CONVERSATION.GROUP
 				|| conversationType === CONVERSATION.PUBLIC)
+		} else {
+			// BrowserStorage.getItem returns a string instead of a boolean
+			isGrid = (isGrid === 'true')
 		}
 		context.dispatch('isGrid', isGrid)
 	},
