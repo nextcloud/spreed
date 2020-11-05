@@ -73,8 +73,8 @@ const actions = {
 		if (isGrid === null) {
 			const conversationType = context.getters.conversations[token].type
 			// default to grid view for group/public calls, otherwise speaker view
-			isGrid = (conversationType === CONVERSATION.GROUP
-				|| conversationType === CONVERSATION.PUBLIC)
+			isGrid = (conversationType === CONVERSATION.TYPE.GROUP
+				|| conversationType === CONVERSATION.TYPE.PUBLIC)
 		} else {
 			// BrowserStorage.getItem returns a string instead of a boolean
 			isGrid = (isGrid === 'true')
