@@ -92,6 +92,12 @@
 							{{ t('spreed', 'Microphone on and off') }}
 						</dd>
 					</div>
+					<div>
+						<dt><kbd>{{ t('spreed', 'Space bar') }}</kbd></dt>
+						<dd class="shortcut-description">
+							{{ t('spreed', 'Push to talk or push to mute') }}
+						</dd>
+					</div>
 				</dl>
 			</div>
 		</div>
