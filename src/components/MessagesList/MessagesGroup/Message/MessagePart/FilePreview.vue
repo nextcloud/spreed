@@ -29,12 +29,13 @@
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<img v-if="(!isLoading && !failed)"
-			:class="previewSizeClass"
+			:class="previewImageClass"
 			class="file-preview__image"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
-			:class="previewSizeClass"
+			class="mimeicon"
+			:class="previewImageClass"
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
@@ -159,11 +160,18 @@ export default {
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
-		previewSizeClass() {
+		previewImageClass() {
+			let classes = ''
 			if (this.previewSize === 64) {
-				return 'preview-64'
+				classes += 'preview-64 '
+			} else {
+				classes += 'preview '
 			}
-			return 'preview'
+
+			if (this.previewType === PREVIEW_TYPE.MIME_ICON) {
+				classes += 'mimeicon'
+			}
+			return classes
 		},
 		previewType() {
 			if (this.hasTemporaryImageUrl) {
@@ -356,6 +364,10 @@ export default {
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 64px;
+	}
+
+	.mimeicon {
+		min-height: 120px;
 	}
 
 	strong {
