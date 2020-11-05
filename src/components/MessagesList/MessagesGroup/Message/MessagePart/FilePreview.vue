@@ -35,14 +35,13 @@
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
-			v-tooltip.auto="previewTooltip"
 			:class="previewImageClass"
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
 			v-tooltip.auto="previewTooltip"
 			class="preview loading" />
-		<strong v-if="isUploadEditor">{{ name }}</strong>
+		<strong v-if="shouldShowFileName">{{ name }}</strong>
 		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
@@ -147,8 +146,22 @@ export default {
 		}
 	},
 	computed: {
+		shouldShowFileName() {
+			// display the file name below the preview if the preview
+			// is not easily recognizable, when:
+			return (
+				// the file is not an image
+				!this.mimetype.startsWith('image/')
+				// the image has no preview (ex: disabled on server)
+				|| (this.previewAvailable !== 'yes' && !this.localUrl)
+				// the preview failed loading
+				|| this.failed
+				// always show in upload editor
+				|| this.isUploadEditor
+			)
+		},
 		previewTooltip() {
-			if (this.isUploadEditor) {
+			if (this.shouldShowFileName) {
 				// no tooltip as the file name is already visible directly
 				return null
 			}
