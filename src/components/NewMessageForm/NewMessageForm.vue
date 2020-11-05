@@ -85,7 +85,7 @@
 						:placeholder-text="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit"
-						@files-pasted="handleFiles" />
+						@files-pasted="handlePastedFiles" />
 				</div>
 				<button
 					:disabled="isReadOnly"
@@ -329,15 +329,25 @@ export default {
 		},
 
 		/**
-		 * Handles files pasting event.
+		 * Handles files pasting event
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 */
-		async handleFiles(files) {
+		async handlePastedFiles(files) {
+			this.handleFiles(files, true)
+		},
+
+		/**
+		 * Handles file upload
+		 *
+		 * @param {File[] | FileList} files pasted files list
+		 * @param {bool} rename whether to rename the files
+		 */
+		async handleFiles(files, rename = false) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			await processFiles(files, this.token, uploadId, true)
+			await processFiles(files, this.token, uploadId, rename)
 		},
 
 		/**
