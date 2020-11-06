@@ -318,7 +318,6 @@ export default {
 		flex-direction: column;
 	}
 	&__user-name {
-		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
 		cursor: pointer;
@@ -328,6 +327,11 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
 		padding-left: 5px;
+	}
+	&__user-descriptor {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	&__status {
 		color: var(--color-text-maxcontrast);
@@ -365,5 +369,4 @@ export default {
 		color: var(--color-text-maxcontrast);
 	}
 }
-
 </style>
