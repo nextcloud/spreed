@@ -29,12 +29,12 @@
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<img v-if="(!isLoading && !failed)"
-			:class="previewSizeClass"
+			:class="previewImageClass"
 			class="file-preview__image"
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
-			:class="previewSizeClass"
+			:class="previewImageClass"
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
@@ -55,6 +55,13 @@ import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Close from 'vue-material-design-icons/Close'
 import { getCapabilities } from '@nextcloud/capabilities'
+
+const PREVIEW_TYPE = {
+	TEMPORARY: 0,
+	MIME_ICON: 1,
+	DIRECT: 2,
+	PREVIEW: 3,
+}
 
 export default {
 	name: 'FilePreview',
@@ -152,26 +159,47 @@ export default {
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
-		previewSizeClass() {
+		previewImageClass() {
+			let classes = ''
 			if (this.previewSize === 64) {
-				return 'preview-64'
+				classes += 'preview-64 '
+			} else {
+				classes += 'preview '
 			}
-			return 'preview'
+
+			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON) {
+				classes += 'mimeicon'
+			}
+			return classes
 		},
-		previewUrl() {
-			const userId = this.$store.getters.getUserId()
+		previewType() {
 			if (this.hasTemporaryImageUrl) {
-				return this.localUrl
+				return PREVIEW_TYPE.TEMPORARY
 			}
 
 			if (this.previewAvailable !== 'yes') {
-				return OC.MimeType.getIconUrl(this.mimetype)
+				return PREVIEW_TYPE.MIME_ICON
 			}
 
-			// max size of a gif for which we allow direct embedding
 			const maxGifSize = getCapabilities()?.caps?.spreed?.config?.previews?.['max-gif-size'] || 3145728
 			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
-				// return direct image so it can be animated
+				return PREVIEW_TYPE.DIRECT
+			}
+
+			return PREVIEW_TYPE.PREVIEW
+		},
+		previewUrl() {
+			const userId = this.$store.getters.getUserId()
+
+			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
+				return this.localUrl
+			}
+			if (this.previewType === PREVIEW_TYPE.MIME_ICON) {
+				return OC.MimeType.getIconUrl(this.mimetype)
+			}
+			// whether to embed/render the file directly
+			if (this.previewType === PREVIEW_TYPE.DIRECT) {
+				// return direct image
 				if (userId === null) {
 					// guest mode, use public link download URL
 					return this.link + '/download/' + this.name
@@ -181,6 +209,7 @@ export default {
 				}
 			}
 
+			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
@@ -335,6 +364,10 @@ export default {
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 64px;
+	}
+
+	.mimeicon {
+		min-height: 128px;
 	}
 
 	strong {
