@@ -56,7 +56,7 @@
 			<button @click="handleDismiss">
 				{{ t('spreed', 'Dismiss') }}
 			</button>
-			<button class="primary" @click="handleUpload">
+			<button ref="submitButton" class="primary" @click="handleUpload">
 				{{ t('spreed', 'Send') }}
 			</button>
 		</div>
@@ -115,12 +115,24 @@ export default {
 	},
 
 	watch: {
+		showModal(show) {
+			if (show) {
+				this.focus()
+			}
+		},
+
 		currentUploadId() {
 			this.modalDismissed = false
 		},
 	},
 
 	methods: {
+		focus() {
+			this.$nextTick(() => {
+				this.$refs.submitButton.focus()
+			})
+		},
+
 		handleDismiss() {
 			this.modalDismissed = true
 		},
