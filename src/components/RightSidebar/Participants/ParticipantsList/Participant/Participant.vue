@@ -39,13 +39,15 @@
 			:offline="isOffline" />
 		<div class="participant-row__user-wrapper">
 			<div class="participant-row__user-descriptor">
-				<span class="participant-row__user-name">{{ computedName }}</span>
+				<span
+					v-tooltip.auto="userTooltip"
+					class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
-			<div v-if="getStatusMessage(participant)"
+			<div v-if="statusMessage"
 				class="participant-row__status">
-				<span>{{ getStatusMessage(participant) }}</span>
+				<span v-tooltip.auto="statusMessage">{{ statusMessage }}</span>
 			</div>
 		</div>
 		<div v-if="callIcon"
@@ -90,6 +92,7 @@
 <script>
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
@@ -109,6 +112,10 @@ export default {
 		Microphone,
 		Phone,
 		Video,
+	},
+
+	directives: {
+		tooltip: Tooltip,
 	},
 
 	mixins: [
@@ -132,6 +139,21 @@ export default {
 	},
 
 	computed: {
+		userTooltip() {
+			let text = this.computedName
+			if (this.showModeratorLabel) {
+				text += ' (' + t('spreed', 'moderator') + ')'
+			}
+			if (this.isGuest) {
+				text += ' (' + t('spreed', 'guest') + ')'
+			}
+			return text
+		},
+
+		statusMessage() {
+			return this.getStatusMessage(this.participant)
+		},
+
 		/**
 		 * Check if the current participant belongs to the selected participants array
 		 * in the store
@@ -369,4 +391,5 @@ export default {
 		color: var(--color-text-maxcontrast);
 	}
 }
+
 </style>
