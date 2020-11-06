@@ -220,6 +220,11 @@ const actions = {
 	 * @param {object} uploadId The unique uploadId
 	 */
 	discardUpload({ commit, state, getters }, uploadId) {
+		if (state.currentUploadId === uploadId) {
+			commit('setCurrentUploadId', undefined)
+			commit('showUploadEditor', false)
+		}
+
 		commit('discardUpload', { uploadId })
 	},
 
@@ -229,6 +234,11 @@ const actions = {
 	 * @param {object} uploadId The unique uploadId
 	 */
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
+		if (state.currentUploadId === uploadId) {
+			commit('setCurrentUploadId', undefined)
+			commit('showUploadEditor', false)
+		}
+
 		EventBus.$emit('uploadStart')
 
 		// Tag the previously indexed files and add the temporary messages to the
