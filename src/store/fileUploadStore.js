@@ -181,6 +181,10 @@ const mutations = {
 			}
 		}
 	},
+
+	discardUpload(state, uploadId) {
+		Vue.delete(state.uploads, uploadId)
+	},
 }
 
 const actions = {
@@ -202,6 +206,15 @@ const actions = {
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
 			commit('addFileToBeUploaded', { file, temporaryMessage })
 		})
+	},
+
+	/**
+	 * Discards an upload
+	 * @param {object} param0 Commit and state
+	 * @param {object} uploadId The unique uploadId
+	 */
+	discardUpload({ commit, state, getters }, uploadId) {
+		commit('discardUpload', { uploadId })
 	},
 
 	/**
