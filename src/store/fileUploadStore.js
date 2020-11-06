@@ -35,7 +35,6 @@ const state = {
 	uploads: {
 	},
 	currentUploadId: undefined,
-	showUploadEditor: false,
 }
 
 const getters = {
@@ -92,10 +91,6 @@ const getters = {
 
 	currentUploadId: (state) => {
 		return state.currentUploadId
-	},
-
-	showUploadEditor: (state) => {
-		return state.showUploadEditor
 	},
 }
 
@@ -174,11 +169,6 @@ const mutations = {
 		state.currentUploadId = currentUploadId
 	},
 
-	// Shows hides the upload editor
-	showUploadEditor(state, show) {
-		state.showUploadEditor = show
-	},
-
 	removeFileFromSelection(state, fileId) {
 		const uploadId = state.currentUploadId
 		for (const key in state.uploads[uploadId].files) {
@@ -198,8 +188,6 @@ const actions = {
 	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
 		// Set last upload id
 		commit('setCurrentUploadId', uploadId)
-		// Show upload editor
-		commit('showUploadEditor', true)
 
 		files.forEach(file => {
 			// Get localurl for previews
@@ -222,7 +210,6 @@ const actions = {
 	discardUpload({ commit, state, getters }, uploadId) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
-			commit('showUploadEditor', false)
 		}
 
 		commit('discardUpload', { uploadId })
@@ -236,7 +223,6 @@ const actions = {
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
-			commit('showUploadEditor', false)
 		}
 
 		EventBus.$emit('uploadStart')

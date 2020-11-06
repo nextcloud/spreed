@@ -97,7 +97,7 @@ export default {
 		},
 
 		showModal() {
-			return this.$store.getters.showUploadEditor
+			return !!this.currentUploadId
 		},
 
 		addMoreAriaLabel() {
