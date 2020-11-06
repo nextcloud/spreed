@@ -135,6 +135,7 @@ export default {
 		},
 
 		handleDismiss() {
+			this.$store.dispatch('discardUpload', this.currentUploadId)
 			this.modalDismissed = true
 		},
 
