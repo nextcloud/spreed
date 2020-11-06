@@ -34,7 +34,6 @@
 			alt=""
 			:src="previewUrl">
 		<img v-if="!isLoading && failed"
-			class="mimeicon"
 			:class="previewImageClass"
 			alt=""
 			:src="defaultIconUrl">
@@ -168,7 +167,7 @@ export default {
 				classes += 'preview '
 			}
 
-			if (this.previewType === PREVIEW_TYPE.MIME_ICON) {
+			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON) {
 				classes += 'mimeicon'
 			}
 			return classes
@@ -192,13 +191,14 @@ export default {
 		previewUrl() {
 			const userId = this.$store.getters.getUserId()
 
-			switch (this.previewType) {
-			case PREVIEW_TYPE.TEMPORARY:
+			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
 				return this.localUrl
-			case PREVIEW_TYPE.MIME_ICON:
+			}
+			if (this.previewType === PREVIEW_TYPE.MIME_ICON) {
 				return OC.MimeType.getIconUrl(this.mimetype)
+			}
 			// whether to embed/render the file directly
-			case PREVIEW_TYPE.DIRECT:
+			if (this.previewType === PREVIEW_TYPE.DIRECT) {
 				// return direct image
 				if (userId === null) {
 					// guest mode, use public link download URL
@@ -367,7 +367,7 @@ export default {
 	}
 
 	.mimeicon {
-		min-height: 120px;
+		min-height: 128px;
 	}
 
 	strong {
