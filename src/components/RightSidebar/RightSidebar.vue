@@ -25,6 +25,7 @@
 		v-show="opened"
 		id="app-sidebar"
 		:title="title"
+		:title-tooltip="title"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
 		:class="'active-tab-' + activeTab"
