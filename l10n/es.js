@@ -793,6 +793,8 @@ OC.L10N.register(
     "Shortcuts while in a call" : "Atajos durante una llamada",
     "Video on and off" : "Vídeo encendido y apagado",
     "Microphone on and off" : "Micrófono encendido y apagado",
+    "Space bar" : "Barra espaciadora",
+    "Push to talk or push to mute" : "Pulsa para hablar o para silenciar",
     "Choose in which folder attachments should be saved." : "Escoge en qué carpeta deben guardarse los adjuntos.",
     "Select location for attachments" : "Selecciona localización para los adjuntos",
     "Error while setting attachment folder" : "Error al fijar la carpeta para los archivos adjuntos",
