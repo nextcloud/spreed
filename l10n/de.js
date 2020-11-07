@@ -793,6 +793,8 @@ OC.L10N.register(
     "Shortcuts while in a call" : "Tastaturkürzel während eines Anrufs",
     "Video on and off" : "Kamera ein- und ausschalten",
     "Microphone on and off" : "Mikrofon an- und ausschalten",
+    "Space bar" : "Leertaste",
+    "Push to talk or push to mute" : "Zum Sprechen oder Stummschalten drücken",
     "Choose in which folder attachments should be saved." : "Bitte auswählen, in welchen Ordner die Anhänge gespeichert werden sollen.",
     "Select location for attachments" : "Speicherort für Anhänge auswählen",
     "Error while setting attachment folder" : "Fehler beim Festlegen des Ordners für Anhänge",
