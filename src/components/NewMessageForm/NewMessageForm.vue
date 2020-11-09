@@ -297,6 +297,10 @@ export default {
 			const files = Object.values(event.target.files)
 
 			this.handleFiles(files)
+
+			// Clear input to ensure that the change event will be emitted if
+			// the same file is picked again.
+			event.target.value = ''
 		},
 
 		/**
