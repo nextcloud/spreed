@@ -17,11 +17,19 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
   -
   -->
-
 <template>
 	<div v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
+			<button
+				id="raiseHand"
+				v-shortkey="['h']"
+				v-tooltip="raisedHandButtonTooltip"
+				:aria-label="raisedHandButtonAriaLabel"
+				:class="raisedHandButtonClass"
+				class="forced-white"
+				@shortkey="toggleHandRaised"
+				@click="toggleHandRaised" />
 			<div id="muteWrapper">
 				<button
 					id="mute"
@@ -175,6 +183,27 @@ export default {
 	},
 
 	computed: {
+
+		raisedHandButtonClass() {
+			return {
+				'icon-hand-white': this.model.attributes.raisedHand,
+				'icon-hand-off-white hand-disabled': !this.model.attributes.raisedHand,
+			}
+		},
+
+		raisedHandButtonAriaLabel() {
+			if (!this.model.attributes.raisedHand) {
+				return t('spreed', 'Raise hand')
+			}
+			return t('spreed', 'Lower hand')
+		},
+
+		raisedHandButtonTooltip() {
+			return {
+				content: this.raisedHandButtonAriaLabel,
+				show: false,
+			}
+		},
 
 		audioButtonClass() {
 			return {
@@ -519,6 +548,10 @@ export default {
 			}
 		},
 
+		toggleHandRaised() {
+			this.model.toggleHandRaised(!this.model.attributes.raisedHand)
+		},
+
 		shareScreen() {
 			if (!this.model.attributes.localScreen) {
 				this.startShareScreen('screen')
@@ -642,12 +675,14 @@ export default {
 	height: auto;
 }
 
+.buttons-bar button.hand-disabled,
 .buttons-bar button.audio-disabled,
 .buttons-bar button.video-disabled,
 .buttons-bar button.screensharing-disabled {
 	opacity: .7;
 }
 
+.buttons-bar button.hand-disabled,
 .buttons-bar button.audio-disabled:not(.no-audio-available),
 .buttons-bar button.video-disabled:not(.no-video-available),
 .buttons-bar button.screensharing-disabled {

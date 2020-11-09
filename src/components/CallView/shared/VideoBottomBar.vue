@@ -25,6 +25,15 @@
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
 			<transition name="fade">
+				<div
+					v-show="showVideoOverlay"
+					class="bottom-bar__statusIndicator">
+					<div
+						v-show="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+						class="raisedHandIndicator forced-white icon-hand-white" />
+				</div>
+			</transition>
+			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
 					:class="{'bottom-bar__nameIndicator--promoted': boldenNameIndicator}">
@@ -247,6 +256,7 @@ export default {
 			font-weight: bold;
 		}
 	}
+	&__statusIndicator,
 	&__mediaIndicator {
 		position: relative;
 		background-size: 22px;
@@ -265,6 +275,7 @@ export default {
 	}
 }
 
+.raisedHandIndicator,
 .muteIndicator,
 .hideRemoteVideo,
 .screensharingIndicator,
@@ -303,5 +314,12 @@ export default {
 .iceFailedIndicator {
 	opacity: .8 !important;
 }
+
+.raisedHandIndicator {
+	display: block;
+	/* like buttons */
+	padding: 6px 12px;
+}
+
 
 </style>

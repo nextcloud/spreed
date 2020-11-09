@@ -100,6 +100,12 @@
 						{{ t('spreed', 'Push to talk or push to mute') }}
 					</dd>
 				</div>
+				<div>
+					<dt><kbd>H</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Raise/lower hand') }}
+					</dd>
+				</div>
 			</dl>
 		</AppSettingsSection>
 	</AppSettingsDialog>

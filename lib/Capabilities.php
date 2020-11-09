@@ -84,6 +84,7 @@ class Capabilities implements IPublicCapability {
 				'sip-support',
 				'chat-read-status',
 				'phonebook-search',
+				'raise-hand',
 			],
 			'config' => [
 				'attachments' => [

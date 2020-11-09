@@ -36,6 +36,7 @@ export default function LocalMediaModel() {
 		videoEnabled: false,
 		localScreen: null,
 		token: '',
+		raisedHand: false,
 	}
 
 	this._handlers = []
@@ -426,6 +427,23 @@ LocalMediaModel.prototype = {
 		}
 
 		this._webRtc.stopScreenShare()
+	},
+
+	/**
+	 * Toggles hand raised mode for the local participant
+	 *
+	 * @param {bool} raised true for raised, false for lowered
+	 */
+	toggleHandRaised: function(raised) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		this._webRtc.sendToAll('raiseHand', { raised: raised })
+
+		// Set state locally too, as even when sending to all the sender will not
+		// receive the message.
+		this.set('raisedHand', raised)
 	},
 
 }
