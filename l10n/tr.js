@@ -793,6 +793,8 @@ OC.L10N.register(
     "Shortcuts while in a call" : "Görüşme sırasında kullanılabilecek kısayol tuşları",
     "Video on and off" : "Görüntüyü açma ve kapatma",
     "Microphone on and off" : "Mikrofonu açma ve kapatma",
+    "Space bar" : "Boşluk tuşu",
+    "Push to talk or push to mute" : "Bas konuş ya da bas kıs",
     "Choose in which folder attachments should be saved." : "Ek dosyaların kaydedileceği klasörü seçin.",
     "Select location for attachments" : "Ek dosyaların konumunu seçin",
     "Error while setting attachment folder" : "Ek dosyalar klasörü ayarlanırken sorun çıktı",
