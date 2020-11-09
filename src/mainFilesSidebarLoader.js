@@ -20,9 +20,7 @@
  *
  */
 
-import Vue from 'vue'
 import FilesSidebarCallView from './views/FilesSidebarCallView'
-import FilesSidebarTab from './views/FilesSidebarTab'
 import { leaveConversation } from './services/participantsService'
 
 const isEnabled = function(fileInfo) {
@@ -47,7 +45,6 @@ const isEnabled = function(fileInfo) {
 	return false
 }
 
-const View = Vue.extend(FilesSidebarTab)
 // It might be enough to keep the instance only in the Tab object itself,
 // without using a shared variable that can be destroyed if a new tab is
 // mounted and the previous one was not destroyed yet, as the tabs seem to
@@ -68,15 +65,22 @@ window.addEventListener('DOMContentLoaded', () => {
 				if (tabInstance) {
 					tabInstance.$destroy()
 				}
-				tabInstance = new View()
-				// Only mount after we have all the info we need
-				await tabInstance.update(fileInfo)
+
+				// Dirty hack to force the style on parent component
+				const tabChat = document.querySelector('#tab-chat')
+				tabChat.style.height = '100%'
+				// Remove paddding to maximize space for the chat view
+				tabChat.style.padding = '0'
+
+				OCA.Talk.fileInfo = this.fileInfo
+				tabInstance = OCA.Talk.newTab()
 				tabInstance.$mount(el)
 			},
 			update(fileInfo) {
-				tabInstance.update(fileInfo)
+				OCA.Talk.fileInfo = fileInfo
 			},
 			destroy() {
+				OCA.Talk.fileInfo = null
 				tabInstance.$destroy()
 				tabInstance = null
 			},
