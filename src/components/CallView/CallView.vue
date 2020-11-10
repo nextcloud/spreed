@@ -312,6 +312,11 @@ export default {
 		},
 	},
 	watch: {
+		isSidebar: (isSidebar) => {
+			// update matching store value
+			this.$store.dispatch('isSidebar', isSidebar)
+		},
+
 		localScreen: function(localScreen) {
 			this._setScreenAvailable(localCallParticipantModel.attributes.peerId, localScreen)
 		},
@@ -359,6 +364,9 @@ export default {
 		// Ensure that data is properly initialized before mounting the
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
+	},
+	mounted() {
+		this.$store.dispatch('isSidebar', this.isSidebar)
 	},
 	methods: {
 		/**

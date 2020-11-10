@@ -27,6 +27,7 @@ import {
 
 const state = {
 	isGrid: false,
+	isSidebar: false,
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
 }
@@ -34,6 +35,9 @@ const state = {
 const getters = {
 	isGrid: (state) => {
 		return state.isGrid
+	},
+	isSidebar: (state) => {
+		return state.isSidebar
 	},
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
@@ -48,6 +52,9 @@ const mutations = {
 	isGrid(state, value) {
 		state.isGrid = value
 	},
+	isSidebar(state, value) {
+		state.isSidebar = value
+	},
 	selectedVideoPeerId(state, value) {
 		state.selectedVideoPeerId = value
 	},
@@ -61,14 +68,22 @@ const actions = {
 	 * @param {bool} value true for enabled grid mode, false for speaker view;
 	 */
 	isGrid(context, value) {
-		BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', value)
+		if (!context.getters.isSidebar()) {
+			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', value)
+		}
 		context.commit('isGrid', value)
+	},
+	isSidebar(context, value) {
+		context.commit('isSidebar', value)
 	},
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
 	},
 
 	joinCall(context, { token }) {
+		if (context.getters.isSidebar()) {
+			context.dispatch('isGrid', false)
+		}
 		let isGrid = BrowserStorage.getItem('callprefs-' + token + '-isgrid')
 		if (isGrid === null) {
 			const conversationType = context.getters.conversations[token].type
