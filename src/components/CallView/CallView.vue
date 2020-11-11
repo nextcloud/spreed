@@ -171,7 +171,7 @@ export default {
 	},
 	computed: {
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels
+			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
 
 		reversedCallParticipantModels() {
