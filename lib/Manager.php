@@ -290,13 +290,18 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->addSelect('a.*')
+			->addSelect('s.*')
 			->selectAlias('r.id', 'r_id')
 			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id')
 			))
 			->where($query->expr()->isNotNull('a.id'));
 
@@ -341,11 +346,16 @@ class Manager {
 		if ($userId !== null) {
 			// Non guest user
 			$query->addSelect('a.*')
+				->addSelect('s.*')
 				->selectAlias('a.id', 'a_id')
+				->selectAlias('s.id', 's_id')
 				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
+				))
+				->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('a.id', 's.attendee_id')
 				))
 				->andWhere($query->expr()->isNotNull('a.id'));
 		}
@@ -396,11 +406,16 @@ class Manager {
 		if ($userId !== null) {
 			// Non guest user
 			$query->addSelect('a.*')
-				->selectAlias('a.id', 'a_id');
-			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				->addSelect('s.*')
+				->selectAlias('a.id', 'a_id')
+				->selectAlias('s.id', 's_id')
+				->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
+				))
+				->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('a.id', 's.attendee_id')
 				));
 		}
 
@@ -476,13 +491,18 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->addSelect('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
 			->selectAlias('r.id', 'r_id')
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
 				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id')
 			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
