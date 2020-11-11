@@ -38,16 +38,22 @@
 			:source="participant.source || participant.actorType"
 			:offline="isOffline" />
 		<div class="participant-row__user-wrapper">
-			<div class="participant-row__user-descriptor">
+			<div
+				ref="userName"
+				class="participant-row__user-descriptor"
+				@mouseover="updateUserNameNeedsTooltip()">
 				<span
-					v-tooltip.auto="userTooltip"
+					v-tooltip.auto="userTooltipText"
 					class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
-			<div v-if="statusMessage"
-				class="participant-row__status">
-				<span v-tooltip.auto="statusMessage">{{ statusMessage }}</span>
+			<div
+				v-if="statusMessage"
+				ref="statusMessage"
+				class="participant-row__status"
+				@mouseover="updateStatusNeedsTooltip()">
+				<span v-tooltip.auto="statusMessageTooltip">{{ statusMessage }}</span>
 			</div>
 		</div>
 		<div v-if="callIcon"
@@ -138,8 +144,18 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			isUserNameTooltipVisible: false,
+			isStatusTooltipVisible: false,
+		}
+	},
+
 	computed: {
-		userTooltip() {
+		userTooltipText() {
+			if (!this.isUserNameTooltipVisible) {
+				return false
+			}
 			let text = this.computedName
 			if (this.showModeratorLabel) {
 				text += ' (' + t('spreed', 'moderator') + ')'
@@ -152,6 +168,14 @@ export default {
 
 		statusMessage() {
 			return this.getStatusMessage(this.participant)
+		},
+
+		statusMessageTooltip() {
+			if (!this.isStatusTooltipVisible) {
+				return false
+			}
+
+			return this.statusMessage
 		},
 
 		/**
@@ -285,6 +309,16 @@ export default {
 	},
 
 	methods: {
+		updateUserNameNeedsTooltip() {
+			// check if ellipsized
+			const e = this.$refs.userName
+			this.isUserNameTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+		},
+		updateStatusNeedsTooltip() {
+			// check if ellipsized
+			const e = this.$refs.statusMessage
+			this.isStatusTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+		},
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
