@@ -29,7 +29,7 @@
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<img v-if="(!isLoading && !failed)"
-			v-tooltip.auto="previewTooltip"
+			v-tooltip="previewTooltip"
 			:class="previewImageClass"
 			class="file-preview__image"
 			alt=""
@@ -39,7 +39,7 @@
 			alt=""
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
-			v-tooltip.auto="previewTooltip"
+			v-tooltip="previewTooltip"
 			class="preview loading" />
 		<strong v-if="shouldShowFileName">{{ name }}</strong>
 		<button v-if="isUploadEditor"
@@ -165,7 +165,11 @@ export default {
 				// no tooltip as the file name is already visible directly
 				return null
 			}
-			return this.name
+			return {
+				content: this.name,
+				delay: { show: 500 },
+				placement: 'left',
+			}
 		},
 		// This is used to decide which outer element type to use
 		// a or div
