@@ -180,15 +180,7 @@ export default {
 		},
 	},
 
-	watch: {
-		token(newValue, oldValue) {
-			this.isCurrentConversationIsFirstInList()
-		},
-	},
-
 	mounted() {
-		this.isCurrentConversationIsFirstInList()
-
 		EventBus.$on('uploadStart', this.handleUploadStart)
 	},
 
@@ -271,16 +263,7 @@ export default {
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
 					// Scrolls the conversationlist to conversation
-					if (!this.conversationIsFirstInList) {
-						const conversation = document.getElementById(`conversation_${this.token}`)
-						this.$nextTick(() => {
-							conversation.scrollIntoView({
-								behavior: 'smooth',
-								block: 'center',
-								inline: 'nearest',
-							})
-						})
-					}
+					EventBus.$emit('newMessagePosted', { token: this.token, message: temporaryMessage })
 				} catch (error) {
 					let statusCode = null
 					console.debug(`error while submitting message ${error}`, error)
@@ -400,12 +383,6 @@ export default {
 			this.text = contentEditable.innerHTML
 
 			range.setStartAfter(emojiTextNode)
-		},
-
-		// Check whether the current conversation is the first in the conversations
-		// list and stores the value in the component's data.
-		isCurrentConversationIsFirstInList() {
-			this.conversationIsFirstInList = this.$store.getters.conversationsList.map(conversation => conversation.token).indexOf(this.token) === 0
 		},
 	},
 }
