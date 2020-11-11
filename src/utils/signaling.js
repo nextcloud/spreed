@@ -1148,6 +1148,9 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 		this._trigger('usersChanged', [data.event.update.users || []])
 		this._trigger('participantListChanged')
 		break
+	case 'flags':
+		this._trigger('participantFlagsChanged', [data.event.flags || []])
+		break
 	default:
 		console.error('Unknown room participant event', data)
 		break
