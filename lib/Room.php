@@ -107,6 +107,8 @@ class Room {
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 
+	public const DESCRIPTION_MAXIMUM_LENGTH = 250;
+
 	/** @var Manager */
 	private $manager;
 	/** @var IDBConnection */
@@ -138,6 +140,8 @@ class Room {
 	private $token;
 	/** @var string */
 	private $name;
+	/** @var string */
+	private $description;
 	/** @var string */
 	private $password;
 	/** @var int */
@@ -174,6 +178,7 @@ class Room {
 								?int $assignedSignalingServer,
 								string $token,
 								string $name,
+								string $description,
 								string $password,
 								int $activeGuests,
 								\DateTime $activeSince = null,
@@ -197,6 +202,7 @@ class Room {
 		$this->assignedSignalingServer = $assignedSignalingServer;
 		$this->token = $token;
 		$this->name = $name;
+		$this->description = $description;
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
@@ -274,6 +280,10 @@ class Room {
 
 	public function getDisplayName(string $userId): string {
 		return $this->manager->resolveRoomDisplayName($this, $userId);
+	}
+
+	public function getDescription(): string {
+		return $this->description;
 	}
 
 	public function getActiveGuests(): int {

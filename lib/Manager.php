@@ -172,6 +172,7 @@ class Manager {
 			$assignedSignalingServer,
 			(string) $row['token'],
 			(string) $row['name'],
+			(string) $row['description'],
 			(string) $row['password'],
 			(int) $row['active_guests'],
 			$activeSince,
