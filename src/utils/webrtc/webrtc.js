@@ -237,6 +237,9 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 			})
 		}
 		callParticipantModel.setUserId(userId)
+		if (user.internal) {
+			callParticipantModel.set('internal', true)
+		}
 
 		// When the MCU is used and the other participant has no streams or
 		// when no MCU is used and neither the local participant nor the
