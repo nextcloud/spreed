@@ -119,16 +119,7 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		conversation() {
-			if (this.$store.getters.conversation(this.token)) {
-				return this.$store.getters.conversation(this.token)
-			}
-			return {
-				token: '',
-				displayName: '',
-				isFavorite: false,
-				type: CONVERSATION.TYPE.PUBLIC,
-				lobbyState: WEBINAR.LOBBY.NONE,
-			}
+			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 		isSearching() {
 			return this.searchText !== ''
