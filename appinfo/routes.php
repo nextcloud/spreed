@@ -237,6 +237,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setDescription',
+			'url' => '/api/{apiVersion}/room/{token}/description',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v3',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#setReadOnly',
 			'url' => '/api/{apiVersion}/room/{token}/read-only',
 			'verb' => 'PUT',

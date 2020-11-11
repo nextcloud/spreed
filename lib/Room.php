@@ -74,6 +74,8 @@ class Room {
 	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
 	public const EVENT_BEFORE_NAME_SET = self::class . '::preSetName';
 	public const EVENT_AFTER_NAME_SET = self::class . '::postSetName';
+	public const EVENT_BEFORE_DESCRIPTION_SET = self::class . '::preSetDescription';
+	public const EVENT_AFTER_DESCRIPTION_SET = self::class . '::postSetDescription';
 	public const EVENT_BEFORE_PASSWORD_SET = self::class . '::preSetPassword';
 	public const EVENT_AFTER_PASSWORD_SET = self::class . '::postSetPassword';
 	public const EVENT_BEFORE_TYPE_SET = self::class . '::preSetType';
@@ -546,6 +548,38 @@ class Room {
 		$this->name = $newName;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param string $description
+	 * @return bool True when the change was valid, false otherwise
+	 * @throws \LengthException when the given description is too long
+	 */
+	public function setDescription(string $description): bool {
+		$description = trim($description);
+
+		if (mb_strlen($description) > self::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new \LengthException('Conversation description is limited to ' . self::DESCRIPTION_MAXIMUM_LENGTH . ' characters');
+		}
+
+		$oldDescription = $this->getDescription();
+		if ($description === $oldDescription) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($this, 'description', $description, $oldDescription);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_DESCRIPTION_SET, $event);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('description', $query->createNamedParameter($description))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+		$this->description = $description;
+
+		$this->dispatcher->dispatch(self::EVENT_AFTER_DESCRIPTION_SET, $event);
 
 		return true;
 	}
