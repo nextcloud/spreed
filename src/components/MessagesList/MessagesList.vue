@@ -52,7 +52,7 @@ get the messagesList array and loop through the list to generate the messages.
 				:count="15" />
 		</template>
 		<transition name="fade">
-			<button v-show="!isScrolledToBottom"
+			<button v-show="!isChatScrolledToBottom"
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
@@ -98,6 +98,11 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		isChatScrolledToBottom: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data: function() {
@@ -114,12 +119,6 @@ export default {
 			 * when quickly switching to a new conversation.
 			 */
 			cancelFetchMessages: () => {},
-			/**
-			 * Initialised as true as when we open a new conversation we're scrolling to
-			 * the bottom for now. In the future when we'll open the conversation close
-			 * to the scroll position of the last red message, we wil need to change this.
-			 */
-			isScrolledToBottom: true,
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
 			 * messages. This boolean allows us to show/hide the loader.
@@ -187,7 +186,7 @@ export default {
 		 * @returns {boolean}
 		 */
 		isSticky() {
-			return this.isScrolledToBottom
+			return this.isChatScrolledToBottom
 		},
 
 		/**
@@ -544,7 +543,7 @@ export default {
 
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
-		}, 200),
+		}, 50),
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
@@ -556,7 +555,7 @@ export default {
 			const elementHeight = this.scroller.clientHeight
 			const tolerance = 10
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
-				this.isScrolledToBottom = true
+				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
@@ -567,7 +566,7 @@ export default {
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			} else {
-				this.isScrolledToBottom = false
+				this.setChatScrolledToBottom(false)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			}
@@ -578,9 +577,9 @@ export default {
 		 * @param {boolean} options.force Set to true, if the chat should be scrolled to the bottom even when it was not before
 		 */
 		handleScrollChatToBottomEvent(options) {
-			if ((options && options.force) || this.isScrolledToBottom) {
+			if ((options && options.force) || this.isChatScrolledToBottom) {
 				this.scrollToBottom()
-				this.isScrolledToBottom = true
+				this.setChatScrolledToBottom(true)
 			}
 		},
 
@@ -593,7 +592,7 @@ export default {
 					top: this.scroller.scrollHeight,
 					behavior: 'smooth',
 					 })
-				this.isScrolledToBottom = true
+				this.setChatScrolledToBottom(true)
 			})
 		},
 		/**
@@ -602,7 +601,7 @@ export default {
 		scrollToBottom() {
 			this.$nextTick(function() {
 				this.scroller.scrollTop = this.scroller.scrollHeight
-				this.isScrolledToBottom = true
+				this.setChatScrolledToBottom(true)
 			})
 
 		},
@@ -687,6 +686,10 @@ export default {
 					}, 2)
 				}
 			}
+		},
+
+		setChatScrolledToBottom(boolean) {
+			this.$emit('setChatScrolledToBottom', boolean)
 		},
 	},
 }
