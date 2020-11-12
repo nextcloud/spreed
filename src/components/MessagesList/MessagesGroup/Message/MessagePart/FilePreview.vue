@@ -28,16 +28,22 @@
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click="handleClick"
 		@keydown.enter="handleClick">
-		<img v-if="(!isLoading && !failed)"
-			v-tooltip="previewTooltip"
-			:class="previewImageClass"
-			class="file-preview__image"
-			alt=""
-			:src="previewUrl">
-		<img v-if="!isLoading && failed"
-			:class="previewImageClass"
-			alt=""
-			:src="defaultIconUrl">
+		<div
+			v-if="!isLoading"
+			class="image-container"
+			:class="{'playable': isPlayable}">
+			<span v-if="isPlayable" class="play-video-button icon-play-white" />
+			<img v-if="!failed"
+				v-tooltip="previewTooltip"
+				:class="previewImageClass"
+				class="file-preview__image"
+				alt=""
+				:src="previewUrl">
+			<img v-else
+				:class="previewImageClass"
+				alt=""
+				:src="defaultIconUrl">
+		</div>
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
@@ -272,6 +278,15 @@ export default {
 
 			return false
 		},
+		isPlayable() {
+			// don't show play button for direct renders
+			if (this.failed || !this.isViewerAvailable || this.previewType !== PREVIEW_TYPE.PREVIEW) {
+				return false
+			}
+
+			// videos only display a preview, so always show a button if playable
+			return this.mimetype === 'image/gif' || this.mimetype.startsWith('video/')
+		},
 		internalAbsolutePath() {
 			if (this.path.startsWith('/')) {
 				return this.path
@@ -396,6 +411,42 @@ export default {
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 64px;
+	}
+
+	.image-container {
+		display: inline-block;
+		position: relative;
+
+		&.playable {
+			.preview {
+				transition: filter 250ms ease-in-out;
+			}
+
+			.play-video-button {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				padding: 22px;
+				border: 2px solid white;
+				border-radius: 25px;
+				opacity: 0.8;
+				z-index: 1;
+				transition: opacity 250ms ease-in-out;
+				background-size: 25px;
+				background-position-x: 11px;
+			}
+
+			&:hover {
+				.preview {
+					filter: brightness(80%);
+				}
+
+				.play-video-button {
+					opacity: 1;
+				}
+			}
+		}
 	}
 
 	.mimeicon {
