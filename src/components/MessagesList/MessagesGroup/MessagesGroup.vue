@@ -141,25 +141,17 @@ export default {
 	&__date-header {
 		display: block;
 		text-align: center;
-
-		margin: 40px 15px 0;
-		border-top: 1px solid var(--color-border);
 		padding-top: 20px;
 		position: relative;
+		margin: 20px 0;
 
 		.date {
 			content: attr(data-date);
-			position: absolute;
-			top: 0;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-			padding: 0 7px 0 7px;
-
-			text-align: center;
-			white-space: nowrap;
-
+			background-color: var(--color-background-dark);
+			font-weight: bold;
+			padding: 6px 12px;
 			color: var(--color-text-maxcontrast);
-			background-color: var(--color-main-background);
+			border-radius: var(--border-radius-pill);
 		}
 	}
 }
