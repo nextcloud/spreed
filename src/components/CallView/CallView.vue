@@ -336,14 +336,18 @@ export default {
 		'callParticipantModelsWithScreen': function(newValue, previousValue) {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
-
-				this.$store.dispatch('isGrid', false)
+				this.$store.dispatch('startPresentation')
+			} else if (newValue.length === 0 && previousValue.length > 0) {
+				// last screen share stopped, reopening stripe
+				this.$store.dispatch('stopPresentation')
 			}
 		},
 		'showLocalScreen': function(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
-				this.$store.dispatch('isGrid', false)
+				this.$store.dispatch('startPresentation')
+			} else {
+				this.$store.dispatch('stopPresentation')
 			}
 		},
 		'hasLocalVideo': function(newValue) {
@@ -512,7 +516,7 @@ export default {
 			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
 		},
 		handleSelectVideo(peerId) {
-			this.$store.dispatch('isGrid', false)
+			this.$store.dispatch('setCallViewMode', { isGrid: false })
 			this.$store.dispatch('selectedVideoPeerId', peerId)
 			this.isLocalVideoSelected = false
 		},
@@ -523,7 +527,7 @@ export default {
 			}
 			// Deselect possible selected video
 			this.$store.dispatch('selectedVideoPeerId', 'local')
-			this.$store.dispatch('isGrid', false)
+			this.$store.dispatch('setCallViewMode', { isGrid: false })
 		},
 	},
 }

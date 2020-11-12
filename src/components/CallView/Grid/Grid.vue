@@ -23,7 +23,7 @@
 	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwo}">
 		<button v-if="isStripe"
 			class="stripe--collapse"
-			@click="stripeOpen = !stripeOpen">
+			@click="handleClickStripeCollapse">
 			<ChevronDown
 				v-if="stripeOpen"
 				fill-color="#ffffff"
@@ -269,8 +269,6 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
-			// Whether the stripe is open (true) or collapsed (false)
-			stripeOpen: true,
 		}
 	},
 
@@ -407,6 +405,10 @@ export default {
 		// Blur radius for each background in the grid
 		videoBackgroundBlur() {
 			return this.$store.getters.getBlurFilter(this.videoWidth, this.videoHeight)
+		},
+
+		stripeOpen() {
+			return this.$store.getters.isStripeOpen
 		},
 	},
 
@@ -665,6 +667,10 @@ export default {
 			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 			this.displayedVideos = this.videos.slice((this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
 			console.debug('slicevalues', (this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
+		},
+
+		handleClickStripeCollapse() {
+			this.$store.dispatch('setCallViewMode', { isStripeOpen: !this.stripeOpen })
 		},
 
 		handleMovement() {
