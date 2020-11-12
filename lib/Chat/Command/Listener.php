@@ -64,19 +64,12 @@ class Listener {
 				return;
 			}
 
-			if ($command->getEnabled() === Command::ENABLED_OFF) {
-				return;
+			if (!$listener->executor->isCommandAvailableForParticipant($command, $participant)) {
+				$command = $listener->commandService->find('', 'help');
+				$arguments = trim($message->getMessage());
 			}
 
-			if ($command->getEnabled() === Command::ENABLED_MODERATOR && !$participant->hasModeratorPermissions()) {
-				return;
-			}
-
-			if ($command->getEnabled() === Command::ENABLED_USERS && $participant->isGuest()) {
-				return;
-			}
-
-			$listener->executor->exec($event->getRoom(), $message, $command, $arguments);
+			$listener->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
 		});
 	}
 
