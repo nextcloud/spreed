@@ -5,7 +5,7 @@
 	"description": "",
 	"author": "Joas Schilling <coding@schilljs.com>",
 	"scripts": {
-		"build": "NODE_ENV=production webpack --progress --hide-modules --config webpack.prod.js",
+		"build": "NODE_ENV=production webpack --progress --config webpack.prod.js",
 		"test:unit": "vue-cli-service test:unit",
 		"test:watch": "vue-cli-service test:unit --watchAll",
 		"lint": "eslint --ext .js,.vue src",
