@@ -206,6 +206,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
+			if (isset($expectedRoom['lastMessage'])) {
+				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
+			}
 
 			return $data;
 		}, $rooms, $formData->getHash()));
