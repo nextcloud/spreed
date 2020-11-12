@@ -20,103 +20,94 @@
 -->
 
 <template>
-	<Modal v-if="showSettings"
-		@close="showSettings = false">
-		<div class="wrapper">
-			<div class="app-settings-section">
-				<h2 class="app-setting-section__title">
-					{{ t('spreed', 'Choose devices') }}
-				</h2>
-				<MediaDevicesPreview />
-			</div>
-			<div v-if="!isGuest"
-				class="app-settings-section">
-				<h2 class="app-setting-section__title">
-					{{ t('spreed', 'Attachments folder') }}
-				</h2>
-				<h3 class="app-settings-section__hint">
-					{{ locationHint }}
-				</h3>
-				<input
-					type="text"
-					class="app-settings-section__input"
-					:value="attachmentFolder"
-					:disabled="attachmentFolderLoading"
-					@click="selectAttachmentFolder">
-			</div>
-			<div class="app-settings-section last">
-				<h2 class="app-setting-section__title">
-					{{ t('spreed', 'Keyboard shortcuts') }}
-				</h2>
+	<AppSettingsDialog :open.sync="showSettings" :show-navigation="true" first-selected-section="keyboard shortcuts">
+		<AppSettingsSection :title="t('spreed', 'Choose devices')"
+			class="app-settings-section">
+			<MediaDevicesPreview />
+		</AppSettingsSection>
+		<AppSettingsSection v-if="!isGuest"
+			:title="t('spreed', 'Attachments folder')"
+			class="app-settings-section">
+			<h3 class="app-settings-section__hint">
+				{{ locationHint }}
+			</h3>
+			<input
+				type="text"
+				class="app-settings-section__input"
+				:value="attachmentFolder"
+				:disabled="attachmentFolderLoading"
+				@click="selectAttachmentFolder">
+		</AppSettingsSection>
+		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
+			<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
 
-				<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
+			<dl>
+				<div>
+					<dt><kbd>C</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Focus the chat input') }}
+					</dd>
+				</div>
+				<div>
+					<dt><kbd>Esc</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}
+					</dd>
+				</div>
+				<div>
+					<dt><kbd>F</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Fullscreen the chat or call') }}
+					</dd>
+				</div>
+				<div>
+					<dt><kbd>Ctrl</kbd> + <kbd>F</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Search') }}
+					</dd>
+				</div>
+			</dl>
 
-				<dl>
-					<div>
-						<dt><kbd>C</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Focus the chat input') }}
-						</dd>
-					</div>
-					<div>
-						<dt><kbd>Esc</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}
-						</dd>
-					</div>
-					<div>
-						<dt><kbd>F</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Fullscreen the chat or call') }}
-						</dd>
-					</div>
-					<div>
-						<dt><kbd>Ctrl</kbd> + <kbd>F</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Search') }}
-						</dd>
-					</div>
-				</dl>
-
-				<h3>{{ t('spreed', 'Shortcuts while in a call') }}</h3>
-				<dl>
-					<div>
-						<dt><kbd>V</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Video on and off') }}
-						</dd>
-					</div>
-					<div>
-						<dt><kbd>M</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Microphone on and off') }}
-						</dd>
-					</div>
-					<div>
-						<dt><kbd>{{ t('spreed', 'Space bar') }}</kbd></dt>
-						<dd class="shortcut-description">
-							{{ t('spreed', 'Push to talk or push to mute') }}
-						</dd>
-					</div>
-				</dl>
-			</div>
-		</div>
-	</Modal>
+			<h3>{{ t('spreed', 'Shortcuts while in a call') }}</h3>
+			<dl>
+				<div>
+					<dt><kbd>V</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Video on and off') }}
+					</dd>
+				</div>
+				<div>
+					<dt><kbd>M</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Microphone on and off') }}
+					</dd>
+				</div>
+				<div>
+					<dt><kbd>{{ t('spreed', 'Space bar') }}</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Push to talk or push to mute') }}
+					</dd>
+				</div>
+			</dl>
+		</AppSettingsSection>
+	</AppSettingsDialog>
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { setAttachmentFolder } from '../../services/settingsService'
-import { EventBus } from '../../services/EventBus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
+import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
+import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
 
 export default {
 	name: 'SettingsDialog',
 
 	components: {
-		Modal,
 		MediaDevicesPreview,
+		AppSettingsDialog,
+		AppSettingsSection,
 	},
 
 	data() {
@@ -141,7 +132,7 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('show-settings', this.handleShowSettings)
+		subscribe('show-settings', this.handleShowSettings)
 		this.attachmentFolderLoading = false
 	},
 
@@ -176,12 +167,12 @@ export default {
 				})
 		},
 
-		handleShowSettings(showSettings) {
-			this.showSettings = showSettings
+		handleShowSettings() {
+			this.showSettings = true
 		},
 
 		beforeDestroy() {
-			EventBus.$off('show-settings')
+			unsubscribe('show-settings', this.handleShowSettings)
 		},
 	},
 }
@@ -215,14 +206,6 @@ export default {
 	.shortcut-description {
 		width: calc(100% - 160px);
 	}
-}
-
-::v-deep .modal-container {
-	display: flex !important;
-	flex-direction: column;
-	min-width: 250px !important;
-	max-width: 500px !important;
-	padding: 8px !important;
 }
 
 </style>
