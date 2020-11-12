@@ -61,6 +61,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import RichText from '@juliushaertl/vue-richtext'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter'
+import { EventBus } from '../services/EventBus'
 
 export default {
 	name: 'Quote',
@@ -202,11 +203,6 @@ export default {
 				return this.simpleQuotedMessage
 			}
 		},
-
-		parent() {
-			return document.getElementById(`message_${this.parentId}`)
-		},
-
 	},
 	methods: {
 		/**
@@ -217,13 +213,8 @@ export default {
 			this.$store.dispatch('removeMessageToBeReplied', this.token)
 		},
 
-		async handleQuoteClick() {
-			await this.parent.scrollIntoView({
-				behavior: 'smooth',
-				block: 'center',
-				inline: 'nearest',
-			})
-			this.parent.focus()
+		handleQuoteClick() {
+			EventBus.$emit('focusMessage', this.parentId)
 		},
 	},
 }

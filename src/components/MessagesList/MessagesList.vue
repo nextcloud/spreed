@@ -233,12 +233,14 @@ export default {
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
+		EventBus.$on('focusMessage', this.focusMessage)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 	},
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
+		EventBus.$off('focusMessage', this.focusMessage)
 
 		this.cancelLookForNewMessages()
 		// Prevent further lookForNewMessages requests after the component was
@@ -589,6 +591,29 @@ export default {
 				this.isScrolledToBottom = true
 			})
 
+		},
+
+		/**
+		 * Temporarily highlight the given message id with a fade out effect.
+		 *
+		 * @param {string} messageId message id
+		 */
+		focusMessage(messageId) {
+			const element = document.getElementById(`message_${messageId}`)
+			if (!element) {
+				console.warn('Message to focus not found in DOM', messageId)
+				return
+			}
+
+			this.$nextTick(async() => {
+				await element.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+					inline: 'nearest',
+				})
+				element.focus()
+				element.highlightAnimation()
+			})
 		},
 
 		/**
