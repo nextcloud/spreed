@@ -38,14 +38,22 @@
 			:source="participant.source || participant.actorType"
 			:offline="isOffline" />
 		<div class="participant-row__user-wrapper">
-			<div class="participant-row__user-descriptor">
-				<span class="participant-row__user-name">{{ computedName }}</span>
+			<div
+				ref="userName"
+				class="participant-row__user-descriptor"
+				@mouseover="updateUserNameNeedsTooltip()">
+				<span
+					v-tooltip.auto="userTooltipText"
+					class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
-			<div v-if="getStatusMessage(participant)"
-				class="participant-row__status">
-				<span>{{ getStatusMessage(participant) }}</span>
+			<div
+				v-if="statusMessage"
+				ref="statusMessage"
+				class="participant-row__status"
+				@mouseover="updateStatusNeedsTooltip()">
+				<span v-tooltip.auto="statusMessageTooltip">{{ statusMessage }}</span>
 			</div>
 		</div>
 		<div v-if="callIcon"
@@ -90,6 +98,7 @@
 <script>
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
@@ -109,6 +118,10 @@ export default {
 		Microphone,
 		Phone,
 		Video,
+	},
+
+	directives: {
+		tooltip: Tooltip,
 	},
 
 	mixins: [
@@ -131,7 +144,40 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			isUserNameTooltipVisible: false,
+			isStatusTooltipVisible: false,
+		}
+	},
+
 	computed: {
+		userTooltipText() {
+			if (!this.isUserNameTooltipVisible) {
+				return false
+			}
+			let text = this.computedName
+			if (this.showModeratorLabel) {
+				text += ' (' + t('spreed', 'moderator') + ')'
+			}
+			if (this.isGuest) {
+				text += ' (' + t('spreed', 'guest') + ')'
+			}
+			return text
+		},
+
+		statusMessage() {
+			return this.getStatusMessage(this.participant)
+		},
+
+		statusMessageTooltip() {
+			if (!this.isStatusTooltipVisible) {
+				return false
+			}
+
+			return this.statusMessage
+		},
+
 		/**
 		 * Check if the current participant belongs to the selected participants array
 		 * in the store
@@ -263,6 +309,16 @@ export default {
 	},
 
 	methods: {
+		updateUserNameNeedsTooltip() {
+			// check if ellipsized
+			const e = this.$refs.userName
+			this.isUserNameTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+		},
+		updateStatusNeedsTooltip() {
+			// check if ellipsized
+			const e = this.$refs.statusMessage
+			this.isStatusTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+		},
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
@@ -318,7 +374,6 @@ export default {
 		flex-direction: column;
 	}
 	&__user-name {
-		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
 		cursor: pointer;
@@ -328,6 +383,11 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
 		padding-left: 5px;
+	}
+	&__user-descriptor {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	&__status {
 		color: var(--color-text-maxcontrast);
