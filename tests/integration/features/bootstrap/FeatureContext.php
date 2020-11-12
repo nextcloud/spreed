@@ -138,6 +138,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
+		$this->assertRooms($rooms, $formData);
+	}
+
+	/**
+	 * @param array $rooms
+	 * @param TableNode $formData
+	 */
+	private function assertRooms($rooms, TableNode $formData) {
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
 			$participantNames = array_map(function($participant) {
@@ -197,10 +205,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param string $isParticipant
 	 * @param string $identifier
+	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRoom($user, $isParticipant, $identifier) {
+	public function userIsParticipantOfRoom($user, $isParticipant, $identifier, TableNode $formData = null) {
 		if (substr($user, 0, strlen('guest')) === 'guest') {
-			$this->guestIsParticipantOfRoom($user, $isParticipant, $identifier);
+			$this->guestIsParticipantOfRoom($user, $isParticipant, $identifier, $formData);
 
 			return;
 		}
@@ -224,6 +233,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($rooms as $room) {
 			if (self::$tokenToIdentifier[$room['token']] === $identifier) {
 				PHPUnit_Framework_Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
+
+				if ($formData) {
+					$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+
+					$rooms = [$this->getDataFromResponse($this->response)];
+
+					$this->assertRooms($rooms, $formData);
+				}
+
 				return;
 			}
 		}
@@ -235,14 +253,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $guest
 	 * @param string $isParticipant
 	 * @param string $identifier
+	 * @param TableNode|null $formData
 	 */
-	private function guestIsParticipantOfRoom($guest, $isParticipant, $identifier) {
+	private function guestIsParticipantOfRoom($guest, $isParticipant, $identifier, TableNode $formData = null) {
 		$this->setCurrentUser($guest);
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
 
 		$response = $this->getDataFromResponse($this->response);
 
 		$isParticipant = $isParticipant === 'is';
+
+		if ($formData) {
+			$rooms = [$response];
+
+			$this->assertRooms($rooms, $formData);
+		}
 
 		if ($isParticipant) {
 			$this->assertStatusCode($this->response, 200);
