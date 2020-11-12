@@ -51,7 +51,7 @@ each other by animating the opacities.
 						:fill="'url(#placeholder-gradient' + suffix + ')'">
 						<circle class="conversation-placeholder-icon" />
 						<rect class="conversation-placeholder-line-one" />
-						<rect class="conversation-placeholder-line-two" :style="{width: `width`}" />
+						<rect class="conversation-placeholder-line-two" :style="width" />
 					</svg>
 					<svg
 						v-if="type === 'messages'"
@@ -62,7 +62,7 @@ each other by animating the opacities.
 						<rect class="message-placeholder-line-one" />
 						<rect class="message-placeholder-line-two" />
 						<rect class="message-placeholder-line-three" />
-						<rect class="message-placeholder-line-four" :style="{width: `width`}" />
+						<rect class="message-placeholder-line-four" :style="width" />
 					</svg>
 				</li>
 			</ul>
@@ -97,7 +97,7 @@ export default {
 			const data = []
 			for (let i = 0; i < this.count; i++) {
 				// generate random widths
-				data.push(Math.floor(Math.random() * 20) + 30)
+				data.push('width: ' + (Math.floor(Math.random() * 20) + 30) + '%')
 			}
 			return data
 		},
