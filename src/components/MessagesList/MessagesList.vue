@@ -373,13 +373,23 @@ export default {
 		 * @param {boolean} loadOldMessages In case it is the first visit of this conversation, we need to load the history
 		 */
 		async getMessages(loadOldMessages) {
+			let focussed = false
 			if (loadOldMessages) {
 				// Gets the history of the conversation.
 				await this.getOldMessages(true)
+
+				if (this.$route.hash && this.$route.hash.startsWith('#message_')) {
+					// scroll to message in URL anchor
+					focussed = this.focusMessage(this.$route.hash.substr(9), false)
+				}
 			}
 
-			// Once the history is loaded, scroll to bottom
-			this.scrollToBottom()
+			if (!focussed) {
+				// if no anchor was present or the message to focus on did not exist,
+				// simply scroll to bottom
+				this.scrollToBottom()
+			}
+
 			// Once the history is received, starts looking for new messages.
 			this.$nextTick(() => {
 				if (this._isBeingDestroyed || this._isDestroyed) {
@@ -597,23 +607,28 @@ export default {
 		 * Temporarily highlight the given message id with a fade out effect.
 		 *
 		 * @param {string} messageId message id
+		 * @param {boolean} smooth true to smooth scroll, false to jump directly
+		 * @returns {bool} true if element was found, false otherwise
 		 */
-		focusMessage(messageId) {
+		focusMessage(messageId, smooth = true) {
 			const element = document.getElementById(`message_${messageId}`)
 			if (!element) {
+				// TODO: in some cases might need to trigger a scroll up if this is an older message
 				console.warn('Message to focus not found in DOM', messageId)
-				return
+				return false
 			}
 
 			this.$nextTick(async() => {
 				await element.scrollIntoView({
-					behavior: 'smooth',
+					behavior: smooth ? 'smooth' : 'auto',
 					block: 'center',
 					inline: 'nearest',
 				})
 				element.focus()
 				element.highlightAnimation()
 			})
+
+			return true
 		},
 
 		/**

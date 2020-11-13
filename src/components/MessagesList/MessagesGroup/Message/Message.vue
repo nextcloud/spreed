@@ -463,12 +463,12 @@ export default {
 }
 
 .highlight-animation {
-	animation: highlight-animation 2s 1;
+	animation: highlight-animation 5s 1;
 }
 
-// TODO: define these colors globally (these are borrowed from the files app upload.css)
 @keyframes highlight-animation {
-	0% { background-color: rgba(255, 255, 140, 1); }
-	100% { background-color: rgba(0, 0, 0, 0); }
+	0% { background-color: var(--color-background-hover); }
+	50% { background-color: var(--color-background-hover); }
+	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 </style>
