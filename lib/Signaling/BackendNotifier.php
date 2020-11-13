@@ -29,7 +29,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Http\Client\IClientService;
-use OCP\IUrlGenerator;
+use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
