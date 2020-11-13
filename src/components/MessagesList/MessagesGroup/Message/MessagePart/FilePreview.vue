@@ -117,9 +117,12 @@ export default {
 			type: String,
 			default: 'no',
 		},
-		previewSize: {
-			type: Number,
-			default: 384,
+		/**
+		 * Whether to render a small preview to embed in replies
+		 */
+		smallPreview: {
+			type: Boolean,
+			default: false,
 		},
 		// In case this component is used to display a file that is being uploaded
 		// this parameter is used to access the file upload status in the store
@@ -199,8 +202,8 @@ export default {
 		},
 		previewImageClass() {
 			let classes = ''
-			if (this.previewSize === 64) {
-				classes += 'preview-64 '
+			if (this.smallPreview) {
+				classes += 'preview-small '
 			} else {
 				classes += 'preview '
 			}
@@ -248,7 +251,11 @@ export default {
 			}
 
 			// use preview provider URL to render a smaller preview
-			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
+			let previewSize = 384
+			if (this.smallPreview) {
+				previewSize = 32
+			}
+			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
@@ -406,11 +413,11 @@ export default {
 		max-width: 100%;
 		max-height: 384px;
 	}
-	.preview-64 {
+	.preview-small {
 		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
-		max-height: 64px;
+		max-height: 32px;
 	}
 
 	.image-container {
