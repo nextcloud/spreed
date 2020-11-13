@@ -18,53 +18,56 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
+<docs>
+
+Displays a loading placeholder for conversation messages.
+
+The gradient animation is achieved by having two placeholder elements,
+with opposite gradient directions (regular and reverse) displayed on top
+of each other (overlapped with position: absolute) and then fading between
+each other by animating the opacities.
+
+</docs>
 
 <template>
-	<ul>
+	<div class="placeholder-main">
 		<!-- Placeholder animation -->
-		<svg class="placeholder-gradient">
-			<defs>
-				<linearGradient id="placeholder-gradient">
-					<stop offset="0%" :stop-color="light">
-						<animate attributeName="stop-color"
-							:values="`${light}; ${light}; ${dark}; ${dark}; ${light}`"
-							dur="2s"
-							repeatCount="indefinite" />
-					</stop>
-					<stop offset="100%" :stop-color="dark">
-						<animate attributeName="stop-color"
-							:values="`${dark}; ${light}; ${light}; ${dark}; ${dark}`"
-							dur="2s"
-							repeatCount="indefinite" />
-					</stop>
-				</linearGradient>
-			</defs>
-		</svg>
+		<template v-for="(suffix, gradientIndex) in ['-regular', '-reverse']">
+			<svg :key="'gradient' + suffix" :class="'placeholder-gradient placeholder-gradient' + suffix">
+				<defs>
+					<linearGradient :id="'placeholder-gradient' + suffix">
+						<stop offset="0%" :stop-color="(gradientIndex == 0) ? light : dark" />
+						<stop offset="100%" :stop-color="(gradientIndex == 0) ? dark : light" />
+					</linearGradient>
+				</defs>
+			</svg>
 
-		<!-- Placeholders -->
-		<li v-for="placeholder in count" :key="placeholder">
-			<svg
-				v-if="type === 'conversations'"
-				class="conversation-placeholder"
-				xmlns="http://www.w3.org/2000/svg"
-				fill="url(#placeholder-gradient)">
-				<circle class="conversation-placeholder-icon" />
-				<rect class="conversation-placeholder-line-one" />
-				<rect class="conversation-placeholder-line-two" :style="{width: `calc(${randWidth()}%)`}" />
-			</svg>
-			<svg
-				v-if="type === 'messages'"
-				class="message-placeholder"
-				xmlns="http://www.w3.org/2000/svg"
-				fill="url(#placeholder-gradient)">
-				<circle class="message-placeholder-icon" />
-				<rect class="message-placeholder-line-one" />
-				<rect class="message-placeholder-line-two" />
-				<rect class="message-placeholder-line-three" />
-				<rect class="message-placeholder-line-four" :style="{width: `calc(${randWidth()}%)`}" />
-			</svg>
-		</li>
-	</ul>
+			<ul :key="'list' + suffix" :class="'placeholder-list placeholder-list' + suffix">
+				<li v-for="(width, index) in placeholderData" :key="'placeholder' + suffix + index">
+					<svg
+						v-if="type === 'conversations'"
+						class="conversation-placeholder"
+						xmlns="http://www.w3.org/2000/svg"
+						:fill="'url(#placeholder-gradient' + suffix + ')'">
+						<circle class="conversation-placeholder-icon" />
+						<rect class="conversation-placeholder-line-one" />
+						<rect class="conversation-placeholder-line-two" :style="width" />
+					</svg>
+					<svg
+						v-if="type === 'messages'"
+						class="message-placeholder"
+						xmlns="http://www.w3.org/2000/svg"
+						:fill="'url(#placeholder-gradient' + suffix + ')'">
+						<circle class="message-placeholder-icon" />
+						<rect class="message-placeholder-line-one" />
+						<rect class="message-placeholder-line-two" />
+						<rect class="message-placeholder-line-three" />
+						<rect class="message-placeholder-line-four" :style="width" />
+					</svg>
+				</li>
+			</ul>
+		</template>
+	</div>
 </template>
 
 <script>
@@ -89,27 +92,53 @@ export default {
 		}
 	},
 
+	computed: {
+		placeholderData() {
+			const data = []
+			for (let i = 0; i < this.count; i++) {
+				// generate random widths
+				data.push('width: ' + (Math.floor(Math.random() * 20) + 30) + '%')
+			}
+			return data
+		},
+	},
+
 	mounted() {
 		const styles = getComputedStyle(document.documentElement)
 		this.dark = styles.getPropertyValue('--color-placeholder-dark')
 		this.light = styles.getPropertyValue('--color-placeholder-light')
 	},
-
-	methods: {
-		randWidth() {
-			return Math.floor(Math.random() * 20) + 30
-		},
-	},
 }
 </script>
 
 <style lang="scss" scoped>
+	@import '../assets/variables';
+
 	$clickable-area: 44px;
 	$margin: 8px;
 
-	ul {
-		width: 100%;
+	.placeholder-main {
+		max-width: $messages-list-max-width;
 		position: relative;
+		margin: auto;
+		padding: 0;
+	}
+
+	.placeholder-list {
+		position: absolute;
+		translate: translateZ(0);
+	}
+
+	.placeholder-list-regular {
+		animation: pulse 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+	}
+
+	.placeholder-list-reverse {
+		animation: pulse-reverse 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
 	}
 
 	.placeholder-gradient {
@@ -154,7 +183,7 @@ export default {
 	}
 
 	.message-placeholder {
-		width: 800px;
+		width: $messages-list-max-width;
 		height: calc(#{$clickable-area} * 2);
 		margin: $margin auto;
 		padding: 0 $margin;
@@ -184,6 +213,30 @@ export default {
 
 		&-line-four {
 			y: 65px;
+		}
+	}
+
+	@keyframes pulse {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes pulse-reverse {
+		0% {
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
 		}
 	}
 
