@@ -22,19 +22,19 @@
 <template>
 	<div>
 		<SearchBox
-			v-if="displaySearchBox"
+			v-if="canSearch"
 			v-model="searchText"
-			:placeholder-text="t('spreed', 'Search or add participants to the conversation')"
+			:placeholder-text="searchBoxPlaceholder"
 			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
-		<Caption v-if="isSearching"
+		<Caption v-if="isSearching && canAdd"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
 			:search-text="searchText"
 			:participants-initialised="participantsInitialised" />
 		<ParticipantsSearchResults
-			v-if="isSearching"
+			v-if="canAdd && isSearching"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
@@ -78,7 +78,11 @@ export default {
 	],
 
 	props: {
-		displaySearchBox: {
+		canSearch: {
+			type: Boolean,
+			required: true,
+		},
+		canAdd: {
 			type: Boolean,
 			required: true,
 		},
@@ -100,6 +104,11 @@ export default {
 	},
 
 	computed: {
+		searchBoxPlaceholder() {
+			return this.canAdd
+				? t('spreed', 'Search or add participants')
+				: t('spreed', 'Search participants')
+		},
 		show() {
 			return this.$store.getters.getSidebarStatus
 		},
