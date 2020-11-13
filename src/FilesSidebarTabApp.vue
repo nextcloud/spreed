@@ -39,7 +39,9 @@
 			</button>
 		</div>
 		<template v-else>
-			<CallButton class="call-button" />
+			<div class="call-button-wrapper">
+				<CallButton class="call-button" />
+			</div>
 			<ChatView :token="token" />
 		</template>
 	</div>
@@ -417,13 +419,25 @@ export default {
 	justify-content: center;
 }
 
+.call-button-wrapper {
+	width: 100%;
+	background-color: var(--color-main-background);
+	z-index: 1;
+}
+
 .call-button {
+	display: block;
+
 	/* Center button horizontally. */
 	margin-left: auto;
 	margin-right: auto;
 
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+::v-deep .scroller {
+	margin-top: 64px;
 }
 
 .chatView {
