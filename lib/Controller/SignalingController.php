@@ -574,9 +574,7 @@ class SignalingController extends OCSController {
 					$participant = $room->getParticipantBySession($sessionId);
 				} catch (ParticipantNotFoundException $e) {
 				}
-			}
-
-			if (!empty($userId)) {
+			} elseif (!empty($userId)) {
 				// User trying to join room.
 				try {
 					$participant = $room->getParticipant($userId);
