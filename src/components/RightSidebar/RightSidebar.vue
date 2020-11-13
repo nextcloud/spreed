@@ -48,7 +48,9 @@
 			:order="2"
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
-			<ParticipantsTab :display-search-box="displaySearchBox" />
+			<ParticipantsTab
+				:can-search="canSearchParticipants"
+				:can-add="canAddParticipants" />
 		</AppSidebarTab>
 		<AppSidebarTab
 			id="settings-tab"
@@ -161,9 +163,11 @@ export default {
 			return this.conversation.isFavorite
 		},
 
-		displaySearchBox() {
-			return this.canFullModerate
-				&& (this.conversation.type === CONVERSATION.TYPE.GROUP
+		canAddParticipants() {
+			return this.canFullModerate && this.canSearchParticipants
+		},
+		canSearchParticipants() {
+			return (this.conversation.type === CONVERSATION.TYPE.GROUP
 					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
 		},
 		isSearching() {
