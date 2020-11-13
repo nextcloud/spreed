@@ -214,7 +214,10 @@ export default {
 		},
 
 		handleQuoteClick() {
-			EventBus.$emit('focusMessage', this.parentId)
+			// FIXME: unify quote attributes for the two use cases
+			// - "reply in message list" (this.parentId) and
+			// - "reply quote in new message" (this.id)
+			EventBus.$emit('focusMessage', this.parentId || this.id)
 		},
 	},
 }
