@@ -623,7 +623,7 @@ export default {
 			this.$nextTick(async() => {
 				await element.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
-					block: 'start',
+					block: 'center',
 					inline: 'nearest',
 				})
 				element.focus()
@@ -676,8 +676,13 @@ export default {
 
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
-					// scroll to message in URL anchor
-					this.focusMessage(to.hash.substr(9), true)
+					// need some delay (next tick is too short) to be able to run
+					// after the browser's native "scroll to anchor" from
+					// the hash
+					window.setTimeout(() => {
+						// scroll to message in URL anchor
+						this.focusMessage(to.hash.substr(9), true)
+					}, 2)
 				}
 			}
 		},
