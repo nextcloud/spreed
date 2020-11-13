@@ -124,14 +124,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following rooms$/
+	 * @Then /^user "([^"]*)" is participant of the following rooms(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms($user, TableNode $formData = null) {
+	public function userIsParticipantOfRooms($user, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
 		$this->assertStatusCode($this->response, 200);
 
 		$rooms = $this->getDataFromResponse($this->response);
@@ -207,22 +207,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)"$/
+	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)"(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
 	 * @param string $isOrNotParticipant
 	 * @param string $identifier
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, TableNode $formData = null) {
+	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion = 'v1', TableNode $formData = null) {
 		if (strpos($user, 'guest') === 0) {
-			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $formData);
+			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion, $formData);
 
 			return;
 		}
 
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
 		$this->assertStatusCode($this->response, 200);
 
 		$isParticipant = $isOrNotParticipant === 'is';
@@ -242,7 +242,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
 
 				if ($formData) {
-					$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+					$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 
 					$rooms = [$this->getDataFromResponse($this->response)];
 
@@ -260,11 +260,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $guest
 	 * @param string $isOrNotParticipant
 	 * @param string $identifier
+	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier, TableNode $formData = null) {
+	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($guest);
-		$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 
 		$response = $this->getDataFromResponse($this->response);
 
