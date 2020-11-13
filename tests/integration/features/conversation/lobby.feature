@@ -230,21 +230,22 @@ Feature: conversation/lobby
     And user "guest2" joins room "room" with 200
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200
     And user "participant1" sends message "Message 1" to room "room" with 201
-    Then user "participant1" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 1               | Message 1   |
-    And user "participant2" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 2               | Message 1   |
-    And user "participant3" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 3               |             |
-    And user "participant4" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 5               |             |
-    And user "guest" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 6               | Message 1   |
-    And user "guest2" is participant of room "room"
-      | name | type | participantType | lastMessage |
-      | room | 3    | 4               |             |
+    And user "participant1" sets description for room "room" to "the description" with 200
+    Then user "participant1" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 1               | Message 1   |
+    And user "participant2" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 2               | Message 1   |
+    And user "participant3" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 3               |             |
+    And user "participant4" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 5               |             |
+    And user "guest" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 6               | Message 1   |
+    And user "guest2" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 4               |             |
