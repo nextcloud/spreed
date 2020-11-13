@@ -457,9 +457,12 @@ export default {
 	margin: -6px 0;
 }
 
+.hover, .highlight-animation {
+	border-radius: 8px;
+}
+
 .hover {
 	background-color: var(--color-background-hover);
-	border-radius: 8px;
 }
 
 .highlight-animation {

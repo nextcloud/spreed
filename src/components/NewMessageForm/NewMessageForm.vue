@@ -76,6 +76,7 @@
 					<Quote
 						v-if="messageToBeReplied"
 						:is-new-message-form-quote="true"
+						:parent-id="messageToBeReplied.id"
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
 						ref="advancedInput"

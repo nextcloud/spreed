@@ -234,6 +234,7 @@ export default {
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
 		EventBus.$on('focusMessage', this.focusMessage)
+		EventBus.$on('routeChange', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 	},
@@ -241,6 +242,7 @@ export default {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
 		EventBus.$off('focusMessage', this.focusMessage)
+		EventBus.$off('routeChange', this.onRouteChange)
 
 		this.cancelLookForNewMessages()
 		// Prevent further lookForNewMessages requests after the component was
@@ -621,7 +623,7 @@ export default {
 			this.$nextTick(async() => {
 				await element.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
-					block: 'center',
+					block: 'start',
 					inline: 'nearest',
 				})
 				element.focus()
@@ -664,6 +666,20 @@ export default {
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
 			this.getNewMessages()
+		},
+
+		onRouteChange({ from, to }) {
+			if (from.name === 'conversation'
+				&& to.name === 'conversation'
+				&& from.token === to.token
+				&& from.hash !== to.hash) {
+
+				// the hash changed, need to focus/highlight another message
+				if (to.hash && to.hash.startsWith('#message_')) {
+					// scroll to message in URL anchor
+					this.focusMessage(to.hash.substr(9), true)
+				}
+			}
 		},
 	},
 }
