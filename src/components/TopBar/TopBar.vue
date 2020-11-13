@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="top-bar">
+	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
 		<Popover v-if="isInCall"
@@ -547,11 +547,16 @@ export default {
 	height: $top-bar-height;
 	position: absolute;
 	top: 0;
-	right: 0;
+	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 8px;
+
+	&.in-call {
+		right: 0;
+	}
+
 	&__button {
 		margin: 0 2px;
 		align-self: center;
@@ -564,7 +569,6 @@ export default {
 			margin-right: 4px !important;
 		}
 	}
-
 }
 
 .hint {
