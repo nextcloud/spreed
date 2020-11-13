@@ -31,7 +31,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Http\Client\IClientService;
-use OCP\IUrlGenerator;
+use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
