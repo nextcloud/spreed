@@ -47,7 +47,6 @@
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
-		<strong v-if="shouldShowFileName">{{ name }}</strong>
 		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
@@ -55,6 +54,7 @@
 			<Close class="remove-file__icon" decorative @click="$emit('remove-file', id)" />
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
+		<strong v-if="shouldShowFileName">{{ name }}</strong>
 	</file-preview>
 </template>
 
