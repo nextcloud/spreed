@@ -336,9 +336,10 @@ class Room {
 	 * Return the room properties to send to the signaling server.
 	 *
 	 * @param string $userId
+	 * @param bool $roomModified
 	 * @return array
 	 */
-	public function getPropertiesForSignaling(string $userId): array {
+	public function getPropertiesForSignaling(string $userId, bool $roomModified = true): array {
 		$properties = [
 			'name' => $this->getDisplayName($userId),
 			'type' => $this->getType(),
@@ -348,6 +349,12 @@ class Room {
 			'active-since' => $this->getActiveSince(),
 			'sip-enabled' => $this->getSIPEnabled(),
 		];
+
+		if ($roomModified) {
+			$properties = array_merge($properties, [
+				'description' => $this->getDescription(),
+			]);
+		}
 
 		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIGNALING_PROPERTIES, $event);

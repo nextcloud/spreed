@@ -136,6 +136,7 @@ class Listener {
 			$notifier->roomModified($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, $listener);
