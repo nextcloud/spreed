@@ -775,7 +775,6 @@ OC.L10N.register(
     "Add users or circles" : "Kullanıcı ya da çevre ekle",
     "Add groups or circles" : "Grup ya da çevre ekle",
     "Add other sources" : "Başka kaynaklar ekle",
-    "Search or add participants to the conversation" : "Görüşme katılımcılarında ara ya da katılımcı ekle",
     "Participants" : "Katılımcılar",
     "An error occurred while fetching the participants" : "Katılımcılar alınırken bir sorun çıktı",
     "Chat" : "Görüşme",
