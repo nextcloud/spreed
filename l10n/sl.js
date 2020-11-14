@@ -773,7 +773,6 @@ OC.L10N.register(
     "Add users or circles" : "Dodaj uporabnike ali kroge",
     "Add groups or circles" : "Dodaj skupine ali kroge",
     "Add other sources" : "Dodaj druge vire",
-    "Search or add participants to the conversation" : "Iskanje in dodajanje udeležencev v pogovor",
     "Participants" : "Udeleženci",
     "An error occurred while fetching the participants" : "Med pridobivanjem udeležencev je prišlo do napake",
     "Chat" : "Pogovor",
