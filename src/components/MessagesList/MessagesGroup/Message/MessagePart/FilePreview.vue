@@ -409,6 +409,15 @@ export default {
 		width: 100%;
 	}
 
+	.mimeicon {
+		min-height: 128px;
+	}
+
+	.mimeicon.preview-small {
+		min-height: auto;
+		height: 32px;
+	}
+
 	.preview {
 		display: inline-block;
 		border-radius: var(--border-radius);
