@@ -85,8 +85,13 @@ class CommandMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('app', $query->createNamedParameter($app)))
-			->andWhere($query->expr()->eq('command', $query->createNamedParameter($cmd)));
+			->where($query->expr()->eq('command', $query->createNamedParameter($cmd)));
+
+		if ($app === '') {
+			$query->andWhere($query->expr()->emptyString('app'));
+		} else {
+			$query->andWhere($query->expr()->eq('app', $query->createNamedParameter($app)));
+		}
 
 		return $this->findEntity($query);
 	}
