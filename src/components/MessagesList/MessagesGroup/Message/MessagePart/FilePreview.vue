@@ -54,7 +54,9 @@
 			<Close class="remove-file__icon" decorative @click="$emit('remove-file', id)" />
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
-		<strong v-if="shouldShowFileName">{{ name }}</strong>
+		<div class="name-container">
+			<strong v-if="shouldShowFileName">{{ name }}</strong>
+		</div>
 	</file-preview>
 </template>
 
@@ -456,17 +458,20 @@ export default {
 		}
 	}
 
-	.mimeicon {
-		min-height: 128px;
-	}
+	.name-container {
+		/* Ellipsis with 100% width */
+		display: table;
+		table-layout: fixed;
+		width: 100%;
 
-	strong {
-		/* As the file preview is an inline block the name is set as a block to
-		force it to be on its own line below the preview. */
-		display: block;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
+		strong {
+			/* As the file preview is an inline block the name is set as a block to
+			force it to be on its own line below the preview. */
+			display: block;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
 	}
 
 	&:not(.file-preview--viewer-available) {
