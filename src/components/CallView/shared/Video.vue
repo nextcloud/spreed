@@ -46,23 +46,30 @@
 				v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
-				<VideoBackground
-					:display-name="participantName"
-					:user="participantUserId"
-					:grid-blur="videoBackgroundBlur" />
-				<Avatar v-if="participantUserId"
-					:size="avatarSize"
-					:disable-menu="true"
-					:disable-tooltip="true"
-					:user="participantUserId"
-					:display-name="participantName"
-					:show-user-status="false"
-					:class="avatarClass" />
-				<div v-if="!participantUserId"
-					:class="guestAvatarClass"
-					class="avatar guest">
-					{{ firstLetterOfGuestName }}
-				</div>
+				<template v-if="participantUserId">
+					<VideoBackground
+						:display-name="participantName"
+						:user="participantUserId"
+						:grid-blur="videoBackgroundBlur" />
+					<Avatar
+						:size="avatarSize"
+						:disable-menu="true"
+						:disable-tooltip="true"
+						:user="participantUserId"
+						:display-name="participantName"
+						:show-user-status="false"
+						:class="avatarClass" />
+				</template>
+				<template v-else>
+					<VideoBackground
+						:display-name="participantName"
+						:grid-blur="videoBackgroundBlur" />
+					<div
+						:class="guestAvatarClass"
+						class="avatar guest">
+						{{ firstLetterOfGuestName }}
+					</div>
+				</template>
 			</div>
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
