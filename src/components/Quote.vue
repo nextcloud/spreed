@@ -158,7 +158,7 @@ export default {
 					richParameters[p] = {
 						component: FilePreview,
 						props: Object.assign({
-							previewSize: 64,
+							smallPreview: true,
 						}, this.messageParameters[p]
 						),
 					}

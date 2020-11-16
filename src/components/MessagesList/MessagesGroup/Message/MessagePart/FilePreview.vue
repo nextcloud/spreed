@@ -47,7 +47,6 @@
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
-		<strong v-if="shouldShowFileName">{{ name }}</strong>
 		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
@@ -55,6 +54,9 @@
 			<Close class="remove-file__icon" decorative @click="$emit('remove-file', id)" />
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
+		<div class="name-container">
+			<strong v-if="shouldShowFileName">{{ name }}</strong>
+		</div>
 	</file-preview>
 </template>
 
@@ -117,9 +119,12 @@ export default {
 			type: String,
 			default: 'no',
 		},
-		previewSize: {
-			type: Number,
-			default: 384,
+		/**
+		 * Whether to render a small preview to embed in replies
+		 */
+		smallPreview: {
+			type: Boolean,
+			default: false,
 		},
 		// In case this component is used to display a file that is being uploaded
 		// this parameter is used to access the file upload status in the store
@@ -199,8 +204,8 @@ export default {
 		},
 		previewImageClass() {
 			let classes = ''
-			if (this.previewSize === 64) {
-				classes += 'preview-64 '
+			if (this.smallPreview) {
+				classes += 'preview-small '
 			} else {
 				classes += 'preview '
 			}
@@ -248,7 +253,11 @@ export default {
 			}
 
 			// use preview provider URL to render a smaller preview
-			const previewSize = Math.ceil(this.previewSize * window.devicePixelRatio)
+			let previewSize = 384
+			if (this.smallPreview) {
+				previewSize = 32
+			}
+			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
@@ -400,17 +409,26 @@ export default {
 		width: 100%;
 	}
 
+	.mimeicon {
+		min-height: 128px;
+	}
+
+	.mimeicon.preview-small {
+		min-height: auto;
+		height: 32px;
+	}
+
 	.preview {
 		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 384px;
 	}
-	.preview-64 {
+	.preview-small {
 		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
-		max-height: 64px;
+		max-height: 32px;
 	}
 
 	.image-container {
@@ -449,17 +467,20 @@ export default {
 		}
 	}
 
-	.mimeicon {
-		min-height: 128px;
-	}
+	.name-container {
+		/* Ellipsis with 100% width */
+		display: table;
+		table-layout: fixed;
+		width: 100%;
 
-	strong {
-		/* As the file preview is an inline block the name is set as a block to
-		force it to be on its own line below the preview. */
-		display: block;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
+		strong {
+			/* As the file preview is an inline block the name is set as a block to
+			force it to be on its own line below the preview. */
+			display: block;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
 	}
 
 	&:not(.file-preview--viewer-available) {
