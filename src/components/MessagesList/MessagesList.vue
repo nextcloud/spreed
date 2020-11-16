@@ -233,12 +233,16 @@ export default {
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
+		EventBus.$on('focusMessage', this.focusMessage)
+		EventBus.$on('routeChange', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 	},
 	beforeDestroy() {
 		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
+		EventBus.$off('focusMessage', this.focusMessage)
+		EventBus.$off('routeChange', this.onRouteChange)
 
 		this.cancelLookForNewMessages()
 		// Prevent further lookForNewMessages requests after the component was
@@ -371,13 +375,23 @@ export default {
 		 * @param {boolean} loadOldMessages In case it is the first visit of this conversation, we need to load the history
 		 */
 		async getMessages(loadOldMessages) {
+			let focussed = false
 			if (loadOldMessages) {
 				// Gets the history of the conversation.
 				await this.getOldMessages(true)
+
+				if (this.$route.hash && this.$route.hash.startsWith('#message_')) {
+					// scroll to message in URL anchor
+					focussed = this.focusMessage(this.$route.hash.substr(9), false)
+				}
 			}
 
-			// Once the history is loaded, scroll to bottom
-			this.scrollToBottom()
+			if (!focussed) {
+				// if no anchor was present or the message to focus on did not exist,
+				// simply scroll to bottom
+				this.scrollToBottom()
+			}
+
 			// Once the history is received, starts looking for new messages.
 			this.$nextTick(() => {
 				if (this._isBeingDestroyed || this._isDestroyed) {
@@ -592,6 +606,34 @@ export default {
 		},
 
 		/**
+		 * Temporarily highlight the given message id with a fade out effect.
+		 *
+		 * @param {string} messageId message id
+		 * @param {boolean} smooth true to smooth scroll, false to jump directly
+		 * @returns {bool} true if element was found, false otherwise
+		 */
+		focusMessage(messageId, smooth = true) {
+			const element = document.getElementById(`message_${messageId}`)
+			if (!element) {
+				// TODO: in some cases might need to trigger a scroll up if this is an older message
+				console.warn('Message to focus not found in DOM', messageId)
+				return false
+			}
+
+			this.$nextTick(async() => {
+				await element.scrollIntoView({
+					behavior: smooth ? 'smooth' : 'auto',
+					block: 'center',
+					inline: 'nearest',
+				})
+				element.focus()
+				element.highlightAnimation()
+			})
+
+			return true
+		},
+
+		/**
 		 * gets the last known message id.
 		 * @returns {string} The last known message id.
 		 */
@@ -624,6 +666,25 @@ export default {
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
 			this.getNewMessages()
+		},
+
+		onRouteChange({ from, to }) {
+			if (from.name === 'conversation'
+				&& to.name === 'conversation'
+				&& from.token === to.token
+				&& from.hash !== to.hash) {
+
+				// the hash changed, need to focus/highlight another message
+				if (to.hash && to.hash.startsWith('#message_')) {
+					// need some delay (next tick is too short) to be able to run
+					// after the browser's native "scroll to anchor" from
+					// the hash
+					window.setTimeout(() => {
+						// scroll to message in URL anchor
+						this.focusMessage(to.hash.substr(9), true)
+					}, 2)
+				}
+			}
 		},
 	},
 }

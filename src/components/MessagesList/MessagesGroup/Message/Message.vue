@@ -27,6 +27,7 @@ the main body of the message as well as a quote.
 <template>
 	<div
 		:id="`message_${id}`"
+		ref="message"
 		class="message"
 		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
 		@mouseover="showActions=true"
@@ -336,9 +337,30 @@ export default {
 		if (this.$refs.messageMain.clientHeight > 44) {
 			this.isTallEnough = true
 		}
+
+		// define a function so it can be triggered directly on the DOM element
+		// which can be found with document.getElementById()
+		this.$refs.message.highlightAnimation = () => {
+			this.highlightAnimation()
+		}
+
+		this.$refs.message.addEventListener('animationend', this.highlightAnimationStop)
+	},
+
+	beforeDestroy() {
+		this.$refs.message.removeEventListener('animationend', this.highlightAnimationStop)
 	},
 
 	methods: {
+		highlightAnimation() {
+			// trigger CSS highlight animation by setting a class
+			this.$refs.message.classList.add('highlight-animation')
+		},
+		highlightAnimationStop() {
+			// when the animation ended, remove the class so we can trigger it
+			// again another time
+			this.$refs.message.classList.remove('highlight-animation')
+		},
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
 				id: this.id,
@@ -435,8 +457,21 @@ export default {
 	margin: -6px 0;
 }
 
+.hover, .highlight-animation {
+	border-radius: 8px;
+}
+
 .hover {
 	background-color: var(--color-background-hover);
-	border-radius: 8px;
+}
+
+.highlight-animation {
+	animation: highlight-animation 5s 1;
+}
+
+@keyframes highlight-animation {
+	0% { background-color: var(--color-background-hover); }
+	50% { background-color: var(--color-background-hover); }
+	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 </style>
