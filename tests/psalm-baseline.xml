@@ -350,16 +350,6 @@
       <code>$view</code>
       <code>Filesystem</code>
     </UndefinedClass>
-    <InvalidArgument occurrences="1"/>
-  </file>
-  <file src="lib/Chat/SystemMessage/Listener.php">
-    <InvalidArgument occurrences="2">
-      <code>$listener</code>
-      <code>$listener</code>
-    </InvalidArgument>
-  </file>
-  <file src="lib/Flow/Operation.php">
-    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
     <InvalidArgument occurrences="2">
@@ -386,12 +376,6 @@
     <UndefinedClass occurrences="1">
       <code>Cache</code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Signaling/BackendNotifier.php">
-    <InvalidClass occurrences="2">
-      <code>IURLGenerator</code>
-      <code>IUrlGenerator</code>
-    </InvalidClass>
   </file>
   <file src="lib/TInitialState.php">
     <MissingDependency occurrences="1">
