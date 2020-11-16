@@ -582,12 +582,6 @@
       <code>Cache</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Signaling/BackendNotifier.php">
-    <InvalidClass occurrences="2">
-      <code>IURLGenerator</code>
-      <code>IUrlGenerator</code>
-    </InvalidClass>
-  </file>
   <file src="lib/TInitialState.php">
     <MissingDependency occurrences="1">
       <code>IRootFolder</code>
