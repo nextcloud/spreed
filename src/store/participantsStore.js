@@ -34,6 +34,8 @@ import { PARTICIPANT } from '../constants'
 const state = {
 	participants: {
 	},
+	peers: {
+	},
 }
 
 const getters = {
@@ -70,6 +72,17 @@ const getters = {
 		}
 
 		return index
+	},
+	getPeer: (state) => (token, sessionId) => {
+		if (!state.peers[token]) {
+			return {}
+		}
+
+		if (state.peers[token].hasOwnProperty(sessionId)) {
+			return state.peers[token][sessionId]
+		}
+
+		return {}
 	},
 }
 
@@ -108,6 +121,18 @@ const mutations = {
 	purgeParticipantsStore(state, token) {
 		if (state.participants[token]) {
 			Vue.delete(state.participants, token)
+		}
+	},
+
+	addPeer(state, { token, peer }) {
+		if (!state.peers[token]) {
+			Vue.set(state.peers, token, [])
+		}
+		Vue.set(state.peers[token], peer.sessionId, peer)
+	},
+	purgePeersStore(state, token) {
+		if (state.peers[token]) {
+			Vue.delete(state.peers, token)
 		}
 	},
 }
@@ -187,6 +212,13 @@ const actions = {
 	 */
 	purgeParticipantsStore({ commit }, token) {
 		commit('purgeParticipantsStore', token)
+	},
+
+	addPeer({ commit }, { token, peer }) {
+		commit('addPeer', { token, peer })
+	},
+	purgePeersStore({ commit }, token) {
+		commit('purgePeersStore', token)
 	},
 
 	updateSessionId({ commit, getters }, { token, participantIdentifier, sessionId }) {

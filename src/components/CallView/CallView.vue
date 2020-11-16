@@ -141,11 +141,14 @@
 <script>
 import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import { fetchPeers } from '../../services/callsService'
 import LocalMediaControls from './shared/LocalMediaControls'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
 import LocalVideo from './shared/LocalVideo'
 import Screen from './shared/Screen'
+import debounce from 'debounce'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'CallView',
@@ -364,6 +367,12 @@ export default {
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
 	},
+	mounted() {
+		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
+	},
+	unmounted() {
+		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
+	},
 	methods: {
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
@@ -529,6 +538,23 @@ export default {
 			this.$store.dispatch('selectedVideoPeerId', 'local')
 			this.$store.dispatch('setCallViewMode', { isGrid: false })
 		},
+
+		debounceFetchPeers: debounce(async function() {
+			const token = this.token
+			try {
+				const response = await fetchPeers(token)
+				this.$store.dispatch('purgePeersStore')
+
+				response.data.ocs.data.forEach((peer) => {
+					this.$store.dispatch('addPeer', {
+						token,
+						peer,
+					})
+				})
+			} catch (exception) {
+				// Just means guests have no name, so don't error …
+			}
+		}, 3000),
 	},
 }
 </script>
@@ -540,7 +566,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	background-color: black,
+	background-color: black;
 }
 
 #call-container {
