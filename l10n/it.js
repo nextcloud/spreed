@@ -777,6 +777,7 @@ OC.L10N.register(
     "Add groups or circles" : "Aggiungi gruppi o cerchie",
     "Add other sources" : "Aggiungi altre fonti",
     "Participants" : "Partecipanti",
+    "Search or add participants" : "Cerca o aggiungi partecipanti",
     "An error occurred while fetching the participants" : "Si è verificato un errore durante il recupero dei partecipanti",
     "Chat" : "Chat",
     "Display name: " : "Nome visualizzato:",
