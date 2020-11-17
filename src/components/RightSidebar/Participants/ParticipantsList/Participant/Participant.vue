@@ -26,6 +26,7 @@
 			'offline': isOffline,
 			'currentUser': isSelf,
 			'guestUser': isGuest,
+			'isSearched': isSearched,
 			'selected': isSelected }"
 		@click="handleClick">
 		<AvatarWrapper
@@ -37,7 +38,12 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<div class="participant-row__user-wrapper">
+		<div
+			class="participant-row__user-wrapper"
+			:class="{
+				'has-call-icon': callIcon,
+				'has-menu-icon': canModerate && !isSearched
+			}">
 			<div
 				ref="userName"
 				class="participant-row__user-descriptor"
@@ -351,23 +357,38 @@ export default {
 .participant-row {
 	display: flex;
 	align-items: center;
-	cursor: pointer;
+	cursor: default;
 	margin: 4px 0;
 	border-radius: 22px;
 	height: 56px;
 	padding: 0 4px;
 
+	&.isSearched {
+		cursor: pointer;
+	}
+
 	&__user-wrapper {
 		margin-top: -4px;
 		margin-left: 12px;
-		width: calc(100% - 96px);
+		width: calc(100% - 100px);
 		display: flex;
 		flex-direction: column;
+
+		&.has-call-icon {
+			/** reduce text width to have some distance from call icon */
+			padding-right: 5px;
+			/** call icon on the right most column */
+			width: calc(100% - 90px);
+		}
+
+		&.has-call-icon.has-menu-icon {
+			/** make room for the call icon + menu icon */
+			width: calc(100% - 124px);
+		}
 	}
 	&__user-name {
 		vertical-align: middle;
 		line-height: normal;
-		cursor: pointer;
 	}
 	&__guest-indicator,
 	&__moderator-indicator {
@@ -398,10 +419,13 @@ export default {
 
 	.callstate-icon {
 		opacity: .4;
-		display: inline-block;
-		height: 44px;
-		width: 44px;
+		display: flex;
+		align-items: center;
 	}
+}
+
+.participant-row.isSearched .participant-row__user-name {
+	cursor: pointer;
 }
 
 .utils {
