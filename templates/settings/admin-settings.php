@@ -50,7 +50,7 @@ style('spreed', ['settings-admin']);
 
 		<div class="signaling-secret">
 			<h4><?php p($l->t('Shared secret')) ?></h4>
-			<input type="text" id="signaling_secret"
+			<input type="password" id="signaling_secret"
 				   name="signaling_secret" placeholder="<?php p($l->t('Shared secret')) ?>" aria-label="<?php p($l->t('Shared secret')) ?>"/>
 		</div>
 	</div>

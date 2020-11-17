@@ -49,7 +49,7 @@
 		<h3>{{ t('spreed', 'Shared secret') }}</h3>
 
 		<input v-model="sharedSecret"
-			type="text"
+			type="password"
 			name="shared-secret"
 			class="sip-bridge__shared-secret"
 			:disabled="loading"

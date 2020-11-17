@@ -31,7 +31,7 @@
 			:aria-label="t('spreed', 'TURN server URL')"
 			@input="updateServer">
 		<input ref="turn_secret"
-			type="text"
+			type="password"
 			name="turn_secret"
 			placeholder="secret"
 			:value="secret"

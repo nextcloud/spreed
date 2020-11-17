@@ -74,7 +74,7 @@
 		<div class="signaling-secret">
 			<h4>{{ t('spreed', 'Shared secret') }}</h4>
 			<input v-model="secret"
-				type="text"
+				type="password"
 				name="signaling_secret"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
