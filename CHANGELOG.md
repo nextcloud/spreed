@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.6 – 2020-11-17
+### Fixed
+- Reduce the load when mounting many shares
+  [#4510](https://github.com/nextcloud/spreed/pull/4510)
+- Fix handling of unavailable commands
+  [#4578](https://github.com/nextcloud/spreed/pull/4578)
+- Correctly delete a conversation when the last moderator leaves
+  [#4499](https://github.com/nextcloud/spreed/pull/4499)
+
+## 8.0.13 – 2020-11-17
+### Fixed
+- Reduce the load when mounting many shares
+  [#4511](https://github.com/nextcloud/spreed/pull/4511)
+- Fix handling of unavailable commands
+  [#4579](https://github.com/nextcloud/spreed/pull/4579)
+- Correctly delete a conversation when the last moderator leaves
+  [#4611](https://github.com/nextcloud/spreed/pull/4611)
+
 ## 9.0.5 – 2020-10-23
 ### Fixed
 - Remove pulse animation from call button to reduce CPU load in chrome-based browsers
