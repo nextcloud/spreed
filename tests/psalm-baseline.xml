@@ -75,6 +75,12 @@
       <code>getById</code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="lib/Chat/SystemMessage/Listener.php">
+    <InvalidArgument occurrences="2">
+      <code>$listener</code>
+      <code>$listener</code>
+    </InvalidArgument>
+  </file>
   <file src="lib/Command/ActiveCalls.php">
     <UndefinedClass occurrences="1">
       <code>Base</code>
@@ -209,16 +215,6 @@
       <code>DBALException</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Controller/MatterbridgeController.php">
-    <InvalidArgument occurrences="1">
-      <code>$success</code>
-    </InvalidArgument>
-  </file>
-  <file src="lib/Controller/MatterbridgeSettingsController.php">
-    <InvalidArgument occurrences="1">
-      <code>$success</code>
-    </InvalidArgument>
-  </file>
   <file src="lib/Controller/PageController.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
@@ -254,10 +250,6 @@
     </UndefinedClass>
   </file>
   <file src="lib/Controller/SignalingController.php">
-    <InvalidArgument occurrences="2">
-      <code>'Internal signaling disabled.'</code>
-      <code>'Internal signaling disabled.'</code>
-    </InvalidArgument>
     <UndefinedClass occurrences="1">
       <code>\GuzzleHttp\Exception\ConnectException</code>
     </UndefinedClass>
@@ -285,6 +277,9 @@
     <UndefinedClass occurrences="1">
       <code>GroupFolderStorage</code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Flow/Operation.php">
+    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/GuestManager.php">
     <UndefinedDocblockClass occurrences="1">
@@ -387,6 +382,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Share/Listener.php">
+    <InvalidArgument occurrences="1">
+      <code>[self::class, 'listenPreShare']</code>
+    </InvalidArgument>
     <UndefinedClass occurrences="7">
       <code>$event-&gt;getView()</code>
       <code>$event-&gt;getView()</code>
