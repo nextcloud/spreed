@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.16@d03e5ef057d6adc656c0ff7e166c50b73b4f48f3">
+<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -292,7 +292,7 @@
     </UndefinedDocblockClass>
   </file>
   <file src="lib/Manager.php">
-    <InvalidArgument occurrences="4"/>
+    <InvalidArgument occurrences="8"/>
     <MissingDependency occurrences="4">
       <code>$this-&gt;commentsManager</code>
       <code>$this-&gt;commentsManager</code>
@@ -301,11 +301,10 @@
     </MissingDependency>
   </file>
   <file src="lib/MatterbridgeManager.php">
-    <UndefinedClass occurrences="4">
+    <UndefinedClass occurrences="3">
       <code>IAuthTokenProvider</code>
       <code>IToken</code>
       <code>IToken</code>
-      <code>UniqueConstraintViolationException</code>
     </UndefinedClass>
     <UndefinedDocblockClass occurrences="4">
       <code>$this-&gt;tokenProvider</code>
@@ -314,201 +313,43 @@
       <code>IAuthTokenProvider</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="lib/Migration/Version10000Date20200819121721.php">
-    <UndefinedClass occurrences="3">
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version11000Date20200922161218.php">
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version2000Date20170707093535.php">
-    <UndefinedClass occurrences="14">
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess occurrences="1">
       <code>$return['num_rooms']</code>
     </InvalidArrayAccess>
-    <UndefinedClass occurrences="3">
+    <UndefinedClass occurrences="2">
       <code>PostgreSqlPlatform</code>
       <code>PostgreSqlPlatform</code>
-      <code>Type</code>
     </UndefinedClass>
     <UndefinedDocblockClass occurrences="2">
       <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
       <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="lib/Migration/Version2001Date20170913104501.php">
-    <UndefinedClass occurrences="4">
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version2001Date20170921145301.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version2001Date20171009132424.php">
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Migration/Version2001Date20171026134605.php">
-    <UndefinedClass occurrences="20">
+    <UndefinedClass occurrences="4">
       <code>PostgreSqlPlatform</code>
       <code>TableNotFoundException</code>
       <code>TableNotFoundException</code>
       <code>TableNotFoundException</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
     </UndefinedClass>
     <UndefinedDocblockClass occurrences="1">
       <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
     </UndefinedDocblockClass>
-  </file>
-  <file src="lib/Migration/Version2001Date20171031102049.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Migration/Version2001Date20180103144447.php">
-    <UndefinedClass occurrences="9">
+    <UndefinedClass occurrences="1">
       <code>PostgreSqlPlatform</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
     </UndefinedClass>
     <UndefinedDocblockClass occurrences="1">
       <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
     </UndefinedDocblockClass>
-  </file>
-  <file src="lib/Migration/Version3002Date20180319104030.php">
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180707222130.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180718112436.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180718133519.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180720162342.php">
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180722152849.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version3003Date20180730080327.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version4099Date20181001123058.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version5099Date20190121102337.php">
-    <UndefinedClass occurrences="7">
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version5099Date20190319134820.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version6099Date20190627172429.php">
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Migration/Version7000Date20190717141457.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Migration/Version7000Date20190724121136.php">
     <InvalidArgument occurrences="1"/>
-    <UndefinedClass occurrences="2">
-      <code>Type</code>
-      <code>Type</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Migration/Version7000Date20190724121137.php">
     <InvalidArgument occurrences="1"/>
-  </file>
-  <file src="lib/Migration/Version8000Date20200407115318.php">
-    <UndefinedClass occurrences="1">
-      <code>Type</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Notification/Notifier.php">
     <InvalidPropertyAssignmentValue occurrences="3">
