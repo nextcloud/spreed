@@ -386,9 +386,6 @@ export default {
 		&.has-call-icon {
 			/** reduce text width to have some distance from call icon */
 			padding-right: 5px;
-		}
-
-		&.has-call-icon {
 			/** call icon on the right most column */
 			width: calc(100% - 90px);
 		}
