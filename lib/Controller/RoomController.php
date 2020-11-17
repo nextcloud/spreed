@@ -677,6 +677,7 @@ class RoomController extends AEnvironmentAwareController {
 				if ($this->getAPIVersion() >= 3) {
 					$roomData['canEnableSIP'] =
 						$this->talkConfig->isSIPConfigured()
+						&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
 						&& ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
 						&& $currentParticipant->hasModeratorPermissions(false)
 						&& $this->talkConfig->canUserEnableSIP($currentUser);

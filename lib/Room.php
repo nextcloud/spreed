@@ -44,6 +44,15 @@ use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
 class Room {
+
+	/**
+	 * Regex that matches SIP incompatible rooms:
+	 * 1. duplicate digit: …11…
+	 * 2. leading zero: 0…
+	 * 3. non-digit: …a…
+	 */
+	public const SIP_INCOMPATIBLE_REGEX = '/((\d)(?=\2+)|^0|\D)/';
+
 	public const UNKNOWN_CALL = -1;
 	public const ONE_TO_ONE_CALL = 1;
 	public const GROUP_CALL = 2;
@@ -776,11 +785,9 @@ class Room {
 			return false;
 		}
 
-		if (!preg_match('/^\d+$/', $this->token)) {
+		if (preg_match(self::SIP_INCOMPATIBLE_REGEX, $this->token)) {
 			return false;
 		}
-
-		// FIXME check if SIP is enabled/configured
 
 		$event = new ModifyRoomEvent($this, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);
