@@ -37,7 +37,7 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<div class="participant-row__user-wrapper">
+		<div class="participant-row__user-wrapper" :class="{ 'has-call-icon': callIcon }">
 			<div
 				ref="userName"
 				class="participant-row__user-descriptor"
@@ -360,9 +360,15 @@ export default {
 	&__user-wrapper {
 		margin-top: -4px;
 		margin-left: 12px;
-		width: calc(100% - 96px);
+		width: calc(100% - 100px);
 		display: flex;
 		flex-direction: column;
+
+		&.has-call-icon {
+			/** make room for the call icon */
+			width: calc(100% - 100px - 24px);
+			padding-right: 5px;
+		}
 	}
 	&__user-name {
 		vertical-align: middle;
@@ -399,8 +405,8 @@ export default {
 	.callstate-icon {
 		opacity: .4;
 		display: inline-block;
-		height: 44px;
-		width: 44px;
+		/** FIXME: use a better way for vertical align */
+		margin-top: 4px;
 	}
 }
 
