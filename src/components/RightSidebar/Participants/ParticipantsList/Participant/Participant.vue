@@ -38,7 +38,12 @@
 			:name="computedName"
 			:source="participant.source"
 			:offline="isOffline" />
-		<div class="participant-row__user-wrapper" :class="{ 'has-call-icon': callIcon }">
+		<div
+			class="participant-row__user-wrapper"
+			:class="{
+				'has-call-icon': callIcon,
+				'has-menu-icon': canModerate && !isSearched
+			}">
 			<div
 				ref="userName"
 				class="participant-row__user-descriptor"
@@ -370,9 +375,18 @@ export default {
 		flex-direction: column;
 
 		&.has-call-icon {
-			/** make room for the call icon */
-			width: calc(100% - 100px - 24px);
+			/** reduce text width to have some distance from call icon */
 			padding-right: 5px;
+		}
+
+		&.has-call-icon {
+			/** call icon on the right most column */
+			width: calc(100% - 90px);
+		}
+
+		&.has-call-icon.has-menu-icon {
+			/** make room for the call icon + menu icon */
+			width: calc(100% - 124px);
 		}
 	}
 	&__user-name {
@@ -408,9 +422,8 @@ export default {
 
 	.callstate-icon {
 		opacity: .4;
-		display: inline-block;
-		/** FIXME: use a better way for vertical align */
-		margin-top: 4px;
+		display: flex;
+		align-items: center;
 	}
 }
 
