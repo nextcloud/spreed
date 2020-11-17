@@ -101,9 +101,10 @@ export default {
 
 		/**
 		 * Sort two participants by:
-		 * - type (moderators before normal participants)
 		 * - online status
-		 * - user status (away + dnd at the end)
+		 * - in call
+		 * - type (moderators before normal participants)
+		 * - user status (dnd at the end)
 		 * - display name
 		 *
 		 * @param {object} participant1 First participant
@@ -131,6 +132,12 @@ export default {
 				}
 			} else if (session2 === '0') {
 				return -1
+			}
+
+			const p1inCall = participant1.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			const p2inCall = participant2.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			if (p1inCall !== p2inCall) {
+				return p1inCall ? -1 : 1
 			}
 
 			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
