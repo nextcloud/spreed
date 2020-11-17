@@ -594,10 +594,6 @@ class SignalingControllerTest extends \Test\TestCase {
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
-			->willThrowException(new ParticipantNotFoundException());
-		$room->expects($this->once())
-			->method('getParticipantBySession')
-			->with($sessionId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')

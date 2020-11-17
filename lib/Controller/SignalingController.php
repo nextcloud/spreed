@@ -543,17 +543,16 @@ class SignalingController extends OCSController {
 				]);
 			}
 
-			try {
-				if ($sessionId) {
-					try {
-						$participant = $room->getParticipantBySession($sessionId);
-					} catch (ParticipantNotFoundException $e) {
-						$participant = $room->getParticipantByActor($actorType, $actorId);
-					}
-				} else {
-					$participant = $room->getParticipantByActor($actorType, $actorId);
+			if ($sessionId) {
+				try {
+					$participant = $room->getParticipantBySession($sessionId);
+				} catch (ParticipantNotFoundException $e) {
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} else {
+				try {
+					$participant = $room->getParticipantByActor($actorType, $actorId);
+				} catch (ParticipantNotFoundException $e) {
+				}
 			}
 		} else {
 			try {
