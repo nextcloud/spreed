@@ -26,6 +26,7 @@
 			'offline': isOffline,
 			'currentUser': isSelf,
 			'guestUser': isGuest,
+			'isSearched': isSearched,
 			'selected': isSelected }"
 		@click="handleClick">
 		<AvatarWrapper
@@ -360,11 +361,15 @@ export default {
 .participant-row {
 	display: flex;
 	align-items: center;
-	cursor: pointer;
+	cursor: default;
 	margin: 4px 0;
 	border-radius: 22px;
 	height: 56px;
 	padding: 0 4px;
+
+	&.isSearched {
+		cursor: pointer;
+	}
 
 	&__user-wrapper {
 		margin-top: -4px;
@@ -382,7 +387,6 @@ export default {
 	&__user-name {
 		vertical-align: middle;
 		line-height: normal;
-		cursor: pointer;
 	}
 	&__guest-indicator,
 	&__moderator-indicator {
@@ -417,6 +421,10 @@ export default {
 		/** FIXME: use a better way for vertical align */
 		margin-top: 4px;
 	}
+}
+
+.participant-row.isSearched .participant-row__user-name {
+	cursor: pointer;
 }
 
 .utils {
