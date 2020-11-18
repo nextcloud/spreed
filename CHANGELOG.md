@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.3 – 2020-11-18
+### Fixed
+- Fix conversation URL change detection
+  [#4642](https://github.com/nextcloud/spreed/pull/4642)
+- Fix missing call icon in participant list
+  [#4637](https://github.com/nextcloud/spreed/pull/4637)
+
 ## 10.0.2 – 2020-11-17
 ### Fixed
 - Reduce performance impact caused by the existence of the emoji picker
@@ -225,7 +232,7 @@ All notable changes to this project will be documented in this file.
   [#3925](https://github.com/nextcloud/spreed/pull/3925)
 - Remove automatic ping when getting chat messages via the web UI
   [#3793](https://github.com/nextcloud/spreed/pull/3793)
-  
+
 ## 7.0.4 – 2020-07-21
 ### Added
 - Reduce CPU usage when doing a video call
@@ -336,7 +343,7 @@ All notable changes to this project will be documented in this file.
   [#3373](https://github.com/nextcloud/spreed/pull/3373)
 - Improve the layout of the video stripe when the videos don't fit anymore
   [#3433](https://github.com/nextcloud/spreed/pull/3433)
-  
+
 ### Fixed
 - Guest names not shown in video calls with the HPB
   [#3502](https://github.com/nextcloud/spreed/pull/3502)
@@ -765,7 +772,7 @@ All notable changes to this project will be documented in this file.
 
 ## 5.0.2 – 2019-01-30
 ### Changed
-- Show autocompletion as soon as "@" is typed 
+- Show autocompletion as soon as "@" is typed
   [#1483](https://github.com/nextcloud/spreed/pull/1483)
 
 ### Fixed
@@ -779,7 +786,7 @@ All notable changes to this project will be documented in this file.
   [#1494](https://github.com/nextcloud/spreed/pull/1494)
   [#1472](https://github.com/nextcloud/spreed/pull/1472)
   [#1486](https://github.com/nextcloud/spreed/pull/1486)
-- Do not show room names when the user is not part of it 
+- Do not show room names when the user is not part of it
   [#1497](https://github.com/nextcloud/spreed/pull/1497)
   [#1495](https://github.com/nextcloud/spreed/pull/1495)
 - Fix page title not updated when room name is updated
@@ -793,7 +800,7 @@ All notable changes to this project will be documented in this file.
 
 ## 4.0.3 – 2019-01-30
 ### Fixed
-- Do not show room names when the user is not part of it 
+- Do not show room names when the user is not part of it
   [#1498](https://github.com/nextcloud/spreed/pull/1498)
 - Fix mentions when adding multiple directly after each other
   [#1393](https://github.com/nextcloud/spreed/pull/1393)
@@ -813,7 +820,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Add a hook so the external signaling can set participant data
   [#1418](https://github.com/nextcloud/spreed/pull/1418)
-  
+
 ### Fixed
 - Fix dark theme for better accessibility
   [#1451](https://github.com/nextcloud/spreed/pull/1451)
@@ -927,7 +934,7 @@ All notable changes to this project will be documented in this file.
   [#1067](https://github.com/nextcloud/spreed/pull/1067)
 - Allow to favor conversations so they are pinned to the top of the list
   [#1025](https://github.com/nextcloud/spreed/pull/1025)
-  
+
 ### Changed
 - Mentions in the chat now show the avatar of the user and highlight yourself more prominent
   [#1142](https://github.com/nextcloud/spreed/pull/1142)
@@ -958,7 +965,7 @@ All notable changes to this project will be documented in this file.
 
 ## 3.2.3 – 2018-07-11
 ### Changed
-- Only paste the content of HTML into the chat input without the actual HTML 
+- Only paste the content of HTML into the chat input without the actual HTML
   [#1018](https://github.com/nextcloud/spreed/pull/1018)
 
 ### Fixed
@@ -966,7 +973,7 @@ All notable changes to this project will be documented in this file.
   [#910](https://github.com/nextcloud/spreed/pull/910)
 - Name not shown for participants without audio and video
   [#982](https://github.com/nextcloud/spreed/pull/982)
-- Correctly timeout users when they are chatting/calling and got disconnected 
+- Correctly timeout users when they are chatting/calling and got disconnected
   [#935](https://github.com/nextcloud/spreed/pull/935)
 - Multiple layout fixes
 
