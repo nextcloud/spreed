@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 10.0.3 - 2020-11-18
+## 10.0.3 – 2020-11-18
 ### Fixed
 - Fix conversation URL change detection
   [#4642](https://github.com/nextcloud/spreed/pull/4642)
