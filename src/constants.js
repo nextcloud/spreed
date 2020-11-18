@@ -47,6 +47,7 @@ export const PARTICIPANT = {
 		IN_CALL: 1,
 		WITH_AUDIO: 2,
 		WITH_VIDEO: 4,
+		WITH_PHONE: 8,
 	},
 	NOTIFY: {
 		DEFAULT: 0,
