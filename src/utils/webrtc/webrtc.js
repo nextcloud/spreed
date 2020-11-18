@@ -974,6 +974,14 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	})
 
 	// Send the nick changed event via data channel and signaling
+	//
+	// The message format is different in each case. Due to historical reasons
+	// the payload of the data channel message is either a string that contains
+	// the name (if the participant is a guest) or an object with "name" and
+	// "userid" string fields (when the participant is a user).
+	//
+	// In the newer signaling message, on the other hand, the payload is always
+	// an object with only a "name" string field.
 	webrtc.on('nickChanged', function(name) {
 		let payload
 		if (signaling.settings.userId === null) {
