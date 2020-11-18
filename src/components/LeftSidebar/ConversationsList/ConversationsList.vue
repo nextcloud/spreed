@@ -85,7 +85,7 @@ export default {
 		onRouteChange({ from, to }) {
 			if (from.name === 'conversation'
 				&& to.name === 'conversation'
-				&& from.token === to.token) {
+				&& from.params.token === to.params.token) {
 				// this is triggered when the hash in the URL changes
 				return
 			}
