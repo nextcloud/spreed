@@ -83,12 +83,6 @@ export default {
 
 	methods: {
 		onRouteChange({ from, to }) {
-			if (from.name === 'conversation'
-				&& to.name === 'conversation'
-				&& from.token === to.token) {
-				// this is triggered when the hash in the URL changes
-				return
-			}
 			if (from.name === 'conversation') {
 				leaveConversation(from.params.token)
 			}
