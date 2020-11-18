@@ -47,6 +47,7 @@
 					@click="clickImportInput">
 					<Plus
 						decorative
+						title=""
 						:size="48"
 						class="upload-editor__plus-icon" />
 				</button>

@@ -67,14 +67,17 @@
 			<Microphone
 				v-if="callIcon === 'audio'"
 				:size="24"
+				title=""
 				decorative />
 			<Phone
 				v-if="callIcon === 'phone'"
 				:size="24"
+				title=""
 				decorative />
 			<Video
 				v-if="callIcon === 'video'"
 				:size="24"
+				title=""
 				decorative />
 		</div>
 		<Actions

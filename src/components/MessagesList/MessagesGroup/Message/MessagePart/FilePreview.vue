@@ -44,7 +44,11 @@
 			tabindex="1"
 			:aria-label="removeAriaLabel"
 			class="remove-file primary">
-			<Close class="remove-file__icon" decorative @click="$emit('remove-file', id)" />
+			<Close
+				class="remove-file__icon"
+				decorative
+				title=""
+				@click="$emit('remove-file', id)" />
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 	</file-preview>
