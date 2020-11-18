@@ -86,7 +86,7 @@
 					@switchScreenToId="1" />
 			</div>
 			<!-- Screens -->
-			<div v-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
+			<div v-if="!isSidebar && !isGrid && (showLocalScreen || showRemoteScreen)" id="screens">
 				<!-- local screen -->
 				<Screen v-show="showLocalScreen"
 					:token="token"
