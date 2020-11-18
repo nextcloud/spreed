@@ -28,11 +28,13 @@
 				v-if="stripeOpen"
 				fill-color="#ffffff"
 				decorative
+				title=""
 				:size="24" />
 			<ChevronUp
 				v-else
 				fill-color="#ffffff"
 				decorative
+				title=""
 				:size="24" />
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
@@ -41,7 +43,9 @@
 					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__previous"
 						@click="handleClickPrevious">
-						<ChevronLeft decorative
+						<ChevronLeft
+							decorative
+							title=""
 							:size="24" />
 					</button>
 					<div
@@ -97,7 +101,9 @@
 					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__next"
 						@click="handleClickNext">
-						<ChevronRight decorative
+						<ChevronRight
+							decorative
+							title=""
 							:size="24" />
 					</button>
 				</div>

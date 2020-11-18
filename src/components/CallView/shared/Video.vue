@@ -69,6 +69,7 @@
 				class="placeholder-for-promoted">
 				<AccountCircle v-if="isPromoted || isSelected"
 					decorative
+					title=""
 					fill-color="#FFFFFF"
 					:size="36" />
 			</div>
