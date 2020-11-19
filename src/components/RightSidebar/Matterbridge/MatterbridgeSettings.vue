@@ -20,59 +20,75 @@
 -->
 
 <template>
-	<div>
+	<div class="matterbridge-settings">
 		<div v-if="loading" class="loading" />
 		<div v-show="!loading">
+			<h3>
+				<span class="icon icon-category-integration" />
+				<p>{{ t('spreed', 'Bridge with other services') }}</p>
+			</h3>
 			<div id="matterbridge-header">
-				<h3>
-					{{ t('spreed', 'Bridge with other services') }}
-				</h3>
 				<p>
 					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
 					<a href="https://github.com/42wim/matterbridge/wiki" target="_blank" rel="noopener">
-						{{ t('spreed', 'More info on Matterbridge.') }}
+						<span class="icon icon-external" />
+						{{ t('spreed', 'More info on Matterbridge') }}
 					</a>
 				</p>
 			</div>
 			<div class="basic-settings">
-				<ActionCheckbox
-					:token="token"
-					:checked="enabled"
-					@update:checked="onEnabled">
-					{{ t('spreed', 'Enabled') }}
-					({{ processStateText }})
-				</ActionCheckbox>
-				<button class="" @click="showLogContent">
-					{{ t('spreed', 'Show matterbridge log') }}
-				</button>
-				<Modal v-if="logModal"
-					@close="closeLogModal">
-					<div class="modal__content">
-						<textarea v-model="processLog" class="log-content" />
-					</div>
-				</Modal>
-				<Multiselect
-					ref="partMultiselect"
-					v-model="selectedType"
-					label="displayName"
-					track-by="type"
-					:placeholder="newPartPlaceholder"
-					:options="formatedTypes"
-					:internal-search="true"
-					@input="clickAddPart" />
+				<div class="add-part-wrapper">
+					<span class="icon icon-add" />
+					<Multiselect
+						ref="partMultiselect"
+						v-model="selectedType"
+						label="displayName"
+						track-by="type"
+						:placeholder="newPartPlaceholder"
+						:options="formatedTypes"
+						:user-select="true"
+						:internal-search="true"
+						@input="clickAddPart">
+						<template #option="{option}">
+							<span :class="option.icon" />
+							{{ option.displayName }}
+						</template>
+					</Multiselect>
+				</div>
 				<ActionButton
 					icon="icon-checkmark"
 					@click="onSave">
 					{{ t('spreed', 'Save') }}
 				</ActionButton>
+				<div class="enable-switch-line">
+					<ActionCheckbox
+						:token="token"
+						:checked="enabled"
+						@update:checked="onEnabled">
+						{{ enabled ? t('spreed', 'Enabled') : t('spreed', 'Disabled') }}
+						({{ processStateText }})
+					</ActionCheckbox>
+					<button
+						v-tooltip.top="{ content: t('spreed', 'Show matterbridge log') }"
+						class="icon icon-edit"
+						@click="showLogContent" />
+					<Modal v-if="logModal"
+						@close="closeLogModal">
+						<div class="modal__content">
+							<textarea v-model="processLog" class="log-content" />
+						</div>
+					</Modal>
+				</div>
 			</div>
 			<ul>
-				<li v-for="(part, i) in editableParts" :key="i">
+				<li v-for="(part, i) in parts" :key="part.type + i">
 					<BridgePart
 						:num="i+1"
 						:part="part"
 						:type="types[part.type]"
-						@deletePart="onDelete(i)" />
+						:editing="part.editing"
+						@edit-clicked="onEditClicked(i)"
+						@delete-part="onDelete(i)" />
 				</li>
 			</ul>
 		</div>
@@ -91,6 +107,10 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
+
+import Vue from 'vue'
+import { Tooltip } from '@nextcloud/vue'
+Vue.directive('tooltip', Tooltip)
 
 export default {
 	name: 'MatterbridgeSettings',
@@ -120,6 +140,7 @@ export default {
 			types: {
 				nctalk: {
 					name: 'Nextcloud Talk',
+					iconClass: 'icon-nctalk',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Section-Nextcloud-Talk-%28basic%29',
 					fields: {
 						server: {
@@ -146,6 +167,7 @@ export default {
 				},
 				matrix: {
 					name: 'Matrix',
+					iconClass: 'icon-matrix',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#matrix',
 					fields: {
 						server: {
@@ -172,6 +194,7 @@ export default {
 				},
 				mattermost: {
 					name: 'Mattermost',
+					iconClass: 'icon-mattermost',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#mattermost',
 					fields: {
 						server: {
@@ -203,6 +226,7 @@ export default {
 				},
 				rocketchat: {
 					name: 'Rocket.Chat',
+					iconClass: 'icon-rocketchat',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#rocketchat',
 					fields: {
 						server: {
@@ -229,6 +253,7 @@ export default {
 				},
 				zulip: {
 					name: 'Zulip',
+					iconClass: 'icon-zulip',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#zulip',
 					fields: {
 						server: {
@@ -255,6 +280,7 @@ export default {
 				},
 				slack: {
 					name: 'Slack',
+					iconClass: 'icon-slack',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Slack-bot-setup',
 					fields: {
 						token: {
@@ -271,6 +297,7 @@ export default {
 				},
 				discord: {
 					name: 'Discord',
+					iconClass: 'icon-discord',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Discord-bot-setup',
 					fields: {
 						token: {
@@ -292,6 +319,7 @@ export default {
 				},
 				telegram: {
 					name: 'Telegram',
+					iconClass: 'icon-telegram',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#telegram',
 					fields: {
 						token: {
@@ -308,6 +336,7 @@ export default {
 				},
 				steam: {
 					name: 'Steam',
+					iconClass: 'icon-steam',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#steam',
 					fields: {
 						login: {
@@ -329,6 +358,7 @@ export default {
 				},
 				irc: {
 					name: 'IRC',
+					iconClass: 'icon-irc',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#irc',
 					fields: {
 						server: {
@@ -382,6 +412,7 @@ export default {
 				},
 				msteams: {
 					name: 'Microsoft Teams',
+					iconClass: 'icon-msteams',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/MS-Teams-setup',
 					fields: {
 						tenantid: {
@@ -408,6 +439,7 @@ export default {
 				},
 				xmpp: {
 					name: 'XMPP/Jabber',
+					iconClass: 'icon-xmpp',
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#xmpp',
 					fields: {
 						server: {
@@ -443,7 +475,7 @@ export default {
 					},
 				},
 			},
-			newPartPlaceholder: t('spreed', 'Add new bridged channel'),
+			newPartPlaceholder: t('spreed', 'Add new bridged channel to current room'),
 			selectedType: null,
 		}
 	},
@@ -467,12 +499,8 @@ export default {
 				return {
 					displayName: t.name,
 					type: k,
+					icon: t.iconClass + ' icon-multiselect-service',
 				}
-			})
-		},
-		editableParts() {
-			return this.parts.filter((p) => {
-				return p.type !== 'nctalk' || p.channel !== this.token
 			})
 		},
 		processStateText() {
@@ -480,7 +508,9 @@ export default {
 				? t('spreed', 'unknown state')
 				: this.processRunning
 					? t('spreed', 'running')
-					: t('spreed', 'not running')
+					: this.enabled
+						? t('spreed', 'not running, check Matterbridge log')
+						: t('spreed', 'not running')
 		},
 	},
 
@@ -501,6 +531,7 @@ export default {
 			const type = this.types[typeKey]
 			const newPart = {
 				type: typeKey,
+				editing: true,
 			}
 			for (const fieldKey in type.fields) {
 				newPart[fieldKey] = ''
@@ -510,6 +541,9 @@ export default {
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
+		},
+		onEditClicked(i) {
+			this.parts[i].editing = !this.parts[i].editing
 		},
 		onEnabled(checked) {
 			this.enabled = checked
@@ -534,6 +568,9 @@ export default {
 		},
 		async editBridge() {
 			this.loading = true
+			this.parts.forEach(part => {
+				part.editing = false
+			})
 			try {
 				const result = await editBridge(this.token, this.enabled, this.parts)
 				this.processLog = result.data.ocs.data.log
@@ -565,38 +602,168 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.loading {
-	margin-top: 30px;
+::v-deep .icon-slack {
+	mask: url('./../../../../img/bridge-services/slack.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/slack.svg') no-repeat;
 }
 
-#matterbridge-header {
-	padding-left: 40px;
-	padding-top: 40px;
+::v-deep .icon-matrix {
+	mask: url('./../../../../img/bridge-services/matrix.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/matrix.svg') no-repeat;
+}
+
+::v-deep .icon-nctalk {
+	mask: url('./../../../../img/app-dark.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/app-dark.svg') no-repeat;
+}
+
+::v-deep .icon-mattermost {
+	mask: url('./../../../../img/bridge-services/mattermost.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/mattermost.svg') no-repeat;
+}
+
+::v-deep .icon-rocketchat {
+	mask: url('./../../../../img/bridge-services/rocketchat.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/rocketchat.svg') no-repeat;
+}
+
+::v-deep .icon-zulip {
+	mask: url('./../../../../img/bridge-services/zulip.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/zulip.svg') no-repeat;
+}
+
+::v-deep .icon-discord {
+	mask: url('./../../../../img/bridge-services/discord.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/discord.svg') no-repeat;
+}
+
+::v-deep .icon-telegram {
+	mask: url('./../../../../img/bridge-services/telegram.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/telegram.svg') no-repeat;
+}
+
+::v-deep .icon-steam {
+	mask: url('./../../../../img/bridge-services/steam.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/steam.svg') no-repeat;
+}
+
+::v-deep .icon-irc {
+	mask: url('./../../../../img/bridge-services/irc.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/irc.svg') no-repeat;
+}
+
+::v-deep .icon-msteams {
+	mask: url('./../../../../img/bridge-services/msteams.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/msteams.svg') no-repeat;
+}
+
+::v-deep .icon-xmpp {
+	mask: url('./../../../../img/bridge-services/xmpp.svg') no-repeat;
+	-webkit-mask: url('./../../../../img/bridge-services/xmpp.svg') no-repeat;
+}
+
+::v-deep .icon-multiselect-service {
+	background-color: var(--color-main-text);
+	padding: 0 !important;
+	mask-position: center;
+	mask-size: 16px auto;
+	-webkit-mask-position: center;
+	-webkit-mask-size: 16px auto;
+	min-width: 32px !important;
+	min-height: 32px !important;
+}
+
+.matterbridge-settings {
+	.loading {
+		margin-top: 30px;
+	}
 
 	h3 {
 		font-weight: bold;
-	}
+		padding: 0;
+		height: 44px;
+		display: flex;
 
-	p {
-		color: var(--color-text-maxcontrast);
+		p {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
 
-		a:hover,
-		a:focus {
-			border-bottom: 2px solid var(--color-text-maxcontrast);
+		.icon {
+			display: inline-block;
+			width: 40px;
+		}
+		&:hover {
+			background-color: var(--color-background-hover);
 		}
 	}
-}
 
-.basic-settings {
-	button,
-	.multiselect {
-		width: calc(100% - 40px);
-		margin-left: 40px;
+	#matterbridge-header {
+		padding: 0 0 10px 0;
+
+		p {
+			padding-left: 40px;
+			color: var(--color-text-maxcontrast);
+
+			a:hover,
+			a:focus {
+				border-bottom: 2px solid var(--color-text-maxcontrast);
+			}
+
+			a .icon {
+				display: inline-block;
+				margin-bottom: -3px;
+			}
+		}
 	}
-}
 
-ul {
-	margin-bottom: 64px;
+	.basic-settings {
+		.action {
+			list-style: none;
+		}
+		button {
+			width: calc(100% - 40px);
+			margin-left: 40px;
+		}
+		.multiselect {
+			width: calc(100% - 44px);
+		}
+		.icon {
+			display: inline-block;
+			width: 40px;
+			height: 34px;
+			background-position: 14px center;
+		}
+		.add-part-wrapper {
+			margin-top: 5px;
+		}
+		.enable-switch-line {
+			display: flex;
+
+			.action {
+				flex-grow: 1;
+			}
+			button {
+				opacity: 0.5;
+				width: 44px;
+				height: 44px;
+				border-radius: var(--border-radius-pill);
+				background-color: transparent;
+				border: none;
+				margin: 0;
+
+				&:hover,
+				&:focus {
+					opacity: 1;
+					background-color: var(--color-background-hover);
+				}
+			}
+		}
+	}
+
+	ul {
+		margin-bottom: 64px;
+	}
 }
 
 .log-content {
