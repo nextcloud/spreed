@@ -64,8 +64,8 @@
 		</div>
 		<div v-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
-			:aria-label="callIconTooltip"
 			class="participant-row__callstate-icon">
+			<span class="hidden-visually">{{ callIconTooltip }}</span>
 			<Microphone
 				v-if="callIcon === 'audio'"
 				:size="24"
