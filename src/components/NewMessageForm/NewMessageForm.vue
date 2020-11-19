@@ -27,6 +27,8 @@
 			ref="fileUploadInput"
 			multiple
 			type="file"
+			tabindex="-1"
+			aria-hidden="true"
 			class="hidden-visually"
 			@change="handleFileInput">
 		<div

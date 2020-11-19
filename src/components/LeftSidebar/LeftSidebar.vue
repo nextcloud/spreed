@@ -37,7 +37,7 @@
 		<template #list class="left-sidebar__list">
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
-			<li>
+			<li role="presentation">
 				<ConversationsList
 					:conversations-list="conversationsList"
 					:initialised-conversations="initialisedConversations"

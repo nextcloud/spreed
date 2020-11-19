@@ -30,7 +30,7 @@ components.
 		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
 			<div class="quote__main__author">
-				<h6>{{ getDisplayName }}</h6>
+				<h6 role="presentation">{{ getDisplayName }}</h6>
 			</div>
 			<div v-if="isFileShareMessage"
 				class="quote__main__text">

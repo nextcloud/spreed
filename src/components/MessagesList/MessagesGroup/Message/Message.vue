@@ -33,7 +33,9 @@ the main body of the message as well as a quote.
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
-			<h6>{{ actorDisplayName }}</h6>
+			<h6 role="presentation" aria-hidden="true">
+				{{ actorDisplayName }}
+			</h6>
 		</div>
 		<div
 			ref="messageMain"
@@ -56,7 +58,8 @@ the main body of the message as well as a quote.
 			<div class="message__main__right">
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
 				<h6 v-if="hasDate"
-					v-tooltip.auto="messageDate">
+					v-tooltip.auto="messageDate"
+					role="presentation">
 					{{ messageTime }}
 				</h6>
 				<Actions
