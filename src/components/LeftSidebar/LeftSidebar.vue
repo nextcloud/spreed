@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<AppNavigation>
+	<AppNavigation
+		:aria-label="t('spreed', 'Conversation list')"
+		:toggle-aria-label="t('spreed', 'Toggle conversations list')">
 		<div class="new-conversation">
 			<SearchBox
 				v-model="searchText"

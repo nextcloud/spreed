@@ -43,8 +43,12 @@
 			</div>
 		</transition>
 		<MessagesList
+			role="region"
+			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token" />
-		<NewMessageForm />
+		<NewMessageForm
+			role="region"
+			:aria-label="t('spreed', 'Post message')" />
 	</div>
 </template>
 
