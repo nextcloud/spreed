@@ -31,7 +31,7 @@
 					:author-id="actorId"
 					:display-name="actorDisplayName" />
 			</div>
-			<div class="messages">
+			<ul class="messages">
 				<Message
 					v-for="(message, index) of messages"
 					:key="message.id"
@@ -42,7 +42,7 @@
 					:actor-display-name="actorDisplayName"
 					:show-author="!isSystemMessage"
 					:is-temporary="message.timestamp === 0" />
-			</div>
+			</ul>
 		</div>
 	</div>
 </template>

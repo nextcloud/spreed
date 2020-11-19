@@ -25,7 +25,7 @@ the main body of the message as well as a quote.
 </docs>
 
 <template>
-	<div
+	<li
 		:id="`message_${id}`"
 		ref="message"
 		class="message"
@@ -75,7 +75,7 @@ the main body of the message as well as a quote.
 				</Actions>
 			</div>
 		</div>
-	</div>
+	</li>
 </template>
 
 <script>
