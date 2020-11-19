@@ -29,10 +29,14 @@
 			'isSearched': isSearched,
 			'selected': isSelected }"
 		:aria-label="participantAriaLabel"
-		v-on="isSearched ? { click: handleClick } : {}">
+		:role="isSearched ? 'listitem' : ''"
+		:tabindex="isSearched ? 0 : -1"
+		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
+		@keydown.enter="handleClick">
 		<AvatarWrapper
 			:id="computedId"
 			:disable-tooltip="true"
+			:disable-menu="isSearched"
 			:size="44"
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
@@ -164,9 +168,9 @@ export default {
 		},
 		participantAriaLabel() {
 			if (this.isSearched) {
-				return t('spreed', 'Add participant {user}', { user: this.computedName })
+				return t('spreed', 'Add participant "{user}"', { user: this.computedName })
 			} else {
-				return t('spreed', 'Participant, {user}.', { user: this.computedName })
+				return t('spreed', 'Participant "{user}"', { user: this.computedName })
 			}
 		},
 
@@ -339,7 +343,9 @@ export default {
 		},
 		// Used to allow selecting participants in a search.
 		handleClick() {
-			this.$emit('clickParticipant', this.participant)
+			if (this.isSearched) {
+				this.$emit('clickParticipant', this.participant)
+			}
 		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
@@ -384,6 +390,10 @@ export default {
 
 	&.isSearched {
 		cursor: pointer;
+	}
+
+	&:focus {
+		background-color: var(--color-background-hover);
 	}
 
 	&__user-wrapper {
