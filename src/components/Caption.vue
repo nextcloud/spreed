@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<li class="app-navigation-caption">
+	<li role="heading" class="app-navigation-caption">
 		{{ title }}
 	</li>
 </template>
