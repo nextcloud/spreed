@@ -52,6 +52,11 @@ class Update extends Base {
 				InputOption::VALUE_REQUIRED,
 				'Sets a new name for the room'
 			)->addOption(
+				'description',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Sets a new description for the room'
+			)->addOption(
 				'public',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -77,6 +82,7 @@ class Update extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$token = $input->getArgument('token');
 		$name = $input->getOption('name');
+		$description = $input->getOption('description');
 		$public = $input->getOption('public');
 		$readOnly = $input->getOption('readonly');
 		$password = $input->getOption('password');
@@ -107,6 +113,10 @@ class Update extends Base {
 		try {
 			if ($name !== null) {
 				$this->setRoomName($room, $name);
+			}
+
+			if ($description !== null) {
+				$this->setRoomDescription($room, $description);
 			}
 
 			if ($public !== null) {
