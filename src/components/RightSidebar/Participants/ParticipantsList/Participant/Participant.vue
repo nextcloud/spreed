@@ -28,7 +28,8 @@
 			'guestUser': isGuest,
 			'isSearched': isSearched,
 			'selected': isSelected }"
-		@click="handleClick">
+		:aria-label="participantAriaLabel"
+		v-on="isSearched ? { click: handleClick } : {}">
 		<AvatarWrapper
 			:id="computedId"
 			:disable-tooltip="true"
@@ -79,7 +80,7 @@
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
-			:aria-label="t('spreed', 'Participant settings')"
+			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
@@ -158,6 +159,17 @@ export default {
 	},
 
 	computed: {
+		participantSettingsAriaLabel() {
+			return t('spreed', 'Settings for participant "{user}"', { user: this.computedName })
+		},
+		participantAriaLabel() {
+			if (this.isSearched) {
+				return t('spreed', 'Add participant {user}', { user: this.computedName })
+			} else {
+				return t('spreed', 'Participant, {user}.', { user: this.computedName })
+			}
+		},
+
 		userTooltipText() {
 			if (!this.isUserNameTooltipVisible) {
 				return false
@@ -327,9 +339,7 @@ export default {
 		},
 		// Used to allow selecting participants in a search.
 		handleClick() {
-			if (this.isSearched) {
-				this.$emit('clickParticipant', this.participant)
-			}
+			this.$emit('clickParticipant', this.participant)
 		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1

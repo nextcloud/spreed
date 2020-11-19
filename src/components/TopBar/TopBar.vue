@@ -56,6 +56,7 @@
 			v-shortkey="['f']"
 			class="top-bar__button"
 			menu-align="right"
+			:aria-label="t('spreed', 'Conversation actions')"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
