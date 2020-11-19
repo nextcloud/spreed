@@ -128,6 +128,7 @@ import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 
@@ -140,6 +141,10 @@ export default {
 		EmptyCallView,
 		ChevronRight,
 		ChevronLeft,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {
@@ -246,6 +251,14 @@ export default {
 	},
 
 	computed: {
+		stripeButtonTooltip() {
+			if (this.stripeOpen) {
+				return t('spreed', 'Collapse stripe')
+			} else {
+				return t('spreed', 'Expand stripe')
+			}
+		},
+
 		// The videos array. This is the total number of grid elements.
 		// Depending on `gridWidthm`, `gridHeight`, `minWidth`, `minHeight` and
 		// `videosCap`, these videos are shown in one or more grid 'pages'.
