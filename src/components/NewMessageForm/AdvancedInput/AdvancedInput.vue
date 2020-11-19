@@ -78,6 +78,7 @@
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			role="textbox"
+			:aria-label="ariaLabel"
 			aria-multiline="true"
 			class="new-message-form__advancedinput"
 			@shortkey="focusInput"
@@ -174,6 +175,11 @@ export default {
 		 * The placeholder for the input field
 		 */
 		placeholderText: {
+			type: String,
+			default: '',
+		},
+
+		ariaLabel: {
 			type: String,
 			default: '',
 		},
