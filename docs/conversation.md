@@ -29,6 +29,7 @@
         `type` | int | * | See list of conversation types in the [constants list](constants.md#Conversation-types)
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
+        `description` | string | v3 | Sha1 value for the description of the conversation (it will be empty if the description is empty)
         `participantType` | int | * | Permissions level of the current user
         `attendeeId` | int | v3 | Unique attendee id
         `attendeePin` | string | v3 | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
@@ -100,7 +101,11 @@
         ------|------|------------
         `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
 
-    - Data: See array definition in `Get user´s conversations`
+    - Data: See array definition in `Get user´s conversations`, except for:
+
+        field | type | API | Description
+        ------|------|-----|------------
+        'description` | string | v3 | Description of the conversation (can also be empty)
 
 ## Rename a conversation
 
@@ -129,6 +134,25 @@
     - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation is a one-to-one conversation (Use [Remove yourself from a conversation](participant.md#Remove-yourself-from-a-conversation) instead)
+        + `403 Forbidden` When the current user is not a moderator/owner
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Set description for a conversation
+
+* Method: `PUT`
+* API: v3
+* Endpoint: `/room/{token}/description`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `description` | string | New description for the conversation
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the description is too long
+        + `400 Bad Request` When the conversation is a one to one conversation
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
 
