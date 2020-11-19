@@ -84,6 +84,7 @@
 						:token="token"
 						:active-input="!isReadOnly"
 						:placeholder-text="placeholderText"
+						:aria-label="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit"
 						@files-pasted="handlePastedFiles" />
