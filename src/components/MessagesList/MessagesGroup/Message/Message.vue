@@ -33,7 +33,7 @@ the main body of the message as well as a quote.
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
-			<h6 role="presentation" aria-hidden="true">
+			<h6 role="heading" aria-level="2">
 				{{ actorDisplayName }}
 			</h6>
 		</div>
