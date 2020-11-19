@@ -29,7 +29,7 @@
         `type` | int | * | See list of conversation types in the [constants list](constants.md#Conversation-types)
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
-        `description` | string | v3 | Sha1 value for the description of the conversation (it will be empty if the description is empty)
+        `description` | string | v3 | Description of the conversation (can also be empty)
         `participantType` | int | * | Permissions level of the current user
         `attendeeId` | int | v3 | Unique attendee id
         `attendeePin` | string | v3 | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
@@ -101,11 +101,7 @@
         ------|------|------------
         `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
 
-    - Data: See array definition in `Get user´s conversations`, except for:
-
-        field | type | API | Description
-        ------|------|-----|------------
-        'description` | string | v3 | Description of the conversation (can also be empty)
+    - Data: See array definition in `Get user´s conversations`
 
 ## Rename a conversation
 

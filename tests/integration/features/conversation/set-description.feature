@@ -300,7 +300,7 @@ Feature: set-description
 
 
 
-  Scenario: room list returns the hashed description if the description is set
+  Scenario: room list returns the description if the description is set
     Given user "owner" creates room "public room"
       | roomType | 3 |
       | roomName | room |
@@ -311,16 +311,16 @@ Feature: set-description
     When user "owner" sets description for room "public room" to "the description" with 200
     Then user "owner" is participant of the following rooms (v3)
       | name | description     |
-      | room | dc90bdf167b8d5598ac2ac3812aa71e34de10ce2 |
+      | room | the description |
     And user "moderator" is participant of the following rooms (v3)
       | name | description     |
-      | room | dc90bdf167b8d5598ac2ac3812aa71e34de10ce2 |
+      | room | the description |
     And user "invited user" is participant of the following rooms (v3)
       | name | description     |
-      | room | dc90bdf167b8d5598ac2ac3812aa71e34de10ce2 |
+      | room | the description |
     And user "not invited but joined user" is participant of the following rooms (v3)
       | name | description     |
-      | room | dc90bdf167b8d5598ac2ac3812aa71e34de10ce2 |
+      | room | the description |
 
   Scenario: room list returns an empty value if the description is not set
     Given user "owner" creates room "public room"
