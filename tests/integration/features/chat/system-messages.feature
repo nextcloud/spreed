@@ -25,6 +25,28 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_renamed |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Set a description
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" sets description for room "room" to "New description" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | description_set |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Removes a description
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sets description for room "room" to "New description" with 200
+    When user "participant1" sets description for room "room" to "" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | description_removed |
+      | room | users     | participant1 | participant1-displayname | description_set |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Toggle guests
     Given user "participant1" creates room "room"
       | roomType | 2 |

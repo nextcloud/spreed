@@ -120,6 +120,20 @@ class SystemMessage {
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
 			}
+		} elseif ($message === 'description_set') {
+			$parsedMessage = $this->l->t('{actor} set the description to "%1$s"', [$parameters['newDescription']]);
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You set the description to "%1$s"', [$parameters['newDescription']]);
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator set the description to "%1$s"', [$parameters['newDescription']]);
+			}
+		} elseif ($message === 'description_removed') {
+			$parsedMessage = $this->l->t('{actor} removed the description');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed the description');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator removed the description');
+			}
 		} elseif ($message === 'call_started') {
 			$parsedMessage = $this->l->t('{actor} started a call');
 			if ($currentUserIsActor) {
