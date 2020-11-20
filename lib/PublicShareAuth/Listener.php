@@ -89,7 +89,7 @@ class Listener {
 		} catch (ParticipantNotFoundException $e) {
 		}
 
-		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
+		if ($room->getNumberOfParticipants(false) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -108,7 +108,7 @@ class Listener {
 			return;
 		}
 
-		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
+		if ($room->getNumberOfParticipants(false) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
