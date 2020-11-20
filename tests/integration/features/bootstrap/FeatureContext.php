@@ -489,6 +489,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
+		if ($statusCode !== '200') {
+			return;
+		}
+
 		$response = $this->getDataFromResponse($this->response);
 		if (array_key_exists('sessionId', $response)) {
 			// In the chat guest users are identified by their sessionId. The
