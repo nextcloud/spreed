@@ -48,7 +48,7 @@ import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
-import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants'
+import { PARTICIPANT } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import {
 	addParticipant,

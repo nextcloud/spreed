@@ -20,55 +20,87 @@
 -->
 
 <template>
-	<ul>
-		<h3 class="app-settings-section__hint">
-			{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
-		</h3>
-		<ActionCheckbox
-			:checked="isReadOnly"
-			:disabled="isReadOnlyStateLoading"
-			@change="toggleReadOnly">
-			{{ t('spreed', 'Lock conversation') }}
-		</ActionCheckbox>
-		<h3 class="app-settings-section__hint">
-			{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
-		</h3>
-		<ActionCheckbox
-			:disabled="isLobbyStateLoading"
-			:checked="hasLobbyEnabled"
-			@change="toggleLobby">
-			{{ t('spreed', 'Enable lobby') }}
-		</ActionCheckbox>
-		<h3 v-if="hasLobbyEnabled" class="app-settings-section__hint">
-			{{ t('spreed', 'After the time limit the lobby will be automatically disabled.') }}
-		</h3>
-		<ActionInput
-			v-if="hasLobbyEnabled"
-			icon="icon-calendar-dark"
-			type="datetime-local"
-			v-bind="dateTimePickerAttrs"
-			:value="lobbyTimer"
-			:disabled="isLobbyTimerLoading || isLobbyStateLoading"
-			@change="setLobbyTimer">
-			{{ t('spreed', 'Start time (optional)') }}
-		</ActionInput>
+	<div>
+		<div class="app-settings-subsection">
+			<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
+			</div>
+			<div>
+				<input id="moderation_settings_lock_conversation_checkbox"
+					aria-describedby="moderation_settings_lock_conversation_hint"
+					type="checkbox"
+					class="checkbox"
+					name="moderation_settings_lock_conversation_checkbox"
+					:checked="isReadOnly"
+					:disabled="isReadOnlyStateLoading"
+					@change="toggleReadOnly">
+				<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
+			</div>
+		</div>
+		<div class="app-settings-subsection">
+			<div id="moderation_settings_enable_lobby_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
+			</div>
+			<div>
+				<input id="moderation_settings_enable_lobby_checkbox"
+					aria-describedby="moderation_settings_enable_lobby_hint"
+					type="checkbox"
+					class="checkbox"
+					name="moderation_settings_enable_lobby_checkbox"
+					:checked="hasLobbyEnabled"
+					:disabled="isLobbyStateLoading"
+					@change="toggleLobby">
+				<label for="moderation_settings_enable_lobby_checkbox">{{ t('spreed', 'Enable lobby') }}</label>
+			</div>
+		</div>
+		<div class="app-settings-subsection">
+			<div v-if="hasLobbyEnabled" id="moderation_settings_lobby_timer_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'After the time limit the lobby will be automatically disabled.') }}
+			</div>
+			<div v-if="hasLobbyEnabled">
+				<form
+					:disabled="lobbyTimerFieldDisabled"
+					@submit.prevent="saveLobbyTimer">
+					<span class="icon-calendar-dark" />
+					<div>
+						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
+					</div>
+					<div>
+						<DatetimePicker
+							id="moderation_settings_lobby_timer_field"
+							aria-describedby="moderation_settings_lobby_timer_hint"
+							:value="lobbyTimer"
+							:placeholder="t('spreed', 'Start time (optional)')"
+							:disabled="lobbyTimerFieldDisabled"
+							type="datetime"
+							:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
+							v-bind="dateTimePickerAttrs"
+							@change="setNewLobbyTimer" />
+						<button
+							id="moderation_settings_lobby_timer_submit"
+							:aria-label="t('spreed', 'Save meeting start time')"
+							:disabled="lobbyTimerFieldDisabled"
+							type="submit"
+							class="icon icon-confirm-fade" />
+					</div>
+				</form>
+			</div>
+		</div>
 		<SipSettings v-if="canUserEnableSIP" />
-	</ul>
+	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION, WEBINAR } from '../../constants'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
+import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker'
 import SipSettings from './SipSettings'
 
 export default {
 	name: 'ModerationSettings',
 
 	components: {
-		ActionCheckbox,
-		ActionInput,
+		DatetimePicker,
 		SipSettings,
 	},
 
@@ -77,6 +109,7 @@ export default {
 			isReadOnlyStateLoading: false,
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
+			newLobbyTimer: null,
 		}
 	},
 
@@ -99,6 +132,10 @@ export default {
 
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
+		lobbyTimerFieldDisabled() {
+			return this.isLobbyStateLoading || this.isLobbyTimerLoading
 		},
 
 		lobbyTimer() {
@@ -183,9 +220,7 @@ export default {
 			this.isLobbyStateLoading = false
 		},
 
-		async setLobbyTimer(date) {
-			this.isLobbyTimerLoading = true
-
+		setNewLobbyTimer(date) {
 			let timestamp = 0
 			if (date) {
 				// PHP timestamp is second-based; JavaScript timestamp is
@@ -193,10 +228,16 @@ export default {
 				timestamp = date.getTime() / 1000
 			}
 
+			this.newLobbyTimer = timestamp
+		},
+
+		async saveLobbyTimer() {
+			this.isLobbyTimerLoading = true
+
 			try {
 				await this.$store.dispatch('setLobbyTimer', {
 					token: this.token,
-					timestamp: timestamp,
+					timestamp: this.newLobbyTimer,
 				})
 				showSuccess(t('spreed', 'Start time has been updated'))
 			} catch (e) {
@@ -211,8 +252,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-settings-section__hint {
-	color: var(--color-text-lighter);
-	padding: 8px 0;
+::v-deep .mx-input {
+	margin: 0;
+}
+
+input[type=password] {
+	width: 200px;
 }
 </style>

@@ -20,14 +20,19 @@
 -->
 
 <template>
-	<AppSettingsDialog :open.sync="showSettings" :show-navigation="true" first-selected-section="keyboard shortcuts">
-		<AppSettingsSection :title="t('spreed', 'Guests access')"
+	<AppSettingsDialog
+		role="dialog"
+		:aria-label="t('spreed', 'Conversation settings')"
+		:open.sync="showSettings"
+		:show-navigation="false">
+		<AppSettingsSection
+			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
-			<LinkShareSettings />
+			<LinkShareSettings ref="linkShareSettings" />
 		</AppSettingsSection>
 		<AppSettingsSection
 			v-if="canFullModerate"
-			:title="t('spreed', 'Moderation settings')"
+			:title="t('spreed', 'Meeting settings')"
 			class="app-settings-section">
 			<ModerationSettings />
 		</AppSettingsSection>
@@ -80,6 +85,9 @@ export default {
 	methods: {
 		handleShowSettings() {
 			this.showSettings = true
+			this.$nextTick(() => {
+				this.$refs.linkShareSettings.focus()
+			})
 		},
 
 		beforeDestroy() {
@@ -88,3 +96,29 @@ export default {
 	},
 }
 </script>
+<style lang="scss" scoped>
+::v-deep button.icon {
+	height: 32px;
+	width: 32px;
+	display: inline-block;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
+::v-deep .app-settings__content {
+	width: 450px;
+}
+
+::v-deep .app-settings-section__hint {
+	color: var(--color-text-lighter);
+	padding: 8px 0;
+}
+
+::v-deep .app-settings-subsection {
+	margin-top: 25px;
+
+	&:first-child {
+		margin-top: 0px;
+	}
+}
+</style>

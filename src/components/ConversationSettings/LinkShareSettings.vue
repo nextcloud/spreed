@@ -20,45 +20,75 @@
 -->
 
 <template>
-	<ul>
-		<h3 class="app-settings-section__hint">
-			{{ t('spreed', 'Allow guests to use a public link connect to join this conversation.') }}
-		</h3>
-		<ActionCheckbox
-			:disabled="isSaving"
-			:checked="isSharedPublicly"
-			@change="toggleGuests">
-			{{ t('spreed', 'Allow guests') }}
-		</ActionCheckbox>
-		<ActionCheckbox
-			v-if="isSharedPublicly"
-			class="share-link-password-checkbox"
-			:disabled="isSaving"
-			:checked="conversation.hasPassword"
-			@check="handlePasswordEnable"
-			@uncheck="handlePasswordDisable">
-			{{ t('spreed', 'Password protection') }}
-		</ActionCheckbox>
-		<ActionInput
-			v-show="showPasswordField"
-			class="share-link-password"
-			icon="icon-password"
-			type="password"
-			:disabled="isSaving"
-			:value.sync="password"
-			autocomplete="new-password"
-			@submit="handleSetNewPassword">
-			{{ t('spreed', 'Enter a password') }}
-		</ActionInput>
-		<ActionButton
-			v-if="isSharedPublicly"
-			:disabled="isSaving"
-			icon="icon-clippy"
-			:close-after-click="true"
-			@click="handleCopyLink">
-			{{ t('spreed', 'Copy public link') }}
-		</ActionButton>
-	</ul>
+	<div>
+		<div class="app-settings-subsection">
+			<div id="link_share_settings_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'Allow guests to use a public link to join this conversation.') }}
+			</div>
+			<div>
+				<input id="link_share_settings_toggle_guests"
+					ref="toggleGuests"
+					aria-describedby="link_share_settings_hint"
+					type="checkbox"
+					class="checkbox"
+					name="link_share_settings_toggle_guests"
+					:checked="isSharedPublicly"
+					:disabled="isSaving"
+					@change="toggleGuests">
+				<label for="link_share_settings_toggle_guests">{{ t('spreed', 'Allow guests') }}</label>
+			</div>
+		</div>
+		<div class="app-settings-subsection">
+			<div id="link_share_settings_password_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
+			</div>
+			<div v-show="isSharedPublicly">
+				<input id="link_share_settings_toggle_password"
+					ref="togglePassword"
+					aria-describedby="link_share_settings_password_hint"
+					type="checkbox"
+					class="checkbox"
+					:checked="conversation.hasPassword"
+					name="link_share_settings_toggle_password"
+					:disabled="isSaving"
+					@change="togglePassword">
+				<label for="link_share_settings_toggle_password">{{ t('spreed', 'Password protection') }}</label>
+			</div>
+		</div>
+		<div class="app-settings-subsection">
+			<div v-show="showPasswordField">
+				<form
+					:disabled="isSaving"
+					@submit.prevent="handleSetNewPassword">
+					<span class="icon-password" />
+					<input
+						id="link_share_settings_link_password"
+						ref="passwordField"
+						v-model="password"
+						aria-describedby="link_share_settings_password_hint"
+						type="password"
+						class="checkbox"
+						autocomplete="new-password"
+						name="link_share_settings_link_password"
+						:placeholder="t('spreed', 'Enter a password')"
+						:disabled="isSaving">
+					<button
+						id="link_share_settings_link_password_submit"
+						:aria-label="t('spreed', 'Save password')"
+						:disabled="isSaving"
+						type="submit"
+						class="icon icon-confirm-fade" />
+				</form>
+			</div>
+		</div>
+		<div class="app-settings-subsection">
+			<button
+				ref="copyLinkButton"
+				@click.prevent="handleCopyLink">
+				<span class="icon icon-clippy" />{{ t('spreed', 'Copy public link') }}
+			</button>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -68,18 +98,9 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 export default {
 	name: 'LinkShareSettings',
-
-	components: {
-		ActionCheckbox,
-		ActionInput,
-		ActionButton,
-	},
 
 	data() {
 		return {
@@ -110,6 +131,12 @@ export default {
 	},
 
 	methods: {
+		focus() {
+			this.$nextTick(() => {
+				this.$refs.toggleGuests.focus()
+			})
+		},
+
 		async setConversationPassword(newPassword) {
 			this.isSaving = true
 			try {
@@ -151,6 +178,17 @@ export default {
 			this.isSaving = false
 		},
 
+		async togglePassword() {
+			if (this.$refs.togglePassword.checked) {
+				this.showPasswordField = true
+				this.$refs.passwordField.focus()
+				await this.handlePasswordEnable()
+			} else {
+				this.showPasswordField = false
+				await this.handlePasswordDisable()
+			}
+		},
+
 		async handlePasswordDisable() {
 			// disable the password protection for the current conversation
 			if (this.conversation.hasPassword) {
@@ -177,14 +215,15 @@ export default {
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
+			// workaround for https://github.com/Inndy/vue-clipboard2/issues/105
+			this.$refs.copyLinkButton.focus()
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.app-settings-section__hint {
-	color: var(--color-text-lighter);
-	padding: 8px 0;
+.icon-clippy {
+	margin-right: 10px;
 }
 </style>
