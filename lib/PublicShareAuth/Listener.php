@@ -91,8 +91,7 @@ class Listener {
 		}
 
 		$participantService = \OC::$server->get(ParticipantService::class);
-		$users = $participantService->getParticipantUserIds($room);
-		if ($room->getActiveGuests() > 0 || \count($users) > 1) {
+		if ($participantService->getNumberOfActors($room) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -112,8 +111,7 @@ class Listener {
 		}
 
 		$participantService = \OC::$server->get(ParticipantService::class);
-		$users = $participantService->getParticipantUserIds($room);
-		if ($room->getActiveGuests() > 0 || \count($users) > 1) {
+		if ($participantService->getNumberOfActors($room) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}

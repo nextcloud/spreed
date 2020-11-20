@@ -3,6 +3,7 @@ Feature: conversation/password-request
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
+    Given user "participant3" exists
 
   Scenario: create password-request room for file shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
@@ -73,6 +74,42 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     And user "guest" creates the password request room for last share with 201
     When user "participant1" joins room "password request for last share room" with 200
+
+  Scenario: other guests can not join the password request room when a guest already joined
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+      | sendPasswordByTalk | true |
+    And user "guest" creates the password request room for last share with 201
+    And user "guest" joins room "password request for last share room" with 200
+    When user "guest2" joins room "password request for last share room" with 404
+    Then user "guest2" is not participant of room "password request for last share room"
+
+  Scenario: other guests can not join the password request room when a user already joined
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+      | sendPasswordByTalk | true |
+    And user "participant2" creates the password request room for last share with 201
+    And user "participant2" joins room "password request for last share room" with 200
+    When user "guest" joins room "password request for last share room" with 404
+    Then user "guest" is not participant of room "password request for last share room"
+
+  Scenario: other users can not join the password request room when a guest already joined
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+      | sendPasswordByTalk | true |
+    And user "guest" creates the password request room for last share with 201
+    And user "guest" joins room "password request for last share room" with 200
+    When user "participant2" joins room "password request for last share room" with 404
+    Then user "participant2" is not participant of room "password request for last share room"
+
+  Scenario: other users can not join the password request room when a user already joined
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+      | sendPasswordByTalk | true |
+    And user "participant2" creates the password request room for last share with 201
+    And user "participant2" joins room "password request for last share room" with 200
+    When user "participant3" joins room "password request for last share room" with 404
+    Then user "participant3" is not participant of room "password request for last share room"
 
 
 
