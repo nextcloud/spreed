@@ -443,6 +443,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates the password request room for last share with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 */
+	public function userCreatesThePasswordRequestRoomForLastShare($user, $statusCode) {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/v1/publicshareauth', new TableNode([['shareToken', $shareToken]]));
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '201') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$identifier = 'password request for last share room';
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
