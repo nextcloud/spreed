@@ -573,6 +573,7 @@ OC.L10N.register(
     "Add groups or circles" : "Lägg till grupper eller cirklar",
     "Add other sources" : "Lägg till andra källor",
     "Participants" : "Deltagare",
+    "Search or add participants" : "Sök eller lägg till deltagare",
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
     "Chat" : "Chat",
     "Display name: " : "Visningsnamn:",
