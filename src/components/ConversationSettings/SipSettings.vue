@@ -25,13 +25,13 @@
 			{{ t('spreed', 'Allow participants to join from a phone.') }}
 		</div>
 		<input id="sip_settings_checkbox"
+			v-model="hasSipEnabled"
 			aria-describedby="sip_settings_hint"
 			type="checkbox"
 			class="checkbox"
 			name="sip_settings_checkbox"
-			:checked="hasSIPEnabled"
 			:disabled="isSipLoading"
-			@change="toggleSIPEnabled">
+			@change="toggleSipEnabled">
 		<label for="sip_settings_checkbox">{{ t('spreed', 'Enable SIP dial-in') }}</label>
 	</div>
 </template>
@@ -46,6 +46,7 @@ export default {
 	data() {
 		return {
 			isSipLoading: false,
+			newSipEnabled: null,
 		}
 	},
 
@@ -58,13 +59,22 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		hasSIPEnabled() {
-			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+		hasSipEnabled: {
+			get() {
+				if (this.newSipEnabled !== null) {
+					return this.newSipEnabled
+				}
+				return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+			},
+			set(value) {
+				this.newSipEnabled = value
+			},
 		},
 	},
 
 	methods: {
-		async toggleSIPEnabled() {
+		async toggleSipEnabled(checked) {
+			this.isSipLoading = true
 			try {
 				await this.$store.dispatch('setSIPEnabled', {
 					token: this.token,
@@ -76,6 +86,8 @@ export default {
 					showSuccess(t('spreed', 'SIP dial-in is now disabled'))
 				}
 			} catch (e) {
+				// revert checkbox state
+				this.newSipEnabled = !checked
 				// TODO check "precondition failed"
 				if (!this.conversation.sipEnabled) {
 					console.error('Error occurred when enabling SIP dial-in', e)
@@ -85,6 +97,7 @@ export default {
 					showError(t('spreed', 'Error occurred when disabling SIP dial-in'))
 				}
 			}
+			this.isSipLoading = false
 		},
 	},
 }
