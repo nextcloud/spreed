@@ -29,8 +29,8 @@ components.
 		class="quote"
 		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
-			<div class="quote__main__author">
-				<h3>{{ getDisplayName }}</h3>
+			<div class="quote__main__author" role="heading" aria-level="4">
+				{{ getDisplayName }}
 			</div>
 			<div v-if="isFileShareMessage"
 				class="quote__main__text">

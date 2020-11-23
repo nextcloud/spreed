@@ -32,10 +32,11 @@ the main body of the message as well as a quote.
 		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
-		<div v-if="isFirstMessage && showAuthor" class="message__author">
-			<h3 role="heading">
-				{{ actorDisplayName }}
-			</h3>
+		<div v-if="isFirstMessage && showAuthor"
+			class="message__author"
+			role="heading"
+			aria-level="4">
+			{{ actorDisplayName }}
 		</div>
 		<div
 			ref="messageMain"
@@ -57,10 +58,7 @@ the main body of the message as well as a quote.
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
-				<span v-if="hasDate"
-					  v-tooltip.auto="messageDate"/>
-					{{ messageTime }}
-				</span>
+				<span v-if="hasDate" v-tooltip.auto="messageDate">{{ messageTime }}</span>
 				<Actions
 					v-show="showActions && hasActions"
 					class="message__main__right__actions">
