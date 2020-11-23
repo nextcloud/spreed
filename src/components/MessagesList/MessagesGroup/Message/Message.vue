@@ -28,11 +28,19 @@ the main body of the message as well as a quote.
 	<li
 		:id="`message_${id}`"
 		ref="message"
+		tabindex="0"
+		class="message"
 		:data-message-id="id"
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
-		class="message">
+		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
+		@keydown.up.prevent="jumpToPrevious"
+		@keydown.down.prevent="jumpToNext"
+		@focus="showActions=true"
+		@blur="showActions=false"
+		@mouseover="showActions=true"
+		@mouseleave="showActions=false">
 		<div
 			:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
 			class="message-body"
@@ -623,6 +631,19 @@ export default {
 			}
 		},
 
+		jumpToPrevious() {
+			const el = document.getElementById('message_' + this.previousMessageId)
+			if (el) {
+				el.focus()
+			}
+		},
+		jumpToNext() {
+			const el = document.getElementById('message_' + this.nextMessageId)
+			if (el) {
+				el.focus()
+			}
+		},
+
 		highlightAnimation() {
 			// trigger CSS highlight animation by setting a class
 			this.$refs.message.classList.add('highlight-animation')
@@ -735,6 +756,10 @@ export default {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
+	&:focus {
+		background-color: var(--color-background-hover);
+	}
+
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
