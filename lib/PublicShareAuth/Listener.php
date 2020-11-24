@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShareAuth;
 
+use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -56,6 +57,11 @@ class Listener {
 			self::preventExtraGuestsFromJoining($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
+
+		$listener = static function (AddParticipantsEvent $event) {
+			self::preventExtraUsersFromBeingAdded($event->getRoom(), $event->getParticipants());
+		};
+		$dispatcher->addListener(Room::EVENT_BEFORE_USERS_ADD, $listener);
 
 		$listener = static function (RoomEvent $event) {
 			self::destroyRoomOnParticipantLeave($event->getRoom());
@@ -109,6 +115,34 @@ class Listener {
 		}
 
 		if ($room->getNumberOfParticipants(false) > 1) {
+			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
+		}
+	}
+
+	/**
+	 * Prevents other users from being added to the room (as they will not be
+	 * able to join).
+	 *
+	 * This method should be called before a user is added to a room.
+	 *
+	 * @param Room $room
+	 * @param array[] $participants
+	 * @throws \OverflowException
+	 */
+	public static function preventExtraUsersFromBeingAdded(Room $room, array $participants): void {
+		if ($room->getObjectType() !== 'share:password') {
+			return;
+		}
+
+		// Events with more than one participant can be directly aborted, as
+		// when the owner is added during room creation or a user self-joins the
+		// event will always have just one participant.
+		if (count($participants) > 1) {
+			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
+		}
+
+		$participant = $participants[0];
+		if ($participant['participantType'] !== Participant::OWNER && $participant['participantType'] !== Participant::USER_SELF_JOINED) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}

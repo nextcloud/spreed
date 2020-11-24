@@ -113,6 +113,17 @@ Feature: conversation/password-request
 
 
 
+  Scenario: owner can not add other users to a password request room
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+      | sendPasswordByTalk | true |
+    And user "guest" creates the password request room for last share with 201
+    And user "participant1" joins room "password request for last share room" with 200
+    When user "participant1" adds "participant2" to room "password request for last share room" with 400
+    Then user "participant2" is not participant of room "password request for last share room"
+
+
+
   Scenario: guest leaves the password request room
     Given user "participant1" shares "welcome.txt" by link with OCS 100
       | password | 123456 |
