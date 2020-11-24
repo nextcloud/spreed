@@ -40,7 +40,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `400 Bad Request` When the source type is unknown, currently `users`, `groups`, `emails` are supported. `circles` are supported with `circles-support` capability
-        + `400 Bad Request` When the conversation is a one-to-one conversation
+        + `400 Bad Request` When the conversation is a one-to-one conversation or a conversation to request a password for a share
         + `403 Forbidden` When the current user is not a moderator or owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user or group to add could not be found
