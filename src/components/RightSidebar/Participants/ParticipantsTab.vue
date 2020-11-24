@@ -313,6 +313,7 @@ export default {
 				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
+				showError(t('spreed', 'An error occurred while adding the participants'))
 			}
 		},
 
