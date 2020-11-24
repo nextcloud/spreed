@@ -222,7 +222,7 @@ export default {
 		},
 
 		isGrid() {
-			return this.$store.getters.isGrid
+			return this.$store.getters.isGrid && !this.isSidebar
 		},
 
 		gridTargetAspectRatio() {

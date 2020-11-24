@@ -277,6 +277,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	position: relative;
 
 	flex-grow: 1;
 
