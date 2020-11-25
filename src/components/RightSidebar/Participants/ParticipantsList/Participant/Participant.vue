@@ -63,18 +63,23 @@
 			</div>
 		</div>
 		<div v-if="callIcon"
+			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
+			<span class="hidden-visually">{{ callIconTooltip }}</span>
 			<Microphone
 				v-if="callIcon === 'audio'"
 				:size="24"
+				title=""
 				decorative />
 			<Phone
 				v-if="callIcon === 'phone'"
 				:size="24"
+				title=""
 				decorative />
 			<Video
 				v-if="callIcon === 'video'"
 				:size="24"
+				title=""
 				decorative />
 		</div>
 		<Actions
@@ -251,6 +256,16 @@ export default {
 				return 'phone'
 			}
 			return 'audio'
+		},
+		callIconTooltip() {
+			if (this.callIcon === 'audio') {
+				return t('spreed', 'Joined with audio')
+			} else if (this.callIcon === 'video') {
+				return t('spreed', 'Joined with video')
+			} else if (this.callIcon === 'phone') {
+				return t('spreed', 'Joined via phone')
+			}
+			return null
 		},
 		participantType() {
 			return this.participant.participantType
