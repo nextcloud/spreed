@@ -31,19 +31,27 @@
 				class="checkbox"
 				name="moderation_settings_lock_conversation_checkbox"
 				:checked="isReadOnly"
-				:disabled="isReadOnlyStateLoading"
+				:disabled="isReadOnlyStateLoading || isInCall"
 				@change="toggleReadOnly">
 			<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
+			<span v-if="isInCall">{{ t('spreed', 'You cannot lock a conversation while in a call!') }}</span>
 		</div>
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import isInCall from '../../mixins/isInCall'
+import participant from '../../mixins/participant'
 import { CONVERSATION } from '../../constants'
 
 export default {
 	name: 'LockingSettings',
+
+	mixins: [
+		isInCall,
+		participant,
+	],
 
 	props: {
 		token: {
