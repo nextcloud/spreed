@@ -98,10 +98,6 @@ export default {
 		tooltip: Tooltip,
 	},
 
-	mixins: [
-		participant,
-	],
-
 	components: {
 		Actions,
 		ActionButton,
@@ -109,6 +105,11 @@ export default {
 		Quote,
 		RichText,
 	},
+
+	mixins: [
+		participant,
+	],
+
 	inheritAttrs: false,
 
 	props: {
