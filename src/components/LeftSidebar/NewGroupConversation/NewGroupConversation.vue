@@ -189,6 +189,7 @@ export default {
 		},
 
 		participant() {
+			// TODO: use participant mixin ??
 			if (this.$store.getters.getToken()) {
 				return {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
