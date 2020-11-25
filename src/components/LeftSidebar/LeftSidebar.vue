@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<AppNavigation>
+	<AppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation">
 			<SearchBox
 				v-model="searchText"
@@ -35,7 +35,7 @@
 		<template #list class="left-sidebar__list">
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
-			<li>
+			<li role="presentation">
 				<ConversationsList
 					:conversations-list="conversationsList"
 					:initialised-conversations="initialisedConversations"
@@ -47,7 +47,7 @@
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
 						:title="t('spreed', 'Users')" />
-					<li v-if="searchResultsUsers.length !== 0">
+					<li v-if="searchResultsUsers.length !== 0" role="presentation">
 						<ConversationsOptionsList
 							:items="searchResultsUsers"
 							@click="createAndJoinConversation" />
@@ -64,7 +64,7 @@
 				<template v-if="searchResultsGroups.length !== 0">
 					<Caption
 						:title="t('spreed', 'Groups')" />
-					<li v-if="searchResultsGroups.length !== 0">
+					<li v-if="searchResultsGroups.length !== 0" role="presentation">
 						<ConversationsOptionsList
 							:items="searchResultsGroups"
 							@click="createAndJoinConversation" />
@@ -74,7 +74,7 @@
 				<template v-if="searchResultsCircles.length !== 0">
 					<Caption
 						:title="t('spreed', 'Circles')" />
-					<li v-if="searchResultsCircles.length !== 0">
+					<li v-if="searchResultsCircles.length !== 0" role="presentation">
 						<ConversationsOptionsList
 							:items="searchResultsCircles"
 							@click="createAndJoinConversation" />

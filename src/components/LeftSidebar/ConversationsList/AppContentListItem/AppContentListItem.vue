@@ -28,7 +28,7 @@
 			:class="{ 'active' : isActive }"
 			href="#"
 			class="acli"
-			:aria-label="t('spreed', 'Conversation, ') + title"
+			:aria-label="conversationLinkAriaLabel"
 			@click="onClick">
 			<!-- default slot for avatar or icon -->
 			<slot name="icon" />
@@ -57,7 +57,7 @@
 		<Actions
 			v-if="hasActions"
 			menu-align="right"
-			:aria-label="t('spreed', 'Conversation settings')"
+			:aria-label="conversationSettingsAriaLabel"
 			class="actions">
 			<slot name="actions" />
 		</Actions>
@@ -138,6 +138,13 @@ export default {
 			}
 		},
 
+		conversationLinkAriaLabel() {
+			return t('spreed', 'Conversation "{conversationName}"', { conversationName: this.title })
+		},
+
+		conversationSettingsAriaLabel() {
+			return t('spreed', 'Settings for conversation "{conversationName}"', { conversationName: this.title })
+		},
 	},
 	methods: {
 		// forward click event

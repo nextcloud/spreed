@@ -28,10 +28,15 @@
 			'guestUser': isGuest,
 			'isSearched': isSearched,
 			'selected': isSelected }"
-		@click="handleClick">
+		:aria-label="participantAriaLabel"
+		:role="isSearched ? 'listitem' : ''"
+		:tabindex="isSearched ? 0 : -1"
+		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
+		@keydown.enter="handleClick">
 		<AvatarWrapper
 			:id="computedId"
 			:disable-tooltip="true"
+			:disable-menu="isSearched"
 			:size="44"
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
@@ -84,7 +89,7 @@
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
-			:aria-label="t('spreed', 'Participant settings')"
+			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
@@ -163,6 +168,17 @@ export default {
 	},
 
 	computed: {
+		participantSettingsAriaLabel() {
+			return t('spreed', 'Settings for participant "{user}"', { user: this.computedName })
+		},
+		participantAriaLabel() {
+			if (this.isSearched) {
+				return t('spreed', 'Add participant "{user}"', { user: this.computedName })
+			} else {
+				return t('spreed', 'Participant "{user}"', { user: this.computedName })
+			}
+		},
+
 		userTooltipText() {
 			if (!this.isUserNameTooltipVisible) {
 				return false
@@ -389,6 +405,10 @@ export default {
 
 	&.isSearched {
 		cursor: pointer;
+	}
+
+	&:focus {
+		background-color: var(--color-background-hover);
 	}
 
 	&__user-wrapper {
