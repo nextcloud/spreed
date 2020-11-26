@@ -135,7 +135,8 @@ import {
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import PasswordProtect from './PasswordProtect/PasswordProtect'
-import { PARTICIPANT } from '../../../constants'
+import isInCall from '../../../mixins/isInCall'
+import participant from '../../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 export default {
@@ -155,6 +156,11 @@ export default {
 		PasswordProtect,
 		Plus,
 	},
+
+	mixins: [
+		isInCall,
+		participant,
+	],
 
 	data() {
 		return {
@@ -188,27 +194,6 @@ export default {
 		},
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
-		},
-
-		participant() {
-			if (this.$store.getters.getToken()) {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
-			}
-
-			const participantIndex = this.$store.getters.getParticipantIndex(this.$store.getters.getToken(), this.$store.getters.getParticipantIdentifier())
-			if (participantIndex !== -1) {
-				return this.$store.getters.getParticipant(this.$store.getters.getToken(), participantIndex)
-			}
-
-			return {
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			}
-		},
-
-		isInCall() {
-			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 	},
 

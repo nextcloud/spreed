@@ -49,7 +49,6 @@ import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
 import CallButton from './components/TopBar/CallButton'
-import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
 import { getPublicShareConversationData } from './services/filesIntegrationServices'
@@ -61,6 +60,7 @@ import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
+import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
 
@@ -79,6 +79,7 @@ export default {
 		browserCheck,
 		duplicateSessionHandler,
 		isInCall,
+		participant,
 		talkHashCheck,
 	],
 
@@ -112,17 +113,6 @@ export default {
 
 		isOpen() {
 			return this.state.isOpen
-		},
-
-		participant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex === -1) {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
-			}
-
-			return this.$store.getters.getParticipant(this.token, participantIndex)
 		},
 
 		warnLeaving() {

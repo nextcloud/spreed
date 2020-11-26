@@ -23,6 +23,7 @@ import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
 import isInLobby from '../mixins/isInLobby'
 import isInCall from '../mixins/isInCall'
+import participant from '../mixins/participant'
 
 export default {
 	name: 'MainView',
@@ -36,6 +37,7 @@ export default {
 	mixins: [
 		isInLobby,
 		isInCall,
+		participant,
 	],
 
 	props: {
@@ -48,23 +50,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
-		},
-
-		participant() {
-			if (typeof this.token === 'undefined') {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
-			}
-
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex !== -1) {
-				return this.$store.getters.getParticipant(this.token, participantIndex)
-			}
-
-			return {
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			}
 		},
 
 		showChatInSidebar() {

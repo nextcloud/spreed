@@ -85,6 +85,7 @@ import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import RichText from '@juliushaertl/vue-richtext'
 import Quote from '../../../Quote'
+import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT, CONVERSATION } from '../../../../constants'
@@ -104,6 +105,11 @@ export default {
 		Quote,
 		RichText,
 	},
+
+	mixins: [
+		participant,
+	],
+
 	inheritAttrs: false,
 
 	props: {
@@ -244,17 +250,6 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token)
-		},
-
-		participant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex !== -1) {
-				return this.$store.getters.getParticipant(this.token, participantIndex)
-			}
-
-			return {
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			}
 		},
 
 		messagesList() {

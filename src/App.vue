@@ -53,7 +53,6 @@ import {
 	joinConversation,
 	leaveConversationSync,
 } from './services/participantsService'
-import { PARTICIPANT } from './constants'
 import {
 	signalingKill,
 } from './utils/webrtc/index'
@@ -61,6 +60,7 @@ import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
+import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 import UploadEditor from './components/UploadEditor'
@@ -84,6 +84,7 @@ export default {
 		talkHashCheck,
 		duplicateSessionHandler,
 		isInCall,
+		participant,
 	],
 
 	data() {
@@ -105,23 +106,6 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
-		},
-
-		participant() {
-			if (typeof this.token === 'undefined') {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
-			}
-
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex !== -1) {
-				return this.$store.getters.getParticipant(this.token, participantIndex)
-			}
-
-			return {
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			}
 		},
 
 		warnLeaving() {

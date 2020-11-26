@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
 import duplicateSessionHandler from './mixins/duplicateSessionHandler'
 import isInCall from './mixins/isInCall'
+import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
 
@@ -51,6 +51,7 @@ export default {
 	mixins: [
 		duplicateSessionHandler,
 		isInCall,
+		participant,
 		talkHashCheck,
 	],
 
@@ -104,17 +105,6 @@ export default {
 			}
 
 			return this.isInCall
-		},
-
-		participant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex === -1) {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
-			}
-
-			return this.$store.getters.getParticipant(this.token, participantIndex)
 		},
 
 		warnLeaving() {

@@ -52,6 +52,7 @@
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
 import isInCall from '../../mixins/isInCall'
+import participant from '../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 
@@ -65,6 +66,7 @@ export default {
 	mixins: [
 		browserCheck,
 		isInCall,
+		participant,
 	],
 
 	data() {
@@ -92,19 +94,6 @@ export default {
 				hasCall: false,
 				canStartCall: false,
 				lobbyState: WEBINAR.LOBBY.NONE,
-			}
-		},
-
-		participant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex !== -1) {
-				console.debug('Current participant found')
-				return this.$store.getters.getParticipant(this.token, participantIndex)
-			}
-
-			console.debug('Current participant not found')
-			return {
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
 		},
 
