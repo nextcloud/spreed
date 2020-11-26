@@ -31,6 +31,7 @@
 		</div>
 		<img
 			v-if="hasPicture"
+			ref="backgroundImage"
 			:src="backgroundImage"
 			:style="backgroundStyle"
 			class="video-background__picture"
@@ -47,6 +48,7 @@ import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 import { getBuilder } from '@nextcloud/browser-storage'
+import browserCheck from '../../../mixins/browserCheck'
 
 const browserStorage = getBuilder('nextcloud').persist().build()
 
@@ -69,6 +71,10 @@ export default {
 		ResizeObserver,
 	},
 
+	mixins: [
+		browserCheck,
+	],
+
 	props: {
 		displayName: {
 			type: String,
@@ -87,7 +93,9 @@ export default {
 	data() {
 		return {
 			hasPicture: false,
+			useCssBlurFilter: true,
 			blur: 0,
+			blurredBackgroundImage: null,
 		}
 	},
 
@@ -103,19 +111,52 @@ export default {
 			}
 		},
 		backgroundImage() {
+			return this.useCssBlurFilter ? this.backgroundImageUrl : this.blurredBackgroundImage
+		},
+		backgroundImageUrl() {
 			return generateUrl(`avatar/${this.user}/300`)
 		},
 		backgroundBlur() {
 			return this.gridBlur ? this.gridBlur : this.blur
 		},
 		backgroundStyle() {
+			if (!this.useCssBlurFilter) {
+				return {}
+			}
+
 			return {
 				filter: `blur(${this.backgroundBlur}px)`,
 			}
 		},
+		// Special computed property to combine the properties that should be
+		// watched to generate (or not) the blurred background image.
+		generatedBackgroundBlur() {
+			if (!this.hasPicture || this.useCssBlurFilter) {
+				return false
+			}
+
+			return this.backgroundBlur
+		},
+	},
+
+	watch: {
+		generatedBackgroundBlur: {
+			immediate: true,
+			handler() {
+				if (this.generatedBackgroundBlur === false) {
+					return
+				}
+
+				this.generateBlurredBackgroundImage()
+			},
+		},
 	},
 
 	async beforeMount() {
+		if (this.isChrome) {
+			this.useCssBlurFilter = false
+		}
+
 		if (!this.user) {
 			return
 		}
@@ -154,6 +195,35 @@ export default {
 		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
 			this.blur = this.$store.getters.getBlurRadius(width, height)
+		},
+
+		generateBlurredBackgroundImage() {
+			const image = new Image()
+			image.onload = () => {
+				// Reset image source so the width and height are adjusted to
+				// the element rather than to the previous image being shown.
+				this.$refs.backgroundImage.src = ''
+
+				const canvas = document.createElement('canvas')
+				canvas.width = this.$refs.backgroundImage.width
+				canvas.height = this.$refs.backgroundImage.height
+
+				const sourceAspectRatio = image.width / image.height
+				const canvasAspectRatio = canvas.width / canvas.height
+
+				if (canvasAspectRatio > sourceAspectRatio) {
+					canvas.height = canvas.width / sourceAspectRatio
+				} else if (canvasAspectRatio < sourceAspectRatio) {
+					canvas.width = canvas.height * sourceAspectRatio
+				}
+
+				const context = canvas.getContext('2d')
+				context.filter = `blur(${this.backgroundBlur}px)`
+				context.drawImage(image, 0, 0, canvas.width, canvas.height)
+
+				this.blurredBackgroundImage = canvas.toDataURL()
+			}
+			image.src = this.backgroundImageUrl
 		},
 	},
 }
