@@ -426,7 +426,7 @@ export default {
 
 		// Blur radius for each background in the grid
 		videoBackgroundBlur() {
-			return this.$store.getters.getBlurFilter(this.videoWidth, this.videoHeight)
+			return this.$store.getters.getBlurRadius(this.videoWidth, this.videoHeight)
 		},
 
 		stripeOpen() {
