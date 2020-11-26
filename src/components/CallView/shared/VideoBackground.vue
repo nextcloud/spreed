@@ -105,9 +105,12 @@ export default {
 		backgroundImage() {
 			return generateUrl(`avatar/${this.user}/300`)
 		},
+		backgroundBlur() {
+			return this.gridBlur ? this.gridBlur : this.blur
+		},
 		backgroundStyle() {
 			return {
-				filter: `blur(${this.gridBlur ? this.gridBlur : this.blur}px)`,
+				filter: `blur(${this.backgroundBlur}px)`,
 			}
 		},
 	},
