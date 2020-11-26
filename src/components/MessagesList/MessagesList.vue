@@ -56,7 +56,9 @@ get the messagesList array and loop through the list to generate the messages.
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
-				<ChevronDown decorative
+				<ChevronDown
+					decorative
+					title=""
 					:size="24" />
 			</button>
 		</transition>

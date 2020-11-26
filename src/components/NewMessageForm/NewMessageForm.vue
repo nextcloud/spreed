@@ -70,7 +70,8 @@
 							:aria-haspopup="true">
 							<EmoticonOutline
 								:size="20"
-								decorative />
+								decorative
+								title="" />
 						</button>
 					</EmojiPicker>
 				</div>

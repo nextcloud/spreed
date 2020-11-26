@@ -23,16 +23,19 @@
 	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwo}">
 		<button v-if="isStripe"
 			class="stripe--collapse"
+			:aria-label="stripeButtonTooltip"
 			@click="handleClickStripeCollapse">
 			<ChevronDown
 				v-if="stripeOpen"
 				fill-color="#ffffff"
 				decorative
+				title=""
 				:size="24" />
 			<ChevronUp
 				v-else
 				fill-color="#ffffff"
 				decorative
+				title=""
 				:size="24" />
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
@@ -40,8 +43,11 @@
 				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
 					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__previous"
+						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
-						<ChevronLeft decorative
+						<ChevronLeft
+							decorative
+							title=""
 							:size="24" />
 					</button>
 					<div
@@ -96,8 +102,11 @@
 					</div>
 					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__next"
+						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
-						<ChevronRight decorative
+						<ChevronRight
+							decorative
+							title=""
 							:size="24" />
 					</button>
 				</div>
@@ -147,6 +156,7 @@ import LocalVideo from '../shared/LocalVideo'
 import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 import ChevronUp from 'vue-material-design-icons/ChevronUp'
@@ -163,6 +173,10 @@ export default {
 		ChevronLeft,
 		ChevronUp,
 		ChevronDown,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {
@@ -273,6 +287,14 @@ export default {
 	},
 
 	computed: {
+		stripeButtonTooltip() {
+			if (this.stripeOpen) {
+				return t('spreed', 'Collapse stripe')
+			} else {
+				return t('spreed', 'Expand stripe')
+			}
+		},
+
 		// The videos array. This is the total number of grid elements.
 		// Depending on `gridWidthm`, `gridHeight`, `minWidth`, `minHeight` and
 		// `videosCap`, these videos are shown in one or more grid 'pages'.
