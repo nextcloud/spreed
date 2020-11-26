@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 
 class Command {
@@ -44,7 +45,7 @@ class Command {
 
 		$participant = $message->getParticipant();
 		if ($data['visibility'] !== \OCA\Talk\Model\Command::RESPONSE_ALL &&
-			($participant->getAttendee()->getActorType() !== 'users'
+			($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
 				|| $data['user'] !== $participant->getAttendee()->getActorId())) {
 			$message->setVisibility(false);
 			return;

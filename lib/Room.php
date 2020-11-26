@@ -33,6 +33,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -43,6 +44,15 @@ use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
 class Room {
+
+	/**
+	 * Regex that matches SIP incompatible rooms:
+	 * 1. duplicate digit: …11…
+	 * 2. leading zero: 0…
+	 * 3. non-digit: …a…
+	 */
+	public const SIP_INCOMPATIBLE_REGEX = '/((\d)(?=\2+)|^0|\D)/';
+
 	public const UNKNOWN_CALL = -1;
 	public const ONE_TO_ONE_CALL = 1;
 	public const GROUP_CALL = 2;
@@ -352,7 +362,7 @@ class Room {
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
-			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter('users')))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
@@ -441,6 +451,38 @@ class Room {
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new ParticipantNotFoundException('User is not a participant');
+		}
+
+		return $this->manager->createParticipantObject($this, $row);
+	}
+
+	/**
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
+	 */
+	public function getParticipantByActor(string $actorType, string $actorId): Participant {
+		if ($actorType === Attendee::ACTOR_USERS) {
+			return $this->getParticipant($actorId);
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->selectAlias('a.id', 'a_id')
+			->selectAlias('s.id', 's_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
 		$result = $query->execute();
@@ -743,11 +785,9 @@ class Room {
 			return false;
 		}
 
-		if (!preg_match('/^\d+$/', $this->token)) {
+		if (preg_match(self::SIP_INCOMPATIBLE_REGEX, $this->token)) {
 			return false;
 		}
-
-		// FIXME check if SIP is enabled/configured
 
 		$event = new ModifyRoomEvent($this, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);

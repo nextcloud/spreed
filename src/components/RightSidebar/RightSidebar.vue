@@ -59,6 +59,10 @@
 			icon="icon-settings">
 			<SetGuestUsername
 				v-if="!getUserId" />
+			<SipSettings
+				v-if="showSIPSettings"
+				:meeting-id="conversation.token"
+				:attendee-pin="conversation.attendeePin" />
 			<CollectionList
 				v-if="getUserId && conversation.token"
 				:id="conversation.token"
@@ -90,6 +94,7 @@ import ParticipantsTab from './Participants/ParticipantsTab'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
+import SipSettings from './SipSettings'
 
 export default {
 	name: 'RightSidebar',
@@ -100,6 +105,7 @@ export default {
 		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
+		SipSettings,
 		MatterbridgeSettings,
 	},
 
@@ -148,6 +154,7 @@ export default {
 				type: CONVERSATION.TYPE.PUBLIC,
 				lobbyState: WEBINAR.LOBBY.NONE,
 				lobbyTimer: 0,
+				attendeePin: '',
 			}
 		},
 
@@ -198,6 +205,11 @@ export default {
 		},
 		isRenamingConversation() {
 			return this.$store.getters.isRenamingConversation
+		},
+
+		showSIPSettings() {
+			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+				&& this.conversation.attendeePin !== ''
 		},
 	},
 

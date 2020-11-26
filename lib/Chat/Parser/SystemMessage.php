@@ -25,6 +25,7 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Share\RoomShareProvider;
@@ -94,7 +95,7 @@ class SystemMessage {
 		if (!$participant->isGuest()) {
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
-				$participant->getAttendee()->getActorType() === 'users' &&
+				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
 				$currentActorId === $parsedParameters['actor']['id'];
 		} else {
 			$currentActorId = $participant->getAttendee()->getActorId();
@@ -385,7 +386,7 @@ class SystemMessage {
 	}
 
 	protected function getActor(IComment $comment): array {
-		if ($comment->getActorType() === 'guests') {
+		if ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			return $this->getGuest($comment->getActorId());
 		}
 

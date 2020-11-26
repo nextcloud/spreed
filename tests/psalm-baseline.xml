@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.16@d03e5ef057d6adc656c0ff7e166c50b73b4f48f3">
+<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -37,6 +37,12 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>getById</code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Chat/SystemMessage/Listener.php">
+    <InvalidArgument occurrences="2">
+      <code>$listener</code>
+      <code>$listener</code>
+    </InvalidArgument>
   </file>
   <file src="lib/Command/ActiveCalls.php">
     <UndefinedClass occurrences="1">
@@ -172,16 +178,6 @@
       <code>DBALException</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Controller/MatterbridgeController.php">
-    <InvalidArgument occurrences="1">
-      <code>$success</code>
-    </InvalidArgument>
-  </file>
-  <file src="lib/Controller/MatterbridgeSettingsController.php">
-    <InvalidArgument occurrences="1">
-      <code>$success</code>
-    </InvalidArgument>
-  </file>
   <file src="lib/Controller/PageController.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
@@ -217,10 +213,6 @@
     </UndefinedClass>
   </file>
   <file src="lib/Controller/SignalingController.php">
-    <InvalidArgument occurrences="2">
-      <code>'Internal signaling disabled.'</code>
-      <code>'Internal signaling disabled.'</code>
-    </InvalidArgument>
     <UndefinedClass occurrences="1">
       <code>\GuzzleHttp\Exception\ConnectException</code>
     </UndefinedClass>
@@ -249,13 +241,16 @@
       <code>GroupFolderStorage</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Flow/Operation.php">
+    <InvalidArgument occurrences="1"/>
+  </file>
   <file src="lib/GuestManager.php">
     <UndefinedDocblockClass occurrences="1">
       <code>\Doctrine\DBAL\DBALException</code>
     </UndefinedDocblockClass>
   </file>
   <file src="lib/Manager.php">
-    <InvalidArgument occurrences="4"/>
+    <InvalidArgument occurrences="8"/>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">
@@ -341,6 +336,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Share/Listener.php">
+    <InvalidArgument occurrences="1">
+      <code>[self::class, 'listenPreShare']</code>
+    </InvalidArgument>
     <UndefinedClass occurrences="7">
       <code>$event-&gt;getView()</code>
       <code>$event-&gt;getView()</code>
@@ -350,16 +348,6 @@
       <code>$view</code>
       <code>Filesystem</code>
     </UndefinedClass>
-    <InvalidArgument occurrences="1"/>
-  </file>
-  <file src="lib/Chat/SystemMessage/Listener.php">
-    <InvalidArgument occurrences="2">
-      <code>$listener</code>
-      <code>$listener</code>
-    </InvalidArgument>
-  </file>
-  <file src="lib/Flow/Operation.php">
-    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
     <InvalidArgument occurrences="2">
@@ -386,12 +374,6 @@
     <UndefinedClass occurrences="1">
       <code>Cache</code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Signaling/BackendNotifier.php">
-    <InvalidClass occurrences="2">
-      <code>IURLGenerator</code>
-      <code>IUrlGenerator</code>
-    </InvalidClass>
   </file>
   <file src="lib/TInitialState.php">
     <MissingDependency occurrences="1">

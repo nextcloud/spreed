@@ -40,6 +40,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -158,6 +159,9 @@ class RoomController extends AEnvironmentAwareController {
 				$this->config->getAppValue('spreed', 'allowed_groups', '') . '#' .
 				$this->config->getAppValue('spreed', 'start_conversations', '') . '#' .
 				$this->config->getAppValue('spreed', 'has_reference_id', '') . '#' .
+				$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]') . '#' .
+				$this->config->getAppValue('spreed', 'sip_bridge_dialin_info') . '#' .
+				$this->config->getAppValue('spreed', 'sip_bridge_shared_secret') . '#' .
 				$this->config->getAppValue('theming', 'cachebuster', '1')
 		)];
 	}
@@ -191,6 +195,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+
 		$rooms = $this->manager->getRoomsForUser($this->userId, true);
 
 		$return = [];
@@ -218,9 +223,11 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
 		}
 
-		if ($isSIPBridgeRequest && $this->getAPIVersion() === 1) {
+		if ($isSIPBridgeRequest && $this->getAPIVersion() < 3) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
+
+		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
@@ -252,21 +259,21 @@ class RoomController extends AEnvironmentAwareController {
 	 * configuration.
 	 *
 	 * @param string $data
-	 * @return bool
-	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but failed
+	 * @return bool True if the request is from the SIP bridge and valid, false if not from SIP bridge
+	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but is not valid
 	 */
 	private function validateSIPBridgeRequest(string $data): bool {
-		if (!isset($_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'])
-			&& !isset($_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'])) {
+		$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
+		$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
+
+		if ($random === '' && $checksum === '') {
 			return false;
 		}
 
-		$random = $_SERVER['HTTP_TALK_SIPBRIDGE_RANDOM'] ?? '';
 		if (strlen($random) < 32) {
 			throw new UnauthorizedException('Invalid random provided');
 		}
 
-		$checksum = $_SERVER['HTTP_TALK_SIPBRIDGE_CHECKSUM'] ?? '';
 		if (empty($checksum)) {
 			throw new UnauthorizedException('Invalid checksum provided');
 		}
@@ -292,7 +299,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @throws RoomNotFoundException
 	 */
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
-		if ($this->getAPIVersion() !== 1) {
+		if ($this->getAPIVersion() >= 2) {
 			return $this->formatRoomV2andV3($room, $currentParticipant, $isSIPBridgeRequest);
 		}
 
@@ -344,7 +351,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $currentParticipant->getAttendee();
-		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
@@ -451,7 +458,7 @@ class RoomController extends AEnvironmentAwareController {
 						$numActiveGuests++;
 					}
 				}
-			} elseif ($participant->getAttendee()->getActorType() === 'users') {
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$attendee = $participant->getAttendee();
 				$session = $participant->getSession();
 				$user = $this->userManager->get($attendee->getActorId());
@@ -528,17 +535,19 @@ class RoomController extends AEnvironmentAwareController {
 			'notificationLevel' => Participant::NOTIFY_NEVER,
 			'lobbyState' => Webinary::LOBBY_NONE,
 			'lobbyTimer' => 0,
-			'sipEnabled' => Webinary::SIP_DISABLED,
 			'lastPing' => 0,
 			'sessionId' => '0',
 			'guestList' => '',
 			'lastMessage' => [],
 		];
-		if ($this->getAPIVersion() === 3) {
+		if ($this->getAPIVersion() >= 3) {
 			$roomData = array_merge($roomData, [
+				'sipEnabled' => Webinary::SIP_DISABLED,
 				'actorType' => '',
 				'actorId' => '',
 				'attendeeId' => 0,
+				'canEnableSIP' => false,
+				'attendeePin' => '',
 			]);
 		}
 
@@ -576,7 +585,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $currentParticipant->getAttendee();
-		$userId = $attendee->getActorType() === 'users' ? $attendee->getActorId() : '';
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
@@ -591,9 +600,13 @@ class RoomController extends AEnvironmentAwareController {
 			'notificationLevel' => $attendee->getNotificationLevel(),
 			'lobbyState' => $room->getLobbyState(),
 			'lobbyTimer' => $lobbyTimer,
-			'sipEnabled' => $room->getSIPEnabled(),
 		]);
-		if ($this->getAPIVersion() === 3) {
+		if ($this->getAPIVersion() >= 3) {
+			if ($this->talkConfig->isSIPConfigured()) {
+				$roomData['sipEnabled'] = $room->getSIPEnabled();
+				$roomData['attendeePin'] = $attendee->getPin();
+			}
+
 			$roomData = array_merge($roomData, [
 				'actorType' => $attendee->getActorType(),
 				'actorId' => $attendee->getActorId(),
@@ -633,7 +646,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->config);
 
-		if ($attendee->getActorType() === 'users') {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
 			if ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
@@ -661,6 +674,14 @@ class RoomController extends AEnvironmentAwareController {
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = true;
+				if ($this->getAPIVersion() >= 3) {
+					$roomData['canEnableSIP'] =
+						$this->talkConfig->isSIPConfigured()
+						&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
+						&& ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
+						&& $currentParticipant->hasModeratorPermissions(false)
+						&& $this->talkConfig->canUserEnableSIP($currentUser);
+				}
 			}
 		}
 
@@ -817,7 +838,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
 			];
 		}
@@ -875,7 +896,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$participants[] = [
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $member->getUserId(),
 			];
 		}
@@ -1009,7 +1030,7 @@ class RoomController extends AEnvironmentAwareController {
 			&& count($participants) < 100
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(static function (Participant $participant) {
-				if ($participant->getAttendee()->getActorType() === 'users') {
+				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 					return $participant->getAttendee()->getActorId();
 				}
 				return null;
@@ -1022,7 +1043,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$guestSessions = array_filter(array_map(static function (Participant $participant) {
 			$session = $participant->getSession();
-			if (!$session || $participant->getAttendee()->getActorType() !== 'guests') {
+			if (!$session || $participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
 				return null;
 			}
 
@@ -1040,10 +1061,15 @@ class RoomController extends AEnvironmentAwareController {
 				'sessionId' => '0', // FIXME empty string or null?
 				'participantType' => $participant->getAttendee()->getParticipantType(),
 			];
-			if ($this->getAPIVersion() === 3) {
+			if ($this->getAPIVersion() >= 3) {
 				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
+				if ($this->talkConfig->isSIPConfigured()
+					&& ($this->participant->hasModeratorPermissions(false)
+						|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
+					$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
+				}
 			}
 			if ($participant->getSession() instanceof Session) {
 				$result['inCall'] = $participant->getSession()->getInCall();
@@ -1051,7 +1077,7 @@ class RoomController extends AEnvironmentAwareController {
 				$result['sessionId'] = $participant->getSession()->getSessionId();
 			}
 
-			if ($participant->getAttendee()->getActorType() === 'users') {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
 				$user = $this->userManager->get($userId);
 				if (!$user instanceof IUser) {
@@ -1062,7 +1088,7 @@ class RoomController extends AEnvironmentAwareController {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 
-				if ($this->getAPIVersion() !== 3) {
+				if ($this->getAPIVersion() < 3) {
 					$result['userId'] = $participant->getAttendee()->getActorId();
 				}
 				$result['displayName'] = (string) $user->getDisplayName();
@@ -1073,18 +1099,18 @@ class RoomController extends AEnvironmentAwareController {
 					$result['statusMessage'] = $statuses[$userId]->getMessage();
 					$result['statusClearAt'] = $statuses[$userId]->getClearAt();
 				}
-			} elseif ($participant->getAttendee()->getActorType() === 'guests') {
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
 				if ($result['lastPing'] <= $maxPingAge) {
 					$cleanGuests = true;
 					continue;
 				}
 
-				if ($this->getAPIVersion() !== 3) {
+				if ($this->getAPIVersion() < 3) {
 					$result['userId'] = '';
 				}
 				$result['displayName'] = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
-			} elseif ($this->getAPIVersion() === 3) {
-				// Other types are only reported on V3
+			} elseif ($this->getAPIVersion() >= 3) {
+				// Other types are only reported on v3 or later
 				$result['displayName'] = $participant->getAttendee()->getActorId();
 			} else {
 				// Skip unknown actor types
@@ -1128,7 +1154,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$this->participantService->addUsers($this->room, [[
-				'actorType' => 'users',
+				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $newUser->getUID(),
 			]]);
 		} elseif ($source === 'groups') {
@@ -1144,7 +1170,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
 				];
 			}
@@ -1183,7 +1209,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$participantsToAdd[] = [
-					'actorType' => 'users',
+					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $member->getUserId(),
 				];
 			}
@@ -1220,7 +1246,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function removeParticipantFromRoom(string $participant): DataResponse {
 		$attendee = $this->participant->getAttendee();
-		if ($attendee->getActorType() === 'users' && $attendee->getActorId() === $participant) {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $participant) {
 			// Removing self, abusing moderator power
 			return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 		}
@@ -1465,6 +1491,7 @@ class RoomController extends AEnvironmentAwareController {
 			$result = $room->verifyPassword((string) $this->session->getPasswordForRoom($token));
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
+				$this->participantService->generatePinForParticipant($room, $participant);
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($room, $password, $result['result']);
 			}
@@ -1541,7 +1568,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function promoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
-		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
+		return $this->changeParticipantType($attendeeId, $participant, $sessionId, true);
 	}
 
 	/**
@@ -1554,7 +1581,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function demoteModerator(?int $attendeeId, ?string $participant, ?string $sessionId): DataResponse {
-		return $this->toggleParticipantType($attendeeId, $participant, $sessionId);
+		return $this->changeParticipantType($attendeeId, $participant, $sessionId, false);
 	}
 
 	/**
@@ -1564,9 +1591,10 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int|null $attendeeId
 	 * @param string|null $userId
 	 * @param string|null $sessionId
+	 * @param bool $promote Shall the attendee be promoted or demoted
 	 * @return DataResponse
 	 */
-	protected function toggleParticipantType(?int $attendeeId, ?string $userId, ?string $sessionId): DataResponse {
+	protected function changeParticipantType(?int $attendeeId, ?string $userId, ?string $sessionId, bool $promote): DataResponse {
 		try {
 			if ($attendeeId !== null) {
 				$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
@@ -1582,17 +1610,22 @@ class RoomController extends AEnvironmentAwareController {
 		$attendee = $targetParticipant->getAttendee();
 
 		// Prevent users/moderators modifying themselves
-		if ($attendee->getActorType() === 'users') {
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			if ($attendee->getActorId() === $this->userId) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
-		} elseif ($attendee->getActorType() === 'guests') {
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 			$session = $targetParticipant->getSession();
 			$currentSessionId = $this->session->getSessionForRoom($this->room->getToken());
 
 			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
+		}
+
+		if ($promote === $targetParticipant->hasModeratorPermissions()) {
+			// Prevent concurrent changes
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($attendee->getParticipantType() === Participant::USER) {

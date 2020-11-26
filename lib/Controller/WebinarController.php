@@ -33,6 +33,8 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
 
 class WebinarController extends AEnvironmentAwareController {
 
@@ -42,16 +44,24 @@ class WebinarController extends AEnvironmentAwareController {
 	protected $participantService;
 	/** @var Config */
 	protected $talkConfig;
+	/** @var IUserManager */
+	protected $userManager;
+	/** @var string|null */
+	protected $userId;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								ITimeFactory $timeFactory,
 								ParticipantService $participantService,
-								Config $talkConfig) {
+								Config $talkConfig,
+								IUserManager $userManager,
+								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->timeFactory = $timeFactory;
 		$this->participantService = $participantService;
 		$this->talkConfig = $talkConfig;
+		$this->userManager = $userManager;
+		$this->userId = $userId;
 	}
 
 	/**
@@ -99,11 +109,19 @@ class WebinarController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setSIPEnabled(int $state): DataResponse {
+		$user = $this->userManager->get($this->userId);
+		if (!$user instanceof IUser) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if (!$this->talkConfig->canUserEnableSIP($user)) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		// TODO Check if user is in "SIP groups"
 		if (!$this->room->setSIPEnabled($state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

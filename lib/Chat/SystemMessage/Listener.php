@@ -31,6 +31,7 @@ use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -80,16 +81,16 @@ class Listener {
 			$participantService = \OC::$server->query(ParticipantService::class);
 
 			if ($participantService->hasActiveSessionsInCall($room)) {
-				$listener->sendSystemMessage($room, 'call_joined');
+				$listener->sendSystemMessage($room, 'call_joined', [], $event->getParticipant());
 			} else {
-				$listener->sendSystemMessage($room, 'call_started');
+				$listener->sendSystemMessage($room, 'call_started', [], $event->getParticipant());
 			}
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 
 			$session = $event->getParticipant()->getSession();
-			if (!$session instanceof Session || $session->getInCall() === Participant::FLAG_DISCONNECTED) {
+			if (!$session instanceof Session) {
 				// This happens in case the user was kicked/lobbied
 				return;
 			}
@@ -221,7 +222,7 @@ class Listener {
 			$room = $event->getRoom();
 			$attendee = $event->getParticipant()->getAttendee();
 
-			if ($attendee->getActorType() !== 'users' && $attendee->getActorType() !== 'guests') {
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
 				return;
 			}
 
@@ -277,10 +278,10 @@ class Listener {
 				$actorType = 'users';
 				$actorId = $user->getUID();
 			} elseif (\OC::$CLI) {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$actorId = 'cli';
 			} else {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 			}

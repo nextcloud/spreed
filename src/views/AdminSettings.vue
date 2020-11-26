@@ -30,7 +30,7 @@
 		<TurnServers />
 		<SignalingServers />
 		<HostedSignalingServer />
-		<!-- <SIPBridge /> -->
+		<SIPBridge />
 	</div>
 </template>
 
@@ -41,7 +41,7 @@ import GeneralSettings from '../components/AdminSettings/GeneralSettings'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration'
 import SignalingServers from '../components/AdminSettings/SignalingServers'
-// import SIPBridge from '../components/AdminSettings/SIPBridge'
+import SIPBridge from '../components/AdminSettings/SIPBridge'
 import StunServers from '../components/AdminSettings/StunServers'
 import TurnServers from '../components/AdminSettings/TurnServers'
 
@@ -55,7 +55,7 @@ export default {
 		HostedSignalingServer,
 		MatterbridgeIntegration,
 		SignalingServers,
-		// SIPBridge,
+		SIPBridge,
 		StunServers,
 		TurnServers,
 	},

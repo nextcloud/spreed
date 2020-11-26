@@ -50,6 +50,9 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastMentionMessage()
  */
 class Attendee extends Entity {
+	public const ACTOR_USERS = 'users';
+	public const ACTOR_GUESTS = 'guests';
+	public const ACTOR_EMAILS = 'emails';
 
 	/** @var int */
 	protected $roomId;

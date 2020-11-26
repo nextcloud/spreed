@@ -27,6 +27,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Activity\IManager;
@@ -129,7 +130,7 @@ class Listener {
 		}
 
 		$actorId = $userIds[0] ?? 'guests-only';
-		$actorType = $actorId !== 'guests-only' ? 'users' : 'guests';
+		$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
 		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
 			'message' => 'call_ended',
 			'parameters' => [
@@ -205,7 +206,7 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($participant['actorType'] !== 'users') {
+			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
 				// No user => no activity
 				continue;
 			}

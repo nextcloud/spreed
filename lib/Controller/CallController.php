@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
@@ -71,17 +72,29 @@ class CallController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$userId = '';
-			if ($participant->getAttendee()->getActorType() === 'users') {
-				$userId = $participant->getAttendee()->getActorId();
-			}
+			if ($this->getAPIVersion() >= 3) {
+				$result[] = [
+					'actorType' => $participant->getAttendee()->getActorType(),
+					'actorId' => $participant->getAttendee()->getActorId(),
+					// FIXME 'displayName' => $participant->getAttendee()->getDisplayName(),
+					'displayName' => $participant->getAttendee()->getActorId(),
+					'token' => $this->room->getToken(),
+					'lastPing' => $session->getLastPing(),
+					'sessionId' => $session->getSessionId(),
+				];
+			} else {
+				$userId = '';
+				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+					$userId = $participant->getAttendee()->getActorId();
+				}
 
-			$result[] = [
-				'userId' => $userId,
-				'token' => $this->room->getToken(),
-				'lastPing' => $session->getLastPing(),
-				'sessionId' => $session->getSessionId(),
-			];
+				$result[] = [
+					'userId' => $userId,
+					'token' => $this->room->getToken(),
+					'lastPing' => $session->getLastPing(),
+					'sessionId' => $session->getSessionId(),
+				];
+			}
 		}
 
 		return new DataResponse($result);

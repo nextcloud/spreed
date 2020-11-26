@@ -46,23 +46,30 @@
 				v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
-				<VideoBackground
-					:display-name="model.attributes.name"
-					:user="model.attributes.userId"
-					:grid-blur="videoBackgroundBlur" />
-				<Avatar v-if="model.attributes.userId"
-					:size="avatarSize"
-					:disable-menu="true"
-					:disable-tooltip="true"
-					:user="model.attributes.userId"
-					:display-name="model.attributes.name"
-					:show-user-status="false"
-					:class="avatarClass" />
-				<div v-if="!model.attributes.userId"
-					:class="guestAvatarClass"
-					class="avatar guest">
-					{{ firstLetterOfGuestName }}
-				</div>
+				<template v-if="participantUserId">
+					<VideoBackground
+						:display-name="participantName"
+						:user="participantUserId"
+						:grid-blur="videoBackgroundBlur" />
+					<Avatar
+						:size="avatarSize"
+						:disable-menu="true"
+						:disable-tooltip="true"
+						:user="participantUserId"
+						:display-name="participantName"
+						:show-user-status="false"
+						:class="avatarClass" />
+				</template>
+				<template v-else>
+					<VideoBackground
+						:display-name="participantName"
+						:grid-blur="videoBackgroundBlur" />
+					<div
+						:class="guestAvatarClass"
+						class="avatar guest">
+						{{ firstLetterOfGuestName }}
+					</div>
+				</template>
 			</div>
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
@@ -93,6 +100,7 @@ import VideoBackground from './VideoBackground'
 import AccountCircle from 'vue-material-design-icons/AccountCircle'
 import VideoBottomBar from './VideoBottomBar'
 import Screen from './Screen'
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 
@@ -203,6 +211,34 @@ export default {
 			return Hex.stringify(SHA1(this.peerId))
 		},
 
+		peerData() {
+			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.peerId)
+			if (!peerData.actorId) {
+				EventBus.$emit('refreshPeerList')
+				peerData = {
+					actorType: '',
+					actorId: '',
+					displayName: '',
+				}
+			}
+			return peerData
+		},
+
+		participantUserId() {
+			let participantUserId = this.model.attributes.userId
+
+			// The name is undefined and not shown until a connection is made
+			// for registered users, so do not fall back to the guest name in
+			// the store either until the connection was made.
+			if (!participantUserId) {
+				if (this.peerData.actorType === 'users') {
+					participantUserId = this.peerData.actorId
+				}
+			}
+
+			return participantUserId
+		},
+
 		participantName() {
 			let participantName = this.model.attributes.name
 
@@ -214,6 +250,10 @@ export default {
 					this.$store.getters.getToken(),
 					this.sessionHash,
 				)
+			}
+
+			if (!participantName) {
+				participantName = this.peerData.displayName
 			}
 
 			return participantName

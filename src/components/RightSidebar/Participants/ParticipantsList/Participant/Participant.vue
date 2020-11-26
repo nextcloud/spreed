@@ -91,6 +91,12 @@
 			v-if="canModerate && !isSearched"
 			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
+			<ActionText
+				v-if="attendeePin"
+				:title="t('spreed', 'Dial-in PIN')"
+				icon="icon-password">
+				{{ attendeePin }}
+			</ActionText>
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
 				@click="demoteFromModerator">
@@ -114,6 +120,7 @@
 <script>
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
@@ -130,6 +137,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		ActionText,
 		AvatarWrapper,
 		Microphone,
 		Phone,
@@ -291,6 +299,9 @@ export default {
 		},
 		lastPing() {
 			return this.participant.lastPing
+		},
+		attendeePin() {
+			return this.participant.attendeePin
 		},
 		token() {
 			return this.$store.getters.getToken()

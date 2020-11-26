@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
 use OCP\Comments\ICommentsManager;
@@ -116,7 +117,7 @@ class UserMention {
 
 			if ($mention['type'] === 'call') {
 				$userId = '';
-				if ($chatMessage->getParticipant()->getAttendee()->getActorType() === 'users') {
+				if ($chatMessage->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 					$userId = $chatMessage->getParticipant()->getAttendee()->getActorId();
 				}
 
