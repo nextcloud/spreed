@@ -321,5 +321,4 @@ export default {
 	padding: 6px 12px;
 }
 
-
 </style>

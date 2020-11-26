@@ -21,15 +21,6 @@
 	<div v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
-			<button
-				id="raiseHand"
-				v-shortkey="['h']"
-				v-tooltip="raisedHandButtonTooltip"
-				:aria-label="raisedHandButtonAriaLabel"
-				:class="raisedHandButtonClass"
-				class="forced-white"
-				@shortkey="toggleHandRaised"
-				@click="toggleHandRaised" />
 			<div id="muteWrapper">
 				<button
 					id="mute"
@@ -89,6 +80,31 @@
 					</li>
 				</ul>
 			</div>
+			<button
+				v-if="model.attributes.raisedHand"
+				v-tooltip="t('spreed', 'Lower hand')"
+				:aria-label="t('spreed', 'Lower hand')"
+				class="forced-white icon-hand-white"
+				@click="toggleHandRaised" />
+			<Actions
+				v-tooltip="t('spreed', 'More actions')"
+				:aria-label="t('spreed', 'More actions')">
+				<ActionButton
+					v-shortkey="['h']"
+					:icon="raiseHandIcon"
+					:close-after-click="true"
+					@shortkey="toggleHandRaised"
+					@click="toggleHandRaised">
+					{{ raiseHandButtonLabel }}
+				</ActionButton>
+				<ActionSeparator />
+				<ActionButton
+					icon="icon-settings"
+					:close-after-click="true"
+					@click="showSettings">
+					{{ t('spreed', 'Settings') }}
+				</ActionButton>
+			</Actions>
 		</div>
 		<div class="network-connection-state">
 			<Popover
@@ -130,11 +146,13 @@
 
 <script>
 import escapeHtml from 'escape-html'
+import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert'
+import { Actions, ActionSeparator, ActionButton } from '@nextcloud/vue'
 import { callAnalyzer } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 
@@ -149,6 +167,9 @@ export default {
 	components: {
 		NetworkStrength2Alert,
 		Popover,
+		Actions,
+		ActionSeparator,
+		ActionButton,
 	},
 
 	props: {
@@ -184,25 +205,15 @@ export default {
 
 	computed: {
 
-		raisedHandButtonClass() {
-			return {
-				'icon-hand-white': this.model.attributes.raisedHand,
-				'icon-hand-off-white hand-disabled': !this.model.attributes.raisedHand,
-			}
+		raiseHandIcon() {
+			return this.model.attributes.raisedHand ? 'icon-hand-off' : 'icon-hand'
 		},
 
-		raisedHandButtonAriaLabel() {
+		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand) {
 				return t('spreed', 'Raise hand')
 			}
 			return t('spreed', 'Lower hand')
-		},
-
-		raisedHandButtonTooltip() {
-			return {
-				content: this.raisedHandButtonAriaLabel,
-				show: false,
-			}
 		},
 
 		audioButtonClass() {
@@ -477,6 +488,10 @@ export default {
 			this.$refs.volumeIndicator.style.height = height + 'px'
 		},
 
+		showSettings() {
+			emit('show-settings')
+		},
+
 		/**
 		 * This method executes on spacebar keydown and keyup
 		 */
@@ -659,6 +674,12 @@ export default {
 	left: calc(50% - 5px);
 	border-top-color: #fff;
 	border-bottom-color: transparent;
+}
+
+.buttons-bar {
+	button, .action-item {
+		vertical-align: middle;
+	}
 }
 
 .buttons-bar button, .buttons-bar button:active {
