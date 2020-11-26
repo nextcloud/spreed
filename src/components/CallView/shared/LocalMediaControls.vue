@@ -564,6 +564,11 @@ export default {
 		},
 
 		toggleHandRaised() {
+			if (this.model.attributes.raisedHand) {
+				showMessage(t('spreed', 'You are no longer raising your hand.'))
+			} else {
+				showMessage(t('spreed', 'You are now raising your hand.'))
+			}
 			this.model.toggleHandRaised(!this.model.attributes.raisedHand)
 		},
 
