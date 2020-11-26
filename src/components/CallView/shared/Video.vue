@@ -150,8 +150,8 @@ export default {
 		},
 		// Calculated once in the grid component for each video background
 		videoBackgroundBlur: {
-			type: String,
-			default: '',
+			type: Number,
+			default: 0,
 		},
 	},
 
