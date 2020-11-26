@@ -25,14 +25,14 @@
 			ref="darkener"
 			class="darken">
 			<ResizeObserver
-				v-if="gridBlur === ''"
+				v-if="gridBlur === 0"
 				class="observer"
 				@notify="setBlur" />
 		</div>
 		<img
 			v-if="hasPicture"
 			:src="backgroundImage"
-			:style="gridBlur ? gridBlur : blur"
+			:style="backgroundStyle"
 			class="video-background__picture"
 			alt="">
 		<div v-else
@@ -79,15 +79,15 @@ export default {
 			default: '',
 		},
 		gridBlur: {
-			type: String,
-			default: '',
+			type: Number,
+			default: 0,
 		},
 	},
 
 	data() {
 		return {
 			hasPicture: false,
-			blur: '',
+			blur: 0,
 		}
 	},
 
@@ -104,6 +104,11 @@ export default {
 		},
 		backgroundImage() {
 			return generateUrl(`avatar/${this.user}/300`)
+		},
+		backgroundStyle() {
+			return {
+				filter: `blur(${this.gridBlur ? this.gridBlur : this.blur}px)`,
+			}
 		},
 	},
 
@@ -145,7 +150,7 @@ export default {
 	methods: {
 		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
-			this.blur = this.$store.getters.getBlurFilter(width, height)
+			this.blur = this.$store.getters.getBlurRadius(width, height)
 		},
 	},
 }
