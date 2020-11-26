@@ -26,7 +26,7 @@ import { EventBus } from '../services/EventBus'
 /**
  * A mixin to check whether the current session of a user is in a call or not.
  *
- * Components using this mixin require a "token" property and a "participant" property with, at least, the "inCall" property.
+ * Components using this mixin require a "participant" property with, at least, the "inCall" property.
  */
 export default {
 
@@ -38,7 +38,7 @@ export default {
 
 	computed: {
 		isInCall() {
-			return this.sessionStorageJoinedConversation === this.token
+			return this.sessionStorageJoinedConversation === this.$store.getters.getToken()
 				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 	},

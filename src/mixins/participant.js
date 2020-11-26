@@ -23,27 +23,26 @@ import { PARTICIPANT } from '../constants'
 
 /**
  * A mixin to check retrieve the current participant object
- *
- * Components using this mixin require a "token" property.
  */
 export default {
 
 	computed: {
 		participant() {
-			if (typeof this.token === 'undefined') {
+			const token = this.$store.getters.getToken()
+			if (typeof token === 'undefined') {
 				return {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				}
 			}
 
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			const participantIndex = this.$store.getters.getParticipantIndex(token, this.$store.getters.getParticipantIdentifier())
 			if (participantIndex === -1) {
 				return {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				}
 			}
 
-			return this.$store.getters.getParticipant(this.token, participantIndex)
+			return this.$store.getters.getParticipant(token, participantIndex)
 		},
 	},
 }
