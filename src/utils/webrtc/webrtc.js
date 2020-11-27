@@ -1049,6 +1049,38 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	webrtc.on('sendToAll', function(messageType, payload) {
+		const sessionIdsForParticipantsWithPeers = {}
+		webrtc.webrtc.peers.forEach(peer => {
+			sessionIdsForParticipantsWithPeers[peer.id] = peer
+		})
+
+		// "webrtc.sendToAll" only sends the signaling message to participants
+		// for which there is a Peer object. Therefore the message needs to be
+		// explicitly sent here too to participants without audio and video.
+		for (const sessionId in usersInCallMapping) {
+			if (sessionIdsForParticipantsWithPeers[sessionId]) {
+				continue
+			} else if (!usersInCallMapping[sessionId].inCall) {
+				continue
+			} else if (sessionId === signaling.getSessionId()) {
+				continue
+			}
+
+			// "roomType" is not really relevant without a peer, but it is
+			// nevertheless expected in the message. As the signaling messages
+			// currently sent to all participants are related to video peers
+			// "video" is used as the room type.
+			const message = {
+				to: sessionId,
+				roomType: 'video',
+				type: messageType,
+				payload: payload,
+			}
+			signaling.emit('message', message)
+		}
+	})
+
 	webrtc.on('speaking', function() {
 		sendDataChannelToAll('status', 'speaking')
 	})
@@ -1093,26 +1125,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 		sendDataChannelToAll('status', 'nickChanged', payload)
 
-		// "webrtc.sendToAll" can not be used, as it only sends the signaling
-		// message to participants for which there is a Peer object, so the
-		// message may not be sent to participants without audio and video.
-		for (const sessionId in usersInCallMapping) {
-			if (!usersInCallMapping[sessionId].inCall) {
-				continue
-			} else if (sessionId === signaling.getSessionId()) {
-				continue
-			}
-
-			const message = {
-				to: sessionId,
-				roomType: 'video',
-				type: 'nickChanged',
-				payload: {
-					name: name,
-				},
-			}
-			signaling.emit('message', message)
-		}
+		webrtc.sendToAll('nickChanged', { name: name })
 	})
 
 	// Local screen added.
