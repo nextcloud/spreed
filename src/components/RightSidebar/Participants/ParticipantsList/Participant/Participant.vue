@@ -86,6 +86,11 @@
 				:size="24"
 				title=""
 				decorative />
+			<Hand
+				v-if="callIcon === 'hand'"
+				:size="24"
+				title=""
+				decorative />
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
@@ -129,6 +134,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
+import Hand from 'vue-material-design-icons/Hand'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import isEqual from 'lodash/isEqual'
@@ -145,6 +151,7 @@ export default {
 		Microphone,
 		Phone,
 		Video,
+		Hand,
 	},
 
 	directives: {
@@ -270,9 +277,19 @@ export default {
 		label() {
 			return this.participant.label
 		},
+		raisedHand() {
+			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG_DISCONNECTED) {
+				return false
+			}
+
+			return this.$store.getters.isParticipantRaisedHand(this.participant.sessionId)
+		},
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
+			}
+			if (this.raisedHand) {
+				return 'hand'
 			}
 			const withVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			if (withVideo) {
@@ -291,6 +308,8 @@ export default {
 				return t('spreed', 'Joined with video')
 			} else if (this.callIcon === 'phone') {
 				return t('spreed', 'Joined via phone')
+			} else if (this.callIcon === 'hand') {
+				return t('spreed', 'Raised their hand')
 			}
 			return null
 		},

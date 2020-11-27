@@ -406,6 +406,7 @@ export default {
 				this.raisedHandUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
+				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raised: false })
 
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
@@ -496,6 +497,9 @@ export default {
 					showMessage(t('spreed', 'A participant lowered their hand.'))
 				}
 			}
+
+			// update in callViewStore
+			this.$store.dispatch('setParticipantHandRaised', { peerId: callParticipantModel.attributes.peerId, raised: raisedHand })
 		},
 
 		_setScreenAvailable(id, screen) {

@@ -564,12 +564,14 @@ export default {
 		},
 
 		toggleHandRaised() {
-			if (this.model.attributes.raisedHand) {
-				showMessage(t('spreed', 'You are no longer raising your hand.'))
-			} else {
+			const raisedHand = !this.model.attributes.raisedHand
+			if (raisedHand) {
 				showMessage(t('spreed', 'You are now raising your hand.'))
+			} else {
+				showMessage(t('spreed', 'You are no longer raising your hand.'))
 			}
-			this.model.toggleHandRaised(!this.model.attributes.raisedHand)
+			this.model.toggleHandRaised(raisedHand)
+			this.$store.dispatch('setParticipantHandRaised', { peerId: this.localCallParticipantModel.attributes.peerId, raised: raisedHand })
 		},
 
 		shareScreen() {
