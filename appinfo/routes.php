@@ -367,7 +367,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/pin/{pin}',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(2|3)', // FIXME v3 only?
+				'apiVersion' => 'v3',
 				'token' => '^[a-z0-9]{4,30}$',
 				'pin' => '^\d{7,32}$',
 			],
@@ -378,6 +378,26 @@ return [
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v(1|2|3)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setLobby',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/lobby',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(1|2|3)',
+				'webinar' => 'webinary?',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setSIPEnabled',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/sip',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v3',
+				'webinar' => 'webinary?',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -496,30 +516,6 @@ return [
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',
-			],
-		],
-
-		/**
-		 * Webinar
-		 */
-		[
-			'name' => 'Webinar#setLobby',
-			'url' => '/api/{apiVersion}/room/{token}/{webinar}/lobby',
-			'verb' => 'PUT',
-			'requirements' => [
-				'apiVersion' => 'v(1|2)',
-				'webinar' => 'webinary?',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
-			'name' => 'Webinar#setSIPEnabled',
-			'url' => '/api/{apiVersion}/room/{token}/{webinar}/sip',
-			'verb' => 'PUT',
-			'requirements' => [
-				'apiVersion' => 'v(1|2)',// FIXME v2 only?
-				'webinar' => 'webinary?',
-				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 
