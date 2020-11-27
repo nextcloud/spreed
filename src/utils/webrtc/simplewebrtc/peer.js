@@ -333,23 +333,16 @@ Peer.prototype.onIceCandidate = function(event) {
 		return
 	}
 	if (candidate) {
-		const pcConfig = this.parent.config.peerConnectionConfig
-		if (webrtcSupport.prefix === 'moz' && pcConfig && pcConfig.iceTransports
-				&& candidate.candidate && candidate.candidate.candidate
-				&& candidate.candidate.candidate.indexOf(pcConfig.iceTransports) < 0) {
-			this.logger.log('Ignoring ice candidate not matching pcConfig iceTransports type: ', pcConfig.iceTransports)
-		} else {
-			// Retain legacy data structure for compatibility with
-			// mobile clients.
-			const expandedCandidate = {
-				candidate: {
-					candidate: candidate.candidate,
-					sdpMid: candidate.sdpMid,
-					sdpMLineIndex: candidate.sdpMLineIndex,
-				},
-			}
-			this.send('candidate', expandedCandidate)
+		// Retain legacy data structure for compatibility with
+		// mobile clients.
+		const expandedCandidate = {
+			candidate: {
+				candidate: candidate.candidate,
+				sdpMid: candidate.sdpMid,
+				sdpMLineIndex: candidate.sdpMLineIndex,
+			},
 		}
+		this.send('candidate', expandedCandidate)
 	} else {
 		this.logger.log('End of candidates.')
 	}
