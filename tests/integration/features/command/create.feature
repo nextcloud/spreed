@@ -6,7 +6,7 @@ Feature: create
     Given group "group1" exists
     Given user "participant2" is member of group "group1"
 
-  Scenario: Create a room group room for participant1
+  Scenario: Create a group room for participant1
     Given invoking occ with "talk:room:create room1 --user participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
@@ -14,7 +14,7 @@ Feature: create
       | name  | type | participantType | participants |
       | room1 | 2    | 3               | participant1-displayname |
 
-  Scenario: Create a room group room for participant1 as moderator
+  Scenario: Create a group room for participant1 as moderator
     Given invoking occ with "talk:room:create room1 --user participant1 --moderator participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
@@ -22,7 +22,7 @@ Feature: create
       | name  | type | participantType | participants |
       | room1 | 2    | 2               | participant1-displayname |
 
-  Scenario: Create a room group room for participant1 as owner
+  Scenario: Create a group room for participant1 as owner
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
@@ -30,7 +30,7 @@ Feature: create
       | name  | type | participantType | participants |
       | room1 | 2    | 1               | participant1-displayname |
 
-  Scenario: Create a room public room for participant1 as owner group1 as users
+  Scenario: Create a public room for participant1 as owner group1 as users
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --group group1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
@@ -41,7 +41,7 @@ Feature: create
       | name  | type | participantType | participants |
       | room1 | 3    | 3               | participant1-displayname, participant2-displayname |
 
-  Scenario: Create a room public room for participant1 as owner group1 as users with password and readonly
+  Scenario: Create a public room for participant1 as owner group1 as users with password and readonly
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --group group1 --readonly --password test"
     And the command output contains the text "Room successfully created"
     Then the command was successful
