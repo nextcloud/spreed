@@ -56,6 +56,7 @@
 					</Multiselect>
 				</div>
 				<ActionButton
+					v-if="canSave"
 					icon="icon-checkmark"
 					@click="onSave">
 					{{ t('spreed', 'Save') }}
@@ -133,6 +134,7 @@ export default {
 			enabled: false,
 			parts: [],
 			loading: false,
+			canSave: false,
 			processRunning: null,
 			processLog: '',
 			logModal: false,
@@ -538,12 +540,15 @@ export default {
 			}
 			this.parts.unshift(newPart)
 			this.selectedType = null
+			this.canSave = true
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
+			this.canSave = true
 		},
 		onEditClicked(i) {
 			this.parts[i].editing = !this.parts[i].editing
+			this.canSave = true
 		},
 		onEnabled(checked) {
 			this.enabled = checked
@@ -576,6 +581,7 @@ export default {
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
 				showSuccess(t('spreed', 'Bridge saved'))
+				this.canSave = false
 			} catch (exception) {
 				console.debug(exception)
 			}
