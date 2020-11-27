@@ -409,6 +409,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (callParticipantModel) {
 			callParticipantModel.set('speaking', (event.flags & PARTICIPANT.SIP_FLAG.SPEAKING) > 0)
 			callParticipantModel.set('audioAvailable', (event.flags & PARTICIPANT.SIP_FLAG.MUTE_MICROPHONE) === 0)
+			callParticipantModel.set('raisedHand', (event.flags & PARTICIPANT.SIP_FLAG.RAISE_HAND) === 0)
 		}
 	})
 	signaling.on('usersInRoom', function(users) {
