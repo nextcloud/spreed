@@ -1644,4 +1644,73 @@ class RoomController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @param int|null $timer
+	 * @return DataResponse
+	 */
+	public function setLobby(int $state, ?int $timer = null): DataResponse {
+		$timerDateTime = null;
+		if ($timer !== null && $timer > 0) {
+			try {
+				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
+				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
+			} catch (\Exception $e) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		if (!$this->room->setLobby($state, $timerDateTime)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($state === Webinary::LOBBY_NON_MODERATORS) {
+			$participants = $this->participantService->getParticipantsInCall($this->room);
+			foreach ($participants as $participant) {
+				if ($participant->hasModeratorPermissions()) {
+					continue;
+				}
+
+				$this->participantService->changeInCall($this->room, $participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
+
+		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setSIPEnabled(int $state): DataResponse {
+		$user = $this->userManager->get($this->userId);
+		if (!$user instanceof IUser) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if (!$this->talkConfig->canUserEnableSIP($user)) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		if (!$this->room->setSIPEnabled($state)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($state === Webinary::SIP_ENABLED) {
+			$this->participantService->generatePinForParticipant($this->room, $this->participant);
+		}
+
+		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
+	}
 }
