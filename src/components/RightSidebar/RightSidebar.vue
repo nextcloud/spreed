@@ -175,7 +175,7 @@ export default {
 		},
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
+					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 		isSearching() {
 			return this.searchText !== ''
