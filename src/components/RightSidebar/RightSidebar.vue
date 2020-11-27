@@ -197,7 +197,7 @@ export default {
 
 		showSIPSettings() {
 			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
-				&& this.conversation.attendeePin !== ''
+				&& this.conversation.attendeePin
 		},
 	},
 
