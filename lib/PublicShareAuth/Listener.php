@@ -137,6 +137,10 @@ class Listener {
 			return;
 		}
 
+		if (empty($participants)) {
+			return;
+		}
+
 		// Events with more than one participant can be directly aborted, as
 		// when the owner is added during room creation or a user self-joins the
 		// event will always have just one participant.
