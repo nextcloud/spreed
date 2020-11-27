@@ -264,7 +264,6 @@ Peer.prototype.send = function(messageType, payload) {
 		roomType: this.type,
 		type: messageType,
 		payload: payload,
-		prefix: webrtcSupport.prefix,
 	}
 	this.logger.log('sending', messageType, message)
 	this.parent.emit('message', message)
