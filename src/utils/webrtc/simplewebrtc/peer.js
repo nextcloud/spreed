@@ -25,7 +25,6 @@ function Peer(options) {
 	this.type = options.type || 'video'
 	this.oneway = options.oneway || false
 	this.sharemyscreen = options.sharemyscreen || false
-	this.browserPrefix = options.prefix
 	this.stream = options.stream
 	this.sendVideoIfAvailable = options.sendVideoIfAvailable === undefined ? true : options.sendVideoIfAvailable
 	this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels
@@ -225,10 +224,6 @@ Peer.prototype.handleMessage = function(message) {
 	const self = this
 
 	this.logger.log('getting', message.type, message)
-
-	if (message.prefix) {
-		this.browserPrefix = message.prefix
-	}
 
 	if (message.type === 'offer') {
 		if (!this.nick) {
