@@ -487,14 +487,10 @@ export default {
 			if (nickName) {
 				if (raisedHand) {
 					showMessage(t('spreed', 'Participant {nickName} raised their hand.', { nickName: nickName }))
-				} else {
-					showMessage(t('spreed', 'Participant {nickName} lowered their hand.', { nickName: nickName }))
 				}
 			} else {
 				if (raisedHand) {
 					showMessage(t('spreed', 'A participant raised their hand.'))
-				} else {
-					showMessage(t('spreed', 'A participant lowered their hand.'))
 				}
 			}
 

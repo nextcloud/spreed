@@ -24,15 +24,13 @@
 		<div v-if="!isSidebar"
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
-			<transition name="fade">
-				<div
-					v-show="showVideoOverlay"
-					class="bottom-bar__statusIndicator">
-					<div
-						v-show="!connectionStateFailedNoRestart && model.attributes.raisedHand"
-						class="raisedHandIndicator forced-white icon-hand-white" />
-				</div>
-			</transition>
+			<div class="bottom-bar__statusIndicator">
+				<transition name="fade">
+					<Hand
+						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+						fill-color="#ffffff" />
+				</transition>
+			</div>
 			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
@@ -80,9 +78,14 @@
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { PARTICIPANT } from '../../../constants'
+import Hand from 'vue-material-design-icons/Hand'
 
 export default {
 	name: 'VideoBottomBar',
+
+	components: {
+		Hand,
+	},
 
 	directives: {
 		tooltip: Tooltip,
@@ -275,7 +278,6 @@ export default {
 	}
 }
 
-.raisedHandIndicator,
 .muteIndicator,
 .hideRemoteVideo,
 .screensharingIndicator,
@@ -313,12 +315,6 @@ export default {
 
 .iceFailedIndicator {
 	opacity: .8 !important;
-}
-
-.raisedHandIndicator {
-	display: block;
-	/* like buttons */
-	padding: 6px 12px;
 }
 
 </style>

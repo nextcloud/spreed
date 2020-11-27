@@ -84,17 +84,27 @@
 				v-if="model.attributes.raisedHand"
 				v-tooltip="t('spreed', 'Lower hand')"
 				:aria-label="t('spreed', 'Lower hand')"
-				class="forced-white icon-hand-white"
-				@click="toggleHandRaised" />
+				@click="toggleHandRaised">
+				<Hand
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<Actions
 				v-tooltip="t('spreed', 'More actions')"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
 					v-shortkey="['h']"
-					:icon="raiseHandIcon"
 					:close-after-click="true"
 					@shortkey="toggleHandRaised"
 					@click="toggleHandRaised">
+					<Hand
+						slot="icon"
+						:size="24"
+						fill-color="#000000"
+						decorative
+						title="" />
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
 				<ActionSeparator />
@@ -148,6 +158,7 @@
 import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
+import Hand from 'vue-material-design-icons/Hand'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
@@ -170,6 +181,7 @@ export default {
 		Actions,
 		ActionSeparator,
 		ActionButton,
+		Hand,
 	},
 
 	props: {
@@ -204,11 +216,6 @@ export default {
 	},
 
 	computed: {
-
-		raiseHandIcon() {
-			return this.model.attributes.raisedHand ? 'icon-hand-off' : 'icon-hand'
-		},
-
 		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand) {
 				return t('spreed', 'Raise hand')
@@ -703,14 +710,12 @@ export default {
 	height: auto;
 }
 
-.buttons-bar button.hand-disabled,
 .buttons-bar button.audio-disabled,
 .buttons-bar button.video-disabled,
 .buttons-bar button.screensharing-disabled {
 	opacity: .7;
 }
 
-.buttons-bar button.hand-disabled,
 .buttons-bar button.audio-disabled:not(.no-audio-available),
 .buttons-bar button.video-disabled:not(.no-video-available),
 .buttons-bar button.screensharing-disabled {
