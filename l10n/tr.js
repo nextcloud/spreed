@@ -794,6 +794,7 @@ OC.L10N.register(
     "Add other sources" : "Başka kaynaklar ekle",
     "Participants" : "Katılımcılar",
     "Search or add participants" : "Katılımcı arayın ya da ekleyin",
+    "An error occurred while adding the participants" : "Katılımcılar eklenirken bir sorun çıktı",
     "An error occurred while fetching the participants" : "Katılımcılar alınırken bir sorun çıktı",
     "Chat" : "Görüşme",
     "Meeting ID: {meetingId}" : "Toplantı kodu: {meetingId}",
