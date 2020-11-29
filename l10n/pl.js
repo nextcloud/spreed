@@ -794,6 +794,7 @@ OC.L10N.register(
     "Add other sources" : "Dodaj inne źródła",
     "Participants" : "Uczestnicy",
     "Search or add participants" : "Wyszukaj lub dodaj uczestników",
+    "An error occurred while adding the participants" : "Wystąpił błąd podczas dodawania uczestników",
     "An error occurred while fetching the participants" : "Wystąpił błąd podczas pobierania uczestników",
     "Chat" : "Rozmowa",
     "Meeting ID: {meetingId}" : "ID spotkania: {meetingId}",

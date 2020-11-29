@@ -764,6 +764,7 @@ OC.L10N.register(
     "Attachments folder" : "Bijlagemap",
     "Keyboard shortcuts" : "Sneltoetsen",
     "Speed up your Talk experience with these quick shortcuts." : "Versnel je Talk-ervaring met deze handige snelkoppelingen.",
+    "Focus the chat input" : "Focus op de chat invoer",
     "Fullscreen the chat or call" : "Chat of gesprek in volledig scherm",
     "Search" : "Zoeken",
     "Shortcuts while in a call" : "Snelkoppelingen in een gesprek",
