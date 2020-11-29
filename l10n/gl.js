@@ -794,6 +794,7 @@ OC.L10N.register(
     "Add other sources" : "Engadir outras orixes",
     "Participants" : "Participantes",
     "Search or add participants" : "Buscar ou engadir participantes",
+    "An error occurred while adding the participants" : "Produciuse un erro ao engdir os participantes",
     "An error occurred while fetching the participants" : "Produciuse un erro ao obter os participantes",
     "Chat" : "Conversa",
     "Meeting ID: {meetingId}" : "ID da xuntanza: {meetingId}",
