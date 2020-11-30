@@ -1706,7 +1706,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if (!$this->talkConfig->canUserEnableSIP($user)) {
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if (!$this->talkConfig->isSIPConfigured()) {
