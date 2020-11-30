@@ -525,13 +525,16 @@ export default {
 			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
 		},
 		handleSelectVideo(peerId) {
+			if (this.isSidebar) {
+				return
+			}
 			this.$store.dispatch('setCallViewMode', { isGrid: false })
 			this.$store.dispatch('selectedVideoPeerId', peerId)
 			this.isLocalVideoSelected = false
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
-			if (!this.hasLocalVideo) {
+			if (!this.hasLocalVideo || this.isSidebar) {
 				return
 			}
 			// Deselect possible selected video

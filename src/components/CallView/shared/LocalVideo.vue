@@ -184,7 +184,7 @@ export default {
 		},
 
 		isSelectable() {
-			return this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+			return !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
 		},
 	},
 
