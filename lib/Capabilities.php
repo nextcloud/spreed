@@ -80,6 +80,7 @@ class Capabilities implements IPublicCapability {
 				'chat-replies',
 				'circles-support',
 				'force-mute',
+				'sip-support',
 			],
 			'config' => [
 				'attachments' => [
