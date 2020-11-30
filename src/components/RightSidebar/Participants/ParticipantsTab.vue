@@ -48,7 +48,7 @@ import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
-import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants'
+import { PARTICIPANT } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import {
 	addParticipant,
@@ -119,16 +119,7 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		conversation() {
-			if (this.$store.getters.conversation(this.token)) {
-				return this.$store.getters.conversation(this.token)
-			}
-			return {
-				token: '',
-				displayName: '',
-				isFavorite: false,
-				type: CONVERSATION.TYPE.PUBLIC,
-				lobbyState: WEBINAR.LOBBY.NONE,
-			}
+			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 		isSearching() {
 			return this.searchText !== ''
