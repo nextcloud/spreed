@@ -530,7 +530,7 @@ export default {
 			if (this.isSidebar) {
 				return
 			}
-			this.$store.dispatch('setCallViewMode', { isGrid: false })
+			this.$store.dispatch('startPresentation')
 			this.$store.dispatch('selectedVideoPeerId', peerId)
 			this.isLocalVideoSelected = false
 		},
@@ -541,7 +541,7 @@ export default {
 			}
 			// Deselect possible selected video
 			this.$store.dispatch('selectedVideoPeerId', 'local')
-			this.$store.dispatch('setCallViewMode', { isGrid: false })
+			this.$store.dispatch('startPresentation')
 		},
 
 		debounceFetchPeers: debounce(async function() {

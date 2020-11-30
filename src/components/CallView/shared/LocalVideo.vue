@@ -277,6 +277,7 @@ export default {
 
 		handleStopFollowing() {
 			this.$store.dispatch('selectedVideoPeerId', null)
+			this.$store.dispatch('stopPresentation')
 		},
 	},
 
