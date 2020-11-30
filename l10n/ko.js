@@ -138,6 +138,7 @@ OC.L10N.register(
     "No results" : "결과 없음",
     "Add users or groups" : "사용자나 그룹 추가",
     "Participants" : "참가자",
+    "Search or add participants" : "참가자 검색 및 추가",
     "Chat" : "대화",
     "Edit" : "편집",
     "Keyboard shortcuts" : "키보드 단축키",
