@@ -136,7 +136,7 @@
 				<ActionCheckbox
 					v-if="canUserEnableSIP"
 					:checked="hasSIPEnabled"
-					@change="toggleSIPEnabled">
+					@update:checked="toggleSIPEnabled">
 					{{ t('spreed', 'Enable SIP dial-in') }}
 				</ActionCheckbox>
 			</template>
