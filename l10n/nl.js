@@ -765,6 +765,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Sneltoetsen",
     "Speed up your Talk experience with these quick shortcuts." : "Versnel je Talk-ervaring met deze handige snelkoppelingen.",
     "Focus the chat input" : "Focus op de chat invoer",
+    "Unfocus the chat input to use shortcuts" : "Verwijder focus op de chat invoer om sneltoetsen te kunnen gebruiken",
     "Fullscreen the chat or call" : "Chat of gesprek in volledig scherm",
     "Search" : "Zoeken",
     "Shortcuts while in a call" : "Snelkoppelingen in een gesprek",
