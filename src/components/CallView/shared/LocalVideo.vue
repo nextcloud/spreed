@@ -129,6 +129,9 @@ export default {
 	},
 
 	computed: {
+		stopFollowingLabel() {
+			return t('spreed', 'Back')
+		},
 
 		videoContainerClass() {
 			return {

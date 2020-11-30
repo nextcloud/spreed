@@ -70,7 +70,7 @@
 						@switchScreenToId="_switchScreenToId" />
 				</template>
 			</div>
-			<!-- Local Video Override mode -->
+			<!-- Local Video Override mode (following own video) -->
 			<div v-if="showLocalVideo"
 				ref="videoContainer"
 				class="video__promoted autopilot"
@@ -79,6 +79,7 @@
 					ref="localVideo"
 					:fit-video="true"
 					:is-stripe="false"
+					:show-controls="false"
 					:is-big="true"
 					:local-media-model="localMediaModel"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
