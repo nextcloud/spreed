@@ -604,7 +604,12 @@ class RoomController extends AEnvironmentAwareController {
 		if ($this->getAPIVersion() >= 3) {
 			if ($this->talkConfig->isSIPConfigured()) {
 				$roomData['sipEnabled'] = $room->getSIPEnabled();
-				$roomData['attendeePin'] = $attendee->getPin();
+				if ($room->getSIPEnabled() === Webinary::SIP_ENABLED) {
+					// Generate a PIN if the attendee is a user and doesn't have one.
+					$this->participantService->generatePinForParticipant($room, $currentParticipant);
+
+					$roomData['attendeePin'] = $attendee->getPin();
+				}
 			}
 
 			$roomData = array_merge($roomData, [
@@ -1065,9 +1070,14 @@ class RoomController extends AEnvironmentAwareController {
 				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
+				$result['attendeePin'] = '';
 				if ($this->talkConfig->isSIPConfigured()
+					&& $this->room->getSIPEnabled() === Webinary::SIP_ENABLED
 					&& ($this->participant->hasModeratorPermissions(false)
 						|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
+					// Generate a PIN if the attendee is a user and doesn't have one.
+					$this->participantService->generatePinForParticipant($this->room, $participant);
+
 					$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
 				}
 			}
@@ -1705,10 +1715,6 @@ class RoomController extends AEnvironmentAwareController {
 
 		if (!$this->room->setSIPEnabled($state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		if ($state === Webinary::SIP_ENABLED) {
-			$this->participantService->generatePinForParticipant($this->room, $this->participant);
 		}
 
 		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
