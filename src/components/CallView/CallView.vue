@@ -26,6 +26,7 @@
 			<LocalMediaControls
 				v-if="!isGrid"
 				class="local-media-controls"
+				:class="{ 'local-media-controls--sidebar': isSidebar }"
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
@@ -752,6 +753,10 @@ export default {
 	right: 0;
 	bottom: 4px;
 	z-index: 10;
+
+	&--sidebar {
+		width: 150px;
+	}
 }
 
 </style>
