@@ -31,24 +31,7 @@ import {
 	setConversationName,
 } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
-
-const DUMMY_CONVERSATION = {
-	token: '',
-	displayName: '',
-	isFavorite: false,
-	hasPassword: false,
-	canEnableSIP: false,
-	type: CONVERSATION.TYPE.PUBLIC,
-	participantFlags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-	participantType: PARTICIPANT.TYPE.USER,
-	readOnly: CONVERSATION.STATE.READ_ONLY,
-	hasCall: false,
-	canStartCall: false,
-	lobbyState: WEBINAR.LOBBY.NONE,
-	lobbyTimer: 0,
-	attendeePin: '',
-}
+import { CONVERSATION, WEBINAR } from '../constants'
 
 const getDefaultState = () => {
 	return {
@@ -72,7 +55,6 @@ const getters = {
 	 * @returns {object} The conversation object
 	 */
 	conversation: state => token => state.conversations[token],
-	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
 }
 
 const mutations = {

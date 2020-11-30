@@ -84,7 +84,17 @@ export default {
 		},
 
 		conversation() {
-			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+			if (this.$store.getters.conversation(this.token)) {
+				return this.$store.getters.conversation(this.token)
+			}
+			return {
+				participantFlags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				participantType: PARTICIPANT.TYPE.USER,
+				readOnly: CONVERSATION.STATE.READ_ONLY,
+				hasCall: false,
+				canStartCall: false,
+				lobbyState: WEBINAR.LOBBY.NONE,
+			}
 		},
 
 		isBlockedByLobby() {

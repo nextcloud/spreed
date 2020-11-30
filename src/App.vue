@@ -34,7 +34,6 @@
 		<PreventUnload :when="warnLeaving" />
 		<UploadEditor />
 		<SettingsDialog />
-		<ConversationSettingsDialog />
 	</Content>
 </template>
 
@@ -66,7 +65,6 @@ import talkHashCheck from './mixins/talkHashCheck'
 import { generateUrl } from '@nextcloud/router'
 import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
-import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog'
 import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {
@@ -79,7 +77,6 @@ export default {
 		RightSidebar,
 		UploadEditor,
 		SettingsDialog,
-		ConversationSettingsDialog,
 	},
 
 	mixins: [

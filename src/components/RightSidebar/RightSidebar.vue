@@ -143,7 +143,19 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		conversation() {
-			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+			if (this.$store.getters.conversation(this.token)) {
+				return this.$store.getters.conversation(this.token)
+			}
+			return {
+				token: '',
+				displayName: '',
+				isFavorite: false,
+				hasPassword: false,
+				type: CONVERSATION.TYPE.PUBLIC,
+				lobbyState: WEBINAR.LOBBY.NONE,
+				lobbyTimer: 0,
+				attendeePin: '',
+			}
 		},
 
 		getUserId() {
