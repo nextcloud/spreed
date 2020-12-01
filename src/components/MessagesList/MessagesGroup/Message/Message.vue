@@ -403,6 +403,7 @@ export default {
 			justify-self: flex-start;
 			justify-content:  space-between;
 			position: relative;
+			user-select: none;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: $chat-font-size;
