@@ -16,6 +16,8 @@ OC.L10N.register(
     "Copy link" : "คัดลอกลิงค์",
     "Dismiss" : "ยกเลิก",
     "Favorite" : "รายการโปรด",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Loading",
@@ -39,9 +41,6 @@ OC.L10N.register(
     "Edit" : "แก้ไข",
     "Keyboard shortcuts" : "ปุ่มลัด",
     "Search" : "Search",
-    "Share link" : "แชร์ลิงค์",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Grid view" : "มุมมองแบบตาราง Grid",
     "Send" : "ส่ง",
     "Default" : "ค่าเริ่มต้น",
@@ -49,6 +48,7 @@ OC.L10N.register(
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
     "Contacts" : "ข้อมูลผู้ติดต่อ",
+    "Share link" : "แชร์ลิงค์",
     "Cancel" : "ยกเลิก"
 },
 "nplurals=1; plural=0;");

@@ -18,6 +18,8 @@
     "Saved" : "Хадгалах",
     "Dismiss" : "Арилгах",
     "Favorite" : "Дуртай",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Loading",
@@ -40,11 +42,9 @@
     "Add users or groups" : "Add users or groups",
     "Edit" : "засварлах",
     "Search" : "Хайх",
-    "Share link" : "Холбоос хуваалцах",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Send" : "илгээх",
     "Contacts" : "Харилцагчид",
+    "Share link" : "Холбоос хуваалцах",
     "Cancel" : "болиулах",
     "Submit" : "мэдэгдэх"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -13,6 +13,8 @@
     "Copy link" : "Link kopéieren",
     "Dismiss" : "Ofbriechen",
     "Favorite" : "Favorit",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Loading",
@@ -35,15 +37,13 @@
     "Add users or groups" : "Add users or groups",
     "Edit" : "Änneren",
     "Search" : "Search",
-    "Share link" : "Link deelen",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Send" : "Schécken",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Den Passwuert ass incorrect. Probeier ed nach eng keier.",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
     "Contacts" : "Kontakter",
+    "Share link" : "Link deelen",
     "Cancel" : "Ofbriechen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
