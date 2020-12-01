@@ -165,6 +165,27 @@ class SystemMessage {
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator locked the conversation');
 			}
+		} elseif ($message === 'listable_participants') {
+			$parsedMessage = $this->l->t('{actor} made the conversation listable for participants only');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You made the conversation listable for participants only');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator made the conversation listable for participants only');
+			}
+		} elseif ($message === 'listable_users') {
+			$parsedMessage = $this->l->t('{actor} made the conversation listable for users only');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You made the conversation listable for users only');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator made the conversation listable for users only');
+			}
+		} elseif ($message === 'listable_all') {
+			$parsedMessage = $this->l->t('{actor} made the conversation listable for everyone');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You made the conversation listable for everyone');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator made the conversation listable for everyone');
+			}
 		} elseif ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');
 		} elseif ($message === 'lobby_none') {

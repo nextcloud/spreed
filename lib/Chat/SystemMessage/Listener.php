@@ -176,6 +176,24 @@ class Listener {
 				$listener->sendSystemMessage($room, 'read_only_off');
 			}
 		});
+		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, static function (ModifyRoomEvent $event) {
+			$room = $event->getRoom();
+
+			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+				return;
+			}
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
+			if ($event->getNewValue() === Room::LISTABLE_PARTICIPANTS) {
+				$listener->sendSystemMessage($room, 'listable_participants');
+			} elseif ($event->getNewValue() === Room::LISTABLE_USERS) {
+				$listener->sendSystemMessage($room, 'listable_users');
+			} elseif ($event->getNewValue() === Room::LISTABLE_ALL) {
+				$listener->sendSystemMessage($room, 'listable_all');
+			}
+		});
 		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, static function (ModifyLobbyEvent $event) {
 			if ($event->getNewValue() === $event->getOldValue()) {
 				return;

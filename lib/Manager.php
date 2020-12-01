@@ -167,6 +167,7 @@ class Manager {
 			(int) $row['r_id'],
 			(int) $row['type'],
 			(int) $row['read_only'],
+			(int) $row['listable'],
 			(int) $row['lobby_state'],
 			(int) $row['sip_enabled'],
 			$assignedSignalingServer,
@@ -704,6 +705,7 @@ class Manager {
 		if ($row === false) {
 			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
 			$room->setReadOnly(Room::READ_ONLY);
+			$room->setListable(Room::LISTABLE_PARTICIPANTS);
 
 			$this->participantService->addUsers($room,[[
 				'actorType' => Attendee::ACTOR_USERS,

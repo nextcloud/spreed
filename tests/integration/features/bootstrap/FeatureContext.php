@@ -30,6 +30,7 @@ use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
+use OCA\Talk\Room;
 
 /**
  * Defines application features from the specific context.
@@ -173,6 +174,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['readOnly'])) {
 				$data['readOnly'] = (string) $room['readOnly'];
+			}
+			if (isset($expectedRoom['listable'])) {
+				$data['listable'] = (string) $room['listable'];
 			}
 			if (isset($expectedRoom['participantType'])) {
 				$data['participantType'] = (string) $room['participantType'];
@@ -789,6 +793,32 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/read-only',
 			new TableNode([['state', $newState === 'unlocks' ? 0 : 1]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(joined|users|all)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $newState
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userChangesListableScopeOfTheRoom($user, $identifier, $newState, $statusCode, $apiVersion = 'v3') {
+		$this->setCurrentUser($user);
+		if ($newState === 'joined') {
+			$newStateValue = Room::LISTABLE_PARTICIPANTS;
+		} elseif ($newState === 'users') {
+			$newStateValue = Room::LISTABLE_USERS;
+		} else {
+			$newStateValue = Room::LISTABLE_ALL;
+		}
+
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/listable',
+			new TableNode([['state', $newStateValue]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

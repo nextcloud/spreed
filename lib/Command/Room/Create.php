@@ -71,6 +71,11 @@ class Create extends Base {
 				InputOption::VALUE_NONE,
 				'Creates the room with read-only access only if set'
 			)->addOption(
+				'listable',
+				null,
+				InputOption::VALUE_NONE,
+				'Creates the room with the given listable scope'
+			)->addOption(
 				'password',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -95,9 +100,20 @@ class Create extends Base {
 		$groups = $input->getOption('group');
 		$public = $input->getOption('public');
 		$readonly = $input->getOption('readonly');
+		$listable = $input->getOption('listable');
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
+
+		if (!in_array($readOnly, [null, '0', '1'], true)) {
+			$output->writeln('<error>Invalid value for option "--readonly" given.</error>');
+			return 1;
+		}
+
+		if (!in_array($listable, [null, '0', '1', '2', '3'], true)) {
+			$output->writeln('<error>Invalid value for option "--listable" given.</error>');
+			return 1;
+		}
 
 		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
 		try {
@@ -116,6 +132,7 @@ class Create extends Base {
 			}
 
 			$this->setRoomReadOnly($room, $readonly);
+			$this->setListable($room, $listable);
 
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);

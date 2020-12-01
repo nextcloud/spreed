@@ -26,6 +26,7 @@ import {
 	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
+	changeListable,
 	addToFavorites,
 	removeFromFavorites,
 	setConversationName,
@@ -43,6 +44,7 @@ const DUMMY_CONVERSATION = {
 	participantFlags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 	participantType: PARTICIPANT.TYPE.USER,
 	readOnly: CONVERSATION.STATE.READ_ONLY,
+	listable: CONVERSATION.LISTABLE.PARTICIPANTS,
 	hasCall: false,
 	canStartCall: false,
 	lobbyState: WEBINAR.LOBBY.NONE,
@@ -237,6 +239,18 @@ const actions = {
 
 		await changeReadOnlyState(token, readOnly)
 		conversation.readOnly = readOnly
+
+		commit('addConversation', conversation)
+	},
+
+	async setListable({ commit, getters }, { token, listable }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		await changeListable(token, listable)
+		conversation.listable = listable
 
 		commit('addConversation', conversation)
 	},

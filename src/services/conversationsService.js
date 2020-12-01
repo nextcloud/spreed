@@ -324,6 +324,22 @@ const changeReadOnlyState = async function(token, readOnly) {
 	}
 }
 
+/**
+ * Change the listable scope
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} listable The new listable scope to set
+ */
+const changeListable = async function(token, listable) {
+	try {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/listable`, {
+			scope: listable,
+		})
+		return response
+	} catch (error) {
+		console.debug('Error while updating listable scope: ', error)
+	}
+}
+
 export {
 	fetchConversations,
 	fetchConversation,
@@ -341,6 +357,7 @@ export {
 	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
+	changeListable,
 	setConversationPassword,
 	setConversationName,
 }

@@ -63,6 +63,7 @@ class RoomTest extends TestCase {
 			1,
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,
+			Room::LISTABLE_PARTICIPANTS,
 			Webinary::LOBBY_NONE,
 			0,
 			null,

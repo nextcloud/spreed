@@ -255,6 +255,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setListable',
+			'url' => '/api/{apiVersion}/room/{token}/listable',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v3',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#setPassword',
 			'url' => '/api/{apiVersion}/room/{token}/password',
 			'verb' => 'PUT',
