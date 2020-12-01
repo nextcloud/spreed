@@ -89,6 +89,23 @@ const checkTalkVersionHash = function(response) {
 }
 
 /**
+ * Fetch listed conversations
+ * @param {string} searchText The string that will be used in the search query.
+ */
+const searchListedConversations = async function(searchText) {
+	try {
+		// use search provider to find listed conversations
+		return axios.get(generateOcsUrl('search/providers/talk-listed-conversations', 2) + 'search', {
+			params: {
+				term: searchText,
+				format: 'json',
+			},
+		})
+	} catch (error) {
+		console.debug('Error while searching listedk conversations: ', error)
+	}
+}
+/**
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
  * @param {string} [token] The token of the conversation (if any)
@@ -110,7 +127,7 @@ const searchPossibleConversations = async function(searchText, token, onlyUsers)
 	}
 
 	try {
-		return await axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
+		return axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
 			params: {
 				search: searchText,
 				itemType: 'call',
@@ -343,6 +360,7 @@ const changeListable = async function(token, listable) {
 export {
 	fetchConversations,
 	fetchConversation,
+	searchListedConversations,
 	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,

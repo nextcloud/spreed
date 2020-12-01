@@ -44,6 +44,16 @@
 					@focus="setFocusedIndex" />
 			</li>
 			<template v-if="isSearching">
+				<template v-if="searchResultsListedConversations.length !== 0">
+					<Caption
+						:title="t('spreed', 'Listed conversations')" />
+					<li role="presentation">
+						<!-- FIXME: use ConversationsList instead ? -->
+						<ConversationsOptionsList
+							:items="searchResultsListedConversations"
+							@click="joinConversation" />
+					</li>
+				</template>
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
 						:title="t('spreed', 'Users')" />
@@ -114,6 +124,7 @@ import {
 	createOneToOneConversation,
 	fetchConversations,
 	searchPossibleConversations,
+	searchListedConversations,
 } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
@@ -146,7 +157,9 @@ export default {
 			searchResultsUsers: [],
 			searchResultsGroups: [],
 			searchResultsCircles: [],
+			searchResultsListedConversations: [],
 			contactsLoading: false,
+			listedConversationsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
 			initialisedConversations: false,
@@ -256,7 +269,7 @@ export default {
 			}
 		}, 250),
 
-		async fetchSearchResults() {
+		async fetchPossibleConversations() {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText, undefined, !this.canStartConversations)
 			this.searchResults = response.data.ocs.data
@@ -268,9 +281,35 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
+		},
+
+		async fetchListedConversations() {
+			this.listedConversationsLoading = true
+			const response = await searchListedConversations(this.searchText)
+			if (response.data.ocs.data?.entries?.length) {
+				this.searchResultsListedConversations = response.data.ocs.data.entries.map((result) => {
+					return {
+						// TODO: extract token ?
+						id: result.resourceUrl,
+						label: result.title,
+						icon: result.icon,
+					}
+				})
+			} else {
+				this.searchResultsListedConversations = []
+			}
+			this.listedConversationsLoading = false
+		},
+
+		async fetchSearchResults() {
+			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
 
 			// If none already focused, focus the first rendered result
 			this.focusInitialise()
+		},
+
+		async joinConversation(item) {
+			console.log('TODO: Implement join conversation: ', item)
 		},
 
 		/**
