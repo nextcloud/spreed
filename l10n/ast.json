@@ -48,6 +48,8 @@
     "An error occurred while starting screensharing." : "Asocedió un fallu entrín s'aniciaba la compartición de pantalla.",
     "You" : "Tu",
     "Favorite" : "Marcar como favoritu",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Introduz una contraseña",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Cargando",
@@ -74,9 +76,6 @@
     "Edit" : "Editar",
     "Keyboard shortcuts" : "Atayos de tecláu",
     "Search" : "Search",
-    "Share link" : "Compartir enllaz",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Introduz una contraseña",
     "Grid view" : "Vista de rexella",
     "Send" : "Unviar",
     "Default" : "Predetermináu",
@@ -94,6 +93,7 @@
     "Your screen" : "La to pantalla",
     "Contacts" : "Contautos",
     "Guests" : "Convidaos",
+    "Share link" : "Compartir enllaz",
     "Cancel" : "Encaboxar",
     "Submit" : "Unviar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
