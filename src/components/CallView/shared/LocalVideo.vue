@@ -129,6 +129,9 @@ export default {
 	},
 
 	computed: {
+		stopFollowingLabel() {
+			return t('spreed', 'Back')
+		},
 
 		videoContainerClass() {
 			return {
@@ -274,6 +277,7 @@ export default {
 
 		handleStopFollowing() {
 			this.$store.dispatch('selectedVideoPeerId', null)
+			this.$store.dispatch('stopPresentation')
 		},
 	},
 
