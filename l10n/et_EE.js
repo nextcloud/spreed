@@ -32,6 +32,8 @@ OC.L10N.register(
     "Screensharing requires the page to be loaded through HTTPS." : "Ekraanijagamiseks tuleb leht laadida üle HTTPS protokolli.",
     "You" : "Sina",
     "Favorite" : "Lemmik",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Remove from favorites" : "Eemalda lemmikutest",
     "Add to favorites" : "Lisa lemmikutesse",
     "Loading" : "Laadimine",
@@ -58,9 +60,6 @@ OC.L10N.register(
     "Edit" : "Redigeeri",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
-    "Share link" : "Jaga link",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Grid view" : "Ruudustikvaade",
     "Send" : "Saada",
     "Default" : "Vaikeväärtus",
@@ -68,6 +67,7 @@ OC.L10N.register(
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
     "Contacts" : "Kontaktid",
+    "Share link" : "Jaga link",
     "Cancel" : "Loobu"
 },
 "nplurals=2; plural=(n != 1);");
