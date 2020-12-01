@@ -254,6 +254,7 @@ OC.L10N.register(
     "Copy link" : "Kopieer skakel",
     "Dismiss" : "Ontslaan",
     "Favorite" : "Gunsteling",
+    "Enter a password" : "Gee ’n wagwoord",
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
     "Loading" : "Laai tans..",
@@ -275,8 +276,6 @@ OC.L10N.register(
     "Edit" : "Wysig",
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
-    "Share link" : "Deelskakel",
-    "Enter a password" : "Gee ’n wagwoord",
     "Send" : "Stuur",
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
@@ -284,6 +283,7 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "Contacts" : "Kontakte",
     "Guests" : "Gaste",
+    "Share link" : "Deelskakel",
     "Cancel" : "Kanselleer"
 },
 "nplurals=2; plural=(n != 1);");

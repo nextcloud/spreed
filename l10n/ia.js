@@ -19,6 +19,8 @@ OC.L10N.register(
     "Dismiss" : "Dimitter",
     "You" : "Tu",
     "Favorite" : "Favorite",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Loading",
@@ -40,9 +42,6 @@ OC.L10N.register(
     "Edit" : "Modificar",
     "Keyboard shortcuts" : "Combinationes de claves",
     "Search" : "Cercar",
-    "Share link" : "Compartir ligamine",
-    "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Send" : "Inviar",
     "Access to microphone & camera is only possible with HTTPS" : "Accesso al microphono e al camera solmente es possibile per HTTPS",
     "Access to microphone & camera was denied" : "Accesso al microphono e al camera solmente esseva negate",
@@ -54,6 +53,7 @@ OC.L10N.register(
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
     "Contacts" : "Contactos",
+    "Share link" : "Compartir ligamine",
     "Cancel" : "Cancellar"
 },
 "nplurals=2; plural=(n != 1);");
