@@ -196,8 +196,8 @@ class CapabilitiesTest extends TestCase {
 					'chat-replies',
 					'circles-support',
 					'force-mute',
-					'chat-reference-id',
 					'sip-support',
+					'chat-reference-id',
 				],
 				'config' => [
 					'attachments' => [
