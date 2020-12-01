@@ -130,6 +130,7 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionId: conversation.sessionId,
 				participantType: conversation.participantType,
+				attendeeId: conversation.attendeeId,
 				actorType: conversation.actorType,
 				actorId: conversation.actorId, // FIXME check public share page handling
 				userId: currentUser ? currentUser.uid : '',

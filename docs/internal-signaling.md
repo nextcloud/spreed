@@ -14,15 +14,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * Response:
 
-    field | type | Description
-    ------|------|------------
-    `signalingMode` | string | See [Signaling modes](constants.md#Signaling_modes)
-    `userId` | string | Current user id
-    `hideWarning` | string | Don't show a performance warning although internal signaling is used
-    `server` | string | URL of the external signaling server
-    `ticket` | string | Ticket for the external signaling server
-    `stunservers` | array | STUN servers
-    `turnservers` | array | TURN servers
+    field | type | API | Description
+    ------|------|-----|------------
+    `signalingMode` | string | * | See [Signaling modes](constants.md#Signaling_modes)
+    `userId` | string | * | Current user id
+    `hideWarning` | string | * | Don't show a performance warning although internal signaling is used
+    `server` | string | * | URL of the external signaling server
+    `ticket` | string | * | Ticket for the external signaling server
+    `stunservers` | array | * | STUN servers
+    `turnservers` | array | * | TURN servers
+    `sipDialinInfo` | string | v2 | Generic SIP dial-in information for this conversation (admin free text containing the phone number etc)
 
     - STUN server
     

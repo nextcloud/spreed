@@ -118,10 +118,13 @@ class SignalingController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
+	 * @param string $apiVersion
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getSettings(string $token = ''): DataResponse {
+	public function getSettings(string $apiVersion, string $token = ''): DataResponse {
+		$apiV = (int) substr($apiVersion, 1);
+
 		try {
 			if ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
@@ -158,7 +161,7 @@ class SignalingController extends OCSController {
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
-		return new DataResponse([
+		$data = [
 			'signalingMode' => $signalingMode,
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
@@ -166,7 +169,13 @@ class SignalingController extends OCSController {
 			'ticket' => $this->talkConfig->getSignalingTicket($this->userId),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
-		]);
+		];
+
+		if ($apiV >= 2) {
+			$data['sipDialinInfo'] = $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '';
+		}
+
+		return new DataResponse($data);
 	}
 
 	/**

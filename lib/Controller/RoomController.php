@@ -604,7 +604,12 @@ class RoomController extends AEnvironmentAwareController {
 		if ($this->getAPIVersion() >= 3) {
 			if ($this->talkConfig->isSIPConfigured()) {
 				$roomData['sipEnabled'] = $room->getSIPEnabled();
-				$roomData['attendeePin'] = $attendee->getPin();
+				if ($room->getSIPEnabled() === Webinary::SIP_ENABLED) {
+					// Generate a PIN if the attendee is a user and doesn't have one.
+					$this->participantService->generatePinForParticipant($room, $currentParticipant);
+
+					$roomData['attendeePin'] = $attendee->getPin();
+				}
 			}
 
 			$roomData = array_merge($roomData, [
@@ -1065,9 +1070,14 @@ class RoomController extends AEnvironmentAwareController {
 				$result['attendeeId'] = $participant->getAttendee()->getId();
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
+				$result['attendeePin'] = '';
 				if ($this->talkConfig->isSIPConfigured()
+					&& $this->room->getSIPEnabled() === Webinary::SIP_ENABLED
 					&& ($this->participant->hasModeratorPermissions(false)
 						|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
+					// Generate a PIN if the attendee is a user and doesn't have one.
+					$this->participantService->generatePinForParticipant($this->room, $participant);
+
 					$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
 				}
 			}
@@ -1643,5 +1653,70 @@ class RoomController extends AEnvironmentAwareController {
 		$this->participantService->updateParticipantType($this->room, $targetParticipant, $newType);
 
 		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @param int|null $timer
+	 * @return DataResponse
+	 */
+	public function setLobby(int $state, ?int $timer = null): DataResponse {
+		$timerDateTime = null;
+		if ($timer !== null && $timer > 0) {
+			try {
+				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
+				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
+			} catch (\Exception $e) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		if (!$this->room->setLobby($state, $timerDateTime)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($state === Webinary::LOBBY_NON_MODERATORS) {
+			$participants = $this->participantService->getParticipantsInCall($this->room);
+			foreach ($participants as $participant) {
+				if ($participant->hasModeratorPermissions()) {
+					continue;
+				}
+
+				$this->participantService->changeInCall($this->room, $participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
+
+		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setSIPEnabled(int $state): DataResponse {
+		$user = $this->userManager->get($this->userId);
+		if (!$user instanceof IUser) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if (!$this->talkConfig->canUserEnableSIP($user)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		if (!$this->room->setSIPEnabled($state)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
 	}
 }
