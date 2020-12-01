@@ -894,6 +894,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
 			$this->createMock(CommentsManager::class),
 			$this->createMock(TalkSession::class),
 			$dispatcher,

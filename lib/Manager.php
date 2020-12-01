@@ -43,6 +43,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IGroupManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
@@ -65,6 +66,8 @@ class Manager {
 	private $secureRandom;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ICommentsManager */
 	private $commentsManager;
 	/** @var TalkSession */
@@ -86,6 +89,7 @@ class Manager {
 								ParticipantService $participantService,
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								CommentsManager $commentsManager,
 								TalkSession $talkSession,
 								IEventDispatcher $dispatcher,
@@ -100,6 +104,7 @@ class Manager {
 		$this->participantService = $participantService;
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->commentsManager = $commentsManager;
 		$this->talkSession = $talkSession;
 		$this->dispatcher = $dispatcher;
@@ -324,6 +329,54 @@ class Manager {
 			if ($userId !== null && isset($row['actor_id'])) {
 				$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 			}
+			$rooms[] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
+	 * Returns rooms that are listable where the current user is not a participant.
+	 *
+	 * @param string $userId user id
+	 * @param string $term search term
+	 * @return Room[]
+	 */
+	public function getListedRoomsForUser(string $userId, string $term = ''): array {
+		$allowedRoomTypes = [Room::GROUP_CALL, Room::PUBLIC_CALL];
+		$allowedListedTypes = [Room::LISTABLE_ALL];
+		if (!$this->isGuestUser($userId)) {
+			$listedType[] = Room::LISTABLE_USERS;
+		}
+		$query = $this->db->getQueryBuilder();
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id')
+			))
+			->where($query->expr()->isNull('a.id'))
+			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedRoomTypes, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedListedTypes, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		if ($term !== '') {
+			$query->andWhere(
+				$query->expr()->ilike('name', $query->createNamedParameter(
+					'%' . $this->db->escapeLikeParameter($term). '%'
+				))
+			);
+		}
+
+		$result = $query->execute();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
 			$rooms[] = $room;
 		}
 		$result->closeCursor();
@@ -812,16 +865,19 @@ class Manager {
 			return $otherParticipant;
 		}
 
-		try {
-			if ($userId === '') {
-				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
-				$room->getParticipantBySession($sessionId);
-			} else {
-				$room->getParticipant($userId);
+		// FIXME: also check guest user case
+		if ($room->getListable() === Room::LISTABLE_PARTICIPANTS) {
+			try {
+				if ($userId === '') {
+					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+					$room->getParticipantBySession($sessionId);
+				} else {
+					$room->getParticipant($userId);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				// Do not leak the name of rooms the user is not a part of
+				return $this->l->t('Private conversation');
 			}
-		} catch (ParticipantNotFoundException $e) {
-			// Do not leak the name of rooms the user is not a part of
-			return $this->l->t('Private conversation');
 		}
 
 		return $room->getName();
@@ -922,6 +978,18 @@ class Manager {
 
 	public function isValidParticipant(string $userId): bool {
 		return $this->userManager->userExists($userId);
+	}
+
+	/**
+	 * Returns whether the given user id is a guest user from
+	 * the guest app
+	 *
+	 * @param string $userId user id to check
+	 * @return bool true if the user is a guest, false otherwise
+	 */
+	public function isGuestUser(string $userId): bool {
+		// FIXME: retrieve guest group name from app ?
+		return $this->groupManager->isInGroup($userId, 'guest_app');
 	}
 
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {

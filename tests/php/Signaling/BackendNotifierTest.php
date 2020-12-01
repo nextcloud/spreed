@@ -146,6 +146,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
+			$groupManager,
 			$this->createMock(CommentsManager::class),
 			$this->createMock(TalkSession::class),
 			$this->dispatcher,
