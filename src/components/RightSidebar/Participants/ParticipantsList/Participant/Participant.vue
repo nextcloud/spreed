@@ -441,7 +441,9 @@ export default {
 			width: calc(100% - 124px);
 		}
 	}
-	&__user-name {
+	&__user-name,
+	&__guest-indicator,
+	&__moderator-indicator {
 		vertical-align: middle;
 		line-height: normal;
 	}
