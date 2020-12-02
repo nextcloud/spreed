@@ -51,6 +51,7 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IGroupManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
@@ -72,6 +73,8 @@ class ParticipantService {
 	private $dispatcher;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
@@ -84,6 +87,7 @@ class ParticipantService {
 								IDBConnection $connection,
 								IEventDispatcher $dispatcher,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								ITimeFactory $timeFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
@@ -94,6 +98,7 @@ class ParticipantService {
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -171,7 +176,7 @@ class ParticipantService {
 				$room->getType() === Room::GROUP_CALL && (
 					// this check should have happened earlier already but let's stay defensive
 					$room->getListable() === Room::LISTABLE_ALL || (
-						$room->getListable() === Room::LISTABLE_USERS && !$this->manager->isGuestUser()
+						$room->getListable() === Room::LISTABLE_USERS && !$this->groupManager->isInGroup($user->getUID(), 'guest_app')
 					)
 				)
 			) {
