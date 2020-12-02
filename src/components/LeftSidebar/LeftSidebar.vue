@@ -44,14 +44,15 @@
 					@focus="setFocusedIndex" />
 			</li>
 			<template v-if="isSearching">
-				<template v-if="searchResultsListedConversations.length !== 0">
+				<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 					<Caption
 						:title="t('spreed', 'Listed conversations')" />
 					<Conversation
 						v-for="item of searchResultsListedConversations"
 						:key="item.id"
 						:item="item"
-						:is-search-result="true" />
+						:is-search-result="true"
+						@click="joinListedConversation" />
 				</template>
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
@@ -296,6 +297,13 @@ export default {
 
 			// If none already focused, focus the first rendered result
 			this.focusInitialise()
+		},
+
+		async joinListedConversation(item) {
+			// there's already an event handler in Component.vue that will take care
+			// of switching the route,
+			// so all we need to do today is reset the UI
+			EventBus.$emit('resetSearchFilter')
 		},
 
 		/**
