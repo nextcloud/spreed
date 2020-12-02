@@ -809,7 +809,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userChangesListableScopeOfTheRoom($user, $identifier, $newState, $statusCode, $apiVersion = 'v3') {
 		$this->setCurrentUser($user);
 		if ($newState === 'joined') {
-			$newStateValue = Room::LISTABLE_PARTICIPANTS;
+			$newStateValue = Room::LISTABLE_NONE;
 		} elseif ($newState === 'users') {
 			$newStateValue = Room::LISTABLE_USERS;
 		} else {

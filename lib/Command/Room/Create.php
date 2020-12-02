@@ -110,7 +110,12 @@ class Create extends Base {
 			return 1;
 		}
 
-		if (!in_array($listable, [null, '0', '1', '2', '3'], true)) {
+		if (!in_array($listable, [
+			null,
+			(string)Room::LISTABLE_NONE,
+			(string)Room::LISTABLE_USERS,
+			(string)Room::LISTABLE_ALL,
+		], true)) {
 			$output->writeln('<error>Invalid value for option "--listable" given.</error>');
 			return 1;
 		}
@@ -167,6 +172,14 @@ class Create extends Base {
 			case 'owner':
 			case 'moderator':
 				return $this->completeParticipantValues($context);
+			case 'readonly':
+				return ['1', '0'];
+			case 'listable':
+				return [
+					(string)Room::LISTABLE_ALL,
+					(string)Room::LISTABLE_USERS,
+					(string)Room::LISTABLE_NONE,
+				];
 		}
 
 		return parent::completeOptionValues($optionName, $context);

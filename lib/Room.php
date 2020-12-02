@@ -65,10 +65,10 @@ class Room {
 	/**
 	 * Only visible when joined
 	 */
-	public const LISTABLE_PARTICIPANTS = 0;
+	public const LISTABLE_NONE = 0;
 
 	/**
-	 * Searchable by all regular users and moderators, even when not joined, excluding guest users
+	 * Searchable by all regular users and moderators, even when not joined, excluding users from the guest app
 	 */
 	public const LISTABLE_USERS = 1;
 
@@ -818,11 +818,15 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL, self::CHANGELOG_CONVERSATION], true)) {
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
 			return false;
 		}
 
-		if ($newState < 0 || $newState > 3) {
+		if (!in_array($newState, [
+			Room::LISTABLE_NONE,
+			Room::LISTABLE_USERS,
+			Room::LISTABLE_ALL,
+		], true)) {
 			return false;
 		}
 

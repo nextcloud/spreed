@@ -758,7 +758,7 @@ class Manager {
 		if ($row === false) {
 			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
 			$room->setReadOnly(Room::READ_ONLY);
-			$room->setListable(Room::LISTABLE_PARTICIPANTS);
+			$room->setListable(Room::LISTABLE_NONE);
 
 			$this->participantService->addUsers($room,[[
 				'actorType' => Attendee::ACTOR_USERS,
@@ -866,7 +866,7 @@ class Manager {
 		}
 
 		// FIXME: also check guest user case
-		if ($room->getListable() === Room::LISTABLE_PARTICIPANTS) {
+		if ($room->getListable() === Room::LISTABLE_NONE) {
 			try {
 				if ($userId === '') {
 					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());

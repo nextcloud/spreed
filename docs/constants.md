@@ -14,7 +14,7 @@ title: Constants
 
 ## Listable scope
 * `0` participants only
-* `1` regular users only, excluding guests
+* `1` regular users only, excluding guest app users
 * `2` everyone
 
 ## Participant types

@@ -22,19 +22,19 @@
 <template>
 	<div>
 		<div class="app-settings-subsection">
-			<div id="moderation_settings_listable_users_hint" class="app-settings-section__hint">
+			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Defines who can find this conversation') }}
 			</div>
 			<div>
-				<label for="moderation_settings_listable_users_conversation_input">{{ t('spreed', 'Listable for') }}</label>
-				<Multiselect id="moderation_settings_listable_users_conversation_input"
+				<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Listable for') }}</label>
+				<Multiselect id="moderation_settings_listable_conversation_input"
 					v-model="listable"
 					:options="listableOptions"
 					:placeholder="t('spreed', 'Listable for')"
 					label="label"
 					track-by="value"
 					:disabled="isListableLoading"
-					aria-describedby="moderation_settings_listable_users_conversation_hint"
+					aria-describedby="moderation_settings_listable_conversation_hint"
 					@input="saveListable" />
 			</div>
 		</div>
@@ -115,9 +115,9 @@ import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker'
 import SipSettings from './SipSettings'
 
 const listableOptions = [
-	{ value: 2, label: t('spreed', 'Everyone') },
-	{ value: 1, label: t('spreed', 'Regular users, without guests') },
-	{ value: 0, label: t('spreed', 'Participants only') },
+	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'None') },
+	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Registered users') },
+	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Everyone') },
 ]
 
 export default {

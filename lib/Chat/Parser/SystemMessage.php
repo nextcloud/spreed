@@ -165,12 +165,12 @@ class SystemMessage {
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator locked the conversation');
 			}
-		} elseif ($message === 'listable_participants') {
-			$parsedMessage = $this->l->t('{actor} made the conversation listable for participants only');
+		} elseif ($message === 'listable_none') {
+			$parsedMessage = $this->l->t('{actor} made the conversation not listable');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You made the conversation listable for participants only');
+				$parsedMessage = $this->l->t('You made the conversation not listable');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator made the conversation listable for participants only');
+				$parsedMessage = $this->l->t('An administrator made the conversation not listable');
 			}
 		} elseif ($message === 'listable_users') {
 			$parsedMessage = $this->l->t('{actor} made the conversation listable for users only');

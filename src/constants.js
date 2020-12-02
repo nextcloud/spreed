@@ -35,7 +35,7 @@ export const CONVERSATION = {
 		READ_ONLY: 1,
 	},
 	LISTABLE: {
-		PARTICIPANTS: 0,
+		NONE: 0,
 		USERS: 1,
 		ALL: 2,
 	},
