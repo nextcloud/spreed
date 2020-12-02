@@ -363,7 +363,7 @@ class Manager {
 			))
 			->where($query->expr()->isNull('a.id'))
 			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedRoomTypes, IQueryBuilder::PARAM_INT_ARRAY)))
-			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedListedTypes, IQueryBuilder::PARAM_INT_ARRAY)));
+			->andWhere($query->expr()->in('r.listable', $query->createNamedParameter($allowedListedTypes, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		if ($term !== '') {
 			$query->andWhere(
