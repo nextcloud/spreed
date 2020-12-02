@@ -166,12 +166,32 @@ class ParticipantService {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
-			// User joining a public room, without being invited
-			$this->addUsers($room, [[
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $user->getUID(),
-				'participantType' => Participant::USER_SELF_JOINED,
-			]]);
+			// User joining a group call through listing
+			if (
+				$room->getType() === Room::GROUP_CALL && (
+					// this check should have happened earlier already but let's stay defensive
+					$room->getListable() === Room::LISTABLE_ALL || (
+						$room->getListable() === Room::LISTABLE_USERS && !$this->manager->isGuestUser()
+					)
+				)
+			) {
+				$this->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $user->getUID(),
+					// need to use "USER" here, because "USER_SELF_JOINED" only works for public calls
+					'participantType' => Participant::USER,
+				]]);
+			} elseif ($room->getType() === Room::PUBLIC_CALL) {
+				// User joining a public room, without being invited
+				$this->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $user->getUID(),
+					'participantType' => Participant::USER_SELF_JOINED,
+				]]);
+			} else {
+				// shouldn't happen unless some code called joinRoom without previous checks
+				throw new UnauthorizedException('Participant is not allowed to join');
+			}
 
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		}
