@@ -90,19 +90,29 @@ const checkTalkVersionHash = function(response) {
 
 /**
  * Fetch listed conversations
- * @param {string} searchText The string that will be used in the search query.
+ * @param {string} searchTerm The string that will be used in the search query.
  */
-const searchListedConversations = async function(searchText) {
+const searchListedConversations = async function(searchTerm) {
 	try {
-		// use search provider to find listed conversations
-		return axios.get(generateOcsUrl('search/providers/talk-listed-conversations', 2) + 'search', {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', {
 			params: {
-				term: searchText,
-				format: 'json',
+				searchTerm,
 			},
 		})
+
+		if (maintenanceWarning) {
+			maintenanceWarning.hideToast()
+			maintenanceWarning = null
+		}
+
+		return response
 	} catch (error) {
-		console.debug('Error while searching listedk conversations: ', error)
+		if (error.response && error.response.status === 503 && !maintenanceWarning) {
+			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		}
+		throw error
 	}
 }
 /**

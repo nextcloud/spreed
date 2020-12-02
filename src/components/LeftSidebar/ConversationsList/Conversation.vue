@@ -45,7 +45,7 @@
 			:highlighted="counterShouldBePrimary">
 			<strong>{{ item.unreadMessages }}</strong>
 		</AppNavigationCounter>
-		<template slot="actions">
+		<template v-if="!isSearchResult" slot="actions">
 			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
@@ -124,6 +124,10 @@ export default {
 		ConversationIcon,
 	},
 	props: {
+		isSearchResult: {
+			type: Boolean,
+			default: false,
+		},
 		item: {
 			type: Object,
 			default: function() {

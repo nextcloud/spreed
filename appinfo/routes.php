@@ -184,6 +184,14 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#getListedRooms',
+			'url' => '/api/{apiVersion}/listed-room',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v3',
+			],
+		],
+		[
 			'name' => 'Room#createRoom',
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'POST',

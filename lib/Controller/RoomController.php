@@ -68,6 +68,7 @@ use OCP\UserStatus\IUserStatus;
 
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
+	public const EVENT_BEFORE_LISTED_ROOMS_GET = self::class . '::preGetListedRooms';
 
 	/** @var string|null */
 	protected $userId;
@@ -218,6 +219,37 @@ class RoomController extends AEnvironmentAwareController {
 
 		return new DataResponse($return, Http::STATUS_OK, $this->getTalkHashHeader());
 	}
+
+	/**
+	 * Search listed rooms
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $searchTerm search term
+	 * @return DataResponse
+	 */
+	public function getListedRooms(string $searchTerm = ''): DataResponse {
+		$event = new UserEvent($this->userId);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_LISTED_ROOMS_GET, $event);
+
+		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
+
+		$return = [];
+		foreach ($rooms as $room) {
+			try {
+				$roomData = $this->formatRoom($room, null);
+				// since formatRoom will break early due to having no participant,
+				// we populate the remaining base attributes here
+				$return[] = $this->populateBaseRoomData($roomData, $room, $this->userId);
+				// TODO: should we populate more ?
+			} catch (RoomNotFoundException $e) {
+			} catch (\RuntimeException $e) {
+			}
+		}
+
+		return new DataResponse($return, Http::STATUS_OK);
+	}
+
 
 	/**
 	 * @PublicPage
@@ -599,20 +631,12 @@ class RoomController extends AEnvironmentAwareController {
 		$attendee = $currentParticipant->getAttendee();
 		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
+		$roomData = $this->populateBaseRoomData($roomData, $room, $userId);
+
 		$roomData = array_merge($roomData, [
-			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($userId),
-			'objectType' => $room->getObjectType(),
-			'objectId' => $room->getObjectId(),
 			'participantType' => $attendee->getParticipantType(),
-			'readOnly' => $room->getReadOnly(),
-			'listable' => $room->getListable(),
-			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
-			'lastActivity' => $lastActivity,
 			'isFavorite' => $attendee->isFavorite(),
 			'notificationLevel' => $attendee->getNotificationLevel(),
-			'lobbyState' => $room->getLobbyState(),
-			'lobbyTimer' => $lobbyTimer,
 		]);
 		if ($this->getAPIVersion() >= 3) {
 			if ($this->talkConfig->isSIPConfigured()) {
@@ -730,6 +754,33 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		return $roomData;
+	}
+
+	protected function populateBaseRoomData(array $roomData, Room $room, $userId) {
+		$lastActivity = $room->getLastActivity();
+		if ($lastActivity instanceof \DateTimeInterface) {
+			$lastActivity = $lastActivity->getTimestamp();
+		} else {
+			$lastActivity = 0;
+		}
+
+		$lobbyTimer = $room->getLobbyTimer();
+		if ($lobbyTimer instanceof \DateTimeInterface) {
+			$lobbyTimer = $lobbyTimer->getTimestamp();
+		} else {
+			$lobbyTimer = 0;
+		}
+
+		return array_merge($roomData, [
+			'name' => $room->getName(),
+			'displayName' => $room->getDisplayName($userId),
+			'objectType' => $room->getObjectType(),
+			'objectId' => $room->getObjectId(),
+			'readOnly' => $room->getReadOnly(),
+			'listable' => $room->getListable(),
+			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'lobbyState' => $room->getLobbyState(),
+		]);
 	}
 
 	/**

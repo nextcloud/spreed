@@ -47,12 +47,11 @@
 				<template v-if="searchResultsListedConversations.length !== 0">
 					<Caption
 						:title="t('spreed', 'Listed conversations')" />
-					<li role="presentation">
-						<!-- FIXME: use ConversationsList instead ? -->
-						<ConversationsOptionsList
-							:items="searchResultsListedConversations"
-							@click="joinConversation" />
-					</li>
+					<Conversation
+						v-for="item of searchResultsListedConversations"
+						:key="item.id"
+						:item="item"
+						:is-search-result="true" />
 				</template>
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
@@ -114,6 +113,7 @@
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
 import ConversationsList from './ConversationsList/ConversationsList'
+import Conversation from './ConversationsList/Conversation'
 import ConversationsOptionsList from '../ConversationsOptionsList'
 import Hint from '../Hint'
 import SearchBox from './SearchBox/SearchBox'
@@ -144,6 +144,7 @@ export default {
 		Hint,
 		SearchBox,
 		NewGroupConversation,
+		Conversation,
 	},
 
 	mixins: [
@@ -286,18 +287,7 @@ export default {
 		async fetchListedConversations() {
 			this.listedConversationsLoading = true
 			const response = await searchListedConversations(this.searchText)
-			if (response.data.ocs.data?.entries?.length) {
-				this.searchResultsListedConversations = response.data.ocs.data.entries.map((result) => {
-					return {
-						// TODO: extract token ?
-						id: result.resourceUrl,
-						label: result.title,
-						icon: result.icon,
-					}
-				})
-			} else {
-				this.searchResultsListedConversations = []
-			}
+			this.searchResultsListedConversations = response.data.ocs.data
 			this.listedConversationsLoading = false
 		},
 
@@ -306,10 +296,6 @@ export default {
 
 			// If none already focused, focus the first rendered result
 			this.focusInitialise()
-		},
-
-		async joinConversation(item) {
-			console.log('TODO: Implement join conversation: ', item)
 		},
 
 		/**

@@ -347,7 +347,7 @@ class Manager {
 		$allowedRoomTypes = [Room::GROUP_CALL, Room::PUBLIC_CALL];
 		$allowedListedTypes = [Room::LISTABLE_ALL];
 		if (!$this->isGuestUser($userId)) {
-			$listedType[] = Room::LISTABLE_USERS;
+			$allowedListedTypes[] = Room::LISTABLE_USERS;
 		}
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
