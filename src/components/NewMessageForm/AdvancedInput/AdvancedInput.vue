@@ -74,7 +74,7 @@
 		</template>
 		<div
 			ref="contentEditable"
-			v-shortkey="['c']"
+			v-shortkey.once="['c']"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			role="textbox"
