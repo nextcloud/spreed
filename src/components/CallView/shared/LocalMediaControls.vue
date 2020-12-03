@@ -86,7 +86,7 @@
 				:aria-label="t('spreed', 'Lower hand')"
 				@click="toggleHandRaised">
 				<Hand
-					:size="16"
+					:size="24"
 					title=""
 					decorative />
 			</button>
