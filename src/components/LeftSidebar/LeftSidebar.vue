@@ -52,7 +52,7 @@
 						:key="item.id"
 						:item="item"
 						:is-search-result="true"
-						@click="joinListedConversation" />
+						@click="joinListedConversation(item)" />
 				</template>
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
@@ -299,13 +299,6 @@ export default {
 			this.focusInitialise()
 		},
 
-		async joinListedConversation(item) {
-			// there's already an event handler in Component.vue that will take care
-			// of switching the route,
-			// so all we need to do today is reset the UI
-			EventBus.$emit('resetSearchFilter')
-		},
-
 		/**
 		 * Create a new conversation with the selected group/user/circle
 		 * @param {Object} item The autocomplete suggestion to start a conversation with
@@ -320,6 +313,13 @@ export default {
 				response = await createGroupConversation(item.id, item.source)
 			}
 			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
+		},
+
+		async joinListedConversation(conversation) {
+			// add as temporary item that will refresh after the joining process is complete
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			EventBus.$emit('resetSearchFilter')
@@ -341,14 +341,6 @@ export default {
 		handleClickSearchResult(selectedConversationToken) {
 			// End the search operation
 			this.abortSearch()
-			const selectedConversation = document.getElementById(`conversation_${selectedConversationToken}`)
-			this.$nextTick(() => {
-				 selectedConversation.scrollIntoView({
-					behavior: 'smooth',
-					block: 'center',
-					inline: 'nearest',
-				})
-			})
 		},
 
 		sortConversations(conversation1, conversation2) {

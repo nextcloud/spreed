@@ -76,16 +76,21 @@ export default {
 	mounted() {
 		EventBus.$on('routeChange', this.onRouteChange)
 		EventBus.$on('newMessagePosted', this.onMessagePosted)
+		EventBus.$on('joinedConversation', this.onJoinedConversation)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('newMessagePosted', this.onMessagePosted)
+		EventBus.$off('joinedConversation', this.onJoinedConversation)
 	},
 
 	methods: {
-		onMessagePosted({ token }) {
+		scrollToConversation(token) {
 			const conversation = document.getElementById(`conversation_${token}`)
+			if (!conversation) {
+				return
+			}
 			this.$nextTick(() => {
 				conversation.scrollIntoView({
 					behavior: 'smooth',
@@ -93,6 +98,12 @@ export default {
 					inline: 'nearest',
 				})
 			})
+		},
+		onJoinedConversation({ token }) {
+			this.scrollToConversation(token)
+		},
+		onMessagePosted({ token }) {
+			this.scrollToConversation(token)
 		},
 		onRouteChange({ from, to }) {
 			if (from.name === 'conversation'

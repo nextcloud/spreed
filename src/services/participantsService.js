@@ -61,7 +61,7 @@ const joinConversation = async(token) => {
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
 		SessionStorage.setItem('joined_conversation', token)
-		EventBus.$emit('joinedConversation')
+		EventBus.$emit('joinedConversation', { token })
 		return response
 	} catch (error) {
 		if (error.response.status === 409) {
