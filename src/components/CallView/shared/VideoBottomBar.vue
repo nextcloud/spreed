@@ -28,7 +28,8 @@
 				<transition name="fade">
 					<Hand
 						class="wave-hand-animation"
-						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand" />
+						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+						fill-color="#ffffff" />
 				</transition>
 			</div>
 			<transition name="fade">
