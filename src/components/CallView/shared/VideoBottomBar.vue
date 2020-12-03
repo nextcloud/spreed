@@ -27,8 +27,7 @@
 			<div class="bottom-bar__statusIndicator">
 				<transition name="fade">
 					<Hand
-						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
-						fill-color="#ffffff" />
+						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand" />
 				</transition>
 			</div>
 			<transition name="fade">
