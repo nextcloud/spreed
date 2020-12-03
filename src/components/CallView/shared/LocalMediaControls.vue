@@ -81,9 +81,13 @@
 				</ul>
 			</div>
 			<button
-				v-if="model.attributes.raisedHand"
+				v-shortkey="['h']"
 				v-tooltip="t('spreed', 'Lower hand')"
+				class="lower-hand"
+				:class="model.attributes.raisedHand ? '' : 'hidden-visually'"
+				:tabindex="model.attributes.raisedHand ? 0 : -1"
 				:aria-label="t('spreed', 'Lower hand')"
+				@shortkey="toggleHandRaised"
 				@click="toggleHandRaised">
 				<Hand
 					:size="24"
@@ -95,9 +99,7 @@
 				v-tooltip="t('spreed', 'More actions')"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
-					v-shortkey="['h']"
 					:close-after-click="true"
-					@shortkey="toggleHandRaised"
 					@click="toggleHandRaised">
 					<Hand
 						slot="icon"
@@ -716,13 +718,15 @@ export default {
 
 .buttons-bar button.audio-disabled,
 .buttons-bar button.video-disabled,
-.buttons-bar button.screensharing-disabled {
+.buttons-bar button.screensharing-disabled,
+.buttons-bar button.lower-hand {
 	opacity: .7;
 }
 
 .buttons-bar button.audio-disabled:not(.no-audio-available),
 .buttons-bar button.video-disabled:not(.no-video-available),
-.buttons-bar button.screensharing-disabled {
+.buttons-bar button.screensharing-disabled,
+.buttons-bar button.lower-hand {
 	&:hover,
 	&:focus {
 		opacity: 1;
