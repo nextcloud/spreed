@@ -25,7 +25,7 @@
 			<div id="muteWrapper">
 				<button
 					id="mute"
-					v-shortkey="['m']"
+					v-shortkey.once="['m']"
 					v-tooltip="audioButtonTooltip"
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
@@ -39,7 +39,7 @@
 			</div>
 			<button
 				id="hideVideo"
-				v-shortkey="['v']"
+				v-shortkey.once="['v']"
 				v-tooltip="videoButtonTooltip"
 				:aria-label="videoButtonAriaLabel"
 				:class="videoButtonClass"
