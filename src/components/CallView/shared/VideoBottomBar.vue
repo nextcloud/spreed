@@ -27,6 +27,7 @@
 			<div class="bottom-bar__statusIndicator">
 				<transition name="fade">
 					<Hand
+						class="wave-hand-animation"
 						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand" />
 				</transition>
 			</div>

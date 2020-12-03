@@ -90,6 +90,7 @@
 				v-if="callIcon === 'hand'"
 				:size="24"
 				title=""
+				class="wave-hand-animation"
 				decorative />
 		</div>
 		<Actions
