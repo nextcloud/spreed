@@ -48,6 +48,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastReadMessage()
  * @method void setLastMentionMessage(int $lastMentionMessage)
  * @method int getLastMentionMessage()
+ * @method void setReadPrivacy(int $readPrivacy)
+ * @method int getReadPrivacy()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -87,6 +89,9 @@ class Attendee extends Entity {
 	/** @var int */
 	protected $lastMentionMessage;
 
+	/** @var int */
+	protected $readPrivacy;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -99,6 +104,7 @@ class Attendee extends Entity {
 		$this->addType('lastJoinedCall', 'int');
 		$this->addType('lastReadMessage', 'int');
 		$this->addType('lastMentionMessage', 'int');
+		$this->addType('readPrivacy', 'int');
 	}
 
 	/**
@@ -118,6 +124,7 @@ class Attendee extends Entity {
 			'last_joined_call' => $this->getLastJoinedCall(),
 			'last_read_message' => $this->getLastReadMessage(),
 			'last_mention_message' => $this->getLastMentionMessage(),
+			'read_privacy' => $this->getReadPrivacy(),
 		];
 	}
 }

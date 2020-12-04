@@ -47,12 +47,15 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
+	/** @var IConfig */
+	protected $serverConfig;
 	/** @var Config */
 	protected $talkConfig;
 	/** @var AttendeeMapper */
@@ -72,7 +75,8 @@ class ParticipantService {
 	/** @var ITimeFactory */
 	private $timeFactory;
 
-	public function __construct(Config $talkConfig,
+	public function __construct(IConfig $serverConfig,
+								Config $talkConfig,
 								AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								SessionService $sessionService,
@@ -81,6 +85,7 @@ class ParticipantService {
 								IEventDispatcher $dispatcher,
 								IUserManager $userManager,
 								ITimeFactory $timeFactory) {
+		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
@@ -238,12 +243,18 @@ class ParticipantService {
 		}
 
 		foreach ($participants as $participant) {
+			$readPrivacy = Participant::PRIVACY_PUBLIC;
+			if ($participant['actorType'] === Attendee::ACTOR_USERS) {
+				$readPrivacy = (int) $this->serverConfig->getUserValue($participant['actorId'], 'spreed', 'read_status_privacy', (string) Participant::PRIVACY_PUBLIC);
+			}
+
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType($participant['actorType']);
 			$attendee->setActorId($participant['actorId']);
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setReadPrivacy($readPrivacy);
 			$this->attendeeMapper->insert($attendee);
 		}
 
@@ -468,6 +479,15 @@ class ParticipantService {
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$query->execute();
+	}
+
+	public function updateReadPrivacyForActor(string $actorType, string $actorId, int $readPrivacy): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_attendees')
+			->set('read_privacy', $query->createNamedParameter($readPrivacy, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
 		$query->execute();
 	}
 

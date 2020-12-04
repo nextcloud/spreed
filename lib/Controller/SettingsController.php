@@ -26,7 +26,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Files_Sharing\SharedStorage;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -48,6 +50,8 @@ class SettingsController extends OCSController {
 	protected $config;
 	/** @var IGroupManager */
 	protected $groupManager;
+	/** @var ParticipantService */
+	protected $participantService;
 	/** @var LoggerInterface */
 	protected $logger;
 	/** @var string|null */
@@ -58,12 +62,14 @@ class SettingsController extends OCSController {
 								IRootFolder $rootFolder,
 								IConfig $config,
 								IGroupManager $groupManager,
+								ParticipantService $participantService,
 								LoggerInterface $logger,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->rootFolder = $rootFolder;
 		$this->config = $config;
 		$this->groupManager = $groupManager;
+		$this->participantService = $participantService;
 		$this->logger = $logger;
 		$this->userId = $userId;
 	}
@@ -81,6 +87,10 @@ class SettingsController extends OCSController {
 		}
 
 		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
+
+		if ($key === 'read_status_privacy') {
+			$this->participantService->updateReadPrivacyForActor(Attendee::ACTOR_USERS, $this->userId, (int) $value);
+		}
 
 		return new DataResponse();
 	}
