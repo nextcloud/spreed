@@ -199,7 +199,7 @@ export default {
 		conversationInformation() {
 			// temporary item while joining
 			if (!this.isSearchResult && !this.item.actorId) {
-				return t('spreed', 'Joining conversation...')
+				return t('spreed', 'Joining conversation …')
 			}
 
 			if (!Object.keys(this.lastChatMessage).length) {

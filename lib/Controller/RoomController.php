@@ -221,7 +221,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Search listed rooms
+	 * Get listed rooms with optional search term
 	 *
 	 * @NoAdminRequired
 	 *
@@ -237,11 +237,7 @@ class RoomController extends AEnvironmentAwareController {
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$roomData = $this->formatRoom($room, null);
-				// since formatRoom will break early due to having no participant,
-				// we populate the remaining base attributes here
-				$return[] = $this->populateBaseRoomData($roomData, $room, $this->userId);
-				// TODO: should we populate more ?
+				$return[] = $this->formatRoomV2andV3($room, null);
 			} catch (RoomNotFoundException $e) {
 			} catch (\RuntimeException $e) {
 			}
@@ -563,7 +559,6 @@ class RoomController extends AEnvironmentAwareController {
 			'participantType' => Participant::GUEST,
 			'participantFlags' => Participant::FLAG_DISCONNECTED,
 			'readOnly' => Room::READ_WRITE,
-			'listable' => $room->getListable(),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
 			'canStartCall' => false,
@@ -592,6 +587,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeePin' => '',
 				'description' => '',
 				'lastCommonReadMessage' => 0,
+				'listable' => Room::LISTABLE_NONE,
 			]);
 		}
 
@@ -609,10 +605,12 @@ class RoomController extends AEnvironmentAwareController {
 			$lobbyTimer = 0;
 		}
 
-		if ($isSIPBridgeRequest) {
+		if ($isSIPBridgeRequest
+			|| ($room->getListable() !== Room::LISTABLE_NONE && !$currentParticipant instanceof Participant)
+		) {
 			return array_merge($roomData, [
 				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName(''),
+				'displayName' => $room->getDisplayName($isSIPBridgeRequest ? '' : $this->userId),
 				'objectType' => $room->getObjectType(),
 				'objectId' => $room->getObjectId(),
 				'readOnly' => $room->getReadOnly(),
@@ -621,6 +619,7 @@ class RoomController extends AEnvironmentAwareController {
 				'lobbyState' => $room->getLobbyState(),
 				'lobbyTimer' => $lobbyTimer,
 				'sipEnabled' => $room->getSIPEnabled(),
+				'listable' => $room->getListable(),
 			]);
 		}
 
@@ -631,12 +630,19 @@ class RoomController extends AEnvironmentAwareController {
 		$attendee = $currentParticipant->getAttendee();
 		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
 
-		$roomData = $this->populateBaseRoomData($roomData, $room, $userId);
-
 		$roomData = array_merge($roomData, [
+			'name' => $room->getName(),
+			'displayName' => $room->getDisplayName($userId),
+			'objectType' => $room->getObjectType(),
+			'objectId' => $room->getObjectId(),
 			'participantType' => $attendee->getParticipantType(),
+			'readOnly' => $room->getReadOnly(),
+			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'lastActivity' => $lastActivity,
 			'isFavorite' => $attendee->isFavorite(),
 			'notificationLevel' => $attendee->getNotificationLevel(),
+			'lobbyState' => $room->getLobbyState(),
+			'lobbyTimer' => $lobbyTimer,
 		]);
 		if ($this->getAPIVersion() >= 3) {
 			if ($this->talkConfig->isSIPConfigured()) {
@@ -654,6 +660,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $attendee->getActorId(),
 				'attendeeId' => $attendee->getId(),
 				'description' => $room->getDescription(),
+				'listable' => $room->getListable(),
 			]);
 
 			if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
@@ -754,33 +761,6 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		return $roomData;
-	}
-
-	protected function populateBaseRoomData(array $roomData, Room $room, $userId) {
-		$lastActivity = $room->getLastActivity();
-		if ($lastActivity instanceof \DateTimeInterface) {
-			$lastActivity = $lastActivity->getTimestamp();
-		} else {
-			$lastActivity = 0;
-		}
-
-		$lobbyTimer = $room->getLobbyTimer();
-		if ($lobbyTimer instanceof \DateTimeInterface) {
-			$lobbyTimer = $lobbyTimer->getTimestamp();
-		} else {
-			$lobbyTimer = 0;
-		}
-
-		return array_merge($roomData, [
-			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($userId),
-			'objectType' => $room->getObjectType(),
-			'objectId' => $room->getObjectId(),
-			'readOnly' => $room->getReadOnly(),
-			'listable' => $room->getListable(),
-			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
-			'lobbyState' => $room->getLobbyState(),
-		]);
 	}
 
 	/**

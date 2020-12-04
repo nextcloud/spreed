@@ -32,7 +32,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Add listable column to the rooms table.
  */
-class Version2100Date20201201102528 extends SimpleMigrationStep {
+class Version11000Date20201201102528 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -48,7 +48,7 @@ class Version2100Date20201201102528 extends SimpleMigrationStep {
 
 			if (!$table->hasColumn('listable')) {
 				$table->addColumn('listable', Type::INTEGER, [
-					'notnull' => true,
+					'notnull' => false,
 					'length' => 6,
 					'default' => 0,
 				]);

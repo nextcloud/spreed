@@ -137,7 +137,7 @@ const searchPossibleConversations = async function(searchText, token, onlyUsers)
 	}
 
 	try {
-		return axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
+		return await axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
 			params: {
 				search: searchText,
 				itemType: 'call',

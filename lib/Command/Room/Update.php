@@ -99,7 +99,7 @@ class Update extends Base {
 			return 1;
 		}
 
-		if (!in_array($readOnly, [null, '0', '1'], true)) {
+		if (!in_array($readOnly, [null, (string)Room::READ_WRITE, (string)Room::READ_ONLY], true)) {
 			$output->writeln('<error>Invalid value for option "--readonly" given.</error>');
 			return 1;
 		}
@@ -171,7 +171,7 @@ class Update extends Base {
 		switch ($optionName) {
 			case 'public':
 			case 'readonly':
-				return ['1', '0'];
+				return [(string)Room::READ_ONLY, (string)Room::READ_WRITE];
 			case 'listable':
 				return [
 					(string)Room::LISTABLE_ALL,

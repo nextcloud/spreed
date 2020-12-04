@@ -171,9 +171,9 @@ class ParticipantService {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
-			// User joining a group call through listing
+			// User joining a group or public call through listing
 			if (
-				$room->getType() === Room::GROUP_CALL && (
+				($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) && (
 					// this check should have happened earlier already but let's stay defensive
 					$room->getListable() === Room::LISTABLE_ALL || (
 						$room->getListable() === Room::LISTABLE_USERS && !$this->groupManager->isInGroup($user->getUID(), 'guest_app')

@@ -20,7 +20,7 @@
         ------|------|------------
         `searchTerm` | string | search term
 
-    - Data:
+    - Data: See array definition in `Get user´s conversations`
         Array of conversations, each conversation has at least:
 
         field | type | API | Description
