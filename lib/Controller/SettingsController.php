@@ -72,10 +72,10 @@ class SettingsController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $key
-	 * @param string|null $value
+	 * @param string|int|null $value
 	 * @return DataResponse
 	 */
-	public function setUserSetting(string $key, ?string $value): DataResponse {
+	public function setUserSetting(string $key, $value): DataResponse {
 		if (!$this->validateUserSetting($key, $value)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -85,7 +85,7 @@ class SettingsController extends OCSController {
 		return new DataResponse();
 	}
 
-	protected function validateUserSetting(string $setting, ?string $value): bool {
+	protected function validateUserSetting(string $setting, $value): bool {
 		if ($setting === 'attachment_folder') {
 			$userFolder = $this->rootFolder->getUserFolder($this->userId);
 			try {
@@ -105,8 +105,8 @@ class SettingsController extends OCSController {
 		}
 
 		if ($setting === 'read_status_privacy') {
-			return $value === Participant::PRIVACY_PUBLIC ||
-				$value === Participant::PRIVACY_PRIVATE;
+			return (int) $value === Participant::PRIVACY_PUBLIC ||
+				(int) $value === Participant::PRIVACY_PRIVATE;
 		}
 
 		return false;

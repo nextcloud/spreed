@@ -32,6 +32,10 @@ title: Constants
 * `2` Notify on mention
 * `3` Never notify
 
+## Participant read status privacy
+* `0` Read status is public
+* `1` Read status is private
+
 ## Actor types of chat messages
 * `guests` - guest users
 * `users` - logged-in users

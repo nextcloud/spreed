@@ -97,6 +97,6 @@ export const FLOW = {
 	},
 }
 export const PRIVACY = {
-	PRIVATE: 'private',
-	PUBLIC: 'public',
+	PUBLIC: 0,
+	PRIVATE: 1,
 }
