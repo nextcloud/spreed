@@ -96,6 +96,7 @@ export default {
 			useCssBlurFilter: true,
 			blur: 0,
 			blurredBackgroundImage: null,
+			blurredBackgroundImageSource: null,
 		}
 	},
 
@@ -114,6 +115,10 @@ export default {
 			return this.useCssBlurFilter ? this.backgroundImageUrl : this.blurredBackgroundImage
 		},
 		backgroundImageUrl() {
+			if (!this.user) {
+				return null
+			}
+
 			return generateUrl(`avatar/${this.user}/300`)
 		},
 		backgroundBlur() {
@@ -135,11 +140,31 @@ export default {
 				return false
 			}
 
+			if (!this.blurredBackgroundImageSource) {
+				return false
+			}
+
 			return this.backgroundBlur
 		},
 	},
 
 	watch: {
+		backgroundImageUrl: {
+			immediate: true,
+			handler() {
+				this.blurredBackgroundImageSource = null
+
+				if (!this.backgroundImageUrl) {
+					return
+				}
+
+				const image = new Image()
+				image.onload = () => {
+					this.blurredBackgroundImageSource = image
+				}
+				image.src = this.backgroundImageUrl
+			},
+		},
 		generatedBackgroundBlur: {
 			immediate: true,
 			handler() {
@@ -198,32 +223,28 @@ export default {
 		},
 
 		generateBlurredBackgroundImage() {
-			const image = new Image()
-			image.onload = () => {
-				// Reset image source so the width and height are adjusted to
-				// the element rather than to the previous image being shown.
-				this.$refs.backgroundImage.src = ''
+			// Reset image source so the width and height are adjusted to
+			// the element rather than to the previous image being shown.
+			this.$refs.backgroundImage.src = ''
 
-				const canvas = document.createElement('canvas')
-				canvas.width = this.$refs.backgroundImage.width
-				canvas.height = this.$refs.backgroundImage.height
+			const canvas = document.createElement('canvas')
+			canvas.width = this.$refs.backgroundImage.width
+			canvas.height = this.$refs.backgroundImage.height
 
-				const sourceAspectRatio = image.width / image.height
-				const canvasAspectRatio = canvas.width / canvas.height
+			const sourceAspectRatio = this.blurredBackgroundImageSource.width / this.blurredBackgroundImageSource.height
+			const canvasAspectRatio = canvas.width / canvas.height
 
-				if (canvasAspectRatio > sourceAspectRatio) {
-					canvas.height = canvas.width / sourceAspectRatio
-				} else if (canvasAspectRatio < sourceAspectRatio) {
-					canvas.width = canvas.height * sourceAspectRatio
-				}
-
-				const context = canvas.getContext('2d')
-				context.filter = `blur(${this.backgroundBlur}px)`
-				context.drawImage(image, 0, 0, canvas.width, canvas.height)
-
-				this.blurredBackgroundImage = canvas.toDataURL()
+			if (canvasAspectRatio > sourceAspectRatio) {
+				canvas.height = canvas.width / sourceAspectRatio
+			} else if (canvasAspectRatio < sourceAspectRatio) {
+				canvas.width = canvas.height * sourceAspectRatio
 			}
-			image.src = this.backgroundImageUrl
+
+			const context = canvas.getContext('2d')
+			context.filter = `blur(${this.backgroundBlur}px)`
+			context.drawImage(this.blurredBackgroundImageSource, 0, 0, canvas.width, canvas.height)
+
+			this.blurredBackgroundImage = canvas.toDataURL()
 		},
 	},
 }
