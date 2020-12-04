@@ -227,9 +227,21 @@ class Listener {
 					continue;
 				}
 
-				$userJoinedFileRoom = $room->getObjectType() === 'file' &&
-						(!isset($participant['participantType']) || $participant['participantType'] !== Participant::USER_SELF_JOINED);
-				if ($userJoinedFileRoom || $userId !== $participant['actorId']) {
+				$participantType = null;
+				if (isset($participant['participantType'])) {
+					$participantType = $participant['participantType'];
+				}
+
+				$userJoinedFileRoom = $room->getObjectType() === 'file' && $participantType !== Participant::USER_SELF_JOINED;
+
+				// add a message "X joined the conversaion", whenever user $userId:
+				if (
+					// - has joined a file room but not through a public link
+					$userJoinedFileRoom
+					// - has been added by another user
+					|| $userId !== $participant['actorId']
+					// - has joined a listable room on their own
+					|| $participantType === Participant::USER) {
 					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
 				}
 			}
