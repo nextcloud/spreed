@@ -210,18 +210,16 @@ class Listener {
 		});
 
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function (AddParticipantsEvent $event) {
-			$participants = $event->getParticipants();
-			$user = \OC::$server->getUserSession()->getUser();
-			$userId = $user instanceof IUser ? $user->getUID() : null;
-
 			$room = $event->getRoom();
-
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				return;
 			}
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
+
+			$participants = $event->getParticipants();
+
 			foreach ($participants as $participant) {
 				if ($participant['actorType'] !== 'users') {
 					continue;
@@ -239,7 +237,7 @@ class Listener {
 					// - has joined a file room but not through a public link
 					$userJoinedFileRoom
 					// - has been added by another user
-					|| $userId !== $participant['actorId']
+					|| $listener->getUserId() !== $participant['actorId']
 					// - has joined a listable room on their own
 					|| $participantType === Participant::USER) {
 					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
@@ -339,5 +337,10 @@ class Listener {
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
 			$referenceId
 		);
+	}
+
+	protected function getUserId() {
+		$user = $this->userSession->getUser();
+		return $user instanceof IUser ? $user->getUID() : null;
 	}
 }
