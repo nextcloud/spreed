@@ -227,18 +227,21 @@ export default {
 			// the element rather than to the previous image being shown.
 			this.$refs.backgroundImage.src = ''
 
-			const canvas = document.createElement('canvas')
-			canvas.width = this.$refs.backgroundImage.width
-			canvas.height = this.$refs.backgroundImage.height
+			let width = this.$refs.backgroundImage.width
+			let height = this.$refs.backgroundImage.height
 
 			const sourceAspectRatio = this.blurredBackgroundImageSource.width / this.blurredBackgroundImageSource.height
-			const canvasAspectRatio = canvas.width / canvas.height
+			const canvasAspectRatio = width / height
 
 			if (canvasAspectRatio > sourceAspectRatio) {
-				canvas.height = canvas.width / sourceAspectRatio
+				height = width / sourceAspectRatio
 			} else if (canvasAspectRatio < sourceAspectRatio) {
-				canvas.width = canvas.height * sourceAspectRatio
+				width = height * sourceAspectRatio
 			}
+
+			const canvas = document.createElement('canvas')
+			canvas.width = width
+			canvas.height = height
 
 			const context = canvas.getContext('2d')
 			context.filter = `blur(${this.backgroundBlur}px)`
