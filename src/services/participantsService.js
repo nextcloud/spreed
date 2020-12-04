@@ -50,7 +50,10 @@ const joinConversation = async(token) => {
 			force: forceJoin,
 		})
 
-		store.dispatch('addConversation', response.data.ocs.data)
+		const conversation = response.data.ocs.data
+		if (conversation.actorType !== 'guests') {
+			store.dispatch('addConversation', response.data.ocs.data)
+		}
 
 		// Update the participant and actor session after a force join
 		store.dispatch('updateSessionId', {
