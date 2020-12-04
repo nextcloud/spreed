@@ -96,6 +96,7 @@ export default {
 			useCssBlurFilter: true,
 			blur: 0,
 			blurredBackgroundImage: null,
+			blurredBackgroundImageCache: {},
 			blurredBackgroundImageSource: null,
 		}
 	},
@@ -239,6 +240,13 @@ export default {
 				width = height * sourceAspectRatio
 			}
 
+			const cacheId = this.backgroundImageUrl + '-' + width + '-' + height + '-' + this.backgroundBlur
+			if (this.blurredBackgroundImageCache[cacheId]) {
+				this.blurredBackgroundImage = this.blurredBackgroundImageCache[cacheId]
+
+				return
+			}
+
 			const canvas = document.createElement('canvas')
 			canvas.width = width
 			canvas.height = height
@@ -248,6 +256,7 @@ export default {
 			context.drawImage(this.blurredBackgroundImageSource, 0, 0, canvas.width, canvas.height)
 
 			this.blurredBackgroundImage = canvas.toDataURL()
+			this.blurredBackgroundImageCache[cacheId] = this.blurredBackgroundImage
 		},
 	},
 }
