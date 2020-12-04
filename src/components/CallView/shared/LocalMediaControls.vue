@@ -34,8 +34,7 @@
 					@click="toggleAudio" />
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
-					class="volume-indicator"
-					:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
+					class="volume-indicator" />
 			</div>
 			<button
 				id="hideVideo"
@@ -214,7 +213,7 @@ export default {
 			return this.model.attributes.audioEnabled ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
 		},
 
-		currentVolumeIndicatorHeight() {
+		currentVolumeProportion() {
 			// refs can not be accessed on the initial render, only after the
 			// component has been mounted.
 			if (!this.mounted) {
@@ -229,11 +228,7 @@ export default {
 				currentVolumeProportion = (this.model.attributes.volumeThreshold - this.model.attributes.currentVolume) / this.model.attributes.volumeThreshold
 			}
 
-			const volumeIndicatorStyle = window.getComputedStyle ? getComputedStyle(this.$refs.volumeIndicator, null) : this.$refs.volumeIndicator.currentStyle
-
-			const maximumVolumeIndicatorHeight = this.$refs.volumeIndicator.parentElement.clientHeight - (parseInt(volumeIndicatorStyle.bottom, 10) * 2)
-
-			return maximumVolumeIndicatorHeight * currentVolumeProportion
+			return currentVolumeProportion
 		},
 
 		videoButtonClass() {
@@ -396,6 +391,13 @@ export default {
 	},
 
 	watch: {
+		currentVolumeProportion: function() {
+			// The volume meter is updated directly in the DOM as it is
+			// more efficient than relying on Vue.js to animate the style property,
+			// because the latter would also process all neighboring components repeatedly.
+			this.updateVolumeMeter()
+		},
+
 		senderConnectionQualityIsBad: function(senderConnectionQualityIsBad) {
 			if (!senderConnectionQualityIsBad) {
 				return
@@ -423,6 +425,7 @@ export default {
 
 	mounted() {
 		this.mounted = true
+		this.updateVolumeMeter()
 
 		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
 	},
@@ -432,6 +435,19 @@ export default {
 	},
 
 	methods: {
+		updateVolumeMeter() {
+			if (!this.mounted) {
+				return
+			}
+
+			const volumeIndicatorStyle = window.getComputedStyle ? getComputedStyle(this.$refs.volumeIndicator, null) : this.$refs.volumeIndicator.currentStyle
+			const maximumVolumeIndicatorHeight = this.$refs.volumeIndicator.parentElement.clientHeight - (parseInt(volumeIndicatorStyle.bottom, 10) * 2)
+
+			// round up to avoid property changes
+			const height = Math.floor(maximumVolumeIndicatorHeight * this.currentVolumeProportion)
+			this.$refs.volumeIndicator.style.height = height + 'px'
+		},
+
 		/**
 		 * This method executes on spacebar keydown and keyup
 		 */
