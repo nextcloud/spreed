@@ -109,7 +109,7 @@ class Room {
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 
-	public const DESCRIPTION_MAXIMUM_LENGTH = 250;
+	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
 	/** @var Manager */
 	private $manager;
