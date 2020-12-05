@@ -99,6 +99,7 @@ export default {
 			blurredBackgroundImage: null,
 			blurredBackgroundImageCache: {},
 			blurredBackgroundImageSource: null,
+			pendingGenerateBlurredBackgroundImageCount: 0,
 			isDestroyed: false,
 		}
 	},
@@ -257,6 +258,14 @@ export default {
 				return
 			}
 
+			if (this.pendingGenerateBlurredBackgroundImageCount) {
+				this.pendingGenerateBlurredBackgroundImageCount++
+
+				return
+			}
+
+			this.pendingGenerateBlurredBackgroundImageCount = 1
+
 			blur(this.blurredBackgroundImageSource, width, height, this.backgroundBlur).then(image => {
 				if (this.isDestroyed) {
 					return
@@ -264,6 +273,14 @@ export default {
 
 				this.blurredBackgroundImage = image
 				this.blurredBackgroundImageCache[cacheId] = this.blurredBackgroundImage
+
+				const generateBlurredBackgroundImageCalledAgain = this.pendingGenerateBlurredBackgroundImageCount > 1
+
+				this.pendingGenerateBlurredBackgroundImageCount = 0
+
+				if (generateBlurredBackgroundImageCalledAgain) {
+					this.generateBlurredBackgroundImage()
+				}
 			})
 		},
 	},
