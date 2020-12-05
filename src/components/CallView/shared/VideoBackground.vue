@@ -49,6 +49,7 @@ import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 import { getBuilder } from '@nextcloud/browser-storage'
 import browserCheck from '../../../mixins/browserCheck'
+import blur from '../../../utils/imageBlurrer'
 
 const browserStorage = getBuilder('nextcloud').persist().build()
 
@@ -98,6 +99,7 @@ export default {
 			blurredBackgroundImage: null,
 			blurredBackgroundImageCache: {},
 			blurredBackgroundImageSource: null,
+			isDestroyed: false,
 		}
 	},
 
@@ -217,6 +219,10 @@ export default {
 		}
 	},
 
+	beforeDestroy() {
+		this.isDestroyed = true
+	},
+
 	methods: {
 		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
@@ -230,6 +236,10 @@ export default {
 
 			let width = this.$refs.backgroundImage.width
 			let height = this.$refs.backgroundImage.height
+
+			// Restore the current background so it is shown instead of an empty
+			// background while the new one is being generated.
+			this.$refs.backgroundImage.src = this.blurredBackgroundImage
 
 			const sourceAspectRatio = this.blurredBackgroundImageSource.width / this.blurredBackgroundImageSource.height
 			const canvasAspectRatio = width / height
@@ -247,16 +257,14 @@ export default {
 				return
 			}
 
-			const canvas = document.createElement('canvas')
-			canvas.width = width
-			canvas.height = height
+			blur(this.blurredBackgroundImageSource, width, height, this.backgroundBlur).then(image => {
+				if (this.isDestroyed) {
+					return
+				}
 
-			const context = canvas.getContext('2d')
-			context.filter = `blur(${this.backgroundBlur}px)`
-			context.drawImage(this.blurredBackgroundImageSource, 0, 0, canvas.width, canvas.height)
-
-			this.blurredBackgroundImage = canvas.toDataURL()
-			this.blurredBackgroundImageCache[cacheId] = this.blurredBackgroundImage
+				this.blurredBackgroundImage = image
+				this.blurredBackgroundImageCache[cacheId] = this.blurredBackgroundImage
+			})
 		},
 	},
 }
