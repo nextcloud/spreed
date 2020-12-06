@@ -10,7 +10,7 @@
     "_%n other_::_%n others_" : ["outro","outros %n"],
     "{actor} invited you to {call}" : "{actor} convidouno á {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Foi convidado a unha <strong>conversa</strong> ou tivo unha <strong>chamada</strong>",
-    "Talk" : "Talk (falar)",
+    "Talk" : "Talk",
     "Guest" : "Convidado",
     "- Spice up your messages with emojis from the emoji picker" : "- Adube as súas mensaxes con emojis do selector de emoji",
     "- Spice up your messages with emojis from the emoji picker {emoji}" : "- Adube as súas mensaxes con emojis do selector de emoji {emoji}",
