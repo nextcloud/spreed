@@ -164,7 +164,9 @@ export default {
 
 				const image = new Image()
 				image.onload = () => {
-					this.blurredBackgroundImageSource = image
+					createImageBitmap(image).then(imageBitmap => {
+						this.blurredBackgroundImageSource = imageBitmap
+					})
 				}
 				image.src = this.backgroundImageUrl
 			},
