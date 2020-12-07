@@ -22,7 +22,8 @@
 <template>
 	<div :class="{ part: true, readonly: !editing }">
 		<h3>
-			<span :class="type.iconClass + ' icon-service'" />
+			<img class="icon-service"
+				:src="type.iconUrl" />
 			<span>
 				{{ type.name }}
 			</span>
@@ -161,15 +162,16 @@ h3 {
 
 	.icon-service {
 		flex-grow: 0;
-		background-color: var(--color-main-text);
 		padding: 0 !important;
-		mask-position: center;
-		mask-size: 16px auto;
-		-webkit-mask-position: center;
-		-webkit-mask-size: 16px auto;
-		min-width: 44px !important;
-		min-height: 44px !important;
+		margin: 14px 10px 0 14px;
+		width: 16px;
+		height: 16px;
 	}
+}
+
+body.theme--dark .icon-service {
+	-webkit-filter: invert(1);
+	filter: invert(1);
 }
 
 input {

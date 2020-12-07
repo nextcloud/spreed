@@ -50,7 +50,8 @@
 						:internal-search="true"
 						@input="clickAddPart">
 						<template #option="{option}">
-							<span :class="option.icon" />
+							<img class="icon-multiselect-service"
+								:src="option.iconUrl" />
 							{{ option.displayName }}
 						</template>
 					</Multiselect>
@@ -103,6 +104,7 @@ import {
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService'
 import { showSuccess } from '@nextcloud/dialogs'
+import { imagePath } from '@nextcloud/router'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
@@ -142,7 +144,7 @@ export default {
 			types: {
 				nctalk: {
 					name: 'Nextcloud Talk',
-					iconClass: 'icon-nctalk',
+					iconUrl: imagePath('spreed', 'app-dark.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Section-Nextcloud-Talk-%28basic%29',
 					fields: {
 						server: {
@@ -169,7 +171,7 @@ export default {
 				},
 				matrix: {
 					name: 'Matrix',
-					iconClass: 'icon-matrix',
+					iconUrl: imagePath('spreed', 'bridge-services/matrix.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#matrix',
 					fields: {
 						server: {
@@ -196,7 +198,7 @@ export default {
 				},
 				mattermost: {
 					name: 'Mattermost',
-					iconClass: 'icon-mattermost',
+					iconUrl: imagePath('spreed', 'bridge-services/mattermost.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#mattermost',
 					fields: {
 						server: {
@@ -228,7 +230,7 @@ export default {
 				},
 				rocketchat: {
 					name: 'Rocket.Chat',
-					iconClass: 'icon-rocketchat',
+					iconUrl: imagePath('spreed', 'bridge-services/rocketchat.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#rocketchat',
 					fields: {
 						server: {
@@ -255,7 +257,7 @@ export default {
 				},
 				zulip: {
 					name: 'Zulip',
-					iconClass: 'icon-zulip',
+					iconUrl: imagePath('spreed', 'bridge-services/zulip.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#zulip',
 					fields: {
 						server: {
@@ -282,7 +284,7 @@ export default {
 				},
 				slack: {
 					name: 'Slack',
-					iconClass: 'icon-slack',
+					iconUrl: imagePath('spreed', 'bridge-services/slack.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Slack-bot-setup',
 					fields: {
 						token: {
@@ -299,7 +301,7 @@ export default {
 				},
 				discord: {
 					name: 'Discord',
-					iconClass: 'icon-discord',
+					iconUrl: imagePath('spreed', 'bridge-services/discord.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Discord-bot-setup',
 					fields: {
 						token: {
@@ -321,7 +323,7 @@ export default {
 				},
 				telegram: {
 					name: 'Telegram',
-					iconClass: 'icon-telegram',
+					iconUrl: imagePath('spreed', 'bridge-services/telegram.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#telegram',
 					fields: {
 						token: {
@@ -338,7 +340,7 @@ export default {
 				},
 				steam: {
 					name: 'Steam',
-					iconClass: 'icon-steam',
+					iconUrl: imagePath('spreed', 'bridge-services/steam.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#steam',
 					fields: {
 						login: {
@@ -360,7 +362,7 @@ export default {
 				},
 				irc: {
 					name: 'IRC',
-					iconClass: 'icon-irc',
+					iconUrl: imagePath('spreed', 'bridge-services/irc.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#irc',
 					fields: {
 						server: {
@@ -414,7 +416,7 @@ export default {
 				},
 				msteams: {
 					name: 'Microsoft Teams',
-					iconClass: 'icon-msteams',
+					iconUrl: imagePath('spreed', 'bridge-services/msteams.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/MS-Teams-setup',
 					fields: {
 						tenantid: {
@@ -441,7 +443,7 @@ export default {
 				},
 				xmpp: {
 					name: 'XMPP/Jabber',
-					iconClass: 'icon-xmpp',
+					iconUrl: imagePath('spreed', 'bridge-services/xmpp.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#xmpp',
 					fields: {
 						server: {
@@ -501,7 +503,7 @@ export default {
 				return {
 					displayName: t.name,
 					type: k,
-					icon: t.iconClass + ' icon-multiselect-service',
+					iconUrl: t.iconUrl,
 				}
 			})
 		},
@@ -608,75 +610,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .icon-slack {
-	mask: url('./../../../../img/bridge-services/slack.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/slack.svg') no-repeat;
-}
-
-::v-deep .icon-matrix {
-	mask: url('./../../../../img/bridge-services/matrix.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/matrix.svg') no-repeat;
-}
-
-::v-deep .icon-nctalk {
-	mask: url('./../../../../img/app-dark.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/app-dark.svg') no-repeat;
-}
-
-::v-deep .icon-mattermost {
-	mask: url('./../../../../img/bridge-services/mattermost.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/mattermost.svg') no-repeat;
-}
-
-::v-deep .icon-rocketchat {
-	mask: url('./../../../../img/bridge-services/rocketchat.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/rocketchat.svg') no-repeat;
-}
-
-::v-deep .icon-zulip {
-	mask: url('./../../../../img/bridge-services/zulip.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/zulip.svg') no-repeat;
-}
-
-::v-deep .icon-discord {
-	mask: url('./../../../../img/bridge-services/discord.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/discord.svg') no-repeat;
-}
-
-::v-deep .icon-telegram {
-	mask: url('./../../../../img/bridge-services/telegram.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/telegram.svg') no-repeat;
-}
-
-::v-deep .icon-steam {
-	mask: url('./../../../../img/bridge-services/steam.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/steam.svg') no-repeat;
-}
-
-::v-deep .icon-irc {
-	mask: url('./../../../../img/bridge-services/irc.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/irc.svg') no-repeat;
-}
-
-::v-deep .icon-msteams {
-	mask: url('./../../../../img/bridge-services/msteams.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/msteams.svg') no-repeat;
-}
-
-::v-deep .icon-xmpp {
-	mask: url('./../../../../img/bridge-services/xmpp.svg') no-repeat;
-	-webkit-mask: url('./../../../../img/bridge-services/xmpp.svg') no-repeat;
-}
-
 ::v-deep .icon-multiselect-service {
-	background-color: var(--color-main-text);
-	padding: 0 !important;
-	mask-position: center;
-	mask-size: 16px auto;
-	-webkit-mask-position: center;
-	-webkit-mask-size: 16px auto;
-	min-width: 32px !important;
-	min-height: 32px !important;
+	width: 16px !important;
+	height: 16px !important;
+	margin-right: 10px;
+}
+
+body.theme--dark .icon-multiselect-service {
+	-webkit-filter: invert(1);
+	filter: invert(1);
 }
 
 .matterbridge-settings {
