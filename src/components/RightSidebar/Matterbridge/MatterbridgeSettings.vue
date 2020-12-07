@@ -56,12 +56,6 @@
 						</template>
 					</Multiselect>
 				</div>
-				<ActionButton
-					v-if="canSave"
-					icon="icon-checkmark"
-					@click="onSave">
-					{{ t('spreed', 'Save') }}
-				</ActionButton>
 				<div class="enable-switch-line">
 					<ActionCheckbox
 						:token="token"
@@ -81,6 +75,13 @@
 						</div>
 					</Modal>
 				</div>
+				<button
+					v-if="canSave"
+					class="save-changes"
+					@click="onSave">
+					<span class="icon-checkmark" />
+					{{ t('spreed', 'Save') }}
+				</button>
 			</div>
 			<ul>
 				<li v-for="(part, i) in parts" :key="part.type + i">
@@ -106,7 +107,6 @@ import {
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
@@ -119,7 +119,6 @@ export default {
 	name: 'MatterbridgeSettings',
 	components: {
 		ActionCheckbox,
-		ActionButton,
 		Multiselect,
 		BridgePart,
 		Modal,
@@ -669,9 +668,13 @@ body.theme--dark .icon-multiselect-service {
 		.action {
 			list-style: none;
 		}
-		button {
-			width: calc(100% - 40px);
-			margin-left: 40px;
+		.save-changes {
+			width: 100%;
+			text-align: left;
+
+			.icon-checkmark {
+				margin: 0 10px 0 2px;
+			}
 		}
 		.multiselect {
 			width: calc(100% - 44px);
