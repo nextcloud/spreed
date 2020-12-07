@@ -56,7 +56,8 @@
 						</template>
 					</Multiselect>
 				</div>
-				<div class="enable-switch-line">
+				<div v-show="parts.length > 0"
+					class="enable-switch-line">
 					<input
 						id="enable-checkbox"
 						type="checkbox"
@@ -571,6 +572,9 @@ export default {
 			this.onSave()
 		},
 		onSave() {
+			if (this.parts.length === 0) {
+				this.enabled = false
+			}
 			this.editBridge(this.token, this.enabled, this.parts)
 		},
 		async getBridge(token) {
