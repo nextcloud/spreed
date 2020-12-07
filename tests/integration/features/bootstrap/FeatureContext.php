@@ -30,7 +30,6 @@ use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
-use OCA\Talk\Room;
 
 /**
  * Defines application features from the specific context.
@@ -316,13 +315,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
 					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
 				}
+				if (isset($attendee['participantType'])) {
+					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
+				}
 				return $attendee;
 			}, $formData->getHash());
 
 			usort($expected, [$this, 'sortAttendees']);
 			usort($result, [$this, 'sortAttendees']);
 
-			Assert::assertEquals($result, $expected);
+			Assert::assertEquals($expected, $result);
 		} else {
 			Assert::assertNull($formData);
 		}
@@ -336,6 +338,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $a1['actorType'] <=> $a2['actorType'];
 		}
 		return $a1['actorId'] <=> $a2['actorId'];
+	}
+
+	private function mapParticipantTypeTestInput($participantType) {
+		if (is_int($participantType)) {
+			return $participantType;
+		}
+
+		switch ($participantType) {
+			case 'OWNER': return 1;
+			case 'MODERATOR': return 2;
+			case 'USER': return 3;
+			case 'GUEST': return 4;
+			case 'USER_SELF_JOINED': return 5;
+			case 'GUEST_MODERATOR': return 6;
+		}
+
+		Assert::fail('Invalid test input value for participant type');
 	}
 
 	/**
@@ -809,16 +828,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userChangesListableScopeOfTheRoom($user, $identifier, $newState, $statusCode, $apiVersion = 'v3') {
 		$this->setCurrentUser($user);
 		if ($newState === 'none') {
-			$newStateValue = Room::LISTABLE_NONE;
+			$newStateValue = 0; // Room::LISTABLE_NONE
 		} elseif ($newState === 'users') {
-			$newStateValue = Room::LISTABLE_USERS;
+			$newStateValue = 1; // Room::LISTABLE_USERS
+		} elseif ($newState === 'all') {
+			$newStateValue = 2; // Room::LISTABLE_ALL
 		} else {
-			$newStateValue = Room::LISTABLE_ALL;
+			Assert::fail('Invalid listable scope value');
 		}
 
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/listable',
-			new TableNode([['state', $newStateValue]])
+			new TableNode([['scope', $newStateValue]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -1511,9 +1532,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function addingUserToGroup($user, $group) {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
-		$this->response = $this->sendRequest('POST', "/cloud/users/$user/groups", [
+		$this->sendRequest('POST', "/cloud/users/$user/groups", [
 			'groupid' => $group,
 		]);
+		$this->assertStatusCode($this->response, 200);
 		$this->setCurrentUser($currentUser);
 	}
 
