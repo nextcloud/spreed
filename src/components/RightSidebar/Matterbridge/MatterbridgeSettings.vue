@@ -61,10 +61,11 @@
 						:token="token"
 						:checked="enabled"
 						@update:checked="onEnabled">
-						{{ enabled ? t('spreed', 'Enabled') : t('spreed', 'Disabled') }}
+						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</ActionCheckbox>
 					<button
+						v-if="enabled"
 						v-tooltip.top="{ content: t('spreed', 'Show matterbridge log') }"
 						class="icon icon-edit"
 						@click="showLogContent" />
