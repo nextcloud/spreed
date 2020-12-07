@@ -659,7 +659,7 @@ OC.L10N.register(
     "Conversation password has been removed" : "Passwort für diese Unterhaltung wurde entfernt",
     "Error occurred while saving conversation password" : "Es ist ein Fehler beim speichern des Passworts für die Unterhaltung aufgetreten",
     "Error occurred while allowing guests" : "Beim Zulassen von Gästen ist ein Fehler aufgetreten",
-    "Error occurred while disallowing guests" : "Beim Nichtzulassen von Gästen ist ein Fehler aufgetreten",
+    "Error occurred while disallowing guests" : "Fehler beim Nichtzulassen von Gästen",
     "Locking the conversation prevents anyone to post messages or start calls." : "Die Unterhaltung zu sperren hindert alle daran, Nachrichten zu posten oder Anrufe zu beginnen.",
     "Lock conversation" : "Unterhaltung sperren",
     "Enabling the lobby only allows moderators to post messages." : "Nach dem Aktivieren der Lobby können nur Moderatoren Nachrichten veröffentlichen.",

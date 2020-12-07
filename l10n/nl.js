@@ -728,6 +728,7 @@ OC.L10N.register(
     "Nickname" : "Roepnaam",
     "Connection password" : "Verbinding wachtwoord",
     "IRC channel" : "IRC kanaal",
+    "Channel password" : "Kanaal password",
     "NickServ nickname" : "NickServ nickname",
     "NickServ password" : "NickServ wachtwoord",
     "Use TLS" : "Gebruik TLS",
