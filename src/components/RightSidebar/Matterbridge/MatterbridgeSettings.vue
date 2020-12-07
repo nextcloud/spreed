@@ -57,13 +57,17 @@
 					</Multiselect>
 				</div>
 				<div class="enable-switch-line">
-					<ActionCheckbox
+					<input
+						id="enable-checkbox"
+						type="checkbox"
+						class="checkbox"
 						:token="token"
 						:checked="enabled"
-						@update:checked="onEnabled">
+						@change="onEnabled">
+					<label for="enable-checkbox">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
-					</ActionCheckbox>
+					</label>
 					<button
 						v-if="enabled"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
@@ -107,7 +111,6 @@ import {
 } from '../../../services/matterbridgeService'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
@@ -119,7 +122,6 @@ Vue.directive('tooltip', Tooltip)
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
-		ActionCheckbox,
 		Multiselect,
 		BridgePart,
 		Modal,
@@ -564,8 +566,8 @@ export default {
 			this.parts[i].editing = !this.parts[i].editing
 			this.canSave = true
 		},
-		onEnabled(checked) {
-			this.enabled = checked
+		onEnabled(e) {
+			this.enabled = e.target.checked
 			this.onSave()
 		},
 		onSave() {
@@ -581,7 +583,7 @@ export default {
 				this.processLog = bridge.log
 				this.processRunning = bridge.running
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 			this.loading = false
 		},
@@ -597,7 +599,7 @@ export default {
 				showSuccess(t('spreed', 'Bridge saved'))
 				this.canSave = false
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 			this.loading = false
 		},
@@ -607,7 +609,7 @@ export default {
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 		},
 		showLogContent() {
@@ -703,9 +705,15 @@ body.theme--dark .icon-multiselect-service {
 		}
 		.enable-switch-line {
 			display: flex;
+			height: 44px;
 
-			.action {
+			label {
 				flex-grow: 1;
+				margin-top: auto;
+				margin-bottom: auto;
+				&::before {
+					margin: 0 10px 0 15px;
+				}
 			}
 			button {
 				opacity: 0.5;
