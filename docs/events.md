@@ -12,12 +12,6 @@ Explanations:
 * Event name: `OCA\Talk\Controller\RoomController::EVENT_BEFORE_ROOMS_GET`
 * Since: 8.0.0
 
-### Search listed conversations
-
-* Event class: `OCA\Talk\Events\UserEvent`
-* Event name: `OCA\Talk\Controller\RoomController::EVENT_BEFORE_LISTED_ROOMS_GET`
-* Since: 11.0.0
-
 ### Create conversation
 
 * Event class: `OCA\Talk\Events\RoomEvent`

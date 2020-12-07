@@ -68,7 +68,6 @@ use OCP\UserStatus\IUserStatus;
 
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
-	public const EVENT_BEFORE_LISTED_ROOMS_GET = self::class . '::preGetListedRooms';
 
 	/** @var string|null */
 	protected $userId;
@@ -230,7 +229,6 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function getListedRooms(string $searchTerm = ''): DataResponse {
 		$event = new UserEvent($this->userId);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_LISTED_ROOMS_GET, $event);
 
 		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
 

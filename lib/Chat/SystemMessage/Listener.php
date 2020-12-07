@@ -232,11 +232,11 @@ class Listener {
 
 				$userJoinedFileRoom = $room->getObjectType() === 'file' && $participantType !== Participant::USER_SELF_JOINED;
 
-				// add a message "X joined the conversaion", whenever user $userId:
+				// add a message "X joined the conversation", whenever user $userId:
 				if (
 					// - has joined a file room but not through a public link
 					$userJoinedFileRoom
-					// - has been added by another user
+					// - has been added by another user (and not when creating a conversation)
 					|| $listener->getUserId() !== $participant['actorId']
 					// - has joined a listable room on their own
 					|| $participantType === Participant::USER) {
