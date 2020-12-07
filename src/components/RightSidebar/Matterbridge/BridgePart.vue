@@ -54,6 +54,7 @@
 			<div v-if="field.type === 'checkbox'" class="checkbox-container">
 				<input
 					:id="key + '-' + num"
+					:ref="key"
 					v-model="part[key]"
 					:type="field.type"
 					:class="classesOf(key)"
@@ -68,6 +69,7 @@
 				</label>
 				<input
 					:id="key + '-' + num"
+					:ref="key"
 					v-model="part[key]"
 					:type="field.type"
 					:class="classesOf(key)"
@@ -127,6 +129,16 @@ export default {
 	computed: {
 	},
 
+	mounted() {
+		this.focusMainField()
+	},
+
+	watch: {
+		editing() {
+			this.focusMainField()
+		},
+	},
+
 	methods: {
 		classesOf(name) {
 			const classes = {
@@ -137,6 +149,13 @@ export default {
 		},
 		onEditClick() {
 			this.$emit('edit-clicked')
+		},
+		// focus on main field when entering edition mode and when created
+		focusMainField() {
+			if (this.editing && this.$refs[this.type.mainField] && this.$refs[this.type.mainField].length > 0) {
+				this.$refs[this.type.mainField][0].focus()
+				this.$refs[this.type.mainField][0].select()
+			}
 		},
 	},
 }

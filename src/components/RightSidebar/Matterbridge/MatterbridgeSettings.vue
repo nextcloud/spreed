@@ -167,6 +167,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				matrix: {
 					name: 'Matrix',
@@ -194,6 +195,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				mattermost: {
 					name: 'Mattermost',
@@ -226,6 +228,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				rocketchat: {
 					name: 'Rocket.Chat',
@@ -253,6 +256,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				zulip: {
 					name: 'Zulip',
@@ -280,6 +284,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				slack: {
 					name: 'Slack',
@@ -297,6 +302,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'channel',
 				},
 				discord: {
 					name: 'Discord',
@@ -319,6 +325,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				telegram: {
 					name: 'Telegram',
@@ -336,6 +343,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'chatid',
 				},
 				steam: {
 					name: 'Steam',
@@ -358,6 +366,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'chatid',
 				},
 				irc: {
 					name: 'IRC',
@@ -412,6 +421,7 @@ export default {
 							labelText: t('spreed', 'Skip TLS verification'),
 						},
 					},
+					mainField: 'channel',
 				},
 				msteams: {
 					name: 'Microsoft Teams',
@@ -439,6 +449,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'threadid',
 				},
 				xmpp: {
 					name: 'XMPP/Jabber',
@@ -476,6 +487,7 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'channel',
 				},
 			},
 			newPartPlaceholder: t('spreed', 'Add new bridged channel to current room'),
