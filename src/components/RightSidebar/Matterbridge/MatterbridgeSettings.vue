@@ -66,7 +66,7 @@
 					</ActionCheckbox>
 					<button
 						v-if="enabled"
-						v-tooltip.top="{ content: t('spreed', 'Show matterbridge log') }"
+						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
 						class="icon icon-edit"
 						@click="showLogContent" />
 					<Modal v-if="logModal"

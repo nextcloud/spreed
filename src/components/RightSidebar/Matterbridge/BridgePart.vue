@@ -28,6 +28,14 @@
 				{{ type.name }}
 			</span>
 			<Actions
+				:force-menu="false">
+				<ActionButton
+					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
+					@click="onEditClick">
+					{{ editing ? t('spreed', 'Ok'): t('spreed', 'Edit') }}
+				</ActionButton>
+			</Actions>
+			<Actions
 				:force-menu="true"
 				placement="bottom">
 				<ActionLink
@@ -37,12 +45,6 @@
 					:href="type.infoTarget"
 					:close-after-click="true" />
 				<ActionButton
-					icon="icon-rename"
-					:close-after-click="true"
-					@click="onEditClick">
-					{{ editing ? t('spreed', 'End edition'): t('spreed', 'Edit') }}
-				</ActionButton>
-				<ActionButton
 					icon="icon-delete"
 					:close-after-click="true"
 					@click="$emit('delete-part')">
@@ -50,7 +52,7 @@
 				</ActionButton>
 			</Actions>
 		</h3>
-		<div v-for="(field, key) in type.fields" :key="key">
+		<div v-for="(field, key) in displayedFields" :key="key">
 			<div v-if="field.type === 'checkbox'" class="checkbox-container">
 				<input
 					:id="key + '-' + num"
@@ -127,6 +129,17 @@ export default {
 	},
 
 	computed: {
+		displayedFields() {
+			if (this.editing) {
+				return this.type.fields
+			} else {
+				const fields = {}
+				if (this.type.fields[this.type.mainField]) {
+					fields[this.type.mainField] = this.type.fields[this.type.mainField]
+				}
+				return fields
+			}
+		},
 	},
 
 	mounted() {
