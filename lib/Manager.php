@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -56,6 +57,8 @@ class Manager {
 	private $config;
 	/** @var Config */
 	private $talkConfig;
+	/** @var IAppManager */
+	private $appManager;
 	/** @var AttendeeMapper */
 	private $attendeeMapper;
 	/** @var SessionMapper */
@@ -84,6 +87,7 @@ class Manager {
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								Config $talkConfig,
+								IAppManager $appManager,
 								AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								ParticipantService $participantService,
@@ -99,6 +103,7 @@ class Manager {
 		$this->db = $db;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
+		$this->appManager = $appManager;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->participantService = $participantService;
@@ -1009,7 +1014,10 @@ class Manager {
 	 * @return bool true if the user is a guest, false otherwise
 	 */
 	public function isGuestUser(string $userId): bool {
-		// FIXME: retrieve guest group name from app ?
+		if (!$this->appManager->isEnabledForUser('guests')) {
+			return false;
+		}
+		// TODO: retrieve guest group name from app once exposed
 		return $this->groupManager->isInGroup($userId, 'guest_app');
 	}
 

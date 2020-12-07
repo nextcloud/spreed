@@ -176,7 +176,9 @@ class ParticipantService {
 				($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) && (
 					// this check should have happened earlier already but let's stay defensive
 					$room->getListable() === Room::LISTABLE_ALL || (
-						$room->getListable() === Room::LISTABLE_USERS && !$this->groupManager->isInGroup($user->getUID(), 'guest_app')
+						$room->getListable() === Room::LISTABLE_USERS &&
+						// queried here to avoid loop deps
+						!\OC::$server->query(\OC\Talk\Manager::class)->isGuestUser($user->getUID())
 					)
 				)
 			) {
