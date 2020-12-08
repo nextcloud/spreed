@@ -245,7 +245,7 @@ class ParticipantService {
 		foreach ($participants as $participant) {
 			$readPrivacy = Participant::PRIVACY_PUBLIC;
 			if ($participant['actorType'] === Attendee::ACTOR_USERS) {
-				$readPrivacy = (int) $this->serverConfig->getUserValue($participant['actorId'], 'spreed', 'read_status_privacy', (string) Participant::PRIVACY_PUBLIC);
+				$readPrivacy = $this->talkConfig->getUserReadPrivacy($participant['actorId']);
 			}
 
 			$attendee = new Attendee();

@@ -27,6 +27,7 @@ namespace OCA\Talk\Tests\Unit;
 
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
+use OCA\Talk\Participant;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;
@@ -100,6 +101,7 @@ class CapabilitiesTest extends TestCase {
 					'circles-support',
 					'force-mute',
 					'sip-support',
+					'chat-read-status',
 				],
 				'config' => [
 					'attachments' => [
@@ -107,6 +109,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'chat' => [
 						'max-length' => 32000,
+						'read-privacy' => 0,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -121,8 +124,8 @@ class CapabilitiesTest extends TestCase {
 
 	public function dataGetCapabilitiesUserAllowed(): array {
 		return [
-			[true, false],
-			[false, true],
+			[true, false, Participant::PRIVACY_PRIVATE],
+			[false, true, Participant::PRIVACY_PUBLIC],
 		];
 	}
 
@@ -130,8 +133,9 @@ class CapabilitiesTest extends TestCase {
 	 * @dataProvider dataGetCapabilitiesUserAllowed
 	 * @param bool $isNotAllowed
 	 * @param bool $canCreate
+	 * @param int $readPrivacy
 	 */
-	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate): void {
+	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, int $readPrivacy): void {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -139,7 +143,7 @@ class CapabilitiesTest extends TestCase {
 		);
 
 		$user = $this->createMock(IUser::class);
-		$user->expects($this->once())
+		$user->expects($this->atLeastOnce())
 			->method('getUID')
 			->willReturn('uid');
 		$this->userSession->expects($this->once())
@@ -160,6 +164,11 @@ class CapabilitiesTest extends TestCase {
 			->method('isNotAllowedToCreateConversations')
 			->with($user)
 			->willReturn($isNotAllowed);
+
+		$this->talkConfig->expects($this->once())
+			->method('getUserReadPrivacy')
+			->with('uid')
+			->willReturn($readPrivacy);
 
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
@@ -197,6 +206,7 @@ class CapabilitiesTest extends TestCase {
 					'circles-support',
 					'force-mute',
 					'sip-support',
+					'chat-read-status',
 					'chat-reference-id',
 				],
 				'config' => [
@@ -206,6 +216,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'chat' => [
 						'max-length' => 32000,
+						'read-privacy' => $readPrivacy,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,

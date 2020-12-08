@@ -89,7 +89,7 @@ trait TInitialState {
 
 		$this->initialStateService->provideInitialState(
 			'talk', 'read_status_privacy',
-			(int) $this->serverConfig->getUserValue($user->getUID(), 'spreed', 'read_status_privacy', (string) Participant::PRIVACY_PUBLIC)
+			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
 
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
