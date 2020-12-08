@@ -69,6 +69,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected $createdGroups = [];
 
 	/** @var array */
+	protected $createdGuestAccountUsers = [];
+
+	/** @var array */
 	protected $changedConfigs = [];
 
 	/** @var SharingContext */
@@ -100,6 +103,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
+		$this->createdGuestAccountUsers = [];
 	}
 
 	/**
@@ -120,6 +124,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		foreach ($this->createdGroups as $group) {
 			$this->deleteGroup($group);
+		}
+		foreach ($this->createdGuestAccountUsers as $user) {
+			$this->deleteUser($user);
 		}
 	}
 
@@ -1416,6 +1423,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$response = $this->userExists($user);
 			$this->assertStatusCode($response, 200);
 		}
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" is a guest account user/
+	 * @param string $user
+	 */
+	public function createGuestUser($user) {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('POST', '/apps/spreedcheats/guest-users', [
+			'userid' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->createdGuestAccountUsers[] = $user;
+		$this->setCurrentUser($currentUser);
 	}
 
 	private function userExists($user) {

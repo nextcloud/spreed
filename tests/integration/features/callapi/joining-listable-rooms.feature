@@ -2,8 +2,7 @@ Feature: callapi/listable-rooms
   Background:
     Given user "creator" exists
     And user "regular-user" exists
-    And user "user-guest" exists
-    And user "user-guest" is member of group "guest_app"
+    And user "user-guest" is a guest account user
     # implicit: And user "guest" is a guest user with no account
 
   # -----------------------------------------------------------------------------

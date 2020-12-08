@@ -74,4 +74,22 @@ class ApiController extends OCSController {
 
 		return new DataResponse();
 	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function createGuestAppUser($userid): DataResponse {
+		$guestAppContainer =\OC::$server->getRegisteredAppContainer('guests');
+		$guestManager = $guestAppContainer->query('\OCA\Guests\GuestManager');
+		$guestManager->createGuest(
+			\OC::$server->getUserSession()->getUser(),
+			$userid,
+			$userid . '@localhost',
+			$userid . '-displayname'
+		);
+
+		return new DataResponse();
+	}
 }
