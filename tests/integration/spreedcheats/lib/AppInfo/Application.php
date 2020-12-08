@@ -1,8 +1,8 @@
 <?php
+
+declare(strict_types=1);
 /**
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,4 +21,23 @@
  *
  */
 
-new \OCP\AppFramework\App('spreedcheats');
+namespace OCA\SpreedCheats\AppInfo;
+
+use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
+
+class Application extends App implements IBootstrap {
+	public const APP_ID = 'spreedcheats';
+	
+	public function __construct() {
+		parent::__construct(self::APP_ID);
+	}
+
+	public function register(IRegistrationContext $context): void {
+	}
+
+	public function boot(IBootContext $context): void {
+	}
+}

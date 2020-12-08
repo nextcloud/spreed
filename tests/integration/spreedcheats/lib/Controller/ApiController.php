@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -34,12 +36,9 @@ class ApiController extends OCSController {
 	/** @var IDBConnection */
 	private $db;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IDBConnection $db
-	 */
-	public function __construct($appName, IRequest $request, IDBConnection $db) {
+	public function __construct(string $appName,
+								IRequest $request,
+								IDBConnection $db) {
 		parent::__construct($appName, $request);
 		$this->db = $db;
 	}
@@ -49,7 +48,7 @@ class ApiController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function resetSpreed() {
+	public function resetSpreed(): DataResponse {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')->execute();
 
