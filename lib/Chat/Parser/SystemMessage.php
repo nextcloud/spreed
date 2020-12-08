@@ -344,6 +344,16 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You removed the Matterbridge configuration.');
 			}
+		} elseif ($message === 'matterbridge_config_enabled') {
+			$parsedMessage = $this->l->t('{actor} started Matterbridge.');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You started Matterbridge.');
+			}
+		} elseif ($message === 'matterbridge_config_disabled') {
+			$parsedMessage = $this->l->t('{actor} stopped Matterbridge.');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You stopped Matterbridge.');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}

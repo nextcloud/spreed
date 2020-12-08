@@ -597,11 +597,15 @@ class MatterbridgeManager {
 	private function notify(Room $room, string $userId, array $currentBridge, array $newBridge): void {
 		$currentParts = $currentBridge['parts'];
 		$newParts = $newBridge['parts'];
-		if (empty($currentParts) && !empty($newParts)) {
+		if ($currentBridge['enabled'] && !$newBridge['enabled']) {
+			$this->sendSystemMessage($room, $userId, 'matterbridge_config_disabled');
+		} elseif (!$currentBridge['enabled'] && $newBridge['enabled']) {
+			$this->sendSystemMessage($room, $userId, 'matterbridge_config_enabled');
+		} elseif (empty($currentParts) && !empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_added');
 		} elseif (!empty($currentParts) && empty($newParts)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_removed');
-		} elseif (empty($currentParts) !== empty($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
+		} elseif (count($currentParts) !== count($newParts) || !$this->compareBridges($currentBridge, $newBridge)) {
 			$this->sendSystemMessage($room, $userId, 'matterbridge_config_edited');
 		}
 	}
