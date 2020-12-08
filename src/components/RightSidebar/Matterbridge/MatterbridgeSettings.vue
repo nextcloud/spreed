@@ -37,7 +37,8 @@
 				</p>
 			</div>
 			<div class="basic-settings">
-				<div class="add-part-wrapper">
+				<div v-show="!enabled"
+					class="add-part-wrapper">
 					<span class="icon icon-add" />
 					<Multiselect
 						ref="partMultiselect"
@@ -81,13 +82,6 @@
 						</div>
 					</Modal>
 				</div>
-				<button
-					v-if="canSave"
-					class="save-changes"
-					@click="onSave">
-					<span class="icon-checkmark" />
-					{{ t('spreed', 'Save') }}
-				</button>
 			</div>
 			<ul>
 				<li v-for="(part, i) in parts" :key="part.type + i">
@@ -96,6 +90,7 @@
 						:part="part"
 						:type="types[part.type]"
 						:editing="part.editing"
+						:editable="!enabled"
 						@edit-clicked="onEditClicked(i)"
 						@delete-part="onDelete(i)" />
 				</li>
@@ -139,7 +134,6 @@ export default {
 			enabled: false,
 			parts: [],
 			loading: false,
-			canSave: false,
 			processRunning: null,
 			processLog: '',
 			logModal: false,
@@ -557,21 +551,22 @@ export default {
 			}
 			this.parts.unshift(newPart)
 			this.selectedType = null
-			this.canSave = true
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
-			this.canSave = true
+			this.save()
 		},
 		onEditClicked(i) {
 			this.parts[i].editing = !this.parts[i].editing
-			this.canSave = true
+			if (!this.parts[i].editing) {
+				this.save()
+			}
 		},
 		onEnabled(e) {
 			this.enabled = e.target.checked
-			this.onSave()
+			this.save()
 		},
-		onSave() {
+		save() {
 			if (this.parts.length === 0) {
 				this.enabled = false
 			}
@@ -601,7 +596,6 @@ export default {
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
 				showSuccess(t('spreed', 'Bridge saved'))
-				this.canSave = false
 			} catch (exception) {
 				console.error(exception)
 			}

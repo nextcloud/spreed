@@ -29,10 +29,10 @@
 			</span>
 			<Actions
 				:force-menu="false">
-				<ActionButton
+				<ActionButton v-if="editable"
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
-					{{ editing ? t('spreed', 'Validate'): t('spreed', 'Edit') }}
+					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
 				</ActionButton>
 			</Actions>
 			<Actions
@@ -44,7 +44,7 @@
 					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
 					:close-after-click="true" />
-				<ActionButton
+				<ActionButton v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"
 					@click="$emit('delete-part')">
@@ -112,13 +112,13 @@ export default {
 			type: Object,
 			required: true,
 		},
-		deletable: {
-			type: Boolean,
-			default: true,
-		},
 		editing: {
 			type: Boolean,
 			default: false,
+		},
+		editable: {
+			type: Boolean,
+			default: true,
 		},
 	},
 
