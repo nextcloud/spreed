@@ -279,6 +279,17 @@ const actions = {
 		commit('addConversation', conversation)
 	},
 
+	async updateLastCommonReadMessage({ commit, getters }, { token, lastCommonReadMessage }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		conversation.lastCommonReadMessage = lastCommonReadMessage
+
+		commit('addConversation', conversation)
+	},
+
 	async updateConversationLastActive({ commit, getters }, token) {
 		const conversation = Object.assign({}, getters.conversations[token])
 		if (!conversation) {

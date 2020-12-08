@@ -59,6 +59,16 @@ the main body of the message as well as a quote.
 			<div class="message__main__right">
 				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
 				<span v-if="hasDate" v-tooltip.auto="messageDate">{{ messageTime }}</span>
+				<CheckAll
+					v-if="showCommonReadIcon"
+					decorative
+					title=""
+					:size="16" />
+				<Check
+					v-else-if="showSentIcon"
+					decorative
+					title=""
+					:size="16" />
 				<Actions
 					v-show="showActions && hasActions"
 					class="message__main__right__actions">
@@ -84,6 +94,8 @@ import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import RichText from '@juliushaertl/vue-richtext'
+import Check from 'vue-material-design-icons/Check'
+import CheckAll from 'vue-material-design-icons/CheckAll'
 import Quote from '../../../Quote'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
@@ -104,6 +116,8 @@ export default {
 		CallButton,
 		Quote,
 		RichText,
+		Check,
+		CheckAll,
 	},
 
 	mixins: [
@@ -228,8 +242,7 @@ export default {
 		},
 
 		isConversationReadOnly() {
-			const conversation = this.$store.getters.conversation(this.token)
-			return conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isSystemMessage() {
@@ -250,6 +263,18 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token)
+		},
+
+		showCommonReadIcon() {
+			return this.conversation.lastCommonReadMessage >= this.id
+				&& this.showSentIcon
+		},
+
+		showSentIcon() {
+			return !this.isSystemMessage
+				&& !this.isTemporary
+				&& this.actorType === this.participant.actorType
+				&& this.actorId === this.participant.actorId
 		},
 
 		messagesList() {
