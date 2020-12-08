@@ -281,10 +281,10 @@ class MatterbridgeManager {
 	 * and to generate a new app token (used to connect via matterbridge)
 	 *
 	 * @param Room $room the room
-	 * @param bool $create whether we should generate a new app token or not
+	 * @param bool $isBridgeEnabled whether we should add the bot and generate a new app token or remove the bot from the room
 	 * @return array Bot user information (username and app token). token is an empty string if creation was not asked.
 	 */
-	private function checkBotUser(Room $room, bool $create): array {
+	private function checkBotUser(Room $room, bool $isBridgeEnabled): array {
 		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
@@ -299,15 +299,20 @@ class MatterbridgeManager {
 			$botUser = $this->userManager->get($botUserId);
 		}
 
-		// check user is member of the room
+		// check if the bot user is member of the room and add or remove it
 		try {
 			$participant = $room->getParticipant($botUserId);
+			if (!$isBridgeEnabled) {
+				$this->participantService->removeUser($room, $botUser, Room::PARTICIPANT_REMOVED);
+			}
 		} catch (ParticipantNotFoundException $e) {
-			$this->participantService->addUsers($room, [[
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $botUserId,
-				'participantType' => Participant::USER,
-			]]);
+			if ($isBridgeEnabled) {
+				$this->participantService->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $botUserId,
+					'participantType' => Participant::USER,
+				]]);
+			}
 		}
 
 		// delete old bot app tokens for this room
@@ -319,7 +324,7 @@ class MatterbridgeManager {
 			}
 		}
 
-		if ($create) {
+		if ($isBridgeEnabled) {
 			// generate app token for the bot
 			$appToken = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
 			$botPassword = $this->config->getAppValue('spreed', 'bridge_bot_password', '');
