@@ -261,6 +261,17 @@ class ChatManager {
 	}
 
 	/**
+	 * Returns the ID of the last chat message, that was read by everyone
+	 * sharing their read status.
+	 *
+	 * @param Room $chat
+	 * @return int
+	 */
+	public function getLastCommonReadMessage(Room $chat): int {
+		return $this->participantService->getLastCommonReadChatMessage($chat);
+	}
+
+	/**
 	 * Receive the history of a chat
 	 *
 	 * @param Room $chat

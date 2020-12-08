@@ -106,6 +106,9 @@ class RoomController extends AEnvironmentAwareController {
 	/** @var Config */
 	protected $talkConfig;
 
+	/** @var array */
+	protected $commonReadMessages = [];
+
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
@@ -195,8 +198,14 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-
 		$rooms = $this->manager->getRoomsForUser($this->userId, true);
+		$readPrivacy = (int) $this->config->getUserValue($this->userId, 'spreed', 'read_status_privacy', (string) Participant::PRIVACY_PUBLIC);
+		if ($readPrivacy === Participant::PRIVACY_PUBLIC) {
+			$roomIds = array_map(static function (Room $room) {
+				return $room->getId();
+			}, $rooms);
+			$this->commonReadMessages = $this->participantService->getLastCommonReadChatMessageForMultipleRooms($roomIds);
+		}
 
 		$return = [];
 		foreach ($rooms as $room) {
@@ -549,6 +558,7 @@ class RoomController extends AEnvironmentAwareController {
 				'canEnableSIP' => false,
 				'attendeePin' => '',
 				'description' => '',
+				'lastCommonReadMessage' => 0,
 			]);
 		}
 
@@ -619,6 +629,14 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeeId' => $attendee->getId(),
 				'description' => $room->getDescription(),
 			]);
+
+			if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				if (isset($this->commonReadMessages[$room->getId()])) {
+					$roomData['lastCommonReadMessage'] = $this->commonReadMessages[$room->getId()];
+				} else {
+					$roomData['lastCommonReadMessage'] = $this->chatManager->getLastCommonReadMessage($room);
+				}
+			}
 		}
 
 		$session = $currentParticipant->getSession();

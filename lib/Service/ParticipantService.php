@@ -491,6 +491,46 @@ class ParticipantService {
 		$query->execute();
 	}
 
+	public function getLastCommonReadChatMessage(Room $room): int {
+		$query = $this->connection->getQueryBuilder();
+		$query->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')
+			->from('talk_attendees')
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (int) ($row['last_common_read_message'] ?? 0);
+	}
+
+	/**
+	 * @param int[] $roomIds
+	 * @return array A map of roomId => "last common read message id"
+	 * @psalm-return  array<int, int>
+	 */
+	public function getLastCommonReadChatMessageForMultipleRooms(array $roomIds): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('room_id')
+			->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')
+			->from('talk_attendees')
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->in('room_id', $query->createNamedParameter($roomIds, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)))
+			->groupBy('room_id');
+
+		$commonReads = array_fill_keys($roomIds, 0);
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$commonReads[(int) $row['room_id']] = (int) $row['last_common_read_message'];
+		}
+		$result->closeCursor();
+
+		return $commonReads;
+	}
+
 	/**
 	 * @param Room $room
 	 * @return Participant[]

@@ -57,6 +57,7 @@
         `unreadMessages` | int | * | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | * | Flag if the user was mentioned since their last visit
         `lastReadMessage` | int | * | ID of the last read message in a room (only available with `chat-read-marker` capability)
+        `lastCommonReadMessage` | int | v3 | ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
         `lastMessage` | message | * | Last message in a conversation if available, otherwise empty
         `objectType` | string | * | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
         `objectId` | string | * | Share token if "objectType" is "share:password", otherwise empty
