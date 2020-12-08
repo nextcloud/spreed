@@ -38,7 +38,7 @@
 		"lodash": "^4.17.20",
 		"mockconsole": "0.0.1",
 		"nextcloud-vue-collections": "^0.9.0",
-		"sdp-transform": "^2.14.0",
+		"sdp-transform": "^2.14.1",
 		"ua-parser-js": "^0.7.22",
 		"url-parse": "^1.4.7",
 		"util": "^0.12.3",
