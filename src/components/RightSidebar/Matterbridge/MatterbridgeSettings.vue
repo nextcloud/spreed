@@ -51,7 +51,7 @@
 						@input="clickAddPart">
 						<template #option="{option}">
 							<img class="icon-multiselect-service"
-								:src="option.iconUrl" />
+								:src="option.iconUrl">
 							{{ option.displayName }}
 						</template>
 					</Multiselect>

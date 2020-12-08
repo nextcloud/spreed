@@ -23,7 +23,7 @@
 	<div :class="{ part: true, readonly: !editing }">
 		<h3>
 			<img class="icon-service"
-				:src="type.iconUrl" />
+				:src="type.iconUrl">
 			<span>
 				{{ type.name }}
 			</span>
@@ -32,7 +32,7 @@
 				<ActionButton
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
-					{{ editing ? t('spreed', 'Ok'): t('spreed', 'Edit') }}
+					{{ editing ? t('spreed', 'Validate'): t('spreed', 'Edit') }}
 				</ActionButton>
 			</Actions>
 			<Actions
@@ -40,8 +40,8 @@
 				placement="bottom">
 				<ActionLink
 					icon="icon-info"
-					title="More information"
 					target="_blank"
+					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
 					:close-after-click="true" />
 				<ActionButton
@@ -142,14 +142,14 @@ export default {
 		},
 	},
 
-	mounted() {
-		this.focusMainField()
-	},
-
 	watch: {
 		editing() {
 			this.focusMainField()
 		},
+	},
+
+	mounted() {
+		this.focusMainField()
 	},
 
 	methods: {
