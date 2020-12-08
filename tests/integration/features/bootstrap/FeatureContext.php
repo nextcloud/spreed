@@ -155,30 +155,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private function assertRooms($rooms, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
-			$participantNames = array_map(function ($participant) {
-				return $participant['name'];
-			}, $room['participants']);
-
-			// When participants have the same last ping the order in which they
-			// are returned from the server is undefined. That is the most
-			// common case during the tests, so by default the list of
-			// participants returned by the server is sorted alphabetically. In
-			// order to check the exact order of participants returned by the
-			// server " [exact order]" can be appended in the test definition to
-			// the list of expected participants of the room.
-			if (strpos($expectedRoom['participants'], ' [exact order]') === false) {
-				sort($participantNames);
-			} else {
-				// "end(array_keys(..." would generate the Strict Standards
-				// error "Only variables should be passed by reference".
-				$participantNamesKeys = array_keys($participantNames);
-				$lastParticipantKey = end($participantNamesKeys);
-
-				// Append " [exact order]" to the last participant so the
-				// imploded string is the same as the expected one.
-				$participantNames[$lastParticipantKey] .= ' [exact order]';
-			}
-
 			$data = [];
 			if (isset($expectedRoom['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$room['token']];
@@ -199,7 +175,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['participantType'] = (string) $room['participantType'];
 			}
 			if (isset($expectedRoom['participants'])) {
+				$participantNames = array_map(function ($participant) {
+					return $participant['name'];
+				}, $room['participants']);
+
+				// When participants have the same last ping the order in which they
+				// are returned from the server is undefined. That is the most
+				// common case during the tests, so by default the list of
+				// participants returned by the server is sorted alphabetically. In
+				// order to check the exact order of participants returned by the
+				// server " [exact order]" can be appended in the test definition to
+				// the list of expected participants of the room.
+				if (strpos($expectedRoom['participants'], ' [exact order]') === false) {
+					sort($participantNames);
+				} else {
+					// "end(array_keys(..." would generate the Strict Standards
+					// error "Only variables should be passed by reference".
+					$participantNamesKeys = array_keys($participantNames);
+					$lastParticipantKey = end($participantNamesKeys);
+
+					// Append " [exact order]" to the last participant so the
+					// imploded string is the same as the expected one.
+					$participantNames[$lastParticipantKey] .= ' [exact order]';
+				}
 				$data['participants'] = implode(', ', $participantNames);
+			}
+			if (isset($expectedRoom['sipEnabled'])) {
+				$data['sipEnabled'] = (string) $room['sipEnabled'];
+			}
+			if (isset($expectedRoom['attendeePin'])) {
+				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
 
 			return $data;
@@ -255,6 +260,72 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following attendees in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode $formData
+	 */
+	public function userSeesAttendeesInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData instanceof TableNode) {
+			$attendees = $this->getDataFromResponse($this->response);
+			$expectedKeys = array_flip($formData->getRows()[0]);
+
+			$result = [];
+			foreach ($attendees as $attendee) {
+				$data = [];
+				if (isset($expectedKeys['actorType'])) {
+					$data['actorType'] = $attendee['actorType'];
+				}
+				if (isset($expectedKeys['actorId'])) {
+					$data['actorId'] = $attendee['actorId'];
+				}
+				if (isset($expectedKeys['participantType'])) {
+					$data['participantType'] = (string) $attendee['participantType'];
+				}
+				if (isset($expectedKeys['inCall'])) {
+					$data['inCall'] = (string) $attendee['inCall'];
+				}
+				if (isset($expectedKeys['attendeePin'])) {
+					$data['attendeePin'] = $attendee['attendeePin'] ? '**PIN**' : '';
+				}
+
+				$result[] = $data;
+			}
+
+			$expected = array_map(function ($attendee) {
+				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
+					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
+				}
+				return $attendee;
+			}, $formData->getHash());
+
+			usort($expected, [$this, 'sortAttendees']);
+			usort($result, [$this, 'sortAttendees']);
+
+			Assert::assertEquals($result, $expected);
+		} else {
+			Assert::assertNull($formData);
+		}
+	}
+
+	protected function sortAttendees(array $a1, array $a2): int {
+		if ($a1['participantType'] !== $a2['participantType']) {
+			return $a1['participantType'] <=> $a2['participantType'];
+		}
+		if ($a1['actorType'] !== $a2['actorType']) {
+			return $a1['actorType'] <=> $a2['actorType'];
+		}
+		return $a1['actorId'] <=> $a2['actorId'];
 	}
 
 	/**
@@ -625,13 +696,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$lobbyState = 1;
 		} else {
 			Assert::fail('Invalid lobby state');
-			return;
 		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinary/lobby',
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/lobby',
 			new TableNode([['state', $lobbyState]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $SIPStateString
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsSIPStateForRoomTo($user, $identifier, $SIPStateString, $statusCode, $apiVersion = 'v1') {
+		if ($SIPStateString === 'disabled') {
+			$SIPState = 0;
+		} elseif ($SIPStateString === 'enabled') {
+			$SIPState = 1;
+		} else {
+			Assert::fail('Invalid SIP state');
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/sip',
+			new TableNode([['state', $SIPState]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -686,6 +782,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
 			new TableNode([['newParticipant', $newUser]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle) "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $newType
+	 * @param string $newId
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userAddAttendeeToRoom($user, $newType, $newId, $identifier, $statusCode, $apiVersion = 'v1') {
+		var_dump($newType);
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
+			new TableNode([
+				['source', $newType . 's'],
+				['newParticipant', $newId],
+			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
