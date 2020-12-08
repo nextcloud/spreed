@@ -548,6 +548,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeeId' => 0,
 				'canEnableSIP' => false,
 				'attendeePin' => '',
+				'description' => '',
 			]);
 		}
 
@@ -616,6 +617,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorType' => $attendee->getActorType(),
 				'actorId' => $attendee->getActorId(),
 				'attendeeId' => $attendee->getId(),
+				'description' => $room->getDescription(),
 			]);
 		}
 
@@ -994,6 +996,27 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$this->room->setName($roomName);
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param string $description
+	 * @return DataResponse
+	 */
+	public function setDescription(string $description): DataResponse {
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->room->setDescription($description);
+		} catch (\LengthException $exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		return new DataResponse();
 	}
 

@@ -106,6 +106,20 @@ trait TRoomCommand {
 	}
 
 	/**
+	 * @param Room   $room
+	 * @param string $description
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function setRoomDescription(Room $room, string $description): void {
+		try {
+			$room->setDescription($description);
+		} catch (\LengthException $e) {
+			throw new InvalidArgumentException('Invalid room description.');
+		}
+	}
+
+	/**
 	 * @param Room $room
 	 * @param bool $public
 	 *

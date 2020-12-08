@@ -305,6 +305,30 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'active-since' => null,
+					'sip-enabled' => 0,
+				],
+			],
+		]);
+	}
+
+	public function testRoomDescriptionChanged() {
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room->setDescription('The description');
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'description' => 'The description',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
@@ -327,6 +351,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
@@ -349,6 +374,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
@@ -371,6 +397,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
@@ -393,6 +420,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NON_MODERATORS,
 					'lobby-timer' => null,
@@ -551,6 +579,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'properties' => [
 					'name' => $room->getDisplayName(''),
+					'description' => '',
 					'type' => $room->getType(),
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,

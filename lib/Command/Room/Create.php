@@ -46,6 +46,11 @@ class Create extends Base {
 				InputArgument::REQUIRED,
 				'The name of the room to create'
 			)->addOption(
+				'description',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'The description of the room to create'
+			)->addOption(
 				'user',
 				null,
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -85,6 +90,7 @@ class Create extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$name = $input->getArgument('name');
+		$description = $input->getOption('description');
 		$users = $input->getOption('user');
 		$groups = $input->getOption('group');
 		$public = $input->getOption('public');
@@ -105,6 +111,10 @@ class Create extends Base {
 		}
 
 		try {
+			if ($description !== null) {
+				$this->setRoomDescription($room, $description);
+			}
+
 			$this->setRoomReadOnly($room, $readonly);
 
 			if ($password !== null) {

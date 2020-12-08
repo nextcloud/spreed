@@ -68,6 +68,7 @@ class RoomTest extends TestCase {
 			null,
 			'foobar',
 			'Test',
+			'description',
 			'passy',
 			0,
 			null,

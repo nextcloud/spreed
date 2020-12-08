@@ -162,6 +162,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['name'])) {
 				$data['name'] = $room['name'];
 			}
+			if (isset($expectedRoom['description'])) {
+				$data['description'] = $room['description'];
+			}
 			if (isset($expectedRoom['type'])) {
 				$data['type'] = (string) $room['type'];
 			}
@@ -173,6 +176,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['participantType'])) {
 				$data['participantType'] = (string) $room['participantType'];
+			}
+			if (isset($expectedRoom['sipEnabled'])) {
+				$data['sipEnabled'] = (string) $room['sipEnabled'];
+			}
+			if (isset($expectedRoom['attendeePin'])) {
+				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
+			}
+			if (isset($expectedRoom['lastMessage'])) {
+				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
 			}
 			if (isset($expectedRoom['participants'])) {
 				$participantNames = array_map(function ($participant) {
@@ -199,12 +211,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$participantNames[$lastParticipantKey] .= ' [exact order]';
 				}
 				$data['participants'] = implode(', ', $participantNames);
-			}
-			if (isset($expectedRoom['sipEnabled'])) {
-				$data['sipEnabled'] = (string) $room['sipEnabled'];
-			}
-			if (isset($expectedRoom['attendeePin'])) {
-				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
 
 			return $data;
@@ -658,6 +664,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier],
 			new TableNode([['roomName', $newName]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sets description for room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $description
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode
+	 */
+	public function userSetsDescriptionForRoomTo($user, $identifier, $description, $statusCode, $apiVersion = 'v3') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' .$apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/description',
+			new TableNode([['description', $description]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

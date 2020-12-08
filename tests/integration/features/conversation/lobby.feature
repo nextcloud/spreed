@@ -210,3 +210,42 @@ Feature: conversation/lobby
     And user "guest2" joins room "room" with 200
     And user "participant2" removes themselves from room "room" with 200
     And user "participant3" removes themselves from room "room" with 200
+
+
+
+  # Not all the values are checked in the test, only the most relevant ones
+  Scenario: participants can get some room information when the lobby is active
+    Given user "participant1" creates room "room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" joins room "room" with 200
+    And user "participant2" joins room "room" with 200
+    And user "participant3" joins room "room" with 200
+    And user "participant4" joins room "room" with 200
+    And user "guest" joins room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200
+    And user "guest2" joins room "room" with 200
+    When user "participant1" sets lobby state for room "room" to "non moderators" with 200
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant1" sets description for room "room" to "the description" with 200
+    Then user "participant1" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage                                  |
+      | room | the description | 3    | 1               | You set the description to "the description" |
+    And user "participant2" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage                                      |
+      | room | the description | 3    | 2               | {actor} set the description to "the description" |
+    And user "participant3" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 3               |             |
+    And user "participant4" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 5               |             |
+    And user "guest" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage                                       |
+      | room | the description | 3    | 6               | {actor} set the description to "the description"  |
+    And user "guest2" is participant of room "room" (v3)
+      | name | description     | type | participantType | lastMessage |
+      | room | the description | 3    | 4               |             |

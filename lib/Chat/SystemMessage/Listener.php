@@ -123,6 +123,19 @@ class Listener {
 				'oldName' => $event->getOldValue(),
 			]);
 		});
+		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, static function (ModifyRoomEvent $event) {
+			$room = $event->getRoom();
+			/** @var self $listener */
+			$listener = \OC::$server->get(self::class);
+
+			if ($event->getNewValue() !== '') {
+				$listener->sendSystemMessage($room, 'description_set', [
+					'newDescription' => $event->getNewValue(),
+				]);
+			} else {
+				$listener->sendSystemMessage($room, 'description_removed');
+			}
+		});
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */

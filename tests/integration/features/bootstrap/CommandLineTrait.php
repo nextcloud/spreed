@@ -46,6 +46,10 @@ trait CommandLineTrait {
 	 * @return int exit code
 	 */
 	public function runOcc($args = []) {
+		// Set UTF-8 locale to ensure that escapeshellarg will not strip
+		// multibyte characters.
+		setlocale(LC_CTYPE, "C.UTF-8");
+
 		$args = array_map(function ($arg) {
 			return escapeshellarg($arg);
 		}, $args);
