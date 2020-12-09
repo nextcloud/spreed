@@ -99,7 +99,7 @@ class GuestManager {
 
 			if ($oldName !== $displayName) {
 				$query = $this->connection->getQueryBuilder();
-				$query->update('talk_guests')
+				$query->update('talk_guestnames')
 					->set('display_name', $query->createNamedParameter($displayName))
 					->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
 				$query->execute();
@@ -128,7 +128,7 @@ class GuestManager {
 	public function getNameBySessionHash(string $sessionHash, bool $allowEmpty = false): string {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('display_name')
-			->from('talk_guests')
+			->from('talk_guestnames')
 			->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
 
 		$result = $query->execute();
@@ -153,7 +153,7 @@ class GuestManager {
 
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
-			->from('talk_guests')
+			->from('talk_guestnames')
 			->where($query->expr()->in('session_hash', $query->createNamedParameter($sessionHashes, IQueryBuilder::PARAM_STR_ARRAY)));
 
 		$result = $query->execute();

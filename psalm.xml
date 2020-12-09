@@ -22,6 +22,7 @@
 			<errorLevel type="suppress">
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 				<referencedClass name="Doctrine\DBAL\Types\Type" />
+				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="OC" />
 			</errorLevel>
 		</UndefinedClass>

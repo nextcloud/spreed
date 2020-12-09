@@ -60,27 +60,32 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('talk_signaling')) {
-			$table = $schema->createTable('talk_signaling');
-
-			$table->addColumn('sender', Type::STRING, [
-				'notnull' => true,
-				'length' => 255,
-			]);
-			$table->addColumn('recipient', Type::STRING, [
-				'notnull' => true,
-				'length' => 255,
-			]);
-			$table->addColumn('message', Type::TEXT, [
-				'notnull' => true,
-			]);
-			$table->addColumn('timestamp', Type::INTEGER, [
-				'notnull' => true,
-				'length' => 11,
-			]);
-
-			$table->addIndex(['recipient', 'timestamp'], 'ts_recipient_time');
-		}
+		/**
+		 * Table had to be rebuild because it was missing a primary key
+		 * @see Version11000Date20201209142525
+		 *
+		 * if (!$schema->hasTable('talk_signaling')) {
+		 * $table = $schema->createTable('talk_signaling');
+		 *
+		 * $table->addColumn('sender', Type::STRING, [
+		 * 'notnull' => true,
+		 * 'length' => 255,
+		 * ]);
+		 * $table->addColumn('recipient', Type::STRING, [
+		 * 'notnull' => true,
+		 * 'length' => 255,
+		 * ]);
+		 * $table->addColumn('message', Type::TEXT, [
+		 * 'notnull' => true,
+		 * ]);
+		 * $table->addColumn('timestamp', Type::INTEGER, [
+		 * 'notnull' => true,
+		 * 'length' => 11,
+		 * ]);
+		 *
+		 * $table->addIndex(['recipient', 'timestamp'], 'ts_recipient_time');
+		 * }
+		 */
 
 		if (!$schema->hasTable('talk_rooms')) {
 			$table = $schema->createTable('talk_rooms');
