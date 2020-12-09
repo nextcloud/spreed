@@ -1,7 +1,8 @@
-Feature: callapi/listable-rooms
+Feature: conversation/join-listable
   Background:
     Given user "creator" exists
     And user "regular-user" exists
+    And guest accounts can be created
     And user "user-guest" is a guest account user
     # implicit: And user "guest" is a guest user with no account
 
@@ -78,7 +79,7 @@ Feature: callapi/listable-rooms
       | actorId      | participantType   | actorType |
       | creator      | OWNER             | users     |
       | regular-user | USER              | users     |
-      | user-guest   | USER_SELF_JOINED  | users     |
+      | user-guest   | USER              | users     |
 
   Scenario: Anyone can join an all-listed public room
     Given user "creator" creates room "room"

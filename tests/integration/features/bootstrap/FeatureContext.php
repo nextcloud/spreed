@@ -35,6 +35,7 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext {
+	public const TEST_PASSWORD = '123456';
 
 	/** @var array[] */
 	protected static $identifierToToken;
@@ -77,6 +78,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var SharingContext */
 	private $sharingContext;
 
+	/** @var null|bool */
+	private $guestsAppWasEnabled = null;
+
+	/** @var string */
+	private $guestsOldWhitelist;
+
 	use CommandLineTrait;
 
 	public static function getTokenForIdentifier(string $identifier) {
@@ -89,6 +96,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function __construct() {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
+		$this->guestsAppWasEnabled = null;
 	}
 
 	/**
@@ -128,6 +136,78 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($this->createdGuestAccountUsers as $user) {
 			$this->deleteUser($user);
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" cannot find any listed rooms(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 */
+	public function userCannotFindAnyListedRooms($user, $apiVersion = 'v1') {
+		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, null);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" cannot find any listed rooms with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userCannotFindAnyListedRoomsWithStatus($user, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" cannot find any listed rooms with term "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $term
+	 * @param string $apiVersion
+	 */
+	public function userCannotFindAnyListedRoomsWithTerm($user, $term, $apiVersion = 'v1') {
+		$this->userCanFindListedRoomsWithTerm($user, $term, $apiVersion, null);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" can find listed rooms(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userCanFindListedRooms($user, $apiVersion = 'v1', TableNode $formData = null) {
+		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, $formData);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" can find listed rooms with term "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $term
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userCanFindListedRoomsWithTerm($user, $term, $apiVersion = 'v1', TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$suffix = '';
+		if ($term !== '') {
+			$suffix = '?searchTerm=' . \rawurlencode($term);
+		}
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/listed-room' . $suffix);
+		$this->assertStatusCode($this->response, 200);
+
+		$rooms = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($rooms);
+			return;
+		}
+
+		$this->assertRooms($rooms, $formData);
 	}
 
 	/**
@@ -348,7 +428,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function mapParticipantTypeTestInput($participantType) {
-		if (is_int($participantType)) {
+		if (is_numeric($participantType)) {
 			return $participantType;
 		}
 
@@ -519,7 +599,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = 'admin';
 		} else {
-			$options['auth'] = [$this->currentUser, '123456'];
+			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		$options['headers'] = [
 			'OCS_APIREQUEST' => 'true'
@@ -824,7 +904,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all|\d+)" with (\d+)(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
 	 * @param string $newState
@@ -840,6 +920,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$newStateValue = 1; // Room::LISTABLE_USERS
 		} elseif ($newState === 'all') {
 			$newStateValue = 2; // Room::LISTABLE_ALL
+		} elseif (is_numeric($newState)) {
+			$newStateValue = (int)$newState;
 		} else {
 			Assert::fail('Invalid listable scope value');
 		}
@@ -1383,6 +1465,44 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^guest accounts can be created$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function allowGuestAccountsCreation(): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+
+		// save old state and restore at the end
+		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
+		$this->assertStatusCode($this->response, 200);
+		$data = $this->getDataFromResponse($this->response);
+		$this->guestsAppWasEnabled = in_array('guests', $data['apps'], true);
+
+		if (!$this->guestsAppWasEnabled) {
+			// enable guests app
+			/*
+			$this->sendRequest('POST', '/cloud/apps/guests');
+			$this->assertStatusCode($this->response, 200);
+			 */
+			// seems using provisioning API doesn't create tables...
+			$this->runOcc(['app:enable', 'guests']);
+		}
+
+		// save previously set whitelist
+		$this->sendRequest('GET', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist');
+		$this->assertStatusCode($this->response, 200);
+		$this->guestsOldWhitelist = $this->getDataFromResponse($this->response)['data'];
+
+		// set whitelist to allow spreed only
+		$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist', [
+			'value' => 'spreed',
+		]);
+
+		$this->setCurrentUser($currentUser);
+	}
+
+	/**
 	 * @BeforeScenario
 	 * @AfterScenario
 	 */
@@ -1395,6 +1515,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @AfterScenario
+	 */
+	public function resetGuestsAppState() {
+		if ($this->guestsAppWasEnabled === null) {
+			// guests app was not touched
+			return;
+		}
+
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+
+		if ($this->guestsOldWhitelist) {
+			// restore old whitelist
+			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist', [
+				'value' => $this->guestsOldWhitelist,
+			]);
+		} else {
+			// restore to default
+			$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist');
+		}
+
+		// restore app's enabled state
+		$this->sendRequest($this->guestsAppWasEnabled ? 'POST' : 'DELETE', '/cloud/apps/guests');
+
+		$this->setCurrentUser($currentUser);
+		$this->guestsAppWasEnabled = null;
 	}
 
 	/*
@@ -1432,8 +1581,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function createGuestUser($user) {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
+		// in case it exists
+		$this->deleteUser($user);
 		$this->sendRequest('POST', '/apps/spreedcheats/guest-users', [
 			'userid' => $user,
+			'password' => self::TEST_PASSWORD,
 		]);
 		$this->assertStatusCode($this->response, 200);
 		$this->createdGuestAccountUsers[] = $user;
@@ -1453,7 +1605,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/cloud/users', [
 			'userid' => $user,
-			'password' => '123456'
+			'password' => self::TEST_PASSWORD,
 		]);
 		$this->assertStatusCode($this->response, 200, 'Failed to create user');
 
@@ -1586,7 +1738,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$requestToken = $this->extractRequestTokenFromResponse($this->response);
 
 		// Login and extract new token
-		$password = ($user === 'admin') ? 'admin' : '123456';
+		$password = ($user === 'admin') ? 'admin' : self::TEST_PASSWORD;
 		$client = new Client();
 		$this->response = $client->post(
 			$loginUrl,
@@ -1625,7 +1777,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
 		} elseif (strpos($this->currentUser, 'guest') !== 0) {
-			$options['auth'] = [$this->currentUser, '123456'];
+			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();

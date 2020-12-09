@@ -1,0 +1,126 @@
+Feature: conversation/find-listed
+  Background:
+    Given user "creator" exists
+    And user "regular-user" exists
+    And guest accounts can be created
+    And user "user-guest" is a guest account user
+
+  Scenario Outline: Nobody can find non-listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    When user "creator" allows listing room "group-room" for "none" with 200
+    And user "creator" allows listing room "public-room" for "none" with 200
+    Then user "creator" cannot find any listed rooms (v3)
+    Examples:
+      | user         |
+      | creator      |
+      | regular-user |
+      | user-guest   |
+
+  Scenario: Regular users can find user-listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    When user "creator" allows listing room "group-room" for "users" with 200
+    And user "creator" allows listing room "public-room" for "users" with 200
+    Then user "regular-user" can find listed rooms (v3)
+      | name        | listable |
+      | group-room  | 1        |
+      | public-room | 1        |
+    And user "user-guest" cannot find any listed rooms (v3)
+
+  Scenario: All users can find all-listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    When user "creator" allows listing room "group-room" for "all" with 200
+    And user "creator" allows listing room "public-room" for "all" with 200
+    Then user "regular-user" can find listed rooms (v3)
+      | name        | listable |
+      | group-room  | 2        |
+      | public-room | 2        |
+    And user "user-guest" can find listed rooms (v3)
+      | name        | listable |
+      | group-room  | 2        |
+      | public-room | 2        |
+
+  Scenario: Participants cannot search for already joined listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    And user "creator" allows listing room "group-room" for "users" with 200
+    And user "creator" allows listing room "public-room" for "users" with 200
+    When user "regular-user" joins room "group-room" with 200
+    And user "regular-user" joins room "public-room" with 200
+    Then user "regular-user" cannot find any listed rooms (v3)
+
+  Scenario: Participants cannot search for already joined listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    And user "creator" allows listing room "group-room" for "users" with 200
+    And user "creator" allows listing room "public-room" for "users" with 200
+    When user "regular-user" joins room "group-room" with 200
+    And user "regular-user" joins room "public-room" with 200
+    Then user "regular-user" cannot find any listed rooms (v3)
+
+  Scenario: Users can use search terms to find listed rooms
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    And user "creator" creates room "group-the-cool-room"
+      | roomType | 2                   |
+      | roomName | group-the-cool-room |
+    And user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    And user "creator" creates room "public-the-cool-room"
+      | roomType | 3                    |
+      | roomName | public-the-cool-room |
+    When user "creator" allows listing room "group-room" for "all" with 200
+    And user "creator" allows listing room "public-room" for "all" with 200
+    And user "creator" allows listing room "group-the-cool-room" for "all" with 200
+    And user "creator" allows listing room "public-the-cool-room" for "all" with 200
+    Then user "regular-user" can find listed rooms with term "cool" (v3)
+      | name                 | listable |
+      | group-the-cool-room  | 2        |
+      | public-the-cool-room | 2        |
+    And user "user-guest" can find listed rooms with term "cool" (v3)
+      | name                 | listable |
+      | group-the-cool-room  | 2        |
+      | public-the-cool-room | 2        |
+
+  Scenario: Searching for a listable room by unknown term returns no results
+    Given user "creator" creates room "group-room"
+      | roomType | 2           |
+      | roomName | group-room  |
+    When user "creator" allows listing room "group-room" for "all" with 200
+    Then user "regular-user" cannot find any listed rooms with term "cool" (v3)
+    And user "user-guest" cannot find any listed rooms with term "cool" (v3)
+
+  Scenario: Guest users without accounts cannot search for listed rooms
+    Given user "creator" creates room "public-room"
+      | roomType | 3           |
+      | roomName | public-room |
+    And user "creator" creates room "public-room-listed"
+      | roomType | 3                  |
+      | roomName | public-room-listed |
+    And user "creator" allows listing room "public-room-listed" for "all" with 200
+    When user "guest" joins room "public-room" with 200
+    Then user "guest" cannot find any listed rooms with 401 (v3)
