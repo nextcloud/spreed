@@ -462,7 +462,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable20
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -657,7 +657,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable20
       DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -880,7 +880,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable20
       DATABASEHOST: pgsql
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
