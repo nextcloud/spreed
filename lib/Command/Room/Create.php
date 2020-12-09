@@ -73,7 +73,7 @@ class Create extends Base {
 			)->addOption(
 				'listable',
 				null,
-				InputOption::VALUE_NONE,
+				InputOption::VALUE_REQUIRED,
 				'Creates the room with the given listable scope'
 			)->addOption(
 				'password',
@@ -137,7 +137,7 @@ class Create extends Base {
 			}
 
 			$this->setRoomReadOnly($room, $readonly);
-			$this->setListable($room, $listable);
+			$this->setRoomListable($room, (int)$listable);
 
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);
