@@ -489,7 +489,9 @@ class MatterbridgeManager {
 				$content .= "\n";
 			} elseif ($type === 'msteams') {
 				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";
-			} elseif (in_array($type, ['telegram', 'steam'])) {
+			} elseif ($type === 'telegram') {
+				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
+			} elseif ($type === 'steam') {
 				$content .= sprintf('	chatid = "%s"', $part['chatid']) . "\n\n";
 			}
 		}
