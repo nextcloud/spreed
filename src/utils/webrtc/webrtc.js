@@ -47,7 +47,7 @@ const delayedConnectionToPeer = []
 let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
-let sendCurrentMediaStateWithRepetitionTimeout = null
+let sendCurrentStateWithRepetitionTimeout = null
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -159,15 +159,23 @@ function sendCurrentMediaState() {
 	}
 }
 
-function sendCurrentMediaStateWithRepetition(timeout) {
+// TODO The participant name should be got from the participant list, but it is
+// not currently possible to associate a Nextcloud ID with a standalone
+// signaling ID for guests.
+function sendCurrentNick() {
+	webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
+}
+
+function sendCurrentStateWithRepetition(timeout) {
 	if (!timeout) {
 		timeout = 0
 
-		clearTimeout(sendCurrentMediaStateWithRepetitionTimeout)
+		clearTimeout(sendCurrentStateWithRepetitionTimeout)
 	}
 
-	sendCurrentMediaStateWithRepetitionTimeout = setTimeout(function() {
+	sendCurrentStateWithRepetitionTimeout = setTimeout(function() {
 		sendCurrentMediaState()
+		sendCurrentNick()
 
 		if (!timeout) {
 			timeout = 1000
@@ -176,11 +184,11 @@ function sendCurrentMediaStateWithRepetition(timeout) {
 		}
 
 		if (timeout > 16000) {
-			sendCurrentMediaStateWithRepetitionTimeout = null
+			sendCurrentStateWithRepetitionTimeout = null
 			return
 		}
 
-		sendCurrentMediaStateWithRepetition(timeout)
+		sendCurrentStateWithRepetition(timeout)
 	}, timeout)
 }
 
@@ -241,15 +249,17 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				|| (!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !webrtc.webrtc.localStreams.length)) {
 			callParticipantModel.setPeer(null)
 
-			// As there is no Peer for the other participant the current media
-			// state will not be sent once it is connected, so it needs to be
-			// sent now.
-			// When there is no MCU this is not needed; as the local participant
-			// has no streams it will be automatically marked with audio and
-			// video not available on the other end, so there is no need to send
-			// the media state.
+			// As there is no Peer for the other participant the current state
+			// will not be sent once it is connected, so it needs to be sent
+			// now.
+			// When there is no MCU this is only needed for the nick; as the
+			// local participant has no streams it will be automatically marked
+			// with audio and video not available on the other end, so there is
+			// no need to send the media state.
 			if (signaling.hasFeature('mcu')) {
-				sendCurrentMediaStateWithRepetition()
+				sendCurrentStateWithRepetition()
+			} else {
+				sendCurrentNick()
 			}
 		}
 
@@ -516,56 +526,14 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		webrtc.sendDirectlyToAll(channel, message, payload)
 	}
 
-	// The nick name below the avatar is distributed through the DataChannel
-	// of the PeerConnection and only sent once during establishment. For
-	// the MCU case, the sending PeerConnection is created once and then
-	// never changed when more participants join. For this, we periodically
-	// send the nick to all other participants through the sending
-	// PeerConnection.
-	//
-	// TODO: The name for the avatar should come from the participant list
-	// which already has all information and get rid of using the
-	// DataChannel for this.
-	function stopSendingNick(peer) {
-		if (!peer.nickInterval) {
-			return
-		}
-
-		clearInterval(peer.nickInterval)
-		peer.nickInterval = null
-	}
-	function startSendingNick(peer) {
-		if (!signaling.hasFeature('mcu')) {
-			return
-		}
-
-		stopSendingNick(peer)
-		peer.nickInterval = setInterval(function() {
-			let payload
-			if (signaling.settings.userId === null) {
-				payload = store.getters.getDisplayName()
-			} else {
-				payload = {
-					'name': store.getters.getDisplayName(),
-					'userid': signaling.settings.userId,
-				}
-			}
-			peer.sendDirectly('status', 'nickChanged', payload)
-		}, 1000)
-	}
-
 	function handleIceConnectionStateConnected(peer) {
-		// Send the current information about the video and microphone
-		// state.
+		// Send the current information about the state.
 		if (!signaling.hasFeature('mcu')) {
+			// Only the media state needs to be sent, the nick was already sent
+			// in the offer/answer.
 			sendCurrentMediaState()
 		} else {
-			sendCurrentMediaStateWithRepetition()
-		}
-
-		if (signaling.settings.userId === null) {
-			const currentGuestNick = store.getters.getDisplayName()
-			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
+			sendCurrentStateWithRepetition()
 		}
 
 		// Reset ice restart counter for peer
@@ -733,8 +701,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		if (peer.type === 'video') {
 			if (peer.id === signaling.getSessionId()) {
 				console.debug('Not adding ICE connection state handler for own peer', peer)
-
-				startSendingNick(peer)
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 			}
@@ -816,7 +782,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	function stopPeerCheckMedia(peer) {
 		stopPeerCheckAudioMedia(peer)
 		stopPeerCheckVideoMedia(peer)
-		stopSendingNick(peer)
 	}
 
 	function startPeerCheckMedia(peer, stream) {
@@ -991,12 +956,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			} else if (data.type === 'videoOff') {
 				webrtc.emit('mute', { id: peer.id, name: 'video' })
 			} else if (data.type === 'nickChanged') {
-				const payload = data.payload || ''
-				if (typeof (payload) === 'string') {
-					webrtc.emit('nick', { id: peer.id, name: data.payload })
-				} else {
-					webrtc.emit('nick', { id: peer.id, name: payload.name, userid: payload.userid })
-				}
+				const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
+				webrtc.emit('nick', { id: peer.id, name: name })
 			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
 				// Valid known messages, but handled elsewhere
 			} else {
@@ -1027,6 +988,50 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	})
 	webrtc.on('videoOff', function() {
 		sendDataChannelToAll('status', 'videoOff')
+	})
+
+	// Send the nick changed event via data channel and signaling
+	//
+	// The message format is different in each case. Due to historical reasons
+	// the payload of the data channel message is either a string that contains
+	// the name (if the participant is a guest) or an object with "name" and
+	// "userid" string fields (when the participant is a user).
+	//
+	// In the newer signaling message, on the other hand, the payload is always
+	// an object with only a "name" string field.
+	webrtc.on('nickChanged', function(name) {
+		let payload
+		if (signaling.settings.userId === null) {
+			payload = name
+		} else {
+			payload = {
+				'name': name,
+				'userid': signaling.settings.userId,
+			}
+		}
+
+		sendDataChannelToAll('status', 'nickChanged', payload)
+
+		// "webrtc.sendToAll" can not be used, as it only sends the signaling
+		// message to participants for which there is a Peer object, so the
+		// message may not be sent to participants without audio and video.
+		for (const sessionId in usersInCallMapping) {
+			if (!usersInCallMapping[sessionId].inCall) {
+				continue
+			} else if (sessionId === signaling.getSessionId()) {
+				continue
+			}
+
+			const message = {
+				to: sessionId,
+				roomType: 'video',
+				type: 'nickChanged',
+				payload: {
+					name: name,
+				},
+			}
+			signaling.emit('message', message)
+		}
 	})
 
 	// Local screen added.
