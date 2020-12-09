@@ -25,7 +25,9 @@ namespace OCA\Talk\Chat\AutoComplete;
 
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -42,6 +44,8 @@ class SearchPlugin implements ISearchPlugin {
 	protected $guestManager;
 	/** @var TalkSession */
 	protected $talkSession;
+	/** @var ParticipantService */
+	protected $participantService;
 	/** @var Util */
 	protected $util;
 	/** @var string|null */
@@ -55,12 +59,14 @@ class SearchPlugin implements ISearchPlugin {
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,
 								TalkSession $talkSession,
+								ParticipantService $participantService,
 								Util $util,
 								?string $userId,
 								IL10N $l) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->talkSession = $talkSession;
+		$this->participantService = $participantService;
 		$this->util = $util;
 		$this->userId = $userId;
 		$this->l = $l;
@@ -94,12 +100,13 @@ class SearchPlugin implements ISearchPlugin {
 				$userIds[] = $userId;
 			}
 		} else {
-			$participants = $this->room->getParticipants();
+			$participants = $this->participantService->getParticipantsForRoom($this->room);
 			foreach ($participants as $participant) {
-				if ($participant->isGuest()) {
-					$guestSessionHashes[] = sha1($participant->getSessionId());
-				} else {
-					$userIds[] = $participant->getUser();
+				$attendee = $participant->getAttendee();
+				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
+					$guestSessionHashes[] = $attendee->getActorId();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$userIds[] = $attendee->getActorId();
 				}
 			}
 		}

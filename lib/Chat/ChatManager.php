@@ -28,8 +28,10 @@ use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -67,6 +69,8 @@ class ChatManager {
 	private $connection;
 	/** @var INotificationManager */
 	private $notificationManager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var Notifier */
 	private $notifier;
 	/** @var ITimeFactory */
@@ -78,6 +82,7 @@ class ChatManager {
 								IEventDispatcher $dispatcher,
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
+								ParticipantService $participantService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory) {
@@ -85,6 +90,7 @@ class ChatManager {
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
+		$this->participantService = $participantService;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->timeFactory = $timeFactory;
@@ -139,7 +145,7 @@ class ChatManager {
 	 * @return IComment
 	 */
 	public function addChangelogMessage(Room $chat, string $message): IComment {
-		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
+		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, 'changelog', 'chat', (string) $chat->getId());
 
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
@@ -208,7 +214,7 @@ class ChatManager {
 
 			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers);
 			if (!empty($alreadyNotifiedUsers)) {
-				$chat->markUsersAsMentioned($alreadyNotifiedUsers, (int) $comment->getId());
+				$this->participantService->markUsersAsMentioned($chat, $alreadyNotifiedUsers, (int) $comment->getId());
 			}
 
 			// User was not mentioned, send a normal notification

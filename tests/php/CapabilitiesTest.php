@@ -97,6 +97,7 @@ class CapabilitiesTest extends TestCase {
 					'chat-replies',
 					'circles-support',
 					'force-mute',
+					'sip-support',
 				],
 				'config' => [
 					'attachments' => [
@@ -188,6 +189,7 @@ class CapabilitiesTest extends TestCase {
 					'chat-replies',
 					'circles-support',
 					'force-mute',
+					'sip-support',
 					'chat-reference-id',
 				],
 				'config' => [

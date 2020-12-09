@@ -36,6 +36,23 @@ const setAttachmentFolder = async function(path) {
 	})
 }
 
+/**
+ * Save the SIP settings
+ *
+ * @param {Array<string>} sipGroups The groups allowed to enable SIP on a conversation
+ * @param {string} sharedSecret The shared secret which is used by the SIP server to authenticate
+ * @param {string} dialInInfo The dial-in Information displayed in the email and sidebar
+ * @returns {Object} The axios response
+ */
+const setSIPSettings = async function(sipGroups, sharedSecret, dialInInfo) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings', 2) + 'sip', {
+		sipGroups,
+		sharedSecret,
+		dialInInfo,
+	})
+}
+
 export {
 	setAttachmentFolder,
+	setSIPSettings,
 }

@@ -27,7 +27,9 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -46,6 +48,9 @@ class Listener {
 	/** @var ChatManager */
 	protected $chatManager;
 
+	/** @var ParticipantService */
+	protected $participantService;
+
 	/** @var LoggerInterface */
 	protected $logger;
 
@@ -55,11 +60,13 @@ class Listener {
 	public function __construct(IManager $activityManager,
 								IUserSession $userSession,
 								ChatManager $chatManager,
+								ParticipantService $participantService,
 								LoggerInterface $logger,
 								ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
 		$this->chatManager = $chatManager;
+		$this->participantService = $participantService;
 		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
 	}
@@ -102,12 +109,12 @@ class Listener {
 	 */
 	public function generateCallActivity(Room $room): bool {
 		$activeSince = $room->getActiveSince();
-		if (!$activeSince instanceof \DateTime || $room->hasSessionsInCall()) {
+		if (!$activeSince instanceof \DateTime || $this->participantService->hasActiveSessionsInCall($room)) {
 			return false;
 		}
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
-		$userIds = $room->getParticipantUserIds($activeSince);
+		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
 
 		if ((\count($userIds) + $room->getActiveGuests()) === 1) {
 			// Single user pinged or guests only => no summary/activity
@@ -123,7 +130,7 @@ class Listener {
 		}
 
 		$actorId = $userIds[0] ?? 'guests-only';
-		$actorType = $actorId !== 'guests-only' ? 'users' : 'guests';
+		$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
 		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
 			'message' => 'call_ended',
 			'parameters' => [
@@ -199,13 +206,18 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
+			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
+				// No user => no activity
+				continue;
+			}
+
+			if ($actorId === $participant['actorId']) {
 				// No activity for self-joining and the creator
 				continue;
 			}
 
 			try {
-				$roomName = $room->getDisplayName($participant['userId']);
+				$roomName = $room->getDisplayName($participant['actorId']);
 				$event
 					->setObject('room', $room->getId(), $roomName)
 					->setSubject('invitation', [
@@ -213,7 +225,7 @@ class Listener {
 						'room' => $room->getId(),
 						'name' => $roomName,
 					])
-					->setAffectedUser($participant['userId']);
+					->setAffectedUser($participant['actorId']);
 				$this->activityManager->publish($event);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);

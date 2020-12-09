@@ -30,31 +30,34 @@
 		<TurnServers />
 		<SignalingServers />
 		<HostedSignalingServer />
+		<SIPBridge />
 	</div>
 </template>
 
 <script>
-import GeneralSettings from '../components/AdminSettings/GeneralSettings'
 import AllowedGroups from '../components/AdminSettings/AllowedGroups'
 import Commands from '../components/AdminSettings/Commands'
-import StunServers from '../components/AdminSettings/StunServers'
-import TurnServers from '../components/AdminSettings/TurnServers'
-import SignalingServers from '../components/AdminSettings/SignalingServers'
+import GeneralSettings from '../components/AdminSettings/GeneralSettings'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration'
+import SignalingServers from '../components/AdminSettings/SignalingServers'
+import SIPBridge from '../components/AdminSettings/SIPBridge'
+import StunServers from '../components/AdminSettings/StunServers'
+import TurnServers from '../components/AdminSettings/TurnServers'
 
 export default {
 	name: 'AdminSettings',
 
 	components: {
-		GeneralSettings,
 		AllowedGroups,
 		Commands,
-		StunServers,
-		TurnServers,
-		SignalingServers,
+		GeneralSettings,
 		HostedSignalingServer,
 		MatterbridgeIntegration,
+		SignalingServers,
+		SIPBridge,
+		StunServers,
+		TurnServers,
 	},
 }
 </script>

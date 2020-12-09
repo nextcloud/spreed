@@ -25,6 +25,7 @@ namespace OCA\Talk\Chat\Command;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\CommandEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -90,7 +91,7 @@ class Executor {
 		try {
 			$command = $this->commandService->resolveAlias($command);
 		} catch (DoesNotExistException $e) {
-			$user = $message->getActorType() === 'users' ? $message->getActorId() : '';
+			$user = $message->getActorType() === Attendee::ACTOR_USERS ? $message->getActorId() : '';
 			$message->setMessage(json_encode([
 				'user' => $user,
 				'visibility' => $command->getResponse(),
@@ -109,7 +110,7 @@ class Executor {
 			$output = $this->execShell($room, $message, $command, $arguments);
 		}
 
-		$user = $message->getActorType() === 'users' ? $message->getActorId() : '';
+		$user = $message->getActorType() === Attendee::ACTOR_USERS ? $message->getActorId() : '';
 		$message->setMessage(json_encode([
 			'user' => $user,
 			'visibility' => $command->getResponse(),
@@ -205,7 +206,7 @@ class Executor {
 				$command->getScript(),
 				$arguments,
 				$room->getToken(),
-				$message->getActorType() === 'users' ? $message->getActorId() : ''
+				$message->getActorType() === Attendee::ACTOR_USERS ? $message->getActorId() : ''
 			);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);

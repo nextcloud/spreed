@@ -229,6 +229,9 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 			})
 		}
 		callParticipantModel.setUserId(userId)
+		if (user.internal) {
+			callParticipantModel.set('internal', true)
+		}
 
 		// When the MCU is used and the other participant has no streams or
 		// when no MCU is used and neither the local participant nor the
@@ -383,6 +386,20 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			usersInCallMapping[sessionId] = user
 		})
 		usersInCallChanged(signaling, usersInCallMapping)
+	})
+	signaling.on('participantFlagsChanged', function(event) {
+		/**
+		 * event {
+		 *   roomid: "1609407087",
+		 *   sessionid: "…",
+		 *   flags: 1
+		 * }
+		 */
+		const callParticipantModel = callParticipantCollection.get(event.sessionid)
+		if (callParticipantModel) {
+			callParticipantModel.set('speaking', (event.flags & PARTICIPANT.SIP_FLAG.SPEAKING) > 0)
+			callParticipantModel.set('audioAvailable', (event.flags & PARTICIPANT.SIP_FLAG.MUTE_MICROPHONE) === 0)
+		}
 	})
 	signaling.on('usersInRoom', function(users) {
 		usersInCallMapping = {}

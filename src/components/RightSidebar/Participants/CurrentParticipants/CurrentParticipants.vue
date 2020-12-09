@@ -69,7 +69,11 @@ export default {
 
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
-				participants = participants.filter(participant => participant.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || participant.userId.toLowerCase().indexOf(lowerSearchText) !== -1)
+				participants = participants.filter(participant => {
+					return participant.displayName.toLowerCase().indexOf(lowerSearchText) !== -1
+						|| (participant.actorType !== 'guests'
+							&& participant.actorId.toLowerCase().indexOf(lowerSearchText) !== -1)
+				})
 			}
 
 			return participants.slice().sort(this.sortParticipants)
@@ -89,7 +93,8 @@ export default {
 			this.$store.dispatch('updateUser', {
 				token: this.token,
 				participantIdentifier: {
-					userId: state.userId,
+					actorType: 'users',
+					actorId: state.userId,
 				},
 				updatedData: {
 					status: state.status,

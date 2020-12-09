@@ -43,6 +43,7 @@ export default function CallParticipantModel(options) {
 		// are used for known but negative/empty values.
 		userId: undefined,
 		name: undefined,
+		internal: undefined,
 		connectionState: ConnectionState.NEW,
 		stream: null,
 		// The audio element is part of the model to ensure that it can be

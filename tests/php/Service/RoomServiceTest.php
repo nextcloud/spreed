@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -37,6 +38,8 @@ class RoomServiceTest extends TestCase {
 
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var RoomService */
 	private $service;
 
@@ -45,8 +48,10 @@ class RoomServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->service = new RoomService(
-			$this->manager
+			$this->manager,
+			$this->participantService
 		);
 	}
 
@@ -69,8 +74,9 @@ class RoomServiceTest extends TestCase {
 			->willReturn('uid2');
 
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
-			->method('ensureOneToOneRoomIsFilled');
+		$this->participantService->expects($this->once())
+			->method('ensureOneToOneRoomIsFilled')
+			->with($room);
 
 		$this->manager->expects($this->once())
 			->method('getOne2OneRoom')
@@ -89,17 +95,21 @@ class RoomServiceTest extends TestCase {
 			->willReturn('uid2');
 
 		$room = $this->createMock(Room::class);
-		$room->expects($this->never())
-			->method('ensureOneToOneRoomIsFilled');
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('addUsers')
-			->with([
-				'userId' => 'uid1',
+			->with($room, [[
+				'actorType' => 'users',
+				'actorId' => 'uid1',
 				'participantType' => Participant::OWNER,
 			], [
-				'userId' => 'uid2',
+				'actorType' => 'users',
+				'actorId' => 'uid2',
 				'participantType' => Participant::OWNER,
-			]);
+			]]);
+
+		$this->participantService->expects($this->never())
+			->method('ensureOneToOneRoomIsFilled')
+			->with($room);
 
 		$this->manager->expects($this->once())
 			->method('getOne2OneRoom')
@@ -204,15 +214,16 @@ class RoomServiceTest extends TestCase {
 			$owner->method('getUID')
 				->willReturn($ownerId);
 
-			$room->expects($this->once())
+			$this->participantService->expects($this->once())
 				->method('addUsers')
-				->with([
-					'userId' => $ownerId,
+				->with($room, [[
+					'actorType' => 'users',
+					'actorId' => $ownerId,
 					'participantType' => Participant::OWNER,
-				]);
+				]]);
 		} else {
 			$owner = null;
-			$room->expects($this->never())
+			$this->participantService->expects($this->never())
 				->method('addUsers');
 		}
 

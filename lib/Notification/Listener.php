@@ -26,7 +26,9 @@ namespace OCA\Talk\Notification;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Notification\IManager;
@@ -38,6 +40,8 @@ class Listener {
 
 	/** @var IManager */
 	protected $notificationManager;
+	/** @var ParticipantService */
+	protected $participantsService;
 	/** @var IEventDispatcher */
 	protected $dispatcher;
 	/** @var IUserSession */
@@ -51,11 +55,13 @@ class Listener {
 	protected $shouldSendCallNotification = false;
 
 	public function __construct(IManager $notificationManager,
+								ParticipantService $participantsService,
 								IEventDispatcher $dispatcher,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory,
 								LoggerInterface $logger) {
 		$this->notificationManager = $notificationManager;
+		$this->participantsService = $participantsService;
 		$this->dispatcher = $dispatcher;
 		$this->userSession = $userSession;
 		$this->timeFactory = $timeFactory;
@@ -137,13 +143,18 @@ class Listener {
 		}
 
 		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
+			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
+				// No user => no activity
+				continue;
+			}
+
+			if ($actorId === $participant['actorId']) {
 				// No activity for self-joining and the creator
 				continue;
 			}
 
 			try {
-				$notification->setUser($participant['userId']);
+				$notification->setUser($participant['actorId']);
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -236,7 +247,7 @@ class Listener {
 			return;
 		}
 
-		$userIds = $room->getNotInCallUserIds();
+		$userIds = $this->participantsService->getParticipantUserIdsNotInCall($room);
 		foreach ($userIds as $userId) {
 			if ($actorId === $userId) {
 				continue;

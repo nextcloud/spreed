@@ -28,8 +28,11 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
@@ -49,6 +52,8 @@ class Notifier {
 	private $notificationManager;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var ParticipantService */
+	private $participantService;
 	/** @var Manager */
 	private $manager;
 	/** @var IConfig */
@@ -58,11 +63,13 @@ class Notifier {
 
 	public function __construct(INotificationManager $notificationManager,
 								IUserManager $userManager,
+								ParticipantService $participantService,
 								Manager $manager,
 								IConfig $config,
 								Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
+		$this->participantService = $participantService;
 		$this->manager = $manager;
 		$this->config = $config;
 		$this->util = $util;
@@ -91,7 +98,7 @@ class Notifier {
 		$mentionedAll = array_search('all', $mentionedUserIds, true);
 
 		if ($mentionedAll !== false) {
-			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $chat->getParticipantUserIds()));
+			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $this->participantService->getParticipantUserIds($chat)));
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
@@ -129,7 +136,7 @@ class Notifier {
 	 * @return string[] Users that were mentioned
 	 */
 	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo): array {
-		if ($replyTo->getActorType() !== 'users') {
+		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
 			// No reply notification when the replyTo-author was not a user
 			return [];
 		}
@@ -159,7 +166,7 @@ class Notifier {
 	 * @param string[] $alreadyNotifiedUsers
 	 */
 	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers): void {
-		$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_ALWAYS);
+		$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_ALWAYS);
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
 		foreach ($participants as $participant) {
@@ -167,19 +174,19 @@ class Notifier {
 				continue;
 			}
 
-			$notification->setUser($participant->getUser());
+			$notification->setUser($participant->getAttendee()->getActorId());
 			$this->notificationManager->notify($notification);
 		}
 
 		// Also notify default participants in one2one chats or when the admin default is "always"
 		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::ONE_TO_ONE_CALL) {
-			$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_DEFAULT);
+			$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_DEFAULT);
 			foreach ($participants as $participant) {
 				if (!$this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers)) {
 					continue;
 				}
 
-				$notification->setUser($participant->getUser());
+				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
 		}
@@ -301,8 +308,8 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return bool
 	 */
-	protected function shouldMentionedUserBeNotified($userId, IComment $comment): bool {
-		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment): bool {
+		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
 		}
@@ -319,8 +326,8 @@ class Notifier {
 
 		try {
 			$participant = $room->getParticipant($userId);
-			$notificationLevel = $participant->getNotificationLevel();
-			if ($participant->getNotificationLevel() === Participant::NOTIFY_DEFAULT) {
+			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 					$notificationLevel = Participant::NOTIFY_ALWAYS;
 				} else {
@@ -334,7 +341,10 @@ class Notifier {
 				// so they can see the room in their room list and
 				// the notification can be parsed and links to an existing room,
 				// where they are a participant of.
-				$room->addUsers(['userId' => $userId]);
+				$this->participantService->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $userId,
+				]]);
 				return true;
 			}
 			return false;
@@ -355,20 +365,21 @@ class Notifier {
 	 * @return bool
 	 */
 	protected function shouldParticipantBeNotified(Participant $participant, IComment $comment, array $alreadyNotifiedUsers): bool {
-		if ($participant->isGuest()) {
+		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
 			return false;
 		}
 
-		if ($comment->getActorType() === 'users' && $participant->getUser() === $comment->getActorId()) {
+		$userId = $participant->getAttendee()->getActorId();
+		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the author
 			return false;
 		}
 
-		if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
+		if (\in_array($userId, $alreadyNotifiedUsers, true)) {
 			return false;
 		}
 
-		if ($participant->getSessionId() !== '0') {
+		if ($participant->getSession() instanceof Session) {
 			// User is online
 			return false;
 		}

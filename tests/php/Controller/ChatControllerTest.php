@@ -31,6 +31,8 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -61,6 +63,10 @@ class ChatControllerTest extends TestCase {
 	private $appManager;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
+	/** @var SessionService|MockObject */
+	protected $sessionService;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var MessageParser|MockObject */
@@ -97,6 +103,8 @@ class ChatControllerTest extends TestCase {
 		$this->session = $this->createMock(TalkSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->sessionService = $this->createMock(SessionService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
@@ -128,14 +136,16 @@ class ChatControllerTest extends TestCase {
 			$this->session,
 			$this->appManager,
 			$this->chatManager,
+			$this->participantService,
+			$this->sessionService,
 			$this->guestManager,
 			$this->messageParser,
 			$this->autoCompleteManager,
 			$this->statusManager,
 			$this->searchPlugin,
 			$this->searchResult,
-			$this->eventDispatcher,
 			$this->timeFactory,
+			$this->eventDispatcher,
 			$this->l
 		);
 	}

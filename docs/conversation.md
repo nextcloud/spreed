@@ -2,6 +2,7 @@
 
 * Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
 * Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
 ## Get user´s conversations
 
@@ -29,6 +30,10 @@
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
         `participantType` | int | * | Permissions level of the current user
+        `attendeeId` | int | v3 | Unique attendee id
+        `attendeePin` | string | v3 | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
+        `actorType` | string | v3 | Currently known `users|guests|emails|groups`
+        `actorId` | string | v3 | The unique identifier for the given actor type
         `participantInCall` | bool | 🏴 v1 | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
         `participantFlags` | int | * | Flags of the current user (only available with `in-call-flags` capability)
         `readOnly` | int | * | Read-only state for the current user (only available with `read-only-rooms` capability)
@@ -46,6 +51,8 @@
         `notificationLevel` | int | * | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
         `lobbyState` | int | * | Webinary lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability)
         `lobbyTimer` | int | * | Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
+        `sipEnabled` | int | v3 | SIP enable status (0-1)
+        `canEnableSIP` | int | v3 | Whether the given user can enable SIP for this conversation. Note that when the token is not-numeric only, SIP can not be enabled even if the user is permitted and a moderator of the conversation
         `unreadMessages` | int | * | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | * | Flag if the user was mentioned since their last visit
         `lastReadMessage` | int | * | ID of the last read message in a room (only available with `chat-read-marker` capability)

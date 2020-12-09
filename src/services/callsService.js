@@ -53,17 +53,9 @@ const leaveCall = async function(token) {
 	}
 }
 
-/**
- * Fetches all peers for a call
- * @param {string} token The token of the call to be fetched.
- */
-const fetchPeers = async function(token) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `call/${token}`)
-		return response
-	} catch (error) {
-		console.debug('Error while fetching the peers: ', error)
-	}
+const fetchPeers = async function(token, options) {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + `call/${token}`, options)
+	return response
 }
 
 export {

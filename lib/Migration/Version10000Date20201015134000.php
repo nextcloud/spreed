@@ -1,0 +1,227 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * @copyright Copyright (c) 2020, Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+namespace OCA\Talk\Migration;
+
+use Closure;
+use Doctrine\DBAL\Types\Type;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
+use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
+
+/**
+ * In order to be able to keep "attendees" which are not users, but groups,
+ * email addresses, etc the sessions had to be decoupled from the participants
+ */
+class Version10000Date20201015134000 extends SimpleMigrationStep {
+	/** @var IDBConnection */
+	protected $connection;
+	/** @var ITimeFactory */
+	protected $timeFactory;
+
+	public function __construct(IDBConnection $connection,
+								ITimeFactory $timeFactory) {
+		$this->connection = $connection;
+		$this->timeFactory = $timeFactory;
+	}
+
+	/**
+	 * @param IOutput $output
+	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
+	 * @param array $options
+	 * @return null|ISchemaWrapper
+	 */
+	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
+		/** @var ISchemaWrapper $schema */
+		$schema = $schemaClosure();
+
+		if (!$schema->hasTable('talk_attendees')) {
+			$table = $schema->createTable('talk_attendees');
+
+			// Auto increment id
+			$table->addColumn('id', Type::BIGINT, [
+				'autoincrement' => true,
+				'notnull' => true,
+			]);
+
+			// Unique key
+			$table->addColumn('room_id', Type::BIGINT, [
+				'notnull' => true,
+				'unsigned' => true,
+			]);
+			$table->addColumn('actor_type', Type::STRING, [
+				'notnull' => true,
+				'length' => 32,
+			]);
+			$table->addColumn('actor_id', Type::STRING, [
+				'notnull' => true,
+				'length' => 255,
+			]);
+			$table->addColumn('display_name', Type::STRING, [
+				'notnull' => false,
+				'default' => '',
+				'length' => 64,
+			]);
+
+			$table->addColumn('pin', Type::STRING, [
+				'notnull' => false,
+				'length' => 32,
+			]);
+			$table->addColumn('participant_type', Type::SMALLINT, [
+				'notnull' => true,
+				'length' => 6,
+				'default' => 0,
+				'unsigned' => true,
+			]);
+			$table->addColumn('favorite', Type::BOOLEAN, [
+				'default' => 0,
+			]);
+			$table->addColumn('notification_level', Type::INTEGER, [
+				'default' => Participant::NOTIFY_DEFAULT,
+				'notnull' => false,
+			]);
+			$table->addColumn('last_joined_call', Type::INTEGER, [
+				'notnull' => true,
+				'length' => 11,
+				'default' => 0,
+				'unsigned' => true,
+			]);
+			$table->addColumn('last_read_message', Type::BIGINT, [
+				'default' => 0,
+				'notnull' => false,
+			]);
+			$table->addColumn('last_mention_message', Type::BIGINT, [
+				'default' => 0,
+				'notnull' => false,
+			]);
+
+			$table->setPrimaryKey(['id']);
+
+			$table->addUniqueIndex(['room_id', 'actor_type', 'actor_id'], 'ta_ident');
+			$table->addIndex(['room_id', 'pin'], 'ta_roompin');
+			$table->addIndex(['room_id'], 'ta_room');
+			$table->addIndex(['actor_type', 'actor_id'], 'ta_actor');
+		}
+
+
+		if (!$schema->hasTable('talk_sessions')) {
+			$table = $schema->createTable('talk_sessions');
+
+			// Auto increment id
+			$table->addColumn('id', Type::BIGINT, [
+				'autoincrement' => true,
+				'notnull' => true,
+			]);
+
+			// Unique key (for now, might remove this in the future,
+			// so a user can join multiple times.
+			$table->addColumn('attendee_id', Type::BIGINT, [
+				'notnull' => true,
+				'unsigned' => true,
+			]);
+
+			// Unique key to avoid duplication issues
+			$table->addColumn('session_id', Type::STRING, [
+				'notnull' => true,
+				'length' => 512,
+			]);
+
+			$table->addColumn('in_call', Type::INTEGER, [
+				'default' => 0,
+			]);
+			$table->addColumn('last_ping', Type::INTEGER, [
+				'notnull' => true,
+				'length' => 11,
+				'default' => 0,
+				'unsigned' => true,
+			]);
+
+			$table->setPrimaryKey(['id']);
+
+			$table->addUniqueIndex(['attendee_id'], 'ts_attendee');
+			$table->addUniqueIndex(['session_id'], 'ts_session');
+			$table->addIndex(['in_call'], 'ts_in_call');
+			$table->addIndex(['last_ping'], 'ts_last_ping');
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * @param IOutput $output
+	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
+	 * @param array $options
+	 */
+	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+		$insert = $this->connection->getQueryBuilder();
+		$insert->insert('talk_attendees')
+			->values([
+				'room_id' => $insert->createParameter('room_id'),
+				'actor_type' => $insert->createParameter('actor_type'),
+				'actor_id' => $insert->createParameter('actor_id'),
+				'participant_type' => $insert->createParameter('participant_type'),
+				'favorite' => $insert->createParameter('favorite'),
+				'notification_level' => $insert->createParameter('notification_level'),
+				'last_joined_call' => $insert->createParameter('last_joined_call'),
+				'last_read_message' => $insert->createParameter('last_read_message'),
+				'last_mention_message' => $insert->createParameter('last_mention_message'),
+			]);
+
+		$query = $this->connection->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->neq('user_id', $query->createNamedParameter('')))
+			->andWhere($query->expr()->isNotNull('user_id'));
+
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$lastJoinedCall = 0;
+			if (!empty($row['last_joined_call'])) {
+				$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call'])->getTimestamp();
+			}
+
+			$insert
+				->setParameter('room_id', (int) $row['room_id'], IQueryBuilder::PARAM_INT)
+				->setParameter('actor_type', Attendee::ACTOR_USERS)
+				->setParameter('actor_id', $row['user_id'])
+				->setParameter('participant_type', (int) $row['participant_type'], IQueryBuilder::PARAM_INT)
+				->setParameter('favorite', (bool) $row['favorite'], IQueryBuilder::PARAM_BOOL)
+				->setParameter('notification_level', (int) $row['notification_level'], IQueryBuilder::PARAM_INT)
+				->setParameter('last_joined_call', $lastJoinedCall, IQueryBuilder::PARAM_INT)
+				->setParameter('last_read_message', (int) $row['last_read_message'], IQueryBuilder::PARAM_INT)
+				->setParameter('last_mention_message', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
+				;
+
+			$insert->execute();
+		}
+		$result->closeCursor();
+	}
+}

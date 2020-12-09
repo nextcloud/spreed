@@ -25,6 +25,7 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Share\RoomShareProvider;
@@ -92,11 +93,15 @@ class SystemMessage {
 
 		$participant = $chatMessage->getParticipant();
 		if (!$participant->isGuest()) {
+			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
-				$participant->getUser() === $parsedParameters['actor']['id'];
+				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
+				$currentActorId === $parsedParameters['actor']['id'];
 		} else {
+			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-				sha1($participant->getSessionId()) === $parsedParameters['actor']['id'];
+				$participant->getAttendee()->getActorType() === 'guest' &&
+				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		}
 		$cliIsActor = $parsedParameters['actor']['type'] === 'guest' &&
 			'guest/cli' === $parsedParameters['actor']['id'];
@@ -197,7 +202,7 @@ class SystemMessage {
 				}
 			} elseif ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator added you');
@@ -217,7 +222,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+				} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 					if ($cliIsActor) {
 						$parsedMessage = $this->l->t('An administrator removed you');
@@ -231,7 +236,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -244,7 +249,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
+			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -257,7 +262,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
+			} elseif ($participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -270,7 +275,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
+			} elseif ($participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -326,8 +331,8 @@ class SystemMessage {
 		$path = $name;
 
 		if (!$participant->isGuest()) {
-			if ($share->getShareOwner() !== $participant->getUser()) {
-				$userFolder = $this->rootFolder->getUserFolder($participant->getUser());
+			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
+				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
 
@@ -336,7 +341,7 @@ class SystemMessage {
 						// 1. Only be executed on "Waiting for new messages"
 						// 2. Once per request
 						\OC_Util::tearDownFS();
-						\OC_Util::setupFS($participant->getUser());
+						\OC_Util::setupFS($participant->getAttendee()->getActorId());
 						$userNodes = $userFolder->getById($node->getId());
 					}
 
@@ -378,7 +383,7 @@ class SystemMessage {
 	}
 
 	protected function getActor(IComment $comment): array {
-		if ($comment->getActorType() === 'guests') {
+		if ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			return $this->getGuest($comment->getActorId());
 		}
 

@@ -45,6 +45,9 @@ class GuestManager {
 	/** @var IDBConnection */
 	protected $connection;
 
+	/** @var Config */
+	protected $talkConfig;
+
 	/** @var IMailer */
 	protected $mailer;
 
@@ -64,6 +67,7 @@ class GuestManager {
 	protected $dispatcher;
 
 	public function __construct(IDBConnection $connection,
+								Config $talkConfig,
 								IMailer $mailer,
 								Defaults $defaults,
 								IUserSession $userSession,
@@ -71,6 +75,7 @@ class GuestManager {
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
 		$this->connection = $connection;
+		$this->talkConfig = $talkConfig;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->userSession = $userSession;
@@ -86,7 +91,7 @@ class GuestManager {
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
-		$sessionHash = sha1($participant->getSessionId());
+		$sessionHash = $participant->getAttendee()->getActorId();
 		$dispatchEvent = true;
 
 		try {
@@ -163,7 +168,10 @@ class GuestManager {
 		return $map;
 	}
 
-	public function inviteByEmail(Room $room, string $email): void {
+	public function sendEmailInvitation(Room $room, Participant $participant): void {
+		$email = $participant->getAttendee()->getActorId();
+		$pin = $participant->getAttendee()->getPin();
+
 		$event = new AddEmailEvent($room, $email);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_EMAIL_INVITE, $event);
 
@@ -178,6 +186,8 @@ class GuestManager {
 			'invitee' => $invitee,
 			'roomName' => $room->getDisplayName(''),
 			'roomLink' => $link,
+			'email' => $email,
+			'pin' => $pin,
 		]);
 
 		if ($user instanceof IUser) {
@@ -200,6 +210,28 @@ class GuestManager {
 			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
 			$link
 		);
+
+		if ($pin) {
+			$template->addBodyText($this->l->t('You can also dial-in via phone with the following details'));
+
+			$template->addBodyListItem(
+				$this->talkConfig->getDialInInfo(),
+				$this->l->t('Dial-in information'),
+				$this->url->getAbsoluteURL($this->url->imagePath('spreed', 'phone.png'))
+			);
+
+			$template->addBodyListItem(
+				$room->getToken(),
+				$this->l->t('Meeting ID'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'places/calendar-dark.png'))
+			);
+
+			$template->addBodyListItem(
+				$pin,
+				$this->l->t('Your PIN'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/password.png'))
+			);
+		}
 
 		$template->addFooter();
 

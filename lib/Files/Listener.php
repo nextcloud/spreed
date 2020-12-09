@@ -28,7 +28,9 @@ use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\EventDispatcher\IEventDispatcher;
 
@@ -52,12 +54,16 @@ class Listener {
 
 	/** @var Util */
 	protected $util;
+	/** @var ParticipantService */
+	protected $participantService;
 	/** @var TalkSession */
 	protected $talkSession;
 
 	public function __construct(Util $util,
+								ParticipantService $participantService,
 								TalkSession $talkSession) {
 		$this->util = $util;
+		$this->participantService = $participantService;
 		$this->talkSession = $talkSession;
 	}
 
@@ -148,7 +154,10 @@ class Listener {
 		try {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
-			$room->addUsers(['userId' => $userId]);
+			$this->participantService->addUsers($room, [[
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $userId,
+			]]);
 		}
 	}
 

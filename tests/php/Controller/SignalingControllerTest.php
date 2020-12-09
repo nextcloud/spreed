@@ -29,8 +29,12 @@ use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -70,6 +74,10 @@ class SignalingControllerTest extends \Test\TestCase {
 	private $signalingManager;
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
+	/** @var SessionService|MockObject */
+	protected $sessionService;
 	/** @var IDBConnection|MockObject */
 	protected $dbConnection;
 	/** @var Messages|MockObject */
@@ -108,6 +116,8 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -124,6 +134,8 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->signalingManager,
 			$this->session,
 			$this->manager,
+			$this->participantService,
+			$this->sessionService,
 			$this->dbConnection,
 			$this->messages,
 			$this->userManager,
@@ -580,10 +592,6 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
-			->method('getParticipant')
-			->with($this->userId)
-			->willThrowException(new ParticipantNotFoundException());
-		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
 			->willReturn($participant);
@@ -632,7 +640,6 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($roomToken)
 			->willReturn($room);
 
-		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->willThrowException(new ParticipantNotFoundException());
@@ -755,9 +762,12 @@ class SignalingControllerTest extends \Test\TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
-			->method('pingSessionIds')
-			->with([$sessionId]);
+
+		$this->timeFactory->method('getTime')
+			->willReturn(123456);
+		$this->sessionService->expects($this->once())
+			->method('updateMultipleLastPings')
+			->with([$sessionId], 123456);
 
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
@@ -791,9 +801,12 @@ class SignalingControllerTest extends \Test\TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
-			->method('pingSessionIds')
-			->with([$sessionId]);
+
+		$this->timeFactory->method('getTime')
+			->willReturn(1234567);
+		$this->sessionService->expects($this->once())
+			->method('updateMultipleLastPings')
+			->with([$sessionId], 1234567);
 
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
@@ -827,9 +840,12 @@ class SignalingControllerTest extends \Test\TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
-			->method('pingSessionIds')
-			->with([$sessionId . '1', $sessionId . '2']);
+
+		$this->timeFactory->method('getTime')
+			->willReturn(234567);
+		$this->sessionService->expects($this->once())
+			->method('updateMultipleLastPings')
+			->with([$sessionId . '1', $sessionId . '2'], 234567);
 
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
@@ -865,10 +881,17 @@ class SignalingControllerTest extends \Test\TestCase {
 		// Make sure that leaving a user with an old session id doesn't remove
 		// the current user from the room if he re-joined in the meantime.
 		$dbConnection = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$dispatcher = \OC::$server->get(IEventDispatcher::class);
+		/** @var ParticipantService $participantService */
+		$participantService = \OC::$server->get(ParticipantService::class);
+
 		$this->manager = new Manager(
 			$dbConnection,
 			\OC::$server->getConfig(),
+			$this->createMock(Config::class),
+			\OC::$server->get(AttendeeMapper::class),
+			\OC::$server->get(SessionMapper::class),
+			$participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
@@ -891,7 +914,8 @@ class SignalingControllerTest extends \Test\TestCase {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
 
 		// The user joined the room.
-		$oldSessionId = $room->joinRoom($testUser, '');
+		$oldParticipant = $participantService->joinRoom($room, $testUser, '');
+		$oldSessionId = $oldParticipant->getSession()->getSessionId();
 		$result = $this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
@@ -902,11 +926,12 @@ class SignalingControllerTest extends \Test\TestCase {
 			],
 		]);
 		$participant = $room->getParticipant($this->userId);
-		$this->assertEquals($oldSessionId, $participant->getSessionId());
+		$this->assertEquals($oldSessionId, $participant->getSession()->getSessionId());
 
 		// The user is reloading the browser which will join him with another
 		// session id.
-		$newSessionId = $room->joinRoom($testUser, '');
+		$newParticipant = $participantService->joinRoom($room, $testUser, '');
+		$newSessionId = $newParticipant->getSession()->getSessionId();
 		$result = $this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
@@ -919,7 +944,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		// Now the new session id is stored in the database.
 		$participant = $room->getParticipant($this->userId);
-		$this->assertEquals($newSessionId, $participant->getSessionId());
+		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 
 		// Leaving the old session id...
 		$result = $this->performBackendRequest([
@@ -934,6 +959,6 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		// ...will keep the new session id in the database.
 		$participant = $room->getParticipant($this->userId);
-		$this->assertEquals($newSessionId, $participant->getSessionId());
+		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 	}
 }

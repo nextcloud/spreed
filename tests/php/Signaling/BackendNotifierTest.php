@@ -27,8 +27,11 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -75,6 +78,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	private $secureRandom;
 	/** @var ITimeFactory|MockObject */
 	private $timeFactory;
+	/** @var ParticipantService|MockObject */
+	private $participantService;
 	/** @var \OCA\Talk\Signaling\Manager|MockObject */
 	private $signalingManager;
 	/** @var IURLGenerator|MockObject */
@@ -119,6 +124,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		]));
 
+		$this->participantService = \OC::$server->get(ParticipantService::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->signalingManager->expects($this->any())
 			->method('getSignalingServerForConversation')
@@ -134,6 +140,10 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->manager = new Manager(
 			$dbConnection,
 			$config,
+			$this->config,
+			\OC::$server->get(AttendeeMapper::class),
+			\OC::$server->get(SessionMapper::class),
+			$this->participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
@@ -159,6 +169,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->createMock(IClientService::class),
 			$this->secureRandom,
 			$this->signalingManager,
+			$this->participantService,
 			$this->urlGenerator
 		);
 	}
@@ -194,7 +205,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$bodies = array_map([$this, 'sortParticipantUsers'], $bodies);
 		$message = $this->sortParticipantUsers($message);
-		$this->assertContains($message, $bodies);
+		$this->assertContains($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
 	}
 
 	private function sortParticipantUsers(array $message): array {
@@ -207,14 +218,24 @@ class BackendNotifierTest extends \Test\TestCase {
 					;
 			});
 		}
+		if ($message['type'] === 'incall') {
+			usort($message['incall']['users'], static function ($a, $b) {
+				return
+					[$a['userId'] ?? '', $a['participantType'], $a['sessionId'], $a['lastPing']]
+					<=>
+					[$b['userId'] ?? '', $b['participantType'], $b['sessionId'], $b['lastPing']]
+					;
+			});
+		}
 		return $message;
 	}
 
 	public function testRoomInvite() {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$room->addUsers([
-			'userId' => $this->userId,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'invite',
@@ -232,6 +253,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -239,16 +261,17 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testRoomDisinvite() {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$room->addUsers([
-			'userId' => $this->userId,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
 		$this->controller->clearRequests();
 		/** @var IUser|MockObject $testUser */
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
 			->willReturn($this->userId);
-		$room->removeUser($testUser, Room::PARTICIPANT_REMOVED);
+		$this->participantService->removeUser($room, $testUser, Room::PARTICIPANT_REMOVED);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'disinvite',
@@ -265,6 +288,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -286,6 +310,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -307,6 +332,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -328,6 +354,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -349,6 +376,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_ONLY,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -370,6 +398,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 				],
 			],
 		]);
@@ -377,9 +406,10 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testRoomDelete() {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$room->addUsers([
-			'userId' => $this->userId,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
 		$room->deleteRoom();
 
 		$this->assertMessageWasSent($room, [
@@ -394,13 +424,22 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testRoomInCallChanged() {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$userSession = 'user-session';
-		$room->addUsers([
-			'userId' => $this->userId,
-			'sessionId' => $userSession,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
+
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($this->userId);
+
+		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$userSession = $participant->getSession()->getSessionId();
 		$participant = $room->getParticipantBySession($userSession);
-		$room->changeInCall($participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
+
+		$this->participantService->changeInCall($room, $participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
@@ -428,9 +467,11 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$guestSession = $room->joinRoomGuest('');
+
+		$guestParticipant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$guestSession = $guestParticipant->getSession()->getSessionId();
 		$guestParticipant = $room->getParticipantBySession($guestSession);
-		$room->changeInCall($guestParticipant, Participant::FLAG_IN_CALL);
+		$this->participantService->changeInCall($room, $guestParticipant, Participant::FLAG_IN_CALL);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
@@ -463,7 +504,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
+		$this->participantService->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'incall',
@@ -515,6 +556,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
 					'active-since' => null,
+					'sip-enabled' => 0,
 					'foo' => 'bar',
 					'room' => $room->getToken(),
 				],
@@ -524,13 +566,22 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testParticipantsTypeChanged() {
 		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$userSession = 'user-session';
-		$room->addUsers([
-			'userId' => $this->userId,
-			'sessionId' => $userSession,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
+
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($this->userId);
+
+		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$userSession = $participant->getSession()->getSessionId();
 		$participant = $room->getParticipantBySession($userSession);
-		$room->setParticipantType($participant, Participant::MODERATOR);
+
+		$this->participantService->updateParticipantType($room, $participant, Participant::MODERATOR);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
@@ -558,9 +609,12 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$guestSession = $room->joinRoomGuest('');
+
+		$guestParticipant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$guestSession = $guestParticipant->getSession()->getSessionId();
 		$guestParticipant = $room->getParticipantBySession($guestSession);
-		$room->setParticipantType($guestParticipant, Participant::GUEST_MODERATOR);
+
+		$this->participantService->updateParticipantType($room, $guestParticipant, Participant::GUEST_MODERATOR);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
@@ -594,11 +648,13 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->controller->clearRequests();
 		$notJoinedUserId = 'not-joined-user-id';
-		$room->addUsers([
-			'userId' => $notJoinedUserId,
-		]);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $notJoinedUserId,
+		]]);
+
 		$notJoinedParticipant = $room->getParticipant($notJoinedUserId);
-		$room->setParticipantType($notJoinedParticipant, Participant::MODERATOR);
+		$this->participantService->updateParticipantType($room, $notJoinedParticipant, Participant::MODERATOR);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
@@ -631,7 +687,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$room->setParticipantType($participant, Participant::USER);
+		$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',
@@ -672,7 +728,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$room->setParticipantType($guestParticipant, Participant::GUEST);
+		$this->participantService->updateParticipantType($room, $guestParticipant, Participant::GUEST);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',

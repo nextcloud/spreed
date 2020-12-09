@@ -49,6 +49,12 @@ export const PARTICIPANT = {
 		WITH_VIDEO: 4,
 		WITH_PHONE: 8,
 	},
+	SIP_FLAG: {
+		MUTE_MICROPHONE: 1,
+		MUTE_SPEAKER: 2,
+		SPEAKING: 4,
+		RAISE_HAND: 8,
+	},
 	NOTIFY: {
 		DEFAULT: 0,
 		ALWAYS: 1,
@@ -68,6 +74,10 @@ export const WEBINAR = {
 	LOBBY: {
 		NONE: 0,
 		NON_MODERATORS: 1,
+	},
+	SIP: {
+		DISABLED: 0,
+		ENABLED: 1,
 	},
 }
 export const SHARE = {

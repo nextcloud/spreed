@@ -91,11 +91,13 @@ export default {
 		},
 
 		generateKey(participant) {
-			let key = 'i#' + participant.id
-			if (participant.userId) {
-				key = 'u#' + participant.userId
-			} else if (participant.sessionId) {
-				key = 's#' + participant.sessionId
+			let key = ''
+			if (participant.attendeeId) {
+				// Attendee from participant list
+				key = 'attendee#' + participant.attendeeId
+			} else if (participant.source) {
+				// Search result candidate
+				key = 'search#' + participant.source + '#' + participant.id
 			}
 			return key
 		},

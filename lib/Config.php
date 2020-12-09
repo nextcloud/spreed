@@ -43,6 +43,9 @@ class Config {
 	/** @var ISecureRandom */
 	private $secureRandom;
 
+	/** @var array */
+	protected $canEnableSIP = [];
+
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								IGroupManager $groupManager,
@@ -60,6 +63,46 @@ class Config {
 		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
 		$groups = json_decode($groups, true);
 		return \is_array($groups) ? $groups : [];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getSIPGroups(): array {
+		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	public function isSIPConfigured(): bool {
+		return $this->getSIPSharedSecret() !== ''
+			&& $this->getDialInInfo() !== '';
+	}
+
+	public function getDialInInfo(): string {
+		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
+	}
+
+	public function getSIPSharedSecret(): string {
+		return $this->config->getAppValue('spreed', 'sip_bridge_shared_secret');
+	}
+
+	public function canUserEnableSIP(IUser $user): bool {
+		if (isset($this->canEnableSIP[$user->getUID()])) {
+			return $this->canEnableSIP[$user->getUID()];
+		}
+
+		$this->canEnableSIP[$user->getUID()] = false;
+
+		$allowedGroups = $this->getSIPGroups();
+		if (empty($allowedGroups)) {
+			$this->canEnableSIP[$user->getUID()] = true;
+		} else {
+			$userGroups = $this->groupManager->getUserGroupIds($user);
+			$this->canEnableSIP[$user->getUID()] = !empty(array_intersect($allowedGroups, $userGroups));
+		}
+
+		return $this->canEnableSIP[$user->getUID()];
 	}
 
 	public function isDisabledForUser(IUser $user): bool {

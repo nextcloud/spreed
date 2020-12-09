@@ -29,9 +29,13 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -67,6 +71,12 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ChatManager */
 	private $chatManager;
 
+	/** @var ParticipantService */
+	private $participantService;
+
+	/** @var SessionService */
+	private $sessionService;
+
 	/** @var GuestManager */
 	private $guestManager;
 
@@ -88,13 +98,14 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var ISearchResult */
 	private $searchResult;
 
+	/** @var ITimeFactory */
+	protected $timeFactory;
+
 	/** @var IEventDispatcher */
-	private $eventDispatcher;
+	protected $eventDispatcher;
 
 	/** @var IL10N */
 	private $l;
-	/** @var ITimeFactory */
-	protected $timeFactory;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -103,14 +114,16 @@ class ChatController extends AEnvironmentAwareController {
 								TalkSession $session,
 								IAppManager $appManager,
 								ChatManager $chatManager,
+								ParticipantService $participantService,
+								SessionService $sessionService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
 								IUserStatusManager $statusManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
-								IEventDispatcher $eventDispatcher,
 								ITimeFactory $timeFactory,
+								IEventDispatcher $eventDispatcher,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -119,14 +132,16 @@ class ChatController extends AEnvironmentAwareController {
 		$this->session = $session;
 		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
+		$this->participantService = $participantService;
+		$this->sessionService = $sessionService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->statusManager = $statusManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
-		$this->eventDispatcher = $eventDispatcher;
 		$this->timeFactory = $timeFactory;
+		$this->eventDispatcher = $eventDispatcher;
 		$this->l = $l;
 	}
 
@@ -151,7 +166,7 @@ class ChatController extends AEnvironmentAwareController {
 	 */
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0): DataResponse {
 		if ($this->userId === null) {
-			$actorType = 'guests';
+			$actorType = Attendee::ACTOR_GUESTS;
 			$sessionId = $this->session->getSessionForRoom($this->room->getToken());
 			// The character limit for actorId is 64, but the spreed-session is
 			// 256 characters long, so it has to be hashed to get an ID that
@@ -164,7 +179,7 @@ class ChatController extends AEnvironmentAwareController {
 				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
 		} else {
-			$actorType = 'users';
+			$actorType = Attendee::ACTOR_USERS;
 			$actorId = $this->userId;
 		}
 
@@ -188,7 +203,7 @@ class ChatController extends AEnvironmentAwareController {
 			}
 		}
 
-		$this->room->ensureOneToOneRoomIsFilled();
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
@@ -206,7 +221,7 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_CREATED);
 		}
 
-		$this->participant->setLastReadMessage((int) $comment->getId());
+		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
 
 		$data = $chatMessage->toArray();
 		if ($parentMessage instanceof Message) {
@@ -267,23 +282,27 @@ class ChatController extends AEnvironmentAwareController {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
-		if ($noStatusUpdate === 0 && $this->participant->getSessionId() !== '0') {
+		$session = $this->participant->getSession();
+		if ($noStatusUpdate === 0 && $session instanceof Session) {
 			// The mobile apps dont do internal signaling unless in a call
 			$isMobileApp = $this->request->isUserAgent([
 				IRequest::USER_AGENT_TALK_ANDROID,
 				IRequest::USER_AGENT_TALK_IOS,
 			]);
-			if ($isMobileApp && $this->participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
-				$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
+			if ($isMobileApp && $session->getInCall() === Participant::FLAG_DISCONNECTED) {
+				$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 
 				if ($lookIntoFuture) {
-					// Bump the user status again
-					$event = new UserLiveStatusEvent(
-						$this->userManager->get($this->participant->getUser()),
-						IUserStatus::ONLINE,
-						$this->timeFactory->getTime()
-					);
-					$this->eventDispatcher->dispatchTyped($event);
+					$attendee = $this->participant->getAttendee();
+					if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+						// Bump the user status again
+						$event = new UserLiveStatusEvent(
+							$this->userManager->get($attendee->getActorId()),
+							IUserStatus::ONLINE,
+							$this->timeFactory->getTime()
+						);
+						$this->eventDispatcher->dispatchTyped($event);
+					}
 				}
 			}
 		}
@@ -299,9 +318,11 @@ class ChatController extends AEnvironmentAwareController {
 		 * we only update the read marker to the last known id, when it is higher
 		 * then the current read marker.
 		 */
+
+		$attendee = $this->participant->getAttendee();
 		if ($lookIntoFuture && $setReadMarker === 1 &&
-			$lastKnownMessageId > $this->participant->getLastReadMessage()) {
-			$this->participant->setLastReadMessage($lastKnownMessageId);
+			$lastKnownMessageId > $attendee->getLastReadMessage()) {
+			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -393,14 +414,14 @@ class ChatController extends AEnvironmentAwareController {
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
 			/**
-			 * This false set the read marker on new messages although you
+			 * This falsely set the read marker on new messages although you
 			 * navigated away to a different chat already. So we removed this
 			 * and instead update the read marker before your next waiting.
 			 * So when you are still there, it will just have a wrong read
 			 * marker for the time until your next request starts, while it will
 			 * not update the value, when you actually left the chat already.
 			 * if ($setReadMarker === 1 && $lookIntoFuture) {
-			 * $this->participant->setLastReadMessage((int) $newLastKnown->getId());
+			 * $this->participantService->updateLastReadMessage($this->participant, (int) $newLastKnown->getId());
 			 * }
 			 */
 		}
@@ -416,7 +437,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setReadMarker(int $lastReadMessage): DataResponse {
-		$this->participant->setLastReadMessage($lastReadMessage);
+		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
 		return new DataResponse();
 	}
 
@@ -464,7 +485,9 @@ class ChatController extends AEnvironmentAwareController {
 
 		$results = $this->prepareResultArray($results, $statuses);
 
-		$roomDisplayName = $this->room->getDisplayName($this->participant->getUser());
+		$attendee = $this->participant->getAttendee();
+		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
+		$roomDisplayName = $this->room->getDisplayName($userId);
 		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
 			if ($search === '' ||
 				stripos($roomDisplayName, $search) === 0 ||
@@ -502,7 +525,7 @@ class ChatController extends AEnvironmentAwareController {
 					'source' => $type,
 				];
 
-				if ($type === 'users' && isset($statuses[$data['id']])) {
+				if ($type === Attendee::ACTOR_USERS && isset($statuses[$data['id']])) {
 					$data['status'] = $statuses[$data['id']]->getStatus();
 					$data['statusIcon'] = $statuses[$data['id']]->getIcon();
 					$data['statusMessage'] = $statuses[$data['id']]->getMessage();

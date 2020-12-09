@@ -24,7 +24,9 @@ namespace OCA\Talk\Tests\php\Chat\Parser;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
@@ -312,20 +314,32 @@ class SystemMessageTest extends TestCase {
 		/** @var Participant|MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		if ($recipientId && strpos($recipientId, 'guest::') !== false) {
+			$attendee = Attendee::fromRow([
+				'actor_type' => 'guests',
+				'actor_id' => substr($recipientId, strlen('guest::')),
+			]);
+			$session = Session::fromRow([
+				'session_id' => substr($recipientId, strlen('guest::')),
+			]);
 			$participant->expects($this->atLeastOnce())
 				->method('isGuest')
 				->willReturn(true);
-			$participant->expects($this->atLeastOnce())
-				->method('getSessionId')
-				->willReturn(substr($recipientId, strlen('guest::')));
 		} else {
 			$participant->expects($this->atLeastOnce())
 				->method('isGuest')
 				->willReturn(false);
-			$participant->expects($this->atLeastOnce())
-				->method('getUser')
-				->willReturn($recipientId);
+			$attendee = Attendee::fromRow([
+				'actor_type' => 'users',
+				'actor_id' => $recipientId,
+			]);
+			$session = null;
 		}
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getSession')
+			->willReturn($session);
 
 		/** @var IComment|MockObject $comment */
 		$comment = $this->createMock(IComment::class);
@@ -520,9 +534,13 @@ class SystemMessageTest extends TestCase {
 		$participant->expects($this->once())
 			->method('isGuest')
 			->willReturn(false);
-		$participant->expects($this->once())
-			->method('getUser')
-			->willReturn('owner');
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'owner',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -557,9 +575,13 @@ class SystemMessageTest extends TestCase {
 		$participant->expects($this->once())
 			->method('isGuest')
 			->willReturn(false);
-		$participant->expects($this->exactly(2))
-			->method('getUser')
-			->willReturn('user');
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'user',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
@@ -627,9 +649,13 @@ class SystemMessageTest extends TestCase {
 		$participant->expects($this->once())
 			->method('isGuest')
 			->willReturn(false);
-		$participant->expects($this->exactly(3))
-			->method('getUser')
-			->willReturn('user');
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'user',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')

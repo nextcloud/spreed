@@ -29,6 +29,7 @@ use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
@@ -43,6 +44,8 @@ class NotifierTest extends TestCase {
 	protected $notificationManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var IConfig|MockObject */
@@ -65,6 +68,7 @@ class NotifierTest extends TestCase {
 				return $userId !== 'unknownUser';
 			});
 
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->util = $this->createMock(Util::class);
@@ -72,6 +76,7 @@ class NotifierTest extends TestCase {
 		$this->notifier = new Notifier(
 			$this->notificationManager,
 			$this->userManager,
+			$this->participantService,
 			$this->manager,
 			$this->config,
 			$this->util

@@ -31,8 +31,11 @@ use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -74,17 +77,20 @@ class Listener {
 			$room = $event->getRoom();
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
+			/** @var ParticipantService $participantService */
+			$participantService = \OC::$server->query(ParticipantService::class);
 
-			if ($room->hasSessionsInCall()) {
-				$listener->sendSystemMessage($room, 'call_joined');
+			if ($participantService->hasActiveSessionsInCall($room)) {
+				$listener->sendSystemMessage($room, 'call_joined', [], $event->getParticipant());
 			} else {
-				$listener->sendSystemMessage($room, 'call_started');
+				$listener->sendSystemMessage($room, 'call_started', [], $event->getParticipant());
 			}
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 
-			if ($event->getParticipant()->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
+			$session = $event->getParticipant()->getSession();
+			if (!$session instanceof Session) {
 				// This happens in case the user was kicked/lobbied
 				return;
 			}
@@ -190,10 +196,14 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			foreach ($participants as $participant) {
+				if ($participant['actorType'] !== 'users') {
+					continue;
+				}
+
 				$userJoinedFileRoom = $room->getObjectType() === 'file' &&
 						(!isset($participant['participantType']) || $participant['participantType'] !== Participant::USER_SELF_JOINED);
-				if ($userJoinedFileRoom || $userId !== $participant['userId']) {
-					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['userId']]);
+				if ($userJoinedFileRoom || $userId !== $participant['actorId']) {
+					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
 				}
 			}
 		});
@@ -210,23 +220,28 @@ class Listener {
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
+			$attendee = $event->getParticipant()->getAttendee();
+
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+				return;
+			}
 
 			if ($event->getNewValue() === Participant::MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $event->getParticipant()->getUser()]);
+				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::USER) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getParticipant()->getUser()]);
+				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
+				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => sha1($event->getParticipant()->getSessionId())]);
+				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 			}
 		});
 		$listener = function (GenericEvent $event) {
@@ -252,20 +267,18 @@ class Listener {
 
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null): void {
 		if ($participant instanceof Participant) {
-			$actorType = $participant->isGuest() ? 'guests' : 'users';
-			$sessionId = $participant->getSessionId();
-			$sessionHash = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
-			$actorId = $participant->isGuest() ? $sessionHash : $participant->getUser();
+			$actorType = $participant->getAttendee()->getActorType();
+			$actorId = $participant->getAttendee()->getActorId();
 		} else {
 			$user = $this->userSession->getUser();
 			if ($user instanceof IUser) {
 				$actorType = 'users';
 				$actorId = $user->getUID();
 			} elseif (\OC::$CLI) {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$actorId = 'cli';
 			} else {
-				$actorType = 'guests';
+				$actorType = Attendee::ACTOR_GUESTS;
 				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 			}

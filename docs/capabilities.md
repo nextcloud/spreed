@@ -51,3 +51,6 @@ title: Capabilities
 * `force-mute` - "forceMute" signaling messages can be sent to mute other participants.
 * `conversation-v2` - The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).
 * `chat-reference-id` - an optional referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message
+
+## 10.0
+* `sip-support` - Whether conversations API v3 exists and SIP can be configured and enabled by moderators. The conversations API will come with some new values `sipEnabled` which signals whether this conversation has SIP configured as well as `canEnableSIP` to see if a user can enable it. When it is enabled `attendeePin` will contain the unique dial-in code for this user.

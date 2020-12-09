@@ -138,7 +138,7 @@ class Operation implements IOperation {
 					$room,
 					$participant,
 					'bots',
-					$participant->getUser(),
+					$participant->getAttendee()->getActorId(),
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
 					null,
@@ -173,9 +173,9 @@ class Operation implements IOperation {
 			case self::MESSAGE_MODES['ROOM_MENTION']:
 				return '@all ';
 			case self::MESSAGE_MODES['SELF_MENTION']:
-				$hasWhitespace = strpos($participant->getUser(), ' ') !== false;
+				$hasWhitespace = strpos($participant->getAttendee()->getActorId(), ' ') !== false;
 				$enclosure = $hasWhitespace ? '"' : '';
-				return '@' . $enclosure . $participant->getUser() . $enclosure . ' ';
+				return '@' . $enclosure . $participant->getAttendee()->getActorId() . $enclosure . ' ';
 			case self::MESSAGE_MODES['NO_MENTION']:
 			default:
 				return '';
@@ -244,7 +244,7 @@ class Operation implements IOperation {
 	 * @throws RoomNotFoundException
 	 */
 	protected function getRoom(string $token, string $uid): Room {
-		return $this->talkManager->getRoomForParticipantByToken($token, $uid);
+		return $this->talkManager->getRoomForUserByToken($token, $uid);
 	}
 
 	/**

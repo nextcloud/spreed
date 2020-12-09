@@ -36,7 +36,7 @@
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
 			:name="computedName"
-			:source="participant.source"
+			:source="participant.source || participant.actorType"
 			:offline="isOffline" />
 		<div
 			class="participant-row__user-wrapper"
@@ -81,6 +81,12 @@
 			v-if="canModerate && !isSearched"
 			:aria-label="t('spreed', 'Participant settings')"
 			class="participant-row__actions">
+			<ActionText
+				v-if="attendeePin"
+				:title="t('spreed', 'Dial-in PIN')"
+				icon="icon-password">
+				{{ attendeePin }}
+			</ActionText>
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
 				@click="demoteFromModerator">
@@ -104,6 +110,7 @@
 <script>
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
@@ -120,6 +127,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		ActionText,
 		AvatarWrapper,
 		Microphone,
 		Phone,
@@ -208,7 +216,7 @@ export default {
 		 * @returns {boolean}
 		 */
 		isSearched() {
-			return this.participant.userId === undefined
+			return this.participant.label !== undefined
 		},
 		computedName() {
 			if (!this.isSearched) {
@@ -228,7 +236,7 @@ export default {
 		},
 		computedId() {
 			if (!this.isSearched) {
-				return this.participant.userId
+				return this.participant.actorId
 			}
 			return this.participant.id
 		},
@@ -260,6 +268,9 @@ export default {
 		},
 		lastPing() {
 			return this.participant.lastPing
+		},
+		attendeePin() {
+			return this.participant.attendeePin
 		},
 		token() {
 			return this.$store.getters.getToken()
@@ -312,21 +323,6 @@ export default {
 		canBePromoted() {
 			return this.canModerate && !this.isModerator
 		},
-
-		participantIdentifier() {
-			let data = {}
-			if (this.isGuest) {
-				data = {
-					sessionId: this.sessionId,
-				}
-			} else {
-				data = {
-					userId: this.computedId,
-				}
-			}
-			return data
-		},
-
 	},
 
 	methods: {
@@ -353,19 +349,19 @@ export default {
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
-				participantIdentifier: this.participantIdentifier,
+				attendeeId: this.participant.attendeeId,
 			})
 		},
 	},
