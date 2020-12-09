@@ -299,9 +299,9 @@ export default {
 							placeholder: t('spreed', 'API token'),
 							icon: 'icon-category-auth',
 						},
-						chatid: {
+						channel: {
 							type: 'text',
-							placeholder: t('spreed', 'Chat ID'),
+							placeholder: t('spreed', 'Channel'),
 							icon: 'icon-group',
 						},
 					},
