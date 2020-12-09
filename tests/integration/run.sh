@@ -10,6 +10,9 @@ php -S localhost:8080 -t ${ROOT_DIR} &
 PHPPID=$!
 echo $PHPPID
 
+# also kill php process in case of ctrl+c
+trap 'kill -TERM $PHPPID; wait $PHPPID' TERM
+
 cp -R ./spreedcheats ../../../spreedcheats
 ${ROOT_DIR}/occ app:enable spreed || exit 1
 ${ROOT_DIR}/occ app:enable spreedcheats || exit 1
@@ -23,5 +26,7 @@ kill $PHPPID
 
 ${ROOT_DIR}/occ app:disable spreedcheats
 rm -rf ../../../spreedcheats
+
+wait $PHPPID
 
 exit $RESULT
