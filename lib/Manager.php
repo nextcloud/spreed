@@ -120,9 +120,9 @@ class Manager {
 
 	public function forAllRooms(callable $callback): void {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')
 			->selectAlias('id', 'r_id')
-			->from('talk_rooms');
+			->from('talk_rooms', 'r');
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
@@ -241,9 +241,9 @@ class Manager {
 
 	public function resetAssignedSignalingServers(ICache $cache): void {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('talk_rooms')
-			->where($query->expr()->isNotNull('assigned_hpb'));
+		$query->select('r.*')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->isNotNull('r.assigned_hpb'));
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
@@ -264,20 +264,20 @@ class Manager {
 	 */
 	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')
 			->selectAlias('id', 'r_id')
-			->from('talk_rooms')
+			->from('talk_rooms', 'r')
 			->setMaxResults(1);
 
 		if ($searchToken !== '') {
-			$query->where($query->expr()->iLike('token', $query->createNamedParameter(
+			$query->where($query->expr()->iLike('r.token', $query->createNamedParameter(
 				'%' . $this->db->escapeLikeParameter($searchToken) . '%'
 			)));
 		}
 
 		$query->setMaxResults($limit)
 			->setFirstResult($offset)
-			->orderBy('token', 'ASC');
+			->orderBy('r.token', 'ASC');
 		$result = $query->execute();
 
 		$rooms = [];
@@ -534,10 +534,10 @@ class Manager {
 	 */
 	public function getRoomById(int $roomId): Room {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('id', 'r_id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -644,11 +644,11 @@ class Manager {
 	 */
 	public function getRoomByObject(string $objectType, string $objectId): Room {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('id', 'r_id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
-			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)));
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -678,7 +678,9 @@ class Manager {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')
+			->addSelect('a.*')
+			->addSelect('s.*')
 			->selectAlias('r.id', 'r_id')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
@@ -734,11 +736,11 @@ class Manager {
 		$name = json_encode($users);
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('id', 'r_id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('name', $query->createNamedParameter($name)));
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($name)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -764,11 +766,11 @@ class Manager {
 	 */
 	public function getChangelogRoom(string $userId): Room {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('id', 'r_id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($userId)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -953,9 +955,9 @@ class Manager {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('token', $query->createParameter('token')));
+		$query->select('r.id')
+			->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.token', $query->createParameter('token')));
 
 		$i = 0;
 		while ($i < 1000) {

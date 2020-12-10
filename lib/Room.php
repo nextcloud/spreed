@@ -402,7 +402,8 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
@@ -438,7 +439,8 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
 			->from('talk_sessions', 's')
@@ -464,7 +466,8 @@ class Room {
 	 */
 	public function getParticipantByPin(string $pin): Participant {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
@@ -490,7 +493,8 @@ class Room {
 	 */
 	public function getParticipantByAttendeeId(int $attendeeId): Participant {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
@@ -521,7 +525,8 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('a.*')
+			->addSelect('s.*')
 			->selectAlias('a.id', 'a_id')
 			->selectAlias('s.id', 's_id')
 			->from('talk_attendees', 'a')
