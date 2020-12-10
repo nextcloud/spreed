@@ -25,6 +25,7 @@ namespace OCA\Talk\AppInfo;
 
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
+use OCA\Talk\Avatar\RoomAvatarProvider;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
 use OCA\Talk\Chat\ChatManager;
@@ -102,6 +103,8 @@ class Application extends App implements IBootstrap {
 		$context->registerSearchProvider(MessageSearch::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
+
+		$context->registerAvatarProvider('room', RoomAvatarProvider::class);
 	}
 
 	public function boot(IBootContext $context): void {
