@@ -19,6 +19,7 @@
  */
 
 import { loadState } from '@nextcloud/initial-state'
+import { setReadStatusPrivacy } from '../services/settingsService'
 
 const state = {
 	readStatusPrivacy: loadState('talk', 'read_status_privacy'),
@@ -45,12 +46,13 @@ const mutations = {
 const actions = {
 
 	/**
-	 * Updates the token
+	 * Update the read status privacy for the user
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} privacy The new selected privacy
+	 * @param {int} privacy The new selected privacy
 	 */
-	updateReadStatusPrivacy(context, privacy) {
+	async updateReadStatusPrivacy(context, privacy) {
+		await setReadStatusPrivacy(privacy)
 		context.commit('updateReadStatusPrivacy', privacy)
 	},
 }

@@ -106,10 +106,7 @@
 
 <script>
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
-import {
-	setAttachmentFolder,
-	setReadStatusPrivacy,
-} from '../../services/settingsService'
+import { setAttachmentFolder } from '../../services/settingsService'
 import { PRIVACY } from '../../constants'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
@@ -191,14 +188,11 @@ export default {
 		},
 
 		async toggleReadStatusPrivacy() {
-			let newPrivacy = PRIVACY.PUBLIC
-			if (this.readStatusPrivacyIsPublic) {
-				newPrivacy = PRIVACY.PRIVATE
-			}
-
 			try {
-				this.$store.commit('updateReadStatusPrivacy', newPrivacy)
-				await setReadStatusPrivacy(newPrivacy)
+				await this.$store.commit(
+					'updateReadStatusPrivacy',
+					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+				)
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
 			}
