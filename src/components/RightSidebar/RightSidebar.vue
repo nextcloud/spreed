@@ -35,6 +35,16 @@
 		@submit-title="handleSubmitTitle"
 		@dismiss-editing="dismissEditing"
 		@close="handleClose">
+		<Description
+			v-if="showDescription"
+			slot="description"
+			:editable="canFullModerate"
+			:description="description"
+			:editing="isEditingDescription"
+			:loading="isDescriptionLoading"
+			:placeholder="t('spreed', 'Add a description for this conversation')"
+			@submit:description="handleUpdateDescription"
+			@update:editing="handleEditDescription" />
 		<AppSidebarTab
 			v-if="showChatInSidebar"
 			id="chat"
@@ -95,6 +105,9 @@ import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
+import Description from './Description/Description'
+import { EventBus } from '../../services/EventBus'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'RightSidebar',
@@ -107,6 +120,7 @@ export default {
 		SetGuestUsername,
 		SipSettings,
 		MatterbridgeSettings,
+		Description,
 	},
 
 	mixins: [
@@ -126,9 +140,12 @@ export default {
 			contactsLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
+			isEditingDescription: false,
+			isDescriptionLoading: false,
 			// Sidebar status before starting editing operation
 			sidebarOpenBeforeEditingName: '',
 			matterbridgeEnabled: loadState('talk', 'enable_matterbridge'),
+
 		}
 	},
 
@@ -191,6 +208,7 @@ export default {
 				return this.conversation.displayName
 			}
 		},
+
 		isRenamingConversation() {
 			return this.$store.getters.isRenamingConversation
 		},
@@ -198,6 +216,18 @@ export default {
 		showSIPSettings() {
 			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
 				&& this.conversation.attendeePin
+		},
+
+		description() {
+			return this.conversation.description
+		},
+
+		showDescription() {
+			if (this.canFullModerate) {
+				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+			} else {
+				return this.description !== ''
+			}
 		},
 	},
 
@@ -207,6 +237,14 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 		},
+	},
+
+	mounted() {
+		EventBus.$on('routeChange', this.handleRouteChange)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('routeChange', this.handleRouteChange)
 	},
 
 	methods: {
@@ -254,6 +292,30 @@ export default {
 			emit('show-settings')
 		},
 
+		async handleUpdateDescription(description) {
+			this.isDescriptionLoading = true
+			try {
+				await this.$store.dispatch('setConversationDescription', {
+					token: this.token,
+					description,
+				})
+				this.isEditingDescription = false
+			} catch (error) {
+				console.error('Error while setting conversation description', error)
+				showError(t('spreed', 'Error while updating conversation description'))
+			}
+			this.isDescriptionLoading = false
+		},
+
+		handleEditDescription(payload) {
+			this.isEditingDescription = payload
+		},
+
+		handleRouteChange() {
+			// Reset description data on route change
+			this.isEditingDescription = false
+			this.isDescriptionLoading = false
+		},
 	},
 }
 </script>
