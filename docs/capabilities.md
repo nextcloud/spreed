@@ -57,3 +57,5 @@ title: Capabilities
 
 ## 11.0
 * `config => previews => max-gif-size` - Maximum size in bytes below which a GIF can be embedded directly in the page at render time. Bigger files will be rendered statically using the preview endpoint instead. Can be set with `occ config:app:set spreed max-gif-size --value=X` where X is the new value in bytes. Defaults to 3 MB.
+* `chat-read-status` - On conversation API v3 and the chat API the last common read message is exposed which can be used to update the "read status" flag of own chat messages. The info should be shown only when the user also shares their read status. The user's value can be found in `config => chat => read-privacy`.
+* `config => chat => read-privacy` - See `chat-read-status`

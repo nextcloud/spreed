@@ -65,6 +65,13 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	public function getUserReadPrivacy(string $userId): int {
+		return (int) $this->config->getUserValue(
+			$userId,
+			'spreed', 'read_status_privacy',
+			(string) Participant::PRIVACY_PUBLIC);
+	}
+
 	/**
 	 * @return string[]
 	 */

@@ -218,7 +218,11 @@ class ChatController extends AEnvironmentAwareController {
 		$this->messageParser->parseMessage($chatMessage);
 
 		if (!$chatMessage->getVisibility()) {
-			return new DataResponse([], Http::STATUS_CREATED);
+			$response = new DataResponse([], Http::STATUS_CREATED);
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			}
+			return $response;
 		}
 
 		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
@@ -227,7 +231,12 @@ class ChatController extends AEnvironmentAwareController {
 		if ($parentMessage instanceof Message) {
 			$data['parent'] = $parentMessage->toArray();
 		}
-		return new DataResponse($data, Http::STATUS_CREATED);
+
+		$response = new DataResponse($data, Http::STATUS_CREATED);
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
+		return $response;
 	}
 
 	/**
@@ -333,7 +342,11 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		if (empty($comments)) {
-			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+			$response = new DataResponse([], Http::STATUS_NOT_MODIFIED);
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			}
+			return $response;
 		}
 
 		$i = 0;
@@ -424,6 +437,9 @@ class ChatController extends AEnvironmentAwareController {
 			 * $this->participantService->updateLastReadMessage($this->participant, (int) $newLastKnown->getId());
 			 * }
 			 */
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			}
 		}
 
 		return $response;
@@ -438,7 +454,11 @@ class ChatController extends AEnvironmentAwareController {
 	 */
 	public function setReadMarker(int $lastReadMessage): DataResponse {
 		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
-		return new DataResponse();
+		$response = new DataResponse();
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
+		return $response;
 	}
 
 	/**

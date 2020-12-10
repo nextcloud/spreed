@@ -87,6 +87,11 @@ trait TInitialState {
 			$appManager->isEnabledForUser('circles', $user)
 		);
 
+		$this->initialStateService->provideInitialState(
+			'talk', 'read_status_privacy',
+			$this->talkConfig->getUserReadPrivacy($user->getUID())
+		);
+
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
 
 		if ($attachmentFolder) {
@@ -125,6 +130,11 @@ trait TInitialState {
 		$this->initialStateService->provideInitialState(
 			'talk', 'circles_enabled',
 			false
+		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'read_status_privacy',
+			Participant::PRIVACY_PUBLIC
 		);
 
 		$this->initialStateService->provideInitialState(

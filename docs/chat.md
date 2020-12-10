@@ -29,6 +29,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
     - Data:
         Array of messages, each message has at least:
@@ -85,6 +86,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
 
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
 
@@ -103,6 +110,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant,
         or the participant is a guest.
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
 
 

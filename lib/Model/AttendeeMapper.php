@@ -126,6 +126,7 @@ class AttendeeMapper extends QBMapper {
 			'last_joined_call' => (int) $row['last_joined_call'],
 			'last_read_message' => (int) $row['last_read_message'],
 			'last_mention_message' => (int) $row['last_mention_message'],
+			'read_privacy' => (int) $row['read_privacy'],
 		]);
 	}
 }

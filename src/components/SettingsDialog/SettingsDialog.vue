@@ -38,6 +38,18 @@
 				:disabled="attachmentFolderLoading"
 				@click="selectAttachmentFolder">
 		</AppSettingsSection>
+		<AppSettingsSection v-if="!isGuest"
+			:title="t('spreed', 'Privacy')"
+			class="app-settings-section">
+			<input id="read_status_privacy"
+				:checked="readStatusPrivacyIsPublic"
+				:disabled="privacyLoading"
+				type="checkbox"
+				name="read_status_privacy"
+				class="checkbox"
+				@change="toggleReadStatusPrivacy">
+			<label for="read_status_privacy">{{ t('spreed', 'Share my read-status and show the read-status of others') }}</label>
+		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
 			<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
 
@@ -94,8 +106,9 @@
 </template>
 
 <script>
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { setAttachmentFolder } from '../../services/settingsService'
+import { PRIVACY } from '../../constants'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
@@ -114,6 +127,7 @@ export default {
 		return {
 			showSettings: false,
 			attachmentFolderLoading: true,
+			privacyLoading: false,
 		}
 	},
 
@@ -128,6 +142,14 @@ export default {
 
 		isGuest() {
 			return !this.$store.getters.getUserId()
+		},
+
+		readStatusPrivacyIsPublic() {
+			return this.readStatusPrivacy === PRIVACY.PUBLIC
+		},
+
+		readStatusPrivacy() {
+			return this.$store.getters.getReadStatusPrivacy()
 		},
 	},
 
@@ -165,6 +187,20 @@ export default {
 					}
 					this.attachmentFolderLoading = false
 				})
+		},
+
+		async toggleReadStatusPrivacy() {
+			this.privacyLoading = true
+			try {
+				await this.$store.dispatch(
+					'updateReadStatusPrivacy',
+					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+				)
+				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting read status privacy'))
+			}
+			this.privacyLoading = false
 		},
 
 		handleShowSettings() {

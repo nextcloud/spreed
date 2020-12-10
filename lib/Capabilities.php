@@ -81,6 +81,7 @@ class Capabilities implements IPublicCapability {
 				'circles-support',
 				'force-mute',
 				'sip-support',
+				'chat-read-status',
 			],
 			'config' => [
 				'attachments' => [
@@ -88,6 +89,7 @@ class Capabilities implements IPublicCapability {
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
+					'read-privacy' => Participant::PRIVACY_PUBLIC,
 				],
 				'conversations' => [],
 				'previews' => [
@@ -98,10 +100,10 @@ class Capabilities implements IPublicCapability {
 
 		if ($user instanceof IUser) {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
+			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());
 		}
 
 		$capabilities['config']['conversations']['can-create'] = $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user);
-
 
 		if ($this->serverConfig->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
 			$capabilities['features'][] = 'chat-reference-id';

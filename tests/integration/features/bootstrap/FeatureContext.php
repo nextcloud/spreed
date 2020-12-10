@@ -950,6 +950,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userReadsMessageInRoom($user, $message, $identifier, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/read',
+			new TableNode([['lastReadMessage', self::$messages[$message]]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
@@ -1197,6 +1215,77 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			new TableNode([['displayName', $name]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^last response has (no) last common read message header$/
+	 *
+	 * @param string $no
+	 */
+	public function hasNoChatLastCommonReadHeader($no) {
+		Assert::assertArrayNotHasKey('X-Chat-Last-Common-Read', $this->response->getHeaders(), 'X-Chat-Last-Common-Read is set to ' . ($this->response->getHeader('X-Chat-Last-Common-Read')[0] ?? '0'));
+	}
+
+	/**
+	 * @Then /^last response has last common read message header (set to|less than) "([^"]*)"$/
+	 *
+	 * @param string $setOrLower
+	 * @param string $message
+	 */
+	public function hasChatLastCommonReadHeader($setOrLower, $message) {
+		Assert::assertArrayHasKey('X-Chat-Last-Common-Read', $this->response->getHeaders());
+		if ($setOrLower === 'set to') {
+			Assert::assertEquals(self::$messages[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
+		} else {
+			// Less than might be required for the first message, because the last read message before is the join/room creation message and we don't know that ID
+			Assert::assertLessThan(self::$messages[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $setting
+	 * @param string $value
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetting($user, $setting, $value, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/settings/user',
+			new TableNode([['key', $setting], ['value', $value]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" has capability "([^"]*)" set to "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $capability
+	 * @param string $value
+	 */
+	public function userCheckCapability($user, $capability, $value) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/cloud/capabilities'
+		);
+
+
+		$data = $this->getDataFromResponse($this->response);
+		$capabilities = $data['capabilities'];
+
+		$keys = explode('=>', $capability);
+		$finalKey = array_pop($keys);
+		$cur = $capabilities;
+
+		foreach ($keys as $key) {
+			Assert::assertArrayHasKey($key, $cur);
+			$cur = $cur[$key];
+		}
+		Assert::assertEquals($value, $cur[$finalKey]);
 	}
 
 	/**
