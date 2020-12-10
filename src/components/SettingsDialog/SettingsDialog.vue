@@ -43,6 +43,7 @@
 			class="app-settings-section">
 			<input id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
+				:disabled="privacyLoading"
 				type="checkbox"
 				name="read_status_privacy"
 				class="checkbox"
@@ -105,7 +106,7 @@
 </template>
 
 <script>
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { setAttachmentFolder } from '../../services/settingsService'
 import { PRIVACY } from '../../constants'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -126,6 +127,7 @@ export default {
 		return {
 			showSettings: false,
 			attachmentFolderLoading: true,
+			privacyLoading: false,
 		}
 	},
 
@@ -188,14 +190,17 @@ export default {
 		},
 
 		async toggleReadStatusPrivacy() {
+			this.privacyLoading = true
 			try {
-				await this.$store.commit(
+				await this.$store.dispatch(
 					'updateReadStatusPrivacy',
 					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
+				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
 			}
+			this.privacyLoading = false
 		},
 
 		handleShowSettings() {
