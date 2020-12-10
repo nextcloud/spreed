@@ -111,6 +111,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var string */
 	private $guestsOldWhitelist;
 
+	use AvatarTrait;
 	use CommandLineTrait;
 
 	public static function getTokenForIdentifier(string $identifier) {
@@ -2704,6 +2705,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
 			$options['form_params'] = $fd;
+		} elseif (is_array($body) && array_key_exists('multipart', $body)) {
+			$options = array_merge($options, $body);
 		} elseif (is_array($body)) {
 			$options['form_params'] = $body;
 		}
@@ -2736,5 +2739,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	protected function assertStatusCode(ResponseInterface $response, int $statusCode, string $message = '') {
 		Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
+	}
+
+	/**
+	 * @Then /^the following headers should be set$/
+	 * @param TableNode $table
+	 * @throws \Exception
+	 */
+	public function theFollowingHeadersShouldBeSet(TableNode $table) {
+		foreach ($table->getTable() as $header) {
+			$headerName = $header[0];
+			$expectedHeaderValue = $header[1];
+			$returnedHeader = $this->response->getHeader($headerName)[0];
+			if ($returnedHeader !== $expectedHeaderValue) {
+				throw new \Exception(
+					sprintf(
+						"Expected value '%s' for header '%s', got '%s'",
+						$expectedHeaderValue,
+						$headerName,
+						$returnedHeader
+					)
+				);
+			}
+		}
 	}
 }
