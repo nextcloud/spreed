@@ -25,11 +25,11 @@
 			{{ t('spreed', 'Defines who can find this conversation without being invited') }}
 		</div>
 		<div>
-			<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Findable by') }}</label>
+			<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Visible for') }}</label>
 			<Multiselect id="moderation_settings_listable_conversation_input"
 				v-model="listable"
 				:options="listableOptions"
-				:placeholder="t('spreed', 'Findable by')"
+				:placeholder="t('spreed', 'Visible for')"
 				label="label"
 				track-by="value"
 				:disabled="isListableLoading"
@@ -45,8 +45,8 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants'
 
 const listableOptions = [
-	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'None') },
-	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Registered users') },
+	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'No one') },
+	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Registered users only') },
 	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Everyone') },
 ]
 
@@ -87,10 +87,17 @@ export default {
 					token: this.token,
 					listable: listable.value,
 				})
-				showSuccess(t('spreed', 'You updated the listable scope'))
+
+				if (listable.value === CONVERSATION.LISTABLE.NONE) {
+					showSuccess(t('spreed', 'You made the conversation invisible'))
+				} else if (listable.value === CONVERSATION.LISTABLE.USERS) {
+					showSuccess(t('spreed', 'You made the conversation visible for registered users only'))
+				} else if (listable.value === CONVERSATION.LISTABLE.ALL) {
+					showSuccess(t('spreed', 'You made the conversation visible for everyone'))
+				}
 			} catch (e) {
-				console.error('Error occurred when updating the listable scope', e)
-				showError(t('spreed', 'Error occurred when updating the listable scope'))
+				console.error('Error occurred when updating the conversation visibility', e)
+				showError(t('spreed', 'Error occurred when updating the conversation visibility'))
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false
