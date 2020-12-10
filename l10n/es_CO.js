@@ -15,7 +15,6 @@ OC.L10N.register(
     "Talk" : "Hablar",
     "Guest" : "Invitado",
     "- Spice up your messages with emojis from the emoji picker" : "Dale sabor a tus mensajes con emojis del selector de emoji",
-    "- Spice up your messages with emojis from the emoji picker {emoji}" : "Dale sabor a tus mensajes con emojis del selector de emoji {emoji}",
     "Talk to %s" : "Hablar con %s",
     "Join call" : "Unirse a la llamada",
     "A group call has started in {call}" : "Una llamada en grupo ha iniciado en {call}",
