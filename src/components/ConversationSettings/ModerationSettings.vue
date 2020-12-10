@@ -23,14 +23,14 @@
 	<div>
 		<div class="app-settings-subsection">
 			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Defines who can find this conversation') }}
+				{{ t('spreed', 'Defines who can find this conversation without being invited') }}
 			</div>
 			<div>
-				<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Listable for') }}</label>
+				<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Findable by') }}</label>
 				<Multiselect id="moderation_settings_listable_conversation_input"
 					v-model="listable"
 					:options="listableOptions"
-					:placeholder="t('spreed', 'Listable for')"
+					:placeholder="t('spreed', 'Findable by')"
 					label="label"
 					track-by="value"
 					:disabled="isListableLoading"
@@ -302,9 +302,5 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .mx-input {
 	margin: 0;
-}
-
-input[type=password] {
-	width: 200px;
 }
 </style>

@@ -226,4 +226,8 @@ export default {
 .icon-clippy {
 	margin-right: 10px;
 }
+
+input[type=password] {
+	width: 200px;
+}
 </style>
