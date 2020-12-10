@@ -57,4 +57,7 @@ const CancelableRequest = function(request) {
 	}
 }
 
+// expose function to check if an exception is from a cancellation
+CancelableRequest.isCancel = axios.isCancel
+
 export default CancelableRequest
