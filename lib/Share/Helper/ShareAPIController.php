@@ -31,7 +31,7 @@ use OCA\Talk\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
-use OCP\IUserManager;
+use OCP\IURLGenerator;
 use OCP\Share\IShare;
 
 /**
@@ -44,27 +44,27 @@ class ShareAPIController {
 
 	/** @var string */
 	private $userId;
-	/** @var IUserManager */
-	private $userManager;
 	/** @var Manager */
 	private $manager;
 	/** @var ITimeFactory */
 	protected $timeFactory;
 	/** @var IL10N */
 	private $l;
+	/** @var IURLGenerator */
+	private $urlGenerator;
 
 	public function __construct(
 			string $UserId,
-			IUserManager $userManager,
 			Manager $manager,
 			ITimeFactory $timeFactory,
-			IL10N $l10n
+			IL10N $l10n,
+			IURLGenerator $urlGenerator
 	) {
 		$this->userId = $UserId;
-		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l10n;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -96,6 +96,7 @@ class ShareAPIController {
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$result['token'] = $share->getToken();
 		}
+		$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
 
 		return $result;
 	}
