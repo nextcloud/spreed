@@ -64,6 +64,7 @@
 								v-if="passwordProtect"
 								v-model="password" />
 						</template>
+						<ListableSettings v-model="listable" />
 					</template>
 					<!-- Second page -->
 					<template v-if="page === 1">
@@ -121,6 +122,7 @@
 
 <script>
 
+import { CONVERSATION } from '../../../constants'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Plus from 'vue-material-design-icons/Plus'
 import SetContacts from './SetContacts/SetContacts'
@@ -135,6 +137,7 @@ import {
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import PasswordProtect from './PasswordProtect/PasswordProtect'
+import ListableSettings from '../../ConversationSettings/ListableSettings'
 import isInCall from '../../../mixins/isInCall'
 import participant from '../../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
@@ -154,6 +157,7 @@ export default {
 		SetConversationType,
 		Confirmation,
 		PasswordProtect,
+		ListableSettings,
 		Plus,
 	},
 
@@ -174,6 +178,7 @@ export default {
 			error: false,
 			password: '',
 			passwordProtect: false,
+			listable: CONVERSATION.LISTABLE.NONE,
 		}
 	},
 
@@ -215,6 +220,7 @@ export default {
 			this.error = false
 			this.passwordProtect = false
 			this.password = ''
+			this.listable = CONVERSATION.LISTABLE.NONE
 			this.$store.dispatch('purgeNewGroupConversationStore')
 		},
 		/** Switch to page 2 */
@@ -229,6 +235,9 @@ export default {
 		 * participants to it and routes to it */
 		async handleCreateConversation() {
 			this.page = 2
+
+			// TODO: move all operations to a single store action
+			// and commit + addConversation only once at the very end
 			if (this.isPublic) {
 				try {
 					await this.createPublicConversation()
@@ -253,6 +262,20 @@ export default {
 					return
 				}
 			}
+
+			try {
+				await this.$store.dispatch('setListable', {
+					token: this.token,
+					listable: this.listable,
+				})
+			} catch (exception) {
+				console.debug(exception)
+				this.isLoading = false
+				this.error = true
+				// Stop the execution of the method on exceptions.
+				return
+			}
+
 			for (const participant of this.selectedParticipants) {
 				try {
 					await addParticipant(this.token, participant.id, participant.source)
@@ -264,6 +287,7 @@ export default {
 					return
 				}
 			}
+
 			this.success = true
 
 			if (!this.isInCall) {
@@ -372,6 +396,19 @@ it back */
 
 .wrapper {
 	margin: auto;
+}
+
+::v-deep .app-settings-section__hint {
+	color: var(--color-text-lighter);
+	padding: 8px 0;
+}
+
+::v-deep .app-settings-subsection {
+	margin-top: 25px;
+
+	&:first-child {
+		margin-top: 0px;
+	}
 }
 
 </style>

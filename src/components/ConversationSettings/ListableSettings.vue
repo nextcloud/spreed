@@ -57,6 +57,18 @@ export default {
 		Multiselect,
 	},
 
+	props: {
+		token: {
+			type: String,
+			default: null,
+		},
+
+		value: {
+			type: Number,
+			default: null,
+		},
+	},
+
 	data() {
 		return {
 			isListableLoading: false,
@@ -66,21 +78,32 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 	},
 
+	watch: {
+		value(value) {
+			this.listable = value
+		},
+	},
+
 	mounted() {
-		this.listable = this.conversation.listable
+		if (this.token) {
+			this.listable = this.value || this.conversation.listable
+		} else {
+			this.listable = this.value
+		}
 	},
 
 	methods: {
 		async saveListable(listable) {
+			this.$emit('input', listable.value)
+			if (!this.token) {
+				this.listable = listable.value
+				return
+			}
 			this.isListableLoading = true
 			try {
 				await this.$store.dispatch('setListable', {
@@ -103,5 +126,6 @@ export default {
 			this.isListableLoading = false
 		},
 	},
+
 }
 </script>
