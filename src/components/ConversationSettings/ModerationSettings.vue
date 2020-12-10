@@ -21,23 +21,7 @@
 
 <template>
 	<div>
-		<div class="app-settings-subsection">
-			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Defines who can find this conversation without being invited') }}
-			</div>
-			<div>
-				<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Findable by') }}</label>
-				<Multiselect id="moderation_settings_listable_conversation_input"
-					v-model="listable"
-					:options="listableOptions"
-					:placeholder="t('spreed', 'Findable by')"
-					label="label"
-					track-by="value"
-					:disabled="isListableLoading"
-					aria-describedby="moderation_settings_listable_conversation_hint"
-					@input="saveListable" />
-			</div>
-		</div>
+		<ListableSettings />
 		<div class="app-settings-subsection">
 			<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
@@ -108,36 +92,27 @@
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION, WEBINAR } from '../../constants'
 import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker'
+import ListableSettings from './ListableSettings'
 import SipSettings from './SipSettings'
-
-const listableOptions = [
-	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'None') },
-	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Registered users') },
-	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Everyone') },
-]
 
 export default {
 	name: 'ModerationSettings',
 
 	components: {
-		Multiselect,
 		DatetimePicker,
+		ListableSettings,
 		SipSettings,
 	},
 
 	data() {
 		return {
 			isReadOnlyStateLoading: false,
-			isListableLoading: false,
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
 			newLobbyTimer: null,
-			listableOptions,
-			listable: null,
 		}
 	},
 
@@ -197,10 +172,6 @@ export default {
 		},
 	},
 
-	mounted() {
-		this.listable = this.conversation.listable
-	},
-
 	methods: {
 		async toggleReadOnly() {
 			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
@@ -225,22 +196,6 @@ export default {
 				}
 			}
 			this.isReadOnlyStateLoading = false
-		},
-
-		async saveListable(listable) {
-			this.isListableLoading = true
-			try {
-				await this.$store.dispatch('setListable', {
-					token: this.token,
-					listable: listable.value,
-				})
-				showSuccess(t('spreed', 'You updated the listable scope'))
-			} catch (e) {
-				console.error('Error occurred when updating the listable scope', e)
-				showError(t('spreed', 'Error occurred when updating the listable scope'))
-				this.listable = this.conversation.listable
-			}
-			this.isListableLoading = false
 		},
 
 		async toggleLobby() {
