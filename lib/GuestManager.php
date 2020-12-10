@@ -107,7 +107,7 @@ class GuestManager {
 				$dispatchEvent = false;
 			}
 		} catch (ParticipantNotFoundException $e) {
-			$this->connection->insertIfNotExist('*PREFIX*talk_guests', [
+			$this->connection->insertIfNotExist('*PREFIX*talk_guestnames', [
 				'session_hash' => $sessionHash,
 				'display_name' => $displayName,
 			], ['session_hash']);
