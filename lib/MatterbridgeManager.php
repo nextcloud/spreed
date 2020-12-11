@@ -501,6 +501,7 @@ class MatterbridgeManager {
 			} elseif ($type === 'steam') {
 				$content .= sprintf('	chatid = "%s"', $part['chatid']) . "\n\n";
 			}
+			$content .= "\n";
 		}
 
 		return $content;
