@@ -47,10 +47,10 @@ class Version11000Date20201201102528 extends SimpleMigrationStep {
 			$table = $schema->getTable('talk_rooms');
 
 			if (!$table->hasColumn('listable')) {
-				$table->addColumn('listable', Types::INTEGER, [
+				$table->addColumn('listable', Types::SMALLINT, [
 					'notnull' => false,
-					'length' => 6,
 					'default' => 0,
+					'unsigned' => true,
 				]);
 			}
 
