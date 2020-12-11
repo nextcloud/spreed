@@ -178,7 +178,7 @@ class ParticipantService {
 					$room->getListable() === Room::LISTABLE_ALL || (
 						$room->getListable() === Room::LISTABLE_USERS &&
 						// queried here to avoid loop deps
-						!\OC::$server->query(\OCA\Talk\Manager::class)->isGuestUser($user->getUID())
+						!\OC::$server->get(\OCA\Talk\Manager::class)->isGuestUser($user->getUID())
 					)
 				)
 			) {

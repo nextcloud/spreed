@@ -344,7 +344,7 @@ export default {
 
 // Dialog variables
 $dialog-margin: 20px;
-$dialog-width: 300px;
+$dialog-width: 400px;
 $dialog-height: 480px;
 
 .toggle {

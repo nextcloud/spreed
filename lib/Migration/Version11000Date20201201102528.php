@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -47,11 +47,15 @@ class Version11000Date20201201102528 extends SimpleMigrationStep {
 			$table = $schema->getTable('talk_rooms');
 
 			if (!$table->hasColumn('listable')) {
-				$table->addColumn('listable', Type::INTEGER, [
+				$table->addColumn('listable', Types::INTEGER, [
 					'notnull' => false,
 					'length' => 6,
 					'default' => 0,
 				]);
+			}
+
+			if (!$table->hasIndex('tr_listable')) {
+				$table->addIndex(['listable'], 'tr_listable');
 			}
 
 			return $schema;
