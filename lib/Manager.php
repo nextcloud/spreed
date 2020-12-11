@@ -522,11 +522,7 @@ class Manager {
 			if (isset($row['listable'])) {
 				$listable = (int)$row['listable'];
 			}
-			if (
-				$listable === Room::LISTABLE_ALL || (
-					$listable === Room::LISTABLE_USERS && !$this->isGuestUser($userId)
-				)
-			) {
+			if ($this->isRoomListableByUser($room, $userId)) {
 				return $room;
 			}
 		}
@@ -891,8 +887,7 @@ class Manager {
 			return $otherParticipant;
 		}
 
-		// FIXME: also check guest user case
-		if ($room->getListable() === Room::LISTABLE_NONE) {
+		if (!$this->isRoomListableByUser($room, $userId)) {
 			try {
 				if ($userId === '') {
 					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
@@ -907,6 +902,29 @@ class Manager {
 		}
 
 		return $room->getName();
+	}
+
+	/**
+	 * Returns whether the given room is listable for the given user.
+	 *
+	 * @param Room $room room
+	 * @param string|null $userId user id
+	 */
+	public function isRoomListableByUser(Room $room, ?string $userId): bool {
+		if ($userId === null) {
+			// not listable for guest users with no account
+			return false;
+		}
+
+		if ($room->getListable() === Room::LISTABLE_ALL) {
+			return true;
+		}
+
+		if ($room->getListable() === Room::LISTABLE_USERS && !$this->isGuestUser($userId)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected function getRoomNameByParticipants(Room $room): string {

@@ -171,16 +171,12 @@ class ParticipantService {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
+			// queried here to avoid loop deps
+			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
+
 			// User joining a group or public call through listing
-			if (
-				($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) && (
-					// this check should have happened earlier already but let's stay defensive
-					$room->getListable() === Room::LISTABLE_ALL || (
-						$room->getListable() === Room::LISTABLE_USERS &&
-						// queried here to avoid loop deps
-						!\OC::$server->get(\OCA\Talk\Manager::class)->isGuestUser($user->getUID())
-					)
-				)
+			if (($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) &&
+				$manager->isRoomListableByUser($room, $user->getUID())
 			) {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
