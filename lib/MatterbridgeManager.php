@@ -678,16 +678,15 @@ class MatterbridgeManager {
 	 */
 	private function launchMatterbridge(Room $room): int {
 		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
-		// TODO this should be in appdata
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
-		$cmd = sprintf('%s -conf %s', $binaryPath, $configPath);
-		$pid = exec(sprintf('nice -n19 %s > %s 2>&1 & echo $!', $cmd, $outputPath), $output, $ret);
-		$pid = (int) $pid;
-		if ($ret !== 0) {
-			$pid = 0;
+		$matterbridgeCmd = sprintf('%s -conf %s', $binaryPath, $configPath);
+		$cmd = sprintf('nice -n19 %s > %s 2>&1 & echo $!', $matterbridgeCmd, $outputPath);
+		$cmdResult = $this->runCommand($cmd);
+		if (!is_null($cmdResult) && $cmdResult['return_code'] === 0 && is_numeric($cmdResult['stdout'] ?? 0)) {
+			return (int) $cmdResult['stdout'];
 		}
-		return $pid;
+		return 0;
 	}
 
 	/**
@@ -696,11 +695,19 @@ class MatterbridgeManager {
 	 */
 	public function killZombieBridges(bool $killAll = false): void {
 		// get list of running matterbridge processes
-		$cmd = 'ps x -o user,pid,args | grep "matterbridge" | grep -v grep | awk \'{print $2}\'';
-		exec($cmd, $output, $ret);
 		$runningPidList = [];
-		foreach ($output as $o) {
-			$runningPidList[] = (int) $o;
+		$cmd = 'ps x -o user,pid,args';
+		$cmdResult = $this->runCommand($cmd);
+		if ($cmdResult && $cmdResult['return_code'] === 0) {
+			$lines = explode("\n", $cmdResult['stdout']);
+			foreach ($lines as $l) {
+				if (preg_match('/matterbridge/i', $l)) {
+					$items = preg_split('/\s+/', $l);
+					if (count($items) > 1 && is_numeric($items[1])) {
+						$runningPidList[] = (int) $items[1];
+					}
+				}
+			}
 		}
 
 		if (empty($runningPidList)) {
@@ -744,10 +751,11 @@ class MatterbridgeManager {
 	 */
 	private function killPid(int $pid): bool {
 		// kill
-		exec(sprintf('kill -9 %d', $pid), $output, $ret);
+		$cmdResult = $this->runCommand(sprintf('kill -9 %d', $pid));
+
 		// check the process is gone
 		$isStillRunning = $this->isRunning($pid);
-		return (int) $ret === 0 && !$isStillRunning;
+		return !is_null($cmdResult) && $cmdResult['return_code'] === 0 && !$isStillRunning;
 	}
 
 	/**
@@ -758,13 +766,47 @@ class MatterbridgeManager {
 	 */
 	private function isRunning(int $pid): bool {
 		try {
-			$result = shell_exec(sprintf('ps x -o user,pid,args | awk \'{print $2}\' | grep "^%d$" | wc -l', $pid));
-			if ((int) $result > 0) {
-				return true;
+			$cmd = 'ps x -o user,pid,args';
+			$cmdResult = $this->runCommand($cmd);
+			if ($cmdResult && $cmdResult['return_code'] === 0) {
+				$lines = explode("\n", $cmdResult['stdout']);
+				foreach ($lines as $l) {
+					$items = preg_split('/\s+/', $l);
+					if (count($items) > 1 && is_numeric($items[1])) {
+						$lPid = (int) $items[1];
+						if ($lPid === $pid) {
+							return true;
+						}
+					}
+				}
 			}
 		} catch (\Exception $e) {
 		}
 		return false;
+	}
+
+	/**
+	 * Launch a command, wait until it ends and return outputs and return code
+	 *
+	 * @param string $cmd command string
+	 * @return ?array outputs and return code, null if process launch failed
+	 */
+	private function runCommand(string $cmd): ?array {
+		$descriptorspec = [fopen('php://stdin', 'r'), ['pipe', 'w'], ['pipe', 'w']];
+		$process = proc_open($cmd, $descriptorspec, $pipes);
+		if ($process) {
+			$output = stream_get_contents($pipes[1]);
+			$errorOutput = stream_get_contents($pipes[2]);
+			fclose($pipes[1]);
+			fclose($pipes[2]);
+			$returnCode = proc_close($process);
+			return [
+				'stdout' => trim($output),
+				'stderr' => trim($errorOutput),
+				'return_code' => $returnCode,
+			];
+		}
+		return null;
 	}
 
 	/**
@@ -886,12 +928,11 @@ class MatterbridgeManager {
 		}
 
 		$cmd = escapeshellcmd($binaryPath) . ' ' . escapeshellarg('-version');
-		@exec($cmd, $output, $returnCode);
-
-		if ($returnCode !== 0) {
+		$cmdResult = $this->runCommand($cmd);
+		if (is_null($cmdResult) || $cmdResult['return_code'] !== 0) {
 			return null;
 		}
 
-		return trim(implode("\n", $output));
+		return $cmdResult['stdout'] ?? null;
 	}
 }
