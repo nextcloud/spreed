@@ -32,9 +32,17 @@
 		</AppSettingsSection>
 		<AppSettingsSection
 			v-if="canFullModerate"
+			:title="t('spreed', 'Conversation settings')"
+			class="app-settings-section">
+			<ListableSettings :token="token" />
+			<LockingSettings :token="token" />
+		</AppSettingsSection>
+		<AppSettingsSection
+			v-if="canFullModerate"
 			:title="t('spreed', 'Meeting settings')"
 			class="app-settings-section">
-			<ModerationSettings />
+			<LobbySettings :token="token" />
+			<SipSettings v-if="canUserEnableSIP" />
 		</AppSettingsSection>
 	</AppSettingsDialog>
 </template>
@@ -45,7 +53,10 @@ import { PARTICIPANT } from '../../constants'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
 import LinkShareSettings from './LinkShareSettings'
-import ModerationSettings from './ModerationSettings'
+import ListableSettings from './ListableSettings'
+import LockingSettings from './LockingSettings'
+import LobbySettings from './LobbySettings'
+import SipSettings from './SipSettings'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -54,7 +65,10 @@ export default {
 		AppSettingsDialog,
 		AppSettingsSection,
 		LinkShareSettings,
-		ModerationSettings,
+		LobbySettings,
+		ListableSettings,
+		LockingSettings,
+		SipSettings,
 	},
 
 	data() {
@@ -64,6 +78,10 @@ export default {
 	},
 
 	computed: {
+		canUserEnableSIP() {
+			return this.conversation.canEnableSIP
+		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},

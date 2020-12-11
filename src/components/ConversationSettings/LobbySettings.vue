@@ -21,23 +21,6 @@
 
 <template>
 	<div>
-		<ListableSettings :token="token" />
-		<div class="app-settings-subsection">
-			<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
-			</div>
-			<div>
-				<input id="moderation_settings_lock_conversation_checkbox"
-					aria-describedby="moderation_settings_lock_conversation_hint"
-					type="checkbox"
-					class="checkbox"
-					name="moderation_settings_lock_conversation_checkbox"
-					:checked="isReadOnly"
-					:disabled="isReadOnlyStateLoading"
-					@change="toggleReadOnly">
-				<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
-			</div>
-		</div>
 		<div class="app-settings-subsection">
 			<div id="moderation_settings_enable_lobby_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
@@ -87,29 +70,30 @@
 				</form>
 			</div>
 		</div>
-		<SipSettings v-if="canUserEnableSIP" />
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION, WEBINAR } from '../../constants'
+import { WEBINAR } from '../../constants'
 import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker'
-import ListableSettings from './ListableSettings'
-import SipSettings from './SipSettings'
 
 export default {
-	name: 'ModerationSettings',
+	name: 'LobbySettings',
 
 	components: {
 		DatetimePicker,
-		ListableSettings,
-		SipSettings,
+	},
+
+	props: {
+		token: {
+			type: String,
+			default: null,
+		},
 	},
 
 	data() {
 		return {
-			isReadOnlyStateLoading: false,
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
 			newLobbyTimer: null,
@@ -117,20 +101,8 @@ export default {
 	},
 
 	computed: {
-		canUserEnableSIP() {
-			return this.conversation.canEnableSIP
-		},
-
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		isReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		hasLobbyEnabled() {
@@ -173,31 +145,6 @@ export default {
 	},
 
 	methods: {
-		async toggleReadOnly() {
-			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
-			this.isReadOnlyStateLoading = true
-			try {
-				await this.$store.dispatch('setReadOnlyState', {
-					token: this.token,
-					readOnly: newReadOnly,
-				})
-				if (newReadOnly) {
-					showSuccess(t('spreed', 'You locked the conversation'))
-				} else {
-					showSuccess(t('spreed', 'You unlocked the conversation'))
-				}
-			} catch (e) {
-				if (newReadOnly) {
-					console.error('Error occurred when locking the conversation', e)
-					showError(t('spreed', 'Error occurred when locking the conversation'))
-				} else {
-					console.error('Error updating read-only state', e)
-					showError(t('spreed', 'Error occurred when unlocking the conversation'))
-				}
-			}
-			this.isReadOnlyStateLoading = false
-		},
-
 		async toggleLobby() {
 			const newLobbyState = this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS
 			this.isLobbyStateLoading = true
