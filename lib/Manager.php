@@ -518,10 +518,7 @@ class Manager {
 			}
 
 			// never joined before but found in listing
-			$listable = null;
-			if (isset($row['listable'])) {
-				$listable = (int)$row['listable'];
-			}
+			$listable = (int)$row['listable'];
 			if ($this->isRoomListableByUser($room, $userId)) {
 				return $room;
 			}
