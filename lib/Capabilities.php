@@ -83,6 +83,7 @@ class Capabilities implements IPublicCapability {
 				'force-mute',
 				'sip-support',
 				'chat-read-status',
+				'phonebook-search',
 			],
 			'config' => [
 				'attachments' => [
