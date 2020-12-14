@@ -103,7 +103,7 @@ class Version11000Date20201209142525 extends SimpleMigrationStep {
 			]);
 
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueIndex(['session_hash'], 'tg_session_hash');
+			$table->addUniqueIndex(['session_hash'], 'tgn_session_hash');
 			$changedSchema = true;
 		}
 
