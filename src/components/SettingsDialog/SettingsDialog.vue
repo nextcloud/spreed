@@ -103,7 +103,7 @@
 				<div>
 					<dt><kbd>R</kbd></dt>
 					<dd class="shortcut-description">
-						{{ t('spreed', 'Raise/lower hand') }}
+						{{ t('spreed', 'Raise or lower hand') }}
 					</dd>
 				</div>
 			</dl>

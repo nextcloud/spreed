@@ -24,14 +24,15 @@
 		<div v-if="!isSidebar"
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
-			<div class="bottom-bar__statusIndicator">
-				<transition name="fade">
+			<transition name="fade">
+				<div
+					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+					class="bottom-bar__statusIndicator">
 					<Hand
-						class="wave-hand-animation"
-						v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+						class="handIndicator wave-hand-animation"
 						fill-color="#ffffff" />
-				</transition>
-			</div>
+				</div>
+			</transition>
 			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
@@ -279,6 +280,7 @@ export default {
 	}
 }
 
+.handIndicator,
 .muteIndicator,
 .hideRemoteVideo,
 .screensharingIndicator,

@@ -88,7 +88,7 @@
 				:tabindex="model.attributes.raisedHand ? 0 : -1"
 				:aria-label="t('spreed', 'Lower hand')"
 				@shortkey="toggleHandRaised"
-				@click="toggleHandRaised">
+				@click.stop="toggleHandRaised">
 				<Hand
 					:size="24"
 					title=""
@@ -577,11 +577,6 @@ export default {
 			if (this.raisingHandNotification) {
 				this.raisingHandNotification.hideToast()
 				this.raisingHandNotification = null
-			}
-			if (raisedHand) {
-				this.raisingHandNotification = showMessage(t('spreed', 'You are now raising your hand.'))
-			} else {
-				this.raisingHandNotification = showMessage(t('spreed', 'You are no longer raising your hand.'))
 			}
 			this.model.toggleHandRaised(raisedHand)
 			this.$store.dispatch('setParticipantHandRaised', { peerId: this.localCallParticipantModel.attributes.peerId, raised: raisedHand })
