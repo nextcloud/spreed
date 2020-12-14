@@ -81,7 +81,7 @@
 				</ul>
 			</div>
 			<button
-				v-shortkey="['h']"
+				v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand')"
 				class="lower-hand"
 				:class="model.attributes.raisedHand ? '' : 'hidden-visually'"
