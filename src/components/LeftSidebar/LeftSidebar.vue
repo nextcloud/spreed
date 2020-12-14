@@ -44,6 +44,16 @@
 					@focus="setFocusedIndex" />
 			</li>
 			<template v-if="isSearching">
+				<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
+					<Caption
+						:title="t('spreed', 'Listed conversations')" />
+					<Conversation
+						v-for="item of searchResultsListedConversations"
+						:key="item.id"
+						:item="item"
+						:is-search-result="true"
+						@click="joinListedConversation(item)" />
+				</template>
 				<template v-if="searchResultsUsers.length !== 0">
 					<Caption
 						:title="t('spreed', 'Users')" />
@@ -104,6 +114,7 @@
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
 import ConversationsList from './ConversationsList/ConversationsList'
+import Conversation from './ConversationsList/Conversation'
 import ConversationsOptionsList from '../ConversationsOptionsList'
 import Hint from '../Hint'
 import SearchBox from './SearchBox/SearchBox'
@@ -114,6 +125,7 @@ import {
 	createOneToOneConversation,
 	fetchConversations,
 	searchPossibleConversations,
+	searchListedConversations,
 } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
@@ -133,6 +145,7 @@ export default {
 		Hint,
 		SearchBox,
 		NewGroupConversation,
+		Conversation,
 	},
 
 	mixins: [
@@ -146,7 +159,9 @@ export default {
 			searchResultsUsers: [],
 			searchResultsGroups: [],
 			searchResultsCircles: [],
+			searchResultsListedConversations: [],
 			contactsLoading: false,
+			listedConversationsLoading: false,
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
 			initialisedConversations: false,
@@ -256,7 +271,7 @@ export default {
 			}
 		}, 250),
 
-		async fetchSearchResults() {
+		async fetchPossibleConversations() {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText, undefined, !this.canStartConversations)
 			this.searchResults = response.data.ocs.data
@@ -268,6 +283,17 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
+		},
+
+		async fetchListedConversations() {
+			this.listedConversationsLoading = true
+			const response = await searchListedConversations(this.searchText)
+			this.searchResultsListedConversations = response.data.ocs.data
+			this.listedConversationsLoading = false
+		},
+
+		async fetchSearchResults() {
+			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
 
 			// If none already focused, focus the first rendered result
 			this.focusInitialise()
@@ -292,6 +318,13 @@ export default {
 			EventBus.$emit('resetSearchFilter')
 		},
 
+		async joinListedConversation(conversation) {
+			// add as temporary item that will refresh after the joining process is complete
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
+		},
+
 		hasOneToOneConversationWith(userId) {
 			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
@@ -308,14 +341,6 @@ export default {
 		handleClickSearchResult(selectedConversationToken) {
 			// End the search operation
 			this.abortSearch()
-			const selectedConversation = document.getElementById(`conversation_${selectedConversationToken}`)
-			this.$nextTick(() => {
-				 selectedConversation.scrollIntoView({
-					behavior: 'smooth',
-					block: 'center',
-					inline: 'nearest',
-				})
-			})
 		},
 
 		sortConversations(conversation1, conversation2) {

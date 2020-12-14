@@ -51,6 +51,7 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IGroupManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
@@ -72,6 +73,8 @@ class ParticipantService {
 	private $dispatcher;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
@@ -84,6 +87,7 @@ class ParticipantService {
 								IDBConnection $connection,
 								IEventDispatcher $dispatcher,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								ITimeFactory $timeFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
@@ -94,6 +98,7 @@ class ParticipantService {
 		$this->connection = $connection;
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -166,12 +171,30 @@ class ParticipantService {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
-			// User joining a public room, without being invited
-			$this->addUsers($room, [[
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $user->getUID(),
-				'participantType' => Participant::USER_SELF_JOINED,
-			]]);
+			// queried here to avoid loop deps
+			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
+
+			// User joining a group or public call through listing
+			if (($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) &&
+				$manager->isRoomListableByUser($room, $user->getUID())
+			) {
+				$this->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $user->getUID(),
+					// need to use "USER" here, because "USER_SELF_JOINED" only works for public calls
+					'participantType' => Participant::USER,
+				]]);
+			} elseif ($room->getType() === Room::PUBLIC_CALL) {
+				// User joining a public room, without being invited
+				$this->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $user->getUID(),
+					'participantType' => Participant::USER_SELF_JOINED,
+				]]);
+			} else {
+				// shouldn't happen unless some code called joinRoom without previous checks
+				throw new UnauthorizedException('Participant is not allowed to join');
+			}
 
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		}

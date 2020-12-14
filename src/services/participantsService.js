@@ -50,6 +50,11 @@ const joinConversation = async(token) => {
 			force: forceJoin,
 		})
 
+		const conversation = response.data.ocs.data
+		if (conversation.actorType !== 'guests') {
+			store.dispatch('addConversation', response.data.ocs.data)
+		}
+
 		// Update the participant and actor session after a force join
 		store.dispatch('updateSessionId', {
 			token: token,
@@ -61,7 +66,7 @@ const joinConversation = async(token) => {
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
 		SessionStorage.setItem('joined_conversation', token)
-		EventBus.$emit('joinedConversation')
+		EventBus.$emit('joinedConversation', { token })
 		return response
 	} catch (error) {
 		if (error.response.status === 409) {

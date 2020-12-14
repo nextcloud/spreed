@@ -152,6 +152,22 @@ trait TRoomCommand {
 	}
 
 	/**
+	 * @param Room $room
+	 * @param int $listable
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	protected function setRoomListable(Room $room, int $listable): void {
+		if ($room->getListable() === $listable) {
+			return;
+		}
+
+		if (!$room->setListable($listable)) {
+			throw new InvalidArgumentException('Unable to change room state.');
+		}
+	}
+
+	/**
 	 * @param Room   $room
 	 * @param string $password
 	 *

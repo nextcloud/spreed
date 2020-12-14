@@ -89,6 +89,25 @@ const checkTalkVersionHash = function(response) {
 }
 
 /**
+ * Fetch listed conversations
+ * @param {string} searchTerm The string that will be used in the search query.
+ */
+const searchListedConversations = async function(searchTerm) {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', {
+		params: {
+			searchTerm,
+		},
+	})
+
+	if (maintenanceWarning) {
+		maintenanceWarning.hideToast()
+		maintenanceWarning = null
+	}
+
+	return response
+}
+
+/**
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
  * @param {string} [token] The token of the conversation (if any)
@@ -324,9 +343,22 @@ const changeReadOnlyState = async function(token, readOnly) {
 	}
 }
 
+/**
+ * Change the listable scope
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} listable The new listable scope to set
+ */
+const changeListable = async function(token, listable) {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/listable`, {
+		scope: listable,
+	})
+	return response
+}
+
 export {
 	fetchConversations,
 	fetchConversation,
+	searchListedConversations,
 	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,
@@ -341,6 +373,7 @@ export {
 	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
+	changeListable,
 	setConversationPassword,
 	setConversationName,
 }

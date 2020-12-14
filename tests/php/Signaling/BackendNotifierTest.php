@@ -35,6 +35,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
@@ -141,11 +142,13 @@ class BackendNotifierTest extends \Test\TestCase {
 			$dbConnection,
 			$config,
 			$this->config,
+			\OC::$server->get(IAppManager::class),
 			\OC::$server->get(AttendeeMapper::class),
 			\OC::$server->get(SessionMapper::class),
 			$this->participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
+			$groupManager,
 			$this->createMock(CommentsManager::class),
 			$this->createMock(TalkSession::class),
 			$this->dispatcher,
@@ -252,6 +255,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -287,6 +291,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -310,6 +315,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -333,6 +339,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -356,6 +363,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -379,6 +387,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -402,8 +411,33 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_ONLY,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+				],
+			],
+		]);
+	}
+
+	public function testRoomListableChanged() {
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room->setListable(Room::LISTABLE_ALL);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_ALL,
+					'active-since' => null,
+					'sip-enabled' => 0,
+					'description' => '',
 				],
 			],
 		]);
@@ -425,6 +459,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NON_MODERATORS,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 				],
@@ -584,6 +619,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'lobby-state' => Webinary::LOBBY_NONE,
 					'lobby-timer' => null,
 					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'foo' => 'bar',

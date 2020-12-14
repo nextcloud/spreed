@@ -140,6 +140,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SIP_ENABLED_SET, $listener);
 		// TODO remove handler with "roomModified" in favour of handler with

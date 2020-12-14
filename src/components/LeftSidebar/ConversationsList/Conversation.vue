@@ -23,8 +23,9 @@
 	<AppContentListItem
 		:title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
-		:to="{ name: 'conversation', params: { token: item.token }}"
-		:class="{ 'has-unread-messages': item.unreadMessages }">
+		:to="!isSearchResult ? { name: 'conversation', params: { token: item.token }} : ''"
+		:class="{ 'has-unread-messages': item.unreadMessages }"
+		@click="onClick">
 		<template v-slot:icon>
 			<ConversationIcon
 				:item="item"
@@ -45,7 +46,7 @@
 			:highlighted="counterShouldBePrimary">
 			<strong>{{ item.unreadMessages }}</strong>
 		</AppNavigationCounter>
-		<template slot="actions">
+		<template v-if="!isSearchResult" slot="actions">
 			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
@@ -124,6 +125,10 @@ export default {
 		ConversationIcon,
 	},
 	props: {
+		isSearchResult: {
+			type: Boolean,
+			default: false,
+		},
 		item: {
 			type: Object,
 			default: function() {
@@ -192,6 +197,11 @@ export default {
 		},
 
 		conversationInformation() {
+			// temporary item while joining
+			if (!this.isSearchResult && !this.item.actorId) {
+				return t('spreed', 'Joining conversation …')
+			}
+
 			if (!Object.keys(this.lastChatMessage).length) {
 				return ''
 			}
@@ -356,6 +366,11 @@ export default {
 		async setNotificationLevel(level) {
 			await setNotificationLevel(this.item.token, level)
 			this.item.notificationLevel = level
+		},
+
+		// forward click event
+		onClick(event) {
+			this.$emit('click', event)
 		},
 	},
 }

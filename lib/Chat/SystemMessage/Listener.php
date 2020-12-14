@@ -176,6 +176,20 @@ class Listener {
 				$listener->sendSystemMessage($room, 'read_only_off');
 			}
 		});
+		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, static function (ModifyRoomEvent $event) {
+			$room = $event->getRoom();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
+			if ($event->getNewValue() === Room::LISTABLE_NONE) {
+				$listener->sendSystemMessage($room, 'listable_none');
+			} elseif ($event->getNewValue() === Room::LISTABLE_USERS) {
+				$listener->sendSystemMessage($room, 'listable_users');
+			} elseif ($event->getNewValue() === Room::LISTABLE_ALL) {
+				$listener->sendSystemMessage($room, 'listable_all');
+			}
+		});
 		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, static function (ModifyLobbyEvent $event) {
 			if ($event->getNewValue() === $event->getOldValue()) {
 				return;
@@ -196,26 +210,36 @@ class Listener {
 		});
 
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function (AddParticipantsEvent $event) {
-			$participants = $event->getParticipants();
-			$user = \OC::$server->getUserSession()->getUser();
-			$userId = $user instanceof IUser ? $user->getUID() : null;
-
 			$room = $event->getRoom();
-
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				return;
 			}
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
+
+			$participants = $event->getParticipants();
+
 			foreach ($participants as $participant) {
 				if ($participant['actorType'] !== 'users') {
 					continue;
 				}
 
-				$userJoinedFileRoom = $room->getObjectType() === 'file' &&
-						(!isset($participant['participantType']) || $participant['participantType'] !== Participant::USER_SELF_JOINED);
-				if ($userJoinedFileRoom || $userId !== $participant['actorId']) {
+				$participantType = null;
+				if (isset($participant['participantType'])) {
+					$participantType = $participant['participantType'];
+				}
+
+				$userJoinedFileRoom = $room->getObjectType() === 'file' && $participantType !== Participant::USER_SELF_JOINED;
+
+				// add a message "X joined the conversation", whenever user $userId:
+				if (
+					// - has joined a file room but not through a public link
+					$userJoinedFileRoom
+					// - has been added by another user (and not when creating a conversation)
+					|| $listener->getUserId() !== $participant['actorId']
+					// - has joined a listable room on their own
+					|| $participantType === Participant::USER) {
 					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
 				}
 			}
@@ -313,5 +337,10 @@ class Listener {
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
 			$referenceId
 		);
+	}
+
+	protected function getUserId() {
+		$user = $this->userSession->getUser();
+		return $user instanceof IUser ? $user->getUID() : null;
 	}
 }

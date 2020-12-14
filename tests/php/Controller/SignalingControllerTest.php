@@ -37,6 +37,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
@@ -889,11 +890,13 @@ class SignalingControllerTest extends \Test\TestCase {
 			$dbConnection,
 			\OC::$server->getConfig(),
 			$this->createMock(Config::class),
+			\OC::$server->get(IAppManager::class),
 			\OC::$server->get(AttendeeMapper::class),
 			\OC::$server->get(SessionMapper::class),
 			$participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
+			$this->createMock(IGroupManager::class),
 			$this->createMock(CommentsManager::class),
 			$this->createMock(TalkSession::class),
 			$dispatcher,

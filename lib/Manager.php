@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -43,6 +44,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IGroupManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
@@ -55,6 +57,8 @@ class Manager {
 	private $config;
 	/** @var Config */
 	private $talkConfig;
+	/** @var IAppManager */
+	private $appManager;
 	/** @var AttendeeMapper */
 	private $attendeeMapper;
 	/** @var SessionMapper */
@@ -65,6 +69,8 @@ class Manager {
 	private $secureRandom;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ICommentsManager */
 	private $commentsManager;
 	/** @var TalkSession */
@@ -81,11 +87,13 @@ class Manager {
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								Config $talkConfig,
+								IAppManager $appManager,
 								AttendeeMapper $attendeeMapper,
 								SessionMapper $sessionMapper,
 								ParticipantService $participantService,
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								CommentsManager $commentsManager,
 								TalkSession $talkSession,
 								IEventDispatcher $dispatcher,
@@ -95,11 +103,13 @@ class Manager {
 		$this->db = $db;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
+		$this->appManager = $appManager;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->sessionMapper = $sessionMapper;
 		$this->participantService = $participantService;
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->commentsManager = $commentsManager;
 		$this->talkSession = $talkSession;
 		$this->dispatcher = $dispatcher;
@@ -167,6 +177,7 @@ class Manager {
 			(int) $row['r_id'],
 			(int) $row['type'],
 			(int) $row['read_only'],
+			(int) $row['listable'],
 			(int) $row['lobby_state'],
 			(int) $row['sip_enabled'],
 			$assignedSignalingServer,
@@ -331,6 +342,54 @@ class Manager {
 	}
 
 	/**
+	 * Returns rooms that are listable where the current user is not a participant.
+	 *
+	 * @param string $userId user id
+	 * @param string $term search term
+	 * @return Room[]
+	 */
+	public function getListedRoomsForUser(string $userId, string $term = ''): array {
+		$allowedRoomTypes = [Room::GROUP_CALL, Room::PUBLIC_CALL];
+		$allowedListedTypes = [Room::LISTABLE_ALL];
+		if (!$this->isGuestUser($userId)) {
+			$allowedListedTypes[] = Room::LISTABLE_USERS;
+		}
+		$query = $this->db->getQueryBuilder();
+		$query->select('r.*')
+			->selectAlias('r.id', 'r_id')
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id')
+			))
+			->where($query->expr()->isNull('a.id'))
+			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedRoomTypes, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->in('r.listable', $query->createNamedParameter($allowedListedTypes, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		if ($term !== '') {
+			$query->andWhere(
+				$query->expr()->iLike('name', $query->createNamedParameter(
+					'%' . $this->db->escapeLikeParameter($term). '%'
+				))
+			);
+		}
+
+		$result = $query->execute();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			$rooms[] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * Does *not* return public rooms for participants that have not been invited
 	 *
 	 * @param int $roomId
@@ -388,8 +447,13 @@ class Manager {
 	}
 
 	/**
-	 * Also returns public rooms for participants that have not been invited,
-	 * so they can join.
+	 * Returns room object for a user by token.
+	 *
+	 * Also returns:
+	 * - public rooms for participants that have not been invited
+	 * - listable rooms for participants that have not been invited
+	 *
+	 * This is useful so they can join.
 	 *
 	 * @param string $token
 	 * @param string|null $userId
@@ -447,8 +511,17 @@ class Manager {
 			return $room;
 		}
 
-		if ($userId !== null && $row['actor_id'] === $userId) {
-			return $room;
+		if ($userId !== null) {
+			// user already joined that room before
+			if ($row['actor_id'] === $userId) {
+				return $room;
+			}
+
+			// never joined before but found in listing
+			$listable = (int)$row['listable'];
+			if ($this->isRoomListableByUser($room, $userId)) {
+				return $room;
+			}
 		}
 
 		throw new RoomNotFoundException();
@@ -704,6 +777,7 @@ class Manager {
 		if ($row === false) {
 			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
 			$room->setReadOnly(Room::READ_ONLY);
+			$room->setListable(Room::LISTABLE_NONE);
 
 			$this->participantService->addUsers($room,[[
 				'actorType' => Attendee::ACTOR_USERS,
@@ -810,19 +884,44 @@ class Manager {
 			return $otherParticipant;
 		}
 
-		try {
-			if ($userId === '') {
-				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
-				$room->getParticipantBySession($sessionId);
-			} else {
-				$room->getParticipant($userId);
+		if (!$this->isRoomListableByUser($room, $userId)) {
+			try {
+				if ($userId === '') {
+					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+					$room->getParticipantBySession($sessionId);
+				} else {
+					$room->getParticipant($userId);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				// Do not leak the name of rooms the user is not a part of
+				return $this->l->t('Private conversation');
 			}
-		} catch (ParticipantNotFoundException $e) {
-			// Do not leak the name of rooms the user is not a part of
-			return $this->l->t('Private conversation');
 		}
 
 		return $room->getName();
+	}
+
+	/**
+	 * Returns whether the given room is listable for the given user.
+	 *
+	 * @param Room $room room
+	 * @param string|null $userId user id
+	 */
+	public function isRoomListableByUser(Room $room, ?string $userId): bool {
+		if ($userId === null) {
+			// not listable for guest users with no account
+			return false;
+		}
+
+		if ($room->getListable() === Room::LISTABLE_ALL) {
+			return true;
+		}
+
+		if ($room->getListable() === Room::LISTABLE_USERS && !$this->isGuestUser($userId)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected function getRoomNameByParticipants(Room $room): string {
@@ -920,6 +1019,21 @@ class Manager {
 
 	public function isValidParticipant(string $userId): bool {
 		return $this->userManager->userExists($userId);
+	}
+
+	/**
+	 * Returns whether the given user id is a guest user from
+	 * the guest app
+	 *
+	 * @param string $userId user id to check
+	 * @return bool true if the user is a guest, false otherwise
+	 */
+	public function isGuestUser(string $userId): bool {
+		if (!$this->appManager->isEnabledForUser('guests')) {
+			return false;
+		}
+		// TODO: retrieve guest group name from app once exposed
+		return $this->groupManager->isInGroup($userId, 'guest_app');
 	}
 
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {

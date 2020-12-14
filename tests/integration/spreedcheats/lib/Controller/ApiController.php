@@ -29,6 +29,7 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IDBConnection;
 use OCP\IRequest;
+use OCP\IUserManager;
 use OCP\Share\IShare;
 
 class ApiController extends OCSController {
@@ -36,11 +37,17 @@ class ApiController extends OCSController {
 	/** @var IDBConnection */
 	private $db;
 
+	/** @var IUserManager */
+	private $userManager;
+
 	public function __construct(string $appName,
 								IRequest $request,
-								IDBConnection $db) {
+								IDBConnection $db,
+								IUserManager $userManager
+	) {
 		parent::__construct($appName, $request);
 		$this->db = $db;
+		$this->userManager = $userManager;
 	}
 
 	/**
@@ -71,6 +78,26 @@ class ApiController extends OCSController {
 				$query->expr()->eq('share_type', $query->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
 			))
 			->execute();
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function createGuestAppUser(string $userid, string $password): DataResponse {
+		$guestAppContainer = \OC::$server->getRegisteredAppContainer('guests');
+		$guestManager = $guestAppContainer->query('\OCA\Guests\GuestManager');
+		$guestManager->createGuest(
+			\OC::$server->getUserSession()->getUser(),
+			$userid,
+			$userid . '@localhost',
+			$userid . '-displayname'
+		);
+
+		$this->userManager->get($userid)->setPassword($password);
 
 		return new DataResponse();
 	}

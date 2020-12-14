@@ -67,6 +67,11 @@ class Update extends Base {
 				InputOption::VALUE_REQUIRED,
 				'Modifies the room to be read-only (value 1) or read-write (value 0)'
 			)->addOption(
+				'listable',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Modifies the room\'s listable scope'
+			)->addOption(
 				'password',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -85,6 +90,7 @@ class Update extends Base {
 		$description = $input->getOption('description');
 		$public = $input->getOption('public');
 		$readOnly = $input->getOption('readonly');
+		$listable = $input->getOption('listable');
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 
@@ -93,8 +99,18 @@ class Update extends Base {
 			return 1;
 		}
 
-		if (!in_array($readOnly, [null, '0', '1'], true)) {
+		if (!in_array($readOnly, [null, (string)Room::READ_WRITE, (string)Room::READ_ONLY], true)) {
 			$output->writeln('<error>Invalid value for option "--readonly" given.</error>');
+			return 1;
+		}
+
+		if (!in_array($listable, [
+			null,
+			(string)Room::LISTABLE_NONE,
+			(string)Room::LISTABLE_USERS,
+			(string)Room::LISTABLE_ALL,
+		], true)) {
+			$output->writeln('<error>Invalid value for option "--listable" given.</error>');
 			return 1;
 		}
 
@@ -127,6 +143,10 @@ class Update extends Base {
 				$this->setRoomReadOnly($room, ($readOnly === '1'));
 			}
 
+			if ($listable !== null) {
+				$this->setRoomListable($room, (int)$listable);
+			}
+
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);
 			}
@@ -151,7 +171,13 @@ class Update extends Base {
 		switch ($optionName) {
 			case 'public':
 			case 'readonly':
-				return ['1', '0'];
+				return [(string)Room::READ_ONLY, (string)Room::READ_WRITE];
+			case 'listable':
+				return [
+					(string)Room::LISTABLE_ALL,
+					(string)Room::LISTABLE_USERS,
+					(string)Room::LISTABLE_NONE,
+				];
 
 			case 'owner':
 				return $this->completeParticipantValues($context);

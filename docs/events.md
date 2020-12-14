@@ -12,7 +12,6 @@ Explanations:
 * Event name: `OCA\Talk\Controller\RoomController::EVENT_BEFORE_ROOMS_GET`
 * Since: 8.0.0
 
-
 ### Create conversation
 
 * Event class: `OCA\Talk\Events\RoomEvent`
@@ -53,6 +52,13 @@ Explanations:
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_READONLY_SET`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_READONLY_SET`
 * Since: 8.0.0
+
+### Set listable
+
+* Event class: `OCA\Talk\Events\ModifyRoomEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_LISTABLE_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_LISTABLE_SET`
+* Since: 11.0.0
 
 ### Set lobby
 

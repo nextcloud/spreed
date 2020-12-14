@@ -184,6 +184,14 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#getListedRooms',
+			'url' => '/api/{apiVersion}/listed-room',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v3',
+			],
+		],
+		[
 			'name' => 'Room#createRoom',
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'POST',
@@ -251,6 +259,15 @@ return [
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v(1|2|3)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setListable',
+			'url' => '/api/{apiVersion}/room/{token}/listable',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v3',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

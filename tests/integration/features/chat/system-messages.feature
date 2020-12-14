@@ -160,6 +160,23 @@ Feature: System messages
       | file last share room | users     | participant1 | participant1-displayname | user_added |
       | file last share room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Joining listed room
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" allows listing room "room" for "all" with 200
+    When user "participant2" joins room "room" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant2 | participant2-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | listable_all         |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant2 | participant2-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | listable_all         |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Participant escalation
     Given user "participant1" creates room "room"
       | roomType | 2 |
@@ -192,4 +209,47 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | moderator_demoted |
       | room | users     | participant1 | participant1-displayname | moderator_promoted |
       | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Changing listable scope of room
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "room" with 200
+    When user "participant1" allows listing room "room" for "all" with 200
+    And user "participant1" allows listing room "room" for "users" with 200
+    And user "participant1" allows listing room "room" for "none" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | listable_none        |
+      | room | users     | participant1 | participant1-displayname | listable_users       |
+      | room | users     | participant1 | participant1-displayname | listable_all         |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | listable_none        |
+      | room | users     | participant1 | participant1-displayname | listable_users       |
+      | room | users     | participant1 | participant1-displayname | listable_all         |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Locking a room
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "room" with 200
+    When user "participant1" locks room "room" with 200
+    And user "participant1" unlocks room "room" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | read_only_off        |
+      | room | users     | participant1 | participant1-displayname | read_only            |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | read_only_off        |
+      | room | users     | participant1 | participant1-displayname | read_only            |
+      | room | users     | participant1 | participant1-displayname | user_added           |
       | room | users     | participant1 | participant1-displayname | conversation_created |

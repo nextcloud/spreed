@@ -220,6 +220,32 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Get listed rooms with optional search term
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $searchTerm search term
+	 * @return DataResponse
+	 */
+	public function getListedRooms(string $searchTerm = ''): DataResponse {
+		$event = new UserEvent($this->userId);
+
+		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
+
+		$return = [];
+		foreach ($rooms as $room) {
+			try {
+				$return[] = $this->formatRoomV2andV3($room, null);
+			} catch (RoomNotFoundException $e) {
+			} catch (\RuntimeException $e) {
+			}
+		}
+
+		return new DataResponse($return, Http::STATUS_OK);
+	}
+
+
+	/**
 	 * @PublicPage
 	 *
 	 * @param string $token
@@ -559,6 +585,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeePin' => '',
 				'description' => '',
 				'lastCommonReadMessage' => 0,
+				'listable' => Room::LISTABLE_NONE,
 			]);
 		}
 
@@ -576,10 +603,12 @@ class RoomController extends AEnvironmentAwareController {
 			$lobbyTimer = 0;
 		}
 
-		if ($isSIPBridgeRequest) {
+		if ($isSIPBridgeRequest
+			|| ($room->getListable() !== Room::LISTABLE_NONE && !$currentParticipant instanceof Participant)
+		) {
 			return array_merge($roomData, [
 				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName(''),
+				'displayName' => $room->getDisplayName($isSIPBridgeRequest ? '' : $this->userId),
 				'objectType' => $room->getObjectType(),
 				'objectId' => $room->getObjectId(),
 				'readOnly' => $room->getReadOnly(),
@@ -588,6 +617,7 @@ class RoomController extends AEnvironmentAwareController {
 				'lobbyState' => $room->getLobbyState(),
 				'lobbyTimer' => $lobbyTimer,
 				'sipEnabled' => $room->getSIPEnabled(),
+				'listable' => $room->getListable(),
 			]);
 		}
 
@@ -628,6 +658,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $attendee->getActorId(),
 				'attendeeId' => $attendee->getId(),
 				'description' => $room->getDescription(),
+				'listable' => $room->getListable(),
 			]);
 
 			if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
@@ -1463,6 +1494,21 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function setReadOnly(int $state): DataResponse {
 		if (!$this->room->setReadOnly($state)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setListable(int $scope): DataResponse {
+		if (!$this->room->setListable($scope)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

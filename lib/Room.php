@@ -62,6 +62,21 @@ class Room {
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
 
+	/**
+	 * Only visible when joined
+	 */
+	public const LISTABLE_NONE = 0;
+
+	/**
+	 * Searchable by all regular users and moderators, even when not joined, excluding users from the guest app
+	 */
+	public const LISTABLE_USERS = 1;
+
+	/**
+	 * Searchable by everyone, which includes guest users (from guest app), even when not joined
+	 */
+	public const LISTABLE_ALL = 2;
+
 	public const START_CALL_EVERYONE = 0;
 	public const START_CALL_USERS = 1;
 	public const START_CALL_MODERATORS = 2;
@@ -82,6 +97,8 @@ class Room {
 	public const EVENT_AFTER_TYPE_SET = self::class . '::postSetType';
 	public const EVENT_BEFORE_READONLY_SET = self::class . '::preSetReadOnly';
 	public const EVENT_AFTER_READONLY_SET = self::class . '::postSetReadOnly';
+	public const EVENT_BEFORE_LISTABLE_SET = self::class . '::preSetListable';
+	public const EVENT_AFTER_LISTABLE_SET = self::class . '::postSetListable';
 	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
@@ -131,6 +148,8 @@ class Room {
 	/** @var int */
 	private $readOnly;
 	/** @var int */
+	private $listable;
+	/** @var int */
 	private $lobbyState;
 	/** @var int */
 	private $sipEnabled;
@@ -175,6 +194,7 @@ class Room {
 								int $id,
 								int $type,
 								int $readOnly,
+								int $listable,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -199,6 +219,7 @@ class Room {
 		$this->id = $id;
 		$this->type = $type;
 		$this->readOnly = $readOnly;
+		$this->listable = $listable;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
@@ -226,6 +247,10 @@ class Room {
 
 	public function getReadOnly(): int {
 		return $this->readOnly;
+	}
+
+	public function getListable(): int {
+		return $this->listable;
 	}
 
 	public function getLobbyState(): int {
@@ -346,6 +371,7 @@ class Room {
 			'lobby-state' => $this->getLobbyState(),
 			'lobby-timer' => $this->getLobbyTimer(),
 			'read-only' => $this->getReadOnly(),
+			'listable' => $this->getListable(),
 			'active-since' => $this->getActiveSince(),
 			'sip-enabled' => $this->getSIPEnabled(),
 		];
@@ -776,6 +802,46 @@ class Room {
 		$this->readOnly = $newState;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_READONLY_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param int $newState New listable scope from self::LISTABLE_*
+	 * 						Also it's only allowed on rooms of type
+	 * 						`self::GROUP_CALL` and `self::PUBLIC_CALL`
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setListable(int $newState): bool {
+		$oldState = $this->getListable();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+			return false;
+		}
+
+		if (!in_array($newState, [
+			Room::LISTABLE_NONE,
+			Room::LISTABLE_USERS,
+			Room::LISTABLE_ALL,
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($this, 'listable', $newState, $oldState);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_LISTABLE_SET, $event);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('listable', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->listable = $newState;
+
+		$this->dispatcher->dispatch(self::EVENT_AFTER_LISTABLE_SET, $event);
 
 		return true;
 	}
