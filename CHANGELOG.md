@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.0-rc.1 – 2020-12-14
+### Added
+- Implement multiple requirements to prepare for SIP dial-in 
+  [#4612](https://github.com/nextcloud/spreed/pull/4612)
+
 ## 10.0.3 – 2020-11-18
 ### Fixed
 - Fix conversation URL change detection
