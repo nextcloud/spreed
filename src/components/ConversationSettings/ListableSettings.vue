@@ -25,9 +25,9 @@
 			{{ t('spreed', 'Defines who can find this conversation without being invited') }}
 		</div>
 		<div>
-			<label for="moderation_settings_listable_conversation_input">{{ t('spreed', 'Visible for') }}</label>
-			<Multiselect id="moderation_settings_listable_conversation_input"
+			<Multiselect
 				v-model="listable"
+				class="listable-options-select"
 				:options="listableOptions"
 				:placeholder="t('spreed', 'Visible for')"
 				label="label"
@@ -45,9 +45,9 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants'
 
 const listableOptions = [
-	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'No one') },
-	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Registered users only') },
-	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Everyone') },
+	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'Visible for no one') },
+	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Visible for registered users only') },
+	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Visible for everyone') },
 ]
 
 export default {
@@ -129,3 +129,8 @@ export default {
 
 }
 </script>
+<style lang="scss" scoped>
+.listable-options-select {
+	width: 100%;
+}
+</style>
