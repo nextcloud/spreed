@@ -99,16 +99,19 @@
 			</ActionText>
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
+				:close-after-click="true"
 				@click="demoteFromModerator">
 				{{ t('spreed', 'Demote from moderator') }}
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
 				icon="icon-rename"
+				:close-after-click="true"
 				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-delete"
+				:close-after-click="true"
 				@click="removeParticipant">
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
