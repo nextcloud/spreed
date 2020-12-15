@@ -1583,11 +1583,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser('admin');
 		// in case it exists
 		$this->deleteUser($user);
-		$this->sendRequest('POST', '/apps/spreedcheats/guest-users', [
-			'userid' => $user,
-			'password' => self::TEST_PASSWORD,
+
+		$lastCode = $this->runOcc([
+			'guests:add',
+			// creator user
+			'admin',
+			// guest user id
+			$user,
+			// email
+			$user . '@localhost',
+			'--display-name',
+			$user . '-displayname',
+			'--password-from-env',
+		], [
+			'OC_PASS' => self::TEST_PASSWORD,
 		]);
-		$this->assertStatusCode($this->response, 200);
+		Assert::assertEquals(0, $lastCode, 'Guest creation succeeded for ' . $user);
+
 		$this->createdGuestAccountUsers[] = $user;
 		$this->setCurrentUser($currentUser);
 	}
