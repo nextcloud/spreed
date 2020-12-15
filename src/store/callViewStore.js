@@ -20,6 +20,7 @@
  *
  */
 
+import Vue from 'vue'
 import BrowserStorage from '../services/BrowserStorage'
 import {
 	CONVERSATION,
@@ -73,9 +74,9 @@ const mutations = {
 	},
 	setParticipantHandRaised(state, { peerId, raised }) {
 		if (raised) {
-			state.participantRaisedHands[peerId] = raised
+			Vue.set(state.participantRaisedHands, peerId, raised)
 		} else {
-			delete state.participantRaisedHands[peerId]
+			Vue.delete(state.participantRaisedHands, peerId)
 		}
 	},
 	clearParticipantHandRaised(state) {
