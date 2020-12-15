@@ -91,29 +91,24 @@ const checkTalkVersionHash = function(response) {
 /**
  * Fetch listed conversations
  * @param {string} searchTerm The string that will be used in the search query.
+ * @param {object} options options
  */
-const searchListedConversations = async function(searchTerm) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', {
+const searchListedConversations = async function(searchTerm, options) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', Object.assign(options, {
 		params: {
 			searchTerm,
 		},
-	})
-
-	if (maintenanceWarning) {
-		maintenanceWarning.hideToast()
-		maintenanceWarning = null
-	}
-
-	return response
+	}))
 }
 
 /**
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
+ * @param {object} options options
  * @param {string} [token] The token of the conversation (if any)
  * @param {boolean} [onlyUsers] Only return users
  */
-const searchPossibleConversations = async function(searchText, token, onlyUsers) {
+const searchPossibleConversations = async function({ searchText, token, onlyUsers }, options) {
 	token = token || 'new'
 	onlyUsers = !!onlyUsers
 	const shareTypes = [
@@ -128,18 +123,14 @@ const searchPossibleConversations = async function(searchText, token, onlyUsers)
 		}
 	}
 
-	try {
-		return await axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
-			params: {
-				search: searchText,
-				itemType: 'call',
-				itemId: token,
-				shareTypes,
-			},
-		})
-	} catch (error) {
-		console.debug('Error while searching possible conversations: ', error)
-	}
+	return axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, Object.assign(options, {
+		params: {
+			search: searchText,
+			itemType: 'call',
+			itemId: token,
+			shareTypes,
+		},
+	}))
 }
 
 /**

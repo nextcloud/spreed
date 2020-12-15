@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import CancelableRequest from '../../../../utils/cancelableRequest'
 import debounce from 'debounce'
 import { showError } from '@nextcloud/dialogs'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
@@ -82,6 +83,7 @@ export default {
 			// with an empty screen as search text.
 			contactsLoading: true,
 			noResults: false,
+			cancelSearchPossibleConversations: () => {},
 		}
 	},
 
@@ -111,6 +113,11 @@ export default {
 		this.contactsLoading = false
 	},
 
+	beforeDestroy() {
+		this.cancelSearchPossibleConversations()
+		this.cancelSearchPossibleConversations = null
+	},
+
 	methods: {
 		handleInput() {
 			this.noResults = false
@@ -125,13 +132,21 @@ export default {
 
 		async fetchSearchResults() {
 			try {
-				const response = await searchPossibleConversations(this.searchText)
-				this.searchResults = response.data.ocs.data
+				this.cancelSearchPossibleConversations('canceled')
+				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				this.cancelSearchPossibleConversations = cancel
+
+				const response = await request({ searchText: this.searchText })
+
+				this.searchResults = response?.data?.ocs?.data || []
 				this.contactsLoading = false
 				if (this.searchResults.length === 0) {
 					this.noResults = true
 				}
 			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
 				console.error(exception)
 				showError(t('spreed', 'An error occurred while performing the search'))
 			}

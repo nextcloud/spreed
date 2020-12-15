@@ -111,6 +111,7 @@
 </template>
 
 <script>
+import CancelableRequest from '../../utils/cancelableRequest'
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
 import ConversationsList from './ConversationsList/ConversationsList'
@@ -131,6 +132,7 @@ import { CONVERSATION } from '../../constants'
 import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 import arrowNavigation from '../../mixins/arrowNavigation'
+import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 export default {
@@ -165,6 +167,8 @@ export default {
 			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 			canStartConversations: loadState('talk', 'start_conversations'),
 			initialisedConversations: false,
+			cancelSearchPossibleConversations: () => {},
+			cancelSearchListedConversations: () => {},
 		}
 	},
 
@@ -231,7 +235,7 @@ export default {
 		 * After a conversation was created, the search filter is reset
 		 */
 		EventBus.$once('resetSearchFilter', () => {
-			this.searchText = ''
+			this.abortSearch()
 		})
 
 		this.fetchConversations()
@@ -252,6 +256,12 @@ export default {
 
 	beforeDestroy() {
 		EventBus.$off('shouldRefreshConversations', this.debounceFetchConversations)
+
+		this.cancelSearchPossibleConversations()
+		this.cancelSearchPossibleConversations = null
+
+		this.cancelSearchListedConversations()
+		this.cancelSearchListedConversations = null
 	},
 
 	methods: {
@@ -273,23 +283,54 @@ export default {
 
 		async fetchPossibleConversations() {
 			this.contactsLoading = true
-			const response = await searchPossibleConversations(this.searchText, undefined, !this.canStartConversations)
-			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => {
-				return match.source === 'users'
-					&& match.id !== this.$store.getters.getUserId()
-					&& !this.hasOneToOneConversationWith(match.id)
-			})
-			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
-			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
-			this.contactsLoading = false
+
+			try {
+				this.cancelSearchPossibleConversations('canceled')
+				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				this.cancelSearchPossibleConversations = cancel
+
+				const response = await request({
+					searchText: this.searchText,
+					token: undefined,
+					onlyUsers: !this.canStartConversations,
+				})
+
+				this.searchResults = response?.data?.ocs?.data || []
+				this.searchResultsUsers = this.searchResults.filter((match) => {
+					return match.source === 'users'
+						&& match.id !== this.$store.getters.getUserId()
+						&& !this.hasOneToOneConversationWith(match.id)
+				})
+				this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
+				this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
+				this.contactsLoading = false
+			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
+				console.error('Error searching for possible conversations', exception)
+				showError(t('spreed', 'An error occurred while performing the search'))
+			}
 		},
 
 		async fetchListedConversations() {
-			this.listedConversationsLoading = true
-			const response = await searchListedConversations(this.searchText)
-			this.searchResultsListedConversations = response.data.ocs.data
-			this.listedConversationsLoading = false
+			try {
+				this.listedConversationsLoading = true
+
+				this.cancelSearchListedConversations('canceled')
+				const { request, cancel } = CancelableRequest(searchListedConversations)
+				this.cancelSearchListedConversations = cancel
+
+				const response = await request({ searchText: this.searchText })
+				this.searchResultsListedConversations = response.data.ocs.data
+				this.listedConversationsLoading = false
+			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
+				console.error('Error searching for listed conversations', exception)
+				showError(t('spreed', 'An error occurred while performing the search'))
+			}
 		},
 
 		async fetchSearchResults() {
@@ -332,6 +373,12 @@ export default {
 		// Reset the search text, therefore end the search operation.
 		abortSearch() {
 			this.searchText = ''
+			if (this.cancelSearchPossibleConversations) {
+				this.cancelSearchPossibleConversations()
+			}
+			if (this.cancelSearchListedConversations) {
+				this.cancelSearchListedConversations()
+			}
 		},
 
 		showSettings() {

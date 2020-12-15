@@ -99,6 +99,7 @@ export default {
 			 * Stores the cancel function for cancelableGetParticipants
 			 */
 			cancelGetParticipants: () => {},
+			cancelSearchPossibleConversations: () => {},
 			fetchingParticipants: false,
 		}
 	},
@@ -143,6 +144,9 @@ export default {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('joinedConversation', this.onJoinedConversation)
 		EventBus.$off('Signaling::participantListChanged', this.debounceUpdateParticipants)
+
+		this.cancelSearchPossibleConversations()
+		this.cancelSearchPossibleConversations = null
 	},
 
 	methods: {
@@ -152,7 +156,7 @@ export default {
 		onRouteChange() {
 			// Reset participantsInitialised when there is only the current user in the participant list
 			this.participantsInitialised = this.$store.getters.participantsList(this.token).length > 1
-			this.searchText = ''
+			this.abortSearch()
 		},
 
 		/**
@@ -187,10 +191,21 @@ export default {
 
 		async fetchSearchResults() {
 			try {
-				const response = await searchPossibleConversations(this.searchText, this.token)
-				this.searchResults = response.data.ocs.data
+				this.cancelSearchPossibleConversations('canceled')
+				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				this.cancelSearchPossibleConversations = cancel
+
+				const response = await request({
+					searchText: this.searchText,
+					token: this.token,
+				})
+
+				this.searchResults = response?.data?.ocs?.data || []
 				this.contactsLoading = false
 			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
 				console.error(exception)
 				showError(t('spreed', 'An error occurred while performing the search'))
 			}
@@ -205,7 +220,7 @@ export default {
 		async addParticipants(item) {
 			try {
 				await addParticipant(this.token, item.id, item.source)
-				this.searchText = ''
+				this.abortSearch()
 				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
@@ -268,6 +283,9 @@ export default {
 		// Ends the search operation
 		abortSearch() {
 			this.searchText = ''
+			if (this.cancelSearchPossibleConversations) {
+				this.cancelSearchPossibleConversations()
+			}
 		},
 	},
 }
