@@ -275,6 +275,9 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
+	 * @param int $lastCommonReadId The last known common read message
+	 *                              (so the response is 200 instead of 304 when
+	 *                              it changes even when there are no messages)
 	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
 	 * @param int $setReadMarker Automatically set the last read marker when 1,
 	 *                           if your client does this itself via chat/{token}/read set to 0
@@ -287,7 +290,14 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30, int $setReadMarker = 1, int $includeLastKnown = 0, int $noStatusUpdate = 0): DataResponse {
+	public function receiveMessages(int $lookIntoFuture,
+									int $limit = 100,
+									int $lastKnownMessageId = 0,
+									int $lastCommonReadId = 0,
+									int $timeout = 30,
+									int $setReadMarker = 1,
+									int $includeLastKnown = 0,
+									int $noStatusUpdate = 0): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -343,8 +353,15 @@ class ChatController extends AEnvironmentAwareController {
 
 		if (empty($comments)) {
 			$response = new DataResponse([], Http::STATUS_NOT_MODIFIED);
-			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			if ($lastCommonReadId && $this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$newLastCommonRead = $this->chatManager->getLastCommonReadMessage($this->room);
+				if ($lastCommonReadId !== $newLastCommonRead) {
+					// Set the status code to 200 so the header is sent to the client.
+					// As per "section 10.3.5 of RFC 2616" entity headers shall be
+					// stripped out on 304: https://stackoverflow.com/a/17822709
+					$response->setStatus(Http::STATUS_OK);
+				}
+				$response->addHeader('X-Chat-Last-Common-Read', $newLastCommonRead);
 			}
 			return $response;
 		}
