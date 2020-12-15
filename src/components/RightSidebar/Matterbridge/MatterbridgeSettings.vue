@@ -20,59 +20,79 @@
 -->
 
 <template>
-	<div>
+	<div class="matterbridge-settings">
 		<div v-if="loading" class="loading" />
 		<div v-show="!loading">
+			<h3>
+				<span class="icon icon-category-integration" />
+				<p>{{ t('spreed', 'Bridge with other services') }}</p>
+			</h3>
 			<div id="matterbridge-header">
-				<h3>
-					{{ t('spreed', 'Bridge with other services') }}
-				</h3>
 				<p>
 					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
 					<a href="https://github.com/42wim/matterbridge/wiki" target="_blank" rel="noopener">
-						{{ t('spreed', 'More info on Matterbridge.') }}
+						<span class="icon icon-external" />
+						{{ t('spreed', 'More info on Matterbridge') }}
 					</a>
 				</p>
 			</div>
 			<div class="basic-settings">
-				<ActionCheckbox
-					:token="token"
-					:checked="enabled"
-					@update:checked="onEnabled">
-					{{ t('spreed', 'Enabled') }}
-					({{ processStateText }})
-				</ActionCheckbox>
-				<button class="" @click="showLogContent">
-					{{ t('spreed', 'Show matterbridge log') }}
-				</button>
-				<Modal v-if="logModal"
-					@close="closeLogModal">
-					<div class="modal__content">
-						<textarea v-model="processLog" class="log-content" />
-					</div>
-				</Modal>
-				<Multiselect
-					ref="partMultiselect"
-					v-model="selectedType"
-					label="displayName"
-					track-by="type"
-					:placeholder="newPartPlaceholder"
-					:options="formatedTypes"
-					:internal-search="true"
-					@input="clickAddPart" />
-				<ActionButton
-					icon="icon-checkmark"
-					@click="onSave">
-					{{ t('spreed', 'Save') }}
-				</ActionButton>
+				<div v-show="!enabled"
+					class="add-part-wrapper">
+					<span class="icon icon-add" />
+					<Multiselect
+						ref="partMultiselect"
+						v-model="selectedType"
+						label="displayName"
+						track-by="type"
+						:placeholder="newPartPlaceholder"
+						:options="formatedTypes"
+						:user-select="true"
+						:internal-search="true"
+						@input="clickAddPart">
+						<template #option="{option}">
+							<img class="icon-multiselect-service"
+								:src="option.iconUrl">
+							{{ option.displayName }}
+						</template>
+					</Multiselect>
+				</div>
+				<div v-show="parts.length > 0"
+					class="enable-switch-line">
+					<input
+						id="enable-checkbox"
+						type="checkbox"
+						class="checkbox"
+						:token="token"
+						:checked="enabled"
+						@change="onEnabled">
+					<label for="enable-checkbox">
+						{{ t('spreed', 'Enable bridge') }}
+						({{ processStateText }})
+					</label>
+					<button
+						v-if="enabled"
+						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
+						class="icon icon-edit"
+						@click="showLogContent" />
+					<Modal v-if="logModal"
+						@close="closeLogModal">
+						<div class="modal__content">
+							<textarea v-model="processLog" class="log-content" />
+						</div>
+					</Modal>
+				</div>
 			</div>
 			<ul>
-				<li v-for="(part, i) in editableParts" :key="i">
+				<li v-for="(part, i) in parts" :key="part.type + i">
 					<BridgePart
 						:num="i+1"
 						:part="part"
 						:type="types[part.type]"
-						@deletePart="onDelete(i)" />
+						:editing="part.editing"
+						:editable="!enabled"
+						@edit-clicked="onEditClicked(i)"
+						@delete-part="onDelete(i)" />
 				</li>
 			</ul>
 		</div>
@@ -86,17 +106,18 @@ import {
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService'
 import { showSuccess } from '@nextcloud/dialogs'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import { imagePath } from '@nextcloud/router'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
 
+import Vue from 'vue'
+import { Tooltip } from '@nextcloud/vue'
+Vue.directive('tooltip', Tooltip)
+
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
-		ActionCheckbox,
-		ActionButton,
 		Multiselect,
 		BridgePart,
 		Modal,
@@ -120,6 +141,7 @@ export default {
 			types: {
 				nctalk: {
 					name: 'Nextcloud Talk',
+					iconUrl: imagePath('spreed', 'app-dark.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Section-Nextcloud-Talk-%28basic%29',
 					fields: {
 						server: {
@@ -143,9 +165,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				matrix: {
 					name: 'Matrix',
+					iconUrl: imagePath('spreed', 'bridge-services/matrix.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#matrix',
 					fields: {
 						server: {
@@ -169,9 +193,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				mattermost: {
 					name: 'Mattermost',
+					iconUrl: imagePath('spreed', 'bridge-services/mattermost.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#mattermost',
 					fields: {
 						server: {
@@ -200,9 +226,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				rocketchat: {
 					name: 'Rocket.Chat',
+					iconUrl: imagePath('spreed', 'bridge-services/rocketchat.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#rocketchat',
 					fields: {
 						server: {
@@ -226,9 +254,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				zulip: {
 					name: 'Zulip',
+					iconUrl: imagePath('spreed', 'bridge-services/zulip.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#zulip',
 					fields: {
 						server: {
@@ -252,9 +282,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				slack: {
 					name: 'Slack',
+					iconUrl: imagePath('spreed', 'bridge-services/slack.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Slack-bot-setup',
 					fields: {
 						token: {
@@ -268,9 +300,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'channel',
 				},
 				discord: {
 					name: 'Discord',
+					iconUrl: imagePath('spreed', 'bridge-services/discord.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Discord-bot-setup',
 					fields: {
 						token: {
@@ -289,9 +323,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'server',
 				},
 				telegram: {
 					name: 'Telegram',
+					iconUrl: imagePath('spreed', 'bridge-services/telegram.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#telegram',
 					fields: {
 						token: {
@@ -305,9 +341,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'chatid',
 				},
 				steam: {
 					name: 'Steam',
+					iconUrl: imagePath('spreed', 'bridge-services/steam.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#steam',
 					fields: {
 						login: {
@@ -326,9 +364,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'chatid',
 				},
 				irc: {
 					name: 'IRC',
+					iconUrl: imagePath('spreed', 'bridge-services/irc.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#irc',
 					fields: {
 						server: {
@@ -379,9 +419,11 @@ export default {
 							labelText: t('spreed', 'Skip TLS verification'),
 						},
 					},
+					mainField: 'channel',
 				},
 				msteams: {
 					name: 'Microsoft Teams',
+					iconUrl: imagePath('spreed', 'bridge-services/msteams.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/MS-Teams-setup',
 					fields: {
 						tenantid: {
@@ -405,9 +447,11 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'threadid',
 				},
 				xmpp: {
 					name: 'XMPP/Jabber',
+					iconUrl: imagePath('spreed', 'bridge-services/xmpp.svg'),
 					infoTarget: 'https://github.com/42wim/matterbridge/wiki/Settings#xmpp',
 					fields: {
 						server: {
@@ -441,9 +485,10 @@ export default {
 							icon: 'icon-group',
 						},
 					},
+					mainField: 'channel',
 				},
 			},
-			newPartPlaceholder: t('spreed', 'Add new bridged channel'),
+			newPartPlaceholder: t('spreed', 'Add new bridged channel to current conversation'),
 			selectedType: null,
 		}
 	},
@@ -467,12 +512,8 @@ export default {
 				return {
 					displayName: t.name,
 					type: k,
+					iconUrl: t.iconUrl,
 				}
-			})
-		},
-		editableParts() {
-			return this.parts.filter((p) => {
-				return p.type !== 'nctalk' || p.channel !== this.token
 			})
 		},
 		processStateText() {
@@ -480,7 +521,9 @@ export default {
 				? t('spreed', 'unknown state')
 				: this.processRunning
 					? t('spreed', 'running')
-					: t('spreed', 'not running')
+					: this.enabled
+						? t('spreed', 'not running, check Matterbridge log')
+						: t('spreed', 'not running')
 		},
 	},
 
@@ -501,6 +544,7 @@ export default {
 			const type = this.types[typeKey]
 			const newPart = {
 				type: typeKey,
+				editing: true,
 			}
 			for (const fieldKey in type.fields) {
 				newPart[fieldKey] = ''
@@ -510,12 +554,22 @@ export default {
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
+			this.save()
 		},
-		onEnabled(checked) {
-			this.enabled = checked
-			this.onSave()
+		onEditClicked(i) {
+			this.parts[i].editing = !this.parts[i].editing
+			if (!this.parts[i].editing) {
+				this.save()
+			}
 		},
-		onSave() {
+		onEnabled(e) {
+			this.enabled = e.target.checked
+			this.save()
+		},
+		save() {
+			if (this.parts.length === 0) {
+				this.enabled = false
+			}
 			this.editBridge(this.token, this.enabled, this.parts)
 		},
 		async getBridge(token) {
@@ -528,19 +582,22 @@ export default {
 				this.processLog = bridge.log
 				this.processRunning = bridge.running
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 			this.loading = false
 		},
 		async editBridge() {
 			this.loading = true
+			this.parts.forEach(part => {
+				part.editing = false
+			})
 			try {
 				const result = await editBridge(this.token, this.enabled, this.parts)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
 				showSuccess(t('spreed', 'Bridge saved'))
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 			this.loading = false
 		},
@@ -550,7 +607,7 @@ export default {
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 			}
 		},
 		showLogContent() {
@@ -565,38 +622,118 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.loading {
-	margin-top: 30px;
+::v-deep .icon-multiselect-service {
+	width: 16px !important;
+	height: 16px !important;
+	margin-right: 10px;
 }
 
-#matterbridge-header {
-	padding-left: 40px;
-	padding-top: 40px;
+body.theme--dark .icon-multiselect-service {
+	-webkit-filter: invert(1);
+	filter: invert(1);
+}
+
+.matterbridge-settings {
+	.loading {
+		margin-top: 30px;
+	}
 
 	h3 {
 		font-weight: bold;
-	}
+		padding: 0;
+		height: 44px;
+		display: flex;
 
-	p {
-		color: var(--color-text-maxcontrast);
+		p {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
 
-		a:hover,
-		a:focus {
-			border-bottom: 2px solid var(--color-text-maxcontrast);
+		.icon {
+			display: inline-block;
+			width: 40px;
+		}
+		&:hover {
+			background-color: var(--color-background-hover);
 		}
 	}
-}
 
-.basic-settings {
-	button,
-	.multiselect {
-		width: calc(100% - 40px);
-		margin-left: 40px;
+	#matterbridge-header {
+		padding: 0 0 10px 0;
+
+		p {
+			padding-left: 40px;
+			color: var(--color-text-maxcontrast);
+
+			a:hover,
+			a:focus {
+				border-bottom: 2px solid var(--color-text-maxcontrast);
+			}
+
+			a .icon {
+				display: inline-block;
+				margin-bottom: -3px;
+			}
+		}
 	}
-}
 
-ul {
-	margin-bottom: 64px;
+	.basic-settings {
+		.action {
+			list-style: none;
+		}
+		.save-changes {
+			width: 100%;
+			text-align: left;
+
+			.icon-checkmark {
+				margin: 0 10px 0 2px;
+			}
+		}
+		.multiselect {
+			width: calc(100% - 46px);
+		}
+		.icon {
+			display: inline-block;
+			width: 40px;
+			height: 34px;
+			background-position: 14px center;
+		}
+		.add-part-wrapper {
+			margin-top: 5px;
+		}
+		.enable-switch-line {
+			display: flex;
+			height: 44px;
+
+			label {
+				flex-grow: 1;
+				margin-top: auto;
+				margin-bottom: auto;
+				&::before {
+					margin: 0 10px 0 15px;
+				}
+			}
+			button {
+				opacity: 0.5;
+				width: 44px;
+				height: 44px;
+				border-radius: var(--border-radius-pill);
+				background-color: transparent;
+				border: none;
+				margin: 0;
+
+				&:hover,
+				&:focus {
+					opacity: 1;
+					background-color: var(--color-background-hover);
+				}
+			}
+		}
+	}
+
+	ul {
+		margin-bottom: 64px;
+	}
 }
 
 .log-content {
