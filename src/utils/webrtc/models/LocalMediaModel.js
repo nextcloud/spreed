@@ -227,6 +227,8 @@ LocalMediaModel.prototype = {
 			this.set('videoEnabled', false)
 			this.set('videoAvailable', false)
 		}
+
+		this.set('raisedHand', false)
 	},
 
 	_handleLocalStreamChanged: function(localStream) {
