@@ -874,7 +874,7 @@ class ChatControllerTest extends TestCase {
 
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
-		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
+		$response = $this->controller->receiveMessages(1, $limit, $offset, 0, $timeout);
 		$expected = new DataResponse([
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
 			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
@@ -908,7 +908,7 @@ class ChatControllerTest extends TestCase {
 
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
-		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
+		$response = $this->controller->receiveMessages(1, $limit, $offset, 0, $timeout);
 		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
 
 		$this->assertEquals($expected, $response);

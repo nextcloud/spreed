@@ -13,6 +13,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a conversation
     `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
     `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
+    `lastCommonReadId` | int | Send the last `X-Chat-Last-Common-Read` header you got, if you are interested in updates of the common read value. A 304 response does not allow custom headers and otherwise the server can not know if your value is modified or not.
     `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
     `setReadMarker` | int | `1` to automatically set the read timer after fetching the messages, use `0` when your client calls `Mark chat as read` manually. (Default: `1`)
     `includeLastKnown` | int | `1` to include the last known message as well (Default: `0`)
@@ -29,7 +30,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
-        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability and when lastCommonReadId was sent)
 
     - Data:
         Array of messages, each message has at least:
