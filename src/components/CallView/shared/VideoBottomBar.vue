@@ -261,7 +261,10 @@ export default {
 			font-weight: bold;
 		}
 	}
-	&__statusIndicator,
+	&__statusIndicator {
+		margin-left: 6px;
+		margin-right: 6px;
+	}
 	&__mediaIndicator {
 		position: relative;
 		background-size: 22px;
@@ -278,6 +281,10 @@ export default {
 			border: none;
 		}
 	}
+}
+
+.handIndicator {
+	margin-top: 8px;
 }
 
 .handIndicator,
