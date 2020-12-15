@@ -488,7 +488,7 @@ export default {
 					mainField: 'channel',
 				},
 			},
-			newPartPlaceholder: t('spreed', 'Add new bridged channel to current room'),
+			newPartPlaceholder: t('spreed', 'Add new bridged channel to current conversation'),
 			selectedType: null,
 		}
 	},
@@ -690,7 +690,7 @@ body.theme--dark .icon-multiselect-service {
 			}
 		}
 		.multiselect {
-			width: calc(100% - 44px);
+			width: calc(100% - 46px);
 		}
 		.icon {
 			display: inline-block;
