@@ -20,9 +20,13 @@
 -->
 
 <template>
-	<ParticipantsList
-		:items="participantsList"
-		:loading="!participantsInitialised" />
+	<div>
+		<ParticipantsList
+			v-if="participantsList.length"
+			:items="participantsList"
+			:loading="!participantsInitialised" />
+		<Hint v-else :hint="t('spreed', 'No search results')" />
+	</div>
 </template>
 
 <script>
@@ -30,6 +34,7 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import { PARTICIPANT } from '../../../../constants'
 import UserStatus from '../../../../mixins/userStatus'
+import Hint from '../../../Hint'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {
@@ -37,6 +42,7 @@ export default {
 
 	components: {
 		ParticipantsList,
+		Hint,
 	},
 
 	mixins: [
