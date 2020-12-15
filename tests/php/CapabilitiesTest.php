@@ -103,6 +103,7 @@ class CapabilitiesTest extends TestCase {
 					'force-mute',
 					'sip-support',
 					'chat-read-status',
+					'phonebook-search',
 				],
 				'config' => [
 					'attachments' => [
@@ -209,6 +210,7 @@ class CapabilitiesTest extends TestCase {
 					'force-mute',
 					'sip-support',
 					'chat-read-status',
+					'phonebook-search',
 					'chat-reference-id',
 				],
 				'config' => [
