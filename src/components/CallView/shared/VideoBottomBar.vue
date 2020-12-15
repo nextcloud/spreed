@@ -29,7 +29,7 @@
 					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
 					class="bottom-bar__statusIndicator">
 					<Hand
-						class="handIndicator wave-hand-animation"
+						class="handIndicator"
 						fill-color="#ffffff" />
 				</div>
 			</transition>

@@ -124,30 +124,3 @@ $chat-line-height: 1.6em;
 		position: absolute !important;
 	}
 }
-
-.wave-hand-animation svg {
-	animation-name: wave-hand;
-	animation-duration: 2s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: 1;
-}
-
-@keyframes wave-hand {
-	0% {
-		transform: rotate(20deg);
-		opacity: 0;
-		transform-origin: 50% 80%;
-	}
-	20% {
-		opacity: 1;
-	}
-	40% {
-		transform: rotate(-20deg);
-	}
-	75% {
-		transform: rotate(15deg);
-	}
-	100% {
-		transform: rotate(0deg);
-	}
-}
