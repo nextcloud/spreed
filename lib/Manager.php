@@ -242,8 +242,9 @@ class Manager {
 
 	public function resetAssignedSignalingServers(ICache $cache): void {
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.*')
-			->from('talk_rooms', 'r')
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
 			->where($query->expr()->isNotNull('r.assigned_hpb'));
 
 		$result = $query->execute();
@@ -354,9 +355,9 @@ class Manager {
 			$allowedListedTypes[] = Room::LISTABLE_USERS;
 		}
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.*')
-			->selectAlias('r.id', 'r_id')
-			->from('talk_rooms', 'r')
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
