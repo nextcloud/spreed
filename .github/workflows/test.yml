@@ -22,7 +22,7 @@ jobs:
       - name: Set up node ${{ matrix.node-versions }}
         uses: actions/setup-node@v1
         with:
-          node-versions: ${{ matrix.node-versions }}
+          node-version: ${{ matrix.node-versions }}
 
       - name: Install dependencies
         run: npm ci
