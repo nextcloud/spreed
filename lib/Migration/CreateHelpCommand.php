@@ -44,13 +44,21 @@ class CreateHelpCommand implements IRepairStep {
 
 	public function run(IOutput $output): void {
 		try {
-			$this->service->find('', 'help');
+			$command = $this->service->find('', 'help');
+			$this->service->update(
+				$command->getId(),
+				'help',
+				'talk',
+				'help',
+				Command::RESPONSE_USER,
+				Command::ENABLED_ALL
+			);
 		} catch (DoesNotExistException $e) {
 			$this->service->create(
 				'',
 				'help',
 				'talk',
-				'',
+				'help',
 				Command::RESPONSE_USER,
 				Command::ENABLED_ALL
 			);

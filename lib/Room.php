@@ -34,6 +34,7 @@ use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -402,10 +403,10 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('a.id', 'a_id')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
@@ -438,10 +439,10 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('a.id', 'a_id')
-			->selectAlias('s.id', 's_id')
-			->from('talk_sessions', 's')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_sessions', 's')
 			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('a.id', 's.attendee_id'))
 			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
@@ -464,10 +465,10 @@ class Room {
 	 */
 	public function getParticipantByPin(string $pin): Participant {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('a.id', 'a_id')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
@@ -490,10 +491,10 @@ class Room {
 	 */
 	public function getParticipantByAttendeeId(int $attendeeId): Participant {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('a.id', 'a_id')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
@@ -521,10 +522,10 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->selectAlias('a.id', 'a_id')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))

@@ -37,6 +37,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
@@ -447,8 +448,9 @@ class ParticipantService {
 		$this->sessionService->deleteSessionsById($sessionTableIds);
 
 		$query = $this->connection->getQueryBuilder();
-		$query->selectAlias('a.id', 'a_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('s.attendee_id', 'a.id'))
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_GUESTS)))
@@ -561,11 +563,10 @@ class ParticipantService {
 	public function getParticipantsForRoom(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->select('a.*')
-			->selectAlias('a.id', 'a_id')
-			->addSelect('s.*')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin(
 				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
@@ -582,11 +583,10 @@ class ParticipantService {
 	public function getParticipantsWithSession(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->select('a.*')
-			->selectAlias('a.id', 'a_id')
-			->addSelect('s.*')
-			->selectAlias('s.id', 's_id')
-			->from('talk_attendees', 'a')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
 			->leftJoin(
 				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
@@ -604,11 +604,10 @@ class ParticipantService {
 	public function getParticipantsInCall(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->select('a.*')
-			->selectAlias('a.id', 'a_id')
-			->addSelect('s.*')
-			->selectAlias('s.id', 's_id')
-			->from('talk_sessions', 's')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_sessions', 's')
 			->leftJoin(
 				's', 'talk_attendees', 'a',
 				$query->expr()->eq('s.attendee_id', 'a.id')
@@ -627,11 +626,10 @@ class ParticipantService {
 	public function getParticipantsByNotificationLevel(Room $room, int $notificationLevel): array {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->select('a.*')
-			->selectAlias('a.id', 'a_id')
-			->addSelect('s.*')
-			->selectAlias('s.id', 's_id')
-			->from('talk_sessions', 's')
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_sessions', 's')
 			->leftJoin(
 				's', 'talk_attendees', 'a',
 				$query->expr()->eq('s.attendee_id', 'a.id')
