@@ -166,25 +166,25 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator locked the conversation');
 			}
 		} elseif ($message === 'listable_none') {
-			$parsedMessage = $this->l->t('{actor} made the conversation invisible');
+			$parsedMessage = $this->l->t('{actor} made the conversation accessible to participants');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You made the conversation invisible');
+				$parsedMessage = $this->l->t('You made the conversation accessible to participants');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator made the conversation invisible');
+				$parsedMessage = $this->l->t('An administrator made the conversation accessible to participants');
 			}
 		} elseif ($message === 'listable_users') {
-			$parsedMessage = $this->l->t('{actor} made the conversation visible for registered users only');
+			$parsedMessage = $this->l->t('{actor} made the conversation accessible to registered users only');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You made the conversation visible for registered users only');
+				$parsedMessage = $this->l->t('You made the conversation accessible to registered users only');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator made the visible for registered users only');
+				$parsedMessage = $this->l->t('An administrator made the accessible to registered users only');
 			}
 		} elseif ($message === 'listable_all') {
-			$parsedMessage = $this->l->t('{actor} made the conversation visible for everyone');
+			$parsedMessage = $this->l->t('{actor} made the conversation accessible to everyone');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You made the conversation visible for everyone');
+				$parsedMessage = $this->l->t('You made the conversation accessible to everyone');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator made the conversation visible for everyone');
+				$parsedMessage = $this->l->t('An administrator made the conversation accessible to everyone');
 			}
 		} elseif ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');

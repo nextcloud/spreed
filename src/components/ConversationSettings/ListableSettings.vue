@@ -21,41 +21,41 @@
 
 <template>
 	<div class="app-settings-subsection">
-		<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
-			{{ t('spreed', 'Defines who can find this conversation without being invited') }}
-		</div>
 		<div>
-			<Multiselect
-				v-model="listable"
-				class="listable-options-select"
-				:options="listableOptions"
-				:placeholder="t('spreed', 'Visible for')"
-				label="label"
-				track-by="value"
+			<input id="listable_settings_registered_users_checkbox"
+				aria-describedby="listable_settings_listable_conversation_hint"
+				type="checkbox"
+				class="checkbox"
+				name="listable_settings_registered_users_checkbox"
+				:checked="listable !== LISTABLE.NONE"
 				:disabled="isListableLoading"
-				aria-describedby="moderation_settings_listable_conversation_hint"
-				@input="saveListable" />
+				@change="toggleListableUsers">
+			<label for="listable_settings_registered_users_checkbox">{{ t('spreed', 'Make conversation accessible to registered users') }}</label>
+		</div>
+		<div v-if="listable !== LISTABLE.NONE" class="indent">
+			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
+				{{ t('spreed', 'This conversation will be shown in search results') }}
+			</div>
+			<div v-if="listable !== LISTABLE.NONE && isGuestAppEnabled">
+				<input id="listable_settings_guestapp_users_checkbox"
+					type="checkbox"
+					class="checkbox"
+					name="listable_settings_guestapp_users_checkbox"
+					:checked="listable === LISTABLE.ALL"
+					:disabled="isListableLoading"
+					@change="toggleListableGuests">
+				<label for="listable_settings_guestapp_users_checkbox">{{ t('spreed', 'Also make it accessible to guest app users') }}</label>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants'
 
-const listableOptions = [
-	{ value: CONVERSATION.LISTABLE.NONE, label: t('spreed', 'Visible for no one') },
-	{ value: CONVERSATION.LISTABLE.USERS, label: t('spreed', 'Visible for registered users only') },
-	{ value: CONVERSATION.LISTABLE.ALL, label: t('spreed', 'Visible for everyone') },
-]
-
 export default {
 	name: 'ListableSettings',
-
-	components: {
-		Multiselect,
-	},
 
 	props: {
 		token: {
@@ -71,15 +71,21 @@ export default {
 
 	data() {
 		return {
-			isListableLoading: false,
-			listableOptions,
 			listable: null,
+			isListableLoading: false,
+			lastNotification: null,
+			LISTABLE: CONVERSATION.LISTABLE,
 		}
 	},
 
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isGuestAppEnabled() {
+			// TODO: how ?
+			return true
 		},
 	},
 
@@ -97,30 +103,50 @@ export default {
 		}
 	},
 
+	beforeDestroy() {
+		if (this.lastNotification) {
+			this.lastNotification.hideToast()
+			this.lastNotification = null
+		}
+	},
+
 	methods: {
+		async toggleListableUsers(event) {
+			await this.saveListable(event.target.checked ? this.LISTABLE.USERS : this.LISTABLE.NONE)
+		},
+
+		async toggleListableGuests(input) {
+			await this.saveListable(event.target.checked ? this.LISTABLE.ALL : this.LISTABLE.USERS)
+		},
+
 		async saveListable(listable) {
-			this.$emit('input', listable.value)
+			this.$emit('input', listable)
 			if (!this.token) {
-				this.listable = listable.value
+				this.listable = listable
 				return
 			}
 			this.isListableLoading = true
 			try {
 				await this.$store.dispatch('setListable', {
 					token: this.token,
-					listable: listable.value,
+					listable: listable,
 				})
 
-				if (listable.value === CONVERSATION.LISTABLE.NONE) {
-					showSuccess(t('spreed', 'You made the conversation invisible'))
-				} else if (listable.value === CONVERSATION.LISTABLE.USERS) {
-					showSuccess(t('spreed', 'You made the conversation visible for registered users only'))
-				} else if (listable.value === CONVERSATION.LISTABLE.ALL) {
-					showSuccess(t('spreed', 'You made the conversation visible for everyone'))
+				if (this.lastNotification) {
+					this.lastNotification.hideToast()
+					this.lastNotification = null
 				}
+				if (listable === CONVERSATION.LISTABLE.NONE) {
+					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to participants'))
+				} else if (listable === CONVERSATION.LISTABLE.USERS) {
+					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to registered users only'))
+				} else if (listable === CONVERSATION.LISTABLE.ALL) {
+					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to everyone'))
+				}
+				this.listable = listable
 			} catch (e) {
-				console.error('Error occurred when updating the conversation visibility', e)
-				showError(t('spreed', 'Error occurred when updating the conversation visibility'))
+				console.error('Error occurred when updating the conversation accessibility', e)
+				showError(t('spreed', 'Error occurred when updating the conversation accessibility'))
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false
@@ -132,5 +158,9 @@ export default {
 <style lang="scss" scoped>
 .listable-options-select {
 	width: 100%;
+}
+
+.indent {
+	margin-left: 26px;
 }
 </style>
