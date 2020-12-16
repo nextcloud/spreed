@@ -30,6 +30,8 @@
 					class="bottom-bar__statusIndicator">
 					<Hand
 						class="handIndicator"
+						decorative
+						title=""
 						fill-color="#ffffff" />
 				</div>
 			</transition>
