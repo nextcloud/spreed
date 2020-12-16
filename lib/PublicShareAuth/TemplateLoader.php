@@ -67,6 +67,12 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
+		// Check if "Video verification" option was set
+		$share = $event->getShare();
+		if (!$share->getSendPasswordByTalk()) {
+			return;
+		}
+
 		Util::addStyle('spreed', 'merged-share-auth');
 		Util::addScript('spreed', 'talk-public-share-auth-sidebar');
 
