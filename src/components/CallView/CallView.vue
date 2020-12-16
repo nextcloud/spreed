@@ -144,6 +144,7 @@
 import Grid from './Grid/Grid'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 import { fetchPeers } from '../../services/callsService'
+import { showMessage } from '@nextcloud/dialogs'
 import LocalMediaControls from './shared/LocalMediaControls'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
@@ -182,6 +183,7 @@ export default {
 			localMediaModel: localMediaModel,
 			localCallParticipantModel: localCallParticipantModel,
 			sharedDatas: {},
+			raisedHandUnwatchers: {},
 			speakingUnwatchers: {},
 			screenUnwatchers: {},
 			speakers: [],
@@ -401,6 +403,11 @@ export default {
 				// Not reactive, but not a problem
 				delete this.screenUnwatchers[removedModelId]
 
+				this.raisedHandUnwatchers[removedModelId]()
+				// Not reactive, but not a problem
+				delete this.raisedHandUnwatchers[removedModelId]
+				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raised: false })
+
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
 
@@ -434,6 +441,13 @@ export default {
 				}, function(screen) {
 					this._setScreenAvailable(addedModel.attributes.peerId, screen)
 				})
+
+				// Not reactive, but not a problem
+				this.raisedHandUnwatchers[addedModel.attributes.peerId] = this.$watch(function() {
+					return addedModel.attributes.raisedHand
+				}, function(raisedHand) {
+					this._handleParticipantRaisedHand(addedModel, raisedHand)
+				})
 			})
 		},
 
@@ -465,6 +479,23 @@ export default {
 					this.speakers.splice(firstInactiveSpeakerIndex, 0, speaker)
 				}
 			}
+		},
+
+		_handleParticipantRaisedHand(callParticipantModel, raisedHand) {
+			const nickName = callParticipantModel.attributes.name || callParticipantModel.attributes.userId
+			// sometimes the nick name is not available yet...
+			if (nickName) {
+				if (raisedHand) {
+					showMessage(t('spreed', 'Participant {nickName} raised their hand.', { nickName: nickName }))
+				}
+			} else {
+				if (raisedHand) {
+					showMessage(t('spreed', 'A participant raised their hand.'))
+				}
+			}
+
+			// update in callViewStore
+			this.$store.dispatch('setParticipantHandRaised', { peerId: callParticipantModel.attributes.peerId, raised: raisedHand })
 		},
 
 		_setScreenAvailable(id, screen) {

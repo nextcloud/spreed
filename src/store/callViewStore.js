@@ -20,6 +20,7 @@
  *
  */
 
+import Vue from 'vue'
 import BrowserStorage from '../services/BrowserStorage'
 import {
 	CONVERSATION,
@@ -33,6 +34,7 @@ const state = {
 	presentationStarted: false,
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
+	participantRaisedHands: {},
 }
 
 const getters = {
@@ -47,6 +49,7 @@ const getters = {
 	getBlurFilter: (state) => (width, height) => {
 		return `filter: blur(${(width * height * state.videoBackgroundBlur) / 1000}px)`
 	},
+	isParticipantRaisedHand: (state) => (peerId) => !!state.participantRaisedHands[peerId],
 }
 
 const mutations = {
@@ -68,6 +71,16 @@ const mutations = {
 	},
 	presentationStarted(state, value) {
 		state.presentationStarted = value
+	},
+	setParticipantHandRaised(state, { peerId, raised }) {
+		if (raised) {
+			Vue.set(state.participantRaisedHands, peerId, raised)
+		} else {
+			Vue.delete(state.participantRaisedHands, peerId)
+		}
+	},
+	clearParticipantHandRaised(state) {
+		state.participantRaisedHands = {}
 	},
 }
 
@@ -94,6 +107,11 @@ const actions = {
 			isStripeOpen = isStripeOpen === 'true'
 		}
 		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: isStripeOpen })
+	},
+
+	leaveCall(context) {
+		// clear raised hands as they were specific to the call
+		context.commit('clearParticipantHandRaised')
 	},
 
 	/**
@@ -123,6 +141,10 @@ const actions = {
 			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isstripeopen', isStripeOpen)
 			context.commit('isStripeOpen', isStripeOpen)
 		}
+	},
+
+	setParticipantHandRaised(context, { peerId, raised }) {
+		context.commit('setParticipantHandRaised', { peerId, raised })
 	},
 
 	/**

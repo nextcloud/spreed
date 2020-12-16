@@ -56,8 +56,9 @@ title: Capabilities
 * `sip-support` - Whether conversations API v3 exists and SIP can be configured and enabled by moderators. The conversations API will come with some new values `sipEnabled` which signals whether this conversation has SIP configured as well as `canEnableSIP` to see if a user can enable it. When it is enabled `attendeePin` will contain the unique dial-in code for this user.
 
 ## 11.0
-* `config => previews => max-gif-size` - Maximum size in bytes below which a GIF can be embedded directly in the page at render time. Bigger files will be rendered statically using the preview endpoint instead. Can be set with `occ config:app:set spreed max-gif-size --value=X` where X is the new value in bytes. Defaults to 3 MB.
 * `chat-read-status` - On conversation API v3 and the chat API the last common read message is exposed which can be used to update the "read status" flag of own chat messages. The info should be shown only when the user also shares their read status. The user's value can be found in `config => chat => read-privacy`.
-* `config => chat => read-privacy` - See `chat-read-status`
-* `phonebook-search` - Is present when the server has the endpoint to search for phone numbers to find matches in the accounts list
 * `listable-rooms` - Conversations can searched for even when not joined. A "listable" attribute set on rooms defines the scope of who can find it.
+* `phonebook-search` - Is present when the server has the endpoint to search for phone numbers to find matches in the accounts list
+* `raise-hand` - Participants can raise or lower hand, the state change is sent through signaling messages.
+* `config => chat => read-privacy` - See `chat-read-status`
+* `config => previews => max-gif-size` - Maximum size in bytes below which a GIF can be embedded directly in the page at render time. Bigger files will be rendered statically using the preview endpoint instead. Can be set with `occ config:app:set spreed max-gif-size --value=X` where X is the new value in bytes. Defaults to 3 MB.

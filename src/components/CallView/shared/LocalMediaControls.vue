@@ -17,7 +17,6 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
   -
   -->
-
 <template>
 	<div v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
@@ -81,6 +80,42 @@
 					</li>
 				</ul>
 			</div>
+			<button
+				v-shortkey.once="['r']"
+				v-tooltip="t('spreed', 'Lower hand')"
+				class="lower-hand"
+				:class="model.attributes.raisedHand ? '' : 'hidden-visually'"
+				:tabindex="model.attributes.raisedHand ? 0 : -1"
+				:aria-label="t('spreed', 'Lower hand')"
+				@shortkey="toggleHandRaised"
+				@click.stop="toggleHandRaised">
+				<Hand
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
+			<Actions
+				v-tooltip="t('spreed', 'More actions')"
+				:aria-label="t('spreed', 'More actions')">
+				<ActionButton
+					:close-after-click="true"
+					@click="toggleHandRaised">
+					<Hand
+						slot="icon"
+						:size="16"
+						decorative
+						title="" />
+					{{ raiseHandButtonLabel }}
+				</ActionButton>
+				<ActionSeparator />
+				<ActionButton
+					icon="icon-settings"
+					:close-after-click="true"
+					@click="showSettings">
+					{{ t('spreed', 'Settings') }}
+				</ActionButton>
+			</Actions>
 		</div>
 		<div class="network-connection-state">
 			<Popover
@@ -122,11 +157,14 @@
 
 <script>
 import escapeHtml from 'escape-html'
+import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
+import Hand from 'vue-material-design-icons/Hand'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert'
+import { Actions, ActionSeparator, ActionButton } from '@nextcloud/vue'
 import { callAnalyzer } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 
@@ -141,6 +179,10 @@ export default {
 	components: {
 		NetworkStrength2Alert,
 		Popover,
+		Actions,
+		ActionSeparator,
+		ActionButton,
+		Hand,
 	},
 
 	props: {
@@ -171,10 +213,17 @@ export default {
 			qualityWarningInGracePeriodTimeout: null,
 			audioEnabledBeforeSpacebarKeydown: undefined,
 			spacebarKeyDown: false,
+			raisingHandNotification: null,
 		}
 	},
 
 	computed: {
+		raiseHandButtonLabel() {
+			if (!this.model.attributes.raisedHand) {
+				return t('spreed', 'Raise hand')
+			}
+			return t('spreed', 'Lower hand')
+		},
 
 		audioButtonClass() {
 			return {
@@ -448,6 +497,10 @@ export default {
 			this.$refs.volumeIndicator.style.height = height + 'px'
 		},
 
+		showSettings() {
+			emit('show-settings')
+		},
+
 		/**
 		 * This method executes on spacebar keydown and keyup
 		 */
@@ -517,6 +570,16 @@ export default {
 			if (!this.model.attributes.localScreen && !this.splitScreenSharingMenu) {
 				this.startShareScreen()
 			}
+		},
+
+		toggleHandRaised() {
+			const raisedHand = !this.model.attributes.raisedHand
+			if (this.raisingHandNotification) {
+				this.raisingHandNotification.hideToast()
+				this.raisingHandNotification = null
+			}
+			this.model.toggleHandRaised(raisedHand)
+			this.$store.dispatch('setParticipantHandRaised', { peerId: this.localCallParticipantModel.attributes.peerId, raised: raisedHand })
 		},
 
 		shareScreen() {
@@ -628,6 +691,12 @@ export default {
 	border-bottom-color: transparent;
 }
 
+.buttons-bar {
+	button, .action-item {
+		vertical-align: middle;
+	}
+}
+
 .buttons-bar button, .buttons-bar button:active {
 	background-color: transparent;
 	border: none;
@@ -644,13 +713,15 @@ export default {
 
 .buttons-bar button.audio-disabled,
 .buttons-bar button.video-disabled,
-.buttons-bar button.screensharing-disabled {
+.buttons-bar button.screensharing-disabled,
+.buttons-bar button.lower-hand {
 	opacity: .7;
 }
 
 .buttons-bar button.audio-disabled:not(.no-audio-available),
 .buttons-bar button.video-disabled:not(.no-video-available),
-.buttons-bar button.screensharing-disabled {
+.buttons-bar button.screensharing-disabled,
+.buttons-bar button.lower-hand {
 	&:hover,
 	&:focus {
 		opacity: 1;

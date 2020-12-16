@@ -53,6 +53,7 @@ export default function CallParticipantModel(options) {
 		speaking: undefined,
 		videoAvailable: undefined,
 		screen: null,
+		raisedHand: false,
 	}
 
 	this._handlers = []
@@ -68,6 +69,7 @@ export default function CallParticipantModel(options) {
 	this._handleUnmuteBound = this._handleUnmute.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
 	this._handleChannelMessageBound = this._handleChannelMessage.bind(this)
+	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
 
 	this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound)
 	this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound)
@@ -75,7 +77,7 @@ export default function CallParticipantModel(options) {
 	this._webRtc.on('mute', this._handleMuteBound)
 	this._webRtc.on('unmute', this._handleUnmuteBound)
 	this._webRtc.on('channelMessage', this._handleChannelMessageBound)
-
+	this._webRtc.on('raisedHand', this._handleRaisedHandBound)
 }
 
 CallParticipantModel.prototype = {
@@ -239,6 +241,14 @@ CallParticipantModel.prototype = {
 		} else if (data.type === 'stoppedSpeaking') {
 			this.set('speaking', false)
 		}
+	},
+
+	_handleRaisedHand: function(data) {
+		if (!this.get('peer') || this.get('peer').id !== data.id) {
+			return
+		}
+
+		this.set('raisedHand', data.raised)
 	},
 
 	setPeer: function(peer) {

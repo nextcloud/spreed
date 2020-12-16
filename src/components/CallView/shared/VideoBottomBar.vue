@@ -25,6 +25,17 @@
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
 			<transition name="fade">
+				<div
+					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+					class="bottom-bar__statusIndicator">
+					<Hand
+						class="handIndicator"
+						decorative
+						title=""
+						fill-color="#ffffff" />
+				</div>
+			</transition>
+			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
 					:class="{'bottom-bar__nameIndicator--promoted': boldenNameIndicator}">
@@ -71,9 +82,14 @@
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { PARTICIPANT } from '../../../constants'
+import Hand from 'vue-material-design-icons/Hand'
 
 export default {
 	name: 'VideoBottomBar',
+
+	components: {
+		Hand,
+	},
 
 	directives: {
 		tooltip: Tooltip,
@@ -247,6 +263,10 @@ export default {
 			font-weight: bold;
 		}
 	}
+	&__statusIndicator {
+		margin-left: 6px;
+		margin-right: 6px;
+	}
 	&__mediaIndicator {
 		position: relative;
 		background-size: 22px;
@@ -265,6 +285,11 @@ export default {
 	}
 }
 
+.handIndicator {
+	margin-top: 8px;
+}
+
+.handIndicator,
 .muteIndicator,
 .hideRemoteVideo,
 .screensharingIndicator,

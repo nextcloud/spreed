@@ -255,6 +255,8 @@ Peer.prototype.handleMessage = function(message) {
 	} else if (message.type === 'unshareScreen') {
 		this.parent.emit('unshareScreen', { id: message.from })
 		this.end()
+	} else if (message.type === 'raiseHand') {
+		this.parent.emit('raisedHand', { id: message.from, raised: message.payload.raised })
 	}
 }
 

@@ -104,6 +104,7 @@ class CapabilitiesTest extends TestCase {
 					'sip-support',
 					'chat-read-status',
 					'phonebook-search',
+					'raise-hand',
 				],
 				'config' => [
 					'attachments' => [
@@ -211,6 +212,7 @@ class CapabilitiesTest extends TestCase {
 					'sip-support',
 					'chat-read-status',
 					'phonebook-search',
+					'raise-hand',
 					'chat-reference-id',
 				],
 				'config' => [
