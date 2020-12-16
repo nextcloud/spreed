@@ -30,6 +30,7 @@
 			<video
 				v-show="showVideo"
 				ref="video"
+				:disablePictureInPicture="!isBig"
 				:class="videoClass"
 				class="video" />
 		</transition>
