@@ -36,7 +36,7 @@
 			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'This conversation will be shown in search results') }}
 			</div>
-			<div v-if="listable !== LISTABLE.NONE && isGuestAppEnabled">
+			<div v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled">
 				<input id="listable_settings_guestapp_users_checkbox"
 					type="checkbox"
 					class="checkbox"
@@ -53,6 +53,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'ListableSettings',
@@ -74,6 +75,7 @@ export default {
 			listable: null,
 			isListableLoading: false,
 			lastNotification: null,
+			isGuestsAccountsEnabled: loadState('talk', 'guests_accounts_enabled'),
 			LISTABLE: CONVERSATION.LISTABLE,
 		}
 	},
@@ -81,11 +83,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		isGuestAppEnabled() {
-			// TODO: how ?
-			return true
 		},
 	},
 
