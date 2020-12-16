@@ -288,8 +288,8 @@ OC.L10N.register(
     "Send message" : "傳送訊息",
     "File to share" : "要分享的檔案",
     "Invalid path selected" : "所選的路徑無效",
-    "Enabled" : "已啟用",
     "Save" : "儲存",
+    "Edit" : "編輯",
     "Password" : "密碼",
     "API token" : "API token",
     "Login" : "帳號",
@@ -301,7 +301,6 @@ OC.L10N.register(
     "Add users or groups" : "增加使用者或者群組",
     "Participants" : "參與者",
     "Chat" : "聊天",
-    "Edit" : "編輯",
     "Keyboard shortcuts" : "快速鍵",
     "Search" : "搜尋",
     "Start call" : "通話",
@@ -326,6 +325,7 @@ OC.L10N.register(
     "Limit app usage to groups." : "限制群組的使用率:",
     "Password required" : "請輸入密碼",
     "Cancel" : "取消",
-    "Submit" : "送出"
+    "Submit" : "送出",
+    "Enabled" : "已啟用"
 },
 "nplurals=1; plural=0;");

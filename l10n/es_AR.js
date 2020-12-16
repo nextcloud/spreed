@@ -64,8 +64,8 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Send message" : "Enviar mensaje",
-    "Enabled" : "Habilitado",
     "Save" : "Guardar",
+    "Edit" : "Editar",
     "Password" : "Contraseña",
     "API token" : "Ficha del API",
     "Login" : "Inicio de sesión",
@@ -76,7 +76,6 @@ OC.L10N.register(
     "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
-    "Edit" : "Editar",
     "Keyboard shortcuts" : "Atajos de teclado",
     "Search" : "Buscar",
     "Rename conversation" : "Renombrar conversación",
@@ -101,6 +100,7 @@ OC.L10N.register(
     "Share link" : "Compartir link",
     "Password required" : "Se requiere contraseña",
     "Cancel" : "Cancelar",
-    "Submit" : "Enviar"
+    "Submit" : "Enviar",
+    "Enabled" : "Habilitado"
 },
 "nplurals=2; plural=(n != 1);");

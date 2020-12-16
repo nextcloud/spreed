@@ -279,8 +279,8 @@
     "Remove" : "Forigi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
-    "Enabled" : "Ŝaltita",
     "Save" : "Konservi",
+    "Edit" : "Modifi",
     "Password" : "Pasvorto",
     "API token" : "API-ĵetono",
     "Login" : "Login",
@@ -290,7 +290,6 @@
     "No results" : "Neniu rezulto",
     "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
-    "Edit" : "Modifi",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
     "Grid view" : "Krada vido",
@@ -304,6 +303,7 @@
     "Share link" : "Kunhavigi ligilon",
     "Password required" : "Pasvorto bezonata",
     "Cancel" : "Nuligi",
-    "Submit" : "Sendi"
+    "Submit" : "Sendi",
+    "Enabled" : "Ŝaltita"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -472,10 +472,10 @@ OC.L10N.register(
     "Groups" : "Групе",
     "Circles" : "Кругови",
     "Settings" : "Поставке",
+    "An error occurred while performing the search" : "Грешка приликом претраге",
     "Password protect" : "Заштићено лозинком",
     "Add participants" : "Додај учеснике",
     "Close" : "Затвори",
-    "An error occurred while performing the search" : "Грешка приликом претраге",
     "Conversation name" : "Назив разговора",
     "You are currently waiting in the lobby" : "Тренутно чекате у лобију",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
@@ -488,8 +488,8 @@ OC.L10N.register(
     "Send message" : "Пошаљи поруку",
     "File to share" : "Фајл за дељење",
     "Invalid path selected" : "Одабрана неисправна путања",
-    "Enabled" : "Укључено",
     "Save" : "Сачувај",
+    "Edit" : "Измени",
     "Password" : "Лозинка",
     "API token" : "API токен",
     "Login" : "Пријава",
@@ -507,7 +507,6 @@ OC.L10N.register(
     "Participants" : "Учесници",
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
     "Chat" : "Ћаскање",
-    "Edit" : "Измени",
     "Keyboard shortcuts" : "Пречице на тастатури",
     "Search" : "Претрага",
     "Start call" : "Почни позив",
@@ -562,6 +561,7 @@ OC.L10N.register(
     "Password required" : "Потребна је лозинка",
     "Cancel" : "Одустани",
     "Submit" : "Пошаљи",
-    "Signaling server URL" : "Адреса сигнализационог сервера"
+    "Signaling server URL" : "Адреса сигнализационог сервера",
+    "Enabled" : "Укључено"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

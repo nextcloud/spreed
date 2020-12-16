@@ -346,6 +346,7 @@ OC.L10N.register(
     "Settings" : "Indstillinger",
     "Groups and circles" : "Grupper og cirkler",
     "Other sources" : "Andre kilder",
+    "An error occurred while performing the search" : "Der opstod en fejl under søgningen",
     "Creating your conversation" : "Opret din samtale",
     "All set" : "Samtalen er klar",
     "Copy conversation link" : "Kopier samtalelink",
@@ -358,7 +359,6 @@ OC.L10N.register(
     "Close" : "Luk",
     "Choose a password" : "Vælg en adgangskode",
     "Search participants" : "Find deltagere",
-    "An error occurred while performing the search" : "Der opstod en fejl under søgningen",
     "Conversation name" : "Samtalenavn",
     "Allow guests to join via link " : "Tillad gæster at deltage via link",
     "You are currently waiting in the lobby" : "Du venter nu i lobbyen",
@@ -376,8 +376,8 @@ OC.L10N.register(
     "File to share" : "Vælg fil til deling",
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Invalid path selected" : "Ugyldig filsti valgt",
-    "Enabled" : "Aktiveret",
     "Save" : "Gem",
+    "Edit" : "Rediger",
     "Password" : "Password",
     "API token" : "API nøgle",
     "Login" : "Login",
@@ -400,7 +400,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Kunne ikke hente listen over deltagere",
     "Chat" : "Chat",
     "Display name: " : "Vist navn:",
-    "Edit" : "Rediger",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Search" : "Søg",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
@@ -477,6 +476,7 @@ OC.L10N.register(
     "Signaling server URL" : "Signalserver URL",
     "This conversation is read only" : "Denne samtale er skrivebeskyttet",
     "Default location for attachments" : "Standard-lokation for vedhæftninger",
-    "Select default location for attachments" : "Vælg standard-lokation for vedhæftninger"
+    "Select default location for attachments" : "Vælg standard-lokation for vedhæftninger",
+    "Enabled" : "Aktiveret"
 },
 "nplurals=2; plural=(n != 1);");

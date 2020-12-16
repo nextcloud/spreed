@@ -292,8 +292,8 @@ OC.L10N.register(
     "Yesterday" : "Вчера",
     "Send message" : "Изпрати съобщение",
     "Invalid path selected" : "Предоставен е невалиден път до файл.",
-    "Enabled" : "Включено",
     "Save" : "Запазване",
+    "Edit" : "Променяне",
     "Password" : "Парола",
     "Login" : "Вписване",
     "Nickname" : "Псевдоним",
@@ -305,7 +305,6 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Участници",
     "Chat" : "Съобщения",
-    "Edit" : "Променяне",
     "Keyboard shortcuts" : "Бързи клавиши",
     "Search" : "Търсене",
     "Grid view" : "Решетъчен изглед",
@@ -326,6 +325,7 @@ OC.L10N.register(
     "Webinar" : "Уебинар",
     "Password required" : "Паролата е задължителна",
     "Cancel" : "Отказ",
-    "Submit" : "Изпращане"
+    "Submit" : "Изпращане",
+    "Enabled" : "Включено"
 },
 "nplurals=2; plural=(n != 1);");

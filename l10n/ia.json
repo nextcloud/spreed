@@ -30,14 +30,13 @@
     "Reply" : "Responder",
     "Today" : "Hodie",
     "Yesterday" : "Heri",
-    "Enabled" : "Activate",
     "Save" : "Salveguardar",
+    "Edit" : "Modificar",
     "Password" : "Contrasigno",
     "Login" : "Login",
     "Nickname" : "Pseudonymo",
     "guest" : "hospite",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Modificar",
     "Keyboard shortcuts" : "Combinationes de claves",
     "Search" : "Cercar",
     "Send" : "Inviar",
@@ -52,6 +51,7 @@
     "iOS app" : "Application iOS",
     "Contacts" : "Contactos",
     "Share link" : "Compartir ligamine",
-    "Cancel" : "Cancellar"
+    "Cancel" : "Cancellar",
+    "Enabled" : "Activate"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -280,6 +280,7 @@
     "Users and circles" : "Käyttäjät ja piirit",
     "Groups and circles" : "Ryhmät ja piirit",
     "Other sources" : "Muut lähteet",
+    "An error occurred while performing the search" : "Hakua suorittaessa tapahtui virhe",
     "Creating your conversation" : "Luodaan keskustelua",
     "Copy conversation link" : "Kopioi keskustelulinkki",
     "Error while creating the conversation" : "Virhe keskustelua luotaessa",
@@ -291,7 +292,6 @@
     "Close" : "Sulje",
     "Choose a password" : "Valitse salasana",
     "Search participants" : "Etsi osallistujia",
-    "An error occurred while performing the search" : "Hakua suorittaessa tapahtui virhe",
     "Conversation name" : "Keskustelun nimi",
     "Allow guests to join via link " : "Salli vieraiden liittyminen linkin kautta",
     "Search conversations or users" : "Hae keskusteluja tai käyttäjiä",
@@ -316,11 +316,9 @@
     "File to share" : "Jaettava tiedosto",
     "Write message, @ to mention someone …" : "Kirjoita viesti, käytä @-merkkiä mainitaksesi käyttäjän…",
     "Invalid path selected" : "Valittu virheellinen polku",
-    "Bridge with other services" : "Siltaa muiden palvelujen kanssa",
-    "More info on Matterbridge." : "Lisätietoja Matterbridgestä.",
-    "Enabled" : "Käytössä",
-    "Show matterbridge log" : "Näytä matterbridge-loki",
     "Save" : "Tallenna",
+    "Edit" : "Muokkaa",
+    "Bridge with other services" : "Siltaa muiden palvelujen kanssa",
     "Nextcloud user" : "Nextcloud-käyttäjä",
     "Matrix channel" : "Matrix-kanava",
     "Mattermost user" : "Mattermost-käyttäjä",
@@ -359,7 +357,6 @@
     "Participants" : "Osallistujat",
     "Chat" : "Keskustelu",
     "Display name: " : "Näyttönimi:",
-    "Edit" : "Muokkaa",
     "Choose devices" : "Valitse laitteet",
     "Attachments folder" : "Liitteiden kansio",
     "Keyboard shortcuts" : "Pikanäppäimet",
@@ -443,6 +440,9 @@
     "Submit" : "Lähetä",
     "This conversation is read only" : "Keskustelu on kirjoitussuojattu",
     "Default location for attachments" : "Oletussijainti liitteille",
-    "Select default location for attachments" : "Valitse liitteiden oletussijainti"
+    "Select default location for attachments" : "Valitse liitteiden oletussijainti",
+    "More info on Matterbridge." : "Lisätietoja Matterbridgestä.",
+    "Enabled" : "Käytössä",
+    "Show matterbridge log" : "Näytä matterbridge-loki"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
