@@ -80,8 +80,8 @@
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Enabled" : "მოქმედია",
     "Save" : "შენახვა",
+    "Edit" : "შეცვლა",
     "Password" : "პაროლი",
     "API token" : "API ტოკენი",
     "Login" : "ავტორიზაცია",
@@ -95,7 +95,6 @@
     "Add users or groups" : "დაამატეთ მომხმარებლები ან ჯგუფები",
     "Participants" : "მონაწილეები",
     "Chat" : "ჩეთი",
-    "Edit" : "შეცვლა",
     "Keyboard shortcuts" : "კლავიატურის კომბინაციები",
     "Search" : "ძიება",
     "Grid view" : "ბადისებური ხედი",
@@ -122,6 +121,7 @@
     "Please enter the password for this call" : "შეყვანეთ პაროლი ზარისთვის",
     "Password required" : "საჭიროა პაროლი",
     "Cancel" : "უარყოფა",
-    "Submit" : "გაგზავნა"
+    "Submit" : "გაგზავნა",
+    "Enabled" : "მოქმედია"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

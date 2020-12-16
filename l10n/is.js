@@ -449,8 +449,8 @@ OC.L10N.register(
     "Send message" : "Senda skilaboð",
     "File to share" : "Skrá til að deila",
     "Invalid path selected" : "Ógild slóð valin",
-    "Enabled" : "Virkt",
     "Save" : "Vista",
+    "Edit" : "Breyta",
     "Password" : "Lykilorð",
     "API token" : "API-teikn",
     "Login" : "Innskráning",
@@ -466,7 +466,6 @@ OC.L10N.register(
     "Add users or groups" : "Bæta við notendum eða hópum",
     "Participants" : "Þátttakendur",
     "Chat" : "Spjall",
-    "Edit" : "Breyta",
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
     "Search" : "Search",
     "Start call" : "Hefja samtal",
@@ -513,6 +512,7 @@ OC.L10N.register(
     "Password required" : "Lykilorðs er krafist",
     "Cancel" : "Hætta við",
     "Submit" : "Senda inn",
-    "Signaling server URL" : "Slóð á merkjasendingaþjón"
+    "Signaling server URL" : "Slóð á merkjasendingaþjón",
+    "Enabled" : "Virkt"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

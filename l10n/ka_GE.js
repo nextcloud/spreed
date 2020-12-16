@@ -82,8 +82,8 @@ OC.L10N.register(
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Enabled" : "მოქმედია",
     "Save" : "შენახვა",
+    "Edit" : "შეცვლა",
     "Password" : "პაროლი",
     "API token" : "API ტოკენი",
     "Login" : "ავტორიზაცია",
@@ -97,7 +97,6 @@ OC.L10N.register(
     "Add users or groups" : "დაამატეთ მომხმარებლები ან ჯგუფები",
     "Participants" : "მონაწილეები",
     "Chat" : "ჩეთი",
-    "Edit" : "შეცვლა",
     "Keyboard shortcuts" : "კლავიატურის კომბინაციები",
     "Search" : "ძიება",
     "Grid view" : "ბადისებური ხედი",
@@ -124,6 +123,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "შეყვანეთ პაროლი ზარისთვის",
     "Password required" : "საჭიროა პაროლი",
     "Cancel" : "უარყოფა",
-    "Submit" : "გაგზავნა"
+    "Submit" : "გაგზავნა",
+    "Enabled" : "მოქმედია"
 },
 "nplurals=2; plural=(n!=1);");

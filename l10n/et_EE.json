@@ -44,8 +44,8 @@
     "Remove" : "Eemalda",
     "Today" : "Täna",
     "Yesterday" : "Eile",
-    "Enabled" : "Lubatud",
     "Save" : "Salvesta",
+    "Edit" : "Redigeeri",
     "Password" : "Parool",
     "API token" : "API kood",
     "Login" : "Logi sisse",
@@ -55,7 +55,6 @@
     "Searching …" : "Otsin ...",
     "No results" : "Vasteid ei leitud",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Redigeeri",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
     "Grid view" : "Ruudustikvaade",
@@ -66,6 +65,7 @@
     "iOS app" : "iOS-i rakendus",
     "Contacts" : "Kontaktid",
     "Share link" : "Jaga link",
-    "Cancel" : "Loobu"
+    "Cancel" : "Loobu",
+    "Enabled" : "Lubatud"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

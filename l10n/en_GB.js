@@ -132,8 +132,8 @@ OC.L10N.register(
     "Yesterday" : "Yesterday",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Send message",
-    "Enabled" : "Enabled",
     "Save" : "Save",
+    "Edit" : "Edit",
     "Password" : "Password",
     "API token" : "API token",
     "Login" : "Login",
@@ -148,7 +148,6 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Participants",
     "Chat" : "Chat",
-    "Edit" : "Edit",
     "Keyboard shortcuts" : "Keyboard shortcuts",
     "Search" : "Search",
     "Rename conversation" : "Rename conversation",
@@ -183,6 +182,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "Please enter the password for this call",
     "Password required" : "Password required",
     "Cancel" : "Cancel",
-    "Submit" : "Submit"
+    "Submit" : "Submit",
+    "Enabled" : "Enabled"
 },
 "nplurals=2; plural=(n != 1);");

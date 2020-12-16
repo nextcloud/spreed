@@ -130,8 +130,8 @@ OC.L10N.register(
     "Yesterday" : "어제",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "메시지 보내기",
-    "Enabled" : "활성화됨",
     "Save" : "저장",
+    "Edit" : "편집",
     "Password" : "암호",
     "API token" : "API 토큰",
     "Login" : "로그인",
@@ -148,7 +148,6 @@ OC.L10N.register(
     "Participants" : "참가자",
     "Search or add participants" : "참가자 검색 및 추가",
     "Chat" : "대화",
-    "Edit" : "편집",
     "Keyboard shortcuts" : "키보드 단축키",
     "Search" : "검색",
     "Start call" : "통화 시작",
@@ -181,6 +180,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "이 통화의 암호를 입력하십시오",
     "Password required" : "암호가 필요함",
     "Cancel" : "취소",
-    "Submit" : "제출"
+    "Submit" : "제출",
+    "Enabled" : "활성화됨"
 },
 "nplurals=1; plural=0;");

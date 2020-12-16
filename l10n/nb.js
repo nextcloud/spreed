@@ -187,8 +187,8 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Send melding",
     "Invalid path selected" : "Ugyldig angitt sti",
-    "Enabled" : "Aktivert",
     "Save" : "Lagre",
+    "Edit" : "Rediger",
     "Password" : "Passord",
     "API token" : "API-symbol",
     "Login" : "Logg inn",
@@ -203,7 +203,6 @@ OC.L10N.register(
     "Add users or groups" : "Legg til bruker eller gruppe",
     "Participants" : "Deltakere",
     "Chat" : "Sludre",
-    "Edit" : "Rediger",
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Search" : "Søk",
     "Start call" : "Start samtale",
@@ -243,6 +242,7 @@ OC.L10N.register(
     "Password required" : "Passord kreves",
     "Cancel" : "Avbryt",
     "Submit" : "Send inn",
-    "Signaling server URL" : "Sender signal til servers URL"
+    "Signaling server URL" : "Sender signal til servers URL",
+    "Enabled" : "Aktivert"
 },
 "nplurals=2; plural=(n != 1);");

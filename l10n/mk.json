@@ -611,6 +611,7 @@
     "Users and circles" : "Корисници и кругови",
     "Groups and circles" : "Групи и кругови",
     "Other sources" : "Други извори",
+    "An error occurred while performing the search" : "Настана грешка при обидот за пребарување",
     "Creating your conversation" : "Креирање на вашиот разговор",
     "Copy conversation link" : "копирај линк од разговорот",
     "Error while creating the conversation" : "Грешка при креирање на разговор",
@@ -622,7 +623,6 @@
     "Close" : "Затвори",
     "Choose a password" : "Избери лозинка",
     "Search participants" : "Барај учесници",
-    "An error occurred while performing the search" : "Настана грешка при обидот за пребарување",
     "Conversation name" : "Име на разговорот",
     "Allow guests to join via link " : "Дозволи им на гостите да се приклучат преку линк",
     "Search conversations or users" : "Пребарување на разговори или корисници",
@@ -657,9 +657,9 @@
     "No permission to post messages in this conversation" : "Немате дозвола да испратите порака во овој разговор",
     "Could not post message: {errorMessage}" : "Неможе да се испрати пораката: {errorMessage}",
     "Invalid path selected" : "Избрана невалидна патека",
-    "Bridge with other services" : "Мост со други сервери",
-    "Enabled" : "Овозможен",
     "Save" : "Зачувај",
+    "Edit" : "Уреди",
+    "Bridge with other services" : "Мост со други сервери",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud корисник",
     "User password" : "Лозинка на корисник",
@@ -694,7 +694,6 @@
     "Participants" : "Учесници",
     "Chat" : "Разговор",
     "Display name: " : "Име:",
-    "Edit" : "Уреди",
     "Choose devices" : "Избери уреди",
     "Attachments folder" : "Папка со прилози",
     "Privacy" : "Приватност",
@@ -789,6 +788,7 @@
     "Signaling server URL" : "URL за сервер за сигнализација",
     "This conversation is read only" : "Разговорот е само за читање",
     "Default location for attachments" : "Стандардна локација за прилози",
-    "Select default location for attachments" : "Избери стандардна локација за прилози"
+    "Select default location for attachments" : "Избери стандардна локација за прилози",
+    "Enabled" : "Овозможен"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

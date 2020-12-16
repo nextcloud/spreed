@@ -400,6 +400,7 @@ OC.L10N.register(
     "Settings" : "הגדרות",
     "Groups and circles" : "קבוצות ומעגלים",
     "Other sources" : "מקורות אחרים",
+    "An error occurred while performing the search" : "אירעה שגיאה בעת ביצוע החיפוש",
     "Creating your conversation" : "הדיון שלך נוצר",
     "All set" : "הכול מוכן",
     "Copy conversation link" : "העתקת קישור דיון",
@@ -412,7 +413,6 @@ OC.L10N.register(
     "Close" : "סגירה",
     "Choose a password" : "בחירת ססמה",
     "Search participants" : "חיפוש משתתפים",
-    "An error occurred while performing the search" : "אירעה שגיאה בעת ביצוע החיפוש",
     "Conversation name" : "שם דיון",
     "Allow guests to join via link " : "לאפשר לאורחים להצטרף דרך קישור",
     "You are currently waiting in the lobby" : "הנך בהמתנה בלובי",
@@ -430,8 +430,8 @@ OC.L10N.register(
     "Send message" : "שליחת הודעה",
     "File to share" : "קובץ לשיתוף",
     "Invalid path selected" : "הנתיב שנבחר שגוי",
-    "Enabled" : "מופעל",
     "Save" : "שמירה",
+    "Edit" : "עריכה",
     "Password" : "ססמה",
     "API token" : "אסימון API",
     "Login" : "התחבר",
@@ -454,7 +454,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "אירעה שגיאה במהלך קבלת המשתתפים",
     "Chat" : "צ׳אט",
     "Display name: " : "שם תצוגה:",
-    "Edit" : "עריכה",
     "Keyboard shortcuts" : "קיצורי מקלדת",
     "Search" : "חיפוש",
     "Start call" : "התחלת שיחה",
@@ -510,6 +509,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "נא להקליד את הססמה של השיחה הזאת",
     "Password required" : "נדרשת ססמה",
     "Cancel" : "ביטול",
-    "Submit" : "שליחה"
+    "Submit" : "שליחה",
+    "Enabled" : "מופעל"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

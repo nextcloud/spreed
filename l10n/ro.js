@@ -274,8 +274,8 @@ OC.L10N.register(
     "Remove" : "Șterge",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
-    "Enabled" : "Activat",
     "Save" : "Salvează",
+    "Edit" : "Editează",
     "Password" : "Parolă",
     "Login" : "Autentificare",
     "Nickname" : "Pseudonim",
@@ -283,7 +283,6 @@ OC.L10N.register(
     "guest" : "invitat",
     "No results" : "Niciun rezultat",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Editează",
     "Keyboard shortcuts" : "Scurtături din tastatură",
     "Search" : "Caută",
     "Grid view" : "Afișare în grilă",
@@ -298,6 +297,7 @@ OC.L10N.register(
     "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri",
     "Password required" : "Parola este necesară",
     "Cancel" : "Anulează",
-    "Submit" : "Trimite"
+    "Submit" : "Trimite",
+    "Enabled" : "Activat"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

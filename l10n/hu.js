@@ -505,6 +505,7 @@ OC.L10N.register(
     "Settings" : "Beállítások",
     "Groups and circles" : "Csoportok és körök",
     "Other sources" : "Egyéb források",
+    "An error occurred while performing the search" : "Hiba történt a keresés végrehajtásakor",
     "Creating your conversation" : "Saját beszélgetés létrehozása",
     "All set" : "Minden kész",
     "Copy conversation link" : "Beszélgetési hivatkozás másolása",
@@ -517,7 +518,6 @@ OC.L10N.register(
     "Close" : "Bezárás",
     "Choose a password" : "Válasszon jelszót",
     "Search participants" : "Résztvevők keresése",
-    "An error occurred while performing the search" : "Hiba történt a keresés végrehajtásakor",
     "Conversation name" : "Beszélgetés neve",
     "Allow guests to join via link " : "A vendégek hivatkozással történő csatlakozásának engedélyezése",
     "You are currently waiting in the lobby" : "Ön jelenleg a váróban van",
@@ -536,8 +536,8 @@ OC.L10N.register(
     "File to share" : "Fájl megosztása",
     "Write message, @ to mention someone …" : "Írjon üzenetet, @-megemlítsen valakit ...",
     "Invalid path selected" : "Érvénytelen útvonal kiválasztva",
-    "Enabled" : "Engedélyezve",
     "Save" : "Mentés",
+    "Edit" : "Szerkesztés",
     "Password" : "Jelszó",
     "API token" : "API token",
     "Login" : "Bejelentkezés",
@@ -560,7 +560,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Hiba történt a résztvevők letöltése közben",
     "Chat" : "Csevegés",
     "Display name: " : "Megjelenítendő név:",
-    "Edit" : "Szerkesztés",
     "Keyboard shortcuts" : "Gyorsbillentyűk",
     "Search" : "Keresés",
     "Error while setting attachment folder" : "Hiba a mellékletek mappa beállításakor",
@@ -646,6 +645,7 @@ OC.L10N.register(
     "Signaling server URL" : "Jeltovábbító kiszolgáló URL",
     "This conversation is read only" : "Ez a beszélgetés csak olvasható",
     "Default location for attachments" : "A mellékletek alapértelmezett helye",
-    "Select default location for attachments" : "Válassza ki a mellékletek alapértelmezett helyét"
+    "Select default location for attachments" : "Válassza ki a mellékletek alapértelmezett helyét",
+    "Enabled" : "Engedélyezve"
 },
 "nplurals=2; plural=(n != 1);");
