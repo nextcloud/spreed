@@ -46,8 +46,8 @@ OC.L10N.register(
     "Remove" : "Eemalda",
     "Today" : "Täna",
     "Yesterday" : "Eile",
-    "Enabled" : "Lubatud",
     "Save" : "Salvesta",
+    "Edit" : "Redigeeri",
     "Password" : "Parool",
     "API token" : "API kood",
     "Login" : "Logi sisse",
@@ -57,7 +57,6 @@ OC.L10N.register(
     "Searching …" : "Otsin ...",
     "No results" : "Vasteid ei leitud",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Redigeeri",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
     "Grid view" : "Ruudustikvaade",
@@ -68,6 +67,7 @@ OC.L10N.register(
     "iOS app" : "iOS-i rakendus",
     "Contacts" : "Kontaktid",
     "Share link" : "Jaga link",
-    "Cancel" : "Loobu"
+    "Cancel" : "Loobu",
+    "Enabled" : "Lubatud"
 },
 "nplurals=2; plural=(n != 1);");

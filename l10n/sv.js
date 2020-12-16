@@ -518,6 +518,7 @@ OC.L10N.register(
     "Users and circles" : "Användare och cirklar",
     "Groups and circles" : "Grupper och cirklar",
     "Other sources" : "Andra källor",
+    "An error occurred while performing the search" : "Ett fel uppstod när sökningen utfördes",
     "Creating your conversation" : "Skapar din konversation",
     "All set" : "Allt klart",
     "Copy conversation link" : "Kopiera konversationslänk",
@@ -530,7 +531,6 @@ OC.L10N.register(
     "Close" : "Stäng",
     "Choose a password" : "Välj ett lösenord",
     "Search participants" : "Sök deltagare",
-    "An error occurred while performing the search" : "Ett fel uppstod när sökningen utfördes",
     "Conversation name" : "Konversationens namn",
     "Allow guests to join via link " : "Tillåt gäster att ansluta via länk",
     "Search conversations or users" : "Sök konversationer eller användare",
@@ -550,8 +550,8 @@ OC.L10N.register(
     "File to share" : "Fil att dela",
     "Write message, @ to mention someone …" : "Skriv meddelande, @ för att nämna någon ...",
     "Invalid path selected" : "Ogiltig sökväg vald",
-    "Enabled" : "Aktiverad",
     "Save" : "Spara",
+    "Edit" : "Ändra",
     "Password" : "Lösenord",
     "API token" : "API-token",
     "Login" : "Logga in",
@@ -579,7 +579,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
     "Chat" : "Chat",
     "Display name: " : "Visningsnamn:",
-    "Edit" : "Ändra",
     "Keyboard shortcuts" : "Tangentbordsgenvägar",
     "Search" : "Sök",
     "Error while setting attachment folder" : "Fel vid inställning av mapp för bilagor",
@@ -670,6 +669,7 @@ OC.L10N.register(
     "This conversation is read only" : "Denna konversation är skrivskyddad",
     "Default location for attachments" : "Standardplats för bilagor",
     "Select default location for attachments" : "Välj standardplats för bilagor",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal",
+    "Enabled" : "Aktiverad"
 },
 "nplurals=2; plural=(n != 1);");

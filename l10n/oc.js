@@ -323,8 +323,8 @@ OC.L10N.register(
     "Yesterday" : "Ièr",
     "Send message" : "Enviar un messatge",
     "Write message, @ to mention someone …" : "Escriure un messatge, @ per mencionar qualqu’un…",
-    "Enabled" : "Activada",
     "Save" : "Salvar",
+    "Edit" : "Modificar",
     "Channel name" : "Nom de la cadena",
     "Password" : "Senhal",
     "Channel" : "Cadena",
@@ -337,7 +337,6 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Participants",
     "Chat" : "Messatjariá",
-    "Edit" : "Modificar",
     "Keyboard shortcuts" : "Acorchis de clavièr",
     "Search" : "Search",
     "Shortcuts while in a call" : "Acorchis pendent una sonada",
@@ -356,6 +355,7 @@ OC.L10N.register(
     "Projects" : "Projèctes",
     "Password required" : "Senhal requerit",
     "Cancel" : "Anullar",
-    "Submit" : "Transmetre"
+    "Submit" : "Transmetre",
+    "Enabled" : "Activada"
 },
 "nplurals=2; plural=(n > 1);");

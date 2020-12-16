@@ -187,8 +187,8 @@ OC.L10N.register(
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Kopīgojamā datne",
-    "Enabled" : "Iespējots",
     "Save" : "Saglabāt",
+    "Edit" : "Rediģēt",
     "Password" : "Parole",
     "API token" : "API pilnvara",
     "Login" : "Autorizēties",
@@ -202,7 +202,6 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Dalībnieki",
     "Chat" : "Tērzēt",
-    "Edit" : "Rediģēt",
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Search" : "Meklēt",
     "Start call" : "Sākt zvanu",
@@ -248,6 +247,7 @@ OC.L10N.register(
     "Password required" : "Nepieciešama parole",
     "Cancel" : "Atcelt",
     "Submit" : "Iesniegt",
-    "Signaling server URL" : "Signalizēšanas servera URL"
+    "Signaling server URL" : "Signalizēšanas servera URL",
+    "Enabled" : "Iespējots"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

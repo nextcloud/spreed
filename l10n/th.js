@@ -30,15 +30,14 @@ OC.L10N.register(
     "Remove" : "ลบออก",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวานนี้",
-    "Enabled" : "เปิดการใช้งาน",
     "Save" : "บันทึก",
+    "Edit" : "แก้ไข",
     "Password" : "รหัสผ่าน",
     "Login" : "Login",
     "Nickname" : "ชื่อเล่น",
     "Client ID" : "Client ID",
     "guest" : "ผู้เยี่ยมชม",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "แก้ไข",
     "Keyboard shortcuts" : "ปุ่มลัด",
     "Search" : "Search",
     "Grid view" : "มุมมองแบบตาราง Grid",
@@ -49,6 +48,7 @@ OC.L10N.register(
     "iOS app" : "แอพฯ IOS",
     "Contacts" : "ข้อมูลผู้ติดต่อ",
     "Share link" : "แชร์ลิงค์",
-    "Cancel" : "ยกเลิก"
+    "Cancel" : "ยกเลิก",
+    "Enabled" : "เปิดการใช้งาน"
 },
 "nplurals=1; plural=0;");

@@ -37,8 +37,8 @@ OC.L10N.register(
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "Invalid path selected" : "Jalur terpilih invalid",
-    "Enabled" : "Diaktifkan",
     "Save" : "Simpan",
+    "Edit" : "Sunting",
     "Password" : "Kata kunci",
     "Login" : "Log masuk",
     "Nickname" : "Nama panggilan",
@@ -46,7 +46,6 @@ OC.L10N.register(
     "guest" : "pengunjung",
     "No results" : "Tidak ada hasil",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Sunting",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Search" : "Cari",
     "Grid view" : "Tampilan kotak",
@@ -59,6 +58,7 @@ OC.L10N.register(
     "Share link" : "Bagikan tautan",
     "Projects" : "Proyek",
     "Password required" : "Kata sandi diperlukan",
-    "Cancel" : "Membatalkan"
+    "Cancel" : "Membatalkan",
+    "Enabled" : "Diaktifkan"
 },
 "nplurals=1; plural=0;");

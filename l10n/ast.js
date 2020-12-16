@@ -65,8 +65,8 @@ OC.L10N.register(
     "Remove" : "Desaniciar",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
-    "Enabled" : "Habilitar",
     "Save" : "Guardar",
+    "Edit" : "Editar",
     "Password" : "Password",
     "API token" : "Pase d'API",
     "Login" : "Aniciu de sesión",
@@ -75,7 +75,6 @@ OC.L10N.register(
     "guest" : "invitáu",
     "No results" : "Ensin resultaos",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Editar",
     "Keyboard shortcuts" : "Atayos de tecláu",
     "Search" : "Search",
     "Grid view" : "Vista de rexella",
@@ -97,6 +96,7 @@ OC.L10N.register(
     "Guests" : "Convidaos",
     "Share link" : "Compartir enllaz",
     "Cancel" : "Encaboxar",
-    "Submit" : "Unviar"
+    "Submit" : "Unviar",
+    "Enabled" : "Habilitar"
 },
 "nplurals=2; plural=(n != 1);");
