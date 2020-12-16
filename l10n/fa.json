@@ -291,8 +291,8 @@
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Send message" : "پیام فرستادن",
-    "Enabled" : "فعال شده",
     "Save" : "ذخیره",
+    "Edit" : "ویرایش",
     "Password" : "گذرواژه",
     "API token" : "API token",
     "Login" : "ورود",
@@ -306,7 +306,6 @@
     "No results" : "نتیجه ای یافت نشد",
     "Add users or groups" : "کاربران یا گروه ها را اضافه کنید",
     "Participants" : "شركت كنندگان",
-    "Edit" : "ویرایش",
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Rename conversation" : "تغییر نام مکالمه",
@@ -329,6 +328,7 @@
     "Projects" : "پروژه ها",
     "Password required" : "رمز عبور لازم است",
     "Cancel" : "لغو",
-    "Submit" : "ارسال"
+    "Submit" : "ارسال",
+    "Enabled" : "فعال شده"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

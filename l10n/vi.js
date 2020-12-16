@@ -141,8 +141,8 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Gửi thông điệp",
     "File to share" : "Tệp để chia sẻ",
-    "Enabled" : "Bật",
     "Save" : "Lưu",
+    "Edit" : "Chỉnh sửa",
     "Password" : "Mật khẩu",
     "API token" : "Tín chỉ API",
     "Login" : "Login",
@@ -155,7 +155,6 @@ OC.L10N.register(
     "Add users or groups" : "Add users or groups",
     "Participants" : "Người tham gia",
     "Chat" : "Trò chuyện",
-    "Edit" : "Chỉnh sửa",
     "Keyboard shortcuts" : "Phím tắt",
     "Search" : "Tìm",
     "Start call" : "Bắt đầu cuộc gọi",
@@ -191,6 +190,7 @@ OC.L10N.register(
     "Password required" : "Mật khẩu đã được yêu cầu",
     "Cancel" : "Hủy bỏ",
     "Submit" : "Gửi đi",
-    "Signaling server URL" : "URL máy chủ đăng ký"
+    "Signaling server URL" : "URL máy chủ đăng ký",
+    "Enabled" : "Bật"
 },
 "nplurals=1; plural=0;");

@@ -79,8 +79,8 @@ OC.L10N.register(
     "Remove" : "Eliminar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
-    "Enabled" : "Habilitado",
     "Save" : "Guardar",
+    "Edit" : "Editar",
     "Password" : "Contraseña",
     "API token" : "Ficha del API",
     "Login" : "Iniciar sesión",
@@ -94,7 +94,6 @@ OC.L10N.register(
     "Add users or groups" : "Agregar usuarios o grupos",
     "Participants" : "Participantes",
     "Chat" : "Chat",
-    "Edit" : "Editar",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
     "Grid view" : "Vista de cuadrícula",
@@ -121,6 +120,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "Por favor ingresa la contraseña para esta llamada",
     "Password required" : "Contraseña requerida",
     "Cancel" : "Cancelar",
-    "Submit" : "Enviar"
+    "Submit" : "Enviar",
+    "Enabled" : "Habilitado"
 },
 "nplurals=2; plural=(n != 1);");

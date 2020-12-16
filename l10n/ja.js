@@ -619,6 +619,7 @@ OC.L10N.register(
     "Users and circles" : "ユーザーとサークル",
     "Groups and circles" : "グループとサークル",
     "Other sources" : "他のソース",
+    "An error occurred while performing the search" : "検索中にエラーが発生しました",
     "Creating your conversation" : "あなたの会話を作成しています",
     "All set" : "すべてのセット",
     "Copy conversation link" : "会話リンクをコピー",
@@ -631,7 +632,6 @@ OC.L10N.register(
     "Close" : "閉じる",
     "Choose a password" : "パスワードを選択",
     "Search participants" : "参加者を探す",
-    "An error occurred while performing the search" : "検索中にエラーが発生しました",
     "Conversation name" : "会話の名前",
     "Allow guests to join via link " : "リンク経由でのゲスト参加を許可",
     "Search conversations or users" : "会話やユーザーを検索",
@@ -651,8 +651,8 @@ OC.L10N.register(
     "File to share" : "共有するファイル",
     "Write message, @ to mention someone …" : "@を話相手に付加して，メッセージを書く...",
     "Invalid path selected" : "無効なパスが選択されました",
-    "Enabled" : "有効",
     "Save" : "保存",
+    "Edit" : "編集",
     "Password" : "パスワード",
     "API token" : "APIトークン",
     "Login" : "ログイン",
@@ -679,7 +679,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "参加者の取得中にエラーが発生しました。",
     "Chat" : "チャット",
     "Display name: " : "表示名:",
-    "Edit" : "編集",
     "Keyboard shortcuts" : "キーボード ショートカット",
     "Search" : "検索",
     "Error while setting attachment folder" : "添付ファイル用フォルダ設定中のエラー",
@@ -775,6 +774,7 @@ OC.L10N.register(
     "This conversation is read only" : "この会話は読み込みのみです",
     "Default location for attachments" : "添付ファイルのデフォルトの場所",
     "Select default location for attachments" : "添付ファイルのデフォルトの場所を選択",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。"
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。",
+    "Enabled" : "有効"
 },
 "nplurals=1; plural=0;");

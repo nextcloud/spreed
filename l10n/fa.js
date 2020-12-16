@@ -293,8 +293,8 @@ OC.L10N.register(
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Send message" : "پیام فرستادن",
-    "Enabled" : "فعال شده",
     "Save" : "ذخیره",
+    "Edit" : "ویرایش",
     "Password" : "گذرواژه",
     "API token" : "API token",
     "Login" : "ورود",
@@ -308,7 +308,6 @@ OC.L10N.register(
     "No results" : "نتیجه ای یافت نشد",
     "Add users or groups" : "کاربران یا گروه ها را اضافه کنید",
     "Participants" : "شركت كنندگان",
-    "Edit" : "ویرایش",
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Rename conversation" : "تغییر نام مکالمه",
@@ -331,6 +330,7 @@ OC.L10N.register(
     "Projects" : "پروژه ها",
     "Password required" : "رمز عبور لازم است",
     "Cancel" : "لغو",
-    "Submit" : "ارسال"
+    "Submit" : "ارسال",
+    "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");

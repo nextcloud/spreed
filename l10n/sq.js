@@ -201,8 +201,8 @@ OC.L10N.register(
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "Send message" : "Dërgo mesazh",
-    "Enabled" : "I aktivizuar",
     "Save" : "Ruaj",
+    "Edit" : "Përpuno",
     "Password" : "Fjalëkalim",
     "API token" : "Çelës identifikues i API-t ",
     "Login" : "Hyrje",
@@ -211,7 +211,6 @@ OC.L10N.register(
     "guest" : "vizitor",
     "No results" : "Asnjë rezultat",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Përpuno",
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Search" : "Kërko",
     "Rename conversation" : "Riemërtojeni bisedën",
@@ -236,6 +235,7 @@ OC.L10N.register(
     "Share link" : "Shpërndaj ndërlidhjen",
     "Password required" : "Kërkohet fjalëkalimi",
     "Cancel" : "Anulo",
-    "Submit" : "Dërgo"
+    "Submit" : "Dërgo",
+    "Enabled" : "I aktivizuar"
 },
 "nplurals=2; plural=(n != 1);");

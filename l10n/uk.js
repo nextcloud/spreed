@@ -127,8 +127,8 @@ OC.L10N.register(
     "File to share" : "Виберіть файл для надання доступу",
     "Write message, @ to mention someone …" : "Написати повідомлення, @ім'я для згадки про користувача…",
     "Invalid path selected" : "Вибрано неправильний шлях",
-    "Enabled" : "Увімкнено",
     "Save" : "Зберегти",
+    "Edit" : "Редагувати",
     "Password" : "Пароль",
     "Login" : "Login",
     "Nickname" : "Прізвисько",
@@ -144,7 +144,6 @@ OC.L10N.register(
     "Add users or circles" : "Додати користувачів або кола",
     "Participants" : "Учасники",
     "Chat" : "Чат",
-    "Edit" : "Редагувати",
     "Keyboard shortcuts" : "Гарячі клавіші",
     "Search" : "Пошук",
     "Start call" : "Почати виклик",
@@ -179,6 +178,7 @@ OC.L10N.register(
     "Cancel" : "Скасувати",
     "Submit" : "Гаразд",
     "Default location for attachments" : "Типове розташування для вкладень",
-    "Select default location for attachments" : "Виберіть типове розташування для вкладень"
+    "Select default location for attachments" : "Виберіть типове розташування для вкладень",
+    "Enabled" : "Увімкнено"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

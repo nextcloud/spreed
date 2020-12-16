@@ -281,8 +281,8 @@ OC.L10N.register(
     "Remove" : "Forigi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
-    "Enabled" : "Ŝaltita",
     "Save" : "Konservi",
+    "Edit" : "Modifi",
     "Password" : "Pasvorto",
     "API token" : "API-ĵetono",
     "Login" : "Login",
@@ -292,7 +292,6 @@ OC.L10N.register(
     "No results" : "Neniu rezulto",
     "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
-    "Edit" : "Modifi",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
     "Grid view" : "Krada vido",
@@ -306,6 +305,7 @@ OC.L10N.register(
     "Share link" : "Kunhavigi ligilon",
     "Password required" : "Pasvorto bezonata",
     "Cancel" : "Nuligi",
-    "Submit" : "Sendi"
+    "Submit" : "Sendi",
+    "Enabled" : "Ŝaltita"
 },
 "nplurals=2; plural=(n != 1);");

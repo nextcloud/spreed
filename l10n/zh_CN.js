@@ -550,6 +550,7 @@ OC.L10N.register(
     "Settings" : "设置",
     "Groups and circles" : "群组和圈子",
     "Other sources" : "其他来源",
+    "An error occurred while performing the search" : "执行搜索时出错",
     "Creating your conversation" : "正在创建你的对话",
     "All set" : "全部搞定",
     "Copy conversation link" : "复制对话链接",
@@ -562,7 +563,6 @@ OC.L10N.register(
     "Close" : "关闭",
     "Choose a password" : "选择一个密码",
     "Search participants" : "搜索参与者",
-    "An error occurred while performing the search" : "执行搜索时出错",
     "Conversation name" : "会话名称",
     "Allow guests to join via link " : "允许访客通过链接加入",
     "You are currently waiting in the lobby" : "您当前正在休息室等待。",
@@ -582,8 +582,8 @@ OC.L10N.register(
     "File to share" : "要共享的文件",
     "Write message, @ to mention someone …" : "输入消息，用 @ 提及某人…",
     "Invalid path selected" : "选择的路径无效",
-    "Enabled" : "已启用",
     "Save" : "保存",
+    "Edit" : "编辑",
     "Password" : "密码",
     "API token" : "API 令牌",
     "Login" : "登录",
@@ -606,7 +606,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "获取参与者时出错",
     "Chat" : "聊天",
     "Display name: " : "显示名称：",
-    "Edit" : "编辑",
     "Keyboard shortcuts" : "键盘快捷方式",
     "Search" : "搜索",
     "Error while setting attachment folder" : "设置附件文件夹时出错",
@@ -688,6 +687,7 @@ OC.L10N.register(
     "Signaling server URL" : "发信服务器 URL",
     "This conversation is read only" : "此会话是只读的",
     "Default location for attachments" : "附件的默认位置",
-    "Select default location for attachments" : "选择附件的默认位置"
+    "Select default location for attachments" : "选择附件的默认位置",
+    "Enabled" : "已启用"
 },
 "nplurals=1; plural=0;");

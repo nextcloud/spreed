@@ -32,14 +32,13 @@ OC.L10N.register(
     "Reply" : "Responder",
     "Today" : "Hodie",
     "Yesterday" : "Heri",
-    "Enabled" : "Activate",
     "Save" : "Salveguardar",
+    "Edit" : "Modificar",
     "Password" : "Contrasigno",
     "Login" : "Login",
     "Nickname" : "Pseudonymo",
     "guest" : "hospite",
     "Add users or groups" : "Add users or groups",
-    "Edit" : "Modificar",
     "Keyboard shortcuts" : "Combinationes de claves",
     "Search" : "Cercar",
     "Send" : "Inviar",
@@ -54,6 +53,7 @@ OC.L10N.register(
     "iOS app" : "Application iOS",
     "Contacts" : "Contactos",
     "Share link" : "Compartir ligamine",
-    "Cancel" : "Cancellar"
+    "Cancel" : "Cancellar",
+    "Enabled" : "Activate"
 },
 "nplurals=2; plural=(n != 1);");

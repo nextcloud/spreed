@@ -493,6 +493,7 @@ OC.L10N.register(
     "Users and circles" : "Naudotojai ir ratai",
     "Groups and circles" : "Grupės ir ratai",
     "Other sources" : "Kiti šaltiniai",
+    "An error occurred while performing the search" : "Atliekant paiešką, įvyko klaida",
     "Creating your conversation" : "Kuriamas jūsų pokalbis",
     "All set" : "Viskas paruošta",
     "Copy conversation link" : "Kopijuoti pokalbio nuorodą",
@@ -504,7 +505,6 @@ OC.L10N.register(
     "Create conversation" : "Sukurti pokalbį",
     "Close" : "Užverti",
     "Search participants" : "Ieškoti dalyvių",
-    "An error occurred while performing the search" : "Atliekant paiešką, įvyko klaida",
     "Conversation name" : "Pokalbio pavadinimas",
     "Allow guests to join via link " : "Leisti svečiams prisijungti per nuorodą",
     "Search conversations or users" : "Ieškoti pokalbių ar naudotojų",
@@ -530,8 +530,8 @@ OC.L10N.register(
     "File to share" : "Failas, kurį bendrinti",
     "Write message, @ to mention someone …" : "Rašykite žinutę, naudokite @ norėdami kažką paminėti…",
     "Invalid path selected" : "Pasirinktas neteisingas kelias",
-    "Enabled" : "Įjungta",
     "Save" : "Įrašyti",
+    "Edit" : "Taisyti",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud naudotojas",
     "User password" : "Naudotojo slaptažodis",
@@ -575,7 +575,6 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Gaunant dalyvius, įvyko klaida",
     "Chat" : "Pokalbis",
     "Display name: " : "Rodomas vardas: ",
-    "Edit" : "Taisyti",
     "Choose devices" : "Pasirinkti įrenginius",
     "Attachments folder" : "Priedų aplankas",
     "Keyboard shortcuts" : "Klavišų kombinacijos",
@@ -660,6 +659,7 @@ OC.L10N.register(
     "Signaling server URL" : "Signalinio serverio URL",
     "This conversation is read only" : "Šis pokalbis yra tik skaitymui",
     "Default location for attachments" : "Numatytoji priedų vieta",
-    "Select default location for attachments" : "Pasirinkti numatytąją vietą priedams"
+    "Select default location for attachments" : "Pasirinkti numatytąją vietą priedams",
+    "Enabled" : "Įjungta"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
