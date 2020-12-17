@@ -22,7 +22,7 @@
 	<div :id="screenContainerId" class="screenContainer">
 		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
 			ref="screen"
-			:disablePictureInPicture="!isBig"
+			:disablePictureInPicture="!isBig ? 'true' : 'false'"
 			class="screen"
 			:class="screenClass" />
 		<VideoBottomBar v-if="isBig"
