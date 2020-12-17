@@ -74,6 +74,7 @@
 				 reference is always valid once mounted. -->
 			<video v-show="videoPreviewAvailable"
 				ref="video"
+				disablePictureInPicture="true"
 				tabindex="-1" />
 		</div>
 	</div>

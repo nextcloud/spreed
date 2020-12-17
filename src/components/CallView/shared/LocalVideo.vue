@@ -28,6 +28,7 @@
 		<video v-show="localMediaModel.attributes.videoEnabled"
 			id="localVideo"
 			ref="video"
+			disablePictureInPicture="true"
 			:class="videoClass"
 			class="video" />
 		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
