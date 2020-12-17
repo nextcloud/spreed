@@ -46,8 +46,12 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
-	getBlurFilter: (state) => (width, height) => {
-		return `filter: blur(${(width * height * state.videoBackgroundBlur) / 1000}px)`
+	/**
+	 * @param {object} state the width and height to calculate the radius from
+	 * @returns {number} the blur radius to use, in pixels
+	 */
+	getBlurRadius: (state) => (width, height) => {
+		return (width * height * state.videoBackgroundBlur) / 1000
 	},
 	isParticipantRaisedHand: (state) => (peerId) => !!state.participantRaisedHands[peerId],
 }

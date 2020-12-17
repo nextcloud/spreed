@@ -7,6 +7,11 @@ module.exports = {
 	entry: {
 		'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
 		'collections': path.join(__dirname, 'src', 'collections.js'),
+		// There is a "worker-loader" plugin for Webpack, but I was not able to
+		// get it to work ("publicPath" uses "output.publicPath" rather than the
+		// one set in the plugin
+		// https://github.com/webpack-contrib/worker-loader/issues/281).
+		'image-blurrer-worker': path.join(__dirname, 'src', 'utils/imageBlurrerWorker.js'),
 		'talk': path.join(__dirname, 'src', 'main.js'),
 		'talk-files-sidebar': [
 			path.join(__dirname, 'src', 'mainFilesSidebar.js'),
