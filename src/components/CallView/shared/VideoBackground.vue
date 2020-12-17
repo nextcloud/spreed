@@ -25,14 +25,15 @@
 			ref="darkener"
 			class="darken">
 			<ResizeObserver
-				v-if="gridBlur === ''"
+				v-if="gridBlur === 0"
 				class="observer"
 				@notify="setBlur" />
 		</div>
 		<img
 			v-if="hasPicture"
+			ref="backgroundImage"
 			:src="backgroundImage"
-			:style="gridBlur ? gridBlur : blur"
+			:style="backgroundStyle"
 			class="video-background__picture"
 			alt="">
 		<div v-else
@@ -47,6 +48,8 @@ import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 import { getBuilder } from '@nextcloud/browser-storage'
+import browserCheck from '../../../mixins/browserCheck'
+import blur from '../../../utils/imageBlurrer'
 
 const browserStorage = getBuilder('nextcloud').persist().build()
 
@@ -69,6 +72,10 @@ export default {
 		ResizeObserver,
 	},
 
+	mixins: [
+		browserCheck,
+	],
+
 	props: {
 		displayName: {
 			type: String,
@@ -79,15 +86,21 @@ export default {
 			default: '',
 		},
 		gridBlur: {
-			type: String,
-			default: '',
+			type: Number,
+			default: 0,
 		},
 	},
 
 	data() {
 		return {
 			hasPicture: false,
-			blur: '',
+			useCssBlurFilter: true,
+			blur: 0,
+			blurredBackgroundImage: null,
+			blurredBackgroundImageCache: {},
+			blurredBackgroundImageSource: null,
+			pendingGenerateBlurredBackgroundImageCount: 0,
+			isDestroyed: false,
 		}
 	},
 
@@ -103,11 +116,78 @@ export default {
 			}
 		},
 		backgroundImage() {
+			return this.useCssBlurFilter ? this.backgroundImageUrl : this.blurredBackgroundImage
+		},
+		backgroundImageUrl() {
+			if (!this.user) {
+				return null
+			}
+
 			return generateUrl(`avatar/${this.user}/300`)
+		},
+		backgroundBlur() {
+			return this.gridBlur ? this.gridBlur : this.blur
+		},
+		backgroundStyle() {
+			if (!this.useCssBlurFilter) {
+				return {}
+			}
+
+			return {
+				filter: `blur(${this.backgroundBlur}px)`,
+			}
+		},
+		// Special computed property to combine the properties that should be
+		// watched to generate (or not) the blurred background image.
+		generatedBackgroundBlur() {
+			if (!this.hasPicture || this.useCssBlurFilter) {
+				return false
+			}
+
+			if (!this.blurredBackgroundImageSource) {
+				return false
+			}
+
+			return this.backgroundBlur
+		},
+	},
+
+	watch: {
+		backgroundImageUrl: {
+			immediate: true,
+			handler() {
+				this.blurredBackgroundImageSource = null
+
+				if (!this.backgroundImageUrl) {
+					return
+				}
+
+				const image = new Image()
+				image.onload = () => {
+					createImageBitmap(image).then(imageBitmap => {
+						this.blurredBackgroundImageSource = imageBitmap
+					})
+				}
+				image.src = this.backgroundImageUrl
+			},
+		},
+		generatedBackgroundBlur: {
+			immediate: true,
+			handler() {
+				if (this.generatedBackgroundBlur === false) {
+					return
+				}
+
+				this.generateBlurredBackgroundImage()
+			},
 		},
 	},
 
 	async beforeMount() {
+		if (this.isChrome) {
+			this.useCssBlurFilter = false
+		}
+
 		if (!this.user) {
 			return
 		}
@@ -142,10 +222,68 @@ export default {
 		}
 	},
 
+	beforeDestroy() {
+		this.isDestroyed = true
+	},
+
 	methods: {
 		// Calculate the background blur based on the height of the background element
 		setBlur({ width, height }) {
-			this.blur = this.$store.getters.getBlurFilter(width, height)
+			this.blur = this.$store.getters.getBlurRadius(width, height)
+		},
+
+		generateBlurredBackgroundImage() {
+			// Reset image source so the width and height are adjusted to
+			// the element rather than to the previous image being shown.
+			this.$refs.backgroundImage.src = ''
+
+			let width = this.$refs.backgroundImage.width
+			let height = this.$refs.backgroundImage.height
+
+			// Restore the current background so it is shown instead of an empty
+			// background while the new one is being generated.
+			this.$refs.backgroundImage.src = this.blurredBackgroundImage
+
+			const sourceAspectRatio = this.blurredBackgroundImageSource.width / this.blurredBackgroundImageSource.height
+			const canvasAspectRatio = width / height
+
+			if (canvasAspectRatio > sourceAspectRatio) {
+				height = width / sourceAspectRatio
+			} else if (canvasAspectRatio < sourceAspectRatio) {
+				width = height * sourceAspectRatio
+			}
+
+			const cacheId = this.backgroundImageUrl + '-' + width + '-' + height + '-' + this.backgroundBlur
+			if (this.blurredBackgroundImageCache[cacheId]) {
+				this.blurredBackgroundImage = this.blurredBackgroundImageCache[cacheId]
+
+				return
+			}
+
+			if (this.pendingGenerateBlurredBackgroundImageCount) {
+				this.pendingGenerateBlurredBackgroundImageCount++
+
+				return
+			}
+
+			this.pendingGenerateBlurredBackgroundImageCount = 1
+
+			blur(this.blurredBackgroundImageSource, width, height, this.backgroundBlur).then(image => {
+				if (this.isDestroyed) {
+					return
+				}
+
+				this.blurredBackgroundImage = image
+				this.blurredBackgroundImageCache[cacheId] = this.blurredBackgroundImage
+
+				const generateBlurredBackgroundImageCalledAgain = this.pendingGenerateBlurredBackgroundImageCount > 1
+
+				this.pendingGenerateBlurredBackgroundImageCount = 0
+
+				if (generateBlurredBackgroundImageCalledAgain) {
+					this.generateBlurredBackgroundImage()
+				}
+			})
 		},
 	},
 }
