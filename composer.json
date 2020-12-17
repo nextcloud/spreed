@@ -16,7 +16,7 @@
 	},
 	"minimum-stability": "dev",
 	"require-dev": {
-		"nextcloud/coding-standard": "^0.3.0",
+		"nextcloud/coding-standard": "^0.4.0",
 		"vimeo/psalm": "^4.1",
 		"christophwurst/nextcloud": "dev-master"
 	}
