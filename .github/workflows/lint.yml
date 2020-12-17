@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: none
@@ -29,18 +29,26 @@ jobs:
         run: composer run lint || ( echo 'Please run `composer run lint` and fix your code' && exit 1 )
 
   php-cs-fixer:
-    name: php-cs check
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: ['7.4']
+
+    name: cs php${{ matrix.php-versions }}
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+
       - name: Set up php
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: ${{ matrix.php-versions }}
           coverage: none
+
       - name: Install dependencies
         run: composer i
+
       - name: Run coding standards check
         run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
 
@@ -58,7 +66,7 @@ jobs:
       - name: Set up node ${{ matrix.node-versions }}
         uses: actions/setup-node@v1
         with:
-          node-versions: ${{ matrix.node-versions }}
+          node-version: ${{ matrix.node-versions }}
 
       - name: Install dependencies
         run: npm ci
@@ -80,7 +88,7 @@ jobs:
       - name: Set up node ${{ matrix.node-versions }}
         uses: actions/setup-node@v1
         with:
-          node-versions: ${{ matrix.node-versions }}
+          node-version: ${{ matrix.node-versions }}
 
       - name: Install dependencies
         run: npm ci
