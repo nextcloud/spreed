@@ -74,11 +74,15 @@ const getters = {
 		return index
 	},
 	getPeer: (state) => (token, sessionId) => {
+		console.log('getPeer', token, sessionId)
 		if (!state.peers[token]) {
 			return {}
 		}
 
+		console.log('getPeer; store entries for token ' + token + ': ', state.peers[token])
+
 		if (state.peers[token].hasOwnProperty(sessionId)) {
+			console.log('getPeer; returning peer ', state.peers[token][sessionId])
 			return state.peers[token][sessionId]
 		}
 

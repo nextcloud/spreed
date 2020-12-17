@@ -213,6 +213,7 @@ export default {
 
 		peerData() {
 			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.peerId)
+			console.log('peerData', this.peerId, peerData)
 			if (!peerData.actorId) {
 				EventBus.$emit('refreshPeerList')
 				peerData = {

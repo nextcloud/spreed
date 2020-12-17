@@ -495,6 +495,7 @@ export default {
 			}
 
 			// update in callViewStore
+			console.log('received raised hand event from peer: ' + callParticipantModel.attributes.peerId, callParticipantModel)
 			this.$store.dispatch('setParticipantHandRaised', { peerId: callParticipantModel.attributes.peerId, raised: raisedHand })
 		},
 
@@ -576,6 +577,7 @@ export default {
 		},
 
 		debounceFetchPeers: debounce(async function() {
+			console.log('debounceFetchPeers')
 			const token = this.token
 			try {
 				const response = await fetchPeers(token)

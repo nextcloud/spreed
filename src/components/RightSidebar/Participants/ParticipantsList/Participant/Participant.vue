@@ -127,6 +127,7 @@
 
 <script>
 
+import { EventBus } from '../../../../../services/EventBus'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
@@ -277,12 +278,24 @@ export default {
 		label() {
 			return this.participant.label
 		},
+		peerId() {
+			const peer = this.$store.getters.getPeer(this.token, this.participant.sessionId)
+			if (!peer?.actorId) {
+				// peer id not known yet, it will likely be after refreshing
+				EventBus.$emit('refreshPeerList')
+				return null
+			}
+
+			console.log('Participant peerId: got peer', peer)
+
+			return peer?.sessionId
+		},
 		raisedHand() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG_DISCONNECTED) {
 				return false
 			}
 
-			return this.$store.getters.isParticipantRaisedHand(this.participant.sessionId)
+			return this.$store.getters.isParticipantRaisedHand(this.peerId)
 		},
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {

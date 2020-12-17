@@ -49,7 +49,10 @@ const getters = {
 	getBlurFilter: (state) => (width, height) => {
 		return `filter: blur(${(width * height * state.videoBackgroundBlur) / 1000}px)`
 	},
-	isParticipantRaisedHand: (state) => (peerId) => !!state.participantRaisedHands[peerId],
+	isParticipantRaisedHand: (state) => (peerId) => {
+		console.log('isParticipantRaisedHand', peerId, state.participantRaisedHands)
+		return !!state.participantRaisedHands[peerId]
+	}
 }
 
 const mutations = {
@@ -73,6 +76,7 @@ const mutations = {
 		state.presentationStarted = value
 	},
 	setParticipantHandRaised(state, { peerId, raised }) {
+		console.log('setParticipantHandRaised', peerId, raised)
 		if (raised) {
 			Vue.set(state.participantRaisedHands, peerId, raised)
 		} else {
