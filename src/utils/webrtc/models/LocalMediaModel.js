@@ -228,7 +228,7 @@ LocalMediaModel.prototype = {
 			this.set('videoAvailable', false)
 		}
 
-		this.set('raisedHand', false)
+		this.set('raisedHand', { state: false, timestamp: Date.now() })
 	},
 
 	_handleLocalStreamChanged: function(localStream) {
@@ -441,11 +441,16 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		this._webRtc.sendToAll('raiseHand', { raised: raised })
+		const raisedHand = {
+			state: raised,
+			timestamp: Date.now(),
+		}
+
+		this._webRtc.sendToAll('raiseHand', raisedHand)
 
 		// Set state locally too, as even when sending to all the sender will not
 		// receive the message.
-		this.set('raisedHand', raised)
+		this.set('raisedHand', raisedHand)
 	},
 
 }

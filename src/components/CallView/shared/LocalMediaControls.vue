@@ -84,8 +84,8 @@
 				v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand')"
 				class="lower-hand"
-				:class="model.attributes.raisedHand ? '' : 'hidden-visually'"
-				:tabindex="model.attributes.raisedHand ? 0 : -1"
+				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
+				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
 				:aria-label="t('spreed', 'Lower hand')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
@@ -218,13 +218,12 @@ export default {
 			qualityWarningInGracePeriodTimeout: null,
 			audioEnabledBeforeSpacebarKeydown: undefined,
 			spacebarKeyDown: false,
-			raisingHandNotification: null,
 		}
 	},
 
 	computed: {
 		raiseHandButtonLabel() {
-			if (!this.model.attributes.raisedHand) {
+			if (!this.model.attributes.raisedHand.state) {
 				return t('spreed', 'Raise hand')
 			}
 			return t('spreed', 'Lower hand')
@@ -578,13 +577,15 @@ export default {
 		},
 
 		toggleHandRaised() {
-			const raisedHand = !this.model.attributes.raisedHand
-			if (this.raisingHandNotification) {
-				this.raisingHandNotification.hideToast()
-				this.raisingHandNotification = null
-			}
-			this.model.toggleHandRaised(raisedHand)
-			this.$store.dispatch('setParticipantHandRaised', { peerId: this.localCallParticipantModel.attributes.peerId, raised: raisedHand })
+			const state = !this.model.attributes.raisedHand?.state
+			this.model.toggleHandRaised(state)
+			this.$store.dispatch(
+				'setParticipantHandRaised',
+				{
+					peerId: this.localCallParticipantModel.attributes.peerId,
+					raisedHand: this.model.attributes.raisedHand,
+				}
+			)
 		},
 
 		shareScreen() {

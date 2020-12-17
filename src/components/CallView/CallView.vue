@@ -409,7 +409,7 @@ export default {
 				this.raisedHandUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
-				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raised: false })
+				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raisedHand: { state: false } })
 
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
@@ -488,17 +488,20 @@ export default {
 			const nickName = callParticipantModel.attributes.name || callParticipantModel.attributes.userId
 			// sometimes the nick name is not available yet...
 			if (nickName) {
-				if (raisedHand) {
+				if (raisedHand?.state) {
 					showMessage(t('spreed', 'Participant {nickName} raised their hand.', { nickName: nickName }))
 				}
 			} else {
-				if (raisedHand) {
+				if (raisedHand?.state) {
 					showMessage(t('spreed', 'A participant raised their hand.'))
 				}
 			}
 
 			// update in callViewStore
-			this.$store.dispatch('setParticipantHandRaised', { peerId: callParticipantModel.attributes.peerId, raised: raisedHand })
+			this.$store.dispatch('setParticipantHandRaised', {
+				peerId: callParticipantModel.attributes.peerId,
+				raisedHand: raisedHand,
+			})
 		},
 
 		_setScreenAvailable(id, screen) {

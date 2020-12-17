@@ -53,7 +53,10 @@ export default function CallParticipantModel(options) {
 		speaking: undefined,
 		videoAvailable: undefined,
 		screen: null,
-		raisedHand: false,
+		raisedHand: {
+			state: false,
+			timestamp: null,
+		},
 	}
 
 	this._handlers = []
