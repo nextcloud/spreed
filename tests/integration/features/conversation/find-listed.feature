@@ -3,7 +3,7 @@ Feature: conversation/find-listed
     Given user "creator" exists
     And user "regular-user" exists
     And guest accounts can be created
-    And user "user-guest" is a guest account user
+    And user "user-guest@example.com" is a guest account user
 
   Scenario Outline: Nobody can find non-listed rooms
     Given user "creator" creates room "group-room"
@@ -16,10 +16,10 @@ Feature: conversation/find-listed
     And user "creator" allows listing room "public-room" for "none" with 200
     Then user "creator" cannot find any listed rooms (v3)
     Examples:
-      | user         |
-      | creator      |
-      | regular-user |
-      | user-guest   |
+      | user                   |
+      | creator                |
+      | regular-user           |
+      | user-guest@example.com |
 
   Scenario: Regular users can find user-listed rooms
     Given user "creator" creates room "group-room"
@@ -34,7 +34,7 @@ Feature: conversation/find-listed
       | name        | listable |
       | group-room  | 1        |
       | public-room | 1        |
-    And user "user-guest" cannot find any listed rooms (v3)
+    And user "user-guest@example.com" cannot find any listed rooms (v3)
 
   Scenario: All users can find all-listed rooms
     Given user "creator" creates room "group-room"
@@ -49,7 +49,7 @@ Feature: conversation/find-listed
       | name        | listable |
       | group-room  | 2        |
       | public-room | 2        |
-    And user "user-guest" can find listed rooms (v3)
+    And user "user-guest@example.com" can find listed rooms (v3)
       | name        | listable |
       | group-room  | 2        |
       | public-room | 2        |
@@ -101,7 +101,7 @@ Feature: conversation/find-listed
       | name                 | listable |
       | group-the-cool-room  | 2        |
       | public-the-cool-room | 2        |
-    And user "user-guest" can find listed rooms with term "cool" (v3)
+    And user "user-guest@example.com" can find listed rooms with term "cool" (v3)
       | name                 | listable |
       | group-the-cool-room  | 2        |
       | public-the-cool-room | 2        |
@@ -112,7 +112,7 @@ Feature: conversation/find-listed
       | roomName | group-room  |
     When user "creator" allows listing room "group-room" for "all" with 200
     Then user "regular-user" cannot find any listed rooms with term "cool" (v3)
-    And user "user-guest" cannot find any listed rooms with term "cool" (v3)
+    And user "user-guest@example.com" cannot find any listed rooms with term "cool" (v3)
 
   Scenario: Guest users without accounts cannot search for listed rooms
     Given user "creator" creates room "public-room"

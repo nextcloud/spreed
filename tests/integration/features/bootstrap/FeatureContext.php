@@ -1576,31 +1576,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @Given /^user "([^"]*)" is a guest account user/
-	 * @param string $user
+	 * @param string $email email address
 	 */
-	public function createGuestUser($user) {
+	public function createGuestUser($email) {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		// in case it exists
-		$this->deleteUser($user);
+		$this->deleteUser($email);
 
 		$lastCode = $this->runOcc([
 			'guests:add',
 			// creator user
 			'admin',
-			// guest user id
-			$user,
 			// email
-			$user . '@localhost',
+			$email,
 			'--display-name',
-			$user . '-displayname',
+			$email . '-displayname',
 			'--password-from-env',
 		], [
 			'OC_PASS' => self::TEST_PASSWORD,
 		]);
-		Assert::assertEquals(0, $lastCode, 'Guest creation succeeded for ' . $user);
+		Assert::assertEquals(0, $lastCode, 'Guest creation succeeded for ' . $email);
 
-		$this->createdGuestAccountUsers[] = $user;
+		$this->createdGuestAccountUsers[] = $email;
 		$this->setCurrentUser($currentUser);
 	}
 
