@@ -24,9 +24,10 @@
 		<div v-if="dateSeparator" class="message-group__date-header">
 			<span class="date" role="heading" aria-level="3">{{ dateSeparator }}</span>
 		</div>
-		<div class="wrapper">
-			<div class="messages__avatar">
-				<AuthorAvatar v-if="!isSystemMessage"
+		<div class="wrapper"
+			:class="{'wrapper--system': isSystemMessage}">
+			<div v-if="!isSystemMessage" class="messages__avatar">
+				<AuthorAvatar
 					:author-type="actorType"
 					:author-id="actorId"
 					:display-name="actorDisplayName" />
@@ -169,6 +170,9 @@ export default {
 	display: flex;
 	margin: auto;
 	padding: 0;
+	&--system {
+		padding-left: $clickable-area + 8px;
+	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
