@@ -57,21 +57,36 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
 			<div class="message__main__right">
-				<div v-if="isTemporary && !isTemporaryUpload" class="icon-loading-small" />
-				<span v-if="hasDate" v-tooltip.auto="messageDate">{{ messageTime }}</span>
-				<CheckAll
-					v-if="showCommonReadIcon"
-					decorative
-					title=""
-					:size="16" />
-				<Check
-					v-else-if="showSentIcon"
-					decorative
-					title=""
-					:size="16" />
+				<span v-if="hasDate"
+					v-tooltip.auto="messageDate"
+					class="date"
+					:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
+				<!-- Message delivery status indicators -->
+				<div v-if="isTemporary && !isTemporaryUpload"
+					v-tooltip.auto="loadingIconTooltip"
+					class="icon-loading-small message-status"
+					:aria-label="loadingIconTooltip" />
+				<div v-if="showCommonReadIcon"
+					v-tooltip.auto="commonReadIconTooltip"
+					class="message-status"
+					:aria-label="commonReadIconTooltip">
+					<CheckAll decorative
+						title=""
+						:size="16" />
+				</div>
+				<div v-else-if="showSentIcon"
+					v-tooltip.auto="sentIconTooltip"
+					class="message-status"
+					:aria-label="sentIconTooltip">
+					<Check decorative
+						title=""
+						:size="16" />
+				</div>
+				<!-- Message Actions -->
 				<Actions
 					v-show="showActions && hasActions"
-					class="message__main__right__actions">
+					class="message__main__right__actions"
+					:class="{ 'tall' : isTallEnough }">
 					<ActionButton
 						v-if="isReplyable"
 						icon="icon-reply"
@@ -345,6 +360,19 @@ export default {
 		isTemporaryUpload() {
 			return this.isTemporary && this.messageParameters.file
 		},
+
+		loadingIconTooltip() {
+			return t('spreed', 'Sending message')
+		},
+
+		sentIconTooltip() {
+			return t('spreed', 'Message sent')
+		},
+
+		commonReadIconTooltip() {
+			return t('spreed', 'Message read by everyone who shares their reading status')
+		},
+
 	},
 
 	watch: {
@@ -354,7 +382,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.$refs.messageMain.clientHeight > 44) {
+		if (this.$refs.messageMain.clientHeight > 56) {
 			this.isTallEnough = true
 		}
 
@@ -418,7 +446,7 @@ export default {
 		justify-content: space-between;
 		min-width: 100%;
 		&__text {
-			flex: 1 1 auto;
+			flex: 0 1 600px;
 			color: var(--color-text-light);
 			.single-emoji {
 				font-size: 250%;
@@ -448,26 +476,35 @@ export default {
 		}
 		&__right {
 			justify-self: flex-start;
-			justify-content:  space-between;
+			justify-content: flex-end;
 			position: relative;
 			user-select: none;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: $chat-font-size;
-			flex: 0 0 95px;
+			flex: 1 0 auto;
 			padding: 0 8px 0 8px;
 			&__actions.action-item {
 				position: absolute;
-				bottom: -11px;
-				right: -3px;
+				top: -8px;
+				right: 50px;
+				&.tall {
+					top: unset;
+					right: 8px;
+					bottom: -8px;
+				}
 			}
 			& h6 {
 				margin-left: auto;
 			}
 		}
 	}
-	.icon-loading-small {
-		position: unset;
+}
+
+.date {
+	margin-right: $clickable-area;
+	&--self {
+		margin-right: 0;
 	}
 }
 
@@ -494,5 +531,14 @@ export default {
 	0% { background-color: var(--color-background-hover); }
 	50% { background-color: var(--color-background-hover); }
 	100% { background-color: rgba(var(--color-background-hover), 0); }
+}
+
+.message-status {
+	margin: -8px 0;
+	width: $clickable-area;
+	height: $clickable-area;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 </style>
