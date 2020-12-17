@@ -463,6 +463,8 @@ export default {
 
 			&.system-message {
 				color: var(--color-text-maxcontrast);
+				text-align: center;
+				padding: 0 20px;
 			}
 
 			::v-deep .rich-text--wrapper {
