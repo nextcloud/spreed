@@ -253,6 +253,7 @@ class MatterbridgeManager {
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 		$configContent = $this->generateConfig($newBridge);
 		file_put_contents($configPath, $configContent);
+		chmod($configPath, 0600);
 	}
 
 	/**
