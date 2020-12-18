@@ -1,6 +1,100 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.0.0-alpha.1 – 2020-12-18
+### Added
+- Implement read status for messages including a privacy setting
+  [#4231](https://github.com/nextcloud/spreed/pull/4231)
+- Implement multiple requirements to prepare for SIP dial-in
+  [#4324](https://github.com/nextcloud/spreed/pull/4324)
+  [#4469](https://github.com/nextcloud/spreed/pull/4496)
+  [#4682](https://github.com/nextcloud/spreed/pull/4682)
+  [#4689](https://github.com/nextcloud/spreed/pull/4689)
+- Allow moderators to make conversations "listable" so users can join themselves
+  [#4706](https://github.com/nextcloud/spreed/pull/4706)
+- Add the possibility for conversation descriptions
+  [#4546](https://github.com/nextcloud/spreed/pull/4546)
+- You can not push to talk/mute with the space key
+  [#4328](https://github.com/nextcloud/spreed/pull/4328)
+- Conversations can now be locked in the moderator settings preventing further chat messages and calls
+  [#4331](https://github.com/nextcloud/spreed/pull/4331)
+- Allow to fold away the video strip to focus more on the promoted speaker or screenshare
+  [#4363](https://github.com/nextcloud/spreed/pull/4363)
+- Improve previews of images and allow animation of gifs
+  [#4472](https://github.com/nextcloud/spreed/pull/4472)
+- Allow to "Raise hand" in a call
+  [#4569](https://github.com/nextcloud/spreed/pull/4569)
+- Compatibility with Nextcloud 21
+### Changed
+- Improve setting initial audio and video status when the HPB is used
+  [#4181](https://github.com/nextcloud/spreed/pull/4181)
+- Remember the Grid view/Promoted speaker selection per conversation in the browser storage and when a screenshare is stopped
+  [#4451](https://github.com/nextcloud/spreed/pull/4451)
+- Use the new Vue settings modal for user and conversation settings
+  [#4195](https://github.com/nextcloud/spreed/pull/4195)
+- Updated database structure so all tables have a primary key for database cluster support
+  [#4735](https://github.com/nextcloud/spreed/pull/4735)
+### Fixed
+- Stop sending the nick through data channels after some time
+  [#4182](https://github.com/nextcloud/spreed/pull/4182)
+- Don't query guest names for an empty list of guest sessions
+  [#4190](https://github.com/nextcloud/spreed/pull/4190)
+- Use date-based names for image content that is pasted into the chat
+  [#4539](https://github.com/nextcloud/spreed/pull/4539)
+
+## 10.1.0 – 2020-12-18
+### Added
+- Implement multiple requirements to prepare for SIP dial-in
+  [#4612](https://github.com/nextcloud/spreed/pull/4612)
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4801](https://github.com/nextcloud/spreed/pull/4801)
+- Prevent issues with UTF8 multibyte chars in the changelog conversation
+  [#4733](https://github.com/nextcloud/spreed/pull/4733)
+- Fix Chromium performance hit in calls due to blur filter
+  [#4781](https://github.com/nextcloud/spreed/pull/4781)
+- Stop sending the nick through data channels after some time
+  [#4726](https://github.com/nextcloud/spreed/pull/4726)
+- Fix "Copy link" not clickable when waiting alone in a call
+  [#4687](https://github.com/nextcloud/spreed/pull/4687)
+- Fix some Matterbridge integrations
+  [#4729](https://github.com/nextcloud/spreed/pull/4729)
+  [#4799](https://github.com/nextcloud/spreed/pull/4799)
+- Use proc_open to run system commands in bridge manager
+  [#4775](https://github.com/nextcloud/spreed/pull/4775)
+- Only show password request button when the share actually has Talk Verification enabled
+  [#4794](https://github.com/nextcloud/spreed/pull/4794)
+
+## 10.0.4 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4798](https://github.com/nextcloud/spreed/pull/4798)
+- Prevent issues with UTF8 multibyte chars in the changelog conversation
+  [#4734](https://github.com/nextcloud/spreed/pull/4734)
+- Fix Chromium performance hit in calls due to blur filter
+  [#4780](https://github.com/nextcloud/spreed/pull/4780)
+- Stop sending the nick through data channels after some time
+  [#4649](https://github.com/nextcloud/spreed/pull/4649)
+- Fix "Copy link" not clickable when waiting alone in a call
+  [#4687](https://github.com/nextcloud/spreed/pull/4687)
+- Fix some Matterbridge integrations
+  [#4728](https://github.com/nextcloud/spreed/pull/4728)
+  [#4800](https://github.com/nextcloud/spreed/pull/4800)
+- Use proc_open to run system commands in bridge manager
+  [#4774](https://github.com/nextcloud/spreed/pull/4774)
+- Only show password request button when the share actually has Talk Verification enabled
+  [#4795](https://github.com/nextcloud/spreed/pull/4795)
+
+## 9.0.7 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4797](https://github.com/nextcloud/spreed/pull/4797)
+
+## 8.0.14 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4796](https://github.com/nextcloud/spreed/pull/4796)
+
 ## 10.0.3 – 2020-11-18
 ### Fixed
 - Fix conversation URL change detection
