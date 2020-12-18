@@ -14,9 +14,6 @@
 			<directory name="vendor" />
 		</ignoreFiles>
 	</projectFiles>
-	<extraFiles>
-		<directory name="vendor" />
-	</extraFiles>
 	<issueHandlers>
 		<UndefinedClass>
 			<errorLevel type="suppress">
