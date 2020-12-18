@@ -1698,7 +1698,7 @@ class RoomController extends AEnvironmentAwareController {
 			} elseif ($userId !== null) {
 				$targetParticipant = $this->room->getParticipant($userId);
 			} else {
-				$targetParticipant =  $this->room->getParticipantBySession($sessionId);
+				$targetParticipant = $this->room->getParticipantBySession($sessionId);
 			}
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

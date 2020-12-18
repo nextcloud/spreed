@@ -215,20 +215,20 @@ class Manager {
 	public function createCommentObject(array $row): ?IComment {
 		/** @psalm-suppress UndefinedInterfaceMethod */
 		return $this->commentsManager->getCommentFromData([
-			'id'				=> $row['comment_id'],
-			'parent_id'			=> $row['comment_parent_id'],
-			'topmost_parent_id'	=> $row['comment_topmost_parent_id'],
-			'children_count'	=> $row['comment_children_count'],
-			'message'			=> $row['comment_message'],
-			'verb'				=> $row['comment_verb'],
-			'actor_type'		=> $row['comment_actor_type'],
-			'actor_id'			=> $row['comment_actor_id'],
-			'object_type'		=> $row['comment_object_type'],
-			'object_id'			=> $row['comment_object_id'],
+			'id' => $row['comment_id'],
+			'parent_id' => $row['comment_parent_id'],
+			'topmost_parent_id' => $row['comment_topmost_parent_id'],
+			'children_count' => $row['comment_children_count'],
+			'message' => $row['comment_message'],
+			'verb' => $row['comment_verb'],
+			'actor_type' => $row['comment_actor_type'],
+			'actor_id' => $row['comment_actor_id'],
+			'object_type' => $row['comment_object_type'],
+			'object_id' => $row['comment_object_id'],
 			// Reference id column might not be there, so we need to fallback to null
-			'reference_id'		=> $row['comment_reference_id'] ?? null,
-			'creation_timestamp'		=> $row['comment_creation_timestamp'],
-			'latest_child_timestamp'	=> $row['comment_latest_child_timestamp'],
+			'reference_id' => $row['comment_reference_id'] ?? null,
+			'creation_timestamp' => $row['comment_creation_timestamp'],
+			'latest_child_timestamp' => $row['comment_latest_child_timestamp'],
 		]);
 	}
 

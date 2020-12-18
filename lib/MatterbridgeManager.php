@@ -113,7 +113,7 @@ class MatterbridgeManager {
 	 * @return array process state and log
 	 */
 	public function getBridgeProcessState(Room $room): array {
-		$bridge =  $this->getBridgeFromDb($room);
+		$bridge = $this->getBridgeFromDb($room);
 
 		$logContent = $this->getBridgeLog($room);
 

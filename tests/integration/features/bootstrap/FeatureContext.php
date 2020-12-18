@@ -1773,7 +1773,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function sendRequest($verb, $url, $body = null, array $headers = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$client = new Client();
-		$options = ['cookies'  => $this->getUserCookieJar($this->currentUser)];
+		$options = ['cookies' => $this->getUserCookieJar($this->currentUser)];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
 		} elseif (strpos($this->currentUser, 'guest') !== 0) {
