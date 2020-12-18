@@ -320,7 +320,7 @@ export default {
 							placeholder: t('spreed', 'Password'),
 							icon: 'icon-category-auth',
 						},
-						chatid: {
+						channel: {
 							type: 'text',
 							placeholder: t('spreed', 'Chat ID'),
 							icon: 'icon-group',
@@ -394,7 +394,7 @@ export default {
 							placeholder: t('spreed', 'Team ID'),
 							icon: 'icon-category-auth',
 						},
-						threadid: {
+						channel: {
 							type: 'text',
 							placeholder: t('spreed', 'Thread ID'),
 							icon: 'icon-group',
