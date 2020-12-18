@@ -27,6 +27,7 @@ export const Sounds = {
 	isInCall: false,
 	lastPlayedJoin: 0,
 	lastPlayedLeave: 0,
+	playedWaiting: 0,
 	backgroundAudio: null,
 	backgroundInterval: null,
 
@@ -52,6 +53,7 @@ export const Sounds = {
 		console.debug('Playing waiting sound')
 		this.backgroundAudio.play()
 
+		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
 			if (!store.getters.playSounds) {
 				return
@@ -59,6 +61,12 @@ export const Sounds = {
 
 			console.debug('Playing waiting sound')
 			this.backgroundAudio.play()
+			this.playedWaiting++
+
+			if (this.playedWaiting >= 3) {
+				// Played 3 times, so we stop now.
+				clearInterval(this.backgroundInterval)
+			}
 		}, 15000)
 	},
 
@@ -91,7 +99,7 @@ export const Sounds = {
 		}
 
 		if (playWaitingSound) {
-			this.playWaiting()
+			await this.playWaiting()
 		} else {
 			this._playSounceOnce('LibremEmailNotification.ogg')
 		}
