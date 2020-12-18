@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.14 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4796](https://github.com/nextcloud/spreed/pull/4796)
+
 ## 8.0.13 – 2020-11-17
 ### Fixed
 - Reduce the load when mounting many shares
