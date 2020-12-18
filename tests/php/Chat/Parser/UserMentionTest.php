@@ -98,7 +98,7 @@ class UserMentionTest extends \Test\TestCase {
 
 	public function testGetRichMessageWithSingleMention() {
 		$mentions = [
-			['type'=>'user', 'id'=>'testUser'],
+			['type' => 'user', 'id' => 'testUser'],
 		];
 		$comment = $this->newComment($mentions);
 
@@ -137,7 +137,7 @@ class UserMentionTest extends \Test\TestCase {
 
 	public function testGetRichMessageWithDuplicatedMention() {
 		$mentions = [
-			['type'=>'user', 'id'=>'testUser'],
+			['type' => 'user', 'id' => 'testUser'],
 		];
 		$comment = $this->newComment($mentions);
 
@@ -176,9 +176,9 @@ class UserMentionTest extends \Test\TestCase {
 
 	public function testGetRichMessageWithSeveralMentions() {
 		$mentions = [
-			['type'=>'user', 'id'=>'testUser1'],
-			['type'=>'user', 'id'=>'testUser2'],
-			['type'=>'user', 'id'=>'testUser3']
+			['type' => 'user', 'id' => 'testUser1'],
+			['type' => 'user', 'id' => 'testUser2'],
+			['type' => 'user', 'id' => 'testUser3']
 		];
 		$comment = $this->newComment($mentions);
 
@@ -239,8 +239,8 @@ class UserMentionTest extends \Test\TestCase {
 
 	public function testGetRichMessageWithNonExistingUserMention() {
 		$mentions = [
-			['type'=>'user', 'id'=>'me'],
-			['type'=>'user', 'id'=>'testUser'],
+			['type' => 'user', 'id' => 'me'],
+			['type' => 'user', 'id' => 'testUser'],
 		];
 		$comment = $this->newComment($mentions);
 
@@ -284,7 +284,7 @@ class UserMentionTest extends \Test\TestCase {
 
 	public function testGetRichMessageWhenDisplayNameCanNotBeResolved() {
 		$mentions = [
-			['type'=>'user', 'id'=>'testUser'],
+			['type' => 'user', 'id' => 'testUser'],
 		];
 		$comment = $this->newComment($mentions);
 

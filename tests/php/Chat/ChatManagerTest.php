@@ -134,16 +134,16 @@ class ChatManagerTest extends TestCase {
 			'creationDateTime' => $comment->getCreationDateTime(),
 			'message' => $comment->getMessage(),
 			'referenceId' => $comment->getReferenceId(),
-			'parentId'  => $comment->getParentId(),
+			'parentId' => $comment->getParentId(),
 		]);
 	}
 
 	public function dataSendMessage(): array {
 		return [
 			'simple message' => ['testUser1', 'testMessage1', '', '0'],
-			'reference id'   => ['testUser2', 'testMessage2', 'referenceId2', '0'],
-			'as a reply'     => ['testUser3', 'testMessage3', '', '23'],
-			'reply w/ ref'   => ['testUser4', 'testMessage4', 'referenceId4', '23'],
+			'reference id' => ['testUser2', 'testMessage2', 'referenceId2', '0'],
+			'as a reply' => ['testUser3', 'testMessage3', '', '23'],
+			'reply w/ ref' => ['testUser4', 'testMessage4', 'referenceId4', '23'],
 		];
 	}
 

@@ -664,10 +664,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
+			['id' => 111, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User4', 'timestamp' => 1000000016, 'message' => 'testMessage4', 'messageParameters' => ['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 110, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUnknownUser', 'actorDisplayName' => 'User3', 'timestamp' => 1000000015, 'message' => 'testMessage3', 'messageParameters' => ['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 109, 'token' => 'testToken', 'actorType' => 'guests', 'actorId' => 'testSpreedSession', 'actorDisplayName' => 'User2', 'timestamp' => 1000000008, 'message' => 'testMessage2', 'messageParameters' => ['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 108, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User1', 'timestamp' => 1000000004, 'message' => 'testMessage1', 'messageParameters' => ['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -730,10 +730,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
+			['id' => 111, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User4', 'timestamp' => 1000000016, 'message' => 'testMessage4', 'messageParameters' => ['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 110, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUnknownUser', 'actorDisplayName' => 'User3', 'timestamp' => 1000000015, 'message' => 'testMessage3', 'messageParameters' => ['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 109, 'token' => 'testToken', 'actorType' => 'guests', 'actorId' => 'testSpreedSession', 'actorDisplayName' => 'User2', 'timestamp' => 1000000008, 'message' => 'testMessage2', 'messageParameters' => ['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 108, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User1', 'timestamp' => 1000000004, 'message' => 'testMessage1', 'messageParameters' => ['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -799,10 +799,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
+			['id' => 111, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User4', 'timestamp' => 1000000016, 'message' => 'testMessage4', 'messageParameters' => ['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 110, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUnknownUser', 'actorDisplayName' => 'User3', 'timestamp' => 1000000015, 'message' => 'testMessage3', 'messageParameters' => ['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 109, 'token' => 'testToken', 'actorType' => 'guests', 'actorId' => 'testSpreedSession', 'actorDisplayName' => 'User2', 'timestamp' => 1000000008, 'message' => 'testMessage2', 'messageParameters' => ['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 108, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User1', 'timestamp' => 1000000004, 'message' => 'testMessage1', 'messageParameters' => ['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -876,10 +876,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(1, $limit, $offset, 0, $timeout);
 		$expected = new DataResponse([
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 108, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User1', 'timestamp' => 1000000004, 'message' => 'testMessage1', 'messageParameters' => ['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 109, 'token' => 'testToken', 'actorType' => 'guests', 'actorId' => 'testSpreedSession', 'actorDisplayName' => 'User2', 'timestamp' => 1000000008, 'message' => 'testMessage2', 'messageParameters' => ['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 110, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUnknownUser', 'actorDisplayName' => 'User3', 'timestamp' => 1000000015, 'message' => 'testMessage3', 'messageParameters' => ['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id' => 111, 'token' => 'testToken', 'actorType' => 'users', 'actorId' => 'testUser', 'actorDisplayName' => 'User4', 'timestamp' => 1000000016, 'message' => 'testMessage4', 'messageParameters' => ['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 111);
 
