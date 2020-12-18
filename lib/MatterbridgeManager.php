@@ -488,18 +488,9 @@ class MatterbridgeManager {
 
 			$content .= '[[gateway.inout]]' . "\n";
 			$content .= sprintf('	account = "%s.%s"', $type, $k) . "\n";
-			if (in_array($type, ['zulip', 'discord', 'xmpp', 'irc', 'slack', 'rocketchat', 'mattermost', 'matrix', 'nctalk'])) {
-				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n";
-				if ($type === 'irc' && $part['password']) {
-					$content .= sprintf('	options = { key = "%s" }', $part['password']) . "\n";
-				}
-				$content .= "\n";
-			} elseif ($type === 'msteams') {
-				$content .= sprintf('	threadId = "%s"', $part['threadid']) . "\n\n";
-			} elseif ($type === 'telegram') {
-				$content .= sprintf('	channel = "%s"', $part['channel']) . "\n\n";
-			} elseif ($type === 'steam') {
-				$content .= sprintf('	chatid = "%s"', $part['chatid']) . "\n\n";
+			$content .= sprintf('	channel = "%s"', $part['channel']) . "\n";
+			if ($type === 'irc' && $part['password']) {
+				$content .= sprintf('	options = { key = "%s" }', $part['password']) . "\n";
 			}
 			$content .= "\n";
 		}
