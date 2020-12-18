@@ -50,6 +50,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IGroup;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroupManager;
@@ -298,6 +299,28 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+	}
+
+	public function addGroup(Room $room, IGroup $group): void {
+		$usersInGroup = $group->getUsers();
+
+		$participants = $this->getParticipantUserIds($room);
+
+		$newParticipants = [];
+		foreach ($usersInGroup as $user) {
+			if (in_array($user->getUID(), $participants, true)) {
+				// Participant is already in the conversation, so skip them.
+				continue;
+			}
+
+			$newParticipants[] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			];
+		}
+
+		$this->addUsers($room, $newParticipants);
 	}
 
 	/**

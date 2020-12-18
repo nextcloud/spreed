@@ -230,21 +230,14 @@ trait TRoomCommand {
 			return;
 		}
 
-		$users = [];
 		foreach ($groupIds as $groupId) {
 			$group = $this->groupManager->get($groupId);
 			if ($group === null) {
 				throw new InvalidArgumentException(sprintf("Group '%s' not found.", $groupId));
 			}
 
-			$groupUsers = array_map(function (IUser $user) {
-				return $user->getUID();
-			}, $group->getUsers());
-
-			$users = array_merge($users, array_values($groupUsers));
+			$this->participantService->addGroup($room, $group);
 		}
-
-		$this->addRoomParticipants($room, array_unique($users));
 	}
 
 	/**
