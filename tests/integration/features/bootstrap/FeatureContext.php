@@ -145,6 +145,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
+		$this->assertRooms($rooms, $formData);
+	}
+
+	/**
+	 * @param array $rooms
+	 * @param TableNode $formData
+	 */
+	private function assertRooms($rooms, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
 			$participantNames = array_map(function ($participant) {
@@ -204,10 +212,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param string $isOrNotParticipant
 	 * @param string $identifier
+	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier) {
+	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, TableNode $formData = null) {
 		if (strpos($user, 'guest') === 0) {
-			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier);
+			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $formData);
 
 			return;
 		}
@@ -231,6 +240,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($rooms as $room) {
 			if (self::$tokenToIdentifier[$room['token']] === $identifier) {
 				Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
+
+				if ($formData) {
+					$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+
+					$rooms = [$this->getDataFromResponse($this->response)];
+
+					$this->assertRooms($rooms, $formData);
+				}
+
 				return;
 			}
 		}
@@ -242,14 +260,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $guest
 	 * @param string $isOrNotParticipant
 	 * @param string $identifier
+	 * @param TableNode|null $formData
 	 */
-	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier) {
+	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier, TableNode $formData = null) {
 		$this->setCurrentUser($guest);
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
 
 		$response = $this->getDataFromResponse($this->response);
 
 		$isParticipant = $isOrNotParticipant === 'is';
+
+		if ($formData) {
+			$rooms = [$response];
+
+			$this->assertRooms($rooms, $formData);
+		}
 
 		if ($isParticipant) {
 			$this->assertStatusCode($this->response, 200);
@@ -425,6 +450,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates the password request room for last share with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 */
+	public function userCreatesThePasswordRequestRoomForLastShare($user, $statusCode) {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/v1/publicshareauth', ['shareToken' => $shareToken]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '201') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$identifier = 'password request for last share room';
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
@@ -439,6 +488,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$formData
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
 
 		$response = $this->getDataFromResponse($this->response);
 		if (array_key_exists('sessionId', $response)) {
