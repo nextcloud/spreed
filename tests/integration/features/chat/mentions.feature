@@ -275,11 +275,11 @@ Feature: chat/mentions
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 200
       | id           | label                    | source |
-      | all          | welcome.txt              | calls  |
+      | all          | welcome (2).txt          | calls  |
       | participant2 | participant2-displayname | users  |
     And user "participant2" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 200
       | id           | label                    | source |
-      | all          | welcome.txt              | calls  |
+      | all          | welcome (2).txt          | calls  |
       | participant1 | participant1-displayname | users  |
 
   Scenario: get matched mentions in a file room
