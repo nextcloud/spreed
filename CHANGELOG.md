@@ -1,6 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.4 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4798](https://github.com/nextcloud/spreed/pull/4798)
+- Prevent issues with UTF8 multibyte chars in the changelog conversation
+  [#4734](https://github.com/nextcloud/spreed/pull/4734)
+- Fix Chromium performance hit in calls due to blur filter
+  [#4780](https://github.com/nextcloud/spreed/pull/4780)
+- Stop sending the nick through data channels after some time
+  [#4649](https://github.com/nextcloud/spreed/pull/4649)
+- Fix "Copy link" not clickable when waiting alone in a call
+  [#4687](https://github.com/nextcloud/spreed/pull/4687)
+- Fix some Matterbridge integrations
+  [#4728](https://github.com/nextcloud/spreed/pull/4728)
+  [#4800](https://github.com/nextcloud/spreed/pull/4800)
+- Use proc_open to run system commands in bridge manager
+  [#4774](https://github.com/nextcloud/spreed/pull/4774)
+- Only show password request button when the share actually has Talk Verification enabled
+  [#4795](https://github.com/nextcloud/spreed/pull/4795)
+
+## 9.0.7 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4797](https://github.com/nextcloud/spreed/pull/4797)
+
+## 8.0.14 – 2020-12-18
+### Fixed
+- Fix potentially multiple guests joining in a password request conversation
+  [#4796](https://github.com/nextcloud/spreed/pull/4796)
+
 ## 10.0.3 – 2020-11-18
 ### Fixed
 - Fix conversation URL change detection
