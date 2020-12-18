@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 11.0.0-alpha.1 – 2020-12-18
+## 11.0.0-alpha.2 – 2020-12-18
 ### Added
 - Implement read status for messages including a privacy setting
   [#4231](https://github.com/nextcloud/spreed/pull/4231)
@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Allow to "Raise hand" in a call
   [#4569](https://github.com/nextcloud/spreed/pull/4569)
 - Compatibility with Nextcloud 21
+
 ### Changed
 - Improve setting initial audio and video status when the HPB is used
   [#4181](https://github.com/nextcloud/spreed/pull/4181)
@@ -34,7 +35,10 @@ All notable changes to this project will be documented in this file.
   [#4195](https://github.com/nextcloud/spreed/pull/4195)
 - Updated database structure so all tables have a primary key for database cluster support
   [#4735](https://github.com/nextcloud/spreed/pull/4735)
+  
 ### Fixed
+- Diff against alpha.1: Revert update of @babel/preset-env which breaks the compiled JS
+  [#4808](https://github.com/nextcloud/spreed/pull/4808)
 - Stop sending the nick through data channels after some time
   [#4182](https://github.com/nextcloud/spreed/pull/4182)
 - Don't query guest names for an empty list of guest sessions
