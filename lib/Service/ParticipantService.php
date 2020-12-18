@@ -320,6 +320,24 @@ class ParticipantService {
 			];
 		}
 
+		try {
+			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_GROUP, $group->getGID());
+		} catch (DoesNotExistException $e) {
+			$lastMessage = 0;
+			if ($room->getLastMessage() instanceof IComment) {
+				$lastMessage = (int) $room->getLastMessage()->getId();
+			}
+
+			$attendee = new Attendee();
+			$attendee->setRoomId($room->getId());
+			$attendee->setActorType(Attendee::ACTOR_GROUP);
+			$attendee->setActorId($group->getGID());
+			$attendee->setParticipantType(Participant::USER);
+			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setReadPrivacy(Participant::PRIVACY_PUBLIC);
+			$this->attendeeMapper->insert($attendee);
+		}
+
 		$this->addUsers($room, $newParticipants);
 	}
 
