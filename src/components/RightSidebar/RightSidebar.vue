@@ -156,7 +156,7 @@ export default {
 		displaySearchBox() {
 			return this.canFullModerate
 				&& (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
+					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 		isSearching() {
 			return this.searchText !== ''
