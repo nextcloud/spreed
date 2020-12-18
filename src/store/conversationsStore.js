@@ -30,7 +30,7 @@ import {
 	addToFavorites,
 	removeFromFavorites,
 	setConversationName,
-} from '../services/conversationsService'
+	setConversationDescription } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
 
@@ -101,6 +101,10 @@ const mutations = {
 	 */
 	purgeConversationsStore(state) {
 		Object.assign(state, getDefaultState())
+	},
+
+	setConversationDescription(state, { token, description }) {
+		Vue.set(state.conversations[token], 'description', description)
 	},
 }
 
@@ -229,6 +233,11 @@ const actions = {
 		conversation.displayName = name
 
 		commit('addConversation', conversation)
+	},
+
+	async setConversationDescription({ commit }, { token, description }) {
+		await setConversationDescription(token, description)
+		commit('setConversationDescription', { token, description })
 	},
 
 	async setReadOnlyState({ commit, getters }, { token, readOnly }) {

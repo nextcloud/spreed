@@ -346,6 +346,13 @@ const changeListable = async function(token, listable) {
 	return response
 }
 
+const setConversationDescription = async function(token, description) {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/description`, {
+		description,
+	})
+	return response
+}
+
 export {
 	fetchConversations,
 	fetchConversation,
@@ -367,4 +374,5 @@ export {
 	changeListable,
 	setConversationPassword,
 	setConversationName,
+	setConversationDescription,
 }
