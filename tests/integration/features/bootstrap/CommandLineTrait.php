@@ -43,9 +43,10 @@ trait CommandLineTrait {
 	 * Invokes an OCC command
 	 *
 	 * @param []string $args OCC command, the part behind "occ". For example: "files:transfer-ownership"
+	 * @param []string $env environment variables
 	 * @return int exit code
 	 */
-	public function runOcc($args = []) {
+	public function runOcc($args = [], $env = null) {
 		// Set UTF-8 locale to ensure that escapeshellarg will not strip
 		// multibyte characters.
 		setlocale(LC_CTYPE, "C.UTF-8");
@@ -61,7 +62,7 @@ trait CommandLineTrait {
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w'],
 		];
-		$process = proc_open('php console.php ' . $args, $descriptor, $pipes, $this->ocPath);
+		$process = proc_open('php console.php ' . $args, $descriptor, $pipes, $this->ocPath, $env);
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);
