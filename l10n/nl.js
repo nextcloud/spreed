@@ -121,7 +121,7 @@ OC.L10N.register(
     "You were invited to a conversation." : "Je werd uitgenodigd voor een gesprek.",
     "Conversation invitation" : "Gespreksuitnodiging",
     "Click the button below to join." : "Klik op de button hieronder om mee te doen.",
-    "Join »%s«" : "Medoen aan »%s«",
+    "Join »%s«" : "Medoen aan \"%s\"",
     "Your PIN" : "Je PIN",
     "Password request: %s" : "Wachtwoord aanvraag: %s",
     "Private conversation" : "Privégesprek",
