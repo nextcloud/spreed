@@ -1,4 +1,4 @@
-# Exclude npm stuff
+# Exclude Npm Stuff
 /build
 /node_modules
 
@@ -6,10 +6,10 @@
 /vendor
 /.php_cs.cache
 
-# Local docs
+# Local Docs
 /site
 
-# Karma/jasmine coverage data
+# Karma/jasmine Coverage Data
 /coverage
 /tests/php/coverage-html
 /tests/php/clover.xml
@@ -17,5 +17,5 @@
 /tests/integration/vendor
 /tests/integration/output
 
-# Compiled javascript
+# Compiled Javascript
 /js
