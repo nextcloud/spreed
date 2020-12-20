@@ -471,7 +471,7 @@ class HostedSignalingServerService {
 					$body = $response->getBody()->getContents();
 					$this->logger->error('Deleting the hosted signaling server account failed: too many requests - HTTP status: ' . $status . ' Response body: ' . $body);
 
-					$message = $this->l10n->t('Too many requests are send from your servers address. Please try again later.');
+					$message = $this->l10n->t('Too many requests are sent from your servers address. Please try again later.');
 					throw new HostedSignalingServerAPIException($message);
 				case Http::STATUS_NOT_FOUND:
 					$body = $response->getBody()->getContents();
