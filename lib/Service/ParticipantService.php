@@ -635,7 +635,7 @@ class ParticipantService {
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}
