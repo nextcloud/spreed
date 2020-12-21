@@ -21,3 +21,7 @@ updates:
     versions:
     - ">= 4.a"
     - "< 5"
+  # remove after fixing https://github.com/nextcloud/spreed/issues/4818
+  - dependency-name: "@babel/preset-env"
+    versions:
+    - ">= 7.12.11"
