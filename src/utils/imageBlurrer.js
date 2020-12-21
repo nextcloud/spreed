@@ -21,22 +21,27 @@
 
 import { generateFilePath } from '@nextcloud/router'
 
-const worker = new Worker(generateFilePath('spreed', '', 'js/image-blurrer-worker.js'))
+let worker = null
 
 const pendingResults = {}
 let pendingResultsNextId = 0
 
-worker.onmessage = function(message) {
-	const pendingResult = pendingResults[message.data.id]
-	if (!pendingResult) {
-		console.debug('No pending result for blurring image with id ' + message.data.id)
+try {
+	worker = new Worker(generateFilePath('spreed', '', 'js/image-blurrer-worker.js'))
+	worker.onmessage = function(message) {
+		const pendingResult = pendingResults[message.data.id]
+		if (!pendingResult) {
+			console.debug('No pending result for blurring image with id ' + message.data.id)
 
-		return
+			return
+		}
+
+		pendingResult(message.data.blurredImageAsDataUrl)
+
+		delete pendingResults[message.data.id]
 	}
-
-	pendingResult(message.data.blurredImageAsDataUrl)
-
-	delete pendingResults[message.data.id]
+} catch (exception) {
+	console.error('Image blurrer worker could not be loaded', exception)
 }
 
 function blurSync(image, width, height, blurRadius) {
@@ -54,7 +59,7 @@ function blurSync(image, width, height, blurRadius) {
 }
 
 export default function blur(image, width, height, blurRadius) {
-	if (typeof OffscreenCanvas === 'undefined') {
+	if (!worker || typeof OffscreenCanvas === 'undefined') {
 		return blurSync(image, width, height, blurRadius)
 	}
 
