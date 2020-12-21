@@ -59,7 +59,6 @@ module.exports = {
 					'hot-patcher',
 					'nextcloud-vue-collections',
 					'semver',
-					'@nextcloud/event-bus',
 					'webdav',
 				]),
 			},
