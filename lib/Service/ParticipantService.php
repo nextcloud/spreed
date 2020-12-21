@@ -629,9 +629,9 @@ class ParticipantService {
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
-		$query->from('talk_sessions', 's')
+		$query->from('talk_attendees', 'a')
 			->leftJoin(
-				's', 'talk_attendees', 'a',
+				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
