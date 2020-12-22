@@ -216,6 +216,7 @@ OC.L10N.register(
     "Deleting the hosted signaling server account failed. Please check back later." : "Barındırılan signaling sunucusu hesabı silinemedi. Lütfen daha sonra yeniden deneyin.",
     "Failed to delete the account because the trial server behaved wrongly. Please check back later." : "Deneme sunucusu doğru davranmadığından hesap silinemedi. Lütfen daha sonra yeniden deneyin.",
     "There is a problem with deleting the account. Please check your logs for further information." : "Hesap silinirken bir sorun çıktı. Lütfen ayrıntılı bilgi almak için günlük kayıtlarına bakın.",
+    "Too many requests are sent from your servers address. Please try again later." : "Sunucunuzun adresinden çok fazla sayıda istekte bulunuldu. Lütfen daha sonra yeniden deneyin.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Deneme sunucusuna erişilemediğinden hesap silinemedi. Lütfen daha sonra yeniden deneyin.",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Birleşik Arap Emirlikleri",
