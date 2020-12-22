@@ -61,6 +61,13 @@ module.exports = {
 					'semver',
 					'@nextcloud/event-bus',
 					'webdav',
+					'ansi-regex',
+					'string-length',
+					'strip-ansi',
+					'char-regex',
+					'tributejs',
+					'@nextcloud/vue',
+					'vue-resize',
 				]),
 			},
 			{
