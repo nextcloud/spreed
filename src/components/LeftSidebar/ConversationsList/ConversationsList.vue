@@ -76,34 +76,35 @@ export default {
 	mounted() {
 		EventBus.$on('routeChange', this.onRouteChange)
 		EventBus.$on('newMessagePosted', this.onMessagePosted)
-		EventBus.$on('joinedConversation', this.onJoinedConversation)
+
+		EventBus.$once('joinedConversation', ({ token }) => {
+			this.scrollToConversation(token)
+		})
 	},
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
 		EventBus.$off('newMessagePosted', this.onMessagePosted)
-		EventBus.$off('joinedConversation', this.onJoinedConversation)
 	},
 
 	methods: {
 		scrollToConversation(token) {
-			const conversation = document.getElementById(`conversation_${token}`)
-			if (!conversation) {
-				return
-			}
-			this.$nextTick(() => {
-				conversation.scrollIntoView({
-					behavior: 'smooth',
-					block: 'start',
-					inline: 'nearest',
+			// FIXME: not sure why we can't scroll earlier even when the element exists already
+			// when too early, Firefox only scrolls a few pixels towards the element but
+			// not enough to make it visible
+			setTimeout(() => {
+				const conversation = document.getElementById(`conversation_${token}`)
+				if (!conversation) {
+					return
+				}
+				this.$nextTick(() => {
+					conversation.scrollIntoView({
+						behavior: 'smooth',
+						block: 'start',
+						inline: 'nearest',
+					})
 				})
-			})
-		},
-		onJoinedConversation({ token }) {
-			this.scrollToConversation(token)
-		},
-		onMessagePosted({ token }) {
-			this.scrollToConversation(token)
+			}, 500)
 		},
 		onRouteChange({ from, to }) {
 			if (from.name === 'conversation'
