@@ -90,13 +90,13 @@ const checkTalkVersionHash = function(response) {
 
 /**
  * Fetch listed conversations
- * @param {string} searchTerm The string that will be used in the search query.
+ * @param {string} searchText The string that will be used in the search query.
  * @param {object} options options
  */
-const searchListedConversations = async function(searchTerm, options) {
+const searchListedConversations = async function({ searchText }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', Object.assign(options, {
 		params: {
-			searchTerm,
+			searchTerm: searchText,
 		},
 	}))
 }
