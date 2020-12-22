@@ -216,6 +216,7 @@ OC.L10N.register(
     "Deleting the hosted signaling server account failed. Please check back later." : "Eliminazione dell'account del server di segnalazione ospitato non riuscita. Controlla più tardi.",
     "Failed to delete the account because the trial server behaved wrongly. Please check back later." : "Impossibile eliminare l'account perché il server di prova si è comportato in modo errato. Controlla più tardi.",
     "There is a problem with deleting the account. Please check your logs for further information." : "Si è verificato un problema con l'eliminazione dell'account. Controlla i registri per ulteriori informazioni.",
+    "Too many requests are sent from your servers address. Please try again later." : "Troppe richieste inviate dall'indirizzo del tuo server. Riprova più tardi.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Impossibile eliminare l'account perché il server di prova non è raggiungibile. Controlla più tardi.",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Emirati Arabi Uniti",
