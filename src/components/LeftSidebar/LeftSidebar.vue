@@ -37,6 +37,7 @@
 				:title="t('spreed', 'Conversations')" />
 			<li role="presentation">
 				<ConversationsList
+					ref="conversationsList"
 					:conversations-list="conversationsList"
 					:initialised-conversations="initialisedConversations"
 					:search-text="searchText"
@@ -354,16 +355,22 @@ export default {
 				response = await createGroupConversation(item.id, item.source)
 			}
 			const conversation = response.data.ocs.data
+			this.abortSearch()
+			EventBus.$once('joinedConversation', ({ token }) => {
+				this.$refs.conversationsList.scrollToConversation(token)
+			})
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			EventBus.$emit('resetSearchFilter')
 		},
 
 		async joinListedConversation(conversation) {
+			this.abortSearch()
+			EventBus.$once('joinedConversation', ({ token }) => {
+				this.$refs.conversationsList.scrollToConversation(token)
+			})
 			// add as temporary item that will refresh after the joining process is complete
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			EventBus.$emit('resetSearchFilter')
 		},
 
 		hasOneToOneConversationWith(userId) {
@@ -386,6 +393,9 @@ export default {
 		},
 
 		handleClickSearchResult(selectedConversationToken) {
+			EventBus.$once('joinedConversation', ({ token }) => {
+				this.$refs.conversationsList.scrollToConversation(token)
+			})
 			// End the search operation
 			this.abortSearch()
 		},
