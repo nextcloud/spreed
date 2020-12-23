@@ -382,7 +382,7 @@ export default {
 				// Gets the history of the conversation.
 				await this.getOldMessages(true)
 
-				if (this.$route.hash && this.$route.hash.startsWith('#message_')) {
+				if (this.$route?.hash?.startsWith('#message_')) {
 					// scroll to message in URL anchor
 					focussed = this.focusMessage(this.$route.hash.substr(9), false)
 				}
