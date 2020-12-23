@@ -52,8 +52,9 @@ title: Capabilities
 * `conversation-v2` - The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).
 * `chat-reference-id` - an optional referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message
 
-## 10.0
-* `sip-support` - Whether conversations API v3 exists and SIP can be configured and enabled by moderators. The conversations API will come with some new values `sipEnabled` which signals whether this conversation has SIP configured as well as `canEnableSIP` to see if a user can enable it. When it is enabled `attendeePin` will contain the unique dial-in code for this user.
+## 10.1
+* `conversation-v3` - Whether conversations API v3 is available
+* `sip-support` - Whether SIP can be configured and enabled by moderators. The conversations API will come with some new values `sipEnabled` which signals whether this conversation has SIP configured as well as `canEnableSIP` to see if a user can enable it. When it is enabled `attendeePin` will contain the unique dial-in code for this user.
 
 ## 11.0
 * `chat-read-status` - On conversation API v3 and the chat API the last common read message is exposed which can be used to update the "read status" flag of own chat messages. The info should be shown only when the user also shares their read status. The user's value can be found in `config => chat => read-privacy`.

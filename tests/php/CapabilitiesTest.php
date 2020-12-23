@@ -43,12 +43,47 @@ class CapabilitiesTest extends TestCase {
 	protected $talkConfig;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
+	/** @var array */
+	protected $baseFeatures;
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+
+		$this->baseFeatures = [
+			'audio',
+			'video',
+			'chat-v2',
+			'conversation-v2',
+			'guest-signaling',
+			'empty-group-room',
+			'guest-display-names',
+			'multi-room-users',
+			'favorites',
+			'last-room-activity',
+			'no-ping',
+			'system-messages',
+			'mention-flag',
+			'in-call-flags',
+			'notification-levels',
+			'invite-groups-and-mails',
+			'locked-one-to-one-rooms',
+			'read-only-rooms',
+			'listable-rooms',
+			'chat-read-marker',
+			'webinary-lobby',
+			'start-call-flag',
+			'chat-replies',
+			'circles-support',
+			'force-mute',
+			'conversation-v3',
+			'sip-support',
+			'chat-read-status',
+			'phonebook-search',
+			'raise-hand',
+		];
 	}
 
 	public function testGetCapabilitiesGuest(): void {
@@ -75,37 +110,7 @@ class CapabilitiesTest extends TestCase {
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
-				'features' => [
-					'audio',
-					'video',
-					'chat-v2',
-					'conversation-v2',
-					'guest-signaling',
-					'empty-group-room',
-					'guest-display-names',
-					'multi-room-users',
-					'favorites',
-					'last-room-activity',
-					'no-ping',
-					'system-messages',
-					'mention-flag',
-					'in-call-flags',
-					'notification-levels',
-					'invite-groups-and-mails',
-					'locked-one-to-one-rooms',
-					'read-only-rooms',
-					'listable-rooms',
-					'chat-read-marker',
-					'webinary-lobby',
-					'start-call-flag',
-					'chat-replies',
-					'circles-support',
-					'force-mute',
-					'sip-support',
-					'chat-read-status',
-					'phonebook-search',
-					'raise-hand',
-				],
+				'features' => $this->baseFeatures,
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
@@ -183,38 +188,11 @@ class CapabilitiesTest extends TestCase {
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
-				'features' => [
-					'audio',
-					'video',
-					'chat-v2',
-					'conversation-v2',
-					'guest-signaling',
-					'empty-group-room',
-					'guest-display-names',
-					'multi-room-users',
-					'favorites',
-					'last-room-activity',
-					'no-ping',
-					'system-messages',
-					'mention-flag',
-					'in-call-flags',
-					'notification-levels',
-					'invite-groups-and-mails',
-					'locked-one-to-one-rooms',
-					'read-only-rooms',
-					'listable-rooms',
-					'chat-read-marker',
-					'webinary-lobby',
-					'start-call-flag',
-					'chat-replies',
-					'circles-support',
-					'force-mute',
-					'sip-support',
-					'chat-read-status',
-					'phonebook-search',
-					'raise-hand',
-					'chat-reference-id',
-				],
+				'features' => array_merge(
+					$this->baseFeatures, [
+						'chat-reference-id'
+					]
+				),
 				'config' => [
 					'attachments' => [
 						'allowed' => true,
