@@ -57,9 +57,10 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
 			<div class="message__main__right">
-				<span v-if="hasDate"
+				<span
 					v-tooltip.auto="messageDate"
 					class="date"
+					:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 					:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
 				<!-- Message delivery status indicators -->
 				<div v-if="isTemporary && !isTemporaryUpload"
