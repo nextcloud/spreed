@@ -96,6 +96,7 @@
 					decorative />
 			</button>
 			<Actions
+				v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
@@ -197,6 +198,10 @@ export default {
 		screenSharingButtonHidden: {
 			type: Boolean,
 			default: false,
+		},
+		showActions: {
+			type: Boolean,
+			default: true,
 		},
 	},
 
@@ -771,7 +776,7 @@ export default {
 .network-connection-state {
 	position: absolute;
 	bottom: 3px;
-	right: 45px;
+	right: 12px;
 	width: 32px;
 	height: 32px;
 }

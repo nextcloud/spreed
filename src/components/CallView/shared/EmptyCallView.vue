@@ -19,7 +19,7 @@
   -->
 
 <template>
-	<div class="empty-call-view">
+	<div class="empty-call-view" :class="{'empty-call-view--sidebar': isSidebar}">
 		<div class="icon" :class="iconClass" />
 		<h2>
 			{{ title }}
@@ -46,6 +46,11 @@ export default {
 
 	props: {
 		isGrid: {
+			type: Boolean,
+			default: false,
+		},
+
+		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
@@ -172,6 +177,20 @@ export default {
 
 	h2, p {
 		color: #ffffff;
+	}
+
+	&--sidebar {
+		padding-bottom: 16px;
+
+		h2, p {
+			font-size: 90%;
+		}
+
+		.icon {
+			transform: scale(0.7);
+			margin-top: 0;
+			margin-bottom: 0;
+		}
 	}
 }
 
