@@ -75,8 +75,6 @@ export default {
 
 	mounted() {
 		EventBus.$on('routeChange', this.onRouteChange)
-		EventBus.$on('newMessagePosted', this.onMessagePosted)
-
 		EventBus.$once('joinedConversation', ({ token }) => {
 			this.scrollToConversation(token)
 		})
@@ -84,7 +82,6 @@ export default {
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
-		EventBus.$off('newMessagePosted', this.onMessagePosted)
 	},
 
 	methods: {
