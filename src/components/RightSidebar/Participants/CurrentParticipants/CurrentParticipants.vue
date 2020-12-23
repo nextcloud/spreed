@@ -114,6 +114,7 @@ export default {
 		 * Sort two participants by:
 		 * - online status
 		 * - in call
+		 * - who raised hand first
 		 * - type (moderators before normal participants)
 		 * - user status (dnd at the end)
 		 * - display name
@@ -149,6 +150,22 @@ export default {
 			const p2inCall = participant2.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 			if (p1inCall !== p2inCall) {
 				return p1inCall ? -1 : 1
+			}
+
+			const p1HandRaised = this.$store.getters.getParticipantRaisedHand(session1)
+			const p2HandRaised = this.$store.getters.getParticipantRaisedHand(session2)
+			if (p1HandRaised.state !== p2HandRaised.state) {
+				return p1HandRaised.state ? -1 : 1
+			}
+			// both had raised hands, then pick whoever raised hand first
+			if (p1HandRaised) {
+				// use MAX_VALUE if not defined to avoid zeroes making it look like
+				// one raised their hands at the birth of time...
+				const t1 = p1HandRaised.timestamp || Number.MAX_VALUE
+				const t2 = p2HandRaised.timestamp || Number.MAX_VALUE
+				if (t1 !== t2) {
+					return t1 - t2
+				}
 			}
 
 			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
