@@ -38,11 +38,11 @@
 				<label for="link_share_settings_toggle_guests">{{ t('spreed', 'Allow guests') }}</label>
 			</div>
 		</div>
-		<div class="app-settings-subsection">
+		<div v-show="isSharedPublicly" class="app-settings-subsection">
 			<div id="link_share_settings_password_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
 			</div>
-			<div v-show="isSharedPublicly">
+			<div>
 				<input id="link_share_settings_toggle_password"
 					ref="togglePassword"
 					aria-describedby="link_share_settings_password_hint"
@@ -85,7 +85,7 @@
 			<button
 				ref="copyLinkButton"
 				@click.prevent="handleCopyLink">
-				<span class="icon icon-clippy" />{{ t('spreed', 'Copy public link') }}
+				<span class="icon icon-clippy" />{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
 	</div>
