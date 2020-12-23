@@ -21,7 +21,10 @@
 
 <template>
 	<div id="call-container">
-		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" />
+		<EmptyCallView
+			v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
+			:is-sidebar="isSidebar"
+		/>
 		<div id="videos">
 			<LocalMediaControls
 				v-if="!isGrid"

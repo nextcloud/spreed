@@ -759,6 +759,7 @@ export default {
 
 .empty-call-view {
 	position: relative;
+	padding: 16px;
 }
 
 .local-video-stripe {
