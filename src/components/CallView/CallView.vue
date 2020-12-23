@@ -409,7 +409,8 @@ export default {
 				this.raisedHandUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
-				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raisedHand: { state: false } })
+				// FIXME: when using HPB sessionId doesn't match
+				this.$store.dispatch('setParticipantHandRaised', { sessionId: removedModelId, raisedHand: { state: false } })
 
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
@@ -499,7 +500,8 @@ export default {
 
 			// update in callViewStore
 			this.$store.dispatch('setParticipantHandRaised', {
-				peerId: callParticipantModel.attributes.peerId,
+				// FIXME: when using HPB sessionId doesn't match
+				sessionId: callParticipantModel.attributes.peerId,
 				raisedHand: raisedHand,
 			})
 		},

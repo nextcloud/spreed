@@ -582,7 +582,8 @@ export default {
 			this.$store.dispatch(
 				'setParticipantHandRaised',
 				{
-					peerId: this.localCallParticipantModel.attributes.peerId,
+					// FIXME: when using HPB these don't match
+					sessionId: this.localCallParticipantModel.attributes.peerId,
 					raisedHand: this.model.attributes.raisedHand,
 				}
 			)
