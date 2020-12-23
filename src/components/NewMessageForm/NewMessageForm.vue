@@ -267,8 +267,6 @@ export default {
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
-					// Scrolls the conversationlist to conversation
-					EventBus.$emit('newMessagePosted', { token: this.token, message: temporaryMessage })
 				} catch (error) {
 					let statusCode = null
 					console.debug(`error while submitting message ${error}`, error)
