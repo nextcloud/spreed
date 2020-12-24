@@ -347,7 +347,6 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Password protection" : "Password protection",
     "Enter a password" : "Picatz un senhal",
-    "Copy public link" : "Copiar ligam public",
     "Delete conversation" : "Suprimir la conversacion",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
