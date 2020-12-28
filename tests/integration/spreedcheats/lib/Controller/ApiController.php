@@ -42,7 +42,6 @@ class ApiController extends OCSController {
 	) {
 		parent::__construct($appName, $request);
 		$this->db = $db;
-		$this->userManager = $userManager;
 	}
 
 	/**
