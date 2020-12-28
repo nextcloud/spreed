@@ -133,6 +133,13 @@ the main body of the message as well as a quote.
 						</ActionButton>
 					</template>
 					<ActionButton
+						v-if="isPrivateReplyable"
+						icon="icon-user"
+						:close-after-click="true"
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply private') }}
+					</ActionButton>
+					<ActionButton
 						v-if="isDeleteable"
 						icon="icon-delete"
 						:close-after-click="true"
@@ -171,6 +178,7 @@ import {
 	showWarning,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import { createOneToOneConversation } from '../../../../services/conversationsService'
 
 export default {
 	name: 'Message',
@@ -494,6 +502,12 @@ export default {
 					|| this.isMyMsg)
 		},
 
+		isPrivateReplyable() {
+			return (this.conversation.type === 3
+			&& !this.isMyMsg
+			&& this.actorType !== 'guests')
+		},
+
 		messageActions() {
 			return this.$store.getters.messageActions
 		},
@@ -602,6 +616,13 @@ export default {
 
 		handleMouseleave() {
 			this.showActions = false
+		},
+		async handlePrivateReply() {
+			// open the 1:1 conversation
+			const response = await createOneToOneConversation(this.actorId)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
