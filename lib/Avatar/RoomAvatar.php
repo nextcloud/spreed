@@ -52,15 +52,20 @@ class RoomAvatar implements IAvatar {
 	/** @var LoggerInterface */
 	private $logger;
 
+	/** @var Util */
+	private $util;
+
 	public function __construct(
 			ISimpleFolder $folder,
 			Room $room,
 			IL10N $l,
-			LoggerInterface $logger) {
+			LoggerInterface $logger,
+			Util $util) {
 		$this->folder = $folder;
 		$this->room = $room;
 		$this->l = $l;
 		$this->logger = $logger;
+		$this->util = $util;
 	}
 
 	public function getRoom(): Room {
@@ -226,6 +231,12 @@ class RoomAvatar implements IAvatar {
 	 */
 	public function getFile($size) {
 		$size = (int) $size;
+
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+			$userAvatar = $this->util->getUserAvatarForOtherParticipant($this->room);
+
+			return $userAvatar->getFile($size);
+		}
 
 		$extension = $this->getExtension();
 
