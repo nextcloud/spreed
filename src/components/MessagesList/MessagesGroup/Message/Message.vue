@@ -490,7 +490,10 @@ export default {
 			EventBus.$emit('focusChatInput')
 		},
 		handleDelete() {
-			this.$store.dispatch('deleteMessage', this.message)
+			this.$store.dispatch('deleteMessage', {
+				token: this.token,
+				id: this.id,
+			})
 		},
 	},
 }
