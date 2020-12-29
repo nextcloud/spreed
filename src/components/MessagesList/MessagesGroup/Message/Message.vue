@@ -129,6 +129,13 @@ the main body of the message as well as a quote.
 							{{ action.label }}
 						</ActionButton>
 					</template>
+					<ActionButton
+						v-if="isDeleteable"
+						icon="icon-delete"
+						:close-after-click="true"
+						@click.stop="handleDelete">
+						{{ t('spreed', 'Delete') }}
+					</ActionButton>
 				</Actions>
 			</div>
 		</div>
@@ -446,6 +453,18 @@ export default {
 			return t('spreed', 'You can not send messages to this conversation at the moment')
 		},
 
+		isMyMsg() {
+			return this.actorId === this.$store.getters.getActorId() && this.actorType === this.$store.getters.getActorType()
+		},
+
+		isDeleteable() {
+			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
+				&& this.messageType === 'comment'
+				&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
+					|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR
+					|| this.isMyMsg)
+		},
+
 		messageActions() {
 			return this.$store.getters.messageActions
 		},
@@ -457,7 +476,6 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
-
 	},
 
 	watch: {
@@ -516,7 +534,10 @@ export default {
 			EventBus.$emit('focusChatInput')
 		},
 		handleDelete() {
-			this.$store.dispatch('deleteMessage', this.message)
+			this.$store.dispatch('deleteMessage', {
+				token: this.token,
+				id: this.id,
+			})
 		},
 	},
 }
