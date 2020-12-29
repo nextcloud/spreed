@@ -83,7 +83,7 @@ class RoomAvatarProvider implements IAvatarProvider {
 			$folder = $this->appData->newFolder('avatar/' . $id);
 		}
 
-		return new RoomAvatar($folder, $room, $this->l, $this->logger);
+		return new RoomAvatar($folder, $room, $this->l, $this->logger, $this->util);
 	}
 
 	/**
