@@ -21,7 +21,7 @@
 
 <template>
 	<div ref="description"
-		v-click-outside="handleClickOutside"
+		v-mousedown-outside="handleMouseDownOutside"
 		class="description"
 		:class="{'description--editing': editing, 'description--expanded': expanded}">
 		<RichContentEditable
@@ -91,7 +91,6 @@ import Close from 'vue-material-design-icons/Close'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
 import RichContentEditable from '@nextcloud/vue/dist/Components/RichContenteditable'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { directive as ClickOutside } from 'v-click-outside'
 
 export default {
 	name: 'Description',
@@ -105,7 +104,6 @@ export default {
 
 	directives: {
 		Tooltip,
-		ClickOutside,
 	},
 
 	props: {
@@ -268,7 +266,7 @@ export default {
 		},
 
 		// Collapse the description or dismiss editing
-		handleClickOutside() {
+		handleMouseDownOutside(event) {
 			this.expanded = false
 			this.$emit('update:editing', false)
 		},

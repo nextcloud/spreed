@@ -42,6 +42,7 @@ import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
+import vOutsideEvents from 'vue-outside-events'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -67,6 +68,7 @@ Vue.use(VueRouter)
 Vue.use(VueClipboard)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+Vue.use(vOutsideEvents)
 
 export default new Vue({
 	el: '#content',
