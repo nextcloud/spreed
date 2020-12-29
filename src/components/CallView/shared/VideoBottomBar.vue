@@ -257,7 +257,6 @@ export default {
 		color: white;
 		margin-right: 4px;
 		position: relative;
-		font-size: 20px;
 		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		&--promoted {
 			font-weight: bold;
