@@ -33,6 +33,7 @@ import { getRequestToken } from '@nextcloud/auth'
 // Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueShortKey from 'vue-shortkey'
+import vOutsideEvents from 'vue-outside-events'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -55,6 +56,7 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+Vue.use(vOutsideEvents)
 
 /**
  * Wraps all the body contents in its own container.
