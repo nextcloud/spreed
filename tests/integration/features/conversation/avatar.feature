@@ -16,8 +16,10 @@ Feature: avatar
     And user "moderator" sets avatar for room "one-to-one room" from file "data/green-square-256.png" with 404
     And user "not invited user" sets avatar for room "one-to-one room" from file "data/green-square-256.png" with 404
     And user "guest" sets avatar for room "one-to-one room" from file "data/green-square-256.png" with 404
-    Then user "owner" gets avatar for room "one-to-one room" with size "256" with 404
-    And user "moderator" gets avatar for room "one-to-one room" with size "256" with 404
+    Then user "owner" gets avatar for room "one-to-one room"
+    And last avatar is a default avatar of size "128"
+    And user "moderator" gets avatar for room "one-to-one room"
+    And last avatar is a default avatar of size "128"
 
 
 

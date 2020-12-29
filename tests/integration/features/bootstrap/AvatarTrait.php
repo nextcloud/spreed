@@ -143,6 +143,20 @@ trait AvatarTrait {
 	}
 
 	/**
+	 * @Then last avatar is a default avatar of size :size
+	 *
+	 * @param string size
+	 */
+	public function lastAvatarIsADefaultAvatarOfSize(string $size) {
+		$this->theFollowingHeadersShouldBeSet(new TableNode([
+			[ 'Content-Type', 'image/png' ],
+			[ 'X-NC-IsCustomAvatar', '0' ]
+		]));
+		$this->lastAvatarIsASquareOfSize($size);
+		$this->lastAvatarIsNotASingleColor();
+	}
+
+	/**
 	 * @Then last avatar is a custom avatar of size :size and color :color
 	 *
 	 * @param string size
