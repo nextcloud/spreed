@@ -48,6 +48,8 @@
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
         `description` | string | v3 | Description of the conversation (can also be empty)
+        `avatarId` | string | v3 | The type of the avatar ("custom", "user", "icon-public", "icon-contacts", "icon-mail", "icon-password", "icon-changelog", "icon-file")
+        `avatarVersion` | int | v3 | The version of the avatar
         `participantType` | int | * | Permissions level of the current user
         `attendeeId` | int | v3 | Unique attendee id
         `attendeePin` | string | v3 | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
