@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Avatar\RoomAvatar;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -172,6 +173,8 @@ class Manager {
 			(string) $row['token'],
 			(string) $row['name'],
 			(string) $row['description'],
+			(string) $row['avatar_id'],
+			(int) $row['avatar_version'],
 			(string) $row['password'],
 			(string) $row['remote_server'],
 			(string) $row['remote_token'],
@@ -910,6 +913,8 @@ class Manager {
 	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
 		$token = $this->getNewToken();
 
+		$defaultRoomAvatarType = RoomAvatar::getDefaultRoomAvatarType($type, $objectType);
+
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert('talk_rooms')
 			->values(
@@ -917,6 +922,7 @@ class Manager {
 					'name' => $insert->createNamedParameter($name),
 					'type' => $insert->createNamedParameter($type, IQueryBuilder::PARAM_INT),
 					'token' => $insert->createNamedParameter($token),
+					'avatar_id' => $insert->createNamedParameter($defaultRoomAvatarType),
 				]
 			);
 

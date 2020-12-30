@@ -154,11 +154,18 @@ class RoomAvatarProvider implements IAvatarProvider {
 	/**
 	 * Returns the latest value of the avatar version
 	 *
-	 * @param IAvatar $avatar ignored
-	 * @return int 0, as versions are not supported by room avatars
+	 * @param IAvatar $avatar
+	 * @return int
+	 * @throws \InvalidArgumentException if the given avatar is not a RoomAvatar
 	 */
 	public function getVersion(IAvatar $avatar): int {
-		return 0;
+		if (!($avatar instanceof RoomAvatar)) {
+			throw new \InvalidArgumentException();
+		}
+
+		$room = $avatar->getRoom();
+
+		return $room->getAvatarVersion();
 	}
 
 	/**

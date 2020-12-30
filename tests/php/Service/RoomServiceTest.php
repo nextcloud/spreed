@@ -371,6 +371,8 @@ class RoomServiceTest extends TestCase {
 			'foobar',
 			'Test',
 			'description',
+			'avatar-id',
+			1,
 			'passy',
 			'',
 			'',

@@ -170,6 +170,8 @@ class Room {
 	private string $token;
 	private string $name;
 	private string $description;
+	private string $avatarId;
+	private int $avatarVersion;
 	private string $password;
 	private string $remoteServer;
 	private string $remoteToken;
@@ -203,6 +205,8 @@ class Room {
 								string $token,
 								string $name,
 								string $description,
+								string $avatarId,
+								int $avatarVersion,
 								string $password,
 								string $remoteServer,
 								string $remoteToken,
@@ -233,6 +237,8 @@ class Room {
 		$this->token = $token;
 		$this->name = $name;
 		$this->description = $description;
+		$this->avatarId = $avatarId;
+		$this->avatarVersion = $avatarVersion;
 		$this->password = $password;
 		$this->remoteServer = $remoteServer;
 		$this->remoteToken = $remoteToken;
@@ -374,6 +380,14 @@ class Room {
 
 	public function setDescription(string $description): void {
 		$this->description = $description;
+	}
+
+	public function getAvatarId(): string {
+		return $this->avatarId;
+	}
+
+	public function getAvatarVersion(): int {
+		return $this->avatarVersion;
 	}
 
 	/**
