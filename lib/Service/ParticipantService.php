@@ -548,13 +548,13 @@ class ParticipantService {
 			->selectAlias('a.id', 'a_id')
 			->addSelect('s.*')
 			->selectAlias('s.id', 's_id')
-			->from('talk_sessions', 's')
+			->from('talk_attendees', 'a')
 			->leftJoin(
-				's', 'talk_attendees', 'a',
+				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}
