@@ -83,6 +83,7 @@ class CapabilitiesTest extends TestCase {
 			'chat-read-status',
 			'phonebook-search',
 			'raise-hand',
+			'room-description',
 		];
 	}
 
