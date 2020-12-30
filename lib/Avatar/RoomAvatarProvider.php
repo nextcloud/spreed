@@ -33,11 +33,10 @@ use OCA\Talk\Room;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\IAvatar;
-use OCP\IAvatarProvider;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 
-class RoomAvatarProvider implements IAvatarProvider {
+class RoomAvatarProvider {
 
 	/** @var IAppData */
 	private $appData;
