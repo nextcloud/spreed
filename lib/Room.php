@@ -399,6 +399,8 @@ class Room {
 		if ($roomModified) {
 			$properties = array_merge($properties, [
 				'description' => $this->getDescription(),
+				'avatarId' => $this->getAvatarId(),
+				'avatarVersion' => $this->getAvatarVersion(),
 			]);
 		}
 
