@@ -116,6 +116,13 @@ the main body of the message as well as a quote.
 					class="message__main__right__actions"
 					:class="{ 'tall' : isTallEnough }">
 					<ActionButton
+						v-if="showModerationOptions"
+						icon="icon-star"
+						:close-after-click="true"
+						@click.stop="togglePin">
+						{{ t('spreed', 'Pin') }}
+					</ActionButton>
+					<ActionButton
 						v-if="isReplyable"
 						icon="icon-reply"
 						:close-after-click="true"
@@ -128,13 +135,6 @@ the main body of the message as well as a quote.
 						:close-after-click="true"
 						@click.stop="handlePrivateReply">
 						{{ t('spreed', 'Reply privately') }}
-					</ActionButton>
-					<ActionButton
-						v-if="showModerationOptions"
-						icon="icon-star"
-						:close-after-click="true"
-						@click.stop="togglePin">
-						{{ t('spreed', 'Pin') }}
 					</ActionButton>
 					<template
 						v-for="action in messageActions">
