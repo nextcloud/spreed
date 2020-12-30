@@ -45,7 +45,6 @@
 
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { CONVERSATION } from '../constants'
 
 export default {
 	name: 'ConversationIcon',
@@ -84,21 +83,11 @@ export default {
 			return !this.hideFavorite && this.item.isFavorite
 		},
 		iconClass() {
-			if (this.item.objectType === 'file') {
-				return 'icon-file'
-			} else if (this.item.objectType === 'share:password') {
-				return 'icon-password'
-			} else if (this.item.objectType === 'emails') {
-				return 'icon-mail'
-			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-				return 'icon-changelog'
-			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
-				return 'icon-contacts'
-			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return 'icon-public'
+			if (!this.item.avatarId || !this.item.avatarId.startsWith('icon')) {
+				return null
 			}
 
-			return ''
+			return this.item.avatarId
 		},
 	},
 }
