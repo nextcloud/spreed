@@ -494,6 +494,8 @@ class Room {
 			'listable' => $this->getListable(),
 			'active-since' => $this->getActiveSince(),
 			'sip-enabled' => $this->getSIPEnabled(),
+			'avatarId' => $this->getAvatarId(),
+			'avatarVersion' => $this->getAvatarVersion(),
 		];
 
 		if ($roomModified) {

@@ -74,6 +74,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, [self::class, 'notifyAfterUsersAdd']);
 		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
+		$dispatcher->addListener(Room::EVENT_AFTER_AVATAR_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
