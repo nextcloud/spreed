@@ -165,6 +165,10 @@ class Room {
 	/** @var string */
 	private $description;
 	/** @var string */
+	private $avatarId;
+	/** @var int */
+	private $avatarVersion;
+	/** @var string */
 	private $password;
 	/** @var int */
 	private $activeGuests;
@@ -202,6 +206,8 @@ class Room {
 								string $token,
 								string $name,
 								string $description,
+								string $avatarId,
+								int $avatarVersion,
 								string $password,
 								int $activeGuests,
 								\DateTime $activeSince = null,
@@ -227,6 +233,8 @@ class Room {
 		$this->token = $token;
 		$this->name = $name;
 		$this->description = $description;
+		$this->avatarId = $avatarId;
+		$this->avatarVersion = $avatarVersion;
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
@@ -312,6 +320,14 @@ class Room {
 
 	public function getDescription(): string {
 		return $this->description;
+	}
+
+	public function getAvatarId(): string {
+		return $this->avatarId;
+	}
+
+	public function getAvatarVersion(): int {
+		return $this->avatarVersion;
 	}
 
 	public function getActiveGuests(): int {

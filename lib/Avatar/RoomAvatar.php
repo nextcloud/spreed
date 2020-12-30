@@ -73,6 +73,42 @@ class RoomAvatar implements IAvatar {
 	}
 
 	/**
+	 * Returns the default room avatar type ("user", "icon-public",
+	 * "icon-contacts"...) for the given room data
+	 *
+	 * @param int $roomType the type of the room
+	 * @param string $objectType the object type of the room
+	 * @return string the room avatar type
+	 */
+	public static function getDefaultRoomAvatarType(int $roomType, string $objectType): string {
+		if ($roomType === Room::ONE_TO_ONE_CALL) {
+			return 'user';
+		}
+
+		if ($objectType === 'emails') {
+			return 'icon-mail';
+		}
+
+		if ($objectType === 'file') {
+			return 'icon-file';
+		}
+
+		if ($objectType === 'share:password') {
+			return 'icon-password';
+		}
+
+		if ($roomType === Room::CHANGELOG_CONVERSATION) {
+			return 'icon-changelog';
+		}
+
+		if ($roomType === Room::GROUP_CALL) {
+			return 'icon-contacts';
+		}
+
+		return 'icon-public';
+	}
+
+	/**
 	 * Gets the room avatar
 	 *
 	 * @param int $size size in px of the avatar, avatars are square, defaults
