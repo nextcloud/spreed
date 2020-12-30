@@ -109,6 +109,20 @@ class RoomAvatar implements IAvatar {
 	}
 
 	/**
+	 * Returns the room avatar type ("custom", "user", "icon-public",
+	 * "icon-contacts"...) of this RoomAvatar
+	 *
+	 * @return string the room avatar type
+	 */
+	public function getRoomAvatarType(): string {
+		if ($this->isCustomAvatar()) {
+			return 'custom';
+		}
+
+		return self::getDefaultRoomAvatarType($this->room->getType(), $this->room->getObjectType());
+	}
+
+	/**
 	 * Gets the room avatar
 	 *
 	 * @param int $size size in px of the avatar, avatars are square, defaults
@@ -163,10 +177,12 @@ class RoomAvatar implements IAvatar {
 
 		$this->validateAvatar($image);
 
-		$this->remove();
+		$this->removeFiles();
 		$type = $this->getAvatarImageType($image);
 		$file = $this->folder->newFile('avatar.' . $type);
 		$file->putContent($data);
+
+		$this->room->setAvatar($this->getRoomAvatarType(), $this->room->getAvatarVersion() + 1);
 	}
 
 	/**
@@ -250,6 +266,17 @@ class RoomAvatar implements IAvatar {
 	 * @return void
 	 */
 	public function remove(): void {
+		$this->removeFiles();
+
+		$this->room->setAvatar($this->getRoomAvatarType(), $this->room->getAvatarVersion() + 1);
+	}
+
+	/**
+	 * Remove the files for the room avatar
+	 *
+	 * @return void
+	 */
+	private function removeFiles(): void {
 		$files = $this->folder->getDirectoryListing();
 
 		// Deletes the original image as well as the resized ones.
