@@ -112,6 +112,7 @@ class Capabilities implements IPublicCapability {
 				'silent-call',
 				'send-call-notification',
 				'talk-polls',
+				'room-avatar',
 			],
 			'config' => [
 				'attachments' => [

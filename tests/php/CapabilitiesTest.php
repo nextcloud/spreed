@@ -124,6 +124,7 @@ class CapabilitiesTest extends TestCase {
 			'talk-polls',
 			'message-expiration',
 			'reactions',
+			'room-avatar',
 		];
 	}
 
