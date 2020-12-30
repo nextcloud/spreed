@@ -30,6 +30,7 @@ use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
+use OCA\Talk\Avatar\Listener as AvatarListener;
 use OCA\Talk\Avatar\RoomAvatarProvider;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
@@ -183,6 +184,7 @@ class Application extends App implements IBootstrap {
 		}
 		ShareListener::register($dispatcher);
 		StatusListener::register($dispatcher);
+		AvatarListener::register($dispatcher);
 
 		$this->registerChatHooks($dispatcher);
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));

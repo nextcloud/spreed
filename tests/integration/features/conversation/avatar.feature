@@ -531,3 +531,56 @@ Feature: avatar
     And user "not invited but joined user" is participant of the following rooms (v3)
       | avatarId    | avatarVersion |
       | icon-public | 3             |
+
+
+
+  Scenario: one-to-one room avatar is updated when user avatar is updated
+    Given user "owner" creates room "one-to-one room"
+      | roomType | 1 |
+      | invite   | moderator |
+    When user "owner" logs in
+    And logged in user posts temporary avatar from file "data/green-square-256.png"
+    And logged in user crops temporary avatar
+      | x | 0 |
+      | y | 0 |
+      | w | 256 |
+      | h | 256 |
+    Then user "owner" gets avatar for room "one-to-one room" with size "256"
+    And last avatar is a default avatar of size "256"
+    And user "moderator" gets avatar for room "one-to-one room" with size "256"
+    # Although the user avatar is a custom avatar the room avatar is still a
+    # default avatar.
+    And the following headers should be set
+      | Content-Type | image/png |
+      | X-NC-IsCustomAvatar | 0 |
+    And last avatar is a square of size "256"
+    And last avatar is a single "#00FF00" color
+    And user "owner" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | user     | 2             |
+    And user "moderator" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | user     | 2             |
+
+  Scenario: one-to-one room avatar is updated when user avatar is deleted
+    Given user "owner" creates room "one-to-one room"
+      | roomType | 1 |
+      | invite   | moderator |
+    And user "owner" logs in
+    And logged in user posts temporary avatar from file "data/green-square-256.png"
+    And logged in user crops temporary avatar
+      | x | 0 |
+      | y | 0 |
+      | w | 256 |
+      | h | 256 |
+    When logged in user deletes the user avatar
+    Then user "owner" gets avatar for room "one-to-one room"
+    And last avatar is a default avatar of size "128"
+    And user "moderator" gets avatar for room "one-to-one room"
+    And last avatar is a default avatar of size "128"
+    And user "owner" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | user     | 3             |
+    And user "moderator" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | user     | 3             |

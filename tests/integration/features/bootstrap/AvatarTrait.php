@@ -143,6 +143,49 @@ trait AvatarTrait {
 	}
 
 	/**
+	 * @When logged in user posts temporary avatar from file :source
+	 *
+	 * @param string $source
+	 */
+	public function loggedInUserPostsTemporaryAvatarFromFile(string $source) {
+		$file = \GuzzleHttp\Psr7\stream_for(fopen($source, 'r'));
+
+		$this->sendingToWithRequestToken('POST', '/index.php/avatar',
+			[
+				'multipart' => [
+					[
+						'name' => 'files[]',
+						'contents' => $file
+					]
+				]
+			]);
+		$this->assertStatusCode($this->response, '200');
+	}
+
+	/**
+	 * @When logged in user crops temporary avatar
+	 *
+	 * @param TableNode $crop
+	 */
+	public function loggedInUserCropsTemporaryAvatar(TableNode $crop) {
+		$parameters = [];
+		foreach ($crop->getRowsHash() as $key => $value) {
+			$parameters[] = 'crop[' . $key . ']=' . $value;
+		}
+
+		$this->sendingToWithRequestToken('POST', '/index.php/avatar/cropped?' . implode('&', $parameters));
+		$this->assertStatusCode($this->response, '200');
+	}
+
+	/**
+	 * @When logged in user deletes the user avatar
+	 */
+	public function loggedInUserDeletesTheUserAvatar() {
+		$this->sendingToWithRequesttoken('DELETE', '/index.php/avatar');
+		$this->assertStatusCode($this->response, '200');
+	}
+
+	/**
 	 * @Then last avatar is a default avatar of size :size
 	 *
 	 * @param string size
