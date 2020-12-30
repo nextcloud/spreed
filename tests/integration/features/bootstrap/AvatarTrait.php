@@ -74,7 +74,7 @@ trait AvatarTrait {
 	 */
 	public function userGetsAvatarForRoomWithSizeWith(string $user, string $identifier, string $size, string $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/core/avatar/room/' . FeatureContext::getTokenForIdentifier($identifier) . '/' . $size, null);
+		$this->sendRequest('GET', '/apps/spreed/api/v3/avatar/' . FeatureContext::getTokenForIdentifier($identifier) . '/' . $size, null);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($statusCode !== '200') {
@@ -107,7 +107,7 @@ trait AvatarTrait {
 		$file = \GuzzleHttp\Psr7\stream_for(fopen($source, 'r'));
 
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/core/avatar/room/' . FeatureContext::getTokenForIdentifier($identifier),
+		$this->sendRequest('POST', '/apps/spreed/api/v3/avatar/' . FeatureContext::getTokenForIdentifier($identifier),
 			[
 				'multipart' => [
 					[
@@ -138,7 +138,7 @@ trait AvatarTrait {
 	 */
 	public function userDeletesAvatarForRoomWith(string $user, string $identifier, string $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('DELETE', '/core/avatar/room/' . FeatureContext::getTokenForIdentifier($identifier), null);
+		$this->sendRequest('DELETE', '/apps/spreed/api/v3/avatar/' . FeatureContext::getTokenForIdentifier($identifier), null);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
