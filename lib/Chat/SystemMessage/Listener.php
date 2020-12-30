@@ -84,6 +84,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, self::class . '::sendSystemMessageAboutConversationCreated');
 		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, self::class . '::sendSystemMessageAboutConversationRenamed');
 		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, self::class . '::sendSystemMessageAboutRoomDescriptionChanges');
+		$dispatcher->addListener(Room::EVENT_AFTER_AVATAR_SET, self::class . '::sendSystemMessageAfterAvatarSet');
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, self::class . '::sendSystemMessageAboutRoomPassword');
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, self::class . '::sendSystemGuestPermissionsMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, self::class . '::sendSystemReadOnlyMessage');
@@ -165,6 +166,18 @@ class Listener implements IEventListener {
 			]);
 		} else {
 			$listener->sendSystemMessage($room, 'description_removed');
+		}
+	}
+
+	public static function sendSystemMessageAfterAvatarSet(ModifyRoomEvent $event) {
+		$room = $event->getRoom();
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
+
+		if ($event->getNewValue() === 'custom') {
+			$listener->sendSystemMessage($room, 'avatar_set');
+		} elseif ($event->getNewValue() !== 'custom' && $event->getOldValue() === 'custom') {
+			$listener->sendSystemMessage($room, 'avatar_removed');
 		}
 	}
 
