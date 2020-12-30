@@ -460,3 +460,74 @@ Feature: avatar
     And user "owner" sets avatar for room "group room" from file "data/green-square-256.png"
     When user "owner" gets avatar for room "group room" with size "128"
     Then last avatar is a custom avatar of size "128" and color "#00FF00"
+
+
+
+  Scenario: room list returns the default avatar after room creation
+    When user "owner" creates room "public room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "owner" adds "moderator" to room "public room" with 200
+    And user "owner" promotes "moderator" in room "public room" with 200
+    And user "owner" adds "invited user" to room "public room" with 200
+    And user "not invited but joined user" joins room "public room" with 200
+    Then user "owner" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 1             |
+    And user "moderator" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 1             |
+    And user "invited user" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 1             |
+    And user "not invited but joined user" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 1             |
+
+  Scenario: room list returns a custom avatar after avatar is set
+    Given user "owner" creates room "public room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "owner" adds "moderator" to room "public room" with 200
+    And user "owner" promotes "moderator" in room "public room" with 200
+    And user "owner" adds "invited user" to room "public room" with 200
+    And user "not invited but joined user" joins room "public room" with 200
+    When user "owner" sets avatar for room "public room" from file "data/green-square-256.png"
+    Then user "owner" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | custom   | 2             |
+    And user "moderator" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | custom   | 2             |
+    And user "invited user" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | custom   | 2             |
+    And user "not invited but joined user" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | custom   | 2             |
+
+  Scenario: room list returns a default avatar after avatar is deleted
+    Given user "owner" creates room "public room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "owner" adds "moderator" to room "public room" with 200
+    And user "owner" promotes "moderator" in room "public room" with 200
+    And user "owner" adds "invited user" to room "public room" with 200
+    And user "not invited but joined user" joins room "public room" with 200
+    And user "owner" sets avatar for room "public room" from file "data/green-square-256.png"
+    And user "owner" is participant of the following rooms (v3)
+      | avatarId | avatarVersion |
+      | custom   | 2             |
+    When user "owner" deletes avatar for room "public room"
+    Then user "owner" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 3             |
+    And user "moderator" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 3             |
+    And user "invited user" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 3             |
+    And user "not invited but joined user" is participant of the following rooms (v3)
+      | avatarId    | avatarVersion |
+      | icon-public | 3             |

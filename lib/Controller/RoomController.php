@@ -408,6 +408,8 @@ class RoomController extends AEnvironmentAwareController {
 			'canEnableSIP' => false,
 			'attendeePin' => '',
 			'description' => '',
+			'avatarId' => '',
+			'avatarVersion' => 0,
 			'lastCommonReadMessage' => 0,
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
@@ -477,6 +479,8 @@ class RoomController extends AEnvironmentAwareController {
 			'callPermissions' => $room->getCallPermissions(),
 			'defaultPermissions' => $room->getDefaultPermissions(),
 			'description' => $room->getDescription(),
+			'avatarId' => $room->getAvatarId(),
+			'avatarVersion' => $room->getAvatarVersion(),
 			'listable' => $room->getListable(),
 			'messageExpiration' => $room->getMessageExpiration(),
 		]);
