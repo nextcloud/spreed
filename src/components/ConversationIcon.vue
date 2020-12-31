@@ -24,12 +24,9 @@
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
-		<Avatar v-else
-			:size="44"
-			:user="item.name"
-			:display-name="item.displayName"
-			menu-position="left"
-			class="conversation-icon__avatar" />
+		<div v-else
+			class="avatar icon"
+			:style="avatarImageStyle" />
 		<div v-if="showCall"
 			class="overlap-icon">
 			<span class="icon icon-active-call" />
@@ -44,13 +41,11 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 export default {
 	name: 'ConversationIcon',
-	components: {
-		Avatar,
-	},
 	props: {
 		/**
 		 * Allow to hide the favorite icon, e.g. on mentions
@@ -75,6 +70,11 @@ export default {
 			},
 		},
 	},
+	data: function() {
+		return {
+			avatarImage: null,
+		}
+	},
 	computed: {
 		showCall() {
 			return !this.hideCall && this.item.hasCall
@@ -88,6 +88,39 @@ export default {
 			}
 
 			return this.item.avatarId
+		},
+		avatarImageId() {
+			if (this.iconClass) {
+				return null
+			}
+
+			return this.item.avatarId + '-' + this.item.avatarVersion
+		},
+		avatarImageStyle() {
+			return {
+				'background-image': 'url(' + this.avatarImage + ')',
+				'background-size': '44px',
+			}
+		},
+	},
+	watch: {
+		avatarImageId: {
+			immediate: true,
+			async handler() {
+				if (!this.avatarImageId) {
+					this.avatarImage = null
+					return
+				}
+
+				try {
+					const avatar = await axios.get(generateOcsUrl('apps/spreed/api/v3/avatar', 2) + this.item.token + '/44?version=' + this.item.avatarVersion, {
+						responseType: 'blob',
+					})
+					this.avatarImage = URL.createObjectURL(avatar.data)
+				} catch (exception) {
+					console.error('Failed to load avatar image for conversation with token ' + this.item.token, exception)
+				}
+			},
 		},
 	},
 }
