@@ -143,7 +143,7 @@ class Listener {
 
 			if ($event->getNewValue() === 'custom') {
 				$listener->sendSystemMessage($room, 'avatar_set');
-			} else if ($event->getNewValue() !== 'custom' && $event->getOldValue() === 'custom') {
+			} elseif ($event->getNewValue() !== 'custom' && $event->getOldValue() === 'custom') {
 				$listener->sendSystemMessage($room, 'avatar_removed');
 			}
 		});
