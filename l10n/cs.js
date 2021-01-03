@@ -138,6 +138,7 @@ OC.L10N.register(
     "Join »%s«" : "Připojit se k „%s“",
     "Dial-in information" : "Informace o volání sem",
     "Meeting ID" : "Identif. schůzky",
+    "Your PIN" : "Váš PIN",
     "Password request: %s" : "Požadavek na heslo: %s",
     "Private conversation" : "Soukromá konverzace",
     "Deleted user (%s)" : "Smazán uživatel (%s)",
