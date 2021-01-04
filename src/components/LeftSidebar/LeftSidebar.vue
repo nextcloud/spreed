@@ -393,9 +393,11 @@ export default {
 		},
 
 		handleClickSearchResult(selectedConversationToken) {
-			EventBus.$once('joinedConversation', ({ token }) => {
-				this.$refs.conversationsList.scrollToConversation(token)
-			})
+			if (this.searchText !== '') {
+				EventBus.$once('joinedConversation', ({ token }) => {
+					this.$refs.conversationsList.scrollToConversation(token)
+				})
+			}
 			// End the search operation
 			this.abortSearch()
 		},
