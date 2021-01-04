@@ -716,7 +716,7 @@ OC.L10N.register(
     "Chat notifications" : "Chat-Benachrichtigungen",
     "Leave conversation" : "Unterhaltung verlassen",
     "Delete conversation" : "Unterhaltung löschen",
-    "Remove from favorites" : "Aus den Favoriten entfernen",
+    "Remove from favorites" : "Von Favoriten entfernen",
     "Add to favorites" : "Zu den Favoriten hinzufügen",
     "Joining conversation …" : "Unterhaltung beitreten …",
     "You: {lastMessage}" : "Sie: {lastMessage}",
