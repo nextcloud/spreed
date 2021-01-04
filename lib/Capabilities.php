@@ -86,6 +86,7 @@ class Capabilities implements IPublicCapability {
 				'chat-read-status',
 				'phonebook-search',
 				'raise-hand',
+				'room-description',
 			],
 			'config' => [
 				'attachments' => [
