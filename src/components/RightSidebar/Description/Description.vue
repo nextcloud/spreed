@@ -21,12 +21,12 @@
 
 <template>
 	<div ref="description"
+		:key="forceReRenderKey"
 		v-mousedown-outside="handleMouseDownOutside"
 		class="description"
 		:class="{'description--editing': editing, 'description--expanded': expanded}">
 		<RichContentEditable
 			ref="contenteditable"
-			:key="forceReRenderKey"
 			:value.sync="descriptionText"
 			class="description__contenteditable"
 			:auto-complete="()=>{}"
@@ -221,6 +221,11 @@ export default {
 			}
 		},
 	},
+	updated() {
+		if (!this.editing && !this.expanded) {
+			this.checkOverflow()
+		}
+	},
 
 	methods: {
 		handleEditDescription() {
@@ -272,12 +277,13 @@ export default {
 		},
 
 		checkOverflow() {
-			const descriptionScrollHeight = this.$refs.description.offsetHeight
-			const descriptionOffsetHeight = this.$refs.contenteditable.$refs.contenteditable.offsetHeight
-			this.overflows = descriptionScrollHeight > descriptionOffsetHeight
+			const descriptionHeight = this.$refs.description.clientHeight
+			const contenteditableHeight = this.$refs.contenteditable.$refs.contenteditable.scrollHeight
+			this.overflows = descriptionHeight < contenteditableHeight
 		},
 	},
 }
+
 </script>
 
 <style lang="scss" scoped>
