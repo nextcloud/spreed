@@ -14,10 +14,9 @@
 		"psalm:clear": "psalm --clear-cache && psalm --clear-global-cache",
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
-	"minimum-stability": "dev",
 	"require-dev": {
 		"nextcloud/coding-standard": "^0.4.0",
-		"vimeo/psalm": "^4.1",
-		"christophwurst/nextcloud": "dev-master"
+		"vimeo/psalm": "^4.3.2",
+		"christophwurst/nextcloud": "dev-master@dev"
 	}
 }
