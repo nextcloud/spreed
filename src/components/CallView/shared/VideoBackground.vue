@@ -138,6 +138,15 @@ export default {
 			}
 		},
 		// Special computed property to combine the properties that should be
+		// watched to set (or not) the blurred background image source.
+		backgroundImageUrlToBlur() {
+			if (this.useCssBlurFilter) {
+				return null
+			}
+
+			return this.backgroundImageUrl
+		},
+		// Special computed property to combine the properties that should be
 		// watched to generate (or not) the blurred background image.
 		generatedBackgroundBlur() {
 			if (!this.hasPicture || this.useCssBlurFilter) {
@@ -153,12 +162,12 @@ export default {
 	},
 
 	watch: {
-		backgroundImageUrl: {
+		backgroundImageUrlToBlur: {
 			immediate: true,
 			handler() {
 				this.blurredBackgroundImageSource = null
 
-				if (!this.backgroundImageUrl) {
+				if (!this.backgroundImageUrlToBlur) {
 					return
 				}
 
@@ -168,7 +177,7 @@ export default {
 						this.blurredBackgroundImageSource = imageBitmap
 					})
 				}
-				image.src = this.backgroundImageUrl
+				image.src = this.backgroundImageUrlToBlur
 			},
 		},
 		generatedBackgroundBlur: {
