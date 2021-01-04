@@ -174,6 +174,7 @@ export default {
 	flex: 0 0 auto;
 	justify-content: flex-start;
 	padding: 10px 2px 10px 8px;
+	height: 72px;
 	cursor: pointer;
 	&:hover,
 	&:focus  {
@@ -221,6 +222,7 @@ export default {
 			align-items: flex-start;
 			justify-content: space-between;
 			white-space: nowrap;
+			width: 240px;
 
 			&__subtitle {
 				overflow: hidden;
@@ -232,7 +234,7 @@ export default {
 				color: var(--color-text-lighter);
 			}
 			&__counter {
-				margin: -6px 9px 0 0;
+				margin-right: 22px;
 			}
 		}
 	}

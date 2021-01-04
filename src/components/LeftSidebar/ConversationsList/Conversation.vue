@@ -382,7 +382,7 @@ export default {
 	/*
 	 * Always add the bubble
 	 */
-	padding: 4px 6px;
+	padding: 4px 6px !important;
 	border-radius: 10px;
 
 	&:not(.app-navigation-entry__counter--highlighted) {
