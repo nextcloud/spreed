@@ -380,7 +380,7 @@ export default {
 }
 
 .overlay {
-	background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.5) 75%, #FFFFFF 100%);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 1) 100%);
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -388,7 +388,12 @@ export default {
 	right: 0;
 	padding-right: $clickable-area;
 	cursor: pointer;
+
+	body.theme--dark & {
+		background: linear-gradient(180deg, rgba(24, 24, 24, 0) 0%, rgba(24, 24, 24, 0.5) 75%, rgba(24, 24, 24, 1) 100%);
+	}
 }
+
 // Restyle richContentEditable component from our library.
 ::v-deep .rich-contenteditable__input {
 	min-height: var(--default-line-height);
