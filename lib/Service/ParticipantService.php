@@ -606,9 +606,9 @@ class ParticipantService {
 		$query = $this->connection->getQueryBuilder();
 
 		$query->select('a.actor_id')
-			->from('talk_sessions', 's')
+			->from('talk_attendees', 'a')
 			->leftJoin(
-				's', 'talk_attendees', 'a',
+				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
