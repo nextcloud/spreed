@@ -81,6 +81,7 @@ class Capabilities implements IPublicCapability {
 				'chat-replies',
 				'circles-support',
 				'force-mute',
+				'conversation-v3',
 				'sip-support',
 				'chat-read-status',
 				'phonebook-search',
