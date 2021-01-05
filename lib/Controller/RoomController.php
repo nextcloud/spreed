@@ -1381,7 +1381,12 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
 			$room->getObjectType() !== 'file' &&
-			$this->participantService->getNumberOfUsers($room) === 1) {
+			$this->participantService->getNumberOfUsers($room) === 1 &&
+			\in_array($participant->getAttendee()->getParticipantType(), [
+				Participant::USER,
+				Participant::MODERATOR,
+				Participant::OWNER,
+			], true)) {
 			$room->deleteRoom();
 			return new DataResponse();
 		}
