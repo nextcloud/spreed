@@ -45,6 +45,20 @@ Feature: public
     Then user "participant1" is participant of room "room"
     And user "participant2" is not participant of room "room"
 
+  Scenario: Self joined user removes the room from their room list
+    Given user "participant1" creates room "room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" joins room "room" with 200
+    And user "participant2" is participant of the following rooms
+      | id   | type | participantType | participants |
+      | room | 3    | 5               | participant1-displayname, participant2-displayname |
+    And user "participant1" is participant of room "room"
+    And user "participant2" is participant of room "room"
+    When user "participant2" removes themselves from room "room" with 200
+    Then user "participant1" is participant of room "room"
+    And user "participant2" is not participant of room "room"
+
   Scenario: Stranger removes the room from their room list
     Given user "participant1" creates room "room"
       | roomType | 3 |
