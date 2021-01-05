@@ -51,8 +51,6 @@ import { getBuilder } from '@nextcloud/browser-storage'
 import browserCheck from '../../../mixins/browserCheck'
 import blur from '../../../utils/imageBlurrer'
 
-const LRU = require('lru-cache')
-
 const browserStorage = getBuilder('nextcloud').persist().build()
 
 // note: this info is shared with the Avatar component
@@ -99,7 +97,6 @@ export default {
 			useCssBlurFilter: true,
 			blur: 0,
 			blurredBackgroundImage: null,
-			blurredBackgroundImageCache: new LRU({ max: 5 }),
 			blurredBackgroundImageSource: null,
 			pendingGenerateBlurredBackgroundImageCount: 0,
 			isDestroyed: false,
@@ -151,6 +148,17 @@ export default {
 			}
 
 			return this.backgroundBlur
+		},
+		blurredBackgroundImageCache() {
+			if (!this.user) {
+				return null
+			}
+
+			if (!this.$store.getters.getBlurredBackgroundImageCache(this.user)) {
+				this.$store.dispatch('initializeBlurredBackgroundImageCache', this.user)
+			}
+
+			return this.$store.getters.getBlurredBackgroundImageCache(this.user)
 		},
 	},
 

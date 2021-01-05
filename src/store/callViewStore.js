@@ -26,6 +26,8 @@ import {
 	CONVERSATION,
 } from '../constants'
 
+const LRU = require('lru-cache')
+
 const state = {
 	isGrid: false,
 	isStripeOpen: true,
@@ -35,6 +37,7 @@ const state = {
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
 	participantRaisedHands: {},
+	blurredBackgroundImageCache: {},
 }
 
 const getters = {
@@ -54,6 +57,7 @@ const getters = {
 		return (width * height * state.videoBackgroundBlur) / 1000
 	},
 	isParticipantRaisedHand: (state) => (peerId) => !!state.participantRaisedHands[peerId],
+	getBlurredBackgroundImageCache: (state) => (videoBackgroundId) => state.blurredBackgroundImageCache[videoBackgroundId],
 }
 
 const mutations = {
@@ -86,6 +90,16 @@ const mutations = {
 	clearParticipantHandRaised(state) {
 		state.participantRaisedHands = {}
 	},
+	initializeBlurredBackgroundImageCache(state, videoBackgroundId) {
+		if (state.blurredBackgroundImageCache[videoBackgroundId]) {
+			return
+		}
+
+		Vue.set(state.blurredBackgroundImageCache, videoBackgroundId, new LRU({ max: 10 }))
+	},
+	clearBlurredBackgroundImageCache(state) {
+		state.blurredBackgroundImageCache = {}
+	},
 }
 
 const actions = {
@@ -116,6 +130,8 @@ const actions = {
 	leaveCall(context) {
 		// clear raised hands as they were specific to the call
 		context.commit('clearParticipantHandRaised')
+
+		context.commit('clearBlurredBackgroundImageCache')
 	},
 
 	/**
@@ -196,6 +212,10 @@ const actions = {
 			isStripeOpen: context.getters.lastIsStripeOpen,
 		})
 		context.commit('presentationStarted', false)
+	},
+
+	initializeBlurredBackgroundImageCache(context, videoBackgroundId) {
+		context.commit('initializeBlurredBackgroundImageCache', videoBackgroundId)
 	},
 }
 
