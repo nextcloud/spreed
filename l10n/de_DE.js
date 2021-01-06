@@ -467,7 +467,7 @@ OC.L10N.register(
     "South Africa" : "Südafrika",
     "Zambia" : "Sambia",
     "Zimbabwe" : "Simbabwe",
-    "Invalid date, date format must be YYYY-MM-DD" : "Ungültiges Datum, Zulässiges Datumsformat: YYYY-MM-DD",
+    "Invalid date, date format must be YYYY-MM-DD" : "Ungültiges Datum, Zulässiges Datumsformat: JJJJ-MM-TT",
     "Conversation not found" : "Unterhaltung nicht gefunden",
     "Path is already shared with this room" : "Pfad wurde bereits mit diesem Raum geteilt",
     "Chat, video & audio-conferencing using WebRTC" : "Chat, Video & Audio-Konferenzen mittels WebRTC",
