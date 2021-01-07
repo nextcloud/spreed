@@ -50,7 +50,7 @@
 		"vue-observe-visibility": "^1.0.0",
 		"vue-outside-events": "^1.1.3",
 		"vue-prevent-unload": "^0.2.3",
-		"vue-resize": "^0.5.0",
+		"vue-resize": "^1.0.0",
 		"vue-router": "^3.4.9",
 		"vue-shortkey": "^3.1.7",
 		"vuex": "^3.6.0",
