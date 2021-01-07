@@ -63,10 +63,10 @@
 				:can-add="canAddParticipants" />
 		</AppSidebarTab>
 		<AppSidebarTab
-			id="settings-tab"
+			id="details-tab"
 			:order="3"
-			:name="t('spreed', 'Settings')"
-			icon="icon-settings">
+			:name="t('spreed', 'Details')"
+			icon="icon-details">
 			<SetGuestUsername
 				v-if="!getUserId" />
 			<SipSettings
@@ -78,7 +78,7 @@
 				:id="conversation.token"
 				type="room"
 				:name="conversation.displayName" />
-			<div id="app-settings">
+			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<button class="settings-button" @click="showSettings">
 						{{ t('spreed', 'Settings') }}
