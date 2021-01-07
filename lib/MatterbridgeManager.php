@@ -336,8 +336,8 @@ class MatterbridgeManager {
 	}
 
 	private function generatePassword(): string {
-		// remove \ because it messes with Matterbridge toml file parsing
-		$symbols = str_replace('\\', '', ISecureRandom::CHAR_SYMBOLS);
+		// remove \ and " because it messes with Matterbridge toml file parsing
+		$symbols = str_replace(['"', '\\'], '', ISecureRandom::CHAR_SYMBOLS);
 
 		// make sure we have at least one of all categories
 		$upper = $this->random->generate(1, ISecureRandom::CHAR_UPPER);
