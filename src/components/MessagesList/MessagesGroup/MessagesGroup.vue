@@ -21,12 +21,16 @@
 
 <template>
 	<div class="message-group">
-		<div v-if="dateSeparator" class="message-group__date-header">
-			<span class="date" role="heading" aria-level="3">{{ dateSeparator }}</span>
+		<div v-if="dateSeparator"
+			class="message-group__date-header">
+			<span class="date"
+				role="heading"
+				aria-level="3">{{ dateSeparator }}</span>
 		</div>
-		<div class="wrapper">
-			<div class="messages__avatar">
-				<AuthorAvatar v-if="!isSystemMessage"
+		<div class="wrapper"
+			:class="{'wrapper--system': isSystemMessage}">
+			<div v-if="!isSystemMessage" class="messages__avatar">
+				<AuthorAvatar
 					:author-type="actorType"
 					:author-id="actorId"
 					:display-name="actorDisplayName" />
@@ -141,25 +145,17 @@ export default {
 	&__date-header {
 		display: block;
 		text-align: center;
-
-		margin: 40px 15px 0;
-		border-top: 1px solid var(--color-border);
 		padding-top: 20px;
 		position: relative;
-
+		margin: 20px 0;
 		.date {
+			margin-right: $clickable-area * 2;
 			content: attr(data-date);
-			position: absolute;
-			top: 0;
+			padding: 4px 12px;
 			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-			padding: 0 7px 0 7px;
-
-			text-align: center;
-			white-space: nowrap;
-
 			color: var(--color-text-maxcontrast);
-			background-color: var(--color-main-background);
+			background-color: var(--color-background-dark);
+			border-radius: var(--border-radius-pill);
 		}
 	}
 }
@@ -169,6 +165,9 @@ export default {
 	display: flex;
 	margin: auto;
 	padding: 0;
+	&--system {
+		padding-left: $clickable-area + 8px;
+	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
@@ -179,6 +178,7 @@ export default {
 	display: flex;
 	padding: 8px 0 8px 0;
 	flex-direction: column;
+	width: 100%;
 	&__avatar {
 		position: sticky;
 		top: 0;
