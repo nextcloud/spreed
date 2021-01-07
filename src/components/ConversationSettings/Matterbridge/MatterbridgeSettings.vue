@@ -23,10 +23,6 @@
 	<div class="matterbridge-settings">
 		<div v-if="loading" class="loading" />
 		<div v-show="!loading">
-			<h3>
-				<span class="icon icon-category-integration" />
-				<p>{{ t('spreed', 'Bridge with other services') }}</p>
-			</h3>
 			<div id="matterbridge-header">
 				<p>
 					{{ t('spreed', 'You can bridge channels from various instant messaging systems with Matterbridge.') }}
@@ -662,7 +658,6 @@ body.theme--dark .icon-multiselect-service {
 		padding: 0 0 10px 0;
 
 		p {
-			padding-left: 40px;
 			color: var(--color-text-maxcontrast);
 
 			a:hover,
