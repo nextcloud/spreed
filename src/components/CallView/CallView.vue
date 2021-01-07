@@ -361,7 +361,7 @@ export default {
 	mounted() {
 		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
 	},
-	unmounted() {
+	beforeDestroy() {
 		EventBus.$off('refreshPeerList', this.debounceFetchPeers)
 	},
 	methods: {
