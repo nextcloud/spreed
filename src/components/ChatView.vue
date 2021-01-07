@@ -165,7 +165,7 @@ export default {
 	background: var(--color-primary-light);
 	z-index: 11;
 	display: flex;
-	box-shadow: 0px 0px 36px var(--color-box-shadow);
+	box-shadow: 0 0 36px var(--color-box-shadow);
 	border-radius: var(--border-radius);
 	opacity: 90%;
 }

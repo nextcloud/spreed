@@ -126,7 +126,7 @@ function isDefaultAtWhoStyleSheet(sheet) {
 			// rules. Moreover, a rather complex rule is needed so the style
 			// sheet is not mismatched with a different atwho stylesheet, for
 			// example, the one added by the Comments app.
-			if (cssRule.cssText === '.atwho-view { color: rgb(0, 0, 0); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px; min-width: 120px; z-index: 11110 !important; }') {
+			if (cssRule.cssText === '.atwho-view { color: rgb(0, 0, 0); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.1) 0 0 5px; min-width: 120px; z-index: 11110 !important; }') {
 				return true
 			}
 		}

@@ -136,7 +136,7 @@ export default {
 	margin-top: 25px;
 
 	&:first-child {
-		margin-top: 0px;
+		margin-top: 0;
 	}
 }
 </style>

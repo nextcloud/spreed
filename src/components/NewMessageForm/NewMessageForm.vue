@@ -447,7 +447,7 @@ export default {
 			align-items: center;
 		}
 		&__quote {
-			margin: 0px 16px 12px 24px;
+			margin: 0 16px 12px 24px;
 			background-color: var(--color-background-hover);
 			padding: 8px;
 			border-radius: var(--border-radius-large);
