@@ -342,6 +342,33 @@ class Manager {
 	}
 
 	/**
+	 * @param string $userId
+	 * @return string[]
+	 */
+	public function getRoomTokensForUser(string $userId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('r.token')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
+			->where($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)));
+
+		$result = $query->execute();
+		$roomTokens = [];
+		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
+			$roomTokens[] = $row['token'];
+		}
+		$result->closeCursor();
+
+		return $roomTokens;
+	}
+
+	/**
 	 * Returns rooms that are listable where the current user is not a participant.
 	 *
 	 * @param string $userId user id

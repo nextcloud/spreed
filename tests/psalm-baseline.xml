@@ -250,7 +250,7 @@
     </UndefinedDocblockClass>
   </file>
   <file src="lib/Manager.php">
-    <InvalidArgument occurrences="10"/>
+    <InvalidArgument occurrences="12"/>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">

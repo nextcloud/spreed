@@ -781,7 +781,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomsForUser($userId);
+		$allRooms = $this->manager->getRoomTokensForUser($userId);
 
 		/** @var IShare[] $shares */
 		$shares = [];
@@ -815,10 +815,6 @@ class RoomShareProvider implements IShareProvider {
 			if ($node !== null) {
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
 			}
-
-			$rooms = array_map(function (Room $room) {
-				return $room->getToken();
-			}, $rooms);
 
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
