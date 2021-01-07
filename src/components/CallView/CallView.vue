@@ -490,7 +490,7 @@ export default {
 			// sometimes the nick name is not available yet...
 			if (nickName) {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', 'Participant {nickName} raised their hand.', { nickName: nickName }))
+					showMessage(t('spreed', '{nickName} raised their hand.', { nickName: nickName }))
 				}
 			} else {
 				if (raisedHand?.state) {
