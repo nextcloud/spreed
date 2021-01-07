@@ -103,7 +103,7 @@
 			<div id="app-settings">
 				<div id="app-settings-header">
 					<button class="settings-button" @click="showSettings">
-						{{ t('spreed', 'Settings') }}
+						{{ t('spreed', 'Talk settings') }}
 					</button>
 				</div>
 			</div>
