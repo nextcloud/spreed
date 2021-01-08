@@ -911,7 +911,6 @@ OC.L10N.register(
     "Go to file" : "Ga naar bestand",
     "Rename conversation" : "Hernoem gesprek",
     "Mute others" : "Anderen dempen",
-    "More settings" : "Meer instellingen",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
     "Fullscreen (f)" : "Volledig scherm (f)",
     "Speaker view" : "Sprekerweergave",
