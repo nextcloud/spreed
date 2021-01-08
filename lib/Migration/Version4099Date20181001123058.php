@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCA\Talk\Participant;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
@@ -44,7 +44,7 @@ class Version4099Date20181001123058 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_participants');
 		if (!$table->hasColumn('notification_level')) {
-			$table->addColumn('notification_level', Type::INTEGER, [
+			$table->addColumn('notification_level', Types::INTEGER, [
 				'default' => Participant::NOTIFY_DEFAULT,
 				'notnull' => false,
 			]);

@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -43,33 +43,33 @@ class Version5099Date20190121102337 extends SimpleMigrationStep {
 		if (!$schema->hasTable('talk_commands')) {
 			$table = $schema->createTable('talk_commands');
 
-			$table->addColumn('id', Type::INTEGER, [
+			$table->addColumn('id', Types::INTEGER, [
 				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 20,
 			]);
-			$table->addColumn('app', Type::STRING, [
+			$table->addColumn('app', Types::STRING, [
 				'notnull' => false,
 				'length' => 64,
 				'default' => '',
 			]);
-			$table->addColumn('name', Type::STRING, [
+			$table->addColumn('name', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('command', Type::STRING, [
+			$table->addColumn('command', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('script', Type::TEXT, [
+			$table->addColumn('script', Types::TEXT, [
 				'notnull' => true,
 			]);
-			$table->addColumn('response', Type::INTEGER, [
+			$table->addColumn('response', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 1,
 			]);
-			$table->addColumn('enabled', Type::INTEGER, [
+			$table->addColumn('enabled', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 1,

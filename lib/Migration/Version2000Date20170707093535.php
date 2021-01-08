@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -45,27 +45,27 @@ class Version2000Date20170707093535 extends SimpleMigrationStep {
 		if (!$schema->hasTable('spreedme_messages')) {
 			$table = $schema->createTable('spreedme_messages');
 
-			$table->addColumn('id', Type::INTEGER, [
+			$table->addColumn('id', Types::INTEGER, [
 				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('sender', Type::STRING, [
+			$table->addColumn('sender', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('recipient', Type::STRING, [
+			$table->addColumn('recipient', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('sessionId', Type::STRING, [
+			$table->addColumn('sessionId', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('object', Type::TEXT, [
+			$table->addColumn('object', Types::TEXT, [
 				'notnull' => true,
 			]);
-			$table->addColumn('timestamp', Type::INTEGER, [
+			$table->addColumn('timestamp', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
@@ -76,22 +76,22 @@ class Version2000Date20170707093535 extends SimpleMigrationStep {
 		if (!$schema->hasTable('spreedme_rooms')) {
 			$table = $schema->createTable('spreedme_rooms');
 
-			$table->addColumn('id', Type::INTEGER, [
+			$table->addColumn('id', Types::INTEGER, [
 				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('name', Type::STRING, [
+			$table->addColumn('name', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 				'default' => '',
 			]);
-			$table->addColumn('token', Type::STRING, [
+			$table->addColumn('token', Types::STRING, [
 				'notnull' => false,
 				'length' => 32,
 				'default' => '',
 			]);
-			$table->addColumn('type', Type::INTEGER, [
+			$table->addColumn('type', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
@@ -104,19 +104,19 @@ class Version2000Date20170707093535 extends SimpleMigrationStep {
 		if (!$schema->hasTable('spreedme_room_participants')) {
 			$table = $schema->createTable('spreedme_room_participants');
 
-			$table->addColumn('userId', Type::STRING, [
+			$table->addColumn('userId', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
-			$table->addColumn('roomId', Type::INTEGER, [
+			$table->addColumn('roomId', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('lastPing', Type::INTEGER, [
+			$table->addColumn('lastPing', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('sessionId', Type::STRING, [
+			$table->addColumn('sessionId', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);

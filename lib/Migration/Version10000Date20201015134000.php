@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -66,58 +66,58 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			$table = $schema->createTable('talk_attendees');
 
 			// Auto increment id
-			$table->addColumn('id', Type::BIGINT, [
+			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
 			]);
 
 			// Unique key
-			$table->addColumn('room_id', Type::BIGINT, [
+			$table->addColumn('room_id', Types::BIGINT, [
 				'notnull' => true,
 				'unsigned' => true,
 			]);
-			$table->addColumn('actor_type', Type::STRING, [
+			$table->addColumn('actor_type', Types::STRING, [
 				'notnull' => true,
 				'length' => 32,
 			]);
-			$table->addColumn('actor_id', Type::STRING, [
+			$table->addColumn('actor_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('display_name', Type::STRING, [
+			$table->addColumn('display_name', Types::STRING, [
 				'notnull' => false,
 				'default' => '',
 				'length' => 64,
 			]);
 
-			$table->addColumn('pin', Type::STRING, [
+			$table->addColumn('pin', Types::STRING, [
 				'notnull' => false,
 				'length' => 32,
 			]);
-			$table->addColumn('participant_type', Type::SMALLINT, [
+			$table->addColumn('participant_type', Types::SMALLINT, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 0,
 				'unsigned' => true,
 			]);
-			$table->addColumn('favorite', Type::BOOLEAN, [
+			$table->addColumn('favorite', Types::BOOLEAN, [
 				'default' => 0,
 			]);
-			$table->addColumn('notification_level', Type::INTEGER, [
+			$table->addColumn('notification_level', Types::INTEGER, [
 				'default' => Participant::NOTIFY_DEFAULT,
 				'notnull' => false,
 			]);
-			$table->addColumn('last_joined_call', Type::INTEGER, [
+			$table->addColumn('last_joined_call', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 				'default' => 0,
 				'unsigned' => true,
 			]);
-			$table->addColumn('last_read_message', Type::BIGINT, [
+			$table->addColumn('last_read_message', Types::BIGINT, [
 				'default' => 0,
 				'notnull' => false,
 			]);
-			$table->addColumn('last_mention_message', Type::BIGINT, [
+			$table->addColumn('last_mention_message', Types::BIGINT, [
 				'default' => 0,
 				'notnull' => false,
 			]);
@@ -135,28 +135,28 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			$table = $schema->createTable('talk_sessions');
 
 			// Auto increment id
-			$table->addColumn('id', Type::BIGINT, [
+			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
 			]);
 
 			// Unique key (for now, might remove this in the future,
 			// so a user can join multiple times.
-			$table->addColumn('attendee_id', Type::BIGINT, [
+			$table->addColumn('attendee_id', Types::BIGINT, [
 				'notnull' => true,
 				'unsigned' => true,
 			]);
 
 			// Unique key to avoid duplication issues
-			$table->addColumn('session_id', Type::STRING, [
+			$table->addColumn('session_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 512,
 			]);
 
-			$table->addColumn('in_call', Type::INTEGER, [
+			$table->addColumn('in_call', Types::INTEGER, [
 				'default' => 0,
 			]);
-			$table->addColumn('last_ping', Type::INTEGER, [
+			$table->addColumn('last_ping', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 				'default' => 0,

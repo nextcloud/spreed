@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -44,7 +44,7 @@ class Version8000Date20200407115318 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_rooms');
 		if (!$table->hasColumn('assigned_hpb')) {
-			$table->addColumn('assigned_hpb', Type::INTEGER, [
+			$table->addColumn('assigned_hpb', Types::INTEGER, [
 				'notnull' => false,
 				'length' => 4,
 				'unsigned' => false,

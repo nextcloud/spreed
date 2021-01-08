@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -55,14 +55,14 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		if ($schema->hasTable('talk_bridges')) {
 			$table = $schema->getTable('talk_bridges');
 			if (!$table->hasColumn('enabled')) {
-				$table->addColumn('enabled', Type::SMALLINT, [
+				$table->addColumn('enabled', Types::SMALLINT, [
 					'notnull' => true,
 					'default' => 0,
 					'unsigned' => true,
 				]);
 			}
 			if (!$table->hasColumn('pid')) {
-				$table->addColumn('pid', Type::INTEGER, [
+				$table->addColumn('pid', Types::INTEGER, [
 					'notnull' => true,
 					'default' => 0,
 					'unsigned' => true,

@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -43,7 +43,7 @@ class Version3003Date20180722152849 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_participants');
-		$table->addColumn('in_call', Type::INTEGER, [
+		$table->addColumn('in_call', Types::INTEGER, [
 			'default' => 0,
 		]);
 

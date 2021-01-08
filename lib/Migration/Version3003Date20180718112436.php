@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -53,7 +53,7 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_rooms');
 		if (!$table->hasColumn('last_activity')) {
-			$table->addColumn('last_activity', Type::DATETIME, [
+			$table->addColumn('last_activity', Types::DATETIME_MUTABLE, [
 				'notnull' => false,
 			]);
 

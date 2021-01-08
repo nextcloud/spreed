@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -45,12 +45,12 @@ class Version6099Date20190627172429 extends SimpleMigrationStep {
 			$table = $schema->getTable('talk_rooms');
 
 			if (!$table->hasColumn('lobby_state')) {
-				$table->addColumn('lobby_state', Type::INTEGER, [
+				$table->addColumn('lobby_state', Types::INTEGER, [
 					'notnull' => true,
 					'length' => 6,
 					'default' => 0,
 				]);
-				$table->addColumn('lobby_timer', Type::DATETIME, [
+				$table->addColumn('lobby_timer', Types::DATETIME_MUTABLE, [
 					'notnull' => false,
 				]);
 			}

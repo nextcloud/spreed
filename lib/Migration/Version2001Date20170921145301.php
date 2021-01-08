@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -43,7 +43,7 @@ class Version2001Date20170921145301 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('spreedme_rooms');
-		$table->addColumn('password', Type::STRING, [
+		$table->addColumn('password', Types::STRING, [
 			'notnull' => false,
 			'length' => 255,
 			'default' => '',

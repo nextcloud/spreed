@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -43,7 +43,7 @@ class Version10000Date20201012144235 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_rooms');
-		$table->addColumn('sip_enabled', Type::SMALLINT, [
+		$table->addColumn('sip_enabled', Types::SMALLINT, [
 			'notnull' => true,
 			'default' => 0,
 			'unsigned' => true,

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use Doctrine\DBAL\Exception;
 use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -88,7 +89,7 @@ class GuestManager {
 	 * @param Room $room
 	 * @param Participant $participant
 	 * @param string $displayName
-	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws Exception
 	 */
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
 		$sessionHash = $participant->getAttendee()->getActorId();

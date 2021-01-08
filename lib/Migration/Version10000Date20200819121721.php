@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -44,15 +44,15 @@ class Version10000Date20200819121721 extends SimpleMigrationStep {
 
 		if (!$schema->hasTable('talk_bridges')) {
 			$table = $schema->createTable('talk_bridges');
-			$table->addColumn('id', Type::BIGINT, [
+			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
 			]);
-			$table->addColumn('room_id', Type::BIGINT, [
+			$table->addColumn('room_id', Types::BIGINT, [
 				'notnull' => true,
 				'unsigned' => true,
 			]);
-			$table->addColumn('json_values', Type::TEXT, [
+			$table->addColumn('json_values', Types::TEXT, [
 				'notnull' => true,
 			]);
 			$table->addUniqueIndex(['room_id'], 'tbr_room_id');

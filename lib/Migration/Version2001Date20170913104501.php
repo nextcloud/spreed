@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -45,18 +45,18 @@ class Version2001Date20170913104501 extends SimpleMigrationStep {
 		if (!$schema->hasTable('videocalls_signaling')) {
 			$table = $schema->createTable('videocalls_signaling');
 
-			$table->addColumn('sender', Type::STRING, [
+			$table->addColumn('sender', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('recipient', Type::STRING, [
+			$table->addColumn('recipient', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('message', Type::TEXT, [
+			$table->addColumn('message', Types::TEXT, [
 				'notnull' => true,
 			]);
-			$table->addColumn('timestamp', Type::INTEGER, [
+			$table->addColumn('timestamp', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);

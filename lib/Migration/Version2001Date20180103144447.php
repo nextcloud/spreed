@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -61,10 +61,10 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_rooms');
 
 		if (!$table->hasColumn('active_since')) {
-			$table->addColumn('active_since', Type::DATETIME, [
+			$table->addColumn('active_since', Types::DATETIME_MUTABLE, [
 				'notnull' => false,
 			]);
-			$table->addColumn('active_guests', Type::INTEGER, [
+			$table->addColumn('active_guests', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 4,
 				'default' => 0,
@@ -75,34 +75,34 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_participants');
 
 		if (!$table->hasColumn('user_id')) {
-			$table->addColumn('user_id', Type::STRING, [
+			$table->addColumn('user_id', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
-			$table->addColumn('room_id', Type::INTEGER, [
+			$table->addColumn('room_id', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 				'default' => 0,
 				'unsigned' => true,
 			]);
-			$table->addColumn('last_ping', Type::INTEGER, [
+			$table->addColumn('last_ping', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 				'default' => 0,
 				'unsigned' => true,
 			]);
-			$table->addColumn('session_id', Type::STRING, [
+			$table->addColumn('session_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 				'default' => '0',
 			]);
-			$table->addColumn('participant_type', Type::SMALLINT, [
+			$table->addColumn('participant_type', Types::SMALLINT, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 0,
 				'unsigned' => true,
 			]);
-			$table->addColumn('in_call', Type::BOOLEAN, [
+			$table->addColumn('in_call', Types::BOOLEAN, [
 				'default' => 0,
 			]);
 		}
@@ -122,7 +122,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			return;
 		}
 
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_rooms')
 				->set('active_since', 'activeSince')

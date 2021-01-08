@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
@@ -51,7 +51,7 @@ class Version3003Date20180718133519 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_rooms');
 
 		if (!$table->hasColumn('last_message')) {
-			$table->addColumn('last_message', Type::BIGINT, [
+			$table->addColumn('last_message', Types::BIGINT, [
 				'notnull' => false,
 				'default' => 0,
 			]);
