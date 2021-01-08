@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -45,7 +45,7 @@ class Version5099Date20190319134820 extends SimpleMigrationStep {
 			$table = $schema->getTable('talk_rooms');
 
 			if (!$table->hasColumn('read_only')) {
-				$table->addColumn('read_only', Type::INTEGER, [
+				$table->addColumn('read_only', Types::INTEGER, [
 					'notnull' => true,
 					'length' => 6,
 					'default' => 0,

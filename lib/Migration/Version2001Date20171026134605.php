@@ -26,8 +26,8 @@ namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
@@ -67,18 +67,18 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		 * if (!$schema->hasTable('talk_signaling')) {
 		 * $table = $schema->createTable('talk_signaling');
 		 *
-		 * $table->addColumn('sender', Type::STRING, [
+		 * $table->addColumn('sender', Types::STRING, [
 		 * 'notnull' => true,
 		 * 'length' => 255,
 		 * ]);
-		 * $table->addColumn('recipient', Type::STRING, [
+		 * $table->addColumn('recipient', Types::STRING, [
 		 * 'notnull' => true,
 		 * 'length' => 255,
 		 * ]);
-		 * $table->addColumn('message', Type::TEXT, [
+		 * $table->addColumn('message', Types::TEXT, [
 		 * 'notnull' => true,
 		 * ]);
-		 * $table->addColumn('timestamp', Type::INTEGER, [
+		 * $table->addColumn('timestamp', Types::INTEGER, [
 		 * 'notnull' => true,
 		 * 'length' => 11,
 		 * ]);
@@ -90,34 +90,34 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		if (!$schema->hasTable('talk_rooms')) {
 			$table = $schema->createTable('talk_rooms');
 
-			$table->addColumn('id', Type::INTEGER, [
+			$table->addColumn('id', Types::INTEGER, [
 				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('name', Type::STRING, [
+			$table->addColumn('name', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 				'default' => '',
 			]);
-			$table->addColumn('token', Type::STRING, [
+			$table->addColumn('token', Types::STRING, [
 				'notnull' => false,
 				'length' => 32,
 				'default' => '',
 			]);
-			$table->addColumn('type', Type::INTEGER, [
+			$table->addColumn('type', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('password', Type::STRING, [
+			$table->addColumn('password', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 				'default' => '',
 			]);
-			$table->addColumn('activeSince', Type::DATETIME, [
+			$table->addColumn('activeSince', Types::DATETIME_MUTABLE, [
 				'notnull' => false,
 			]);
-			$table->addColumn('activeGuests', Type::INTEGER, [
+			$table->addColumn('activeGuests', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 4,
 				'default' => 0,
@@ -131,23 +131,23 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		if (!$schema->hasTable('talk_participants')) {
 			$table = $schema->createTable('talk_participants');
 
-			$table->addColumn('userId', Type::STRING, [
+			$table->addColumn('userId', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
-			$table->addColumn('roomId', Type::INTEGER, [
+			$table->addColumn('roomId', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('lastPing', Type::INTEGER, [
+			$table->addColumn('lastPing', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('sessionId', Type::STRING, [
+			$table->addColumn('sessionId', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('participantType', Type::SMALLINT, [
+			$table->addColumn('participantType', Types::SMALLINT, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 0,
@@ -216,7 +216,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 */
 	protected function copyParticipants(array $roomIdMap): void {
 		$insert = $this->connection->getQueryBuilder();
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
 			$insert->insert('talk_participants')
 				->values([
 					'userId' => $insert->createParameter('userId'),
@@ -252,7 +252,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('lastPing', (int) $row['lastPing'], IQueryBuilder::PARAM_INT)
 				->setParameter('sessionId', $row['sessionId'])
 			;
-			if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
 				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
 			} else {
 				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);

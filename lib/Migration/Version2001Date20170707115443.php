@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\DBAL\Types\Types;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\DB\ISchemaWrapper;
@@ -62,7 +62,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		$table = $schema->getTable('spreedme_room_participants');
 
 		if (!$table->hasColumn('participantType')) {
-			$table->addColumn('participantType', Type::SMALLINT, [
+			$table->addColumn('participantType', Types::SMALLINT, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 0,
@@ -126,7 +126,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeOne2OneParticipantsOwners(array $one2oneRooms): int {
 		$update = $this->db->getQueryBuilder();
 
-		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSQL94Platform) {
 			$update->update('spreedme_room_participants')
 				->set('participantType', $update->createNamedParameter(Participant::OWNER))
 				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
@@ -146,7 +146,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeGroupParticipantsModerators(array $one2oneRooms): int {
 		$update = $this->db->getQueryBuilder();
 
-		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSQL94Platform) {
 			$update->update('spreedme_room_participants')
 				->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
 				->where($update->expr()->nonEmptyString('userId'));

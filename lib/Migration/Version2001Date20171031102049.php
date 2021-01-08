@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -44,7 +44,7 @@ class Version2001Date20171031102049 extends SimpleMigrationStep {
 
 
 		$table = $schema->getTable('talk_participants');
-		$table->addColumn('inCall', Type::BOOLEAN, [
+		$table->addColumn('inCall', Types::BOOLEAN, [
 			'default' => 0,
 		]);
 

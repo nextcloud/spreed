@@ -25,7 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -55,11 +55,11 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_participants');
 		if (!$table->hasColumn('last_read_message')) {
-			$table->addColumn('last_read_message', Type::BIGINT, [
+			$table->addColumn('last_read_message', Types::BIGINT, [
 				'default' => 0,
 				'notnull' => false,
 			]);
-			$table->addColumn('last_mention_message', Type::BIGINT, [
+			$table->addColumn('last_mention_message', Types::BIGINT, [
 				'default' => 0,
 				'notnull' => false,
 			]);

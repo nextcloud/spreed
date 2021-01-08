@@ -24,7 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -45,12 +45,12 @@ class Version3003Date20180720162342 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_rooms');
 
 		if (!$table->hasColumn('object_type')) {
-			$table->addColumn('object_type', Type::STRING, [
+			$table->addColumn('object_type', Types::STRING, [
 				'notnull' => false,
 				'length' => 64,
 				'default' => '',
 			]);
-			$table->addColumn('object_id', Type::STRING, [
+			$table->addColumn('object_id', Types::STRING, [
 				'notnull' => false,
 				'length' => 64,
 				'default' => '',

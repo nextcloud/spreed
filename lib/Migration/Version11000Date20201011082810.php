@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -45,7 +45,7 @@ class Version11000Date20201011082810 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_rooms');
 		if (!$table->hasColumn('description')) {
-			$table->addColumn('description', Type::TEXT, [
+			$table->addColumn('description', Types::TEXT, [
 				'notnull' => false,
 				'default' => '',
 			]);
