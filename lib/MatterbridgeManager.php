@@ -282,7 +282,7 @@ class MatterbridgeManager {
 		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists($botUserId)) {
-			$pass = md5((string)mt_rand());
+			$pass = $this->generatePassword();
 			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
 			$botUser = $this->userManager->createUser($botUserId, $pass);
 			// set avatar
@@ -314,7 +314,7 @@ class MatterbridgeManager {
 
 		if ($create) {
 			// generate app token for the bot
-			$appToken = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+			$appToken = $this->generatePassword();
 			$botPassword = $this->config->getAppValue('spreed', 'bridge_bot_password', '');
 			$generatedToken = $this->tokenProvider->generateToken(
 				$appToken,
@@ -333,6 +333,23 @@ class MatterbridgeManager {
 			'id' => $botUserId,
 			'password' => $appToken,
 		];
+	}
+
+	private function generatePassword(): string {
+		// remove \ because it messes with Matterbridge toml file parsing
+		$symbols = str_replace('\\', '', ISecureRandom::CHAR_SYMBOLS);
+
+		// make sure we have at least one of all categories
+		$upper = $this->random->generate(1, ISecureRandom::CHAR_UPPER);
+		$lower = $this->random->generate(1, ISecureRandom::CHAR_LOWER);
+		$digit = $this->random->generate(1, ISecureRandom::CHAR_DIGITS);
+		$symbol = $this->random->generate(1, $symbols);
+
+		$randomString = $this->random->generate(68, ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS . $symbols);
+
+		$password = $upper . $lower . $digit . $symbol . $randomString;
+		$password = str_shuffle($password);
+		return $password;
 	}
 
 	/**
