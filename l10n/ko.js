@@ -910,7 +910,6 @@ OC.L10N.register(
     "Go to file" : "파일로 이동",
     "Rename conversation" : "대화 제목 변경",
     "Mute others" : "다른 사람 음소거",
-    "More settings" : "더 많은 설정",
     "Exit fullscreen (f)" : "전체화면 끝내기 (f)",
     "Fullscreen (f)" : "전체화면 (f)",
     "Speaker view" : "말하는 사람 관점",
