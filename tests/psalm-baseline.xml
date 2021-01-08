@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
+<files psalm-version="4.3.2@57b53ff26237074fdf5cbcb034f7da5172be4524">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -173,11 +173,6 @@
       <code>ShareNotFound</code>
     </MissingDependency>
   </file>
-  <file src="lib/Controller/GuestController.php">
-    <UndefinedClass occurrences="1">
-      <code>DBALException</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Controller/PageController.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
@@ -244,13 +239,8 @@
   <file src="lib/Flow/Operation.php">
     <InvalidArgument occurrences="1"/>
   </file>
-  <file src="lib/GuestManager.php">
-    <UndefinedDocblockClass occurrences="1">
-      <code>\Doctrine\DBAL\DBALException</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="lib/Manager.php">
-    <InvalidArgument occurrences="12"/>
+    <InvalidArgument occurrences="10"/>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">
@@ -269,33 +259,6 @@
     <InvalidArrayAccess occurrences="1">
       <code>$return['num_rooms']</code>
     </InvalidArrayAccess>
-    <UndefinedClass occurrences="2">
-      <code>PostgreSqlPlatform</code>
-      <code>PostgreSqlPlatform</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="2">
-      <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
-      <code>$this-&gt;db-&gt;getDatabasePlatform()</code>
-    </UndefinedDocblockClass>
-  </file>
-  <file src="lib/Migration/Version2001Date20171026134605.php">
-    <UndefinedClass occurrences="4">
-      <code>PostgreSqlPlatform</code>
-      <code>TableNotFoundException</code>
-      <code>TableNotFoundException</code>
-      <code>TableNotFoundException</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="1">
-      <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
-    </UndefinedDocblockClass>
-  </file>
-  <file src="lib/Migration/Version2001Date20180103144447.php">
-    <UndefinedClass occurrences="1">
-      <code>PostgreSqlPlatform</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="1">
-      <code>$this-&gt;connection-&gt;getDatabasePlatform()</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="lib/Migration/Version7000Date20190724121136.php">
     <InvalidArgument occurrences="1"/>
