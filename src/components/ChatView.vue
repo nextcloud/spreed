@@ -45,9 +45,12 @@
 		<MessagesList
 			role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
-			:token="token" />
+			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
+			:token="token"
+			@setChatScrolledToBottom="setScrollStatus" />
 		<NewMessageForm
 			role="region"
+			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:aria-label="t('spreed', 'Post message')" />
 	</div>
 </template>
@@ -77,6 +80,12 @@ export default {
 	data: function() {
 		return {
 			isDraggingOver: false,
+			/**
+			 * Initialised as true as when we open a new conversation we're scrolling to
+			 * the bottom for now. In the future when we'll open the conversation close
+			 * to the scroll position of the last read message, we will need to change this.
+			 */
+			isChatScrolledToBottom: true,
 		}
 	},
 
@@ -128,6 +137,10 @@ export default {
 			// Uploads and shares the files
 			processFiles(files, this.token, uploadId)
 		},
+
+		setScrollStatus(payload) {
+			this.isChatScrolledToBottom = payload
+		},
 	},
 
 }
@@ -152,7 +165,7 @@ export default {
 	background: var(--color-primary-light);
 	z-index: 11;
 	display: flex;
-	box-shadow: 0px 0px 36px var(--color-box-shadow);
+	box-shadow: 0 0 36px var(--color-box-shadow);
 	border-radius: var(--border-radius);
 	opacity: 90%;
 }

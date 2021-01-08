@@ -22,6 +22,7 @@
 <template>
 	<At ref="at"
 		v-model="text"
+		class="atwho-wrapper"
 		name-key="label"
 		:members="autoCompleteMentionCandidates"
 		:filter-match="atFilter"
@@ -389,6 +390,10 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables';
 
+.atwho-wrapper {
+	display: flex;
+}
+
 .new-message-form__advancedinput {
 	overflow: visible;
 	width: 100%;
@@ -397,12 +402,21 @@ export default {
 	margin-left: 6px !important;
 	word-break: break-word;
 	white-space: pre-wrap;
+	padding: 8px 16px;
 }
 
 // Support for the placeholder text in the div contenteditable
 div[contenteditable] {
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
+	min-height: $clickable-area;
+	border-radius: $clickable-area / 2;
+	border: 1px solid var(--color-border-dark);
+	&:hover,
+	&:focus,
+	&:active {
+		border: 1px solid var(--color-primary-element) !important;
+	}
 }
 
 // Support for the placeholder text in the div contenteditable

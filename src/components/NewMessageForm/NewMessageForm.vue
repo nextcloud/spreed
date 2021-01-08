@@ -21,7 +21,8 @@
 
 <template>
 	<div
-		class="wrapper">
+		class="wrapper"
+		:class="{'wrapper--chatScrolledToBottom': isChatScrolledToBottom}">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="fileUploadInput"
@@ -76,11 +77,12 @@
 					</EmojiPicker>
 				</div>
 				<div class="new-message-form__input">
-					<Quote
-						v-if="messageToBeReplied"
-						:is-new-message-form-quote="true"
-						:parent-id="messageToBeReplied.id"
-						v-bind="messageToBeReplied" />
+					<div v-if="messageToBeReplied" class="new-message-form__quote">
+						<Quote
+							:is-new-message-form-quote="true"
+							v-bind="messageToBeReplied" />
+					</div>
+
 					<AdvancedInput
 						ref="advancedInput"
 						v-model="text"
@@ -96,8 +98,12 @@
 					:disabled="isReadOnly"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="new-message-form__button submit icon-confirm-fade"
-					@click.prevent="handleSubmit" />
+					class="new-message-form__button submit"
+					@click.prevent="handleSubmit">
+					<Send
+						:size="20"
+						decorative />
+				</button>
 			</form>
 		</div>
 	</div>
@@ -117,6 +123,7 @@ import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
 import createTemporaryMessage from '../../utils/temporaryMessage'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
+import Send from 'vue-material-design-icons/Send'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -134,6 +141,14 @@ export default {
 		ActionButton,
 		EmojiPicker,
 		EmoticonOutline,
+		Send,
+	},
+
+	props: {
+		isChatScrolledToBottom: {
+			type: Boolean,
+			required: true,
+		},
 	},
 	data: function() {
 		return {
@@ -397,32 +412,45 @@ export default {
 .wrapper {
 	position: sticky;
 	bottom: 0;
-	background-color: var(--color-main-background);
 	display: flex;
 	justify-content: center;
-	border-top: 1px solid var(--color-border-dark);
-	padding: 4px 0;
+	padding: 12px 0;
+	border-top: 1px solid var(--color-border);
+	&--chatScrolledToBottom {
+		border-top: none;
+	}
 }
 
 .new-message {
-	max-width: $messages-list-max-width;
+	max-width: $messages-list-max-width + 145px;
 	flex: 1 1 100%;
 	&-form {
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		&__input {
 			flex-grow: 1;
 			max-height: $message-form-max-height;
 			overflow-y: auto;
 			overflow-x: hidden;
-			max-width: $message-max-width;
+			max-width: 638px;
 		}
 		&__button {
 			width: 44px;
 			height: 44px;
-			margin-top: auto;
 			background-color: transparent;
 			border: none;
+			margin: 0 4px;
+			color: var(--color-main-text);
+			opacity: .9;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		&__quote {
+			margin: 0 16px 12px 24px;
+			background-color: var(--color-background-hover);
+			padding: 8px;
+			border-radius: var(--border-radius-large);
 		}
 
 		// put a grey round background when popover is opened
