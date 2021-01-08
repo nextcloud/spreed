@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.15 – 2021-01-08
+### Fixed
+- Don't remove a chat when a self-joined user leaves
+  [#4904](https://github.com/nextcloud/spreed/pull/4904)
+
 ## 8.0.14 – 2020-12-18
 ### Fixed
 - Fix potentially multiple guests joining in a password request conversation
