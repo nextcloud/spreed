@@ -464,9 +464,11 @@ export default {
 		isStripe() {
 			this.rebuildGrid()
 		},
+
 		stripeOpen() {
 			this.rebuildGrid()
 		},
+
 		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
@@ -525,6 +527,9 @@ export default {
 		// Find the right size if the grid in rows and columns (we already know
 		// the size in px).
 		makeGrid() {
+			if (!this.$refs.grid) {
+				return
+			}
 			this.gridWidth = this.$refs.grid.clientWidth
 			this.gridHeight = this.$refs.grid.clientHeight
 			// prevent making grid if no videos

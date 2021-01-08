@@ -104,13 +104,7 @@ const actions = {
 			// BrowserStorage.getItem returns a string instead of a boolean
 			isGrid = (isGrid === 'true')
 		}
-		let isStripeOpen = BrowserStorage.getItem('callprefs-' + token + '-isstripeopen')
-		if (isStripeOpen === null) {
-			isStripeOpen = true
-		} else {
-			isStripeOpen = isStripeOpen === 'true'
-		}
-		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: isStripeOpen })
+		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: true })
 	},
 
 	leaveCall(context) {
@@ -142,7 +136,6 @@ const actions = {
 		}
 
 		if (isStripeOpen !== null) {
-			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isstripeopen', isStripeOpen)
 			context.commit('isStripeOpen', isStripeOpen)
 		}
 	},
