@@ -26,7 +26,7 @@
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
 			<transition name="fade">
 				<div
-					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand"
+					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
 					class="bottom-bar__statusIndicator">
 					<Hand
 						class="handIndicator"

@@ -53,7 +53,12 @@ const getters = {
 	getBlurRadius: (state) => (width, height) => {
 		return (width * height * state.videoBackgroundBlur) / 1000
 	},
-	isParticipantRaisedHand: (state) => (peerId) => !!state.participantRaisedHands[peerId],
+	getParticipantRaisedHand: (state) => (sessionId) => {
+		return state.participantRaisedHands[sessionId] || { state: false, timestamp: null }
+	},
+	isParticipantRaisedHand: (state) => (sessionId) => {
+		return state.participantRaisedHands[sessionId]?.state
+	},
 }
 
 const mutations = {
@@ -76,11 +81,14 @@ const mutations = {
 	presentationStarted(state, value) {
 		state.presentationStarted = value
 	},
-	setParticipantHandRaised(state, { peerId, raised }) {
-		if (raised) {
-			Vue.set(state.participantRaisedHands, peerId, raised)
+	setParticipantHandRaised(state, { sessionId, raisedHand }) {
+		if (!sessionId) {
+			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
+		}
+		if (raisedHand && raisedHand.state) {
+			Vue.set(state.participantRaisedHands, sessionId, raisedHand)
 		} else {
-			Vue.delete(state.participantRaisedHands, peerId)
+			Vue.delete(state.participantRaisedHands, sessionId)
 		}
 	},
 	clearParticipantHandRaised(state) {
@@ -140,8 +148,8 @@ const actions = {
 		}
 	},
 
-	setParticipantHandRaised(context, { peerId, raised }) {
-		context.commit('setParticipantHandRaised', { peerId, raised })
+	setParticipantHandRaised(context, { sessionId, raisedHand }) {
+		context.commit('setParticipantHandRaised', { sessionId, raisedHand })
 	},
 
 	/**

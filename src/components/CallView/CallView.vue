@@ -409,7 +409,8 @@ export default {
 				this.raisedHandUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
-				this.$store.dispatch('setParticipantHandRaised', { peerId: removedModelId, raised: false })
+				// FIXME: when using HPB sessionId doesn't match
+				this.$store.dispatch('setParticipantHandRaised', { sessionId: removedModelId, raisedHand: { state: false } })
 
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
@@ -488,17 +489,21 @@ export default {
 			const nickName = callParticipantModel.attributes.name || callParticipantModel.attributes.userId
 			// sometimes the nick name is not available yet...
 			if (nickName) {
-				if (raisedHand) {
-					showMessage(t('spreed', 'Participant {nickName} raised their hand.', { nickName: nickName }))
+				if (raisedHand?.state) {
+					showMessage(t('spreed', '{nickName} raised their hand.', { nickName: nickName }))
 				}
 			} else {
-				if (raisedHand) {
+				if (raisedHand?.state) {
 					showMessage(t('spreed', 'A participant raised their hand.'))
 				}
 			}
 
 			// update in callViewStore
-			this.$store.dispatch('setParticipantHandRaised', { peerId: callParticipantModel.attributes.peerId, raised: raisedHand })
+			this.$store.dispatch('setParticipantHandRaised', {
+				// FIXME: this is a bit hacky to fix the HPB session mismatch
+				sessionId: raisedHand?.sessionId ? raisedHand?.sessionId : callParticipantModel.attributes.peerId,
+				raisedHand: raisedHand,
+			})
 		},
 
 		_setScreenAvailable(id, screen) {

@@ -277,18 +277,19 @@ export default {
 		label() {
 			return this.participant.label
 		},
-		raisedHand() {
+		isHandRaised() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG_DISCONNECTED) {
 				return false
 			}
 
-			return this.$store.getters.isParticipantRaisedHand(this.participant.sessionId)
+			const state = this.$store.getters.isParticipantRaisedHand(this.participant.sessionId)
+			return state
 		},
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
 			}
-			if (this.raisedHand) {
+			if (this.isHandRaised) {
 				return 'hand'
 			}
 			const withVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
