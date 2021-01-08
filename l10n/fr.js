@@ -846,7 +846,6 @@ OC.L10N.register(
     "Go to file" : "Ouvrir le fichier",
     "Rename conversation" : "Renommer la conversation",
     "Mute others" : "Mettre en sourdine les autres",
-    "More settings" : "Plus de paramètres",
     "Exit fullscreen (f)" : "Quitter le plein écran (f)",
     "Fullscreen (f)" : "Plein écran (f)",
     "Speaker view" : "Vue conférence",

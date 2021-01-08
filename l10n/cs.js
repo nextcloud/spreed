@@ -858,7 +858,6 @@ OC.L10N.register(
     "Go to file" : "Přejít k souboru",
     "Rename conversation" : "Přejmenovat konverzaci",
     "Mute others" : "Ztlumit ostatní",
-    "More settings" : "Další nastavení",
     "Exit fullscreen (f)" : "Opustit režim celé obrazovky (f)",
     "Fullscreen (f)" : "Celá obrazovka (f)",
     "Speaker view" : "Zobrazení řečníka",
