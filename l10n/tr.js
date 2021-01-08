@@ -911,7 +911,6 @@ OC.L10N.register(
     "Go to file" : "Dosyaya git",
     "Rename conversation" : "Görüşmeyi yeniden adlandır",
     "Mute others" : "Diğerlerinin sesini kıs",
-    "More settings" : "Diğer ayarlar",
     "Exit fullscreen (f)" : "Tam ekrandan çık (f)",
     "Fullscreen (f)" : "Tam ekran (f)",
     "Speaker view" : "Konuşmacı görünümü",

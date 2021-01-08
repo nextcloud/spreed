@@ -911,7 +911,6 @@ OC.L10N.register(
     "Go to file" : "Idź do pliku",
     "Rename conversation" : "Zmień nazwę rozmowy",
     "Mute others" : "Wycisz innych",
-    "More settings" : "Więcej ustawień",
     "Exit fullscreen (f)" : "Wyjdź z trybu pełnoekranowego (f)",
     "Fullscreen (f)" : "Tryb pełnoekranowy (f)",
     "Speaker view" : "Widok głośnika",
