@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.5 – 2021-01-08
+### Fixed
+- Fix CSP violation in Safari with worker-src from avatar blurring
+  [#4900](https://github.com/nextcloud/spreed/pull/4900)
+- Don't remove a chat when a self-joined user leaves
+  [#4894](https://github.com/nextcloud/spreed/pull/4894)
+- Make the bridge bot password more complex
+  [#4910](https://github.com/nextcloud/spreed/pull/4910)
+
+## 9.0.8 – 2021-01-08
+### Fixed
+- Don't remove a chat when a self-joined user leaves
+  [#4903](https://github.com/nextcloud/spreed/pull/4903)
+
+## 8.0.15 – 2021-01-08
+### Fixed
+- Don't remove a chat when a self-joined user leaves
+  [#4904](https://github.com/nextcloud/spreed/pull/4904)
+
 ## 10.0.4 – 2020-12-18
 ### Fixed
 - Fix potentially multiple guests joining in a password request conversation
