@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.1 – 2021-01-08
+### Fixed
+- Fix chat notifications not being sent when user is not active in a chat
+  [#4869](https://github.com/nextcloud/spreed/pull/4869)
+  [#4847](https://github.com/nextcloud/spreed/pull/4847)
+- Fix CSP violation in Safari with worker-src from avatar blurring
+  [#4899](https://github.com/nextcloud/spreed/pull/4899)
+- Don't remove a chat when a self-joined user leaves
+  [#4893](https://github.com/nextcloud/spreed/pull/4893)
+- Use proc_open to run matterbridge for better compatibility
+  [#4775](https://github.com/nextcloud/spreed/pull/4775)
+- Make the bridge bot password more complex
+  [#4909](https://github.com/nextcloud/spreed/pull/4909)
+
+## 10.0.5 – 2021-01-08
+### Fixed
+- Fix CSP violation in Safari with worker-src from avatar blurring
+  [#4900](https://github.com/nextcloud/spreed/pull/4900)
+- Don't remove a chat when a self-joined user leaves
+  [#4894](https://github.com/nextcloud/spreed/pull/4894)
+- Make the bridge bot password more complex
+  [#4910](https://github.com/nextcloud/spreed/pull/4910)
+
+## 9.0.8 – 2021-01-08
+### Fixed
+- Don't remove a chat when a self-joined user leaves
+  [#4903](https://github.com/nextcloud/spreed/pull/4903)
+
+## 8.0.15 – 2021-01-08
+### Fixed
+- Don't remove a chat when a self-joined user leaves
+  [#4904](https://github.com/nextcloud/spreed/pull/4904)
+
 ## 10.1.0 – 2020-12-18
 ### Added
 - Implement multiple requirements to prepare for SIP dial-in
