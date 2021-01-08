@@ -500,8 +500,8 @@ export default {
 
 			// update in callViewStore
 			this.$store.dispatch('setParticipantHandRaised', {
-				// FIXME: when using HPB sessionId doesn't match
-				sessionId: callParticipantModel.attributes.peerId,
+				// FIXME: this is a bit hacky to fix the HPB session mismatch
+				sessionId: raisedHand?.sessionId ? raisedHand?.sessionId : callParticipantModel.attributes.peerId,
 				raisedHand: raisedHand,
 			})
 		},
