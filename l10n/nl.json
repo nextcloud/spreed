@@ -594,7 +594,6 @@
     "Test this server" : "Test deze server",
     "TURN servers" : "TURN servers",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "Een TURN server wordt gebruikt om verkeer van deelnemers achter een firewall te proxyen. Als individuele deelnemers niet rechtstreeks met anderen kunnen verbinden, is TURN server vermoedelijk vereist. Zie {linkstart}deze documentatie{linkend} voor instructies.",
-    "Participant {nickName} raised their hand." : "Deelnemer {nickName} stak zijn/haar hand op.",
     "A participant raised their hand." : "Een deelnemer stak zijn/haar hand op.",
     "Previous page of videos" : "Voorgaande pagina met video's",
     "Next page of videos" : "Volgende pagina met video's",
