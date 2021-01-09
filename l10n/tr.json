@@ -594,7 +594,6 @@
     "Test this server" : "Bu sunucuyu sına",
     "TURN servers" : "TURN sunucuları",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcıların bağlanabilmesi için kullanılan bir vekil sunucudur. Bazı kullanıcılar diğerlerine bağlanamıyorsa genellikle bir TURN sunucusunun kullanılması gerekir. Kurulum bilgileri için {linkstart}bu belgeye{linkend} bakabilirsiniz.",
-    "Participant {nickName} raised their hand." : "{nickName} katılımcısı elini kaldırdı.",
     "A participant raised their hand." : "Bir katılımcı elini kaldırdı.",
     "Previous page of videos" : "Önceki görüntü sayfası",
     "Next page of videos" : "Sonraki görüntü sayfası",

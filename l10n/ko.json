@@ -593,7 +593,6 @@
     "Test this server" : "이 서버 테스트",
     "TURN servers" : "TURN 서버",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 프록시하는 데 사용됩니다. 개별 참가자가 다른 참가자에 연결할 수 없는 경우, TURN 서버가 가장 필요할 수 있습니다. 설정 지침은 이 설명서 {linkend} 을 참조하십시오.",
-    "Participant {nickName} raised their hand." : "참가자 {nickName}이 손을 들었다.",
     "A participant raised their hand." : "한 참가자가 손을 들었다.",
     "Previous page of videos" : "비디오의 이전 페이지",
     "Next page of videos" : "비디오의 다음 페이지",
