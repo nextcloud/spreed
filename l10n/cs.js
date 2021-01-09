@@ -586,7 +586,6 @@ OC.L10N.register(
     "Test this server" : "Vyzkoušet tento server",
     "TURN servers" : "TURN servery",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN server slouží jako proxy pro provoz od účastníků, kteří se nacházejí za bránou firewall. Pokud se jednotliví účastníci nemohou spojit s ostatními, nejspíš je zapotřebí TURN server. Pokyny k nastavení viz {linkstart}tato dokumentace{linkend}.",
-    "Participant {nickName} raised their hand." : "Účasntík {nickName} se hlásí.",
     "A participant raised their hand." : "Účastník se hlásí.",
     "Previous page of videos" : "Předchozí stránka s videi",
     "Next page of videos" : "Další stránka s videi",
