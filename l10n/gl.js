@@ -596,6 +596,7 @@ OC.L10N.register(
     "Test this server" : "Probar este servidor",
     "TURN servers" : "Servidores TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "Úsase un servidor TURN para proxy do tráfico de participantes detrás dunha devasa. Se os participantes individuais non poden conectarse a outros, o máis probábel é que sexa necesario un servidor TURN. Consulte {linkstart}esta documentación{linkend} para obter instrucións de configuración.",
+    "{nickName} raised their hand." : "{nickName} ergueu a man.",
     "A participant raised their hand." : "Un participante ergueu a man.",
     "Previous page of videos" : "Páxina anterior de vídeos",
     "Next page of videos" : "Seguinte páxina de vídeos",
