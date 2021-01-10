@@ -461,7 +461,7 @@ export default {
 .new-conversation {
 	display: flex;
 	padding: 8px;
-	border-bottom: 1px solid var(--color-border-dark);
+	border-bottom: 1px solid var(--color-border);
 }
 
 // Override vue overflow rules for <ul> elements within app-navigation
