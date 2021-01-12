@@ -251,6 +251,12 @@ class Listener {
 				return;
 			}
 
+			if ($event->getReason() === Room::PARTICIPANT_LEFT
+				&& $event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+				// Self-joined user closes the tab/window or leaves via the menu
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->sendSystemMessage($room, 'user_removed', ['user' => $event->getUser()->getUID()]);
