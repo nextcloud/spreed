@@ -21,7 +21,9 @@
 
 <template>
 	<AppNavigation :aria-label="t('spreed', 'Conversation list')">
-		<div class="new-conversation">
+		<div
+			class="new-conversation"
+			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
 			<SearchBox
 				v-model="searchText"
 				class="conversations-search"
@@ -33,70 +35,75 @@
 				v-if="canStartConversations" />
 		</div>
 		<template #list class="left-sidebar__list">
-			<Caption v-if="isSearching"
-				:title="t('spreed', 'Conversations')" />
-			<li role="presentation">
-				<ConversationsList
-					ref="conversationsList"
-					:conversations-list="conversationsList"
-					:initialised-conversations="initialisedConversations"
-					:search-text="searchText"
-					@click-search-result="handleClickSearchResult"
-					@focus="setFocusedIndex" />
-			</li>
-			<template v-if="isSearching">
-				<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
-					<Caption
-						:title="t('spreed', 'Open conversations')" />
-					<Conversation
-						v-for="item of searchResultsListedConversations"
-						:key="item.id"
-						:item="item"
-						:is-search-result="true"
-						@click="joinListedConversation(item)" />
+			<div
+				ref="scroller"
+				class="left-sidebar__list"
+				@scroll="debounceHandleScroll">
+				<Caption v-if="isSearching"
+					:title="t('spreed', 'Conversations')" />
+				<li role="presentation">
+					<ConversationsList
+						ref="conversationsList"
+						:conversations-list="conversationsList"
+						:initialised-conversations="initialisedConversations"
+						:search-text="searchText"
+						@click-search-result="handleClickSearchResult"
+						@focus="setFocusedIndex" />
+				</li>
+				<template v-if="isSearching">
+					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
+						<Caption
+							:title="t('spreed', 'Open conversations')" />
+						<Conversation
+							v-for="item of searchResultsListedConversations"
+							:key="item.id"
+							:item="item"
+							:is-search-result="true"
+							@click="joinListedConversation(item)" />
+					</template>
+					<template v-if="searchResultsUsers.length !== 0">
+						<Caption
+							:title="t('spreed', 'Users')" />
+						<li v-if="searchResultsUsers.length !== 0" role="presentation">
+							<ConversationsOptionsList
+								:items="searchResultsUsers"
+								@click="createAndJoinConversation" />
+						</li>
+					</template>
+					<template v-if="!showStartConversationsOptions">
+						<Caption v-if="searchResultsUsers.length === 0"
+							:title="t('spreed', 'Users')" />
+						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+						<Hint v-else :hint="t('spreed', 'No search results')" />
+					</template>
 				</template>
-				<template v-if="searchResultsUsers.length !== 0">
-					<Caption
-						:title="t('spreed', 'Users')" />
-					<li v-if="searchResultsUsers.length !== 0" role="presentation">
-						<ConversationsOptionsList
-							:items="searchResultsUsers"
-							@click="createAndJoinConversation" />
-					</li>
-				</template>
-				<template v-if="!showStartConversationsOptions">
-					<Caption v-if="searchResultsUsers.length === 0"
-						:title="t('spreed', 'Users')" />
+				<template v-if="showStartConversationsOptions">
+					<template v-if="searchResultsGroups.length !== 0">
+						<Caption
+							:title="t('spreed', 'Groups')" />
+						<li v-if="searchResultsGroups.length !== 0" role="presentation">
+							<ConversationsOptionsList
+								:items="searchResultsGroups"
+								@click="createAndJoinConversation" />
+						</li>
+					</template>
+
+					<template v-if="searchResultsCircles.length !== 0">
+						<Caption
+							:title="t('spreed', 'Circles')" />
+						<li v-if="searchResultsCircles.length !== 0" role="presentation">
+							<ConversationsOptionsList
+								:items="searchResultsCircles"
+								@click="createAndJoinConversation" />
+						</li>
+					</template>
+
+					<Caption v-if="sourcesWithoutResults"
+						:title="sourcesWithoutResultsList" />
 					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 					<Hint v-else :hint="t('spreed', 'No search results')" />
 				</template>
-			</template>
-			<template v-if="showStartConversationsOptions">
-				<template v-if="searchResultsGroups.length !== 0">
-					<Caption
-						:title="t('spreed', 'Groups')" />
-					<li v-if="searchResultsGroups.length !== 0" role="presentation">
-						<ConversationsOptionsList
-							:items="searchResultsGroups"
-							@click="createAndJoinConversation" />
-					</li>
-				</template>
-
-				<template v-if="searchResultsCircles.length !== 0">
-					<Caption
-						:title="t('spreed', 'Circles')" />
-					<li v-if="searchResultsCircles.length !== 0" role="presentation">
-						<ConversationsOptionsList
-							:items="searchResultsCircles"
-							@click="createAndJoinConversation" />
-					</li>
-				</template>
-
-				<Caption v-if="sourcesWithoutResults"
-					:title="sourcesWithoutResultsList" />
-				<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
-			</template>
+			</div>
 		</template>
 
 		<template #footer>
@@ -169,6 +176,8 @@ export default {
 			initialisedConversations: false,
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
+			// Keeps track of wheteher the conversation list is scrolled to the top or not
+			isScrolledToTop: true,
 		}
 	},
 
@@ -450,6 +459,20 @@ export default {
 				this.isFetchingConversations = false
 			}
 		},
+
+		// Checks whether the conversations list is scrolled all the way to the top
+		// or not
+		handleScroll() {
+			const scrollTop = this.$refs.scroller.scrollTop
+			if (scrollTop === 0) {
+				this.isScrolledToTop = true
+			} else {
+				this.isScrolledToTop = false
+			}
+		},
+		debounceHandleScroll: debounce(function() {
+			this.handleScroll()
+		}, 50),
 	},
 }
 </script>
@@ -461,7 +484,9 @@ export default {
 .new-conversation {
 	display: flex;
 	padding: 8px;
-	border-bottom: 1px solid var(--color-border);
+	&--scrolled-down {
+		border-bottom: 1px solid var(--color-border);
+	}
 }
 
 // Override vue overflow rules for <ul> elements within app-navigation
