@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<div :class="{ part: true, readonly: !editing }">
+	<div
+		class="part"
+		:class="{ readonly: !editing }">
 		<h3>
 			<img class="icon-service"
 				:src="type.iconUrl">
@@ -53,7 +55,10 @@
 				</ActionButton>
 			</Actions>
 		</h3>
-		<div v-for="(field, key) in displayedFields" :key="key">
+		<div
+			v-for="(field, key) in displayedFields"
+			:key="key"
+			class="field">
 			<div v-if="field.type === 'checkbox'" class="checkbox-container">
 				<input
 					:id="key + '-' + num"
@@ -245,5 +250,9 @@ input {
 // Force action buttons to be 44px tall;
 ::v-deep .action-item__menutoggle {
 	height: $clickable-area !important;
+}
+
+.field {
+	margin: 4px 0;
 }
 </style>
