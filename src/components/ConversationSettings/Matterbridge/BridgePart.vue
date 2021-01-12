@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<div :class="{ part: true, readonly: !editing }">
+	<div
+		class="part"
+		:class="{ readonly: !editing }">
 		<h3>
 			<img class="icon-service"
 				:src="type.iconUrl">
@@ -36,6 +38,7 @@
 				</ActionButton>
 			</Actions>
 			<Actions
+				class="actions"
 				:force-menu="true"
 				placement="bottom">
 				<ActionLink
@@ -52,7 +55,10 @@
 				</ActionButton>
 			</Actions>
 		</h3>
-		<div v-for="(field, key) in displayedFields" :key="key">
+		<div
+			v-for="(field, key) in displayedFields"
+			:key="key"
+			class="field">
 			<div v-if="field.type === 'checkbox'" class="checkbox-container">
 				<input
 					:id="key + '-' + num"
@@ -175,6 +181,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
+
 .part {
 	padding-top: 10px;
 }
@@ -237,5 +245,14 @@ input {
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
 	}
+}
+
+// Force action buttons to be 44px tall;
+::v-deep .action-item__menutoggle {
+	height: $clickable-area !important;
+}
+
+.field {
+	margin: 4px 0;
 }
 </style>

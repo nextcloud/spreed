@@ -44,6 +44,12 @@
 			<LobbySettings :token="token" />
 			<SipSettings v-if="canUserEnableSIP" />
 		</AppSettingsSection>
+		<AppSettingsSection
+			v-if="canFullModerate && matterbridgeEnabled"
+			:title="t('spreed', 'Matterbridge')"
+			class="app-settings-section">
+			<MatterbridgeSettings />
+		</AppSettingsSection>
 	</AppSettingsDialog>
 </template>
 
@@ -57,6 +63,8 @@ import ListableSettings from './ListableSettings'
 import LockingSettings from './LockingSettings'
 import LobbySettings from './LobbySettings'
 import SipSettings from './SipSettings'
+import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -69,11 +77,13 @@ export default {
 		ListableSettings,
 		LockingSettings,
 		SipSettings,
+		MatterbridgeSettings,
 	},
 
 	data() {
 		return {
 			showSettings: false,
+			matterbridgeEnabled: loadState('talk', 'enable_matterbridge'),
 		}
 	},
 
