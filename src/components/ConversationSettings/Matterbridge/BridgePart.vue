@@ -36,6 +36,7 @@
 				</ActionButton>
 			</Actions>
 			<Actions
+				class="actions"
 				:force-menu="true"
 				placement="bottom">
 				<ActionLink
@@ -175,6 +176,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
+
 .part {
 	padding-top: 10px;
 }
@@ -237,5 +240,10 @@ input {
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
 	}
+}
+
+// Force action buttons to be 44px tall;
+::v-deep .action-item__menutoggle {
+	height: $clickable-area !important;
 }
 </style>
