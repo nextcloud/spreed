@@ -62,6 +62,7 @@ import ConversationIcon from './../components/ConversationIcon'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import { CONVERSATION } from '../constants'
 
 const ROOM_POLLING_INTERVAL = 30
 
@@ -155,7 +156,9 @@ export default {
 			axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room').then((response) => {
 				const rooms = response.data.ocs.data
 				const importantRooms = rooms.filter((conversation) => {
-					return conversation.hasCall || conversation.unreadMention
+					return conversation.hasCall
+						|| conversation.unreadMention
+						|| (conversation.unreadMessages > 0 && conversation.type === CONVERSATION.TYPE.ONE_TO_ONE)
 				})
 
 				if (importantRooms.length) {
