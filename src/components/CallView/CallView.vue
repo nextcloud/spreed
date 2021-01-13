@@ -118,6 +118,7 @@
 				:fit-video="true"
 				:has-pagination="true"
 				:call-participant-models="callParticipantModels"
+				:screens="screens"
 				:target-aspect-ratio="gridTargetAspectRatio"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
