@@ -45,6 +45,8 @@
 				:loading="loadingGroups"
 				:show-no-options="false"
 				:close-on-select="false"
+				track-by="id"
+				label="displayname"
 				@search-change="searchGroup" />
 
 			<button class="button primary"
@@ -67,6 +69,8 @@
 				:loading="loadingGroups"
 				:show-no-options="false"
 				:close-on-select="false"
+				track-by="id"
+				label="displayname"
 				@search-change="searchGroup" />
 
 			<button class="button primary"
@@ -131,11 +135,26 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.allowedGroups = loadState('talk', 'allowed_groups')
-		this.canStartConversations = loadState('talk', 'start_conversations')
+		this.allowedGroups = loadState('talk', 'allowed_groups').sort(function(a, b) {
+			return a.displayname.localeCompare(b.displayname)
+		})
+		this.canStartConversations = loadState('talk', 'start_conversations').sort(function(a, b) {
+			return a.displayname.localeCompare(b.displayname)
+		})
 		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
-		this.groups = [...new Set(this.allowedGroups.concat(this.canStartConversations))].sort(function(a, b) {
-			return a.localeCompare(b)
+
+		// Make a unique list with the groups we know from allowedGroups and canStartConversations
+		// Unique checking is done by turning the group objects (with id and name)
+		// into json strings and afterwards back again
+		const mergedGroups = Array.from(
+			new Set(
+				this.allowedGroups.concat(this.canStartConversations)
+					.map(g => JSON.stringify(g))
+			)
+		).map(g => JSON.parse(g))
+
+		this.groups = mergedGroups.sort(function(a, b) {
+			return a.displayname.localeCompare(b.displayname)
 		})
 		this.loading = false
 
@@ -146,14 +165,13 @@ export default {
 		searchGroup: debounce(async function(query) {
 			this.loadingGroups = true
 			try {
-				const res = await axios.get(generateOcsUrl('cloud', 2) + 'groups', {
+				const response = await axios.get(generateOcsUrl('cloud', 2) + 'groups/details', {
 					search: query,
 					limit: 20,
 					offset: 0,
 				})
-				// remove duplicates and sort
-				this.groups = [...new Set(res.data.ocs.data.groups)].sort(function(a, b) {
-					return a.localeCompare(b)
+				this.groups = response.data.ocs.data.groups.sort(function(a, b) {
+					return a.displayname.localeCompare(b.displayname)
 				})
 			} catch (err) {
 				console.error('Could not fetch groups', err)
@@ -167,7 +185,11 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
-			OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(this.allowedGroups), {
+			const groups = this.allowedGroups.map(group => {
+				return group.id
+			})
+
+			OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(groups), {
 				success: function() {
 					this.loading = false
 					this.loadingGroups = false
@@ -184,7 +206,11 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelStartConversations = t('spreed', 'Saving …')
 
-			OCP.AppConfig.setValue('spreed', 'start_conversations', JSON.stringify(this.canStartConversations), {
+			const groups = this.canStartConversations.map(group => {
+				return group.id
+			})
+
+			OCP.AppConfig.setValue('spreed', 'start_conversations', JSON.stringify(groups), {
 				success: function() {
 					this.loading = false
 					this.loadingGroups = false
