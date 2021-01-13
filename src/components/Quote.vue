@@ -151,7 +151,13 @@ export default {
 		},
 
 		isOwnMessageQuoted() {
-			return this.actorId === this.$store.getters.getUserId()
+			let actorId = this.actorId
+			if (this.actorType === 'guests') {
+				actorId = 'guest/' + actorId
+			}
+
+			return actorId === this.$store.getters.getActorId()
+				&& this.actorType === this.$store.getters.getActorType()
 		},
 
 		isFileShareMessage() {
