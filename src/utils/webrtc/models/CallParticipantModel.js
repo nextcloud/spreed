@@ -37,6 +37,7 @@ export default function CallParticipantModel(options) {
 
 	this.attributes = {
 		peerId: null,
+		nextcloudSessionId: null,
 		peer: null,
 		screenPeer: null,
 		// "undefined" is used for values not known yet; "null" or "false"
@@ -346,6 +347,10 @@ CallParticipantModel.prototype = {
 
 	setUserId: function(userId) {
 		this.set('userId', userId)
+	},
+
+	setNextcloudSessionId: function(nextcloudSessionId) {
+		this.set('nextcloudSessionId', nextcloudSessionId)
 	},
 
 }

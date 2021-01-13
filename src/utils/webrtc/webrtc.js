@@ -229,6 +229,12 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 		const userId = user.userId || user.userid || null
 
+		// When the external signaling server is used the Nextcloud session id
+		// will be provided in its own property. When the internal signaling
+		// server is used the Nextcloud session id and the signaling session id
+		// are the same and thus set from the signaling session id.
+		const nextcloudSessionId = user.nextcloudSessionId || user.nextcloudsessionid || sessionId
+
 		let callParticipantModel = callParticipantCollection.get(sessionId)
 		if (!callParticipantModel) {
 			callParticipantModel = callParticipantCollection.add({
@@ -237,6 +243,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 			})
 		}
 		callParticipantModel.setUserId(userId)
+		callParticipantModel.setNextcloudSessionId(nextcloudSessionId)
 		if (user.internal) {
 			callParticipantModel.set('internal', true)
 		}

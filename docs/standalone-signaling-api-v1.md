@@ -549,7 +549,9 @@ Message format (Server -> Client, participants change):
 
 If a participant has the `inCall` flag set, he has joined the call of the room
 and a WebRTC peerconnection should be established if the local client is also
-in the call.
+in the call. In that case the participant information will contain properties
+for both the signaling session id (`sessionId`) and the Nextcloud session id
+(`nextcloudSessionId`).
 
 
 ## Room messages

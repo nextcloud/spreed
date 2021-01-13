@@ -334,6 +334,7 @@ class BackendNotifier {
 				$data['inCall'] = $session->getInCall();
 				$data['lastPing'] = $session->getLastPing();
 				$data['sessionId'] = $session->getSessionId();
+				$data['nextcloudSessionId'] = $session->getSessionId();
 
 				if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
 					$users[] = $data;
