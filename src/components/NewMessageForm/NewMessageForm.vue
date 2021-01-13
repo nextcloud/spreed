@@ -80,6 +80,7 @@
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote
 							:is-new-message-form-quote="true"
+							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
 

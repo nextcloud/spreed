@@ -27,6 +27,7 @@ components.
 <template>
 	<a href="#"
 		class="quote"
+		:class="{'quote-own-message': isOwnMessageQuoted}"
 		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
 			<div class="quote__main__author" role="heading" aria-level="4">
@@ -71,6 +72,10 @@ export default {
 		RichText,
 	},
 	props: {
+		actorId: {
+			type: String,
+			required: true,
+		},
 		/**
 		 * The sender of the message to be replied to.
 		 */
@@ -143,6 +148,16 @@ export default {
 			}
 
 			return displayName
+		},
+
+		isOwnMessageQuoted() {
+			let actorId = this.actorId
+			if (this.actorType === 'guests') {
+				actorId = 'guest/' + actorId
+			}
+
+			return actorId === this.$store.getters.getActorId()
+				&& this.actorType === this.$store.getters.getActorType()
 		},
 
 		isFileShareMessage() {
@@ -225,11 +240,16 @@ export default {
 @import '../assets/variables';
 
 .quote {
-	border-left: 4px solid var(--color-primary);
+	border-left: 4px solid var(--color-border-dark);
 	margin: 4px 0 4px 8px;
 	padding-left: 8px;
 	display: flex;
 	max-width: $messages-list-max-width - $message-utils-width;
+
+	&.quote-own-message {
+		border-left: 4px solid var(--color-primary);
+	}
+
 	&__main {
 		display: flex;
 		flex-direction: column;
