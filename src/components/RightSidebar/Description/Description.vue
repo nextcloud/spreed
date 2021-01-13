@@ -166,7 +166,7 @@ export default {
 
 	data() {
 		return {
-			descriptionText: '',
+			descriptionText: this.description,
 			forceReRenderKey: 0,
 			expanded: false,
 			overflows: null,
@@ -209,8 +209,8 @@ export default {
 
 	watch: {
 		// Each time the prop changes, reflect the changes in the value stored in this component
-		description() {
-			this.descriptionText = this.description
+		description(newValue) {
+			this.descriptionText = newValue
 			if (!this.editing) {
 				this.checkOverflow()
 			}
