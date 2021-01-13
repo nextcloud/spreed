@@ -106,6 +106,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton'
+import DeckCard from './MessagePart/DeckCard'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
@@ -341,6 +342,11 @@ export default {
 				} else if (type === 'file') {
 					richParameters[p] = {
 						component: FilePreview,
+						props: this.messageParameters[p],
+					}
+				} else if (type === 'deck-card') {
+					richParameters[p] = {
+						component: DeckCard,
 						props: this.messageParameters[p],
 					}
 				} else {
