@@ -20,6 +20,7 @@
  *
  */
 import Vue from 'vue'
+import { deleteMessage } from '../services/messagesService'
 
 const state = {
 	/**
@@ -225,6 +226,7 @@ const actions = {
 	 */
 	deleteMessage(context, message) {
 		context.commit('deleteMessage', message)
+		deleteMessage(message)
 	},
 
 	/**
