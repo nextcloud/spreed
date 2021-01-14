@@ -247,6 +247,22 @@ class ChatManager {
 		return $comment;
 	}
 
+	/**
+	 * @param Room $chat
+	 * @param string $messageId
+	 * @return IComment
+	 * @throws NotFoundException
+	 */
+	public function getComment(Room $chat, string $messageId): IComment {
+		$comment = $this->commentsManager->get($messageId);
+
+		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {
+			throw new NotFoundException('Message not found in the right context');
+		}
+
+		return $comment;
+	}
+
 	public function getLastReadMessageFromLegacy(Room $chat, IUser $user): int {
 		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
 		if ($marker === null) {
