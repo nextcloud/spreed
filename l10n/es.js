@@ -673,6 +673,7 @@ OC.L10N.register(
     "Conversation settings" : "Ajustes de la conversación",
     "Guests access" : "Acceso de invitados",
     "Meeting settings" : "Ajustes de la reunión",
+    "Matterbridge" : "Matterbridge",
     "Allow guests to use a public link to join this conversation." : "Permite que se unan invitados a esta conversación mediante un enlace público.",
     "Allow guests" : "Permitir invitados",
     "Set a password to restrict who can use the public link." : "Establece una contraseña para controlar quién puede usar el enlace público.",
