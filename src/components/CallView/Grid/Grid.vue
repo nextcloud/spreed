@@ -365,10 +365,6 @@ export default {
 				return 'height: 100%'
 			}
 		},
-		// Determines when to show the stripe navigation buttons
-		showNavigation() {
-			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
-		},
 
 		// Blur radius for each background in the grid
 		videoBackgroundBlur() {
