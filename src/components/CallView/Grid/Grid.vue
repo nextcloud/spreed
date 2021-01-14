@@ -661,7 +661,7 @@ export default {
 
 .stripe-wrapper {
 	width: calc(100% - 300px);
-	position:relative
+	position: relative;
 }
 
 .dev-mode-video {
