@@ -111,9 +111,13 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initAllowedGroups(): void {
-		$this->initialStateService->provideInitialState('talk', 'start_conversations', $this->talkConfig->getAllowedConversationsGroupIds());
 		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
-		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $this->talkConfig->getAllowedTalkGroupIds());
+
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds());
+		$this->initialStateService->provideInitialState('talk', 'start_conversations', $groups);
+
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds());
+		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $groups);
 	}
 
 	protected function initCommands(): void {
@@ -475,7 +479,14 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initSIPBridge(): void {
-		$gids = $this->talkConfig->getSIPGroups();
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getSIPGroups());
+
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $groups);
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
+		$this->initialStateService->provideInitialState('talk', 'sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
+	}
+
+	protected function getGroupDetailsArray(array $gids): array {
 		$groups = [];
 		foreach ($gids as $gid) {
 			$group = $this->groupManager->get($gid);
@@ -487,9 +498,7 @@ class AdminSettings implements ISettings {
 			}
 		}
 
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $groups);
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
+		return $groups;
 	}
 
 	/**
