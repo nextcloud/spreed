@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper" :style="wrapperStyle">
 		<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-			<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+			<button v-if="hasPreviousPage && gridWidth > 0 && showVideoOverlay"
 				class="grid-navigation grid-navigation__previous"
 				@click="handleClickPrevious">
 				<ChevronLeft decorative
@@ -78,7 +78,7 @@
 						@click-video="handleClickLocalVideo" />
 				</template>
 			</div>
-			<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+			<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
 				class="grid-navigation grid-navigation__next"
 				@click="handleClickNext">
 				<ChevronRight decorative
@@ -714,7 +714,8 @@ export default {
 	height: 44px;
 	background-color: white;
 	opacity: 0.6 !important;
-	top: 12px;
+	/* Center icons vertically in the grid view */
+	top: calc(50% - 22px);
 	z-index: 2;
 	box-shadow: 0 0 4px var(--color-box-shadow);
 	padding: 0;
@@ -732,6 +733,10 @@ export default {
 	&__next {
 		right: 12px;
 	}
+}
+
+.stripe-wrapper .grid-navigation {
+	top: 12px;
 }
 
 .pages-indicator {
