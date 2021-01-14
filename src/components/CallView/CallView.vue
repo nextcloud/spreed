@@ -377,9 +377,13 @@ export default {
 	},
 	mounted() {
 		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
+
+		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 	},
 	beforeDestroy() {
 		EventBus.$off('refreshPeerList', this.debounceFetchPeers)
+
+		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 	},
 	methods: {
 		/**
@@ -410,8 +414,6 @@ export default {
 				this.raisedHandUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
-				// FIXME: when using HPB sessionId doesn't match
-				this.$store.dispatch('setParticipantHandRaised', { sessionId: removedModelId, raisedHand: { state: false } })
 
 				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
@@ -501,9 +503,15 @@ export default {
 
 			// update in callViewStore
 			this.$store.dispatch('setParticipantHandRaised', {
-				// FIXME: this is a bit hacky to fix the HPB session mismatch
-				sessionId: raisedHand?.sessionId ? raisedHand?.sessionId : callParticipantModel.attributes.peerId,
+				sessionId: callParticipantModel.attributes.nextcloudSessionId,
 				raisedHand: raisedHand,
+			})
+		},
+
+		_lowerHandWhenParticipantLeaves(callParticipantCollection, callParticipantModel) {
+			this.$store.dispatch('setParticipantHandRaised', {
+				sessionId: callParticipantModel.attributes.nextcloudSessionId,
+				raisedHand: false,
 			})
 		},
 

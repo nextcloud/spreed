@@ -444,7 +444,6 @@ LocalMediaModel.prototype = {
 		const raisedHand = {
 			state: raised,
 			timestamp: Date.now(),
-			sessionId: this._webRtc.connection?.nextcloudSessionId,
 		}
 
 		this._webRtc.sendToAll('raiseHand', raisedHand)
