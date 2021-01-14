@@ -31,6 +31,13 @@ Feature: public
     Then user "participant1" is participant of room "room"
     And user "participant2" is not participant of room "room"
 
+  Scenario: Last moderator removes the room from their room list
+    Given user "participant1" creates room "room"
+      | roomType | 3 |
+      | roomName | room |
+    When user "participant1" removes themselves from room "room" with 200
+    Then user "participant2" gets room "room" with 404 (v3)
+
   Scenario: User removes the room from their room list
     Given user "participant1" creates room "room"
       | roomType | 3 |
