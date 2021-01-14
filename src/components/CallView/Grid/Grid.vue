@@ -40,7 +40,7 @@
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
-				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
+				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
 					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
@@ -757,7 +757,7 @@ export default {
 	width: 300px;
 }
 
-.pagination-wrapper {
+.stripe-wrapper {
 	width: calc(100% - 300px);
 	position:relative
 }
