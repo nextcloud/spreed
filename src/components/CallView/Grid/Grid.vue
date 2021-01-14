@@ -41,7 +41,7 @@
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+					<button v-if="hasPreviousPage && gridWidth > 0 && showVideoOverlay"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
@@ -100,7 +100,7 @@
 							@switchScreenToId="1"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+					<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
@@ -812,7 +812,8 @@ export default {
 	height: 44px;
 	background-color: white;
 	opacity: 0.6 !important;
-	top: 12px;
+	/* Center icons vertically in the grid view */
+	top: calc(50% - 22px);
 	z-index: 2;
 	box-shadow: 0 0 4px var(--color-box-shadow);
 	padding: 0;
@@ -830,6 +831,10 @@ export default {
 	&__next {
 		right: 12px;
 	}
+}
+
+.stripe-wrapper .grid-navigation {
+	top: 12px;
 }
 
 .pages-indicator {
