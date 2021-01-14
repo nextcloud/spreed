@@ -565,12 +565,7 @@ export default {
 				this.shrinkGrid(this.videosCount)
 			}
 			// Once the grid is done, populate it with video components
-			if (this.isStripe) {
-				this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
-			} else {
-				// `- 1` because we a ccount for the localVideo component (see template)
-				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
-			}
+			this.displayedVideos = this.videos.slice(0, this.slots)
 			// Send event to display hint in the topbar component if there's an
 			// overflow of videos (only if in full-grid mode, not stripe)
 			if (this.hasVideoOverflow) {
