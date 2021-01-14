@@ -227,9 +227,6 @@ export default {
 		return {
 			gridWidth: 0,
 			gridHeight: 0,
-			// Array of videos that are being displayed in the grid at any
-			// given moment
-			displayedVideos: [],
 			// Columns of the grid at any given moment
 			columns: 0,
 			// Rows of the grid at any given moment
@@ -272,6 +269,22 @@ export default {
 		videoHeight() {
 			return this.gridHeight / this.rows
 		},
+
+		// Array of videos that are being displayed in the grid at any given
+		// moment
+		displayedVideos() {
+			if (!this.slots) {
+				return []
+			}
+
+			// Slice the `videos` array to display the current page of videos
+			if (((this.currentPage + 1) * this.slots) >= this.videos.length) {
+				return this.videos.slice(this.currentPage * this.slots)
+			}
+
+			return this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
+		},
+
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
@@ -458,7 +471,6 @@ export default {
 			if (this.videos.length === 0) {
 				this.columns = 0
 				this.rows = 0
-				this.displayedVideos = []
 				return
 			}
 
@@ -485,8 +497,6 @@ export default {
 			} else {
 				this.shrinkGrid(this.videosCount)
 			}
-			// Once the grid is done, populate it with video components
-			this.displayedVideos = this.videos.slice(0, this.slots)
 			// Send event to display hint in the topbar component if there's an
 			// overflow of videos (only if in full-grid mode, not stripe)
 			if (this.hasVideoOverflow) {
@@ -594,23 +604,13 @@ export default {
 		// this.shrinkGrid(this.displayedVideos.length)
 		// },
 
-		// Slice the `videos` array to display the next set of videos
 		handleClickNext() {
 			this.currentPage++
 			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
-			if (((this.currentPage + 1) * this.slots) >= this.videos.length) {
-				this.displayedVideos = this.videos.slice(this.currentPage * this.slots)
-			} else {
-				this.displayedVideos = this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
-			}
-			console.debug('slicevalues', (this.currentPage) * this.slots, this.currentPage * this.slots)
 		},
-		// Slice the `videos` array to display the previous set of videos
 		handleClickPrevious() {
 			this.currentPage--
 			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
-			this.displayedVideos = this.videos.slice((this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
-			console.debug('slicevalues', (this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
 		},
 
 		handleMovement() {
