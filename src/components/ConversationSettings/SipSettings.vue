@@ -64,20 +64,20 @@ export default {
 	},
 
 	methods: {
-		async toggleSIPEnabled(checked) {
+		async toggleSIPEnabled() {
 			try {
 				await this.$store.dispatch('setSIPEnabled', {
 					token: this.token,
-					state: checked ? WEBINAR.SIP.ENABLED : WEBINAR.SIP.DISABLED,
+					state: !this.conversation.sipEnabled ? WEBINAR.SIP.ENABLED : WEBINAR.SIP.DISABLED,
 				})
-				if (checked) {
+				if (this.conversation.sipEnabled) {
 					showSuccess(t('spreed', 'SIP dial-in is now enabled'))
 				} else {
 					showSuccess(t('spreed', 'SIP dial-in is now disabled'))
 				}
 			} catch (e) {
 				// TODO check "precondition failed"
-				if (checked) {
+				if (!this.conversation.sipEnabled) {
 					console.error('Error occurred when enabling SIP dial-in', e)
 					showError(t('spreed', 'Error occurred when enabling SIP dial-in'))
 				} else {
