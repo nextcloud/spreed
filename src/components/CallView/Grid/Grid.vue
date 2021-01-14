@@ -562,15 +562,11 @@ export default {
 			}
 			// Send event to display hint in the topbar component if there's an
 			// overflow of videos (only if in full-grid mode, not stripe)
-			if (this.hasVideoOverflow) {
-				if (!this.isStripe) {
-					EventBus.$emit('toggleLayoutHint', true)
-				} else {
-				// Remove the hint if user resizes
-					EventBus.$emit('toggleLayoutHint', false)
-				}
+			if (!this.hasVideoOverflow || this.isStripe) {
+				EventBus.$emit('toggleLayoutHint', false)
+			} else {
+				EventBus.$emit('toggleLayoutHint', true)
 			}
-
 		},
 
 		// Fine tune the number of rows and columns of the grid
