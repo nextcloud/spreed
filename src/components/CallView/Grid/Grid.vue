@@ -454,11 +454,6 @@ export default {
 		// If the video array size changes, rebuild the grid
 		'videos.length': function() {
 			this.makeGrid()
-			if (this.hasPagination) {
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
 		},
 		// TODO: rebuild the grid to have optimal for last page
 		// Exception for when navigating in and away from the last page of the
@@ -488,6 +483,12 @@ export default {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
 		},
+
+		numberOfPages() {
+			if (this.currentPage >= this.numberOfPages) {
+				this.currentPage = this.numberOfPages - 1
+			}
+		},
 	},
 
 	// bind event handlers to the `handleResize` method
@@ -495,11 +496,6 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
-		if (this.hasPagination) {
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
-		}
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.handleResize)
@@ -514,11 +510,6 @@ export default {
 			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
 			if (!this.isStripe || this.stripeOpen) {
 				this.$nextTick(this.makeGrid)
-				if (this.hasPagination) {
-					// Set the current page to 0
-					// TODO: add support for keeping position in the videos array when resizing or collapsing
-					this.currentPage = 0
-				}
 			}
 		},
 
@@ -529,11 +520,6 @@ export default {
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
 			debounce(this.makeGrid(), 200)
-			if (this.hasPagination) {
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
 		},
 
 		// Find the right size if the grid in rows and columns (we already know
