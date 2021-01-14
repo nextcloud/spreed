@@ -68,20 +68,6 @@ export default {
 		},
 	},
 
-	watch: {
-		value(value) {
-			this.listable = value
-		},
-	},
-
-	mounted() {
-		if (this.token) {
-			this.listable = this.value || this.conversation.listable
-		} else {
-			this.listable = this.value
-		}
-	},
-
 	methods: {
 		async toggleReadOnly() {
 			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
