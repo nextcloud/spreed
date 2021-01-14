@@ -483,10 +483,11 @@ class Manager {
 	 * @param string $token
 	 * @param string|null $userId
 	 * @param bool $includeLastMessage
+	 * @param bool $isSIPBridgeRequest
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForUserByToken(string $token, ?string $userId, bool $includeLastMessage = false): Room {
+	public function getRoomForUserByToken(string $token, ?string $userId, bool $includeLastMessage = false, bool $isSIPBridgeRequest = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -530,7 +531,7 @@ class Manager {
 			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
-		if ($room->getType() === Room::PUBLIC_CALL) {
+		if ($isSIPBridgeRequest || $room->getType() === Room::PUBLIC_CALL) {
 			return $room;
 		}
 
