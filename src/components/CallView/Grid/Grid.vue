@@ -76,17 +76,6 @@
 									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 							</template>
-							<LocalVideo
-								v-if="!isStripe"
-								ref="localVideo"
-								class="video"
-								:is-grid="true"
-								:fit-video="isStripe"
-								:local-media-model="localMediaModel"
-								:video-container-aspect-ratio="videoContainerAspectRatio"
-								:local-call-participant-model="localCallParticipantModel"
-								@switchScreenToId="1"
-								@click-video="handleClickLocalVideo" />
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
@@ -99,6 +88,17 @@
 								Dev mode on ;-)
 							</h1>
 						</template>
+						<LocalVideo
+							v-if="!isStripe"
+							ref="localVideo"
+							class="video"
+							:is-grid="true"
+							:fit-video="isStripe"
+							:local-media-model="localMediaModel"
+							:video-container-aspect-ratio="videoContainerAspectRatio"
+							:local-call-participant-model="localCallParticipantModel"
+							@switchScreenToId="1"
+							@click-video="handleClickLocalVideo" />
 					</div>
 					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
 						class="grid-navigation grid-navigation__next"
@@ -310,9 +310,9 @@ export default {
 			}
 		},
 
-		// Number of video components (includes localvideo if not in dev mode)
+		// Number of video components (includes localvideo if not stripe)
 		videosCount() {
-			if (this.devMode || this.isStripe) {
+			if (this.isStripe) {
 				return this.videos.length
 			} else {
 				// Count the emptycontent as a grid element
@@ -571,7 +571,7 @@ export default {
 				this.shrinkGrid(this.videosCount)
 			}
 			// Once the grid is done, populate it with video components
-			if (this.devMode || this.isStripe) {
+			if (this.isStripe) {
 				this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
 			} else {
 				// `- 1` because we a ccount for the localVideo component (see template)
