@@ -257,18 +257,14 @@ export default {
 			}
 		},
 
-		// Number of video components (includes localvideo if not stripe)
+		// Number of video components (it does not include the local video)
 		videosCount() {
-			if (this.isStripe) {
-				return this.videos.length
-			} else {
+			if (!this.isStripe && this.videos.length === 0) {
 				// Count the emptycontent as a grid element
-				if (this.videos.length === 0) {
-					return 2
-				}
-				// Add the local video to the count
-				return this.videos.length + 1
+				return 1
 			}
+
+			return this.videos.length
 		},
 		videoWidth() {
 			return this.gridWidth / this.columns
@@ -302,8 +298,10 @@ export default {
 		},
 
 		// Number of grid slots at any given moment
+		// The local video always takes one slot if the grid view is not shown
+		// as a stripe.
 		slots() {
-			return this.rows * this.columns
+			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
 		},
 
 		// Hides or displays the `grid-navigation next` button
@@ -520,7 +518,7 @@ export default {
 
 			let currentColumns = this.columns
 			let currentRows = this.rows
-			let currentSlots = currentColumns * currentRows
+			let currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
@@ -553,7 +551,7 @@ export default {
 						currentColumns--
 					}
 
-					currentSlots = currentColumns * currentRows
+					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
@@ -566,7 +564,7 @@ export default {
 						currentRows--
 					}
 
-					currentSlots = currentColumns * currentRows
+					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
