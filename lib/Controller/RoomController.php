@@ -231,7 +231,7 @@ class RoomController extends AEnvironmentAwareController {
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $includeLastMessage);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $includeLastMessage, $isSIPBridgeRequest);
 
 			$participant = null;
 			try {
