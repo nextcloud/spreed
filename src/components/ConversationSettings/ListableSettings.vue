@@ -30,7 +30,7 @@
 				:checked="listable !== LISTABLE.NONE"
 				:disabled="isListableLoading"
 				@change="toggleListableUsers">
-			<label for="listable_settings_registered_users_checkbox">{{ t('spreed', 'Make conversation accessible to registered users') }}</label>
+			<label for="listable_settings_registered_users_checkbox">{{ t('spreed', 'Open conversation to registered users') }}</label>
 		</div>
 		<div v-if="listable !== LISTABLE.NONE" class="indent">
 			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
@@ -44,7 +44,7 @@
 					:checked="listable === LISTABLE.ALL"
 					:disabled="isListableLoading"
 					@change="toggleListableGuests">
-				<label for="listable_settings_guestapp_users_checkbox">{{ t('spreed', 'Also make it accessible to guest app users') }}</label>
+				<label for="listable_settings_guestapp_users_checkbox">{{ t('spreed', 'Also open to guest app users') }}</label>
 			</div>
 		</div>
 	</div>
@@ -134,16 +134,16 @@ export default {
 					this.lastNotification = null
 				}
 				if (listable === CONVERSATION.LISTABLE.NONE) {
-					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to participants'))
+					this.lastNotification = showSuccess(t('spreed', 'You limited the conversation to the current participants'))
 				} else if (listable === CONVERSATION.LISTABLE.USERS) {
-					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to registered users only'))
+					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered users'))
 				} else if (listable === CONVERSATION.LISTABLE.ALL) {
-					this.lastNotification = showSuccess(t('spreed', 'You made the conversation accessible to everyone'))
+					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered and guest app users'))
 				}
 				this.listable = listable
 			} catch (e) {
-				console.error('Error occurred when updating the conversation accessibility', e)
-				showError(t('spreed', 'Error occurred when updating the conversation accessibility'))
+				console.error('Error occurred when opening or limiting the conversation', e)
+				showError(t('spreed', 'Error occurred when opening or limiting the conversation'))
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false

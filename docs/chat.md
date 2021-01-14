@@ -161,9 +161,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `call_ended` - Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration 30:23)
 * `read_only_off` - {actor} unlocked the conversation
 * `read_only` - {actor} locked the conversation
-* `listable_none` - {actor} made the conversation accessible to participants
-* `listable_users` - {actor} made the conversation accessible to regular users
-* `listable_all` - {actor} made the conversation accessible to everone which includes users and guests
+* `listable_none` - {actor} limited the conversation to the current participants
+* `listable_users` - {actor} opened the conversation accessible to registered users
+* `listable_all` - {actor} opened the conversation accessible to registered and guest app users
 * `lobby_timer_reached` - The conversation is now open to everyone
 * `lobby_none` - {actor} opened the conversation to everyone
 * `lobby_non_moderators` - {actor} restricted the conversation to moderators
