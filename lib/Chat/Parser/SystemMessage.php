@@ -354,6 +354,11 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You stopped Matterbridge.');
 			}
+		} elseif ($message === 'message_deleted') {
+			$parsedMessage = $this->l->t('{actor} deleted a message');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You deleted a message');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}

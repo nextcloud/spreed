@@ -466,6 +466,40 @@ class ChatController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 * @RequireParticipant
 	 *
+	 * @param int $messageId
+	 * @return DataResponse
+	 */
+	public function deleteMessage(int $messageId): DataResponse {
+		try {
+			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$attendee = $this->participant->getAttendee();
+		if (!$this->participant->hasModeratorPermissions(false)
+			&& ($message->getActorType() !== $attendee->getActorType()
+				|| $message->getActorId() !== $attendee->getActorId())) {
+			// Actor is not a moderator or not the owner of the message
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$attendee->getActorType(),
+			$attendee->getActorId(),
+			json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $messageId]]),
+			$this->timeFactory->getDateTime(),
+			false
+		);
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 *
 	 * @param int $lastReadMessage
 	 * @return DataResponse
 	 */
