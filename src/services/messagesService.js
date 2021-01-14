@@ -103,8 +103,20 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
 	return response
 }
 
+/**
+ * Posts a new messageto the server.
+ *
+ * @param {object} param0 The message object that is destructured
+ * @param {string} token The conversation token
+ * @param {string} id The id of the message to be deleted
+ */
+const deleteMessage = async function({ token, id }) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '/' + id)
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
 	postNewMessage,
+	deleteMessage,
 }
