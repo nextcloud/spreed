@@ -152,6 +152,7 @@ const actions = {
 	 * @param {object} token the token of the conversation to be deleted;
 	 */
 	deleteConversation(context, token) {
+		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
 	},
 
