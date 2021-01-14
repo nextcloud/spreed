@@ -417,7 +417,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			callParticipantModel.set('speaking', (event.flags & PARTICIPANT.SIP_FLAG.SPEAKING) > 0)
 			callParticipantModel.set('audioAvailable', (event.flags & PARTICIPANT.SIP_FLAG.MUTE_MICROPHONE) === 0)
 			callParticipantModel.set('raisedHand', {
-				state: (event.flags & PARTICIPANT.SIP_FLAG.RAISE_HAND) === 0,
+				state: (event.flags & PARTICIPANT.SIP_FLAG.RAISE_HAND) !== 0,
 				timestamp: Date.now(),
 			})
 		}
