@@ -125,7 +125,6 @@
 import debounce from 'debounce'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
-import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
@@ -384,21 +383,6 @@ export default {
 		videoBackgroundBlur() {
 			return this.$store.getters.getBlurRadius(this.videoWidth, this.videoHeight)
 		},
-
-		// Special boolean property to watch and emit the "toggleLayoutHint"
-		// event to display hint in the topbar component if there is an overflow
-		// of videos (only if in full-grid mode, not stripe)
-		toggleLayoutHint() {
-			if (!this.hasVideoOverflow) {
-				return false
-			}
-
-			if (this.isStripe) {
-				return false
-			}
-
-			return true
-		},
 	},
 
 	watch: {
@@ -437,13 +421,6 @@ export default {
 			if (this.currentPage >= this.numberOfPages) {
 				this.currentPage = this.numberOfPages - 1
 			}
-		},
-
-		toggleLayoutHint: {
-			immediate: true,
-			handler() {
-				EventBus.$emit('toggleLayoutHint', this.toggleLayoutHint)
-			},
 		},
 	},
 
