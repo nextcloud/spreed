@@ -334,7 +334,7 @@ export default {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible
 			// so we can show it in the stripe
-			return this.callParticipantModels.length <= 1 && !this.screens.length
+			return this.videos.length <= 1 && !this.screens.length
 		},
 
 		// The aspect ratio of the grid (in terms of px)
