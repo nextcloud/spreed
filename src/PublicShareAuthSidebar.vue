@@ -179,7 +179,7 @@ export default {
 			} catch (exception) {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
-				this.$store.dispatch('deleteConversationByToken', this.token)
+				this.$store.dispatch('deleteConversation', this.token)
 				this.$store.dispatch('updateToken', '')
 			}
 		},

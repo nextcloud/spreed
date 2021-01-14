@@ -154,12 +154,12 @@ const mutations = {
 	},
 
 	/**
-	 * Deletes the messages entry for the deleted conversation.
+	 * Deletes the messages entry from the store for the given conversation token.
 	 *
 	 * @param {object} state current store state
 	 * @param {string} token Token of the conversation
 	 */
-	deleteConversationByToken(state, token) {
+	deleteConversation(state, token) {
 		if (state.firstKnown[token]) {
 			Vue.delete(state.firstKnown, token)
 		}
@@ -245,20 +245,10 @@ const actions = {
 	 * Deletes the messages of a conversation
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} conversation the conversation to be deleted;
-	 */
-	deleteConversation(context, conversation) {
-		context.commit('deleteConversationByToken', conversation.token)
-	},
-
-	/**
-	 * Deletes the messages of a conversation
-	 *
-	 * @param {object} context default store context;
 	 * @param {object} token the token of the conversation to be deleted;
 	 */
-	deleteConversationByToken(context, token) {
-		context.commit('deleteConversationByToken', token)
+	deleteConversation(context, token) {
+		context.commit('deleteConversation', token)
 	},
 }
 
