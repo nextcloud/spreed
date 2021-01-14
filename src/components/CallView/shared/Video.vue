@@ -225,22 +225,53 @@ export default {
 			return peerData
 		},
 
-		participantUserId() {
-			let participantUserId = this.model.attributes.userId
-
-			// The name is undefined and not shown until a connection is made
-			// for registered users, so do not fall back to the guest name in
-			// the store either until the connection was made.
-			if (!participantUserId) {
-				if (this.peerData.actorType === 'users') {
-					participantUserId = this.peerData.actorId
-				}
+		participant() {
+			/**
+			 * This only works for logged in users. Guests can not load the data
+			 * via the participant list
+			 */
+			const participantIndex = this.$store.getters.getParticipantIndex(this.$store.getters.getToken(), {
+				sessionId: this.peerId,
+			})
+			if (participantIndex === -1) {
+				return {}
 			}
 
-			return participantUserId
+			return this.$store.getters.getParticipant(this.$store.getters.getToken(), participantIndex)
+		},
+
+		participantUserId() {
+			if (this.model.attributes.userId) {
+				return this.model.attributes.userId
+			}
+
+			// Check data from participant list
+			if (this.participant?.actorType) {
+				if (this.participant?.actorType === 'users' && this.participant?.actorId) {
+					return this.participant.actorId
+				}
+
+				// Not a user
+				return null
+			}
+
+			// Fallback to CallController::getPeers() endpoint
+			if (this.peerData.actorType === 'users') {
+				return this.peerData.actorId
+			}
+
+			return null
 		},
 
 		participantName() {
+			if (this.model.attributes.name) {
+				return this.model.attributes.name
+			}
+
+			if (this.participant?.displayName) {
+				return this.participant.displayName
+			}
+
 			let participantName = this.model.attributes.name
 
 			// The name is undefined and not shown until a connection is made
