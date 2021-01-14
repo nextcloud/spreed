@@ -448,6 +448,21 @@ export default {
 		stripeOpen() {
 			return this.$store.getters.isStripeOpen
 		},
+
+		// Special boolean property to watch and emit the "toggleLayoutHint"
+		// event to display hint in the topbar component if there is an overflow
+		// of videos (only if in full-grid mode, not stripe)
+		toggleLayoutHint() {
+			if (!this.hasVideoOverflow) {
+				return false
+			}
+
+			if (this.isStripe) {
+				return false
+			}
+
+			return true
+		},
 	},
 
 	watch: {
@@ -488,6 +503,13 @@ export default {
 			if (this.currentPage >= this.numberOfPages) {
 				this.currentPage = this.numberOfPages - 1
 			}
+		},
+
+		toggleLayoutHint: {
+			immediate: true,
+			handler() {
+				EventBus.$emit('toggleLayoutHint', this.toggleLayoutHint)
+			},
 		},
 	},
 
@@ -559,13 +581,6 @@ export default {
 				this.shrinkGrid(this.videosCap)
 			} else {
 				this.shrinkGrid(this.videosCount)
-			}
-			// Send event to display hint in the topbar component if there's an
-			// overflow of videos (only if in full-grid mode, not stripe)
-			if (!this.hasVideoOverflow || this.isStripe) {
-				EventBus.$emit('toggleLayoutHint', false)
-			} else {
-				EventBus.$emit('toggleLayoutHint', true)
 			}
 		},
 
