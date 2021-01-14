@@ -231,8 +231,6 @@ export default {
 			columns: 0,
 			// Rows of the grid at any given moment
 			rows: 0,
-			// Grid pages at any given moment
-			numberOfPages: 0,
 			// The current page
 			currentPage: 0,
 			// Videos controls and name
@@ -317,6 +315,11 @@ export default {
 			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
 		},
 
+		// Grid pages at any given moment
+		numberOfPages() {
+			return Math.ceil(this.videosCount / this.slots)
+		},
+
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
@@ -388,7 +391,6 @@ export default {
 		'videos.length': function() {
 			this.makeGrid()
 			if (this.hasPagination) {
-				this.setNumberOfPages()
 				// Set the current page to 0
 				// TODO: add support for keeping position in the videos array when resizing
 				this.currentPage = 0
@@ -416,7 +418,6 @@ export default {
 			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
 			this.$nextTick(this.makeGrid)
 			if (this.hasPagination) {
-				this.setNumberOfPages()
 				// Set the current page to 0
 				// TODO: add support for keeping position in the videos array when resizing
 				this.currentPage = 0
@@ -434,7 +435,6 @@ export default {
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
 		if (this.hasPagination) {
-			this.setNumberOfPages()
 			// Set the current page to 0
 			// TODO: add support for keeping position in the videos array when resizing
 			this.currentPage = 0
@@ -455,7 +455,6 @@ export default {
 			// in the grid goes back to be first video)
 			debounce(this.makeGrid(), 200)
 			if (this.hasPagination) {
-				this.setNumberOfPages()
 				// Set the current page to 0
 				// TODO: add support for keeping position in the videos array when resizing
 				this.currentPage = 0
@@ -586,11 +585,6 @@ export default {
 
 			this.columns = currentColumns
 			this.rows = currentRows
-		},
-
-		// Set the current number of pages
-		setNumberOfPages() {
-			this.numberOfPages = Math.ceil(this.videosCount / this.slots)
 		},
 
 		// The last grid page is very likely not to have the same number of
