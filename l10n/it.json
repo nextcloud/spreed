@@ -823,6 +823,7 @@
     "Sending message" : "Invio del messaggio",
     "Message sent" : "Messaggio inviato",
     "Message read by everyone who shares their reading status" : "Messaggio letto da tutti coloro che condividono il proprio stato di lettura",
+    "{stack} in {board}" : "{stack} in {board}",
     "Remove" : "Rimuovi",
     "[Unknown username]" : "[Nome utente sconosciuto]",
     "Scroll to bottom" : "Scorri in fondo",
