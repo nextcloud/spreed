@@ -472,6 +472,10 @@ export default {
 		 */
 		isStripe() {
 			this.rebuildGrid()
+
+			// Reset current page when switching between stripe and full grid,
+			// as the previous page is meaningless in the new mode.
+			this.currentPage = 0
 		},
 
 		stripeOpen() {
