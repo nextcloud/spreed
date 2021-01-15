@@ -131,6 +131,16 @@ const mutations = {
 	},
 
 	/**
+	 * Deletes a message from the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the message;
+	 * @param {string} tempMessage Placeholder message until deleting finished
+	 */
+	markMessageAsDeleted(state, { message, placeholder }) {
+		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
+		Vue.set(state.messages[message.token][message.id], 'message', placeholder)
+	},
+	/**
 	 * Adds a temporary message to the store.
 	 * @param {object} state current store state;
 	 * @param {object} message the temporary message;
@@ -222,11 +232,19 @@ const actions = {
 	 * Delete a message
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} message the message to be deleted;
+	 * @param {object} message the message to be deleted;
+	 * @param {string} placeholder Placeholder message until deleting finished
 	 */
-	deleteMessage(context, message) {
-		context.commit('deleteMessage', message)
-		deleteMessage(message)
+	async deleteMessage(context, { message, placeholder }) {
+		context.commit('markMessageAsDeleted', { message, placeholder })
+		const response = await deleteMessage(message)
+
+		if (response.parent) {
+			context.commit('addMessage', response.parent)
+			response.parent = response.parent.id
+		}
+
+		context.commit('addMessage', response)
 	},
 
 	/**

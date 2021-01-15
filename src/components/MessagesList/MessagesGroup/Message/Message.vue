@@ -90,7 +90,7 @@ the main body of the message as well as a quote.
 						title=""
 						:size="16" />
 				</div>
-				<div v-else-if="isTemporary && !isTemporaryUpload"
+				<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
 					v-tooltip.auto="loadingIconTooltip"
 					class="icon-loading-small message-status"
 					:aria-label="loadingIconTooltip" />
@@ -310,6 +310,7 @@ export default {
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
 			showReloadButton: false,
+			isDeleting: false,
 		}
 	},
 
@@ -358,6 +359,7 @@ export default {
 		showSentIcon() {
 			return !this.isSystemMessage
 				&& !this.isTemporary
+				&& !this.isDeleting
 				&& this.actorType === this.participant.actorType
 				&& this.actorId === this.participant.actorId
 		},
@@ -429,7 +431,7 @@ export default {
 
 		// Determines whether the date has to be displayed or not
 		hasDate() {
-			if (this.isTemporary || this.sendingFailure) {
+			if (this.isTemporary || this.isDeleting || this.sendingFailure) {
 				// Never on temporary or failed messages
 				return false
 			}
@@ -468,12 +470,14 @@ export default {
 		},
 
 		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId() && this.actorType === this.$store.getters.getActorType()
+			return this.actorId === this.$store.getters.getActorId()
+				&& this.actorType === this.$store.getters.getActorType()
 		},
 
 		isDeleteable() {
 			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
 				&& this.messageType === 'comment'
+				&& !this.isDeleting
 				&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
 					|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR
 					|| this.isMyMsg)
@@ -547,11 +551,16 @@ export default {
 			})
 			EventBus.$emit('focusChatInput')
 		},
-		handleDelete() {
-			this.$store.dispatch('deleteMessage', {
-				token: this.token,
-				id: this.id,
+		async handleDelete() {
+			this.isDeleting = true
+			await this.$store.dispatch('deleteMessage', {
+				message: {
+					token: this.token,
+					id: this.id,
+				},
+				placeholder: t('spreed', 'Deleting message'),
 			})
+			this.isDeleting = false
 		},
 	},
 }
