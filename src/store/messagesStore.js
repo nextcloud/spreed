@@ -22,12 +22,18 @@
 import Vue from 'vue'
 
 const state = {
-	messages: {
-	},
-	firstKnown: {
-	},
-	lastKnown: {
-	},
+	/**
+	 * Map of conversation token to message list
+	 */
+	messages: {},
+	/**
+	 * Map of conversation token to first known message id
+	 */
+	firstKnown: {},
+	/**
+	 * Map of conversation token to last known message id
+	 */
+	lastKnown: {},
 }
 
 const getters = {
@@ -146,6 +152,24 @@ const mutations = {
 	setLastKnownMessageId(state, { token, id }) {
 		Vue.set(state.lastKnown, token, id)
 	},
+
+	/**
+	 * Deletes the messages entry from the store for the given conversation token.
+	 *
+	 * @param {object} state current store state
+	 * @param {string} token Token of the conversation
+	 */
+	deleteMessages(state, token) {
+		if (state.firstKnown[token]) {
+			Vue.delete(state.firstKnown, token)
+		}
+		if (state.lastKnown[token]) {
+			Vue.delete(state.lastKnown, token)
+		}
+		if (state.messages[token]) {
+			Vue.delete(state.messages, token)
+		}
+	},
 }
 
 const actions = {
@@ -215,6 +239,16 @@ const actions = {
 	 */
 	setLastKnownMessageId(context, { token, id }) {
 		context.commit('setLastKnownMessageId', { token, id })
+	},
+
+	/**
+	 * Deletes the messages of a conversation
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} token the token of the conversation to be deleted;
+	 */
+	deleteMessages(context, token) {
+		context.commit('deleteMessages', token)
 	},
 }
 

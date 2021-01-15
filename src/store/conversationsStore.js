@@ -146,22 +146,13 @@ const actions = {
 	},
 
 	/**
-	 * Delete a object
-	 *
-	 * @param {object} context default store context;
-	 * @param {object} conversation the conversation to be deleted;
-	 */
-	deleteConversation(context, conversation) {
-		context.commit('deleteConversation', conversation.token)
-	},
-
-	/**
-	 * Delete a object
+	 * Delete a conversation from the store.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} token the token of the conversation to be deleted;
 	 */
-	deleteConversationByToken(context, token) {
+	deleteConversation(context, token) {
+		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
 	},
 

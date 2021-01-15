@@ -216,7 +216,7 @@ export default {
 
 			// Remove the conversation to ensure that the old data is not used
 			// before fetching it again if this conversation is joined again.
-			this.$store.dispatch('deleteConversationByToken', this.token)
+			this.$store.dispatch('deleteConversation', this.token)
 			// Remove the participant to ensure that it will be set again fresh
 			// if this conversation is joined again.
 			this.$store.dispatch('purgeParticipantsStore', this.token)

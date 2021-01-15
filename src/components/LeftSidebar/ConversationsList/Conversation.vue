@@ -331,7 +331,7 @@ export default {
 					try {
 						await deleteConversation(this.item.token)
 						// If successful, deletes the conversation from the store
-						this.$store.dispatch('deleteConversation', this.item)
+						this.$store.dispatch('deleteConversation', this.item.token)
 					} catch (error) {
 						console.debug(`error while deleting conversation ${error}`)
 					}
@@ -346,7 +346,7 @@ export default {
 			try {
 				await removeCurrentUserFromConversation(this.item.token)
 				// If successful, deletes the conversation from the store
-				this.$store.dispatch('deleteConversation', this.item)
+				this.$store.dispatch('deleteConversation', this.item.token)
 			} catch (error) {
 				if (error.response && error.response.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
