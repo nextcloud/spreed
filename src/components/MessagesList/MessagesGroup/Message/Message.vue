@@ -52,6 +52,9 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				<CallButton />
 			</div>
+			<div v-else-if="isDeletedMessage" class="message__main__text deleted-message">
+				<RichText :text="message" :arguments="richParameters" :autolink="true" />
+			</div>
 			<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
 				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
@@ -265,6 +268,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * The type of the message.
+		 */
+		messageType: {
+			type: String,
+			required: true,
+		},
+		/**
 		 * The parent message's id.
 		 */
 		parent: {
@@ -297,6 +307,10 @@ export default {
 
 		isSystemMessage() {
 			return this.systemMessage !== ''
+		},
+
+		isDeletedMessage() {
+			return this.messageType === 'comment_deleted'
 		},
 
 		messageTime() {
@@ -534,6 +548,13 @@ export default {
 				text-align: center;
 				padding: 0 20px;
 				width: 100%;
+			}
+
+			&.deleted-message {
+				background-color: var(--color-background-dark);
+				color: var(--color-text-lighter);
+				padding: var(--border-radius) var(--border-radius-large);
+				border-radius: var(--border-radius-large);
 			}
 
 			::v-deep .rich-text--wrapper {
