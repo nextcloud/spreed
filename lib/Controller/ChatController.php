@@ -484,16 +484,25 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->chatManager->addSystemMessage(
+		$systemMessageComment = $this->chatManager->deleteMessage(
 			$this->room,
+			$messageId,
 			$attendee->getActorType(),
 			$attendee->getActorId(),
-			json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $messageId]]),
-			$this->timeFactory->getDateTime(),
-			false
+			$this->timeFactory->getDateTime()
 		);
 
-		return new DataResponse();
+		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
+		$this->messageParser->parseMessage($systemMessage);
+
+		$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($message);
+
+		$data = $systemMessage->toArray();
+		$data['parent'] = $message->toArray();
+
+		return new DataResponse($data);
 	}
 
 	/**

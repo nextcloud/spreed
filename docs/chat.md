@@ -44,7 +44,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
-        `messageType` | string | Currently known types are `comment`, `system` and `command`
+        `messageType` | string | Currently known types are `comment`, `comment_deleted`, `system` and `command`
         `isReplyable` | bool | True if the user can post a reply to this message (only available with `chat-replies` capability)
         `referenceId` | string | A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
@@ -177,3 +177,4 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
+* `message_deleted` - Message deleted by {actor} (Should not be shown to the user)
