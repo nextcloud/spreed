@@ -162,6 +162,10 @@ export default {
 			const groups = []
 			let lastMessage = null
 			for (const message of this.messagesList) {
+				if (message.systemMessage === 'message_deleted') {
+					continue
+				}
+
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					// Add the date separator for different days
 					if (this.messagesHaveDifferentDate(message, lastMessage)) {
