@@ -825,6 +825,7 @@ OC.L10N.register(
     "Sending message" : "Sende Nachricht",
     "Message sent" : "Nachricht gesendet",
     "Message read by everyone who shares their reading status" : "Nachricht wird von allen gelesen, die Ihren Lesestatus teilen",
+    "{stack} in {board}" : "{stack} in {board}",
     "Remove" : "Entfernen",
     "[Unknown username]" : "[Unbekannter Benutzername]",
     "Scroll to bottom" : "Nach unten blättern",
