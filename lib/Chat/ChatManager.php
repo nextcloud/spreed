@@ -106,14 +106,27 @@ class ChatManager {
 	 * @param \DateTime $creationDateTime
 	 * @param bool $sendNotifications
 	 * @param string|null $referenceId
+	 * @param int|null $parentId
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications, ?string $referenceId = null): IComment {
+	public function addSystemMessage(
+		Room $chat,
+		string $actorType,
+		string $actorId,
+		string $message,
+		\DateTime $creationDateTime,
+		bool $sendNotifications,
+		?string $referenceId = null,
+		?int $parentId = null
+	): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		if ($referenceId !== null) {
 			$comment->setReferenceId($referenceId);
+		}
+		if ($parentId !== null) {
+			$comment->setParentId((string) $parentId);
 		}
 		$comment->setVerb('system');
 
@@ -229,6 +242,30 @@ class ChatManager {
 		}
 
 		return $comment;
+	}
+
+	public function deleteMessage(Room $chat, int $messageId, string $actorType, string $actorId, \DateTime $deletionTime): IComment {
+		$comment = $this->getComment($chat, (string) $messageId);
+		$comment->setMessage(
+			json_encode([
+				'deleted_by_type' => $actorType,
+				'deleted_by_id' => $actorId,
+				'deleted_on' => $deletionTime->getTimestamp(),
+			])
+		);
+		$comment->setVerb('comment_deleted');
+		$this->commentsManager->save($comment);
+
+		return $this->addSystemMessage(
+			$chat,
+			$actorType,
+			$actorId,
+			json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $messageId]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$messageId
+		);
 	}
 
 	/**
