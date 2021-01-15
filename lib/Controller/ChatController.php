@@ -29,6 +29,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
@@ -92,6 +93,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IUserStatusManager */
 	private $statusManager;
 
+	/** @var MatterbridgeManager */
+	protected $matterbridgeManager;
+
 	/** @var SearchPlugin */
 	private $searchPlugin;
 
@@ -120,6 +124,7 @@ class ChatController extends AEnvironmentAwareController {
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
 								IUserStatusManager $statusManager,
+								MatterbridgeManager $matterbridgeManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
 								ITimeFactory $timeFactory,
@@ -138,6 +143,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->statusManager = $statusManager;
+		$this->matterbridgeManager = $matterbridgeManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->timeFactory = $timeFactory;
@@ -502,7 +508,8 @@ class ChatController extends AEnvironmentAwareController {
 		$data = $systemMessage->toArray();
 		$data['parent'] = $message->toArray();
 
-		return new DataResponse($data);
+		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED: Http::STATUS_OK);
 	}
 
 	/**
