@@ -136,7 +136,7 @@ const mutations = {
 	 * @param {object} message the message;
 	 * @param {string} tempMessage Placeholder message until deleting finished
 	 */
-	markMessageAsDeleted(state, { message, placeholder }) {
+	markMessageAsDeleting(state, { message, placeholder }) {
 		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
 		Vue.set(state.messages[message.token][message.id], 'message', placeholder)
 	},
@@ -236,15 +236,27 @@ const actions = {
 	 * @param {string} placeholder Placeholder message until deleting finished
 	 */
 	async deleteMessage(context, { message, placeholder }) {
-		context.commit('markMessageAsDeleted', { message, placeholder })
-		const response = await deleteMessage(message)
+		const messageObject = Object.assign({}, context.getters.message(message.token, message.id))
+		context.commit('markMessageAsDeleting', { message, placeholder })
 
-		if (response.parent) {
-			context.commit('addMessage', response.parent)
-			response.parent = response.parent.id
+		let response
+		try {
+			response = await deleteMessage(message)
+		} catch (e) {
+			// Restore the previous message state
+			context.commit('addMessage', messageObject)
+			throw e
 		}
 
-		context.commit('addMessage', response)
+		const systemMessage = response.data.ocs.data
+		if (systemMessage.parent) {
+			context.commit('addMessage', systemMessage.parent)
+			systemMessage.parent = systemMessage.parent.id
+		}
+
+		context.commit('addMessage', systemMessage)
+
+		return response.status
 	},
 
 	/**

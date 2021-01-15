@@ -158,13 +158,19 @@ import RichText from '@juliushaertl/vue-richtext'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
+import Reload from 'vue-material-design-icons/Reload'
 import Quote from '../../../Quote'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
-import Reload from 'vue-material-design-icons/Reload'
+import {
+	showError,
+	showSuccess,
+	showWarning,
+	TOAST_DEFAULT_TIMEOUT
+} from '@nextcloud/dialogs'
 
 export default {
 	name: 'Message',
@@ -553,13 +559,33 @@ export default {
 		},
 		async handleDelete() {
 			this.isDeleting = true
-			await this.$store.dispatch('deleteMessage', {
-				message: {
-					token: this.token,
-					id: this.id,
-				},
-				placeholder: t('spreed', 'Deleting message'),
-			})
+			try {
+				const statusCode = await this.$store.dispatch('deleteMessage', {
+					message: {
+						token: this.token,
+						id: this.id,
+					},
+					placeholder: t('spreed', 'Deleting message'),
+				})
+
+				if (statusCode === 202) {
+					showWarning(t('spreed', 'Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services'), {
+						timeout: TOAST_DEFAULT_TIMEOUT * 2,
+					})
+				} else if (statusCode === 200) {
+					showSuccess(t('spreed', 'Message deleted successfully'))
+				}
+			} catch (e) {
+				if (e?.response?.status === 400) {
+					showError(t('spreed', 'Message could not be deleted because it is too old'))
+				} else {
+					showError(t('spreed', 'An error occurred while deleting the message'))
+					console.error(e)
+				}
+				this.isDeleting = false
+				return
+			}
+
 			this.isDeleting = false
 		},
 	},
