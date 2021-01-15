@@ -411,6 +411,10 @@ export default {
 			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
 			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
 			this.$nextTick(this.makeGrid)
+
+			// Reset current page when switching between stripe and full grid,
+			// as the previous page is meaningless in the new mode.
+			this.currentPage = 0
 		},
 		sidebarStatus() {
 			// Handle the resize after the sidebar animation has completed
