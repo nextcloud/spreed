@@ -60,6 +60,7 @@ module.exports = {
 					'nextcloud-vue-collections',
 					'semver',
 					'@nextcloud/event-bus',
+					'@nextcloud/vue-dashboard',
 					'webdav',
 					'ansi-regex',
 					'string-length',
