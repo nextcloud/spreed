@@ -88,6 +88,11 @@ trait TInitialState {
 		);
 
 		$this->initialStateService->provideInitialState(
+			'talk', 'guests_accounts_enabled',
+			$appManager->isEnabledForUser('guests', $user)
+		);
+
+		$this->initialStateService->provideInitialState(
 			'talk', 'read_status_privacy',
 			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
