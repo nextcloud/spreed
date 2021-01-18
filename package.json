@@ -29,6 +29,7 @@
 		"@nextcloud/vue": "^2.9.0",
 		"@nextcloud/vue-dashboard": "^1.0.1",
 		"attachmediastream": "^2.1.0",
+		"color.js": "^1.2.0",
 		"crypto-js": "^4.0.0",
 		"debounce": "^1.2.0",
 		"emoji-regex": "^9.1.1",
