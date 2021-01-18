@@ -30,10 +30,15 @@
 </template>
 
 <script>
+import readableNumber from '../../mixins/readableNumber'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'SipSettings',
+
+	mixins: [
+		readableNumber,
+	],
 
 	props: {
 		attendeePin: {
@@ -55,12 +60,12 @@ export default {
 	computed: {
 		meetingIdLabel() {
 			return t('spreed', 'Meeting ID: {meetingId}', {
-				meetingId: this.meetingId,
+				meetingId: this.readableNumber(this.meetingId),
 			})
 		},
 		attendeePinLabel() {
 			return t('spreed', 'Your PIN: {attendeePin}', {
-				attendeePin: this.attendeePin,
+				attendeePin: this.readableNumber(this.attendeePin),
 			})
 		},
 	},

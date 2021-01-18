@@ -137,6 +137,7 @@ import Video from 'vue-material-design-icons/Video'
 import Hand from 'vue-material-design-icons/Hand'
 import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
+import readableNumber from '../../../../../mixins/readableNumber'
 import isEqual from 'lodash/isEqual'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 
@@ -160,6 +161,7 @@ export default {
 
 	mixins: [
 		UserStatus,
+		readableNumber,
 	],
 
 	props: {
@@ -324,7 +326,7 @@ export default {
 			return this.participant.lastPing
 		},
 		attendeePin() {
-			return this.participant.attendeePin
+			return this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
 		},
 		token() {
 			return this.$store.getters.getToken()
