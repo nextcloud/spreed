@@ -30,7 +30,7 @@
 				@notify="setBlur" />
 		</div>
 		<img
-			v-if="hasPicture"
+			v-if="hasPicture && !useAverageColor"
 			ref="backgroundImage"
 			:src="backgroundImage"
 			:style="backgroundStyle"
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { average } from 'color.js'
 import axios from '@nextcloud/axios'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
@@ -95,6 +96,8 @@ export default {
 		return {
 			hasPicture: false,
 			useCssBlurFilter: true,
+			useAverageColor: false,
+			backgroundImageAverageColor: '',
 			blur: 0,
 			blurredBackgroundImage: null,
 			blurredBackgroundImageCache: {},
@@ -106,6 +109,10 @@ export default {
 
 	computed: {
 		backgroundColor() {
+			if (this.hasPicture && this.useAverageColor) {
+				return this.backgroundImageAverageColor
+			}
+
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
 			if (!this.displayName) {
@@ -138,9 +145,18 @@ export default {
 			}
 		},
 		// Special computed property to combine the properties that should be
+		// watched to set (or not) the background image average color.
+		backgroundImageUrlToAverage() {
+			if (this.useCssBlurFilter || !this.useAverageColor) {
+				return null
+			}
+
+			return this.backgroundImageUrl
+		},
+		// Special computed property to combine the properties that should be
 		// watched to set (or not) the blurred background image source.
 		backgroundImageUrlToBlur() {
-			if (this.useCssBlurFilter) {
+			if (this.useCssBlurFilter || this.useAverageColor) {
 				return null
 			}
 
@@ -162,6 +178,23 @@ export default {
 	},
 
 	watch: {
+		backgroundImageUrlToAverage: {
+			immediate: true,
+			handler() {
+				if (!this.backgroundImageUrlToAverage) {
+					return
+				}
+
+				if (this.backgroundImageAverageColor) {
+					// Already calculated, no need to do it again.
+					return
+				}
+
+				average(this.backgroundImageUrlToAverage, { format: 'hex' }).then(color => {
+					this.backgroundImageAverageColor = color
+				})
+			},
+		},
 		backgroundImageUrlToBlur: {
 			immediate: true,
 			handler() {
@@ -195,6 +228,11 @@ export default {
 	async beforeMount() {
 		if (this.isChrome) {
 			this.useCssBlurFilter = false
+		}
+
+		if (this.isSafari) {
+			this.useCssBlurFilter = false
+			this.useAverageColor = true
 		}
 
 		if (!this.user) {
