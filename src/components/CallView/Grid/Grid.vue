@@ -40,8 +40,8 @@
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
-				<div :class="{'pagination-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0 && isStripe && showVideoOverlay"
+				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
+					<button v-if="hasPreviousPage && gridWidth > 0 && showVideoOverlay"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
@@ -76,17 +76,6 @@
 									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 							</template>
-							<LocalVideo
-								v-if="!isStripe"
-								ref="localVideo"
-								class="video"
-								:is-grid="true"
-								:fit-video="isStripe"
-								:local-media-model="localMediaModel"
-								:video-container-aspect-ratio="videoContainerAspectRatio"
-								:local-call-participant-model="localCallParticipantModel"
-								@switchScreenToId="1"
-								@click-video="handleClickLocalVideo" />
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
@@ -99,8 +88,19 @@
 								Dev mode on ;-)
 							</h1>
 						</template>
+						<LocalVideo
+							v-if="!isStripe"
+							ref="localVideo"
+							class="video"
+							:is-grid="true"
+							:fit-video="isStripe"
+							:local-media-model="localMediaModel"
+							:video-container-aspect-ratio="videoContainerAspectRatio"
+							:local-call-participant-model="localCallParticipantModel"
+							@switchScreenToId="1"
+							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0 && isStripe && showVideoOverlay"
+					<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
@@ -153,7 +153,6 @@
 import debounce from 'debounce'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
-import { EventBus } from '../../../services/EventBus'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import EmptyCallView from '../shared/EmptyCallView'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
@@ -272,15 +271,10 @@ export default {
 		return {
 			gridWidth: 0,
 			gridHeight: 0,
-			// Array of videos that are being displayed in the grid at any
-			// given moment
-			displayedVideos: [],
 			// Columns of the grid at any given moment
 			columns: 0,
 			// Rows of the grid at any given moment
 			rows: 0,
-			// Grid pages at any given moment
-			numberOfPages: 0,
 			// The current page
 			currentPage: 0,
 			// Videos controls and name
@@ -310,18 +304,14 @@ export default {
 			}
 		},
 
-		// Number of video components (includes localvideo if not in dev mode)
+		// Number of video components (it does not include the local video)
 		videosCount() {
-			if (this.devMode || this.isStripe) {
-				return this.videos.length
-			} else {
+			if (!this.isStripe && this.videos.length === 0) {
 				// Count the emptycontent as a grid element
-				if (this.videos.length === 0) {
-					return 2
-				}
-				// Add the local video to the count
-				return this.videos.length + 1
+				return 1
 			}
+
+			return this.videos.length
 		},
 		videoWidth() {
 			return this.gridWidth / this.columns
@@ -330,11 +320,26 @@ export default {
 			return this.gridHeight / this.rows
 		},
 
+		// Array of videos that are being displayed in the grid at any given
+		// moment
+		displayedVideos() {
+			if (!this.slots) {
+				return []
+			}
+
+			// Slice the `videos` array to display the current page of videos
+			if (((this.currentPage + 1) * this.slots) >= this.videos.length) {
+				return this.videos.slice(this.currentPage * this.slots)
+			}
+
+			return this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
+		},
+
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible
 			// so we can show it in the stripe
-			return this.callParticipantModels.length <= 1 && !this.screens.length
+			return this.videos.length <= 1 && !this.screens.length
 		},
 
 		// The aspect ratio of the grid (in terms of px)
@@ -363,8 +368,15 @@ export default {
 		},
 
 		// Number of grid slots at any given moment
+		// The local video always takes one slot if the grid view is not shown
+		// as a stripe.
 		slots() {
-			return this.rows * this.columns
+			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+		},
+
+		// Grid pages at any given moment
+		numberOfPages() {
+			return Math.ceil(this.videosCount / this.slots)
 		},
 
 		// Hides or displays the `grid-navigation next` button
@@ -426,10 +438,6 @@ export default {
 				return 'height: 100%'
 			}
 		},
-		// Determines when to show the stripe navigation buttons
-		showNavigation() {
-			return this.gridWidth > 0 && this.isStripe && this.videosCount > 0 && this.showVideoOverlay
-		},
 
 		// Blur radius for each background in the grid
 		videoBackgroundBlur() {
@@ -445,12 +453,6 @@ export default {
 		// If the video array size changes, rebuild the grid
 		'videos.length': function() {
 			this.makeGrid()
-			if (this.hasPagination) {
-				this.setNumberOfPages()
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
 		},
 		// TODO: rebuild the grid to have optimal for last page
 		// Exception for when navigating in and away from the last page of the
@@ -470,6 +472,10 @@ export default {
 		 */
 		isStripe() {
 			this.rebuildGrid()
+
+			// Reset current page when switching between stripe and full grid,
+			// as the previous page is meaningless in the new mode.
+			this.currentPage = 0
 		},
 
 		stripeOpen() {
@@ -480,6 +486,12 @@ export default {
 			// Handle the resize after the sidebar animation has completed
 			setTimeout(this.handleResize, 500)
 		},
+
+		numberOfPages() {
+			if (this.currentPage >= this.numberOfPages) {
+				this.currentPage = this.numberOfPages - 1
+			}
+		},
 	},
 
 	// bind event handlers to the `handleResize` method
@@ -487,12 +499,6 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
-		if (this.hasPagination) {
-			this.setNumberOfPages()
-			// Set the current page to 0
-			// TODO: add support for keeping position in the videos array when resizing
-			this.currentPage = 0
-		}
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.handleResize)
@@ -507,12 +513,6 @@ export default {
 			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
 			if (!this.isStripe || this.stripeOpen) {
 				this.$nextTick(this.makeGrid)
-				if (this.hasPagination) {
-					this.setNumberOfPages()
-					// Set the current page to 0
-					// TODO: add support for keeping position in the videos array when resizing or collapsing
-					this.currentPage = 0
-				}
 			}
 		},
 
@@ -523,12 +523,6 @@ export default {
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
 			debounce(this.makeGrid(), 200)
-			if (this.hasPagination) {
-				this.setNumberOfPages()
-				// Set the current page to 0
-				// TODO: add support for keeping position in the videos array when resizing
-				this.currentPage = 0
-			}
 		},
 
 		// Find the right size if the grid in rows and columns (we already know
@@ -543,7 +537,6 @@ export default {
 			if (this.videos.length === 0) {
 				this.columns = 0
 				this.rows = 0
-				this.displayedVideos = []
 				return
 			}
 
@@ -570,24 +563,6 @@ export default {
 			} else {
 				this.shrinkGrid(this.videosCount)
 			}
-			// Once the grid is done, populate it with video components
-			if (this.devMode || this.isStripe) {
-				this.displayedVideos = this.videos.slice(0, this.rows * this.columns)
-			} else {
-				// `- 1` because we a ccount for the localVideo component (see template)
-				this.displayedVideos = this.videos.slice(0, this.rows * this.columns - 1)
-			}
-			// Send event to display hint in the topbar component if there's an
-			// overflow of videos (only if in full-grid mode, not stripe)
-			if (this.hasVideoOverflow) {
-				if (!this.isStripe) {
-					EventBus.$emit('toggleLayoutHint', true)
-				} else {
-				// Remove the hint if user resizes
-					EventBus.$emit('toggleLayoutHint', false)
-				}
-			}
-
 		},
 
 		// Fine tune the number of rows and columns of the grid
@@ -603,7 +578,7 @@ export default {
 
 			let currentColumns = this.columns
 			let currentRows = this.rows
-			let currentSlots = currentColumns * currentRows
+			let currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
@@ -636,7 +611,7 @@ export default {
 						currentColumns--
 					}
 
-					currentSlots = currentColumns * currentRows
+					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
@@ -649,7 +624,7 @@ export default {
 						currentRows--
 					}
 
-					currentSlots = currentColumns * currentRows
+					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
@@ -668,11 +643,6 @@ export default {
 			this.rows = currentRows
 		},
 
-		// Set the current number of pages
-		setNumberOfPages() {
-			this.numberOfPages = Math.ceil(this.videosCount / this.slots)
-		},
-
 		// The last grid page is very likely not to have the same number of
 		// elements as the previous pages so the grid needs to be tweaked
 		// accordingly
@@ -684,23 +654,13 @@ export default {
 		// this.shrinkGrid(this.displayedVideos.length)
 		// },
 
-		// Slice the `videos` array to display the next set of videos
 		handleClickNext() {
 			this.currentPage++
 			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
-			if (((this.currentPage + 1) * this.slots) >= this.videos.length) {
-				this.displayedVideos = this.videos.slice(this.currentPage * this.slots)
-			} else {
-				this.displayedVideos = this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
-			}
-			console.debug('slicevalues', (this.currentPage) * this.slots, this.currentPage * this.slots)
 		},
-		// Slice the `videos` array to display the previous set of videos
 		handleClickPrevious() {
 			this.currentPage--
 			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
-			this.displayedVideos = this.videos.slice((this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
-			console.debug('slicevalues', (this.currentPage) * this.slots, (this.currentPage + 1) * this.slots)
 		},
 
 		handleClickStripeCollapse() {
@@ -778,9 +738,9 @@ export default {
 	width: 300px;
 }
 
-.pagination-wrapper {
+.stripe-wrapper {
 	width: calc(100% - 300px);
-	position:relative
+	position: relative;
 }
 
 .dev-mode-video {
@@ -833,7 +793,8 @@ export default {
 	height: 44px;
 	background-color: white;
 	opacity: 0.6 !important;
-	top: 12px;
+	/* Center icons vertically in the grid view */
+	top: calc(50% - 22px);
 	z-index: 2;
 	box-shadow: 0 0 4px var(--color-box-shadow);
 	padding: 0;
@@ -851,6 +812,10 @@ export default {
 	&__next {
 		right: 12px;
 	}
+}
+
+.stripe-wrapper .grid-navigation {
+	top: 12px;
 }
 
 .pages-indicator {
