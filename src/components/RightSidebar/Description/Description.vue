@@ -242,8 +242,8 @@ export default {
 			if (!this.canSubmit) {
 				return
 			}
-			// Remove newlines and whitespaces.
-			this.descriptionText = this.descriptionText.replace(/\r\n|\n|\r/gm, '').trim()
+			// Remove leading/trailing whitespaces.
+			this.descriptionText = this.descriptionText.replace(/\r\n|\n|\r/gm, '\n').trim()
 			// Submit description
 			this.$emit('submit:description', this.descriptionText)
 			/**
