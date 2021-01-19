@@ -606,8 +606,9 @@ export default {
 				})
 			} catch (exception) {
 				// Just means guests have no name, so don't error …
+				console.error(exception)
 			}
-		}, 3000),
+		}, 1500),
 	},
 }
 </script>
