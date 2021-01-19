@@ -209,13 +209,10 @@ export default {
 		}
 
 		try {
-			const response = await axios.get(generateUrl(`avatar/${this.user}/300`))
-			if (response.headers[`x-nc-iscustomavatar`] === '1') {
-				this.hasPicture = true
-				setUserHasAvatar(this.user, true)
-			} else {
-				setUserHasAvatar(this.user, false)
-			}
+			await axios.get(generateUrl(`avatar/${this.user}/300`))
+
+			this.hasPicture = true
+			setUserHasAvatar(this.user, true)
 		} catch (exception) {
 			console.debug(exception)
 		}
