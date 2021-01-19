@@ -23,6 +23,7 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 |---|---|
 | Firefox | ✔️ 52 or later |
 | Chrome/Chromium | ✔️ 49 or later |
+| Opera | ✔️ 72 or later |
 | Edge | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
 | Safari | ⚠️ 12 or later <br> ❌ No screensharing support <br> 🖥 Viewing screens of others' work |
 
