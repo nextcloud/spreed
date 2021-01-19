@@ -55,6 +55,7 @@ const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) =>
 		messageParameters,
 		token: token,
 		isReplyable: false,
+		sendingFailure: '',
 		referenceId: Hex.stringify(SHA1(tempId)),
 	})
 

@@ -80,15 +80,16 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
 }
 
 /**
- * Posts a new messageto the server.
+ * Posts a new message to the server.
  *
  * @param {object} param0 The message object that is destructured
- * @param {string} token The conversation token
- * @param {string} message The message object
- * @param {string} referenceId A reference id to identify the message later again
- * @param {Number} parent The id of the message to be replied to
+ * @param {string} param0.token The conversation token
+ * @param {string} param0.message The message object
+ * @param {string} param0.referenceId A reference id to identify the message later again
+ * @param {Number} param0.parent The id of the message to be replied to
+ * @param {object} options options
  */
-const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }) {
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName, referenceId, replyTo: parent })
 
 	if ('x-chat-last-common-read' in response.headers) {

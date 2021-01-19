@@ -125,6 +125,7 @@ import { CONVERSATION } from '../../constants'
 import createTemporaryMessage from '../../utils/temporaryMessage'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
+import CancelableRequest from '../../utils/cancelableRequest'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -203,10 +204,12 @@ export default {
 
 	mounted() {
 		EventBus.$on('uploadStart', this.handleUploadStart)
+		EventBus.$on('retryMessage', this.handleRetryMessage)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('uploadStart', this.handleUploadStart)
+		EventBus.$off('retryMessage', this.handleRetryMessage)
 	},
 
 	methods: {
@@ -266,7 +269,6 @@ export default {
 		 */
 		async handleSubmit() {
 			if (this.parsedText !== '') {
-				const oldMessage = this.parsedText
 				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
@@ -275,9 +277,21 @@ export default {
 				EventBus.$emit('smoothScrollChatToBottom')
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
+				let timeout
 				try {
 					// Posts the message to the server
-					const response = await postNewMessage(temporaryMessage)
+					const { request, cancel } = CancelableRequest(postNewMessage)
+
+					timeout = setTimeout(() => {
+						cancel('canceled')
+						this.$store.dispatch('markTemporaryMessageAsFailed', {
+							message: temporaryMessage,
+							reason: 'timeout',
+						})
+					}, 30000)
+					const response = await request(temporaryMessage)
+					clearTimeout(timeout)
+
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// And adds the complete version of the message received
@@ -287,19 +301,44 @@ export default {
 					let statusCode = null
 					console.debug(`error while submitting message ${error}`, error)
 					if (error.isAxiosError) {
-						statusCode = error.response.status
-					}
-					// 403 when room is read-only, 412 when switched to lobby mode
-					if (statusCode === 403 || statusCode === 412) {
-						showError(t('spreed', 'No permission to post messages in this conversation'))
-					} else {
-						showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
+						statusCode = error?.response?.status
 					}
 
-					// restore message to allow re-sending
+					if (timeout) {
+						clearTimeout(timeout)
+					}
+
+					// 403 when room is read-only, 412 when switched to lobby mode
+					if (statusCode === 403) {
+						showError(t('spreed', 'No permission to post messages in this conversation'))
+						this.$store.dispatch('markTemporaryMessageAsFailed', {
+							message: temporaryMessage,
+							reason: 'read-only',
+						})
+					} else if (statusCode === 412) {
+						showError(t('spreed', 'No permission to post messages in this conversation'))
+						this.$store.dispatch('markTemporaryMessageAsFailed', {
+							message: temporaryMessage,
+							reason: 'lobby',
+						})
+					} else {
+						showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
+						this.$store.dispatch('markTemporaryMessageAsFailed', {
+							message: temporaryMessage,
+							reason: 'other',
+						})
+					}
+				}
+			}
+		},
+
+		handleRetryMessage(temporaryMessageId) {
+			if (this.parsedText === '') {
+				const temporaryMessage = this.$store.getters.message(this.token, temporaryMessageId)
+				if (temporaryMessage) {
+					this.text = temporaryMessage.message || this.text
+					this.parsedText = temporaryMessage.message || this.parsedText
 					this.$store.dispatch('deleteMessage', temporaryMessage)
-					this.text = oldMessage
-					this.parsedText = oldMessage
 				}
 			}
 		},

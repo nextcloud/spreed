@@ -126,6 +126,7 @@ const mutations = {
 	deleteMessage(state, message) {
 		Vue.delete(state.messages[message.token], message.id)
 	},
+
 	/**
 	 * Adds a temporary message to the store.
 	 * @param {object} state current store state;
@@ -133,6 +134,20 @@ const mutations = {
 	 */
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
+	},
+
+	/**
+	 * Adds a temporary message to the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the temporary message;
+	 * @param {string} reason the reason the temporary message failed;
+	 */
+	markTemporaryMessageAsFailed(state, { message, reason }) {
+		console.log(message)
+		console.log(reason)
+		if (state.messages[message.token][message.id]) {
+			Vue.set(state.messages[message.token][message.id], 'sendingFailure', reason)
+		}
 	},
 
 	/**
@@ -221,6 +236,17 @@ const actions = {
 		context.commit('addTemporaryMessage', message)
 		// Update conversations list order
 		context.dispatch('updateConversationLastActive', message.token)
+	},
+
+	/**
+	 * Mark a temporary message as failed to allow retrying it again
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} message the temporary message;
+	 * @param {string} reason the reason the temporary message failed;
+	 */
+	markTemporaryMessageAsFailed(context, { message, reason }) {
+		context.commit('markTemporaryMessageAsFailed', { message, reason })
 	},
 
 	/**

@@ -63,11 +63,21 @@ the main body of the message as well as a quote.
 					:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 					:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
 				<!-- Message delivery status indicators -->
-				<div v-if="isTemporary && !isTemporaryUpload"
+				<div v-if="sendingFailure"
+					v-tooltip.auto="sendingErrorIconTooltip"
+					class="message-status sending-failed"
+					:class="{'retry-option': sendingErrorCanRetry}"
+					:aria-label="sendingErrorIconTooltip"
+					@click="handleRetry">
+					<AlertCircle decorative
+						title=""
+						:size="16" />
+				</div>
+				<div v-else-if="isTemporary && !isTemporaryUpload"
 					v-tooltip.auto="loadingIconTooltip"
 					class="icon-loading-small message-status"
 					:aria-label="loadingIconTooltip" />
-				<div v-if="showCommonReadIcon"
+				<div v-else-if="showCommonReadIcon"
 					v-tooltip.auto="commonReadIconTooltip"
 					class="message-status"
 					:aria-label="commonReadIconTooltip">
@@ -111,6 +121,7 @@ import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import RichText from '@juliushaertl/vue-richtext'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import Quote from '../../../Quote'
@@ -133,6 +144,7 @@ export default {
 		CallButton,
 		Quote,
 		RichText,
+		AlertCircle,
 		Check,
 		CheckAll,
 	},
@@ -242,6 +254,10 @@ export default {
 		parent: {
 			type: Number,
 			default: 0,
+		},
+		sendingFailure: {
+			type: String,
+			default: '',
 		},
 	},
 
@@ -361,7 +377,12 @@ export default {
 
 		// Determines whether the date has to be displayed or not
 		hasDate() {
-			return this.isSystemMessage || (!this.isTemporary && !this.showActions) || this.isTallEnough
+			if (this.isTemporary || this.sendingFailure) {
+				// Never on temporary or failed messages
+				return false
+			}
+
+			return this.isSystemMessage || !this.showActions || this.isTallEnough
 		},
 
 		isTemporaryUpload() {
@@ -378,6 +399,17 @@ export default {
 
 		commonReadIconTooltip() {
 			return t('spreed', 'Message read by everyone who shares their reading status')
+		},
+
+		sendingErrorCanRetry() {
+			return this.sendingFailure === 'timeout' || this.sendingFailure === 'other'
+		},
+
+		sendingErrorIconTooltip() {
+			if (this.sendingErrorCanRetry) {
+				return t('spreed', 'Failed to sent message to the server. Click to try sending it again.')
+			}
+			return t('spreed', 'You can not send messages to this conversation right now.')
 		},
 
 	},
@@ -415,6 +447,12 @@ export default {
 			// when the animation ended, remove the class so we can trigger it
 			// again another time
 			this.$refs.message.classList.remove('highlight-animation')
+		},
+		handleRetry() {
+			if (this.sendingErrorCanRetry) {
+				EventBus.$emit('retryMessage', this.id)
+				EventBus.$emit('focusChatInput')
+			}
 		},
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
@@ -550,5 +588,9 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	&.retry-option {
+		cursor: pointer;
+	}
 }
 </style>
