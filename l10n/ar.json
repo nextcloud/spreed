@@ -551,7 +551,6 @@
     "Start call" : "ابدء مكالمة",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
     "You will be able to join the call only after a moderator starts it." : "لن تتمكن من الانضمام إلى المكالمة إلا بعد أن يبدأها المشرف.",
-    "Use speaker view" : "استخدام عرض المتحدث",
     "Toggle fullscreen" : "تفعيل/تعطيل ملء الشاشة",
     "Go to file" : "الذهاب إلى ملف",
     "Rename conversation" : "إعادة تسمية المحادثة",
@@ -560,7 +559,6 @@
     "Fullscreen (f)" : "ملء الشاشة (f)",
     "Speaker view" : "عرض المتحدث",
     "Grid view" : "عرض كمخطط",
-    "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "الكثير من مقاطع الفيديو في النافذة. تكبير النافذة أو التبديل إلى \"عرض المتحدث\" للحصول على تجربة أفضل.",
     "Send" : "أرسل",
     "Add more files" : "اضافة المزيد من الملفات",
     "No unread mentions" : "لا يوجد منشن جديد",
@@ -640,6 +638,8 @@
     "Default location for attachments" : "مكان المرفقات الافتراضي",
     "Select default location for attachments" : "اختر مكان المرفقات الافتراضي",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
+    "Use speaker view" : "استخدام عرض المتحدث",
+    "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "الكثير من مقاطع الفيديو في النافذة. تكبير النافذة أو التبديل إلى \"عرض المتحدث\" للحصول على تجربة أفضل.",
     "Bridge with other services" : "الربط مع خدمات آخرى",
     "Enabled" : "مفعلة"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
