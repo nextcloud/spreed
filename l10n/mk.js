@@ -710,7 +710,6 @@ OC.L10N.register(
     "Select location for attachments" : "Избери локација за прилози",
     "Error while setting attachment folder" : "Грешка при поставување на папка за прилози",
     "Start call" : "Повик",
-    "Use speaker view" : "Користете поглед кон тој што зборува",
     "Toggle fullscreen" : "Вклучи на цел екран",
     "Go to file" : "Оди до датотеката",
     "Rename conversation" : "Преименувај разговор",
@@ -789,6 +788,7 @@ OC.L10N.register(
     "This conversation is read only" : "Разговорот е само за читање",
     "Default location for attachments" : "Стандардна локација за прилози",
     "Select default location for attachments" : "Избери стандардна локација за прилози",
+    "Use speaker view" : "Користете поглед кон тој што зборува",
     "Bridge with other services" : "Мост со други сервери",
     "Enabled" : "Овозможен"
 },
