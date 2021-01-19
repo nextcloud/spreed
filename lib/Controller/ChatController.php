@@ -471,6 +471,8 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId
 	 * @return DataResponse
@@ -516,7 +518,12 @@ class ChatController extends AEnvironmentAwareController {
 		$data['parent'] = $message->toArray();
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
-		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED: Http::STATUS_OK);
+
+		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED: Http::STATUS_OK);
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
+		return $response;
 	}
 
 	/**
