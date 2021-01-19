@@ -401,9 +401,9 @@ class SystemMessage {
 
 			if (!$authorIsActor) {
 				$parsedMessage = $this->l->t('Message deleted by {actor}');
-				if ($currentUserIsActor) {
-					$parsedMessage = $this->l->t('Message deleted by you');
-				}
+			}
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('Message deleted by you');
 			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
