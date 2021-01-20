@@ -588,11 +588,24 @@ export default {
 		 */
 		smoothScrollToBottom() {
 			this.$nextTick(function() {
-				this.scroller.scrollTo({
-					top: this.scroller.scrollHeight,
-					behavior: 'smooth',
-					 })
-				this.setChatScrolledToBottom(true)
+				if (this.$store.getters.windowIsVisible()) {
+					// scrollTo is used when the user is watching
+					this.scroller.scrollTo({
+						top: this.scroller.scrollHeight,
+						behavior: 'smooth',
+					})
+					this.setChatScrolledToBottom(true)
+				} else {
+					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
+					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
+						// Single new line from the previous author is 35px so scroll half a line
+						this.scroller.scrollTop += 10
+					} else {
+						// Single new line from the new author is 75px so scroll half an avatar
+						this.scroller.scrollTop += 40
+					}
+					this.setChatScrolledToBottom(false)
+				}
 			})
 		},
 		/**
