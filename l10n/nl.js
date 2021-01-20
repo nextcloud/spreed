@@ -767,7 +767,6 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Je moet een nieuwe moderator promoveren voordat je het gesprek kunt verlaten.",
     "No matches" : "Geen overeenkomsten",
     "Conversation list" : "Gesprekkenlijst",
-    "Listed conversations" : "Vermelde gesprekken",
     "Loading" : "Laden",
     "No search results" : "Geen zoekresultaten",
     "Groups" : "Groepen",

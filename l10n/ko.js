@@ -764,7 +764,6 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "대화를 종료하려면 새 진행자를 승격해야 합니다.",
     "No matches" : "일치 항목 없음",
     "Conversation list" : "대화 목록",
-    "Listed conversations" : "목록화 된 대화",
     "Loading" : "불러오는 중",
     "No search results" : "결과를 찾을 수 없음",
     "Groups" : "그룹",

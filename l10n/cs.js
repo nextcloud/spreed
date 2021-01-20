@@ -738,7 +738,6 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
     "No matches" : "Žádné výsledky",
     "Conversation list" : "Seznam konverzace",
-    "Listed conversations" : "Vypsané konverzace",
     "Loading" : "Načítání",
     "No search results" : "Žádné výsledky vyhledávání",
     "Groups" : "Skupiny",
