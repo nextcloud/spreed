@@ -35,6 +35,7 @@ const state = {
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
 	participantRaisedHands: {},
+	backgroundImageAverageColorCache: {},
 }
 
 const getters = {
@@ -58,6 +59,9 @@ const getters = {
 	},
 	isParticipantRaisedHand: (state) => (sessionId) => {
 		return state.participantRaisedHands[sessionId]?.state
+	},
+	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
+		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
 }
 
@@ -94,6 +98,12 @@ const mutations = {
 	clearParticipantHandRaised(state) {
 		state.participantRaisedHands = {}
 	},
+	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
+		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+	},
+	clearBackgroundImageAverageColorCache(state) {
+		state.backgroundImageAverageColorCache = {}
+	},
 }
 
 const actions = {
@@ -118,6 +128,8 @@ const actions = {
 	leaveCall(context) {
 		// clear raised hands as they were specific to the call
 		context.commit('clearParticipantHandRaised')
+
+		context.commit('clearBackgroundImageAverageColorCache')
 	},
 
 	/**
@@ -150,6 +162,10 @@ const actions = {
 
 	setParticipantHandRaised(context, { sessionId, raisedHand }) {
 		context.commit('setParticipantHandRaised', { sessionId, raisedHand })
+	},
+
+	setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
+		context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
 	},
 
 	/**

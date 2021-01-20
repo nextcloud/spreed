@@ -97,7 +97,6 @@ export default {
 			hasPicture: false,
 			useCssBlurFilter: true,
 			useAverageColor: false,
-			backgroundImageAverageColor: '',
 			blur: 0,
 			blurredBackgroundImage: null,
 			blurredBackgroundImageCache: {},
@@ -108,6 +107,13 @@ export default {
 	},
 
 	computed: {
+		backgroundImageAverageColor() {
+			if (!this.backgroundImageUrlToAverage) {
+				return ''
+			}
+
+			return this.$store.getters.getCachedBackgroundImageAverageColor(this.backgroundImageUrlToAverage)
+		},
 		backgroundColor() {
 			if (this.hasPicture && this.useAverageColor) {
 				return this.backgroundImageAverageColor
@@ -191,7 +197,10 @@ export default {
 				}
 
 				average(this.backgroundImageUrlToAverage, { format: 'hex' }).then(color => {
-					this.backgroundImageAverageColor = color
+					this.$store.dispatch('setCachedBackgroundImageAverageColor', {
+						videoBackgroundId: this.backgroundImageUrlToAverage,
+						backgroundImageAverageColor: color,
+					})
 				})
 			},
 		},
