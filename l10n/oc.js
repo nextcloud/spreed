@@ -381,7 +381,6 @@ OC.L10N.register(
     "Add to favorites" : "Add to favorites",
     "No matches" : "Cap de resultat correspond pas",
     "Conversation list" : "Lista de conversacion",
-    "Listed conversations" : "Conversacions listadas",
     "Loading" : "Loading",
     "No search results" : "pas cap de resultats de recèrca",
     "Groups" : "Gropes",
