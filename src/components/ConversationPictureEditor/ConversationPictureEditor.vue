@@ -31,7 +31,7 @@
 				type="file"
 				accept="image/png, image/jpeg"
 				class="hidden-visually"
-				@change="handleFileInput">
+				@change="loadImage">
 			<Cropper
 				:src="selectedPicture"
 				stencil-component="circle-stencil"
@@ -78,11 +78,11 @@ export default {
 	},
 
 	mounted() {
-		// Upon mounting the component, click the invisible file input right away
+		// Upon mounting the component, click the invisible file input immediately
 
-		// this.$nextTick(() => {
-		// this.clickInput()
-		// })
+		this.$nextTick(() => {
+			this.clickInput()
+		})
 	},
 
 	methods: {
@@ -108,9 +108,30 @@ export default {
 			this.$refs.conversationPictureInput.click()
 		},
 
-		handleFileInput(event) {
-			console.debug(event)
-			this.selectedPicture = event.target.files[0]
+		/**
+		 * Loads the image into the cropper
+		 * @param {object} event The event triggered by the input
+		 */
+		loadImage(event) {
+			// Loading state
+			this.isLoading = true
+			// Reference to the DOM input element
+			const input = event.target
+			// Ensure that a file exists before attempting to read it
+			if (input.files && input.files[0]) {
+				// create a new FileReader to read this image and convert to base64 format
+				const reader = new FileReader()
+				// Define a callback function to run, when FileReader finishes its job
+				reader.onload = (e) => {
+					// Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+					// Read image as base64 and set to imageData
+					this.selectedPicture = e.target.result
+				}
+				// Start the reader job - read file as a data url (base64 format)
+				reader.readAsDataURL(input.files[0])
+			}
+			// Loading state off
+			this.isLoading = false
 		},
 	},
 }
