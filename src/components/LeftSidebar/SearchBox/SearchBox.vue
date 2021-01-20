@@ -139,7 +139,7 @@ export default {
 }
 
 .abort-search {
-	margin-left: -28px;
+	margin-left: -34px;
 	z-index: 1;
 	border: none;
 	background-color: transparent
