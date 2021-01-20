@@ -85,6 +85,7 @@
 			@shortkey="focusInput"
 			@keydown.enter="handleKeydownEnter"
 			@keydown.esc.prevent="handleKeydownEsc"
+			@blur="onBlur"
 			@paste="onPaste" />
 	</At>
 </template>
@@ -249,6 +250,15 @@ export default {
 		EventBus.$off('focusChatInput', this.focusInput)
 	},
 	methods: {
+		onBlur() {
+			// requires a short delay to avoid blocking click event handlers
+			// from vue-at which also have some delay in place...
+			// a setTimeout was recommended by the library author here:
+			// https://github.com/fritx/vue-at/issues/114#issuecomment-565777450
+			setTimeout(() => {
+				this.$refs.at.closePanel()
+			}, 100)
+		},
 		onPaste(e) {
 			e.preventDefault()
 
