@@ -353,6 +353,8 @@ const setConversationDescription = async function(token, description) {
 	return response
 }
 
+// const getConversationPucture
+
 export {
 	fetchConversations,
 	fetchConversation,

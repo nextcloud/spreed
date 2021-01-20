@@ -21,6 +21,7 @@
 
 <template>
 	<Modal
+		class="top"
 		@close="handleDismiss">
 		<div class="conversation-picture-editor"
 			@click.stop="">
@@ -92,12 +93,11 @@ export default {
 		},
 
 		handleDismiss() {
-			this.modalDismissed = true
+			this.$emit('close')
 		},
 
 		handleUpload() {
 			this.$store.dispatch('uploadFiles', this.currentUploadId)
-			this.modalDismissed = true
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent ActionButton,
@@ -138,4 +138,5 @@ export default {
 	padding: 12px !important;
 	min-width: 400px;
 }
+
 </style>
