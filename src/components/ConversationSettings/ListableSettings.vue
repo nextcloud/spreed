@@ -75,7 +75,7 @@ export default {
 			listable: null,
 			isListableLoading: false,
 			lastNotification: null,
-			isGuestsAccountsEnabled: loadState('talk', 'guests_accounts_enabled'),
+			isGuestsAccountsEnabled: loadState('spreed', 'guests_accounts_enabled'),
 			LISTABLE: CONVERSATION.LISTABLE,
 		}
 	},

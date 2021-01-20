@@ -94,7 +94,7 @@ util.inherits(Peer, WildEmitter)
 
 function shouldPreferH264() {
 	try {
-		return initialState.loadState('talk', 'prefer_h264')
+		return initialState.loadState('spreed', 'prefer_h264')
 	} catch (exception) {
 		// If the state can not be loaded an exception is thrown
 		console.warn('Could not find initial state for H.264 preference')

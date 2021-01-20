@@ -109,8 +109,8 @@ export default {
 			hideWarning: false,
 			loading: false,
 			saved: false,
-			isCacheConfigured: loadState('talk', 'has_cache_configured'),
-			isClusteredMode: loadState('talk', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
+			isCacheConfigured: loadState('spreed', 'has_cache_configured'),
+			isClusteredMode: loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
 		}
 	},
 
@@ -121,7 +121,7 @@ export default {
 	},
 
 	beforeMount() {
-		const state = loadState('talk', 'signaling_servers')
+		const state = loadState('spreed', 'signaling_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.hideWarning = state.hideWarning

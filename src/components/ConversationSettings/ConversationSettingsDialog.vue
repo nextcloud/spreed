@@ -83,7 +83,7 @@ export default {
 	data() {
 		return {
 			showSettings: false,
-			matterbridgeEnabled: loadState('talk', 'enable_matterbridge'),
+			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
 		}
 	},
 

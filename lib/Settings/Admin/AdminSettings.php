@@ -31,11 +31,11 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -50,8 +50,8 @@ class AdminSettings implements ISettings {
 	private $serverConfig;
 	/** @var CommandService */
 	private $commandService;
-	/** @var IInitialStateService */
-	private $initialStateService;
+	/** @var IInitialState */
+	private $initialState;
 	/** @var ICacheFactory */
 	private $memcacheFactory;
 	/** @var IGroupManager */
@@ -68,7 +68,7 @@ class AdminSettings implements ISettings {
 	public function __construct(Config $talkConfig,
 								IConfig $serverConfig,
 								CommandService $commandService,
-								IInitialStateService $initialStateService,
+								IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								IGroupManager $groupManager,
 								MatterbridgeManager $bridgeManager,
@@ -78,7 +78,7 @@ class AdminSettings implements ISettings {
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->commandService = $commandService;
-		$this->initialStateService = $initialStateService;
+		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->groupManager = $groupManager;
 		$this->bridgeManager = $bridgeManager;
@@ -105,19 +105,19 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialStateService->provideInitialState('talk', 'default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
-		$this->initialStateService->provideInitialState('talk', 'conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
-		$this->initialStateService->provideInitialState('talk', 'conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
+		$this->initialState->provideInitialState('default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
+		$this->initialState->provideInitialState('conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
+		$this->initialState->provideInitialState('conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
 	}
 
 	protected function initAllowedGroups(): void {
-		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
+		$this->initialState->provideInitialState('start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds());
-		$this->initialStateService->provideInitialState('talk', 'start_conversations', $groups);
+		$this->initialState->provideInitialState('start_conversations', $groups);
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds());
-		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $groups);
+		$this->initialState->provideInitialState('allowed_groups', $groups);
 	}
 
 	protected function initCommands(): void {
@@ -127,7 +127,7 @@ class AdminSettings implements ISettings {
 			return $command->asArray();
 		}, $commands);
 
-		$this->initialStateService->provideInitialState('talk', 'commands', $result);
+		$this->initialState->provideInitialState('commands', $result);
 	}
 
 	protected function initMatterbridge(): void {
@@ -141,32 +141,32 @@ class AdminSettings implements ISettings {
 			$version = '';
 			$error = 'binary_permissions';
 		}
-		$this->initialStateService->provideInitialState(
-			'talk', 'matterbridge_error', $error
+		$this->initialState->provideInitialState(
+			'matterbridge_error', $error
 		);
-		$this->initialStateService->provideInitialState(
-			'talk', 'matterbridge_version', $version
+		$this->initialState->provideInitialState(
+			'matterbridge_version', $version
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'matterbridge_enable',
+		$this->initialState->provideInitialState(
+			'matterbridge_enable',
 			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
 		);
 	}
 
 	protected function initStunServers(): void {
-		$this->initialStateService->provideInitialState('talk', 'stun_servers', $this->talkConfig->getStunServers());
-		$this->initialStateService->provideInitialState('talk', 'has_internet_connection', $this->serverConfig->getSystemValueBool('has_internet_connection', true));
+		$this->initialState->provideInitialState('stun_servers', $this->talkConfig->getStunServers());
+		$this->initialState->provideInitialState('has_internet_connection', $this->serverConfig->getSystemValueBool('has_internet_connection', true));
 	}
 
 	protected function initTurnServers(): void {
-		$this->initialStateService->provideInitialState('talk', 'turn_servers', $this->talkConfig->getTurnServers());
+		$this->initialState->provideInitialState('turn_servers', $this->talkConfig->getTurnServers());
 	}
 
 	protected function initSignalingServers(): void {
-		$this->initialStateService->provideInitialState('talk', 'has_cache_configured', $this->memcacheFactory->isAvailable());
-		$this->initialStateService->provideInitialState('talk', 'signaling_mode', $this->talkConfig->getSignalingMode(false));
-		$this->initialStateService->provideInitialState('talk', 'signaling_servers', [
+		$this->initialState->provideInitialState('has_cache_configured', $this->memcacheFactory->isAvailable());
+		$this->initialState->provideInitialState('signaling_mode', $this->talkConfig->getSignalingMode(false));
+		$this->initialState->provideInitialState('signaling_servers', [
 			'servers' => $this->talkConfig->getSignalingServers(),
 			'secret' => $this->talkConfig->getSignalingSecret(),
 			'hideWarning' => $this->talkConfig->getHideSignalingWarning(),
@@ -446,14 +446,14 @@ class AdminSettings implements ISettings {
 			}
 		}
 
-		$this->initialStateService->provideInitialState('talk', 'hosted_signaling_server_prefill', [
+		$this->initialState->provideInitialState('hosted_signaling_server_prefill', [
 			'url' => $this->serverConfig->getSystemValueString('overwrite.cli.url'),
 			'fullName' => $this->currentUser->getDisplayName(),
 			'email' => $this->currentUser->getEMailAddress() ?: '',
 			'language' => $userLanguage,
 			'country' => $guessCountry,
 		]);
-		$this->initialStateService->provideInitialState('talk', 'hosted_signaling_server_trial_data',
+		$this->initialState->provideInitialState('hosted_signaling_server_trial_data',
 			json_decode($this->serverConfig->getAppValue('spreed', 'hosted-signaling-server-account', "[]"), true) ?? []
 		);
 		$languages = $this->l10nFactory->getLanguages();
@@ -472,7 +472,7 @@ class AdminSettings implements ISettings {
 		usort($countries, function ($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
-		$this->initialStateService->provideInitialState('talk', 'hosted_signaling_server_language_data', [
+		$this->initialState->provideInitialState('hosted_signaling_server_language_data', [
 			'languages' => $languages,
 			'countries' => $countries,
 		]);
@@ -481,9 +481,9 @@ class AdminSettings implements ISettings {
 	protected function initSIPBridge(): void {
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getSIPGroups());
 
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_groups', $groups);
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
-		$this->initialStateService->provideInitialState('talk', 'sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
+		$this->initialState->provideInitialState('sip_bridge_groups', $groups);
+		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
+		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
 	}
 
 	protected function getGroupDetailsArray(array $gids): array {

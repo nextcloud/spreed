@@ -109,12 +109,12 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.groups = loadState('talk', 'sip_bridge_groups').sort(function(a, b) {
+		this.groups = loadState('spreed', 'sip_bridge_groups').sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
 		this.sipGroups = this.groups
-		this.dialInInfo = loadState('talk', 'sip_bridge_dialin_info')
-		this.sharedSecret = loadState('talk', 'sip_bridge_shared_secret')
+		this.dialInInfo = loadState('spreed', 'sip_bridge_dialin_info')
+		this.sharedSecret = loadState('spreed', 'sip_bridge_shared_secret')
 		this.searchGroup('')
 		this.loading = false
 	},

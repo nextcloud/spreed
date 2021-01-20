@@ -80,8 +80,8 @@ export default {
 	},
 
 	beforeMount() {
-		this.servers = loadState('talk', 'stun_servers')
-		this.hasInternetConnection = loadState('talk', 'has_internet_connection')
+		this.servers = loadState('spreed', 'stun_servers')
+		this.hasInternetConnection = loadState('spreed', 'has_internet_connection')
 	},
 
 	methods: {

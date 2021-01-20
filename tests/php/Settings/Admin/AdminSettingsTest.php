@@ -27,10 +27,10 @@ use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
-use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -44,7 +44,7 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $serverConfig;
 	/** @var CommandService|MockObject */
 	protected $commandService;
-	/** @var IInitialStateService|MockObject */
+	/** @var IInitialState|MockObject */
 	protected $initialState;
 	/** @var ICacheFactory|MockObject */
 	protected $cacheFactory;
@@ -67,7 +67,7 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->commandService = $this->createMock(CommandService::class);
-		$this->initialState = $this->createMock(IInitialStateService::class);
+		$this->initialState = $this->createMock(IInitialState::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
@@ -169,8 +169,8 @@ class AdminSettingsTest extends \Test\TestCase {
 		$this->initialState->expects($this->exactly(2))
 			->method('provideInitialState')
 			->withConsecutive(
-				['talk', 'stun_servers', ['getStunServers']],
-				['talk', 'has_internet_connection', true]
+				['stun_servers', ['getStunServers']],
+				['has_internet_connection', true]
 			);
 
 		$admin = $this->getAdminSettings();
@@ -184,7 +184,7 @@ class AdminSettingsTest extends \Test\TestCase {
 
 		$this->initialState->expects($this->once())
 			->method('provideInitialState')
-			->with('talk', 'turn_servers', ['getTurnServers']);
+			->with('turn_servers', ['getTurnServers']);
 
 		$admin = $this->getAdminSettings();
 		self::invokePrivate($admin, 'initTurnServers');
