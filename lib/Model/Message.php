@@ -158,6 +158,7 @@ class Message {
 	public function isReplyable(): bool {
 		return $this->getMessageType() !== 'system' &&
 			$this->getMessageType() !== 'command' &&
+			$this->getMessageType() !== 'comment_deleted' &&
 			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
