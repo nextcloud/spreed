@@ -50,8 +50,6 @@ class CSPListener implements IEventListener {
 			$csp->addAllowedConnectDomain($server);
 		}
 
-		$csp->addAllowedWorkerSrcDomain('\'self\'');
-
 		$event->addPolicy($csp);
 	}
 }
