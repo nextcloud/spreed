@@ -20,10 +20,13 @@
  *
  */
 
+import Vue from 'vue'
+
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
 	videoBackgroundBlur: 1,
+	backgroundImageAverageColorCache: {},
 }
 
 const getters = {
@@ -40,6 +43,9 @@ const getters = {
 	getBlurRadius: (state) => (width, height) => {
 		return (width * height * state.videoBackgroundBlur) / 1000
 	},
+	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
+		return state.backgroundImageAverageColorCache[videoBackgroundId]
+	},
 }
 
 const mutations = {
@@ -50,6 +56,12 @@ const mutations = {
 	selectedVideoPeerId(state, value) {
 		state.selectedVideoPeerId = value
 	},
+	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
+		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+	},
+	clearBackgroundImageAverageColorCache(state) {
+		state.backgroundImageAverageColorCache = {}
+	},
 }
 
 const actions = {
@@ -58,6 +70,14 @@ const actions = {
 	},
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
+	},
+
+	leaveCall(context) {
+		context.commit('clearBackgroundImageAverageColorCache')
+	},
+
+	setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
+		context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
 	},
 }
 
