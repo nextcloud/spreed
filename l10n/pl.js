@@ -780,6 +780,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Zanim opuścisz rozmowę, musisz promować nowego moderatora.",
     "No matches" : "Nie pasuje",
     "Conversation list" : "Lista rozmów",
+    "Open conversations" : "Otwarte rozmowy",
     "Loading" : "Wczytywanie",
     "No search results" : "Brak wyników wyszukiwania",
     "Groups" : "Grupy",
