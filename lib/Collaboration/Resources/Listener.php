@@ -102,7 +102,10 @@ class Listener {
 			}
 
 			$participant = $event->getParticipant();
-			$user = $userManager->get($participant->getUser());
+			$user = null;
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$user = $userManager->get($participant->getAttendee()->getActorId());
+			}
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
