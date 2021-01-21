@@ -48,6 +48,9 @@ const browserCheck = {
 		isChrome() {
 			return this.browser.name === 'Chrome' || this.browser.name === 'Chromium'
 		},
+		isOpera() {
+			return this.browser.name === 'Opera'
+		},
 		isSafari() {
 			return this.browser.name === 'Safari' || this.browser.name === 'Mobile Safari'
 		},
@@ -65,6 +68,7 @@ const browserCheck = {
 		isFullySupported() {
 			return (this.isFirefox && this.majorVersion >= 52)
 			|| (this.isChrome && this.majorVersion >= 49)
+			|| (this.isOpera && this.majorVersion >= 72)
 			|| (this.isSafari && this.majorVersion >= 12)
 			|| this.isEdge
 		},
@@ -72,12 +76,13 @@ const browserCheck = {
 		blockCalls() {
 			return (this.isFirefox && this.majorVersion < 52)
 			|| (this.isChrome && this.majorVersion < 49)
+			|| (this.isOpera && this.majorVersion < 72)
 			|| (this.isSafari && this.majorVersion < 12)
 			|| this.isIE
 		},
 		// Used both in the toast and in the call button tooltip
 		unsupportedWarning() {
-			return t('spreed', "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari.")
+			return t('spreed', "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari.")
 		},
 		// Used in CallButton.vue
 		callButtonTooltipText() {
