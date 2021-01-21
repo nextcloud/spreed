@@ -28,6 +28,7 @@ use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
@@ -65,8 +66,8 @@ class Listener {
 			$participants = $event->getParticipants();
 			foreach ($participants as $participant) {
 				$user = null;
-				if ($participant['userId'] !== '') {
-					$user = $userManager->get($participant['userId']);
+				if ($participant['actorType'] === Attendee::ACTOR_USERS) {
+					$user = $userManager->get($participant['actorId']);
 				}
 
 				$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
@@ -101,7 +102,10 @@ class Listener {
 			}
 
 			$participant = $event->getParticipant();
-			$user = $userManager->get($participant->getUser());
+			$user = null;
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$user = $userManager->get($participant->getAttendee()->getActorId());
+			}
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
