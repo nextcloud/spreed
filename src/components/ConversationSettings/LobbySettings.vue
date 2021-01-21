@@ -54,6 +54,7 @@
 							id="moderation_settings_lobby_timer_field"
 							aria-describedby="moderation_settings_lobby_timer_hint"
 							:value="lobbyTimer"
+							:default-value="defaultLobbyTimer"
 							:placeholder="t('spreed', 'Start time (optional)')"
 							:disabled="lobbyTimerFieldDisabled"
 							type="datetime"
@@ -96,7 +97,7 @@ export default {
 		return {
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
-			newLobbyTimer: null,
+			newLobbyTimer: undefined,
 		}
 	},
 
@@ -113,7 +114,19 @@ export default {
 			return this.isLobbyStateLoading || this.isLobbyTimerLoading
 		},
 
+		defaultLobbyTimer() {
+			let date = new Date()
+			// strip minutes and seconds
+			date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), 0, 0, 0)
+			// add one hour to reach the next hour
+			return new Date(date.getTime() + 3600000)
+		},
+
 		lobbyTimer() {
+			if (this.newLobbyTimer !== undefined) {
+				return this.newLobbyTimer
+			}
+
 			// A timestamp of 0 means that there is no lobby, but it would be
 			// interpreted as the Unix epoch by the DateTimePicker.
 			if (this.conversation.lobbyTimer === 0) {
@@ -122,7 +135,7 @@ export default {
 
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			return new Date(this.conversation.lobbyTimer * 1000)
+			return this.conversation.lobbyTimer * 1000
 		},
 
 		dateTimePickerAttrs() {
@@ -133,13 +146,10 @@ export default {
 					days: window.dayNamesShort, // Provided by server
 					months: window.monthNamesShort, // Provided by server
 				},
-				// Do not update the value until the confirm button has been
-				// pressed. Otherwise it would not be possible to set a lobby
-				// for today, because as soon as the day is selected the lobby
-				// timer would be set, but as no time was set at that point the
-				// lobby timer would be set to today at 00:00, which would
-				// disable the lobby due to being in the past.
-				confirm: true,
+				clearable: true,
+				minuteStep: 5,
+				appendToBody: true,
+				valueType: 'timestamp',
 			}
 		},
 	},
@@ -170,15 +180,12 @@ export default {
 			this.isLobbyStateLoading = false
 		},
 
-		setNewLobbyTimer(date) {
-			let timestamp = 0
-			if (date) {
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				timestamp = date.getTime() / 1000
-			}
-
+		setNewLobbyTimer(timestamp) {
 			this.newLobbyTimer = timestamp
+			if (!this.newLobbyTimer) {
+				// save directly upon clearing
+				this.saveLobbyTimer()
+			}
 		},
 
 		async saveLobbyTimer() {
@@ -187,9 +194,13 @@ export default {
 			try {
 				await this.$store.dispatch('setLobbyTimer', {
 					token: this.token,
-					timestamp: this.newLobbyTimer,
+					timestamp: this.newLobbyTimer ? (this.newLobbyTimer / 1000) : 0,
 				})
-				showSuccess(t('spreed', 'Start time has been updated'))
+				if (!this.newLobbyTimer) {
+					showSuccess(t('spreed', 'Start time has been cleared'))
+				} else {
+					showSuccess(t('spreed', 'Start time has been updated'))
+				}
 			} catch (e) {
 				console.error('Error occurred while updating start time', e)
 				showError(t('spreed', 'Error occurred while updating start time'))
