@@ -72,6 +72,11 @@ trait TInitialState {
 			'sip_dialin_info',
 			$this->talkConfig->getDialInInfo()
 		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'grid_videos_limit',
+			$this->talkConfig->getGridVideosLimit()
+		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {

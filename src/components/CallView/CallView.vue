@@ -128,6 +128,7 @@
 				:token="token"
 				:fit-video="true"
 				:has-pagination="true"
+				:videos-cap="gridVideosCap"
 				:call-participant-models="callParticipantModels"
 				:screens="screens"
 				:target-aspect-ratio="gridTargetAspectRatio"
@@ -158,6 +159,7 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
 import Grid from './Grid/Grid'
 import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
@@ -261,6 +263,10 @@ export default {
 			} else {
 				return 1
 			}
+		},
+
+		gridVideosCap() {
+			return parseInt(loadState('talk', 'grid_videos_limit'))
 		},
 
 		selectedVideoPeerId() {
