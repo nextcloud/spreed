@@ -353,7 +353,18 @@ const setConversationDescription = async function(token, description) {
 	return response
 }
 
-// const getConversationPucture
+const setConversationPicture = async function(token, blob) {
+	const formData = new FormData()
+	formData.append('name', 'files[]')
+	formData.append('contents', blob)
+	console.log('formData', formData, 'blob', blob)
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `avatar/${token}`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data;boundary=----WebKitFormBoundaryyrV7KO0BoCBuDbTL',
+		},
+	})
+	return response
+}
 
 export {
 	fetchConversations,
@@ -377,4 +388,5 @@ export {
 	setConversationPassword,
 	setConversationName,
 	setConversationDescription,
+	setConversationPicture,
 }

@@ -23,6 +23,7 @@
 	<div class="general-settings">
 		<ConversationPictureEditor
 			v-if="isSettingConversationPicture"
+			:token="token"
 			@close="isSettingConversationPicture = false" />
 		<button class="general-settings__picture icon-user"
 			@click="setConversationPicture">

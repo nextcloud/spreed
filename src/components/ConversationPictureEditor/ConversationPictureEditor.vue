@@ -33,23 +33,27 @@
 				class="hidden-visually"
 				@change="loadImage">
 			<Cropper
+				ref="cropper"
 				:src="selectedPicture"
+				:resize-image="false"
 				stencil-component="circle-stencil"
 				:stencil-props="{
 					movable: true,
 					scalable: true,
 					aspectRatio: 1,
-				}"
-				:resize-image="{
-					adjustStencil: false
-				}"
-				image-restriction="stencil" />
+					stencilSize: ({ boundaries }) => {
+						return {
+							width: boundaries.width,
+							height: boundaries.height,
+						}
+					}
+				}" />
 			<div class="actions" />
 			<div class="conversation-picture-editor__actions">
 				<button @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
 				</button>
-				<button ref="submitButton" class="primary" @click="handleUpload">
+				<button ref="submitButton" class="primary" @click="uploadResult">
 					{{ t('spreed', 'Send') }}
 				</button>
 			</div>
@@ -61,7 +65,7 @@
 
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import { Cropper } from 'vue-advanced-cropper'
-
+import { setConversationPicture } from '../../services/conversationsService'
 export default {
 	name: 'ConversationPictureEditor',
 
@@ -70,9 +74,16 @@ export default {
 		Cropper,
 	},
 
+	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
-			selectedPicture: 'https://nextcloud.local/remote.php/dav/files/admin/Peek%202020-11-12%2014-23.gif',
+			selectedPicture: '',
 			croppedPicture: null,
 		}
 	},
@@ -133,6 +144,19 @@ export default {
 			// Loading state off
 			this.isLoading = false
 		},
+
+		async uploadResult() {
+			const { canvas } = this.$refs.cropper.getResult()
+			if (canvas) {
+				await canvas.toBlob(async blob => {
+					try {
+						await setConversationPicture(this.token, blob)
+					} catch (exception) {
+						console.debug(exception)
+					}
+				}, 'image/jpeg')
+			}
+		},
 	},
 }
 </script>
@@ -141,7 +165,7 @@ export default {
 @import '../../assets/variables.scss';
 
 .conversation-picture-editor {
-	max-width: 400px;
+	max-width: 480px;
 	&__actions {
 		display: flex;
 		justify-content: flex-end;
