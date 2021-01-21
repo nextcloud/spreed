@@ -608,7 +608,7 @@ class RoomController extends AEnvironmentAwareController {
 		) {
 			return array_merge($roomData, [
 				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName($isSIPBridgeRequest ? '' : $this->userId),
+				'displayName' => $room->getDisplayName($isSIPBridgeRequest || $this->userId === null ? '' : $this->userId),
 				'objectType' => $room->getObjectType(),
 				'objectId' => $room->getObjectId(),
 				'readOnly' => $room->getReadOnly(),
