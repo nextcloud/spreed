@@ -397,4 +397,8 @@ class Config {
 	public function getGridVideosLimit(): string {
 		return $this->config->getAppValue('spreed', 'grid_videos_limit', '0');
 	}
+
+	public function getGridVideosLimitEnforced(): bool {
+		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+	}
 }

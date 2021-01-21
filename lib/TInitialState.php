@@ -77,6 +77,11 @@ trait TInitialState {
 			'talk', 'grid_videos_limit',
 			$this->talkConfig->getGridVideosLimit()
 		);
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'grid_videos_limit_enforced',
+			$this->talkConfig->getGridVideosLimitEnforced()
+		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {

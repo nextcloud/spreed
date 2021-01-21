@@ -129,6 +129,7 @@
 				:fit-video="true"
 				:has-pagination="true"
 				:videos-cap="gridVideosCap"
+				:videos-cap-enforced="gridVideosCapEnforced"
 				:call-participant-models="callParticipantModels"
 				:screens="screens"
 				:target-aspect-ratio="gridTargetAspectRatio"
@@ -267,6 +268,10 @@ export default {
 
 		gridVideosCap() {
 			return parseInt(loadState('talk', 'grid_videos_limit'))
+		},
+
+		gridVideosCapEnforced() {
+			return loadState('talk', 'grid_videos_limit_enforced')
 		},
 
 		selectedVideoPeerId() {

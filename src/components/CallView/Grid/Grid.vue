@@ -225,6 +225,10 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		videosCapEnforced: {
+			type: Boolean,
+			default: false,
+		},
 		targetAspectRatio: {
 			type: Number,
 			default: 1,
@@ -356,12 +360,14 @@ export default {
 				return []
 			}
 
+			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
+
 			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * this.slots) >= this.videos.length) {
-				return this.videos.slice(this.currentPage * this.slots)
+			if (((this.currentPage + 1) * slots) >= this.videos.length) {
+				return this.videos.slice(this.currentPage * slots)
 			}
 
-			return this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
+			return this.videos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
 		},
 
 		isLessThanTwoVideos() {
