@@ -88,6 +88,10 @@
 								Dev mode on ;-)
 							</h1>
 						</template>
+						<div
+							v-for="video in paddingVideos"
+							:key="video"
+							class="video" />
 						<LocalVideo
 							v-if="!isStripe"
 							ref="localVideo"
@@ -135,6 +139,7 @@
 					<p>GRID INFO</p>
 					<p>Videos (total): {{ videosCount }}</p>
 					<p>Displayed videos n: {{ displayedVideos.length }}</p>
+					<p>Padding videos n: {{ paddingVideos.length }}</p>
 					<p>Max per page: ~{{ videosCap }}</p>
 					<p>Grid width: {{ gridWidth }}</p>
 					<p>Grid height: {{ gridHeight }}</p>
@@ -333,6 +338,29 @@ export default {
 			}
 
 			return this.videos.slice(this.currentPage * this.slots, (this.currentPage + 1) * this.slots)
+		},
+
+		// Dummy array to add padding in the last page of the grid view and show
+		// the local video at the same position as in the other pages.
+		// In practice the padding could be added unconditionally, as it would
+		// have effect only in the last page of the main grid, but this should
+		// avoid recomputing the property when not needed.
+		paddingVideos() {
+			if (this.isStripe) {
+				return []
+			}
+
+			if (this.currentPage !== this.numberOfPages - 1) {
+				return []
+			}
+
+			if (this.currentPage === 0) {
+				return []
+			}
+
+			const numberOfPaddingVideos = this.slots - this.displayedVideos.length
+
+			return Array(numberOfPaddingVideos)
 		},
 
 		isLessThanTwoVideos() {
