@@ -23,34 +23,13 @@
 	<div class="top-bar">
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
-		<Popover v-if="isInCall"
-			class="top-bar__button"
-			trigger="manual"
-			:open="showLayoutHint && !hintDismissed"
-			@auto-hide="showLayoutHint=false">
-			<Actions slot="trigger">
-				<ActionButton v-if="isInCall"
-					:icon="changeViewIconClass"
-					@click="changeView">
-					{{ changeViewText }}
-				</actionbutton>
-			</Actions>
-			<div class="hint">
-				{{ layoutHintText }}
-				<div class="hint__actions">
-					<button
-						class="hint__button"
-						@click="showLayoutHint=false, hintDismissed=true">
-						{{ t('spreed', 'Dismiss') }}
-					</button>
-					<button
-						class="hint__button primary"
-						@click="changeView">
-						{{ t('spreed', 'Use speaker view') }}
-					</button>
-				</div>
-			</div>
-		</Popover>
+		<Actions slot="trigger">
+			<ActionButton v-if="isInCall"
+				:icon="changeViewIconClass"
+				@click="changeView">
+				{{ changeViewText }}
+			</actionbutton>
+		</Actions>
 		<!-- sidebar toggle -->
 		<Actions
 			v-shortkey="['f']"
@@ -164,10 +143,8 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import CallButton from './CallButton'
-import { EventBus } from '../../services/EventBus'
 import BrowserStorage from '../../services/BrowserStorage'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
@@ -190,7 +167,6 @@ export default {
 		ActionInput,
 		ActionLink,
 		CallButton,
-		Popover,
 		ActionSeparator,
 	},
 
@@ -203,8 +179,6 @@ export default {
 
 	data() {
 		return {
-			showLayoutHint: false,
-			hintDismissed: false,
 			// The conversation's password
 			password: '',
 			// Switch for the password-editing operation
@@ -258,9 +232,6 @@ export default {
 			}
 		},
 
-		layoutHintText() {
-			return t('Spreed', 'Too many videos to fit in the window. Maximize the window or switch to "speaker view" for a better experience.')
-		},
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
@@ -372,8 +343,6 @@ export default {
 		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
-		// Add call layout hint listener
-		EventBus.$on('toggleLayoutHint', this.handleToggleLayoutHint)
 	},
 
 	beforeDestroy() {
@@ -381,8 +350,6 @@ export default {
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
-		// Remove call layout hint listener
-		EventBus.$off('toggleLayoutHint', this.handleToggleLayoutHint)
 	},
 
 	methods: {
@@ -437,7 +404,6 @@ export default {
 		changeView() {
 			this.$store.dispatch('isGrid', !this.isGrid)
 			this.$store.dispatch('selectedVideoPeerId', null)
-			this.showLayoutHint = false
 		},
 		async toggleGuests() {
 			await this.$store.dispatch('toggleGuests', {
@@ -512,9 +478,6 @@ export default {
 			this.$store.dispatch('isRenamingConversation', true)
 			this.$store.dispatch('showSidebar')
 		},
-		handleToggleLayoutHint(display) {
-			this.showLayoutHint = display
-		},
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()
@@ -550,19 +513,5 @@ export default {
 		}
 	}
 
-}
-
-.hint {
-	padding: 12px;
-	max-width: 300px;
-	text-align: left;
-	&__button {
-		height: $clickable-area;
-	}
-	&__actions{
-		display: flex;
-		justify-content: space-between;
-		padding-top:4px;
-	}
 }
 </style>
