@@ -35,16 +35,18 @@
 		@submit-title="handleSubmitTitle"
 		@dismiss-editing="dismissEditing"
 		@close="handleClose">
-		<Description
-			v-if="showDescription"
-			slot="description"
-			:editable="canFullModerate"
-			:description="description"
-			:editing="isEditingDescription"
-			:loading="isDescriptionLoading"
-			:placeholder="t('spreed', 'Add a description for this conversation')"
-			@submit:description="handleUpdateDescription"
-			@update:editing="handleEditDescription" />
+		<template slot="description">
+			<Description
+				v-if="showDescription"
+				:editable="canFullModerate"
+				:description="description"
+				:editing="isEditingDescription"
+				:loading="isDescriptionLoading"
+				:placeholder="t('spreed', 'Add a description for this conversation')"
+				@submit:description="handleUpdateDescription"
+				@update:editing="handleEditDescription" />
+			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+		</template>
 		<AppSidebarTab
 			v-if="showChatInSidebar"
 			id="chat"
@@ -102,6 +104,7 @@ import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
 import Description from './Description/Description'
+import LobbyStatus from './LobbyStatus'
 import { EventBus } from '../../services/EventBus'
 import { showError } from '@nextcloud/dialogs'
 
@@ -116,6 +119,7 @@ export default {
 		SetGuestUsername,
 		SipSettings,
 		Description,
+		LobbyStatus,
 	},
 
 	mixins: [
@@ -222,6 +226,11 @@ export default {
 				return this.description !== ''
 			}
 		},
+
+		hasLobbyEnabled() {
+			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
 	},
 
 	watch: {
@@ -319,6 +328,10 @@ export default {
  * nextcloud-vue for ".app-sidebar". */
 #app-sidebar {
 	display: flex;
+}
+
+::v-deep .app-sidebar-header__description {
+	flex-direction: column;
 }
 
 .app-sidebar-tabs__content #tab-chat {
