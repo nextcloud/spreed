@@ -431,4 +431,10 @@ export default {
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 }
+
+// Always display the local video in the last row
+#localVideoContainer {
+	grid-row-end: -1;
+}
+
 </style>
