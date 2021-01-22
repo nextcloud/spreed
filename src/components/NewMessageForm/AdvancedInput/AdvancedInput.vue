@@ -408,8 +408,7 @@ export default {
 	overflow: visible;
 	width: 100%;
 	border:none;
-	margin: 0;
-	margin-left: 6px !important;
+	margin: 0 6px !important;
 	word-break: break-word;
 	white-space: pre-wrap;
 	padding: 8px 16px;

@@ -38,7 +38,7 @@
 		<template v-if="!loading">
 			<template v-if="editing">
 				<button
-					class="nc-button nc-button__main"
+					class="nc-button nc-button__main description__action"
 					:aria-label="t('spreed','Cancel editing description')"
 					@click="handleCancelEditing">
 					<Close
@@ -47,7 +47,7 @@
 						:size="16" />
 				</button>
 				<button
-					class="nc-button nc-button__main primary"
+					class="nc-button nc-button__main primary description__action"
 					:aria-label="t('spreed','Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
@@ -333,10 +333,10 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 	}
-	&__buttons{
-		display: flex;
-		margin-top: 8px;
-		justify-content: flex-end;
+
+	&__action {
+		margin: 0 0 4px 4px;
+
 	}
 }
 

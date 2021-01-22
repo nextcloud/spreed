@@ -66,11 +66,11 @@
 					<EmojiPicker @select="addEmoji">
 						<button
 							type="button"
-							class="new-message-form__icon new-message-form__button"
+							class="nc-button nc-button__main"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<EmoticonOutline
-								:size="20"
+								:size="16"
 								decorative
 								title="" />
 						</button>
@@ -99,10 +99,11 @@
 					:disabled="isReadOnly"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="new-message-form__button submit"
+					class="nc-button nc-button__main"
 					@click.prevent="handleSubmit">
 					<Send
-						:size="20"
+						title=""
+						:size="16"
 						decorative />
 				</button>
 			</form>
@@ -447,7 +448,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
+@import '../../assets/buttons';
 
 .wrapper {
 	position: sticky;
@@ -473,18 +474,6 @@ export default {
 			overflow-y: auto;
 			overflow-x: hidden;
 			max-width: 638px;
-		}
-		&__button {
-			width: 44px;
-			height: 44px;
-			background-color: transparent;
-			border: none;
-			margin: 0 4px;
-			color: var(--color-main-text);
-			opacity: .9;
-			display: flex;
-			justify-content: center;
-			align-items: center;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;

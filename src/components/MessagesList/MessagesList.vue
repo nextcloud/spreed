@@ -59,7 +59,7 @@ get the messagesList array and loop through the list to generate the messages.
 				<ChevronDown
 					decorative
 					title=""
-					:size="24" />
+					:size="20" />
 			</button>
 		</transition>
 	</div>
@@ -726,12 +726,14 @@ export default {
 	position: absolute;
 	width: 44px;
 	height: 44px;
-
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
 	padding: 0;
 	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 </style>
