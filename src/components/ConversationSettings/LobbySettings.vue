@@ -49,25 +49,17 @@
 					<div>
 						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 					</div>
-					<div>
-						<DatetimePicker
-							id="moderation_settings_lobby_timer_field"
-							aria-describedby="moderation_settings_lobby_timer_hint"
-							:value="lobbyTimer"
-							:default-value="defaultLobbyTimer"
-							:placeholder="t('spreed', 'Start time (optional)')"
-							:disabled="lobbyTimerFieldDisabled"
-							type="datetime"
-							:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
-							v-bind="dateTimePickerAttrs"
-							@change="setNewLobbyTimer" />
-						<button
-							id="moderation_settings_lobby_timer_submit"
-							:aria-label="t('spreed', 'Save meeting start time')"
-							:disabled="lobbyTimerFieldDisabled"
-							type="submit"
-							class="icon icon-confirm-fade" />
-					</div>
+					<DatetimePicker
+						id="moderation_settings_lobby_timer_field"
+						aria-describedby="moderation_settings_lobby_timer_hint"
+						:value="lobbyTimer"
+						:default-value="defaultLobbyTimer"
+						:placeholder="t('spreed', 'Start time (optional)')"
+						:disabled="lobbyTimerFieldDisabled"
+						type="datetime"
+						:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
+						v-bind="dateTimePickerAttrs"
+						@change="saveLobbyTimer" />
 				</form>
 			</div>
 		</div>
@@ -97,7 +89,6 @@ export default {
 		return {
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
-			newLobbyTimer: undefined,
 		}
 	},
 
@@ -123,10 +114,6 @@ export default {
 		},
 
 		lobbyTimer() {
-			if (this.newLobbyTimer !== undefined) {
-				return this.newLobbyTimer
-			}
-
 			// A timestamp of 0 means that there is no lobby, but it would be
 			// interpreted as the Unix epoch by the DateTimePicker.
 			if (this.conversation.lobbyTimer === 0) {
@@ -146,6 +133,7 @@ export default {
 					days: window.dayNamesShort, // Provided by server
 					months: window.monthNamesShort, // Provided by server
 				},
+				confirm: true,
 				clearable: true,
 				minuteStep: 5,
 				appendToBody: true,
@@ -180,27 +168,15 @@ export default {
 			this.isLobbyStateLoading = false
 		},
 
-		setNewLobbyTimer(timestamp) {
-			this.newLobbyTimer = timestamp
-			if (!this.newLobbyTimer) {
-				// save directly upon clearing
-				this.saveLobbyTimer()
-			}
-		},
-
-		async saveLobbyTimer() {
+		async saveLobbyTimer(timestamp) {
 			this.isLobbyTimerLoading = true
 
 			try {
 				await this.$store.dispatch('setLobbyTimer', {
 					token: this.token,
-					timestamp: this.newLobbyTimer ? (this.newLobbyTimer / 1000) : 0,
+					timestamp: timestamp ? (timestamp / 1000) : 0,
 				})
-				if (!this.newLobbyTimer) {
-					showSuccess(t('spreed', 'Start time has been cleared'))
-				} else {
-					showSuccess(t('spreed', 'Start time has been updated'))
-				}
+				showSuccess(t('spreed', 'Start time has been updated'))
 			} catch (e) {
 				console.error('Error occurred while updating start time', e)
 				showError(t('spreed', 'Error occurred while updating start time'))
