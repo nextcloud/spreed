@@ -143,8 +143,6 @@ const mutations = {
 	 * @param {string} reason the reason the temporary message failed;
 	 */
 	markTemporaryMessageAsFailed(state, { message, reason }) {
-		console.log(message)
-		console.log(reason)
 		if (state.messages[message.token][message.id]) {
 			Vue.set(state.messages[message.token][message.id], 'sendingFailure', reason)
 		}

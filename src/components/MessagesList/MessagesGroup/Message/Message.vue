@@ -68,8 +68,22 @@ the main body of the message as well as a quote.
 					class="message-status sending-failed"
 					:class="{'retry-option': sendingErrorCanRetry}"
 					:aria-label="sendingErrorIconTooltip"
-					@click="handleRetry">
-					<AlertCircle decorative
+					tabindex="0"
+					@mouseover="showReloadButton = true"
+					@focus="showReloadButton = true"
+					@mouseleave="showReloadButton = true"
+					@blur="showReloadButton = true">
+					<button
+						v-if="sendingErrorCanRetry && showReloadButton"
+						class="nc-button nc-button__main--dark"
+						@click="handleRetry">
+						<Reload
+							decorative
+							title=""
+							:size="16" />
+					</button>
+					<AlertCircle v-else
+						decorative
 						title=""
 						:size="16" />
 				</div>
@@ -130,6 +144,7 @@ import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
+import Reload from 'vue-material-design-icons/Reload'
 
 export default {
 	name: 'Message',
@@ -147,6 +162,7 @@ export default {
 		AlertCircle,
 		Check,
 		CheckAll,
+		Reload,
 	},
 
 	mixins: [
@@ -266,6 +282,7 @@ export default {
 			showActions: false,
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
+			showReloadButton: false,
 		}
 	},
 
@@ -407,9 +424,9 @@ export default {
 
 		sendingErrorIconTooltip() {
 			if (this.sendingErrorCanRetry) {
-				return t('spreed', 'Failed to sent message to the server. Click to try sending it again.')
+				return t('spreed', 'Failed to send the message. Click to try again')
 			}
-			return t('spreed', 'You can not send messages to this conversation right now.')
+			return t('spreed', 'You can not send messages to this conversation at the moment.')
 		},
 
 	},
@@ -478,6 +495,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../assets/variables';
+@import '../../../../assets/buttons';
 
 .message {
 	padding: 4px;
