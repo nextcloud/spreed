@@ -49,24 +49,17 @@
 					<div>
 						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 					</div>
-					<div>
-						<DatetimePicker
-							id="moderation_settings_lobby_timer_field"
-							aria-describedby="moderation_settings_lobby_timer_hint"
-							:value="lobbyTimer"
-							:placeholder="t('spreed', 'Start time (optional)')"
-							:disabled="lobbyTimerFieldDisabled"
-							type="datetime"
-							:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
-							v-bind="dateTimePickerAttrs"
-							@change="setNewLobbyTimer" />
-						<button
-							id="moderation_settings_lobby_timer_submit"
-							:aria-label="t('spreed', 'Save meeting start time')"
-							:disabled="lobbyTimerFieldDisabled"
-							type="submit"
-							class="icon icon-confirm-fade" />
-					</div>
+					<DatetimePicker
+						id="moderation_settings_lobby_timer_field"
+						aria-describedby="moderation_settings_lobby_timer_hint"
+						:value="lobbyTimer"
+						:default-value="defaultLobbyTimer"
+						:placeholder="t('spreed', 'Start time (optional)')"
+						:disabled="lobbyTimerFieldDisabled"
+						type="datetime"
+						:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
+						v-bind="dateTimePickerAttrs"
+						@change="saveLobbyTimer" />
 				</form>
 			</div>
 		</div>
@@ -96,7 +89,6 @@ export default {
 		return {
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
-			newLobbyTimer: null,
 		}
 	},
 
@@ -113,6 +105,14 @@ export default {
 			return this.isLobbyStateLoading || this.isLobbyTimerLoading
 		},
 
+		defaultLobbyTimer() {
+			let date = new Date()
+			// strip minutes and seconds
+			date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), 0, 0, 0)
+			// add one hour to reach the next hour
+			return new Date(date.getTime() + 3600000)
+		},
+
 		lobbyTimer() {
 			// A timestamp of 0 means that there is no lobby, but it would be
 			// interpreted as the Unix epoch by the DateTimePicker.
@@ -122,7 +122,7 @@ export default {
 
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			return new Date(this.conversation.lobbyTimer * 1000)
+			return this.conversation.lobbyTimer * 1000
 		},
 
 		dateTimePickerAttrs() {
@@ -133,13 +133,11 @@ export default {
 					days: window.dayNamesShort, // Provided by server
 					months: window.monthNamesShort, // Provided by server
 				},
-				// Do not update the value until the confirm button has been
-				// pressed. Otherwise it would not be possible to set a lobby
-				// for today, because as soon as the day is selected the lobby
-				// timer would be set, but as no time was set at that point the
-				// lobby timer would be set to today at 00:00, which would
-				// disable the lobby due to being in the past.
 				confirm: true,
+				clearable: true,
+				minuteStep: 5,
+				appendToBody: true,
+				valueType: 'timestamp',
 			}
 		},
 	},
@@ -170,24 +168,13 @@ export default {
 			this.isLobbyStateLoading = false
 		},
 
-		setNewLobbyTimer(date) {
-			let timestamp = 0
-			if (date) {
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				timestamp = date.getTime() / 1000
-			}
-
-			this.newLobbyTimer = timestamp
-		},
-
-		async saveLobbyTimer() {
+		async saveLobbyTimer(timestamp) {
 			this.isLobbyTimerLoading = true
 
 			try {
 				await this.$store.dispatch('setLobbyTimer', {
 					token: this.token,
-					timestamp: this.newLobbyTimer,
+					timestamp: timestamp ? (timestamp / 1000) : 0,
 				})
 				showSuccess(t('spreed', 'Start time has been updated'))
 			} catch (e) {
