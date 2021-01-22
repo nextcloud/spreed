@@ -94,7 +94,7 @@ export default {
 			searchResults: [],
 			contactsLoading: false,
 			participantsInitialised: false,
-			isCirclesEnabled: loadState('talk', 'circles_enabled'),
+			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
 			/**
 			 * Stores the cancel function for cancelableGetParticipants
 			 */

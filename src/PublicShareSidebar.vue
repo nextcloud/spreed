@@ -156,7 +156,7 @@ export default {
 			// used), although that should not be a problem given that only the
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
-			if (loadState('talk', 'signaling_mode') !== 'internal') {
+			if (loadState('spreed', 'signaling_mode') !== 'internal') {
 				EventBus.$on('shouldRefreshConversations', this.fetchCurrentConversation)
 				EventBus.$on('Signaling::participantListChanged', this.fetchCurrentConversation)
 			} else {

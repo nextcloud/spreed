@@ -53,7 +53,7 @@ export default {
 
 	data() {
 		return {
-			dialInInfo: loadState('talk', 'sip_dialin_info'),
+			dialInInfo: loadState('spreed', 'sip_dialin_info'),
 		}
 	},
 

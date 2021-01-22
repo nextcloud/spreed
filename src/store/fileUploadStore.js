@@ -30,7 +30,7 @@ import { EventBus } from '../services/EventBus'
 import { shareFile } from '../services/filesSharingServices'
 
 const state = {
-	attachmentFolder: loadState('talk', 'attachment_folder'),
+	attachmentFolder: loadState('spreed', 'attachment_folder'),
 	uploads: {
 	},
 	currentUploadId: undefined,

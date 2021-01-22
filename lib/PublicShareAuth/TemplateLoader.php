@@ -28,11 +28,11 @@ namespace OCA\Talk\PublicShareAuth;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\ICacheFactory;
 use OCP\IConfig;
-use OCP\IInitialStateService;
 use OCP\Util;
 
 /**
@@ -43,11 +43,11 @@ use OCP\Util;
 class TemplateLoader implements IEventListener {
 	use TInitialState;
 
-	public function __construct(IInitialStateService $initialStateService,
+	public function __construct(IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig) {
-		$this->initialStateService = $initialStateService;
+		$this->initialState = $initialState;
 		$this->talkConfig = $talkConfig;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->serverConfig = $serverConfig;

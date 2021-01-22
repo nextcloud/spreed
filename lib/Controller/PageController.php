@@ -43,11 +43,11 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
 use OCP\IConfig;
-use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -93,7 +93,7 @@ class PageController extends Controller {
 								IURLGenerator $url,
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
-								IInitialStateService $initialStateService,
+								IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								IRootFolder $rootFolder,
 								Config $talkConfig,
@@ -109,7 +109,7 @@ class PageController extends Controller {
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
-		$this->initialStateService = $initialStateService;
+		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->rootFolder = $rootFolder;
 		$this->talkConfig = $talkConfig;

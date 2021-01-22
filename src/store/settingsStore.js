@@ -22,7 +22,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { setReadStatusPrivacy } from '../services/settingsService'
 
 const state = {
-	readStatusPrivacy: loadState('talk', 'read_status_privacy'),
+	readStatusPrivacy: loadState('spreed', 'read_status_privacy'),
 }
 
 const getters = {

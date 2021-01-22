@@ -29,13 +29,13 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
 use OCP\IConfig;
-use OCP\IInitialStateService;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
@@ -53,14 +53,14 @@ class TemplateLoader implements IEventListener {
 	/** @var IUserSession */
 	private $userSession;
 
-	public function __construct(IInitialStateService $initialStateService,
+	public function __construct(IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								Config $talkConfig,
 								IConfig $serverConfig,
 								IAppManager $appManager,
 								IRootFolder $rootFolder,
 								IUserSession $userSession) {
-		$this->initialStateService = $initialStateService;
+		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;

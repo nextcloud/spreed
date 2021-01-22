@@ -195,20 +195,20 @@ export default {
 	},
 
 	beforeMount() {
-		const state = loadState('talk', 'hosted_signaling_server_prefill')
+		const state = loadState('spreed', 'hosted_signaling_server_prefill')
 		this.hostedHPBNextcloudUrl = state.url
 		this.hostedHPBFullName = state.fullName
 		this.hostedHPBEmail = state.email
 		this.hostedHPBLanguage = state.language
 		this.hostedHPBCountry = state.country
 
-		this.trialAccount = loadState('talk', 'hosted_signaling_server_trial_data')
+		this.trialAccount = loadState('spreed', 'hosted_signaling_server_trial_data')
 
-		const languagesAndCountries = loadState('talk', 'hosted_signaling_server_language_data')
+		const languagesAndCountries = loadState('spreed', 'hosted_signaling_server_language_data')
 		this.languages = languagesAndCountries['languages'] // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
 		this.countries = languagesAndCountries['countries'] // list of {code: "France", name: "France"}
 
-		const signaling = loadState('talk', 'signaling_servers')
+		const signaling = loadState('spreed', 'signaling_servers')
 		this.showForm = this.trialAccount.length !== 0
 			|| signaling.servers.length === 0
 	},

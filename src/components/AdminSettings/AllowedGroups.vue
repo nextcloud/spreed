@@ -135,13 +135,13 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.allowedGroups = loadState('talk', 'allowed_groups').sort(function(a, b) {
+		this.allowedGroups = loadState('spreed', 'allowed_groups').sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
-		this.canStartConversations = loadState('talk', 'start_conversations').sort(function(a, b) {
+		this.canStartConversations = loadState('spreed', 'start_conversations').sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
-		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
+		this.startCalls = startCallOptions[parseInt(loadState('spreed', 'start_calls'))]
 
 		// Make a unique list with the groups we know from allowedGroups and canStartConversations
 		// Unique checking is done by turning the group objects (with id and name)

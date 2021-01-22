@@ -79,7 +79,7 @@ export default {
 	},
 
 	mounted() {
-		this.commands = loadState('talk', 'commands')
+		this.commands = loadState('spreed', 'commands')
 	},
 }
 </script>

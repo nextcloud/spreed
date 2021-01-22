@@ -85,10 +85,10 @@ export default {
 
 	data() {
 		return {
-			matterbridgeEnabled: loadState('talk', 'matterbridge_enable'),
-			matterbridgeVersion: loadState('talk', 'matterbridge_version'),
+			matterbridgeEnabled: loadState('spreed', 'matterbridge_enable'),
+			matterbridgeVersion: loadState('spreed', 'matterbridge_version'),
 			isInstalling: false,
-			error: loadState('talk', 'matterbridge_error'),
+			error: loadState('spreed', 'matterbridge_error'),
 		}
 	},
 

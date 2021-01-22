@@ -89,7 +89,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.servers = loadState('talk', 'turn_servers')
+		this.servers = loadState('spreed', 'turn_servers')
 	},
 
 	methods: {

@@ -26,11 +26,11 @@ namespace OCA\Talk;
 use OC\HintException;
 use OC\User\NoUserException;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
-use OCP\IInitialStateService;
 use OCP\IUser;
 use OCP\Util;
 
@@ -40,8 +40,8 @@ trait TInitialState {
 	protected $talkConfig;
 	/** @var IConfig */
 	protected $serverConfig;
-	/** @var IInitialStateService */
-	protected $initialStateService;
+	/** @var IInitialState */
+	protected $initialState;
 	/** @var ICacheFactory */
 	protected $memcacheFactory;
 
@@ -49,8 +49,8 @@ trait TInitialState {
 		// Needed to enable the screensharing extension in Chromium < 72.
 		Util::addHeader('meta', ['id' => 'app', 'class' => 'nc-enable-screensharing-extension']);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'prefer_h264',
+		$this->initialState->provideInitialState(
+			'prefer_h264',
 			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
 		);
 
@@ -63,13 +63,13 @@ trait TInitialState {
 			);
 		}
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'signaling_mode',
+		$this->initialState->provideInitialState(
+			'signaling_mode',
 			$this->talkConfig->getSignalingMode()
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'sip_dialin_info',
+		$this->initialState->provideInitialState(
+			'sip_dialin_info',
 			$this->talkConfig->getDialInInfo()
 		);
 	}
@@ -77,23 +77,23 @@ trait TInitialState {
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
 		$this->publishInitialStateShared();
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'start_conversations',
+		$this->initialState->provideInitialState(
+			'start_conversations',
 			!$this->talkConfig->isNotAllowedToCreateConversations($user)
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'circles_enabled',
+		$this->initialState->provideInitialState(
+			'circles_enabled',
 			$appManager->isEnabledForUser('circles', $user)
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'guests_accounts_enabled',
+		$this->initialState->provideInitialState(
+			'guests_accounts_enabled',
 			$appManager->isEnabledForUser('guests', $user)
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'read_status_privacy',
+		$this->initialState->provideInitialState(
+			'read_status_privacy',
 			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
 
@@ -113,13 +113,13 @@ trait TInitialState {
 			}
 		}
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'attachment_folder',
+		$this->initialState->provideInitialState(
+			'attachment_folder',
 			$attachmentFolder
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'enable_matterbridge',
+		$this->initialState->provideInitialState(
+			'enable_matterbridge',
 			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
 		);
 	}
@@ -127,28 +127,28 @@ trait TInitialState {
 	protected function publishInitialStateForGuest(): void {
 		$this->publishInitialStateShared();
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'start_conversations',
+		$this->initialState->provideInitialState(
+			'start_conversations',
 			false
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'circles_enabled',
+		$this->initialState->provideInitialState(
+			'circles_enabled',
 			false
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'read_status_privacy',
+		$this->initialState->provideInitialState(
+			'read_status_privacy',
 			Participant::PRIVACY_PUBLIC
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'attachment_folder',
+		$this->initialState->provideInitialState(
+			'attachment_folder',
 			''
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'enable_matterbridge',
+		$this->initialState->provideInitialState(
+			'enable_matterbridge',
 			false
 		);
 	}
