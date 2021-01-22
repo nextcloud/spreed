@@ -378,4 +378,9 @@ export default {
 	width: 100%;
 }
 
+// Always display the local video in the last row
+#localVideoContainer {
+	grid-row-end: -1;
+}
+
 </style>
