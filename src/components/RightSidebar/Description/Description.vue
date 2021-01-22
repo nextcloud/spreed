@@ -38,23 +38,23 @@
 		<template v-if="!loading">
 			<template v-if="editing">
 				<button
-					class="description__button"
+					class="nc-button nc-button__main"
 					:aria-label="t('spreed','Cancel editing description')"
 					@click="handleCancelEditing">
 					<Close
 						decorative
 						title=""
-						:size="20" />
+						:size="16" />
 				</button>
 				<button
-					class="description__button primary"
+					class="nc-button nc-button__main primary"
 					:aria-label="t('spreed','Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
 					<Check
 						decorative
 						title=""
-						:size="20" />
+						:size="16" />
 				</button>
 				<div v-if="showCountDown"
 					v-tooltip.auto="countDownWarningText"
@@ -65,17 +65,21 @@
 				</div>
 			</template>
 			<button v-if="!editing && editable"
-				class="description__button"
+				class="nc-button nc-button__main"
 				:aria-label="t('spreed','Edit conversation description')"
 				@click="handleEditDescription">
 				<Pencil
 					decorative
-					:size="20" />
+					title=""
+					:size="16" />
 			</button>
 		</template>
 		<div v-if="loading" class="icon-loading-small spinner" />
-		<button v-if="!editing && overflows && expanded" class="expand-indicator description__button" @click="handleClick">
-			<ChevronDown />
+		<button v-if="!editing && overflows && expanded" class="expand-indicator nc-button nc-button__main" @click="handleClick">
+			<ChevronDown
+				decorative
+				title=""
+				:size="16" />
 		</button>
 		<div v-if="showOverlay"
 			cursor="pointer"
@@ -288,6 +292,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../assets/variables.scss';
+@import '../../../assets/buttons.scss';
 
 .description {
 	margin: -20px 0 8px 8px;
@@ -332,28 +337,6 @@ export default {
 		display: flex;
 		margin-top: 8px;
 		justify-content: flex-end;
-	}
-	&__button {
-		width: $clickable-area;
-		height: $clickable-area;
-		flex-shrink: 0;
-		border: 0;
-		padding: 0;
-		margin: 0 0 4px 4px;
-		z-index: 1;
-		&:not(.primary) {
-			background-color: transparent;
-		}
-
-		&:hover,
-		&:focus {
-			background-color: var(--color-background-hover);
-		}
-		&:disabled {
-			&:hover {
-				background-color: var(--color-primary-element);
-			}
-		}
 	}
 }
 
