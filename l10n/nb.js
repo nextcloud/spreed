@@ -421,7 +421,6 @@ OC.L10N.register(
     "Enable lobby" : "Aktiver lobby",
     "Meeting start time" : "Møtets starttidspunkt",
     "Start time (optional)" : "Starttidspunkt (valgfri)",
-    "Save meeting start time" : "Lagre møtets starttidspunkt",
     "Start time has been updated" : "Starttidspunkt har blitt oppdatert",
     "Lock conversation" : "Lås samtalen",
     "Save" : "Lagre",
