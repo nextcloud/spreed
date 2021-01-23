@@ -677,7 +677,6 @@
     "After the time limit the lobby will be automatically disabled." : "시간 제한이 지나면 로비가 자동으로 비활성화됩니다.",
     "Meeting start time" : "미팅 시작 시간",
     "Start time (optional)" : "시작 시간 (옵션)",
-    "Save meeting start time" : "미팅 시작 시간 저장",
     "Error occurred when restricting the conversation to moderator" : "대화를 진행자로 제한하는 동안 오류가 발생했습니다.",
     "Error occurred when opening the conversation to everyone" : "모든 사용자에게 대화를 여는 동안 오류가 발생했습니다.",
     "Start time has been updated" : "시작 시간이 업데이트 되었습니다.",
