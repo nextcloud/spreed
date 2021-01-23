@@ -665,7 +665,6 @@ OC.L10N.register(
     "Enable lobby" : "Activer la salle d'attente",
     "Meeting start time" : "Heure de début de la réunion",
     "Start time (optional)" : "Heure de début (optionelle)",
-    "Save meeting start time" : "Enregistrer l'heure de début de la réunion",
     "Start time has been updated" : "L'heure de début a été mise à jour",
     "Error occurred while updating start time" : "Une erreur s'est produite lors de la mise à jour de l'heure de début",
     "Lock conversation" : "Verrouiller la conversation",

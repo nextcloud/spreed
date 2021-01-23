@@ -693,7 +693,6 @@
     "After the time limit the lobby will be automatically disabled." : "Dopo il limite di tempo, l'ingresso sarà disabilitato automaticamente.",
     "Meeting start time" : "Orario di inizio della riunione",
     "Start time (optional)" : "Ora iniziale (facoltativa)",
-    "Save meeting start time" : "Salva l'ora di inizio della riunione",
     "Error occurred when restricting the conversation to moderator" : "Si è verificato un errore durante la limitazione della conversazione al moderatore",
     "Error occurred when opening the conversation to everyone" : "Si è verificato un errore durante l'apertura della conversazione a tutti",
     "Start time has been updated" : "L'orario di inizio è stato aggiornato",
