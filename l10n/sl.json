@@ -693,7 +693,6 @@
     "After the time limit the lobby will be automatically disabled." : "Po določeni časovni omejitvi bo čakalnica samodejno onemogočena.",
     "Meeting start time" : "Čas začetka sestanka",
     "Start time (optional)" : "Čas začetka (izbirno)",
-    "Save meeting start time" : "Shrani čas začetka sestanka",
     "Error occurred when restricting the conversation to moderator" : "Prišlo je do napake med omejevanjem pogovora za moderatorja.",
     "Error occurred when opening the conversation to everyone" : "Prišlo je do napake med odpiranjem pogovora za vse udeležence.",
     "Start time has been updated" : "Čas začetka je posodobljen",

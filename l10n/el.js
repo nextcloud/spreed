@@ -681,7 +681,6 @@ OC.L10N.register(
     "After the time limit the lobby will be automatically disabled." : "Μετά το χρονικό όριο, το λόμπι θα απενεργοποιηθεί αυτόματα.",
     "Meeting start time" : "Ώρα έναρξης της συνάντησης",
     "Start time (optional)" : "Ώρα έναρξης (προαιρετικό)",
-    "Save meeting start time" : "Αποθήκευση ώρας έναρξης της συνάντησης",
     "Error occurred when restricting the conversation to moderator" : "Παρουσιάστηκε σφάλμα κατά τον περιορισμό της συνομιλίας σε επόπτη",
     "Error occurred when opening the conversation to everyone" : "Παρουσιάστηκε σφάλμα κατά το άνοιγμα της συνομιλίας σε όλους",
     "Start time has been updated" : "Η ώρα έναρξης ενημερώθηκε",
