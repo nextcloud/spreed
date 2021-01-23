@@ -426,7 +426,7 @@ export default {
 			if (this.sendingErrorCanRetry) {
 				return t('spreed', 'Failed to send the message. Click to try again')
 			}
-			return t('spreed', 'You can not send messages to this conversation at the moment.')
+			return t('spreed', 'You can not send messages to this conversation at the moment')
 		},
 
 	},
