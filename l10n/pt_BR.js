@@ -823,6 +823,7 @@ OC.L10N.register(
     "Message sent" : "Mensagem enviada",
     "Message read by everyone who shares their reading status" : "Mensagem lida por todos que compartilham seu status de leitura",
     "Failed to send the message. Click to try again" : "Ocorreu um erro ao enviar a mensagem. Clique para tentar novamente.",
+    "You can not send messages to this conversation at the moment" : "Você não pode enviar mensagens para esta conversa no momento",
     "{stack} in {board}" : "{stack} de {board}",
     "Remove" : "Excluir",
     "[Unknown username]" : "[Nome de usuário desconhecido]",
