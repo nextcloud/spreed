@@ -33,8 +33,8 @@ const state = {
 	lastIsStripeOpen: null,
 	presentationStarted: false,
 	selectedVideoPeerId: null,
-	videoBackgroundBlur: 1,
 	participantRaisedHands: {},
+	backgroundImageAverageColorCache: {},
 }
 
 const getters = {
@@ -46,18 +46,14 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
-	/**
-	 * @param {object} state the width and height to calculate the radius from
-	 * @returns {number} the blur radius to use, in pixels
-	 */
-	getBlurRadius: (state) => (width, height) => {
-		return (width * height * state.videoBackgroundBlur) / 1000
-	},
 	getParticipantRaisedHand: (state) => (sessionId) => {
 		return state.participantRaisedHands[sessionId] || { state: false, timestamp: null }
 	},
 	isParticipantRaisedHand: (state) => (sessionId) => {
 		return state.participantRaisedHands[sessionId]?.state
+	},
+	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
+		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
 }
 
@@ -94,6 +90,12 @@ const mutations = {
 	clearParticipantHandRaised(state) {
 		state.participantRaisedHands = {}
 	},
+	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
+		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+	},
+	clearBackgroundImageAverageColorCache(state) {
+		state.backgroundImageAverageColorCache = {}
+	},
 }
 
 const actions = {
@@ -118,6 +120,8 @@ const actions = {
 	leaveCall(context) {
 		// clear raised hands as they were specific to the call
 		context.commit('clearParticipantHandRaised')
+
+		context.commit('clearBackgroundImageAverageColorCache')
 	},
 
 	/**
@@ -150,6 +154,10 @@ const actions = {
 
 	setParticipantHandRaised(context, { sessionId, raisedHand }) {
 		context.commit('setParticipantHandRaised', { sessionId, raisedHand })
+	},
+
+	setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
+		context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
 	},
 
 	/**

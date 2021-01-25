@@ -50,8 +50,7 @@
 				<template v-if="participantUserId">
 					<VideoBackground
 						:display-name="participantName"
-						:user="participantUserId"
-						:grid-blur="videoBackgroundBlur" />
+						:user="participantUserId" />
 					<Avatar
 						:size="avatarSize"
 						:disable-menu="true"
@@ -63,8 +62,7 @@
 				</template>
 				<template v-else>
 					<VideoBackground
-						:display-name="participantName"
-						:grid-blur="videoBackgroundBlur" />
+						:display-name="participantName" />
 					<div
 						:class="guestAvatarClass"
 						class="avatar guest">
@@ -157,11 +155,6 @@ export default {
 		isSidebar: {
 			type: Boolean,
 			default: false,
-		},
-		// Calculated once in the grid component for each video background
-		videoBackgroundBlur: {
-			type: Number,
-			default: 0,
 		},
 	},
 
