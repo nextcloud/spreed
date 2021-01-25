@@ -30,7 +30,7 @@
 			<Plus
 				decorative
 				title=""
-				:size="24" />
+				:size="20" />
 		</button>
 		<!-- New group form -->
 		<Modal
@@ -352,6 +352,9 @@ $dialog-height: 480px;
 	width: 44px;
 	padding: 0;
 	margin: 0 0 0 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .new-group-conversation {

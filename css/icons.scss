@@ -113,6 +113,11 @@
 			filter: initial;
 		}
 	}
+
+	// Patch material design icons' span wrong height
+	.material-design-icon {
+		display: contents;
+	}
 }
 
 // The atwho panel is a direct child of the body, so it is not affected by
