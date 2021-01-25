@@ -1,6 +1,57 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.0.0-alpha.4 – 2021-01-25
+### Added
+- Allow pagination for main grid view
+  [#4958](https://github.com/nextcloud/spreed/pull/4958)
+- Allow line breaks and links in the descriptions
+  [#4960](https://github.com/nextcloud/spreed/pull/4960)
+- Allow to send messages again when they failed
+  [#4975](https://github.com/nextcloud/spreed/pull/4975)
+- Add a button to directly disable the lobby
+  [#4997](https://github.com/nextcloud/spreed/pull/4997)
+- Add basic support for Opera
+  [#4974](https://github.com/nextcloud/spreed/pull/4974)
+
+### Changed
+- The avatar-blurring in calls has been replaced with the average color to improve performance on Chrome, Chromium, Safari, Edge and Opera
+  [#4985](https://github.com/nextcloud/spreed/pull/4985)
+- User different border color when own message is quoted
+  [#4940](https://github.com/nextcloud/spreed/pull/4940)
+- Move matterbridge settings into the conversation settings dialog
+  [#4907](https://github.com/nextcloud/spreed/pull/4907)
+
+### Fixed
+- Fix Javascript errors with Internet Explorer and Safari
+  [#4829](https://github.com/nextcloud/spreed/pull/4829)
+  [#4963](https://github.com/nextcloud/spreed/pull/4963)
+  [#5008](https://github.com/nextcloud/spreed/pull/5008)
+- Show unread one-to-one messages in dashboard widget
+  [#4944](https://github.com/nextcloud/spreed/pull/4944)
+- Allow to clear the lobby timer value again
+  [#4990](https://github.com/nextcloud/spreed/pull/4990)
+- Show single video in stripe if screen share in progress
+  [#4941](https://github.com/nextcloud/spreed/pull/4941)
+- Properly initialize descriptionText with description
+  [#4942](https://github.com/nextcloud/spreed/pull/4942)
+- Remove system message when a self-joined user leaves a conversation
+  [#4933](https://github.com/nextcloud/spreed/pull/4933)
+- Fix scrolling of the chat when messages arrive while in background
+  [#4979](https://github.com/nextcloud/spreed/pull/4979)
+- Fix a bug that prevented disabling sip
+  [#4951](https://github.com/nextcloud/spreed/pull/4951)
+- Allow SIP dial-in in non-public conversations
+  [#4954](https://github.com/nextcloud/spreed/pull/4954)
+- Correctly use the displayname for groups in admin settings
+  [#4943](https://github.com/nextcloud/spreed/pull/4943)
+- Delete messages from UI storage when a conversation is deleted
+  [#4949](https://github.com/nextcloud/spreed/pull/4949)
+- Add mapping between Nextcloud session id and signaling server session id, to allow linking call users with the rest of the UI
+  [#4952](https://github.com/nextcloud/spreed/pull/4952)
+- Fix missing display names with sip users
+  [#4956](https://github.com/nextcloud/spreed/pull/4956)
+
 ## 11.0.0-alpha.3 – 2021-01-08
 ### Fixed
 - Fix chat notifications not being sent when user is not active in a chat
