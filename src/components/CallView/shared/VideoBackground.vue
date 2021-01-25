@@ -23,12 +23,7 @@
 	<div class="video-backgroundbackground">
 		<div
 			ref="darkener"
-			class="darken">
-			<ResizeObserver
-				v-if="gridBlur === 0"
-				class="observer"
-				@notify="setBlur" />
-		</div>
+			class="darken" />
 		<div
 			:style="{'background-color': backgroundColor }"
 			class="video-background" />
@@ -40,7 +35,6 @@ import { average } from 'color.js'
 import axios from '@nextcloud/axios'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
-import { ResizeObserver } from 'vue-resize'
 import { getBuilder } from '@nextcloud/browser-storage'
 
 const browserStorage = getBuilder('nextcloud').persist().build()
@@ -60,9 +54,6 @@ function setUserHasAvatar(userId, flag) {
 
 export default {
 	name: 'VideoBackground',
-	components: {
-		ResizeObserver,
-	},
 
 	props: {
 		displayName: {
@@ -73,16 +64,11 @@ export default {
 			type: String,
 			default: '',
 		},
-		gridBlur: {
-			type: Number,
-			default: 0,
-		},
 	},
 
 	data() {
 		return {
 			hasPicture: false,
-			blur: 0,
 		}
 	},
 
@@ -114,9 +100,6 @@ export default {
 			}
 
 			return generateUrl(`avatar/${this.user}/300`)
-		},
-		backgroundBlur() {
-			return this.gridBlur ? this.gridBlur : this.blur
 		},
 	},
 
@@ -163,23 +146,6 @@ export default {
 		} catch (exception) {
 			console.debug(exception)
 		}
-	},
-
-	async mounted() {
-		if (!this.gridBlur) {
-			// Initialise blur
-			this.setBlur({
-				width: this.$refs['darkener'].clientWidth,
-				height: this.$refs['darkener'].clientHeight,
-			})
-		}
-	},
-
-	methods: {
-		// Calculate the background blur based on the height of the background element
-		setBlur({ width, height }) {
-			this.blur = this.$store.getters.getBlurRadius(width, height)
-		},
 	},
 }
 </script>

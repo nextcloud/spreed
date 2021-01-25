@@ -33,7 +33,6 @@ const state = {
 	lastIsStripeOpen: null,
 	presentationStarted: false,
 	selectedVideoPeerId: null,
-	videoBackgroundBlur: 1,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
 }
@@ -46,13 +45,6 @@ const getters = {
 	presentationStarted: (state) => state.presentationStarted,
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
-	},
-	/**
-	 * @param {object} state the width and height to calculate the radius from
-	 * @returns {number} the blur radius to use, in pixels
-	 */
-	getBlurRadius: (state) => (width, height) => {
-		return (width * height * state.videoBackgroundBlur) / 1000
 	},
 	getParticipantRaisedHand: (state) => (sessionId) => {
 		return state.participantRaisedHands[sessionId] || { state: false, timestamp: null }
