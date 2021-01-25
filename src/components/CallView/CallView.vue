@@ -620,13 +620,13 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	background-color: black;
+	background-color: $color-call-background;
 }
 
 #call-container {
 	width: 100%;
 	height: 100%;
-	background-color: #000;
+	background-color: $color-call-background;
 }
 
 #videos {

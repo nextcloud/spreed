@@ -162,7 +162,6 @@ export default {
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
-	background-color: #444;
 	text-align: center;
 	.icon {
 		background-size: 64px;

@@ -697,7 +697,6 @@ export default {
 .grid-main-wrapper {
 	position: relative;
 	width: 100%;
-	background-color: var(--color-text-maxcontrast);
 }
 
 .grid-main-wrapper.transparent {
