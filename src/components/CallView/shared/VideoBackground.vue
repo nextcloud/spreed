@@ -29,14 +29,7 @@
 				class="observer"
 				@notify="setBlur" />
 		</div>
-		<img
-			v-if="hasPicture && !useAverageColor"
-			ref="backgroundImage"
-			:src="backgroundImageUrl"
-			:style="backgroundStyle"
-			class="video-background__picture"
-			alt="">
-		<div v-else
+		<div
 			:style="{'background-color': backgroundColor }"
 			class="video-background" />
 	</div>
@@ -49,7 +42,6 @@ import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
 import { generateUrl } from '@nextcloud/router'
 import { ResizeObserver } from 'vue-resize'
 import { getBuilder } from '@nextcloud/browser-storage'
-import browserCheck from '../../../mixins/browserCheck'
 
 const browserStorage = getBuilder('nextcloud').persist().build()
 
@@ -72,10 +64,6 @@ export default {
 		ResizeObserver,
 	},
 
-	mixins: [
-		browserCheck,
-	],
-
 	props: {
 		displayName: {
 			type: String,
@@ -94,21 +82,20 @@ export default {
 	data() {
 		return {
 			hasPicture: false,
-			useAverageColor: false,
 			blur: 0,
 		}
 	},
 
 	computed: {
 		backgroundImageAverageColor() {
-			if (!this.backgroundImageUrlToAverage) {
+			if (!this.backgroundImageUrl) {
 				return ''
 			}
 
-			return this.$store.getters.getCachedBackgroundImageAverageColor(this.backgroundImageUrlToAverage)
+			return this.$store.getters.getCachedBackgroundImageAverageColor(this.backgroundImageUrl)
 		},
 		backgroundColor() {
-			if (this.hasPicture && this.useAverageColor) {
+			if (this.hasPicture) {
 				return this.backgroundImageAverageColor
 			}
 
@@ -131,31 +118,13 @@ export default {
 		backgroundBlur() {
 			return this.gridBlur ? this.gridBlur : this.blur
 		},
-		backgroundStyle() {
-			if (this.useAverageColor) {
-				return {}
-			}
-
-			return {
-				filter: `blur(${this.backgroundBlur}px)`,
-			}
-		},
-		// Special computed property to combine the properties that should be
-		// watched to set (or not) the background image average color.
-		backgroundImageUrlToAverage() {
-			if (!this.useAverageColor) {
-				return null
-			}
-
-			return this.backgroundImageUrl
-		},
 	},
 
 	watch: {
-		backgroundImageUrlToAverage: {
+		backgroundImageUrl: {
 			immediate: true,
 			handler() {
-				if (!this.backgroundImageUrlToAverage) {
+				if (!this.backgroundImageUrl) {
 					return
 				}
 
@@ -164,9 +133,9 @@ export default {
 					return
 				}
 
-				average(this.backgroundImageUrlToAverage, { format: 'hex' }).then(color => {
+				average(this.backgroundImageUrl, { format: 'hex' }).then(color => {
 					this.$store.dispatch('setCachedBackgroundImageAverageColor', {
-						videoBackgroundId: this.backgroundImageUrlToAverage,
+						videoBackgroundId: this.backgroundImageUrl,
 						backgroundImageAverageColor: color,
 					})
 				})
@@ -175,10 +144,6 @@ export default {
 	},
 
 	async beforeMount() {
-		if (!this.isFirefox) {
-			this.useAverageColor = true
-		}
-
 		if (!this.user) {
 			return
 		}
