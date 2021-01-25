@@ -25,7 +25,6 @@ import Vue from 'vue'
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
-	videoBackgroundBlur: 1,
 	backgroundImageAverageColorCache: {},
 }
 
@@ -35,13 +34,6 @@ const getters = {
 	},
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
-	},
-	/**
-	 * @param {object} state the width and height to calculate the radius from
-	 * @returns {number} the blur radius to use, in pixels
-	 */
-	getBlurRadius: (state) => (width, height) => {
-		return (width * height * state.videoBackgroundBlur) / 1000
 	},
 	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
 		return state.backgroundImageAverageColorCache[videoBackgroundId]
