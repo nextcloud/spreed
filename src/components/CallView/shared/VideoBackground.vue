@@ -22,11 +22,11 @@
 <template>
 	<div class="video-backgroundbackground">
 		<div
-			ref="darkener"
-			class="darken" />
-		<div
 			:style="{'background-color': backgroundColor }"
 			class="video-background" />
+		<div
+			ref="darkener"
+			class="darken" />
 	</div>
 </template>
 
