@@ -50,7 +50,6 @@
 							:is-selected="isSelected(callParticipantModel)"
 							:fit-video="false"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
-							:video-background-blur="videoBackgroundBlur"
 							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 							@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 					</template>
@@ -377,11 +376,6 @@ export default {
 			} else {
 				return 'height: 100%'
 			}
-		},
-
-		// Blur radius for each background in the grid
-		videoBackgroundBlur() {
-			return this.$store.getters.getBlurRadius(this.videoWidth, this.videoHeight)
 		},
 	},
 

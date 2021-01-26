@@ -20,10 +20,12 @@
  *
  */
 
+import Vue from 'vue'
+
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
-	videoBackgroundBlur: 1,
+	backgroundImageAverageColorCache: {},
 }
 
 const getters = {
@@ -33,12 +35,8 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
-	/**
-	 * @param {object} state the width and height to calculate the radius from
-	 * @returns {number} the blur radius to use, in pixels
-	 */
-	getBlurRadius: (state) => (width, height) => {
-		return (width * height * state.videoBackgroundBlur) / 1000
+	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
+		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
 }
 
@@ -50,6 +48,12 @@ const mutations = {
 	selectedVideoPeerId(state, value) {
 		state.selectedVideoPeerId = value
 	},
+	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
+		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+	},
+	clearBackgroundImageAverageColorCache(state) {
+		state.backgroundImageAverageColorCache = {}
+	},
 }
 
 const actions = {
@@ -58,6 +62,14 @@ const actions = {
 	},
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
+	},
+
+	leaveCall(context) {
+		context.commit('clearBackgroundImageAverageColorCache')
+	},
+
+	setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
+		context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
 	},
 }
 
