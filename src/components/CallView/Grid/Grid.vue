@@ -847,10 +847,16 @@ button.stripe--collapse {
 	border: 0;
 	background: none;
 	opacity: .7;
+	padding: 0;
 
-	&:hover,
-	&:focus {
-		opacity: 1;
+	.app-content:hover & {
+		background-color: rgba(0, 0, 0, 0.1) !important;
+
+		&:hover,
+		&:focus {
+			opacity: 1;
+			background-color: rgba(0, 0, 0, 0.2) !important;
+		}
 	}
 
 	&:active {
