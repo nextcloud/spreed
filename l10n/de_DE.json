@@ -821,7 +821,7 @@
     "Message sent" : "Nachricht gesendet",
     "Message read by everyone who shares their reading status" : "Nachricht wird von allen gelesen, die Ihren Lesestatus teilen",
     "Failed to send the message. Click to try again" : "Fehler beim Senden der Nachricht. Klicken, um es noch einmal zu probieren",
-    "You can not send messages to this conversation at the moment" : "Sie können derzeit keine Nachrichten an diese Konversation senden.",
+    "You can not send messages to this conversation at the moment" : "Sie können derzeit keine Nachrichten an diese Unterhaltung senden",
     "{stack} in {board}" : "{stack} auf {board}",
     "Remove" : "Entfernen",
     "[Unknown username]" : "[Unbekannter Benutzername]",
