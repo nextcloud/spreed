@@ -119,6 +119,16 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<template
+						v-for="action in messageActions">
+						<ActionButton
+							:key="action.label"
+							:icon="action.icon"
+							:close-after-click="true"
+							@click="action.callback(messageAPIData)">
+							{{ action.label }}
+						</ActionButton>
+					</template>
 				</Actions>
 			</div>
 		</div>
@@ -287,6 +297,10 @@ export default {
 	},
 
 	computed: {
+		messageObject() {
+			return this.$store.getters.message(this.token, this.id)
+		},
+
 		hasActions() {
 			return this.isReplyable && !this.isConversationReadOnly
 		},
@@ -430,6 +444,18 @@ export default {
 				return t('spreed', 'Not enough free space to upload file')
 			}
 			return t('spreed', 'You can not send messages to this conversation at the moment')
+		},
+
+		messageActions() {
+			return this.$store.getters.messageActions
+		},
+
+		messageAPIData() {
+			return {
+				message: this.messageObject,
+				metadata: this.conversation,
+				apiVersion: 'v3',
+			}
 		},
 
 	},
