@@ -21,6 +21,7 @@
 import Vue from 'vue'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar'
+import './init'
 
 // Store
 import Vuex from 'vuex'

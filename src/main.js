@@ -24,6 +24,7 @@
 
 import Vue from 'vue'
 import App from './App'
+import './init'
 
 // Store
 import Vuex from 'vuex'

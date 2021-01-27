@@ -20,6 +20,7 @@
 
 import Vue from 'vue'
 import PublicShareSidebar from './PublicShareSidebar'
+import './init'
 
 // Store
 import Vuex from 'vuex'
