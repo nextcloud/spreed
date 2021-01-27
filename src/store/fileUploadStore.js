@@ -31,6 +31,7 @@ import { shareFile } from '../services/filesSharingServices'
 
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder'),
+	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space'),
 	uploads: {
 	},
 	currentUploadId: undefined,
@@ -74,6 +75,11 @@ const getters = {
 	// gets the current attachment folder
 	getAttachmentFolder: (state) => () => {
 		return state.attachmentFolder
+	},
+
+	// gets the current attachment folder
+	getAttachmentFolderFreeSpace: (state) => () => {
+		return state.attachmentFolderFreeSpace
 	},
 
 	uploadProgress: (state) => (uploadId, index) => {
