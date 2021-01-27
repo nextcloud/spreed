@@ -117,7 +117,7 @@ const mutations = {
 	},
 
 	// Marks a given file as failed upload
-	markFileAsFailedUpload(state, { uploadId, index }) {
+	markFileAsFailedUpload(state, { uploadId, index, status }) {
 		state.uploads[uploadId].files[index].status = 'failedUpload'
 	},
 
@@ -230,8 +230,9 @@ const actions = {
 			const currentFile = state.uploads[uploadId].files[index].file
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
+			const fileName = (currentFile.newName || currentFile.name)
 			// Candidate rest of the path
-			const path = getters.getAttachmentFolder() + '/' + (currentFile.newName || currentFile.name)
+			const path = getters.getAttachmentFolder() + '/' + fileName
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
@@ -245,10 +246,21 @@ const actions = {
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
 			} catch (exception) {
-				console.debug('Error while uploading file:' + exception)
-				showError(t('spreed', 'Error while uploading file'))
+				console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
+				const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
+				let reason = 'failed-upload'
+				if (exception.response.status === 507) {
+					reason = 'quota'
+					showError(t('spreed', 'Not enough free space for uploading "{fileName}"', { fileName }))
+				} else {
+					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				}
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
+				dispatch('markTemporaryMessageAsFailed', {
+					message: temporaryMessage,
+					reason: reason,
+				})
 			}
 
 			// Get the files that have successfully been uploaded from the store

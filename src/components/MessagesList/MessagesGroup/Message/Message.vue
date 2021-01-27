@@ -426,6 +426,9 @@ export default {
 			if (this.sendingErrorCanRetry) {
 				return t('spreed', 'Failed to send the message. Click to try again')
 			}
+			if (this.sendingFailure === 'quota') {
+				return t('spreed', 'Could not upload due to insufficient storage')
+			}
 			return t('spreed', 'You can not send messages to this conversation at the moment')
 		},
 
