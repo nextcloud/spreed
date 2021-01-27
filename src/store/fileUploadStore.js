@@ -251,7 +251,7 @@ const actions = {
 				let reason = 'failed-upload'
 				if (exception.response.status === 507) {
 					reason = 'quota'
-					showError(t('spreed', 'Error while uploading file "{fileName}": insufficient storage', { fileName }))
+					showError(t('spreed', 'Not enough free space for uploading "{fileName}"', { fileName }))
 				} else {
 					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
