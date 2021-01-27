@@ -181,6 +181,15 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Chat#shareObjectToChat',
+			'url' => '/api/{apiVersion}/chat/{token}/share',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 		/**
 		 * Conversation (Room)
