@@ -51,6 +51,8 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\RichObjectStrings\InvalidObjectExeption;
+use OCP\RichObjectStrings\IValidator;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -108,6 +110,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IEventDispatcher */
 	protected $eventDispatcher;
 
+	/** @var IValidator */
+	protected $richObjectValidator;
+
 	/** @var IL10N */
 	private $l;
 
@@ -129,6 +134,7 @@ class ChatController extends AEnvironmentAwareController {
 								ISearchResult $searchResult,
 								ITimeFactory $timeFactory,
 								IEventDispatcher $eventDispatcher,
+								IValidator $richObjectValidator,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -148,7 +154,56 @@ class ChatController extends AEnvironmentAwareController {
 		$this->searchResult = $searchResult;
 		$this->timeFactory = $timeFactory;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->richObjectValidator = $richObjectValidator;
 		$this->l = $l;
+	}
+
+	protected function getActorInfo(string $actorDisplayName = ''): array {
+		if ($this->userId === null) {
+			$actorType = Attendee::ACTOR_GUESTS;
+			$sessionId = $this->session->getSessionForRoom($this->room->getToken());
+			// The character limit for actorId is 64, but the spreed-session is
+			// 256 characters long, so it has to be hashed to get an ID that
+			// fits (except if there is no session, as the actorId should be
+			// empty in that case but sha1('') would generate a hash too
+			// instead of returning an empty string).
+			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+
+			if ($sessionId && $actorDisplayName) {
+				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
+			}
+		} else {
+			$actorType = Attendee::ACTOR_USERS;
+			$actorId = $this->userId;
+		}
+
+		return [$actorType, $actorId];
+	}
+
+	public function parseCommentToResponse(IComment $comment, Message $parentMessage = null): DataResponse {
+		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($chatMessage);
+
+		if (!$chatMessage->getVisibility()) {
+			$response = new DataResponse([], Http::STATUS_CREATED);
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			}
+			return $response;
+		}
+
+		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
+
+		$data = $chatMessage->toArray();
+		if ($parentMessage instanceof Message) {
+			$data['parent'] = $parentMessage->toArray();
+		}
+
+		$response = new DataResponse($data, Http::STATUS_CREATED);
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
+		return $response;
 	}
 
 	/**
@@ -171,24 +226,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         found".
 	 */
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0): DataResponse {
-		if ($this->userId === null) {
-			$actorType = Attendee::ACTOR_GUESTS;
-			$sessionId = $this->session->getSessionForRoom($this->room->getToken());
-			// The character limit for actorId is 64, but the spreed-session is
-			// 256 characters long, so it has to be hashed to get an ID that
-			// fits (except if there is no session, as the actorId should be
-			// empty in that case but sha1('') would generate a hash too
-			// instead of returning an empty string).
-			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
-
-			if ($sessionId && $actorDisplayName) {
-				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
-			}
-		} else {
-			$actorType = Attendee::ACTOR_USERS;
-			$actorId = $this->userId;
-		}
-
+		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -220,29 +258,69 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
-		$this->messageParser->parseMessage($chatMessage);
+		return $this->parseCommentToResponse($comment, $parentMessage);
+	}
 
-		if (!$chatMessage->getVisibility()) {
-			$response = new DataResponse([], Http::STATUS_CREATED);
-			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
-			}
-			return $response;
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * Sends a rich-object to the given room.
+	 *
+	 * The author and timestamp are automatically set to the current user/guest
+	 * and time.
+	 *
+	 * @param string $objectType
+	 * @param string $objectId
+	 * @param string $metaData
+	 * @param string $actorDisplayName
+	 * @param string $referenceId
+	 * @return DataResponse the status code is "201 Created" if successful, and
+	 *         "404 Not found" if the room or session for a guest user was not
+	 *         found".
+	 */
+	public function shareObjectToChat(string $objectType, string $objectId, string $metaData = '', string $actorDisplayName = '', string $referenceId = ''): DataResponse {
+		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
+		if (!$actorId) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
+		$data = $metaData !== '' ? json_decode($metaData, true) : [];
+		if (!is_array($data)) {
+			$data = [];
+		}
+		$data['type'] = $objectType;
+		$data['id'] = $objectId;
 
-		$data = $chatMessage->toArray();
-		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray();
+		try {
+			$this->richObjectValidator->validate('{object}', ['object' => $data]);
+		} catch (InvalidObjectExeption $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$response = new DataResponse($data, Http::STATUS_CREATED);
-		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+
+		$message = json_encode([
+			'message' => 'object_shared',
+			'parameters' => [
+				'objectType' => $objectType,
+				'objectId' => $objectId,
+				'metaData' => $data,
+			],
+		]);
+
+		try {
+			$comment = $this->chatManager->addSystemMessage($this->room, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
+		} catch (MessageTooLongException $e) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		return $response;
+
+		return $this->parseCommentToResponse($comment);
 	}
 
 	/**
