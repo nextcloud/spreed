@@ -227,8 +227,7 @@ export default {
 			if (this.previewAvailable !== 'yes') {
 				return PREVIEW_TYPE.MIME_ICON
 			}
-
-			const maxGifSize = getCapabilities()?.caps?.spreed?.config?.previews?.['max-gif-size'] || 3145728
+			const maxGifSize = getCapabilities()?.spreed?.config?.previews?.['max-gif-size'] || 3145728
 			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
 				return PREVIEW_TYPE.DIRECT
 			}

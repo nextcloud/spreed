@@ -115,6 +115,7 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { postNewMessage } from '../../services/messagesService'
+import { getCapabilities } from '@nextcloud/capabilities'
 import Quote from '../Quote'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
@@ -195,7 +196,8 @@ export default {
 		},
 
 		canShareAndUploadFiles() {
-			return !this.currentUserIsGuest && !this.isReadOnly
+			const allowed = getCapabilities()?.spreed?.config?.attachments?.allowed
+			return allowed && !this.currentUserIsGuest && !this.isReadOnly
 		},
 
 		attachmentFolder() {
