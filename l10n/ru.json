@@ -690,7 +690,6 @@
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Вы пытаетесь присоединиться к обсуждению, в котором уже есть активные сессии из другого окна или устройства. В данный момент данная возможность не поддерживается сервером Nextcloud Talk. Что вы хотите сделать?",
     "Join here" : "Присоединиться",
     "Leave this page" : "Покинуть страницу",
-    "Error while uploading file" : "Не удалось передать файл на сервер",
     "Sending signaling message has failed." : "Не удалось передать сообщение сингализации.",
     "Lost connection to signaling server. Trying to reconnect." : "Потеряно соединение с сигнальным сервером. Попытка переподключения.",
     "Lost connection to signaling server. Try to reload the page manually." : "Потеряно соединение с сигнальным сервером. Попробуйте обновить страницу вручную.",
@@ -755,6 +754,7 @@
     "Default location for attachments" : "Расположение для вложений по умолчанию",
     "Select default location for attachments" : "Выберите расположение для вложений по умолчанию",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk обновлен, перезагрузите страницу чтобы можно было начать или присоединиться к звонку",
+    "Error while uploading file" : "Не удалось передать файл на сервер",
     "Enabled" : "Включено"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

@@ -645,7 +645,6 @@ OC.L10N.register(
     "Away" : "Iväg",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud är i underhållsläge, ladda om sidan igen",
     "Error while sharing file" : "Fel vid delning av fil",
-    "Error while uploading file" : "Fel vid uppladdning av fil",
     "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande.",
     "Establishing signaling connection is taking longer than expected …" : "Det tar längre tid än förväntat att upprätta signalanslutning ...",
     "Failed to establish signaling connection. Retrying …" : "Det gick inte att upprätta signalanslutning. Försöker igen ...",
@@ -708,6 +707,7 @@ OC.L10N.register(
     "Default location for attachments" : "Standardplats för bilagor",
     "Select default location for attachments" : "Välj standardplats för bilagor",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal",
+    "Error while uploading file" : "Fel vid uppladdning av fil",
     "Enabled" : "Aktiverad"
 },
 "nplurals=2; plural=(n != 1);");

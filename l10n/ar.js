@@ -585,7 +585,6 @@ OC.L10N.register(
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "انضممت لمحادثة آخرى في نافذة او جهاز آخر. هذه الخاصية غير مدعومة سيتم اغلاق هذه الجلسة من قبل نكست كلاود التحدث. ماذا تريد ان تفعل؟",
     "Join here" : "انضم لهذا",
     "Leave this page" : "مغادرة هذه الصفحة",
-    "Error while uploading file" : "خطأ اثناء رفع ملف",
     "Default" : "افتراضي",
     "Microphone {number}" : "مايك {number}",
     "Camera {number}" : "كاميرا {number}",
@@ -642,6 +641,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
     "Use speaker view" : "استخدام عرض المتحدث",
     "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "الكثير من مقاطع الفيديو في النافذة. تكبير النافذة أو التبديل إلى \"عرض المتحدث\" للحصول على تجربة أفضل.",
+    "Error while uploading file" : "خطأ اثناء رفع ملف",
     "Bridge with other services" : "الربط مع خدمات آخرى",
     "Enabled" : "مفعلة"
 },
