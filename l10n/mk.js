@@ -737,7 +737,6 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Неуспешно приклучување кон разговорот, Пробајте да ја превчитате страницата.",
     "Join here" : "Приклучи се овде",
     "Leave this page" : "Напушти ја оваа страна",
-    "Error while uploading file" : "Грешка при прикачување на датотека",
     "Default" : "Стандардно",
     "Microphone {number}" : "Микрофон {number}",
     "Speaker {number}" : "Зборуваат {number}",
@@ -789,6 +788,7 @@ OC.L10N.register(
     "Default location for attachments" : "Стандардна локација за прилози",
     "Select default location for attachments" : "Избери стандардна локација за прилози",
     "Use speaker view" : "Користете поглед кон тој што зборува",
+    "Error while uploading file" : "Грешка при прикачување на датотека",
     "Bridge with other services" : "Мост со други сервери",
     "Enabled" : "Овозможен"
 },

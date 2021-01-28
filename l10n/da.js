@@ -421,7 +421,6 @@ OC.L10N.register(
     "Select conversation" : "Vælg samtale",
     "Join a conversation or start a new one" : "Deltag i en samtale eller start en ny",
     "Error while sharing file" : "Fejl ved deling af fil",
-    "Error while uploading file" : "Fejl ved upload af fil",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked",
     "Default" : "Standard",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Det virker som om du snakker mens lyden er slået fra, slå den til hvis du vil have at andre skal høre dig",
@@ -477,6 +476,7 @@ OC.L10N.register(
     "This conversation is read only" : "Denne samtale er skrivebeskyttet",
     "Default location for attachments" : "Standard-lokation for vedhæftninger",
     "Select default location for attachments" : "Vælg standard-lokation for vedhæftninger",
+    "Error while uploading file" : "Fejl ved upload af fil",
     "Enabled" : "Aktiveret"
 },
 "nplurals=2; plural=(n != 1);");
