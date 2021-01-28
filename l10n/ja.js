@@ -710,7 +710,6 @@ OC.L10N.register(
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "別ウィンドウかデバイスで既に会話に参加済みです。現在、複数接続はNextcloud Talkではサポートされていません。どうしますか？",
     "Join here" : "参加する",
     "Leave this page" : "このページを離れる",
-    "Error while uploading file" : "ファイルのアップロード中にエラーが発生しました",
     "Sending signaling message has failed." : "シグナリングメッセージの送信に失敗しました。",
     "Lost connection to signaling server. Trying to reconnect." : "シグナリングサーバーへの接続が切れました。再接続してみてください。",
     "Lost connection to signaling server. Try to reload the page manually." : "シグナリングサーバーへの接続が切れました。手動でページを再読み込みしてください。",
@@ -775,6 +774,7 @@ OC.L10N.register(
     "Default location for attachments" : "添付ファイルのデフォルトの場所",
     "Select default location for attachments" : "添付ファイルのデフォルトの場所を選択",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。",
+    "Error while uploading file" : "ファイルのアップロード中にエラーが発生しました",
     "Enabled" : "有効"
 },
 "nplurals=1; plural=0;");
