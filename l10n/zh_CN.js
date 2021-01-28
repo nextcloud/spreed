@@ -634,7 +634,6 @@ OC.L10N.register(
     "Do not disturb" : "请勿打扰",
     "Away" : "离开",
     "Error while sharing file" : "共享文件时出错",
-    "Error while uploading file" : "上传文件时出错",
     "Sending signaling message has failed." : "发送信令消息失败。",
     "Default" : "默认",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "您似乎在静音时说话了，请将您自己的静音设置取消以使他人能听到",
@@ -692,6 +691,7 @@ OC.L10N.register(
     "This conversation is read only" : "此会话是只读的",
     "Default location for attachments" : "附件的默认位置",
     "Select default location for attachments" : "选择附件的默认位置",
+    "Error while uploading file" : "上传文件时出错",
     "Enabled" : "已启用"
 },
 "nplurals=1; plural=0;");

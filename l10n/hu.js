@@ -584,7 +584,6 @@ OC.L10N.register(
     "Nextcloud Talk was updated, please reload the page" : "A Nextcloud Talk frissült, kérjük, töltse újra az oldalt",
     "Nextcloud is in maintenance mode, please reload the page" : "A Nextcloud karbantartási módban van, kérjük, töltse újra az oldalt",
     "Error while sharing file" : "Hiba a fájl megosztása közben",
-    "Error while uploading file" : "Hiba a fájl feltöltése közben",
     "Sending signaling message has failed." : "A jelző üzenet küldése sikertelen.",
     "Establishing signaling connection is taking longer than expected …" : "A jelző kapcsolat létesítése a vártnál hosszabb időt vesz igénybe ...",
     "Failed to establish signaling connection. Retrying …" : "Nem sikerült létrehozni a jelző kapcsolatot. Újrapróbálkozás ...",
@@ -646,6 +645,7 @@ OC.L10N.register(
     "This conversation is read only" : "Ez a beszélgetés csak olvasható",
     "Default location for attachments" : "A mellékletek alapértelmezett helye",
     "Select default location for attachments" : "Válassza ki a mellékletek alapértelmezett helyét",
+    "Error while uploading file" : "Hiba a fájl feltöltése közben",
     "Enabled" : "Engedélyezve"
 },
 "nplurals=2; plural=(n != 1);");
