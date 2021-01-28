@@ -114,11 +114,11 @@ All notable changes to this project will be documented in this file.
   [#4706](https://github.com/nextcloud/spreed/pull/4706)
 - Add the possibility for conversation descriptions
   [#4546](https://github.com/nextcloud/spreed/pull/4546)
-- You can not push to talk/mute with the space key
+- You can now push to talk/mute with the space key
   [#4328](https://github.com/nextcloud/spreed/pull/4328)
 - Conversations can now be locked in the moderator settings preventing further chat messages and calls
   [#4331](https://github.com/nextcloud/spreed/pull/4331)
-- Allow to fold away the video strip to focus more on the promoted speaker or screenshare
+- Allow to collapse the video strip to focus more on the promoted speaker or screenshare
   [#4363](https://github.com/nextcloud/spreed/pull/4363)
 - Improve previews of images and allow animation of gifs
   [#4472](https://github.com/nextcloud/spreed/pull/4472)
