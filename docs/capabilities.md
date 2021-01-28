@@ -67,3 +67,4 @@ title: Capabilities
 
 ## 12.0
 * `delete-messages` - Allows to delete chat messages up to 6 hours for your own messages or when being a moderator. On deleting the message text will be replaced and a follow up system message will make sure clients and users update it in their cache and storage.
+* `rich-object-sharing` - Rich objects can be shared to chats. See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob/master/lib/public/RichObjectStrings/Definitions.php) for more details on supported rich objects and required data.
