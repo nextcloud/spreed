@@ -174,6 +174,80 @@ class UserMentionTest extends \Test\TestCase {
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
+	public function dataGetRichMessageWithMentionsFullyIncludedInOtherMentions() {
+		// Based on valid characters from server/lib/private/User/Manager.php
+		return [
+			['testUser', 'testUser1', false],
+			['testUser', 'testUser1', true],
+			['testUser', 'testUser_1', false],
+			['testUser', 'testUser_1', true],
+			['testUser', 'testUser.1', false],
+			['testUser', 'testUser.1', true],
+			['testUser', 'testUser@1', false],
+			['testUser', 'testUser@1', true],
+			['testUser', 'testUser-1', false],
+			['testUser', 'testUser-1', true],
+			['testUser', 'testUser\'1', false],
+			['testUser', 'testUser\'1', true],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetRichMessageWithMentionsFullyIncludedInOtherMentions
+	 */
+	public function testGetRichMessageWithMentionsFullyIncludedInOtherMentions(string $baseId, string $longerId, bool $quoted) {
+		$mentions = [
+			['type' => 'user', 'id' => $baseId],
+			['type' => 'user', 'id' => $longerId],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->exactly(2))
+			->method('resolveDisplayName')
+			->willReturnCallback(function ($type, $id) {
+				return $id . ' display name';
+			});
+
+		$this->userManager->expects($this->exactly(2))
+			->method('get')
+			->withConsecutive(
+				[$longerId],
+				[$baseId]
+			)
+			->willReturn($this->createMock(IUser::class));
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		if ($quoted) {
+			$chatMessage->setMessage('Mention to @"' . $baseId . '" and @"' . $longerId . '"', []);
+		} else {
+			$chatMessage->setMessage('Mention to @' . $baseId . ' and @' . $longerId, []);
+		}
+
+		$this->parser->parseMessage($chatMessage);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => $longerId,
+				'name' => $longerId . ' display name'
+			],
+			'mention-user2' => [
+				'type' => 'user',
+				'id' => $baseId,
+				'name' => $baseId . ' display name'
+			],
+		];
+
+		$this->assertEquals('Mention to {mention-user2} and {mention-user1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
 	public function testGetRichMessageWithSeveralMentions() {
 		$mentions = [
 			['type'=>'user', 'id'=>'testUser1'],
@@ -249,15 +323,12 @@ class UserMentionTest extends \Test\TestCase {
 			->with('user', 'testUser')
 			->willReturn('testUser display name');
 
-		$this->userManager->expects($this->at(0))
+		$this->userManager->expects($this->exactly(2))
 			->method('get')
-			->with('me')
-			->willReturn(null);
-
-		$this->userManager->expects($this->at(1))
-			->method('get')
-			->with('testUser')
-			->willReturn($this->createMock(IUser::class));
+			->willReturnMap([
+				['me', null],
+				['testUser', $this->createMock(IUser::class)],
+			]);
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
