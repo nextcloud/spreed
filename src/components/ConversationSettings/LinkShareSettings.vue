@@ -94,6 +94,7 @@
 				@click.prevent="handleResendInvitations">
 				{{ t('spreed', 'Resend email invitations') }}
 			</button>
+			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
 	</div>
 </template>
@@ -244,6 +245,10 @@ export default {
 <style lang="scss" scoped>
 .icon-clippy {
 	margin-right: 10px;
+}
+
+.spinner {
+	margin-left: 24px;
 }
 
 input[type=password] {
