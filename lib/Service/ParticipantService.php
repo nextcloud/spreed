@@ -258,6 +258,9 @@ class ParticipantService {
 	 * @param array $participants
 	 */
 	public function addUsers(Room $room, array $participants): void {
+		if (empty($participants)) {
+			return;
+		}
 		$event = new AddParticipantsEvent($room, $participants);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USERS_ADD, $event);
 
