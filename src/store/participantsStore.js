@@ -24,6 +24,7 @@ import {
 	promoteToModerator,
 	demoteFromModerator,
 	removeAttendeeFromConversation,
+	resendEmailInvitations,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -272,6 +273,10 @@ const actions = {
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+	},
+
+	async resendEmailInvitations(_, token) {
+		await resendEmailInvitations(token)
 	},
 }
 

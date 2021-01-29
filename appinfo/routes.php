@@ -344,6 +344,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#resendEmails',
+			'url' => '/api/{apiVersion}/room/{token}/participants/emails',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v(1|2|3)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#leaveRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'DELETE',

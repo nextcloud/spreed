@@ -26,6 +26,7 @@ namespace OCA\Talk;
 use Doctrine\DBAL\Exception;
 use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Defaults;
@@ -174,6 +175,9 @@ class GuestManager {
 	}
 
 	public function sendEmailInvitation(Room $room, Participant $participant): void {
+		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
+			throw new \InvalidArgumentException('Cannot send email for non-email participant actor type');
+		}
 		$email = $participant->getAttendee()->getActorId();
 		$pin = $participant->getAttendee()->getPin();
 

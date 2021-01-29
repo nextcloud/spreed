@@ -1811,4 +1811,20 @@ class RoomController extends AEnvironmentAwareController {
 
 		return new DataResponse($this->formatRoomV2andV3($this->room, $this->participant));
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function resendEmails(): DataResponse {
+		$participants = $this->participantService->getParticipantsForRoom($this->room);
+		foreach ($participants as $participant) {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
+				$this->guestManager->sendEmailInvitation($this->room, $participant);
+			}
+		}
+		return new DataResponse();
+	}
 }

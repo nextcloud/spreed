@@ -251,6 +251,10 @@ const setGuestUserName = async(token, userName) => {
 	return response
 }
 
+const resendEmailInvitations = async(token) => {
+	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/emails')
+}
+
 export {
 	joinConversation,
 	rejoinConversation,
@@ -265,4 +269,5 @@ export {
 	demoteFromModerator,
 	fetchParticipants,
 	setGuestUserName,
+	resendEmailInvitations,
 }

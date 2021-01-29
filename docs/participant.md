@@ -168,6 +168,16 @@
         `inCall` | int | Flags whether the conflicting session is in a potential call
         `lastPing` | int | Timestamp of the last ping of the conflicting session
 
+## Resend participant emails
+
+* Method: `POST`
+* Endpoint: `/room/{token}/participants/emails`
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator or owner
+        + `404 Not Found` When the conversation could not be found
+
 ## Leave a conversation (not available for call and chat anymore)
 
 * Method: `DELETE`
