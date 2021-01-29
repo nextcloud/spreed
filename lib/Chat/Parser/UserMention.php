@@ -78,6 +78,11 @@ class UserMention {
 		$mentionTypeCount = [];
 
 		$mentions = $comment->getMentions();
+		// TODO This can be removed once getMentions() returns sorted results (Nextcloud 21+)
+		usort($mentions, static function ($m1, $m2) {
+			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
+		});
+
 		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
 				$mention['type'] = 'call';
@@ -101,12 +106,10 @@ class UserMention {
 			// index of the mentions of that type.
 			$mentionParameterId = 'mention-' . $mention['type'] . $mentionTypeCount[$mention['type']];
 
-			if (strpos($mention['id'], ' ') !== false || strpos($mention['id'], 'guest/') === 0) {
-				$placeholder = '@"' . $mention['id'] . '"';
-			} else {
-				$placeholder = '@' .  $mention['id'];
+			$message = str_replace('@"' . $mention['id'] . '"', '{' . $mentionParameterId . '}', $message);
+			if (strpos($mention['id'], ' ') === false && strpos($mention['id'], 'guest/') !== 0) {
+				$message = str_replace('@' . $mention['id'], '{' . $mentionParameterId . '}', $message);
 			}
-			$message = str_replace($placeholder, '{' . $mentionParameterId . '}', $message);
 
 			if ($mention['type'] === 'call') {
 				$messageParameters[$mentionParameterId] = [
