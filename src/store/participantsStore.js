@@ -24,7 +24,7 @@ import {
 	promoteToModerator,
 	demoteFromModerator,
 	removeAttendeeFromConversation,
-	resendEmailInvitations,
+	resendInvitations,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -283,8 +283,8 @@ const actions = {
 	 * @param {string} token conversation token
 	 * @param {string} userId user id to target, or null for all
 	 */
-	async resendEmailInvitations(_, { token, userId }) {
-		await resendEmailInvitations(token, userId)
+	async resendInvitations(_, { token, userId }) {
+		await resendInvitations(token, userId)
 	},
 }
 

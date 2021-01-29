@@ -1819,12 +1819,12 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param ?string $participant participant
 	 * @return DataResponse
 	 */
-	public function resendEmails(?string $participant): DataResponse {
+	public function resendInvitations(?string $participant): DataResponse {
 		$participants = [];
 		// targetting specific participant
-		if ($participantId !== null) {
+		if ($participant !== null) {
 			try {
-				$participants[] = $this->room->getParticipant($participantId);
+				$participants[] = $this->room->getParticipant($participant);
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}

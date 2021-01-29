@@ -258,8 +258,8 @@ const setGuestUserName = async(token, userName) => {
  * @param {string} token conversation token
  * @param {string} userId user id to target, or null for all
  */
-const resendEmailInvitations = async(token, userId = null) => {
-	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/emails', {
+const resendInvitations = async(token, userId = null) => {
+	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/resend-invitations', {
 		participant: userId,
 	})
 }
@@ -278,5 +278,5 @@ export {
 	demoteFromModerator,
 	fetchParticipants,
 	setGuestUserName,
-	resendEmailInvitations,
+	resendInvitations,
 }

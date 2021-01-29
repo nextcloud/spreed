@@ -88,7 +88,7 @@
 				<span class="icon icon-clippy" />{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
-		<div class="app-settings-subsection" v-if="isSharedPublicly">
+		<div v-if="isSharedPublicly" class="app-settings-subsection">
 			<button
 				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
@@ -230,8 +230,8 @@ export default {
 		async handleResendInvitations() {
 			this.isSendingInvitations = true
 			try {
-				await this.$store.dispatch('resendEmailInvitations', { token: this.token })
-				showSuccess(t('spreed', 'Email invitations have been sent'))
+				await this.$store.dispatch('resendInvitations', { token: this.token })
+				showSuccess(t('spreed', 'Email invitations sent'))
 			} catch (e) {
 				showError(t('spreed', 'Error occurred when sending email invitations'))
 			}

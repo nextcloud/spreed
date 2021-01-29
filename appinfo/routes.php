@@ -344,8 +344,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#resendEmails',
-			'url' => '/api/{apiVersion}/room/{token}/participants/emails',
+			'name' => 'Room#resendInvitations',
+			'url' => '/api/{apiVersion}/room/{token}/participants/resend-invitations',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v3',

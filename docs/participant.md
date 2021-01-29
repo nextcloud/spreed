@@ -171,18 +171,18 @@
 ## Resend participant emails
 
 * Method: `POST`
-* Endpoint: `/room/{token}/participants/emails`
+* Endpoint: `/room/{token}/participants/resend-invitations`
 * Data:
 
     field | type | Description
     ------|------|------------
-    `participant` | string or null | v3 | User for whom to resend email, or null to send to all email actors
+    `participant` | string or null | v3 | User for whom to resend invitations, or null to send to all email actors
 
 * Response:
     - Status code:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator or owner
-        + `404 Not Found` When the conversation could not be found
+        + `404 Not Found` When the given participant was not found in the conversation
 
 ## Leave a conversation (not available for call and chat anymore)
 
