@@ -160,8 +160,7 @@ class MatterbridgeManager {
 
 		$this->notify($room, $userId, $currentBridge, $newBridge);
 
-		// edit/update the config file
-		$this->editBridgeConfig($room, $newBridge);
+		$this->writeBridgeConfig($room, $newBridge);
 
 		// check state and manage the binary
 		$pid = $this->checkBridgeProcess($room, $newBridge);
@@ -238,13 +237,13 @@ class MatterbridgeManager {
 	}
 
 	/**
-	 * Edit the mattermost configuration file for one room
+	 * Write the mattermost configuration file for one room
 	 * This method takes care of connecting the bridge to the Talk room with a bot user
 	 *
 	 * @param Room $room
 	 * @param array $newBridge
 	 */
-	private function editBridgeConfig(Room $room, array $newBridge): void {
+	private function writeBridgeConfig(Room $room, array $newBridge): void {
 		// check bot user exists and is member of the room
 		// add the 'local' bridge part
 		$newBridge = $this->addLocalPart($room, $newBridge);
@@ -692,6 +691,13 @@ class MatterbridgeManager {
 	private function launchMatterbridge(Room $room): int {
 		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
+
+		// recreate config file if it's not there (can happen after a reboot)
+		if (!file_exists($configPath)) {
+			$currentBridge = $this->getBridgeOfRoom($room);
+			$this->writeBridgeConfig($room, $currentBridge);
+		}
+
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$matterbridgeCmd = sprintf('%s -conf %s', $binaryPath, $configPath);
 		$cmd = sprintf('nice -n19 %s > %s 2>&1 & echo $!', $matterbridgeCmd, $outputPath);
