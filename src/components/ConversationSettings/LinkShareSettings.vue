@@ -92,7 +92,7 @@
 			<button
 				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				{{ t('spreed', 'Resend email invitations') }}
+				<span class="icon icon-mail" />{{ t('spreed', 'Resend email invitations') }}
 			</button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
@@ -243,7 +243,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.icon-clippy {
+.icon {
 	margin-right: 10px;
 }
 

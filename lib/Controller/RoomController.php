@@ -1816,15 +1816,21 @@ class RoomController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 * @RequireModeratorParticipant
 	 *
-	 * @param ?string $participant participant
+	 * @param int|null $attendeeId attendee id
+	 * @param string|null $participant participant
 	 * @return DataResponse
 	 */
-	public function resendInvitations(?string $participant): DataResponse {
+	public function resendInvitations(?int $attendeeId, ?string $participant): DataResponse {
 		$participants = [];
+
 		// targetting specific participant
 		if ($participant !== null) {
 			try {
-				$participants[] = $this->room->getParticipant($participant);
+				if ($attendeeId !== null) {
+					$participants[] = $this->room->getParticipantByAttendeeId($attendeeId);
+				} elseif ($participant !== null) {
+					$participants[] = $this->room->getParticipant($participant);
+				}
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
@@ -1832,6 +1838,7 @@ class RoomController extends AEnvironmentAwareController {
 			$participants = $this->participantService->getParticipantsForRoom($this->room);
 		}
 
+		\OCP\Util::writeLog('spreed', '#### participants: ' . $participants , \OCP\ILogger::DEBUG);
 		foreach ($participants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
 				// generate PIN if applicable

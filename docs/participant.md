@@ -176,7 +176,8 @@
 
     field | type | Description
     ------|------|------------
-    `participant` | string or null | v3 | User for whom to resend invitations, or null to send to all email actors
+    `participant`| string or null | v3 | User for whom to resend invitations, or null to send to all email actors
+    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
 
 * Response:
     - Status code:

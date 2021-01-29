@@ -46,6 +46,13 @@ export const CONVERSATION = {
 		CHANGELOG: 4,
 	},
 }
+export const ATTENDEE = {
+	ACTOR_TYPE: {
+		USERS: 'users',
+		GUESTS: 'guests',
+		EMAILS: 'emails',
+	},
+}
 export const PARTICIPANT = {
 	CALL_FLAG: {
 		DISCONNECTED: 0,
