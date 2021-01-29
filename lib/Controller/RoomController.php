@@ -1822,6 +1822,8 @@ class RoomController extends AEnvironmentAwareController {
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		foreach ($participants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
+				// generate PIN if applicable
+				$this->participantService->generatePinForParticipant($this->room, $participant);
 				$this->guestManager->sendEmailInvitation($this->room, $participant);
 			}
 		}
