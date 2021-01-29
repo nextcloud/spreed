@@ -38,6 +38,7 @@
 				class="new-message-form"
 				@submit.prevent>
 				<div
+					v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__button">
 					<Actions
 						default-icon="icon-clip-add-file"
