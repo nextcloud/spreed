@@ -705,7 +705,8 @@ class Room {
 		$query->update('talk_rooms')
 			->set('active_guests', $query->createNamedParameter(0))
 			->set('active_since', $query->createNamedParameter(null, 'datetime'))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNotNull('active_since'));
 
 		$this->activeGuests = 0;
 		$this->activeSince = null;
