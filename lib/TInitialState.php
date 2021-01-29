@@ -98,17 +98,23 @@ trait TInitialState {
 		);
 
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
+		$freeSpace = 0;
 
 		if ($attachmentFolder) {
 			try {
 				$userFolder = $rootFolder->getUserFolder($user->getUID());
 
-				if (!$userFolder->nodeExists($attachmentFolder)) {
-					$userFolder->newFolder($attachmentFolder);
+				try {
+					if (!$userFolder->nodeExists($attachmentFolder)) {
+						$userFolder->newFolder($attachmentFolder);
+					}
+
+					$freeSpace = $userFolder->get($attachmentFolder)->getFreeSpace();
+				} catch (NotPermittedException $e) {
+					$attachmentFolder = '/';
+					$this->serverConfig->setUserValue($user->getUID(), 'spreed', 'attachment_folder', '/');
+					$freeSpace = $userFolder->getFreeSpace();
 				}
-			} catch (NotPermittedException $e) {
-				$attachmentFolder = '/';
-				$this->serverConfig->setUserValue($user->getUID(), 'spreed', 'attachment_folder', '/');
 			} catch (NoUserException $e) {
 			}
 		}
@@ -116,6 +122,11 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'attachment_folder',
 			$attachmentFolder
+		);
+
+		$this->initialState->provideInitialState(
+			'attachment_folder_free_space',
+			$freeSpace
 		);
 
 		$this->initialState->provideInitialState(
@@ -144,6 +155,11 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'attachment_folder',
+			''
+		);
+
+		$this->initialState->provideInitialState(
+			'attachment_folder_free_space',
 			''
 		);
 

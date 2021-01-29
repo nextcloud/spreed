@@ -38,6 +38,7 @@
 				class="new-message-form"
 				@submit.prevent>
 				<div
+					v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__button">
 					<Actions
 						default-icon="icon-clip-add-file"
@@ -45,14 +46,14 @@
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
 						<ActionButton
-							v-if="canShareAndUploadFiles"
+							v-if="canUploadFiles"
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
 							{{ t('spreed', 'Upload new files') }}
 						</ActionButton>
 						<ActionButton
-							v-if="canShareAndUploadFiles"
+							v-if="canShareFiles"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
@@ -195,13 +196,19 @@ export default {
 			return this.$store.getters.getUserId() === null
 		},
 
-		canShareAndUploadFiles() {
-			const allowed = getCapabilities()?.spreed?.config?.attachments?.allowed
-			return allowed && !this.currentUserIsGuest && !this.isReadOnly
+		canShareFiles() {
+			return !this.currentUserIsGuest && !this.isReadOnly
 		},
 
-		attachmentFolder() {
-			return this.$store.getters.getAttachmentFolder()
+		canUploadFiles() {
+			const allowed = getCapabilities()?.spreed?.config?.attachments?.allowed
+			return allowed
+				&& this.attachmentFolderFreeSpace !== 0
+				&& this.canShareFiles
+		},
+
+		attachmentFolderFreeSpace() {
+			return this.$store.getters.getAttachmentFolderFreeSpace()
 		},
 	},
 
