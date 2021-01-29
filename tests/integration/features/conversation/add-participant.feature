@@ -72,17 +72,23 @@ Feature: public
       | id   | type | participantType | participants |
       | room | 3    | 3               | participant1-displayname, participant2-displayname |
 
-  Scenario: Moderator invites a group containing self-joined users
+  Scenario: Moderator invites a group containing a self-joined user
     Given group "group1" exists
     And user "participant2" is member of group "group1"
+    And user "participant3" is member of group "group1"
     And user "participant1" creates room "room"
       | roomType | 3 |
       | roomName | room |
     And user "participant2" joins room "room" with 200
+    # participant3 already present, so it will be skipped
+    And user "participant1" adds "participant3" to room "room" with 200
     When user "participant1" adds group "group1" to room "room" with 200
     Then user "participant2" is participant of the following rooms
       | id   | type | participantType | participants |
-      | room | 3    | 3               | participant1-displayname, participant2-displayname |
+      | room | 3    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
+    And user "participant3" is participant of the following rooms
+      | id   | type | participantType | participants |
+      | room | 3    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: Stranger invites a user
     Given user "participant1" creates room "room"

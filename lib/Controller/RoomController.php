@@ -1303,19 +1303,21 @@ class RoomController extends AEnvironmentAwareController {
 
 		// attempt adding the listed users to the room
 		// existing users with USER_SELF_JOINED will get converted to regular USER participants
-		foreach ($participantsToAdd as $participantToAdd) {
+		foreach ($participantsToAdd as $index => $participantToAdd) {
 			$existingParticipant = $participantsByUserId[$participantToAdd['actorId']] ?? null;
 
 			if ($existingParticipant !== null) {
+				unset($participantsToAdd[$index]);
 				if ($existingParticipant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED) {
 					// user is already a regular participant, skip
 					continue;
 				}
 				$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
-			} else {
-				$this->participantService->addUsers($this->room, [$participantToAdd]);
 			}
 		}
+
+		// add the remaining users in batch
+		$this->participantService->addUsers($this->room, $participantsToAdd);
 
 		return new DataResponse([]);
 	}
