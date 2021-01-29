@@ -1816,10 +1816,22 @@ class RoomController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 * @RequireModeratorParticipant
 	 *
+	 * @param ?string $participant participant
 	 * @return DataResponse
 	 */
-	public function resendEmails(): DataResponse {
-		$participants = $this->participantService->getParticipantsForRoom($this->room);
+	public function resendEmails(?string $participant): DataResponse {
+		$participants = [];
+		// targetting specific participant
+		if ($participantId !== null) {
+			try {
+				$participants[] = $this->room->getParticipant($participantId);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		} else {
+			$participants = $this->participantService->getParticipantsForRoom($this->room);
+		}
+
 		foreach ($participants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
 				// generate PIN if applicable

@@ -275,8 +275,16 @@ const actions = {
 		commit('updateParticipant', { token, index, updatedData })
 	},
 
-	async resendEmailInvitations(_, token) {
-		await resendEmailInvitations(token)
+	/**
+	 * Resends email invitations for the given conversation.
+	 * If no userId is set, send to all applicable participants.
+	 *
+	 * @param {Object} _ unused
+	 * @param {string} token conversation token
+	 * @param {string} userId user id to target, or null for all
+	 */
+	async resendEmailInvitations(_, { token, userId }) {
+		await resendEmailInvitations(token, userId)
 	},
 }
 

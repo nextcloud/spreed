@@ -251,8 +251,17 @@ const setGuestUserName = async(token, userName) => {
 	return response
 }
 
-const resendEmailInvitations = async(token) => {
-	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/emails')
+/**
+ * Resends email invitations for the given conversation.
+ * If no userId is set, send to all applicable participants.
+ *
+ * @param {string} token conversation token
+ * @param {string} userId user id to target, or null for all
+ */
+const resendEmailInvitations = async(token, userId = null) => {
+	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/emails', {
+		participant: userId,
+	})
 }
 
 export {

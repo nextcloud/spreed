@@ -172,6 +172,12 @@
 
 * Method: `POST`
 * Endpoint: `/room/{token}/participants/emails`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `participant` | string or null | v3 | User for whom to resend email, or null to send to all email actors
+
 * Response:
     - Status code:
         + `200 OK`
