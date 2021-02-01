@@ -96,7 +96,7 @@ class ConversationSearch implements IProvider {
 				$parameters['token'] === $room->getToken() &&
 				strpos($query->getRoute(), Application::APP_ID . '.') === 0) {
 				// Don't search the current conversation.
-				//User mostlikely looks for other things with the same name
+				//User most likely looks for other things with the same name
 				continue;
 			}
 
