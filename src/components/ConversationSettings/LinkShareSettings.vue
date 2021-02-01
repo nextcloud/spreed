@@ -88,6 +88,14 @@
 				<span class="icon icon-clippy" />{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
+		<div v-if="isSharedPublicly" class="app-settings-subsection">
+			<button
+				:disabled="isSendingInvitations"
+				@click.prevent="handleResendInvitations">
+				<span class="icon icon-mail" />{{ t('spreed', 'Resend invitations') }}
+			</button>
+			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
+		</div>
 	</div>
 </template>
 
@@ -109,6 +117,7 @@ export default {
 			// Switch for the password-editing operation
 			showPasswordField: false,
 			isSaving: false,
+			isSendingInvitations: false,
 		}
 	},
 
@@ -218,13 +227,28 @@ export default {
 			// workaround for https://github.com/Inndy/vue-clipboard2/issues/105
 			this.$refs.copyLinkButton.focus()
 		},
+
+		async handleResendInvitations() {
+			this.isSendingInvitations = true
+			try {
+				await this.$store.dispatch('resendInvitations', { token: this.token })
+				showSuccess(t('spreed', 'Invitations sent'))
+			} catch (e) {
+				showError(t('spreed', 'Error occurred when sending invitations'))
+			}
+			this.isSendingInvitations = false
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.icon-clippy {
+.icon {
 	margin-right: 10px;
+}
+
+.spinner {
+	margin-left: 24px;
 }
 
 input[type=password] {

@@ -344,6 +344,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#resendInvitations',
+			'url' => '/api/{apiVersion}/room/{token}/participants/resend-invitations',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v3',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#leaveRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'DELETE',

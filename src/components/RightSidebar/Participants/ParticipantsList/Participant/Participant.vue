@@ -114,6 +114,13 @@
 				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
+			<ActionButton v-if="isEmailActor"
+				icon="icon-mail"
+				:close-after-click="true"
+				@click="resendInvitation">
+				{{ t('spreed', 'Resend invitation') }}
+			</ActionButton>
+			<ActionSeparator />
 			<ActionButton
 				icon="icon-delete"
 				:close-after-click="true"
@@ -127,15 +134,17 @@
 
 <script>
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
 import Hand from 'vue-material-design-icons/Hand'
-import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import readableNumber from '../../../../../mixins/readableNumber'
 import isEqual from 'lodash/isEqual'
@@ -148,6 +157,7 @@ export default {
 		Actions,
 		ActionButton,
 		ActionText,
+		ActionSeparator,
 		AvatarWrapper,
 		Microphone,
 		Phone,
@@ -251,6 +261,11 @@ export default {
 		isSearched() {
 			return this.participant.label !== undefined
 		},
+
+		isEmailActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS
+		},
+
 		computedName() {
 			if (!this.isSearched) {
 				const displayName = this.participant.displayName.trim()
@@ -413,6 +428,17 @@ export default {
 				token: this.token,
 				attendeeId: this.participant.attendeeId,
 			})
+		},
+		async resendInvitation() {
+			try {
+				await this.$store.dispatch('resendInvitations', {
+					token: this.token,
+					attendeeId: this.participant.attendeeId,
+				})
+				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
+			} catch (error) {
+				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
+			}
 		},
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {

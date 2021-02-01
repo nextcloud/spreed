@@ -24,6 +24,7 @@ import {
 	promoteToModerator,
 	demoteFromModerator,
 	removeAttendeeFromConversation,
+	resendInvitations,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -272,6 +273,18 @@ const actions = {
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+	},
+
+	/**
+	 * Resends email invitations for the given conversation.
+	 * If no userId is set, send to all applicable participants.
+	 *
+	 * @param {Object} _ unused
+	 * @param {string} token conversation token
+	 * @param {int} attendeeId attendee id to target, or null for all
+	 */
+	async resendInvitations(_, { token, attendeeId }) {
+		await resendInvitations(token, { attendeeId })
 	},
 }
 
