@@ -342,25 +342,30 @@ export default {
 		},
 
 		/**
-		 * Create a new conversation with the selected group/user/circle
+		 * Create a new conversation with the selected user
+		 * or bring up the dialog to create a new group/circle conversation
+		 *
 		 * @param {Object} item The autocomplete suggestion to start a conversation with
 		 * @param {string} item.id The ID of the target
-		 * @param {string} item.source The source of the target
+		 * @param {string} item.label The displayname of the target
+		 * @param {string} item.source The source of the target (e.g. users, groups, circle)
 		 */
 		async createAndJoinConversation(item) {
 			let response
 			if (item.source === 'users') {
+				// Create one-to-one conversation directly
 				response = await createOneToOneConversation(item.id)
+				const conversation = response.data.ocs.data
+				this.abortSearch()
+				EventBus.$once('joinedConversation', ({ token }) => {
+					this.$refs.conversationsList.scrollToConversation(token)
+				})
+				this.$store.dispatch('addConversation', conversation)
+				this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
-				response = await createGroupConversation(item.id, item.source)
+				// For other types we start the conversation creation dialog
+				EventBus.$emit('NewGroupConversationDialog', item)
 			}
-			const conversation = response.data.ocs.data
-			this.abortSearch()
-			EventBus.$once('joinedConversation', ({ token }) => {
-				this.$refs.conversationsList.scrollToConversation(token)
-			})
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async joinListedConversation(conversation) {
