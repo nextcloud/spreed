@@ -141,6 +141,7 @@ import ListableSettings from '../../ConversationSettings/ListableSettings'
 import isInCall from '../../../mixins/isInCall'
 import participant from '../../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 
@@ -202,8 +203,21 @@ export default {
 		},
 	},
 
+	mounted() {
+		EventBus.$on('NewGroupConversationDialog', this.showModal)
+	},
+
+	destroyed() {
+		EventBus.$off('NewGroupConversationDialog', this.showModal)
+	},
+
 	methods: {
-		showModal() {
+		showModal(item) {
+			if (item) {
+				// Preload the conversation name from group selection
+				this.conversationNameInput = item.label
+				this.$store.dispatch('updateSelectedParticipants', item)
+			}
 			this.modal = true
 		},
 		/** Reinitialise the component to it's initial state. This is necessary
