@@ -124,7 +124,9 @@ const mutations = {
 	 * @param {object} message the message;
 	 */
 	deleteMessage(state, message) {
-		Vue.delete(state.messages[message.token], message.id)
+		if (state.messages[message.token][message.id]) {
+			Vue.delete(state.messages[message.token], message.id)
+		}
 	},
 
 	/**
@@ -133,6 +135,9 @@ const mutations = {
 	 * @param {object} message the temporary message;
 	 */
 	addTemporaryMessage(state, message) {
+		if (!state.messages[message.token]) {
+			Vue.set(state.messages, message.token, {})
+		}
 		Vue.set(state.messages[message.token], message.id, message)
 	},
 
