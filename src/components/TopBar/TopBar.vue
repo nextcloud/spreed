@@ -72,9 +72,13 @@
 				v-if="showModerationOptions && canFullModerate && isInCall">
 				<ActionSeparator />
 				<ActionButton
-					icon="icon-audio"
 					:close-after-click="true"
 					@click="forceMuteOthers">
+					<MicrophoneOff
+						slot="icon"
+						:size="16"
+						decorative
+						title="" />
 					{{ t('spreed', 'Mute others') }}
 				</ActionButton>
 			</template>
@@ -106,6 +110,7 @@ import CallButton from './CallButton'
 import BrowserStorage from '../../services/BrowserStorage'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
 import { callParticipantCollection } from '../../utils/webrtc/index'
@@ -120,6 +125,7 @@ export default {
 		ActionLink,
 		CallButton,
 		ActionSeparator,
+		MicrophoneOff,
 	},
 
 	props: {

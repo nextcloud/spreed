@@ -782,7 +782,7 @@ export default {
 }
 
 #videos .videoContainer.speaking:not(.videoView) ::v-deep .nameIndicator,
-#videos .videoContainer.videoView.speaking ::v-deep .nameIndicator .icon-audio {
+#videos .videoContainer.videoView.speaking ::v-deep .nameIndicator .microphone-icon {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
 }

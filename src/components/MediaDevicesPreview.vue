@@ -30,10 +30,16 @@
 				class="preview-not-available">
 				<div v-if="audioStreamError"
 					class="icon icon-error" />
-				<div v-else-if="!audioInputId"
-					class="icon icon-audio-off" />
-				<div v-else-if="!enabled"
-					class="icon icon-audio" />
+				<MicrophoneOff
+					v-else-if="!audioInputId"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<Microphone
+					v-else-if="!enabled"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<div v-else-if="!audioStream"
 					class="icon icon-loading" />
 				<p v-if="audioStreamErrorMessage">
@@ -44,7 +50,10 @@
 				 reference is always valid once mounted. -->
 			<div v-show="audioPreviewAvailable"
 				class="volume-indicator-wrapper">
-				<div class="icon icon-audio" />
+				<Microphone
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<span ref="volumeIndicator"
 					class="volume-indicator"
 					:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
@@ -83,6 +92,8 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { mediaDevicesManager } from '../utils/webrtc/index'
 import MediaDevicesSelector from './MediaDevicesSelector'
 
@@ -92,6 +103,8 @@ export default {
 
 	components: {
 		MediaDevicesSelector,
+		Microphone,
+		MicrophoneOff,
 	},
 
 	props: {

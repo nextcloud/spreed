@@ -28,9 +28,14 @@
 					v-tooltip="audioButtonTooltip"
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
-					class="forced-white"
 					@shortkey="toggleAudio"
-					@click="toggleAudio" />
+					@click="toggleAudio">
+					<component :is="audioButtonComponent"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+				</button>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator" />
@@ -161,6 +166,9 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import Hand from 'vue-material-design-icons/Hand'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import MicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
@@ -184,6 +192,9 @@ export default {
 		ActionSeparator,
 		ActionButton,
 		Hand,
+		Microphone,
+		MicrophoneOff,
+		MicrophoneOutline,
 	},
 
 	props: {
@@ -231,11 +242,19 @@ export default {
 
 		audioButtonClass() {
 			return {
-				'icon-audio': this.model.attributes.audioAvailable && this.model.attributes.audioEnabled,
 				'audio-disabled': this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
-				'icon-audio-off': !this.model.attributes.audioAvailable || !this.model.attributes.audioEnabled,
 				'no-audio-available': !this.model.attributes.audioAvailable,
 			}
+		},
+
+		audioButtonComponent() {
+			if (this.model.attributes.audioAvailable) {
+				if (this.model.attributes.audioEnabled) {
+					return 'Microphone'
+				}
+				return 'MicrophoneOff'
+			}
+			return 'MicrophoneOutline'
 		},
 
 		audioButtonTooltip() {
@@ -770,7 +789,7 @@ export default {
 	opacity: 0.7;
 }
 
-#muteWrapper .icon-audio-off + .volume-indicator {
+#muteWrapper .microphone-off-icon + .volume-indicator {
 	background: linear-gradient(0deg, gray, white 36px);
 }
 
