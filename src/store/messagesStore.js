@@ -134,7 +134,7 @@ const mutations = {
 	 * Deletes a message from the store.
 	 * @param {object} state current store state;
 	 * @param {object} message the message;
-	 * @param {string} tempMessage Placeholder message until deleting finished
+	 * @param {string} placeholder Placeholder message until deleting finished
 	 */
 	markMessageAsDeleting(state, { message, placeholder }) {
 		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')

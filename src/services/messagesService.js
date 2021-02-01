@@ -104,7 +104,7 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
 }
 
 /**
- * Posts a new messageto the server.
+ * Deletes a message from the server.
  *
  * @param {object} param0 The message object that is destructured
  * @param {string} token The conversation token
