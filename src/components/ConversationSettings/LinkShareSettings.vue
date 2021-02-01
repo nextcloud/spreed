@@ -92,7 +92,7 @@
 			<button
 				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				<span class="icon icon-mail" />{{ t('spreed', 'Resend invitation e-mails') }}
+				<span class="icon icon-mail" />{{ t('spreed', 'Resend invitations') }}
 			</button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
@@ -232,9 +232,9 @@ export default {
 			this.isSendingInvitations = true
 			try {
 				await this.$store.dispatch('resendInvitations', { token: this.token })
-				showSuccess(t('spreed', 'Email invitations sent'))
+				showSuccess(t('spreed', 'Invitations sent'))
 			} catch (e) {
-				showError(t('spreed', 'Error occurred when sending email invitations'))
+				showError(t('spreed', 'Error occurred when sending invitations'))
 			}
 			this.isSendingInvitations = false
 		},

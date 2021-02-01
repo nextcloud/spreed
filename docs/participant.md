@@ -176,14 +176,13 @@
 
     field | type | Description
     ------|------|------------
-    `participant`| string or null | v3 | User for whom to resend invitations, or null to send to all email actors
     `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator or owner
-        + `404 Not Found` When the given participant was not found in the conversation
+        + `404 Not Found` When the given attendee was not found in the conversation
 
 ## Leave a conversation (not available for call and chat anymore)
 

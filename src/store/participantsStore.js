@@ -282,10 +282,9 @@ const actions = {
 	 * @param {Object} _ unused
 	 * @param {string} token conversation token
 	 * @param {int} attendeeId attendee id to target, or null for all
-	 * @param {string} userId user id to target, or null for all
 	 */
-	async resendInvitations(_, { token, attendeeId, userId }) {
-		await resendInvitations(token, { attendeeId, userId })
+	async resendInvitations(_, { token, attendeeId }) {
+		await resendInvitations(token, { attendeeId })
 	},
 }
 

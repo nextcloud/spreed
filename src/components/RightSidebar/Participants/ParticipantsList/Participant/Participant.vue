@@ -435,9 +435,9 @@ export default {
 					token: this.token,
 					attendeeId: this.participant.attendeeId,
 				})
-				showSuccess(t('spreed', 'Email invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
+				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
 			} catch (error) {
-				showError(t('spreed', 'Could not send email invitation to {actorId}', { actorId: this.participant.actorId }))
+				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
 		},
 		async removeParticipant() {
