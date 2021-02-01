@@ -92,7 +92,7 @@
 			<button
 				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				<span class="icon icon-mail" />{{ t('spreed', 'Resend email invitations') }}
+				<span class="icon icon-mail" />{{ t('spreed', 'Resend invitation e-mails') }}
 			</button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
