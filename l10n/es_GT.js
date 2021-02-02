@@ -129,16 +129,7 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
     "{user} wants to talk with you" : "{user} quiere hablar contigo",
-    "No other people in this call" : "No hay más personas en esta llamada",
-    "Your screen" : "Tu pantalla",
-    "Contacts" : "Contactos",
-    "[Unknown user name]" : "[Nombre de usuario desconocido]",
-    "Guests" : "Invitados",
     "Share link" : "Compartir liga",
-    "Please enter the password for this call" : "Por favor ingresa la contraseña para esta llamada",
-    "Password required" : "Contraseña requerida",
-    "Cancel" : "Cancelar",
-    "Submit" : "Enviar",
     "Enabled" : "Habilitado"
 },
 "nplurals=2; plural=(n != 1);");
