@@ -322,15 +322,9 @@ OC.L10N.register(
     "iOS app" : "اپ iOS",
     "New in Talk 6" : "جدید در Talk 6",
     "New in Talk 7" : "جدید در Talk 7",
-    "Contacts" : "مخاطبین",
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
-    "Guests" : "میهمان ها",
-    "Share link" : "Share link",
-    "Webinar" : "وبینار",
     "Projects" : "پروژه ها",
-    "Password required" : "رمز عبور لازم است",
-    "Cancel" : "لغو",
-    "Submit" : "ارسال",
+    "Share link" : "Share link",
     "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");

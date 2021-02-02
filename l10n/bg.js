@@ -319,13 +319,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена.",
     "Android app" : "Android приложение",
     "iOS app" : "iOS приложениер",
-    "Contacts" : "Контакти",
-    "Guests" : "Гости",
     "Share link" : "Сподели връзка",
-    "Webinar" : "Уебинар",
-    "Password required" : "Паролата е задължителна",
-    "Cancel" : "Отказ",
-    "Submit" : "Изпращане",
     "Enabled" : "Включено"
 },
 "nplurals=2; plural=(n != 1);");

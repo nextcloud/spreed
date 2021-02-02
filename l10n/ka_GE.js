@@ -114,16 +114,7 @@ OC.L10N.register(
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
     "{user} wants to talk with you" : "{user} მომხმარებელს სურს თქვენთან საუბარი",
-    "No other people in this call" : "ამ ზარში მეტი ადამიანი არაა",
-    "Your screen" : "თქვენი ეკრანი",
-    "Contacts" : "კონტაქტები",
-    "[Unknown user name]" : "[ამოუცნობი მომხმარებელი]",
-    "Guests" : "სტუმრები",
     "Share link" : "ბმულის გაზიარება",
-    "Please enter the password for this call" : "შეყვანეთ პაროლი ზარისთვის",
-    "Password required" : "საჭიროა პაროლი",
-    "Cancel" : "უარყოფა",
-    "Submit" : "გაგზავნა",
     "Enabled" : "მოქმედია"
 },
 "nplurals=2; plural=(n!=1);");
