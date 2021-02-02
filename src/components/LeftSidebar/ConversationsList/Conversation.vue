@@ -415,6 +415,6 @@ export default {
 }
 
 .forced-active {
-	box-shadow: inset 4px 0 var(--color-primary-element);
+	background-color: var(--color-primary-light) !important //Overrides gray hover feedback;
 }
 </style>
