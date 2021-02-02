@@ -123,7 +123,6 @@ import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import {
-	createGroupConversation,
 	createOneToOneConversation,
 	fetchConversations,
 	searchPossibleConversations,
