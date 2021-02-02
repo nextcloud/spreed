@@ -158,11 +158,12 @@ class Message {
 	public function isReplyable(): bool {
 		return $this->getMessageType() !== 'system' &&
 			$this->getMessageType() !== 'command' &&
+			$this->getMessageType() !== 'comment_deleted' &&
 			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
 	public function toArray(): array {
-		return [
+		$data = [
 			'id' => (int) $this->getComment()->getId(),
 			'token' => $this->getRoom()->getToken(),
 			'actorType' => $this->getActorType(),
@@ -176,5 +177,11 @@ class Message {
 			'isReplyable' => $this->isReplyable(),
 			'referenceId' => (string) $this->getComment()->getReferenceId(),
 		];
+
+		if ($this->getMessageType() === 'comment_deleted') {
+			$data['deleted'] = true;
+		}
+
+		return $data;
 	}
 }

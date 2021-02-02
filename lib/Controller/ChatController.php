@@ -29,6 +29,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
@@ -92,6 +93,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IUserStatusManager */
 	private $statusManager;
 
+	/** @var MatterbridgeManager */
+	protected $matterbridgeManager;
+
 	/** @var SearchPlugin */
 	private $searchPlugin;
 
@@ -120,6 +124,7 @@ class ChatController extends AEnvironmentAwareController {
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
 								IUserStatusManager $statusManager,
+								MatterbridgeManager $matterbridgeManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
 								ITimeFactory $timeFactory,
@@ -138,6 +143,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->statusManager = $statusManager;
+		$this->matterbridgeManager = $matterbridgeManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->timeFactory = $timeFactory;
@@ -459,6 +465,69 @@ class ChatController extends AEnvironmentAwareController {
 			}
 		}
 
+		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $messageId
+	 * @return DataResponse
+	 */
+	public function deleteMessage(int $messageId): DataResponse {
+		try {
+			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$attendee = $this->participant->getAttendee();
+		if (!$this->participant->hasModeratorPermissions(false)
+			&& ($message->getActorType() !== $attendee->getActorType()
+				|| $message->getActorId() !== $attendee->getActorId())) {
+			// Actor is not a moderator or not the owner of the message
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($message->getVerb() !== 'comment') {
+			// System message or file share (since the message is not parsed, it has type "system")
+			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
+
+		$maxDeleteAge = $this->timeFactory->getDateTime();
+		$maxDeleteAge->sub(new \DateInterval('PT6H'));
+		if ($message->getCreationDateTime() < $maxDeleteAge) {
+			// Message is too old
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$systemMessageComment = $this->chatManager->deleteMessage(
+			$this->room,
+			$messageId,
+			$attendee->getActorType(),
+			$attendee->getActorId(),
+			$this->timeFactory->getDateTime()
+		);
+
+		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
+		$this->messageParser->parseMessage($systemMessage);
+
+		$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($message);
+
+		$data = $systemMessage->toArray();
+		$data['parent'] = $message->toArray();
+
+		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+
+		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED: Http::STATUS_OK);
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
 		return $response;
 	}
 

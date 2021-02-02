@@ -20,6 +20,7 @@
  *
  */
 import Vue from 'vue'
+import { deleteMessage } from '../services/messagesService'
 
 const state = {
 	/**
@@ -130,6 +131,16 @@ const mutations = {
 	},
 
 	/**
+	 * Deletes a message from the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the message;
+	 * @param {string} placeholder Placeholder message until deleting finished
+	 */
+	markMessageAsDeleting(state, { message, placeholder }) {
+		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
+		Vue.set(state.messages[message.token][message.id], 'message', placeholder)
+	},
+	/**
 	 * Adds a temporary message to the store.
 	 * @param {object} state current store state;
 	 * @param {object} message the temporary message;
@@ -221,10 +232,31 @@ const actions = {
 	 * Delete a message
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} message the message to be deleted;
+	 * @param {object} message the message to be deleted;
+	 * @param {string} placeholder Placeholder message until deleting finished
 	 */
-	deleteMessage(context, message) {
-		context.commit('deleteMessage', message)
+	async deleteMessage(context, { message, placeholder }) {
+		const messageObject = Object.assign({}, context.getters.message(message.token, message.id))
+		context.commit('markMessageAsDeleting', { message, placeholder })
+
+		let response
+		try {
+			response = await deleteMessage(message)
+		} catch (e) {
+			// Restore the previous message state
+			context.commit('addMessage', messageObject)
+			throw e
+		}
+
+		const systemMessage = response.data.ocs.data
+		if (systemMessage.parent) {
+			context.commit('addMessage', systemMessage.parent)
+			systemMessage.parent = systemMessage.parent.id
+		}
+
+		context.commit('addMessage', systemMessage)
+
+		return response.status
 	},
 
 	/**
