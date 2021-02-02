@@ -65,9 +65,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
-    "Contacts" : "Kontaktid",
     "Share link" : "Jaga link",
-    "Cancel" : "Loobu",
     "Enabled" : "Lubatud"
 },
 "nplurals=2; plural=(n != 1);");

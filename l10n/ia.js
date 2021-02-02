@@ -51,9 +51,7 @@ OC.L10N.register(
     "TURN server" : "servitor TURN",
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
-    "Contacts" : "Contactos",
     "Share link" : "Compartir ligamine",
-    "Cancel" : "Cancellar",
     "Enabled" : "Activate"
 },
 "nplurals=2; plural=(n != 1);");
