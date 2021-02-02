@@ -162,7 +162,7 @@ export default {
 		},
 
 		iconFavorite() {
-			return this.item.isFavorite ? 'icon-star-dark' : 'icon-starred'
+			return this.item.isFavorite ? 'icon-favorite' : 'icon-starred'
 		},
 
 		labelFavorite() {
