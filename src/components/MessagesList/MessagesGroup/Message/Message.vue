@@ -305,7 +305,7 @@ export default {
 
 	computed: {
 		hasActions() {
-			return this.isReplyable && !this.isConversationReadOnly
+			return (this.isReplyable || this.isDeleteable) && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {
@@ -532,6 +532,8 @@ export default {
 			} catch (e) {
 				if (e?.response?.status === 400) {
 					showError(t('spreed', 'Message could not be deleted because it is too old'))
+				} else if (e?.response?.status === 405) {
+					showError(t('spreed', 'Only normal chat messages can be deleted'))
 				} else {
 					showError(t('spreed', 'An error occurred while deleting the message'))
 					console.error(e)

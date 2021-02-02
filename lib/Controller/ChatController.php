@@ -492,6 +492,11 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		if ($message->getVerb() !== 'comment') {
+			// System message or file share (since the message is not parsed, it has type "system")
+			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
+
 		$maxDeleteAge = $this->timeFactory->getDateTime();
 		$maxDeleteAge->sub(new \DateInterval('PT6H'));
 		if ($message->getCreationDateTime() < $maxDeleteAge) {
