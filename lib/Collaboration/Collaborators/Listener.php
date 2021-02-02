@@ -27,6 +27,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
@@ -127,7 +128,11 @@ class Listener {
 		$userId = $result['value']['shareWith'];
 
 		try {
-			$this->room->getParticipant($userId);
+			$participant = $this->room->getParticipant($userId);
+			if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+				// do list self-joined users so they can be added as permanent participants by moderators
+				return true;
+			}
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return true;

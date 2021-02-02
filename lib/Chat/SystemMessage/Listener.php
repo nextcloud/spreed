@@ -274,9 +274,15 @@ class Listener {
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::USER) {
-				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
-				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
+				if ($event->getOldValue() === Participant::USER_SELF_JOINED) {
+					/** @var self $listener */
+					$listener = \OC::$server->query(self::class);
+					$listener->sendSystemMessage($room, 'user_added', ['user' => $attendee->getActorId()]);
+				} else {
+					/** @var self $listener */
+					$listener = \OC::$server->query(self::class);
+					$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
+				}
 			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);

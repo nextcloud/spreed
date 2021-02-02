@@ -1222,23 +1222,28 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$participants = $this->participantService->getParticipantUserIds($this->room);
+		$participants = $this->participantService->getParticipantsForRoom($this->room);
+		$participantsByUserId = [];
+		foreach ($participants as $participant) {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
+			}
+		}
 
+		// list of participants to attempt adding,
+		// existing ones will be filtered later below
 		$participantsToAdd = [];
+
 		if ($source === 'users') {
 			$newUser = $this->userManager->get($newParticipant);
 			if (!$newUser instanceof IUser) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			if (\in_array($newParticipant, $participants, true)) {
-				return new DataResponse([]);
-			}
-
-			$this->participantService->addUsers($this->room, [[
+			$participantsToAdd[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $newUser->getUID(),
-			]]);
+			];
 		} elseif ($source === 'groups') {
 			$group = $this->groupManager->get($newParticipant);
 			if (!$group instanceof IGroup) {
@@ -1247,21 +1252,11 @@ class RoomController extends AEnvironmentAwareController {
 
 			$usersInGroup = $group->getUsers();
 			foreach ($usersInGroup as $user) {
-				if (\in_array($user->getUID(), $participants, true)) {
-					continue;
-				}
-
 				$participantsToAdd[] = [
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
 				];
 			}
-
-			if (empty($participantsToAdd)) {
-				return new DataResponse([]);
-			}
-
-			$this->participantService->addUsers($this->room, $participantsToAdd);
 		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1281,10 +1276,6 @@ class RoomController extends AEnvironmentAwareController {
 					continue;
 				}
 
-				if (\in_array($member->getUserId(), $participants, true)) {
-					continue;
-				}
-
 				if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
 					// Only allow invited and regular members
 					continue;
@@ -1295,12 +1286,6 @@ class RoomController extends AEnvironmentAwareController {
 					'actorId' => $member->getUserId(),
 				];
 			}
-
-			if (empty($participantsToAdd)) {
-				return new DataResponse([]);
-			}
-
-			$this->participantService->addUsers($this->room, $participantsToAdd);
 		} elseif ($source === 'emails') {
 			$data = [];
 			if ($this->room->setType(Room::PUBLIC_CALL)) {
@@ -1316,7 +1301,25 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		// attempt adding the listed users to the room
+		// existing users with USER_SELF_JOINED will get converted to regular USER participants
+		foreach ($participantsToAdd as $index => $participantToAdd) {
+			$existingParticipant = $participantsByUserId[$participantToAdd['actorId']] ?? null;
+
+			if ($existingParticipant !== null) {
+				unset($participantsToAdd[$index]);
+				if ($existingParticipant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED) {
+					// user is already a regular participant, skip
+					continue;
+				}
+				$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
+			}
+		}
+
+		// add the remaining users in batch
+		$this->participantService->addUsers($this->room, $participantsToAdd);
+
+		return new DataResponse([]);
 	}
 
 	/**
