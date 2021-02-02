@@ -281,9 +281,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
-    "Contacts" : "Kontakte",
-    "Guests" : "Gaste",
-    "Share link" : "Deelskakel",
-    "Cancel" : "Kanselleer"
+    "Share link" : "Deelskakel"
 },
 "nplurals=2; plural=(n != 1);");

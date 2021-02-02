@@ -152,17 +152,7 @@ OC.L10N.register(
     "iOS app" : "Aplicação iOS",
     "New in Talk 6" : "Novo em Talk 6",
     "{user} wants to talk with you" : "{user} quer falar consigo",
-    "No other people in this call" : "Sem mais pessoas nesta chamada",
-    "Your screen" : "O seu ecrã",
-    "Contacts" : "Contactos",
-    "[Unknown user name]" : "[Nome de utilizador desconhecido]",
-    "Guests" : "Convidados",
     "Share link" : "Partilhar hiperligação",
-    "Limit app usage to groups." : "Limitar o uso da aplicação a grupos.",
-    "Please enter the password for this call" : "Por favor introduza a palavra-passe para esta chamada",
-    "Password required" : "Necessário palavra-passe",
-    "Cancel" : "Cancelar",
-    "Submit" : "Submeter",
     "Enabled" : "Habilidado"
 },
 "nplurals=2; plural=(n != 1);");

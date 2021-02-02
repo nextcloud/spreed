@@ -316,16 +316,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "密碼錯誤，請重試",
     "Android app" : "安卓應用",
     "iOS app" : "蘋果應用",
-    "Contacts" : "聯絡人",
-    "Search conversations or contacts" : "搜尋對話或聯絡人",
-    "[Unknown user name]" : "[未知的使用者名稱]",
-    "Guests" : "訪客",
-    "Share link" : "分享連結",
     "Projects" : "專案項目",
-    "Limit app usage to groups." : "限制群組的使用率:",
-    "Password required" : "請輸入密碼",
-    "Cancel" : "取消",
-    "Submit" : "送出",
+    "Share link" : "分享連結",
     "Enabled" : "已啟用"
 },
 "nplurals=1; plural=0;");
