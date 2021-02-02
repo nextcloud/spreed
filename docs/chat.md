@@ -110,6 +110,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the message is not from the current user and the user not a moderator
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation or chat message could not be found for the participant
+        + `405 Method Not Allowed` When the message is not a normal chat message
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Header:
