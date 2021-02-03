@@ -329,6 +329,10 @@ class SystemMessage {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} elseif ($message === 'object_shared') {
+			$parsedParameters['object'] = $parameters['metaData'];
+			$parsedMessage = '{object}';
+			$chatMessage->setMessageType('comment');
 		} elseif ($message === 'matterbridge_config_added') {
 			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats.');
 			if ($currentUserIsActor) {
