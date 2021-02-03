@@ -204,21 +204,26 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('NewGroupConversationDialog', this.showModal)
+		EventBus.$on('NewGroupConversationDialog', this.showModalForItem)
 	},
 
 	destroyed() {
-		EventBus.$off('NewGroupConversationDialog', this.showModal)
+		EventBus.$off('NewGroupConversationDialog', this.showModalForItem)
 	},
 
 	methods: {
-		showModal(item) {
+		showModal() {
+			this.modal = true
+		},
+
+		showModalForItem(item) {
 			if (item) {
 				// Preload the conversation name from group selection
 				this.conversationNameInput = item.label
 				this.$store.dispatch('updateSelectedParticipants', item)
 			}
-			this.modal = true
+
+			this.showModal()
 		},
 		/** Reinitialise the component to it's initial state. This is necessary
 		 * because once the component is mounted it's data would persist even if
