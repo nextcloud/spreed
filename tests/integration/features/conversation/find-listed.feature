@@ -14,7 +14,7 @@ Feature: conversation/find-listed
       | roomName | public-room |
     When user "creator" allows listing room "group-room" for "none" with 200
     And user "creator" allows listing room "public-room" for "none" with 200
-    Then user "creator" cannot find any listed rooms (v3)
+    Then user "<user>" cannot find any listed rooms (v3)
     Examples:
       | user                   |
       | creator                |
