@@ -30,7 +30,14 @@
 					:class="audioButtonClass"
 					@shortkey="toggleAudio"
 					@click.stop="toggleAudio">
-					<component :is="audioButtonComponent"
+					<Microphone
+						v-if="showMicrophoneOn"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+					<MicrophoneOff
+						v-else
 						:size="24"
 						title=""
 						fill-color="#ffffff"
@@ -48,7 +55,14 @@
 				:class="videoButtonClass"
 				@shortkey="toggleVideo"
 				@click.stop="toggleVideo">
-				<component :is="videoButtonComponent"
+				<VideoIcon
+					v-if="showVideoOn"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+				<VideoOff
+					v-else
 					:size="24"
 					title=""
 					fill-color="#ffffff"
@@ -186,12 +200,10 @@ import { showMessage } from '@nextcloud/dialogs'
 import Hand from 'vue-material-design-icons/Hand'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
-import MicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline'
 import Monitor from 'vue-material-design-icons/Monitor'
 import MonitorOff from 'vue-material-design-icons/MonitorOff'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
-import VideoOutline from 'vue-material-design-icons/VideoOutline'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
@@ -217,10 +229,8 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
-		MicrophoneOutline,
 		'VideoIcon': Video,
 		VideoOff,
-		VideoOutline,
 		Monitor,
 		MonitorOff,
 	},
@@ -275,14 +285,8 @@ export default {
 			}
 		},
 
-		audioButtonComponent() {
-			if (this.model.attributes.audioAvailable) {
-				if (this.model.attributes.audioEnabled) {
-					return 'Microphone'
-				}
-				return 'MicrophoneOff'
-			}
-			return 'MicrophoneOutline'
+		showMicrophoneOn() {
+			return this.model.attributes.audioAvailable && this.model.attributes.audioEnabled
 		},
 
 		audioButtonTooltip() {
@@ -338,14 +342,8 @@ export default {
 			}
 		},
 
-		videoButtonComponent() {
-			if (this.model.attributes.videoAvailable) {
-				if (this.model.attributes.videoEnabled) {
-					return 'VideoIcon'
-				}
-				return 'VideoOff'
-			}
-			return 'VideoOutline'
+		showVideoOn() {
+			return this.model.attributes.videoAvailable && this.model.attributes.videoEnabled
 		},
 
 		videoButtonTooltip() {
