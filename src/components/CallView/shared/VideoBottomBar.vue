@@ -85,9 +85,15 @@
 					</button>
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
-						class="screensharingIndicator forced-white icon-screen"
+						class="screensharingIndicator"
 						:class="screenSharingButtonClass"
-						@click="switchToScreen" />
+						@click.stop="switchToScreen">
+						<Monitor
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="connectionStateFailedNoRestart"
 						class="iceFailedIndicator forced-white icon-error"
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
@@ -108,6 +114,7 @@ import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantMod
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Monitor from 'vue-material-design-icons/Monitor'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import { PARTICIPANT } from '../../../constants'
@@ -120,6 +127,7 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
+		Monitor,
 		'VideoIcon': Video,
 		VideoOff,
 	},
@@ -321,7 +329,14 @@ export default {
 .handIndicator,
 .muteIndicator,
 .hideRemoteVideo,
-.screensharingIndicator,
+.screensharingIndicator {
+	position: relative;
+	display: inline-block;
+	background-color: transparent !important;
+	border: none;
+	padding: 0 12px;
+}
+
 .iceFailedIndicator {
 	position: relative;
 	display: inline-block;
@@ -330,6 +345,7 @@ export default {
 	width: 32px;
 	height: 32px;
 	background-size: 22px;
+	opacity: .8 !important;
 
 	&.hidden {
 		display: none;
@@ -351,10 +367,6 @@ export default {
 	&:focus {
 		opacity: 1;
 	}
-}
-
-.iceFailedIndicator {
-	opacity: .8 !important;
 }
 
 </style>

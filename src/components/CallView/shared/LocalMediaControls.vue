@@ -60,8 +60,21 @@
 				v-tooltip="screenSharingButtonTooltip"
 				:aria-label="screenSharingButtonAriaLabel"
 				:class="screenSharingButtonClass"
-				class="app-navigation-entry-utils-menu-button forced-white"
-				@click="toggleScreenSharingMenu" />
+				class="app-navigation-entry-utils-menu-button"
+				@click.stop="toggleScreenSharingMenu">
+				<Monitor
+					v-if="model.attributes.localScreen"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+				<MonitorOff
+					v-if="!model.attributes.localScreen"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<div id="screensharing-menu" :class="{ open: screenSharingMenuOpen }" class="app-navigation-entry-menu">
 				<ul>
 					<li v-if="!model.attributes.localScreen && splitScreenSharingMenu" id="share-screen-entry">
@@ -174,6 +187,8 @@ import Hand from 'vue-material-design-icons/Hand'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import MicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline'
+import Monitor from 'vue-material-design-icons/Monitor'
+import MonitorOff from 'vue-material-design-icons/MonitorOff'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import VideoOutline from 'vue-material-design-icons/VideoOutline'
@@ -206,6 +221,8 @@ export default {
 		'VideoIcon': Video,
 		VideoOff,
 		VideoOutline,
+		Monitor,
+		MonitorOff,
 	},
 
 	props: {
@@ -365,9 +382,7 @@ export default {
 
 		screenSharingButtonClass() {
 			return {
-				'icon-screen': this.model.attributes.localScreen,
 				'screensharing-disabled': !this.model.attributes.localScreen,
-				'icon-screen-off': !this.model.attributes.localScreen,
 			}
 		},
 
@@ -715,13 +730,9 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables.scss';
 
-.forced-white {
-	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
-
 #screensharing-menu {
 	bottom: 44px;
-	left: calc(50% - 40px);
+	left: calc(50% - 64px);
 	right: initial;
 	color: initial;
 	text-shadow: initial;
@@ -745,9 +756,7 @@ export default {
 	background-color: transparent;
 	border: none;
 	margin: 0;
-	width: 44px;
-	height: 44px;
-	background-size: 24px;
+	padding: 0 12px;
 }
 
 .buttons-bar #screensharing-menu button {
