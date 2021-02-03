@@ -68,9 +68,21 @@
 					</button>
 					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
-						class="hideRemoteVideo forced-white"
-						:class="videoButtonClass"
-						@click="toggleVideo" />
+						class="hideRemoteVideo"
+						@click.stop="toggleVideo">
+						<VideoIcon
+							v-if="showVideoButton"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+						<VideoOff
+							v-if="!showVideoButton"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
 						class="screensharingIndicator forced-white icon-screen"
@@ -96,6 +108,8 @@ import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantMod
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
 import { PARTICIPANT } from '../../../constants'
 import Hand from 'vue-material-design-icons/Hand'
 
@@ -106,6 +120,8 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
+		'VideoIcon': Video,
+		VideoOff,
 	},
 
 	directives: {
@@ -173,11 +189,8 @@ export default {
 			return null
 		},
 
-		videoButtonClass() {
-			return {
-				'icon-video': this.sharedData.videoEnabled,
-				'icon-video-off': !this.sharedData.videoEnabled,
-			}
+		showVideoButton() {
+			return this.sharedData.videoEnabled
 		},
 
 		videoButtonTooltip() {

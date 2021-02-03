@@ -29,7 +29,7 @@
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
 					@shortkey="toggleAudio"
-					@click="toggleAudio">
+					@click.stop="toggleAudio">
 					<component :is="audioButtonComponent"
 						:size="24"
 						title=""
@@ -46,9 +46,14 @@
 				v-tooltip="videoButtonTooltip"
 				:aria-label="videoButtonAriaLabel"
 				:class="videoButtonClass"
-				class="forced-white"
 				@shortkey="toggleVideo"
-				@click="toggleVideo" />
+				@click.stop="toggleVideo">
+				<component :is="videoButtonComponent"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<button
 				v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
@@ -169,6 +174,9 @@ import Hand from 'vue-material-design-icons/Hand'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import MicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
+import VideoOutline from 'vue-material-design-icons/VideoOutline'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
@@ -195,6 +203,9 @@ export default {
 		Microphone,
 		MicrophoneOff,
 		MicrophoneOutline,
+		'VideoIcon': Video,
+		VideoOff,
+		VideoOutline,
 	},
 
 	props: {
@@ -305,11 +316,19 @@ export default {
 
 		videoButtonClass() {
 			return {
-				'icon-video': this.model.attributes.videoAvailable && this.model.attributes.videoEnabled,
 				'video-disabled': this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
-				'icon-video-off': !this.model.attributes.videoAvailable || !this.model.attributes.videoEnabled,
 				'no-video-available': !this.model.attributes.videoAvailable,
 			}
+		},
+
+		videoButtonComponent() {
+			if (this.model.attributes.videoAvailable) {
+				if (this.model.attributes.videoEnabled) {
+					return 'VideoIcon'
+				}
+				return 'VideoOff'
+			}
+			return 'VideoOutline'
 		},
 
 		videoButtonTooltip() {
@@ -755,8 +774,10 @@ export default {
 
 .buttons-bar button.no-audio-available,
 .buttons-bar button.no-video-available {
-	opacity: .7;
-	cursor: not-allowed;
+	&, & * {
+		opacity: .7;
+		cursor: not-allowed;
+	}
 }
 
 .buttons-bar button.no-audio-available:active,

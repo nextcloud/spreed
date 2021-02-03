@@ -69,10 +69,16 @@
 				class="preview-not-available">
 				<div v-if="videoStreamError"
 					class="icon icon-error" />
-				<div v-else-if="!videoInputId"
-					class="icon icon-video-off" />
-				<div v-else-if="!enabled"
-					class="icon icon-video" />
+				<VideoOff
+					v-else-if="!videoInputId"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<VideoIcon
+					v-else-if="!enabled"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<div v-else-if="!videoStream"
 					class="icon icon-loading" />
 				<p v-if="videoStreamErrorMessage">
@@ -94,6 +100,8 @@ import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
 import { mediaDevicesManager } from '../utils/webrtc/index'
 import MediaDevicesSelector from './MediaDevicesSelector'
 
@@ -105,6 +113,8 @@ export default {
 		MediaDevicesSelector,
 		Microphone,
 		MicrophoneOff,
+		'VideoIcon': Video,
+		VideoOff,
 	},
 
 	props: {
