@@ -95,9 +95,15 @@
 							decorative />
 					</button>
 					<button v-show="connectionStateFailedNoRestart"
-						class="iceFailedIndicator forced-white icon-error"
+						class="iceFailedIndicator"
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-						disabled="true" />
+						disabled="true">
+						<AlertCircle
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 				</div>
 			</transition>
 			<button v-if="hasSelectedVideo && isBig"
@@ -112,6 +118,7 @@
 <script>
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
@@ -124,6 +131,7 @@ export default {
 	name: 'VideoBottomBar',
 
 	components: {
+		AlertCircle,
 		Hand,
 		Microphone,
 		MicrophoneOff,
@@ -329,7 +337,8 @@ export default {
 .handIndicator,
 .muteIndicator,
 .hideRemoteVideo,
-.screensharingIndicator {
+.screensharingIndicator,
+.iceFailedIndicator {
 	position: relative;
 	display: inline-block;
 	background-color: transparent !important;
@@ -338,18 +347,7 @@ export default {
 }
 
 .iceFailedIndicator {
-	position: relative;
-	display: inline-block;
-	background-color: transparent !important;
-	border: none;
-	width: 32px;
-	height: 32px;
-	background-size: 22px;
 	opacity: .8 !important;
-
-	&.hidden {
-		display: none;
-	}
 }
 
 .screensharingIndicator.screen-off,

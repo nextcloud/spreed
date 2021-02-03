@@ -28,8 +28,11 @@
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
 				class="preview-not-available">
-				<div v-if="audioStreamError"
-					class="icon icon-error" />
+				<AlertCircle
+					v-if="audioStreamError"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<MicrophoneOff
 					v-else-if="!audioInputId"
 					:size="64"
@@ -67,8 +70,11 @@
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">
-				<div v-if="videoStreamError"
-					class="icon icon-error" />
+				<AlertCircle
+					v-if="videoStreamError"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<VideoOff
 					v-else-if="!videoInputId"
 					:size="64"
@@ -98,6 +104,7 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Video from 'vue-material-design-icons/Video'
@@ -110,6 +117,7 @@ export default {
 	name: 'MediaDevicesPreview',
 
 	components: {
+		AlertCircle,
 		MediaDevicesSelector,
 		Microphone,
 		MicrophoneOff,
