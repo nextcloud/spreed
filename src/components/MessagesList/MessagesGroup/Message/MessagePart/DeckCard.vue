@@ -21,11 +21,21 @@
 
 <template>
 	<a
-		v-tooltip.bottom="deckLocation"
-		class="external"
+		class="deck-card"
 		:href="link"
+		:aria-label="deckCardAriaLabel"
 		target="_blank">
-		<strong>{{ name }}</strong>
+		<div class="deck-card__lineone">
+			<div class="icon-deck" />
+			<div class="title">
+				{{ name }}
+			</div>
+		</div>
+		<div class="deck-card__linetwo">
+			<div>
+				{{ deckLocation }}
+			</div>
+		</div>
 	</a>
 </template>
 
@@ -73,6 +83,58 @@ export default {
 				board: this.boardname,
 			})
 		},
+		deckCardAriaLabel() {
+			return t('spreed', 'Deck Card')
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.deck-card {
+	display: flex;
+	transition: box-shadow 0.1s ease-in-out;
+	box-shadow: 0 0 2px 0 var(--color-box-shadow);
+	border-radius: var(--border-radius-large);
+	font-size: 100%;
+	background-color: var(--color-main-background);
+	margin: 12px 0;
+	max-width: 300px;
+	padding: 8px 16px;
+	flex-direction: column;
+	white-space: nowrap;
+	&:hover,
+	&:focus{
+		box-shadow: 0 0 5px 0 var(--color-box-shadow);
+	}
+	&__lineone {
+		height: 30px;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+
+		.title {
+			margin-left: 8px;
+		}
+	}
+	&__linetwo {
+		height: 30px;
+		color: var(--color-text-lighter);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	// Dark theme
+	body.dark &, body.theme--dark & {
+		border: 2px solid var(--color-border);
+	}
+}
+
+.icon-deck {
+	opacity: .8;
+}
+
+</style>
