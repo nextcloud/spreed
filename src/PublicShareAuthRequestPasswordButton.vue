@@ -113,7 +113,6 @@ export default {
 
 .request-password-wrapper .icon {
 	position: absolute;
-	top: 23px;
 	right: 23px;
 	pointer-events: none;
 }
