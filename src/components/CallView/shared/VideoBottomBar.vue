@@ -48,11 +48,24 @@
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
 					<button v-show="!connectionStateFailedNoRestart"
+						v-if="showMicrophone || showMicrophoneOff"
 						v-tooltip="audioButtonTooltip"
-						class="muteIndicator forced-white"
-						:class="audioButtonClass"
+						class="muteIndicator"
 						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
-						@click="forceMute" />
+						@click.stop="forceMute">
+						<Microphone
+							v-if="showMicrophone"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+						<MicrophoneOff
+							v-if="showMicrophoneOff"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
 						class="hideRemoteVideo forced-white"
@@ -81,6 +94,8 @@
 <script>
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { PARTICIPANT } from '../../../constants'
 import Hand from 'vue-material-design-icons/Hand'
 
@@ -89,6 +104,8 @@ export default {
 
 	components: {
 		Hand,
+		Microphone,
+		MicrophoneOff,
 	},
 
 	directives: {
@@ -136,16 +153,16 @@ export default {
 	},
 
 	computed: {
+		showMicrophone() {
+			return this.model.attributes.audioAvailable && this.selfIsModerator
+		},
+
+		showMicrophoneOff() {
+			return !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined
+		},
 
 		connectionStateFailedNoRestart() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
-		},
-
-		audioButtonClass() {
-			return {
-				'icon-audio': this.model.attributes.audioAvailable && this.selfIsModerator,
-				'icon-audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
-			}
 		},
 
 		audioButtonTooltip() {
@@ -306,13 +323,12 @@ export default {
 	}
 }
 
-.muteIndicator:not(.icon-audio):not(.icon-audio-off),
 .screensharingIndicator.screen-off,
 .iceFailedIndicator.not-failed {
 	display: none;
 }
 
-.muteIndicator.icon-audio-off,
+.muteIndicator[disabled],
 .hideRemoteVideo {
 	opacity: .7;
 }
