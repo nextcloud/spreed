@@ -28,9 +28,21 @@
 					v-tooltip="audioButtonTooltip"
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
-					class="forced-white"
 					@shortkey="toggleAudio"
-					@click="toggleAudio" />
+					@click.stop="toggleAudio">
+					<Microphone
+						v-if="showMicrophoneOn"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+					<MicrophoneOff
+						v-else
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+				</button>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator" />
@@ -41,17 +53,42 @@
 				v-tooltip="videoButtonTooltip"
 				:aria-label="videoButtonAriaLabel"
 				:class="videoButtonClass"
-				class="forced-white"
 				@shortkey="toggleVideo"
-				@click="toggleVideo" />
+				@click.stop="toggleVideo">
+				<VideoIcon
+					v-if="showVideoOn"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+				<VideoOff
+					v-else
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<button
 				v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
 				:aria-label="screenSharingButtonAriaLabel"
 				:class="screenSharingButtonClass"
-				class="app-navigation-entry-utils-menu-button forced-white"
-				@click="toggleScreenSharingMenu" />
+				class="app-navigation-entry-utils-menu-button"
+				@click.stop="toggleScreenSharingMenu">
+				<Monitor
+					v-if="model.attributes.localScreen"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+				<MonitorOff
+					v-if="!model.attributes.localScreen"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<div id="screensharing-menu" :class="{ open: screenSharingMenuOpen }" class="app-navigation-entry-menu">
 				<ul>
 					<li v-if="!model.attributes.localScreen && splitScreenSharingMenu" id="share-screen-entry">
@@ -161,6 +198,12 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import Hand from 'vue-material-design-icons/Hand'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Monitor from 'vue-material-design-icons/Monitor'
+import MonitorOff from 'vue-material-design-icons/MonitorOff'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
@@ -184,6 +227,12 @@ export default {
 		ActionSeparator,
 		ActionButton,
 		Hand,
+		Microphone,
+		MicrophoneOff,
+		'VideoIcon': Video,
+		VideoOff,
+		Monitor,
+		MonitorOff,
 	},
 
 	props: {
@@ -231,11 +280,13 @@ export default {
 
 		audioButtonClass() {
 			return {
-				'icon-audio': this.model.attributes.audioAvailable && this.model.attributes.audioEnabled,
 				'audio-disabled': this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
-				'icon-audio-off': !this.model.attributes.audioAvailable || !this.model.attributes.audioEnabled,
 				'no-audio-available': !this.model.attributes.audioAvailable,
 			}
+		},
+
+		showMicrophoneOn() {
+			return this.model.attributes.audioAvailable && this.model.attributes.audioEnabled
 		},
 
 		audioButtonTooltip() {
@@ -286,11 +337,13 @@ export default {
 
 		videoButtonClass() {
 			return {
-				'icon-video': this.model.attributes.videoAvailable && this.model.attributes.videoEnabled,
 				'video-disabled': this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
-				'icon-video-off': !this.model.attributes.videoAvailable || !this.model.attributes.videoEnabled,
 				'no-video-available': !this.model.attributes.videoAvailable,
 			}
+		},
+
+		showVideoOn() {
+			return this.model.attributes.videoAvailable && this.model.attributes.videoEnabled
 		},
 
 		videoButtonTooltip() {
@@ -327,9 +380,7 @@ export default {
 
 		screenSharingButtonClass() {
 			return {
-				'icon-screen': this.model.attributes.localScreen,
 				'screensharing-disabled': !this.model.attributes.localScreen,
-				'icon-screen-off': !this.model.attributes.localScreen,
 			}
 		},
 
@@ -677,13 +728,9 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables.scss';
 
-.forced-white {
-	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
-
 #screensharing-menu {
 	bottom: 44px;
-	left: calc(50% - 40px);
+	left: calc(50% - 64px);
 	right: initial;
 	color: initial;
 	text-shadow: initial;
@@ -707,9 +754,7 @@ export default {
 	background-color: transparent;
 	border: none;
 	margin: 0;
-	width: 44px;
-	height: 44px;
-	background-size: 24px;
+	padding: 0 12px;
 }
 
 .buttons-bar #screensharing-menu button {
@@ -736,8 +781,10 @@ export default {
 
 .buttons-bar button.no-audio-available,
 .buttons-bar button.no-video-available {
-	opacity: .7;
-	cursor: not-allowed;
+	&, & * {
+		opacity: .7;
+		cursor: not-allowed;
+	}
 }
 
 .buttons-bar button.no-audio-available:active,
@@ -770,7 +817,7 @@ export default {
 	opacity: 0.7;
 }
 
-#muteWrapper .icon-audio-off + .volume-indicator {
+#muteWrapper .microphone-off-icon + .volume-indicator {
 	background: linear-gradient(0deg, gray, white 36px);
 }
 

@@ -28,12 +28,21 @@
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
 				class="preview-not-available">
-				<div v-if="audioStreamError"
-					class="icon icon-error" />
-				<div v-else-if="!audioInputId"
-					class="icon icon-audio-off" />
-				<div v-else-if="!enabled"
-					class="icon icon-audio" />
+				<AlertCircle
+					v-if="audioStreamError"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<MicrophoneOff
+					v-else-if="!audioInputId"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<Microphone
+					v-else-if="!enabled"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<div v-else-if="!audioStream"
 					class="icon icon-loading" />
 				<p v-if="audioStreamErrorMessage">
@@ -44,7 +53,10 @@
 				 reference is always valid once mounted. -->
 			<div v-show="audioPreviewAvailable"
 				class="volume-indicator-wrapper">
-				<div class="icon icon-audio" />
+				<Microphone
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<span ref="volumeIndicator"
 					class="volume-indicator"
 					:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
@@ -58,12 +70,21 @@
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">
-				<div v-if="videoStreamError"
-					class="icon icon-error" />
-				<div v-else-if="!videoInputId"
-					class="icon icon-video-off" />
-				<div v-else-if="!enabled"
-					class="icon icon-video" />
+				<AlertCircle
+					v-if="videoStreamError"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<VideoOff
+					v-else-if="!videoInputId"
+					:size="64"
+					title=""
+					fill-color="#999" />
+				<VideoIcon
+					v-else-if="!enabled"
+					:size="64"
+					title=""
+					fill-color="#999" />
 				<div v-else-if="!videoStream"
 					class="icon icon-loading" />
 				<p v-if="videoStreamErrorMessage">
@@ -83,6 +104,11 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
 import { mediaDevicesManager } from '../utils/webrtc/index'
 import MediaDevicesSelector from './MediaDevicesSelector'
 
@@ -91,7 +117,12 @@ export default {
 	name: 'MediaDevicesPreview',
 
 	components: {
+		AlertCircle,
 		MediaDevicesSelector,
+		Microphone,
+		MicrophoneOff,
+		'VideoIcon': Video,
+		VideoOff,
 	},
 
 	props: {

@@ -48,25 +48,62 @@
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
 					<button v-show="!connectionStateFailedNoRestart"
+						v-if="showMicrophone || showMicrophoneOff"
 						v-tooltip="audioButtonTooltip"
-						class="muteIndicator forced-white"
-						:class="audioButtonClass"
+						class="muteIndicator"
 						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
-						@click="forceMute" />
+						@click.stop="forceMute">
+						<Microphone
+							v-if="showMicrophone"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+						<MicrophoneOff
+							v-if="showMicrophoneOff"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
-						class="hideRemoteVideo forced-white"
-						:class="videoButtonClass"
-						@click="toggleVideo" />
+						class="hideRemoteVideo"
+						@click.stop="toggleVideo">
+						<VideoIcon
+							v-if="showVideoButton"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+						<VideoOff
+							v-if="!showVideoButton"
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
-						class="screensharingIndicator forced-white icon-screen"
+						class="screensharingIndicator"
 						:class="screenSharingButtonClass"
-						@click="switchToScreen" />
+						@click.stop="switchToScreen">
+						<Monitor
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 					<button v-show="connectionStateFailedNoRestart"
-						class="iceFailedIndicator forced-white icon-error"
+						class="iceFailedIndicator"
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-						disabled="true" />
+						disabled="true">
+						<AlertCircle
+							:size="24"
+							title=""
+							fill-color="#ffffff"
+							decorative />
+					</button>
 				</div>
 			</transition>
 			<button v-if="hasSelectedVideo && isBig"
@@ -81,6 +118,12 @@
 <script>
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
+import Microphone from 'vue-material-design-icons/Microphone'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
+import Monitor from 'vue-material-design-icons/Monitor'
+import Video from 'vue-material-design-icons/Video'
+import VideoOff from 'vue-material-design-icons/VideoOff'
 import { PARTICIPANT } from '../../../constants'
 import Hand from 'vue-material-design-icons/Hand'
 
@@ -88,7 +131,13 @@ export default {
 	name: 'VideoBottomBar',
 
 	components: {
+		AlertCircle,
 		Hand,
+		Microphone,
+		MicrophoneOff,
+		Monitor,
+		'VideoIcon': Video,
+		VideoOff,
 	},
 
 	directives: {
@@ -136,16 +185,16 @@ export default {
 	},
 
 	computed: {
+		showMicrophone() {
+			return this.model.attributes.audioAvailable && this.selfIsModerator
+		},
+
+		showMicrophoneOff() {
+			return !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined
+		},
 
 		connectionStateFailedNoRestart() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
-		},
-
-		audioButtonClass() {
-			return {
-				'icon-audio': this.model.attributes.audioAvailable && this.selfIsModerator,
-				'icon-audio-off': !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined,
-			}
 		},
 
 		audioButtonTooltip() {
@@ -156,11 +205,8 @@ export default {
 			return null
 		},
 
-		videoButtonClass() {
-			return {
-				'icon-video': this.sharedData.videoEnabled,
-				'icon-video-off': !this.sharedData.videoEnabled,
-			}
+		showVideoButton() {
+			return this.sharedData.videoEnabled
 		},
 
 		videoButtonTooltip() {
@@ -297,22 +343,19 @@ export default {
 	display: inline-block;
 	background-color: transparent !important;
 	border: none;
-	width: 32px;
-	height: 32px;
-	background-size: 22px;
-
-	&.hidden {
-		display: none;
-	}
+	padding: 0 12px;
 }
 
-.muteIndicator:not(.icon-audio):not(.icon-audio-off),
+.iceFailedIndicator {
+	opacity: .8 !important;
+}
+
 .screensharingIndicator.screen-off,
 .iceFailedIndicator.not-failed {
 	display: none;
 }
 
-.muteIndicator.icon-audio-off,
+.muteIndicator[disabled],
 .hideRemoteVideo {
 	opacity: .7;
 }
@@ -322,10 +365,6 @@ export default {
 	&:focus {
 		opacity: 1;
 	}
-}
-
-.iceFailedIndicator {
-	opacity: .8 !important;
 }
 
 </style>
