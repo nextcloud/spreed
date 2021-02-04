@@ -24,32 +24,42 @@ import { generateUrl } from '@nextcloud/router'
 import { EventBus } from '../services/EventBus'
 import SessionStorage from '../services/SessionStorage'
 
-const talkHashCheck = {
+const sessionIssueHandler = {
 	data() {
 		return {
-			isLeavingAfterSessionConflict: false,
+			isLeavingAfterSessionIssue: false,
 		}
 	},
 
 	beforeDestroy() {
 		EventBus.$off('duplicateSessionDetected', this.duplicateSessionTriggered)
+		EventBus.$off('deletedSessionDetected', this.deletedSessionTriggered)
 	},
 
 	beforeMount() {
 		EventBus.$on('duplicateSessionDetected', this.duplicateSessionTriggered)
+		EventBus.$on('deletedSessionDetected', this.deletedSessionTriggered)
 	},
 
 	methods: {
 		duplicateSessionTriggered() {
-			this.isLeavingAfterSessionConflict = true
+			this.isLeavingAfterSessionIssue = true
 			SessionStorage.removeItem('joined_conversation')
+			// Need to delay until next tick, otherwise the PreventUnload is still being triggered
+			// Putting the window in front with the warning and irritating the user
 			this.$nextTick(() => {
-				// Need to delay until next tick, otherwise the PreventUnload is still being triggered
-				// Putting the window in front with the warning and irritating the user
+				// FIXME: can't use router push as it somehow doesn't clean up
+				// fully and leads the other instance where "Join here" was clicked
+				// to redirect to "not found"
 				window.location = generateUrl('/apps/spreed/duplicate-session')
 			})
+		},
+
+		deletedSessionTriggered() {
+			this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+			this.$store.dispatch('updateToken', '')
 		},
 	},
 }
 
-export default talkHashCheck
+export default sessionIssueHandler

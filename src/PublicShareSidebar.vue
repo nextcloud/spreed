@@ -58,7 +58,7 @@ import {
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
 import browserCheck from './mixins/browserCheck'
-import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import sessionIssueHandler from './mixins/sessionIssueHandler'
 import isInCall from './mixins/isInCall'
 import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
@@ -77,7 +77,7 @@ export default {
 
 	mixins: [
 		browserCheck,
-		duplicateSessionHandler,
+		sessionIssueHandler,
 		isInCall,
 		participant,
 		talkHashCheck,
@@ -116,7 +116,7 @@ export default {
 		},
 
 		warnLeaving() {
-			return !this.isLeavingAfterSessionConflict && this.isInCall
+			return !this.isLeavingAfterSessionIssue && this.isInCall
 		},
 	},
 
@@ -126,7 +126,7 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				if (!this.isLeavingAfterSessionConflict) {
+				if (!this.isLeavingAfterSessionIssue) {
 					leaveConversationSync(this.token)
 				}
 			}
