@@ -38,11 +38,9 @@
 				class="new-message-form"
 				@submit.prevent>
 				<div
-					v-if="canUploadFiles || canShareFiles"
-					class="new-message-form__button">
+					v-if="canUploadFiles || canShareFiles">
 					<Actions
 						default-icon="icon-clip-add-file"
-						class="new-message-form__button"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
 						<ActionButton
@@ -62,8 +60,7 @@
 					</Actions>
 				</div>
 				<div
-					v-if="!isReadOnly"
-					class="new-message-form__button">
+					v-if="!isReadOnly">
 					<EmojiPicker @select="addEmoji">
 						<button
 							type="button"
@@ -501,6 +498,16 @@ export default {
 			background-color: $icon-focus-bg;
 		}
 
+	}
+}
+
+// Override actions styles TODO: upstream this change
+::v-deep .action-item__menutoggle {
+	opacity: .8 !important;
+	&:hover,
+	&:focus {
+		background-color: var(--color-background-hover) !important;
+		opacity: .8 !important;
 	}
 }
 

@@ -23,7 +23,7 @@
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
-		<Actions slot="trigger">
+		<Actions slot="trigger" class="forced-background">
 			<ActionButton v-if="isInCall"
 				:icon="changeViewIconClass"
 				@click="changeView">
@@ -33,7 +33,7 @@
 		<!-- sidebar toggle -->
 		<Actions
 			v-shortkey.once="['f']"
-			class="top-bar__button"
+			class="top-bar__button forced-background"
 			menu-align="right"
 			:aria-label="t('spreed', 'Conversation actions')"
 			@shortkey.native="toggleFullscreen">
@@ -93,7 +93,7 @@
 			</ActionButton>
 		</Actions>
 		<Actions v-if="showOpenSidebarButton"
-			class="top-bar__button"
+			class="top-bar__button forced-background"
 			close-after-click="true">
 			<ActionButton
 				:icon="iconMenuPeople"
@@ -340,6 +340,10 @@ export default {
 
 	&.in-call {
 		right: 0;
+		.forced-background {
+			background-color: rgba(0,0,0,0.1) !important;
+			border-radius: var(--border-radius-pill);
+		}
 	}
 
 	&__button {

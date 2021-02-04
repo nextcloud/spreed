@@ -118,7 +118,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql
+          extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql, gd, zip
           tools: phpunit:8.5.2
           coverage: none
 
