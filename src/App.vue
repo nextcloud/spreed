@@ -59,7 +59,7 @@ import {
 } from './utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck'
-import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import sessionIssueHandler from './mixins/sessionIssueHandler'
 import isInCall from './mixins/isInCall'
 import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
@@ -85,7 +85,7 @@ export default {
 	mixins: [
 		browserCheck,
 		talkHashCheck,
-		duplicateSessionHandler,
+		sessionIssueHandler,
 		isInCall,
 		participant,
 	],
@@ -112,7 +112,7 @@ export default {
 		},
 
 		warnLeaving() {
-			return !this.isLeavingAfterSessionConflict && this.isInCall
+			return !this.isLeavingAfterSessionIssue && this.isInCall
 		},
 
 		/**
@@ -219,7 +219,7 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				if (!this.isLeavingAfterSessionConflict) {
+				if (!this.isLeavingAfterSessionIssue) {
 					leaveConversationSync(this.token)
 				}
 			}
@@ -232,8 +232,9 @@ export default {
 					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
 					this.refreshCurrentConversation()
 				} else {
-					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-					this.$router.push('/apps/spreed/not-found')
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
+					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+					this.$store.dispatch('updateToken', '')
 				}
 			}
 		})
@@ -287,7 +288,7 @@ export default {
 		 * Global before guard, this is called whenever a navigation is triggered.
 		*/
 		Router.beforeEach((to, from, next) => {
-			if (this.isInCall) {
+			if (this.warnLeaving && !to.params?.skipLeaveWarning) {
 				OC.dialogs.confirmDestructive(
 					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
 						conversation: this.getConversationName(this.token),
@@ -437,7 +438,8 @@ export default {
 				})
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push('/apps/spreed/not-found')
+				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+				this.$store.dispatch('updateToken', '')
 				this.$store.dispatch('hideSidebar')
 			} finally {
 				this.isRefreshingCurrentConversation = false
