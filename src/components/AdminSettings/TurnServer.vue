@@ -39,9 +39,11 @@
 		</select>
 
 		<input ref="turn_server"
+			v-tooltip.auto="turnServerError"
 			type="text"
 			name="turn_server"
 			placeholder="turnserver:port"
+			:class="turnServerClasses"
 			:value="server"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server URL')"
@@ -137,6 +139,18 @@ export default {
 	},
 
 	computed: {
+		turnServerError() {
+			if (this.schemes.includes('turns') && /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$/.test(this.server.trim())) {
+				return t('spreed', 'turns: scheme must be used with a domain')
+			}
+
+			return false
+		},
+		turnServerClasses() {
+			return {
+				'error': this.turnServerError,
+			}
+		},
 		testIconClasses() {
 			return {
 				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
@@ -313,5 +327,9 @@ export default {
 	height: 44px;
 	display: flex;
 	align-items: center;
+
+	&.error {
+		border: solid 1px var(--color-error);
+	}
 }
 </style>
