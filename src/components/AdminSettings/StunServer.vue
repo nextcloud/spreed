@@ -22,6 +22,8 @@
 
 <template>
 	<div class="stun-server">
+		<!-- "stun:" scheme is untranslated -->
+		<span class="scheme">stun:</span>
 		<input ref="stun_server"
 			type="text"
 			name="stun_server"
@@ -96,6 +98,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.scheme {
+	/* Same margin as inputs to keep the style. */
+	margin: 3px 3px 3px 0;
+}
+
 .stun-server {
 	height: 44px;
 	display: flex;
