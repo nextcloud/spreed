@@ -22,10 +22,28 @@
 
 <template>
 	<div class="turn-server">
+		<select class="schemes"
+			:value="schemes"
+			:disabled="loading"
+			:aria-label="t('spreed', 'TURN server schemes')"
+			@input="updateSchemes">
+			<option value="turn,turns">
+				{{ t('spreed', 'turn: and turns:') }}
+			</option>
+			<option value="turn">
+				{{ t('spreed', 'turn: only') }}
+			</option>
+			<option value="turns">
+				{{ t('spreed', 'turns: only') }}
+			</option>
+		</select>
+
 		<input ref="turn_server"
+			v-tooltip.auto="turnServerError"
 			type="text"
 			name="turn_server"
 			placeholder="turnserver:port"
+			:class="turnServerClasses"
 			:value="server"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server URL')"
@@ -81,6 +99,11 @@ export default {
 	},
 
 	props: {
+		schemes: {
+			type: String,
+			default: '',
+			required: true,
+		},
 		server: {
 			type: String,
 			default: '',
@@ -116,6 +139,18 @@ export default {
 	},
 
 	computed: {
+		turnServerError() {
+			if (this.schemes.includes('turns') && /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$/.test(this.server.trim())) {
+				return t('spreed', 'turns: scheme must be used with a domain')
+			}
+
+			return false
+		},
+		turnServerClasses() {
+			return {
+				'error': this.turnServerError,
+			}
+		},
 		testIconClasses() {
 			return {
 				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
@@ -152,15 +187,17 @@ export default {
 			this.testingError = false
 			this.testingSuccess = false
 
+			const schemes = this.schemes.split(',')
 			const protocols = this.protocols.split(',')
-			if (!this.server || !this.secret || !protocols.length) {
+			if (!schemes.length || !this.server || !this.secret || !protocols.length) {
 				return
 			}
 
 			const urls = []
-			let i
-			for (i = 0; i < protocols.length; i++) {
-				urls.push('turn:' + this.server + '?transport=' + protocols[i])
+			for (let i = 0; i < schemes.length; i++) {
+				for (let j = 0; j < protocols.length; j++) {
+					urls.push(schemes[i] + ':' + this.server + '?transport=' + protocols[j])
+				}
 			}
 
 			const expires = Math.round((new Date()).getTime() / 1000) + (5 * 60)
@@ -265,6 +302,10 @@ export default {
 		removeServer() {
 			this.$emit('removeServer', this.index)
 		},
+		updateSchemes(event) {
+			this.$emit('update:schemes', event.target.value)
+			this.debounceTestServer()
+		},
 		updateServer(event) {
 			this.$emit('update:server', event.target.value)
 			this.debounceTestServer()
@@ -286,5 +327,9 @@ export default {
 	height: 44px;
 	display: flex;
 	align-items: center;
+
+	&.error {
+		border: solid 1px var(--color-error);
+	}
 }
 </style>

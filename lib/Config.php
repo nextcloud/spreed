@@ -243,6 +243,10 @@ class Config {
 			return [];
 		}
 
+		foreach ($servers as $key => $server) {
+			$servers[$key]['schemes'] = $server['schemes'] ?? 'turn';
+		}
+
 		return $servers;
 	}
 
@@ -256,6 +260,7 @@ class Config {
 
 		if (empty($servers)) {
 			return [
+				'schemes' => '',
 				'server' => '',
 				'username' => '',
 				'password' => '',
@@ -278,6 +283,7 @@ class Config {
 		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
 		return [
+			'schemes' => $server['schemes'],
 			'server' => $server['server'],
 			'username' => $username,
 			'password' => $password,
