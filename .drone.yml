@@ -6,7 +6,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable21
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -32,7 +32,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable21
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -67,7 +67,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable21
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -102,7 +102,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable21
       DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-integration-tests.sh || exit 0
@@ -137,7 +137,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable21
       GUESTS_BRANCH: master
       DATABASEHOST: sqlite
     commands:
