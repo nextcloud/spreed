@@ -1,7 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
-    "a conversation" : "交談",
+    "a conversation" : "對話",
     "(Duration %s)" : "(已歷時 %s)",
     "You attended a call with {user1}" : "您加入了與{user1}之間的通話",
     "_%n guest_::_%n guests_" : ["%n位訪客"],
