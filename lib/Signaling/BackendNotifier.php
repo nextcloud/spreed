@@ -277,7 +277,13 @@ class BackendNotifier {
 				$users[] = $data;
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
-					$data['permissions'] = ['publish-media', 'publish-screen'];
+					$data['permissions'] = [];
+					if ($attendee->getPublishingPermissions() & (Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+						$data['permissions'][] = 'publish-media';
+					}
+					if ($attendee->getPublishingPermissions() & Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING) {
+						$data['permissions'][] = 'publish-screen';
+					}
 					if ($attendee->getParticipantType() === Participant::OWNER ||
 						$attendee->getParticipantType() === Participant::MODERATOR) {
 						$data['permissions'][] = 'control';
