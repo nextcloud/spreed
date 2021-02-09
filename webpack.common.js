@@ -16,6 +16,7 @@ module.exports = {
 		'talk-public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
 		'flow': path.join(__dirname, 'src', 'flow.js'),
 		'dashboard': path.join(__dirname, 'src', 'dashboard.js'),
+		'deck': path.join(__dirname, 'src', 'deck.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, './js'),
