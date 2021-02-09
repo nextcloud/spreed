@@ -43,6 +43,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
@@ -249,6 +250,7 @@ class PageController extends Controller {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
 
+		$this->eventDispatcher->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts', new GenericEvent());
 		$response = new TemplateResponse($this->appName, 'index');
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
