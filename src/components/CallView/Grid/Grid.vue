@@ -64,18 +64,18 @@
 					<h1 class="dev-mode__title">
 						Dev mode on ;-)
 					</h1>
-					<LocalVideo
-						v-if="!isStripe"
-						ref="localVideo"
-						class="video"
-						:is-grid="true"
-						:fit-video="isStripe"
-						:local-media-model="localMediaModel"
-						:video-container-aspect-ratio="videoContainerAspectRatio"
-						:local-call-participant-model="localCallParticipantModel"
-						@switchScreenToId="1"
-						@click-video="handleClickLocalVideo" />
 				</template>
+				<LocalVideo
+					v-if="!isStripe"
+					ref="localVideo"
+					class="video"
+					:is-grid="true"
+					:fit-video="isStripe"
+					:local-media-model="localMediaModel"
+					:video-container-aspect-ratio="videoContainerAspectRatio"
+					:local-call-participant-model="localCallParticipantModel"
+					@switchScreenToId="1"
+					@click-video="handleClickLocalVideo" />
 			</div>
 			<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
 				class="grid-navigation grid-navigation__next"
