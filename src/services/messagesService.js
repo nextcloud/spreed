@@ -23,6 +23,8 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import store from '../store/index'
+import SHA1 from 'crypto-js/sha1'
+import Hex from 'crypto-js/enc-hex'
 
 /**
  * Fetches messages that belong to a particular conversation
@@ -103,8 +105,31 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
 	return response
 }
 
+/**
+ * Post a rich object to a conversation
+ *
+ * @param {string} token conversation token
+ * @param {string} objectType object type
+ * @param {string} objectId object id
+ * @param {string} metaData JSON metadata of the rich object encoded as string
+ * @param {string} referenceId generated reference id, leave empty to generate it based on the other args
+ */
+const postRichObjectToConversation = async function(token, { objectType, objectId, metaData, referenceId }) {
+	if (!referenceId) {
+		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
+		referenceId = Hex.stringify(SHA1(tempId))
+	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/share`, {
+		objectType,
+		objectId,
+		metaData,
+		referenceId,
+	})
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
 	postNewMessage,
+	postRichObjectToConversation,
 }

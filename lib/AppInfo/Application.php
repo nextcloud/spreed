@@ -38,6 +38,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\Operation;
@@ -96,6 +97,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
