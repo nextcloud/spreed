@@ -34,7 +34,6 @@ const state = {
 	uploads: {
 	},
 	currentUploadId: undefined,
-	showUploadEditor: false,
 }
 
 const getters = {
@@ -86,10 +85,6 @@ const getters = {
 
 	currentUploadId: (state) => {
 		return state.currentUploadId
-	},
-
-	showUploadEditor: (state) => {
-		return state.showUploadEditor
 	},
 }
 
@@ -168,11 +163,6 @@ const mutations = {
 		state.currentUploadId = currentUploadId
 	},
 
-	// Shows hides the upload editor
-	showUploadEditor(state, show) {
-		state.showUploadEditor = show
-	},
-
 	removeFileFromSelection(state, fileId) {
 		const uploadId = state.currentUploadId
 		for (const key in state.uploads[uploadId].files) {
@@ -181,6 +171,10 @@ const mutations = {
 			}
 		}
 	},
+
+	discardUpload(state, uploadId) {
+		Vue.delete(state.uploads, uploadId)
+	},
 }
 
 const actions = {
@@ -188,8 +182,6 @@ const actions = {
 	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
 		// Set last upload id
 		commit('setCurrentUploadId', uploadId)
-		// Show upload editor
-		commit('showUploadEditor', true)
 
 		files.forEach(file => {
 			// Get localurl for previews
@@ -205,11 +197,28 @@ const actions = {
 	},
 
 	/**
+	 * Discards an upload
+	 * @param {object} param0 Commit and state
+	 * @param {object} uploadId The unique uploadId
+	 */
+	discardUpload({ commit, state, getters }, uploadId) {
+		if (state.currentUploadId === uploadId) {
+			commit('setCurrentUploadId', undefined)
+		}
+
+		commit('discardUpload', { uploadId })
+	},
+
+	/**
 	 * Uploads the files to the root directory of the user
 	 * @param {object} param0 Commit, state and getters
 	 * @param {object} uploadId The unique uploadId
 	 */
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
+		if (state.currentUploadId === uploadId) {
+			commit('setCurrentUploadId', undefined)
+		}
+
 		EventBus.$emit('uploadStart')
 
 		// Tag the previously indexed files and add the temporary messages to the
