@@ -29,6 +29,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<namespace>Talk</namespace>
 
 	<types>
+		<dav />
 		<prevent_group_restriction />
 	</types>
 
