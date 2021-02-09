@@ -133,7 +133,8 @@ export default {
 	data() {
 		return {
 			testing: false,
-			testingError: false,
+			testingErrorUDP: false,
+			testingErrorTCP: false,
 			testingSuccess: false,
 		}
 	},
@@ -153,17 +154,23 @@ export default {
 		},
 		testIconClasses() {
 			return {
-				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
+				'icon-category-monitoring': !this.testing && !(this.testingErrorUDP || this.testingErrorTCP) && !this.testingSuccess,
 				'icon-loading-small': this.testing,
-				'icon-error': this.testingError,
+				'icon-error': this.testingErrorUDP || this.testingErrorTCP,
 				'icon-checkmark': this.testingSuccess,
 			}
 		},
 		testResult() {
 			if (this.testingSuccess) {
 				return t('spreed', 'OK: Successful ICE candidates returned by the TURN server')
-			} else if (this.testingError) {
-				return t('spreed', 'Error: No working ICE candidates returned by the TURN server')
+			} else if (this.testingErrorUDP) {
+				if (this.testingErrorTCP) {
+					return t('spreed', 'Error: No working ICE candidates returned by the TURN server')
+				}
+
+				return t('spreed', 'Error: No working ICE candidates returned for UDP by the TURN server')
+			} else if (this.testingErrorTCP) {
+				return t('spreed', 'Error: No working ICE candidates returned for TCP by the TURN server')
 			} else if (this.testing) {
 				return t('spreed', 'Testing whether the TURN server returns ICE candidates')
 			}
@@ -173,7 +180,8 @@ export default {
 
 	mounted() {
 		this.testing = false
-		this.testingError = false
+		this.testingErrorUDP = false
+		this.testingErrorTCP = false
 		this.testingSuccess = false
 	},
 
@@ -184,7 +192,8 @@ export default {
 
 		testServer() {
 			this.testing = true
-			this.testingError = false
+			this.testingErrorUDP = false
+			this.testingErrorTCP = false
 			this.testingSuccess = false
 
 			const schemes = this.schemes.split(',')
@@ -256,17 +265,22 @@ export default {
 		notifyTurnResult(candidates, timeout) {
 			console.info('Received candidates', candidates)
 
-			const types = candidates.map((cand) => cand.type)
+			const udpCandidates = candidates.filter((cand) => cand.type === 'relay' && cand.protocol === 'UDP')
+			const tcpCandidates = candidates.filter((cand) => cand.type === 'relay' && cand.protocol === 'TCP')
 
 			this.testing = false
-			if (types.indexOf('relay') === -1) {
-				this.testingError = true
-			} else {
-				this.testingSuccess = true
+			if (udpCandidates.length === 0 && this.protocols.indexOf('udp') !== -1) {
+				this.testingErrorUDP = true
+			}
+			if (tcpCandidates.length === 0 && this.protocols.indexOf('tcp') !== -1) {
+				this.testingErrorTCP = true
 			}
 
+			this.testingSuccess = !(this.testingErrorUDP || this.testingErrorTCP)
+
 			setTimeout(() => {
-				this.testingError = false
+				this.testingErrorUDP = false
+				this.testingErrorTCP = false
 				this.testingSuccess = false
 			}, 30000)
 
