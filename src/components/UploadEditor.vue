@@ -79,12 +79,6 @@ export default {
 		Plus,
 	},
 
-	data() {
-		return {
-			modalDismissed: false,
-		}
-	},
-
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
@@ -101,12 +95,8 @@ export default {
 			return []
 		},
 
-		showUploadEditor() {
-			return this.$store.getters.showUploadEditor
-		},
-
 		showModal() {
-			return this.showUploadEditor && !this.modalDismissed
+			return !!this.currentUploadId
 		},
 
 		addMoreAriaLabel() {
@@ -114,20 +104,13 @@ export default {
 		},
 	},
 
-	watch: {
-		currentUploadId() {
-			this.modalDismissed = false
-		},
-	},
-
 	methods: {
 		handleDismiss() {
-			this.modalDismissed = true
+			this.$store.dispatch('discardUpload', this.currentUploadId)
 		},
 
 		handleUpload() {
 			this.$store.dispatch('uploadFiles', this.currentUploadId)
-			this.modalDismissed = true
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent ActionButton,
