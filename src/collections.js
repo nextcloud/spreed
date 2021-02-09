@@ -49,7 +49,7 @@ import RoomSelector from './views/RoomSelector'
 				ComponentVM.$root.$on('close', () => {
 					ComponentVM.$el.remove()
 					ComponentVM.$destroy()
-					reject(new Error('User canceled resource selection'))
+					reject(new Error('User cancelled resource selection'))
 				})
 				ComponentVM.$root.$on('select', (id) => {
 					resolve(id)
