@@ -1,11 +1,6 @@
 <?php
 
-/** @var \OCP\IL10N $l */
-/** @var array $_ */
+declare(strict_types=1);
 
 script('spreed', 'talk');
-
 style('spreed', 'merged');
-if (($_['user_uid'] ?? '') !== '') {
-	\OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
-}
