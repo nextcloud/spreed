@@ -109,7 +109,7 @@ class CallController extends AEnvironmentAwareController {
 						$displayName = $user->getDisplayName();
 					}
 				} else {
-					$displayName = $guestNames[$participant->getAttendee()->getActorId()] ?? $displayName;
+					$displayName = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
 				}
 
 				$result[] = [
