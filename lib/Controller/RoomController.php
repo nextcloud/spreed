@@ -1161,11 +1161,6 @@ class RoomController extends AEnvironmentAwareController {
 
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
-				$user = $this->userManager->get($userId);
-				if (!$user instanceof IUser) {
-					continue;
-				}
-
 				if ($result['lastPing'] > 0 && $result['lastPing'] <= $maxPingAge) {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
@@ -1173,7 +1168,14 @@ class RoomController extends AEnvironmentAwareController {
 				if ($this->getAPIVersion() < 3) {
 					$result['userId'] = $participant->getAttendee()->getActorId();
 				}
-				$result['displayName'] = (string) $user->getDisplayName();
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+				if (!$result['displayName']) {
+					$user = $this->userManager->get($userId);
+					if (!$user instanceof IUser) {
+						continue;
+					}
+					$result['displayName'] = $user->getDisplayName();
+				}
 
 				if (isset($statuses[$userId])) {
 					$result['status'] = $statuses[$userId]->getStatus();
