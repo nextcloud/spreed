@@ -24,7 +24,7 @@ import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../services/BrowserStorage'
 
 const state = {
-	playSoundsUser: loadState('talk', 'play_sounds'),
+	playSoundsUser: loadState('spreed', 'play_sounds'),
 	playSoundsGuest: BrowserStorage.getItem('play_sounds') !== 'no',
 }
 

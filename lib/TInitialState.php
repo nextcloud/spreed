@@ -97,8 +97,8 @@ trait TInitialState {
 			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'play_sounds',
+		$this->initialState->provideInitialState(
+			'play_sounds',
 			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
 		);
 
@@ -173,8 +173,8 @@ trait TInitialState {
 			false
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'play_sounds',
+		$this->initialState->provideInitialState(
+			'play_sounds',
 			false
 		);
 	}
