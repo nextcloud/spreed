@@ -483,7 +483,7 @@ export default {
 
 		numberOfPages() {
 			if (this.currentPage >= this.numberOfPages) {
-				this.currentPage = this.numberOfPages - 1
+				this.currentPage = Math.max(0, this.numberOfPages - 1)
 			}
 		},
 	},
