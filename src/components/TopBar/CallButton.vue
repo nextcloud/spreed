@@ -98,6 +98,7 @@ export default {
 				|| this.isBlockedByLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
+				|| !this.currentConversationIsJoined
 		},
 
 		leaveCallLabel() {
@@ -163,6 +164,10 @@ export default {
 		showLeaveCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& this.isInCall
+		},
+
+		currentConversationIsJoined() {
+			return this.$store.getters.currentConversationIsJoined
 		},
 	},
 
