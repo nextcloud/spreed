@@ -246,6 +246,9 @@ export default {
 
 			if (!participantName) {
 				participantName = this.peerData.displayName
+				if (!participantName && this.peerData.actorType === 'guests') {
+					participantName = t('spreed', 'Guest')
+				}
 			}
 
 			return participantName
