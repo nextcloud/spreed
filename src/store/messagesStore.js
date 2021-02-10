@@ -20,7 +20,10 @@
  *
  */
 import Vue from 'vue'
-import { deleteMessage } from '../services/messagesService'
+import {
+	deleteMessage,
+	updateLastReadMessage,
+} from '../services/messagesService'
 
 const state = {
 	/**
@@ -320,6 +323,26 @@ const actions = {
 	 */
 	deleteMessages(context, token) {
 		context.commit('deleteMessages', token)
+	},
+
+	async clearLastReadMessage(context, { token }) {
+		const conversation = context.getters.conversations[token]
+		if (!conversation || !conversation.lastMessage) {
+			return
+		}
+		// set the id to the last message
+		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id })
+	},
+
+	async updateLastReadMessage(context, { token, id = 0 }) {
+		const conversation = Object.assign({}, context.getters.conversations[token])
+		if (!conversation || conversation.lastReadMessage === id) {
+			return
+		}
+
+		// optimistic early commit to avoid indicator flickering
+		context.commit('updateConversationLastReadMessage', { token, lastReadMessage: id })
+		await updateLastReadMessage(token, id)
 	},
 }
 

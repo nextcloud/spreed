@@ -45,8 +45,7 @@
 					:actor-id="actorId"
 					:actor-display-name="actorDisplayName"
 					:show-author="!isSystemMessage"
-					:is-temporary="message.timestamp === 0"
-					:last-read-message="lastReadMessage" />
+					:is-temporary="message.timestamp === 0" />
 			</ul>
 		</div>
 	</div>
@@ -86,13 +85,6 @@ export default {
 		messages: {
 			type: Array,
 			required: true,
-		},
-		/**
-		 * Id of the last read message when the chat was opened
-		 */
-		lastReadMessage: {
-			type: Number,
-			default: 0,
 		},
 	},
 

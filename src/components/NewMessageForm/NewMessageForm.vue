@@ -324,9 +324,26 @@ export default {
 
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
+
+					const message = response.data.ocs.data
 					// And adds the complete version of the message received
 					// by the server
-					this.$store.dispatch('processMessage', response.data.ocs.data)
+					this.$store.dispatch('processMessage', message)
+
+					// update lastMessage and lastReadMessage
+					// do it conditionally because there could have been more messages appearing concurrently
+					if (this.conversation.lastMessage && message.id > this.conversation.lastMessage.id) {
+						this.$store.dispatch('updateConversationLastMessage', {
+							token: this.token,
+							lastMessage: message,
+						})
+					}
+					if (message.id > this.conversation.lastReadMessage) {
+						this.$store.dispatch('updateConversationLastReadMessage', {
+							token: this.token,
+							lastReadMessage: message.id,
+						})
+					}
 				} catch (error) {
 					let statusCode = null
 					console.debug(`error while submitting message ${error}`, error)

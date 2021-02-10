@@ -36,6 +36,7 @@ import Hex from 'crypto-js/enc-hex'
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
 		params: {
+			setReadMarker: 0,
 			lookIntoFuture: 0,
 			lastKnownMessageId,
 			includeLastKnown: includeLastKnown || 0,
@@ -64,6 +65,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
 const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
 		params: {
+			setReadMarker: 0,
 			lookIntoFuture: 1,
 			lastKnownMessageId,
 			includeLastKnown: 0,
@@ -138,10 +140,28 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
 	})
 }
 
+/**
+ * Updates the last read message id
+ *
+ * @param {string} token The token of the conversation to be removed from favorites
+ * @param {int} lastReadMessage id of the last read message to set
+ */
+const updateLastReadMessage = async function(token, lastReadMessage) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/read`, {
+			lastReadMessage,
+		})
+		return response
+	} catch (error) {
+		console.error(`Error while updating the last read message to {lastReadMessage}`, error)
+	}
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
 	postNewMessage,
 	deleteMessage,
 	postRichObjectToConversation,
+	updateLastReadMessage,
 }
