@@ -125,7 +125,7 @@ Feature: get
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" moves file "/welcome (2).txt" to "/renamed.txt" with 201
+    And user "participant2" moves file "/Talk/welcome.txt" to "/Talk/renamed.txt" with 201
     And user "participant1" updates last share with
       | expireDate | -3 days |
     And share is returned with
@@ -1149,7 +1149,7 @@ Feature: get
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
+    When user "participant2" gets the share-type DAV property for "Talk/welcome.txt"
     Then the response contains a share-types DAV property with
 
   Scenario: get DAV properties for a room share reshared with a user
@@ -1269,10 +1269,12 @@ Feature: get
     And user "participant2" gets the DAV properties for "/"
     And the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
-      | /welcome%20(2).txt |
-
-
+    And user "participant2" gets the DAV properties for "/Talk"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/welcome.txt |
 
   Scenario: get files after deleting a share
     Given user "participant1" creates room "group room"
