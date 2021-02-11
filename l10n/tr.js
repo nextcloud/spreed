@@ -846,6 +846,7 @@ OC.L10N.register(
     "Only normal chat messages can be deleted" : "Yalnız normal sohbet iletileri silinebilir",
     "An error occurred while deleting the message" : "İleti silinirken bir sorun çıktı",
     "{stack} in {board}" : "{stack} {board} panosunda",
+    "Deck Card" : "Tahta Kartı",
     "Remove" : "Sil",
     "[Unknown username]" : "[Kullanıcı adı bilinmiyor]",
     "Scroll to bottom" : "Aşağıya kaydır",
