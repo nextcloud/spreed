@@ -168,6 +168,8 @@ class Room {
 	private $password;
 	/** @var int */
 	private $activeGuests;
+	/** @var int */
+	private $callFlag;
 	/** @var \DateTime|null */
 	private $activeSince;
 	/** @var \DateTime|null */
@@ -204,6 +206,7 @@ class Room {
 								string $description,
 								string $password,
 								int $activeGuests,
+								int $callFlag,
 								\DateTime $activeSince = null,
 								\DateTime $lastActivity = null,
 								int $lastMessageId,
@@ -229,6 +232,7 @@ class Room {
 		$this->description = $description;
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
+		$this->callFlag = $callFlag;
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
 		$this->lastMessageId = $lastMessageId;
@@ -316,6 +320,10 @@ class Room {
 
 	public function getActiveGuests(): int {
 		return $this->activeGuests;
+	}
+
+	public function getCallFlag(): int {
+		return $this->callFlag;
 	}
 
 	public function getActiveSince(): ?\DateTime {
@@ -662,18 +670,32 @@ class Room {
 
 	/**
 	 * @param \DateTime $since
+	 * @param int $callFlag
 	 * @param bool $isGuest
 	 * @return bool
 	 */
-	public function setActiveSince(\DateTime $since, bool $isGuest): bool {
+	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): bool {
 		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
 			$query = $this->db->getQueryBuilder();
 			$query->update('talk_rooms')
 				->set('active_guests', $query->createFunction($query->getColumnName('active_guests') . ' + 1'))
+				->set(
+					'call_flag',
+					$query->expr()->bitwiseOr('call_flag', $callFlag)
+				)
 				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 			$query->execute();
 
 			$this->activeGuests++;
+		} elseif (!$isGuest) {
+			$query = $this->db->getQueryBuilder();
+			$query->update('talk_rooms')
+				->set(
+					'call_flag',
+					$query->expr()->bitwiseOr('call_flag', $callFlag)
+				)
+				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+			$query->execute();
 		}
 
 		if ($this->activeSince instanceof \DateTime) {
@@ -682,7 +704,7 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
-			->set('active_since', $query->createNamedParameter($since, 'datetime'))
+			->set('active_since', $query->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNull('active_since'));
 		$query->execute();
@@ -703,8 +725,9 @@ class Room {
 	public function resetActiveSince(): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
-			->set('active_guests', $query->createNamedParameter(0))
-			->set('active_since', $query->createNamedParameter(null, 'datetime'))
+			->set('active_guests', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('active_since', $query->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
+			->set('call_flag', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('active_since'));
 
