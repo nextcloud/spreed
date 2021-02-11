@@ -898,7 +898,7 @@ Feature: update
     And user "participant1" adds "participant3" to room "group room invited to" with 200
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant2" creates folder "/test"
-    And user "participant2" moves file "/welcome (2).txt" to "/test/renamed.txt" with 201
+    And user "participant2" moves file "/Talk/welcome.txt" to "/test/renamed.txt" with 201
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
@@ -947,7 +947,7 @@ Feature: update
     And user "participant1" adds "participant3" to room "group room invited to" with 200
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant2" creates folder "/test"
-    And user "participant2" moves file "/welcome (2).txt" to "/test/renamed.txt" with 201
+    And user "participant2" moves file "/Talk/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant1" removes "participant2" from room "group room invited to" with 200
     When user "participant2" updates last share with
       | permissions            | 1 |
