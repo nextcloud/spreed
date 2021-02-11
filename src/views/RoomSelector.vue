@@ -24,7 +24,7 @@
 	<Modal @close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-				<h2>{{ t('spreed', 'Select a conversation') }}</h2>
+				<h2>{{ dialogTitle }}</h2>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
 						<li v-for="room in availableRooms"
@@ -69,6 +69,20 @@ export default {
 		ConversationIcon,
 		Modal,
 	},
+	props: {
+		dialogTitle: {
+			type: String,
+			default: t('spreed', 'Link to a conversation'),
+		},
+		/**
+		 * Whether to only show conversations to which
+		 * the user can post messages.
+		 */
+		showPostableOnly: {
+			type: Boolean,
+			default: false,
+		},
+	},
 	data() {
 		return {
 			rooms: [],
@@ -80,6 +94,7 @@ export default {
 		availableRooms() {
 			return this.rooms.filter((room) => {
 				return room.type !== CONVERSATION.TYPE.CHANGELOG
+					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
 			})
