@@ -100,6 +100,7 @@ import AccountCircle from 'vue-material-design-icons/AccountCircle'
 import VideoBottomBar from './VideoBottomBar'
 import Screen from './Screen'
 import { EventBus } from '../../../services/EventBus'
+import { ATTENDEE } from '../../../constants'
 
 export default {
 
@@ -240,7 +241,7 @@ export default {
 
 			// Check data from participant list
 			if (this.participant?.actorType) {
-				if (this.participant?.actorType === 'users' && this.participant?.actorId) {
+				if (this.participant?.actorType === ATTENDEE.ACTOR_TYPE.USERS && this.participant?.actorId) {
 					return this.participant.actorId
 				}
 
@@ -249,7 +250,7 @@ export default {
 			}
 
 			// Fallback to CallController::getPeers() endpoint
-			if (this.peerData.actorType === 'users') {
+			if (this.peerData.actorType === ATTENDEE.ACTOR_TYPE.USERS) {
 				return this.peerData.actorId
 			}
 
@@ -279,7 +280,7 @@ export default {
 
 			if (!participantName) {
 				participantName = this.peerData.displayName
-				if (!participantName && this.peerData.actorType === 'guests') {
+				if (!participantName && this.peerData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 					participantName = t('spreed', 'Guest')
 				}
 			}
