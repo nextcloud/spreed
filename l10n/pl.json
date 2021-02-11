@@ -599,6 +599,8 @@
     "turns: scheme must be used with a domain" : "turny: schemat musi być używany z domeną",
     "OK: Successful ICE candidates returned by the TURN server" : "W porządku: Pomyślnie zwróceni kandydaci ICE przez serwer TURN",
     "Error: No working ICE candidates returned by the TURN server" : "Błąd: Nie działa zwrot kandydatów ICE przez serwer TURN",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Błąd: Nie działa zwrot kandydatów ICE do UDP przez serwer TURN",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Błąd: Nie działa zwrot kandydatów ICE do TCP przez serwer TURN",
     "Testing whether the TURN server returns ICE candidates" : "Testowanie, czy serwer TURN zwraca kandydatów ICE",
     "Test this server" : "Przetestuj ten serwer",
     "TURN servers" : "Serwery TURN",

@@ -601,6 +601,8 @@ OC.L10N.register(
     "turns: scheme must be used with a domain" : "Lo schema turns: deve essere utilizzato con un dominio",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: Candidati ICE validi restituiti dal server TURN",
     "Error: No working ICE candidates returned by the TURN server" : "OK: Candidati ICE non funzionanti restituiti dal server TURN",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Errore: nessun candidato ICE funzionante restituito per UDP dal server TURN ",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Errore: nessun candidato ICE funzionante restituito per TCP dal server TURN ",
     "Testing whether the TURN server returns ICE candidates" : "Verifica se il server TURN restituisce candidati",
     "Test this server" : "Prova questo server",
     "TURN servers" : "Server TURN",
