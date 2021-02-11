@@ -217,7 +217,7 @@ Feature: move
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" creates folder "/test"
-    When user "participant2" moves file "/welcome (2).txt" to "/test/renamed.txt" with 201
+    When user "participant2" moves file "Talk/welcome.txt" to "test/renamed.txt" with 201
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -267,5 +267,5 @@ Feature: move
     And user "participant3" shares "/test" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    When user "participant3" moves file "/welcome (2).txt" to "/test/renamed.txt"
+    When user "participant3" moves file "/Talk/welcome.txt" to "/test/renamed.txt"
     Then the HTTP status code should be "403"
