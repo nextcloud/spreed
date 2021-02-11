@@ -372,8 +372,8 @@ Feature: hooks
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
-    And user "participant3" moves file "welcome (2).txt" to "renamed too.txt"
+    And user "participant2" moves file "Talk/welcome.txt" to "Talk/renamed.txt"
+    And user "participant3" moves file "Talk/welcome.txt" to "Talk/renamed too.txt"
     When user "participant1" removes "participant2" from room "group room" with 200
     Then user "participant1" gets last share
     And share is returned with
@@ -392,11 +392,11 @@ Feature: hooks
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /renamed too.txt |
+      | path                   | /Talk/renamed too.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/renamed too.txt |
-      | file_target            | /renamed too.txt |
+      | storage_id             | shared::/Talk/renamed too.txt |
+      | file_target            | /Talk/renamed too.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
@@ -819,8 +819,8 @@ Feature: hooks
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
-    And user "participant2" shares "renamed.txt" with user "participant3" with OCS 100
+    And user "participant2" moves file "Talk/welcome.txt" to "Talk/renamed.txt"
+    And user "participant2" shares "Talk/renamed.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     When user "participant1" deletes room "group room" with 200
     Then user "participant1" gets all shares
