@@ -29,12 +29,12 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
-use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -59,8 +59,6 @@ class ChatControllerTest extends TestCase {
 	private $userId;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var TalkSession|MockObject */
-	private $session;
 	/** @var IAppManager|MockObject */
 	private $appManager;
 	/** @var ChatManager|MockObject */
@@ -106,7 +104,6 @@ class ChatControllerTest extends TestCase {
 
 		$this->userId = 'testUser';
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->session = $this->createMock(TalkSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -141,7 +138,6 @@ class ChatControllerTest extends TestCase {
 			$this->userId,
 			$this->createMock(IRequest::class),
 			$this->userManager,
-			$this->session,
 			$this->appManager,
 			$this->chatManager,
 			$this->participantService,
@@ -542,15 +538,14 @@ class ChatControllerTest extends TestCase {
 		$this->userId = null;
 		$this->recreateChatController();
 
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'guests',
+			'actor_id' => 'actorId',
+			'participant_type' => Participant::GUEST,
+		]);
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getToken')
-			->willReturn('testToken');
+		$participant->method('getAttendee')
+			->willReturn($attendee);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -563,7 +558,7 @@ class ChatControllerTest extends TestCase {
 			->with($this->room,
 				$participant,
 				'guests',
-				sha1('testSpreedSession'),
+				'actorId',
 				'testMessage',
 				$this->newMessageDateTimeConstraint
 			)
