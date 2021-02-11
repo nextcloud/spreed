@@ -519,6 +519,15 @@ class ParticipantService {
 		$query->execute();
 	}
 
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_attendees')
+			->set('display_name', $query->createNamedParameter($displayName))
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
+		$query->execute();
+	}
+
 	public function getLastCommonReadChatMessage(Room $room): int {
 		$query = $this->connection->getQueryBuilder();
 		$query->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')

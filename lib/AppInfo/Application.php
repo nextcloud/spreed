@@ -46,6 +46,7 @@ use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\UserDeletedListener;
+use OCA\Talk\Listener\UserDisplayNameListener;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
@@ -75,6 +76,7 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
+use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserDeletedEvent;
 
 class Application extends App implements IBootstrap {
@@ -96,6 +98,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
+		$context->registerEventListener(UserChangedEvent::class, UserDisplayNameListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
