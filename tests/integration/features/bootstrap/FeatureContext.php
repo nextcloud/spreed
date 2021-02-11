@@ -270,6 +270,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['sipEnabled'])) {
 				$data['sipEnabled'] = (string) $room['sipEnabled'];
 			}
+			if (isset($expectedRoom['callFlag'])) {
+				$data['callFlag'] = (int) $room['callFlag'];
+			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
