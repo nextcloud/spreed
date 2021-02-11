@@ -601,6 +601,8 @@ OC.L10N.register(
     "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır",
     "OK: Successful ICE candidates returned by the TURN server" : "Tamam: TURN sunucusu tarafından çalışan ICE adayları bildirildi",
     "Error: No working ICE candidates returned by the TURN server" : "Sorun: TURN sunucusu tarafından çalışan bir ICE adayı bildirilmedi",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Sorun: TURN sunucusu tarafından UDP için çalışan bir ICE adayı bildirilmedi",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Sorun: TURN sunucusu tarafından TCP için çalışan bir ICE adayı bildirilmedi",
     "Testing whether the TURN server returns ICE candidates" : "TURN sunucusunun ICE adaylarını bildirip bildirmediği sınanıyor",
     "Test this server" : "Bu sunucuyu sına",
     "TURN servers" : "TURN sunucuları",
