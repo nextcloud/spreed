@@ -98,6 +98,7 @@ import AccountCircle from 'vue-material-design-icons/AccountCircle'
 import VideoBottomBar from './VideoBottomBar'
 import Screen from './Screen'
 import { EventBus } from '../../../services/EventBus'
+import { ATTENDEE } from '../../../constants'
 
 export default {
 
@@ -246,7 +247,7 @@ export default {
 
 			if (!participantName) {
 				participantName = this.peerData.displayName
-				if (!participantName && this.peerData.actorType === 'guests') {
+				if (!participantName && this.peerData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 					participantName = t('spreed', 'Guest')
 				}
 			}
