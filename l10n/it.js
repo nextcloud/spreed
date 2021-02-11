@@ -846,6 +846,7 @@ OC.L10N.register(
     "Only normal chat messages can be deleted" : "È possibile eliminare solo i normali messaggi di chat",
     "An error occurred while deleting the message" : "Si è verificato un errore durante l'eliminazione del messaggio",
     "{stack} in {board}" : "{stack} in {board}",
+    "Deck Card" : "Scheda di Deck",
     "Remove" : "Rimuovi",
     "[Unknown username]" : "[Nome utente sconosciuto]",
     "Scroll to bottom" : "Scorri in fondo",
