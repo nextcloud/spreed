@@ -599,6 +599,8 @@
     "turns: scheme must be used with a domain" : "girar: o esquema deve ser usado com um domínio ",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: Candidatos ICE foram retornados pelo servidor TURN",
     "Error: No working ICE candidates returned by the TURN server" : "Erro: Nenhum candidato ICE foi retornado pelo servidor TURN",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Erro: Nenhum candidato ICE funcional retornado para UDP pelo servidor TURN",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Erro: Nenhum candidato ICE funcional retornado para TCP pelo servidor TURN",
     "Testing whether the TURN server returns ICE candidates" : "Testando para ver se o servidor TURN retorna candidatos ICE",
     "Test this server" : "Testar este servidor",
     "TURN servers" : "Servidores TURN",
