@@ -59,11 +59,6 @@ const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) =>
 		referenceId: Hex.stringify(SHA1(tempId)),
 	})
 
-	if (store.getters.getActorType() === 'guests') {
-		// Strip off "guests/" from the sessionHash
-		message.actorId = store.getters.getActorId().substring(6)
-	}
-
 	/**
 	 * If the current message is a quote-reply message, add the parent key to the
 	 * temporary message object.

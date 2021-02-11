@@ -111,7 +111,7 @@ export default {
 				this.$store.dispatch('setDisplayName', this.guestUserName)
 				this.$store.dispatch('forceGuestName', {
 					token: this.token,
-					actorId: this.$store.getters.getActorId().substring(6),
+					actorId: this.$store.getters.getActorId(),
 					actorDisplayName: this.guestUserName,
 				})
 				await setGuestUserName(this.token, this.guestUserName)
@@ -125,7 +125,7 @@ export default {
 				this.$store.dispatch('setDisplayName', previousName)
 				this.$store.dispatch('forceGuestName', {
 					token: this.token,
-					actorId: this.$store.getters.getActorId().substring(6),
+					actorId: this.$store.getters.getActorId(),
 					actorDisplayName: previousName,
 				})
 				console.debug(exception)
