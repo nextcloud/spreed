@@ -282,6 +282,7 @@ trait TRoomCommand {
 			$participants[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
 			];
 		}
 

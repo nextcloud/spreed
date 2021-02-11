@@ -899,6 +899,7 @@ class RoomController extends AEnvironmentAwareController {
 			$participants[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
 			];
 		}
 
@@ -954,9 +955,15 @@ class RoomController extends AEnvironmentAwareController {
 				continue;
 			}
 
+			$user = $this->userManager->get($this->userId);
+			if (!$user instanceof IUser) {
+				continue;
+			}
+
 			$participants[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $member->getUserId(),
+				'displayName' => $user->getDisplayName(),
 			];
 		}
 
@@ -1248,6 +1255,7 @@ class RoomController extends AEnvironmentAwareController {
 			$participantsToAdd[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $newUser->getUID(),
+				'displayName' => $newUser->getDisplayName(),
 			];
 		} elseif ($source === 'groups') {
 			$group = $this->groupManager->get($newParticipant);
@@ -1260,6 +1268,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participantsToAdd[] = [
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
+					'displayName' => $user->getDisplayName(),
 				];
 			}
 		} elseif ($source === 'circles') {
@@ -1286,9 +1295,15 @@ class RoomController extends AEnvironmentAwareController {
 					continue;
 				}
 
+				$user = $this->userManager->get($this->userId);
+				if (!$user instanceof IUser) {
+					continue;
+				}
+
 				$participantsToAdd[] = [
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $member->getUserId(),
+					'displayName' => $user->getDisplayName(),
 				];
 			}
 		} elseif ($source === 'emails') {

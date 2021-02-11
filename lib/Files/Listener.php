@@ -33,6 +33,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IUserManager;
 
 /**
  * Custom behaviour for rooms for files.
@@ -56,14 +57,18 @@ class Listener {
 	protected $util;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var IUserManager */
+	protected $userManager;
 	/** @var TalkSession */
 	protected $talkSession;
 
 	public function __construct(Util $util,
 								ParticipantService $participantService,
+								IUserManager $userManager,
 								TalkSession $talkSession) {
 		$this->util = $util;
 		$this->participantService = $participantService;
+		$this->userManager = $userManager;
 		$this->talkSession = $talkSession;
 	}
 
@@ -154,9 +159,12 @@ class Listener {
 		try {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
+			$user = $this->userManager->get($userId);
+
 			$this->participantService->addUsers($room, [[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
+				'displayName' => $user ? $user->getDisplayName() : $userId,
 			]]);
 		}
 	}

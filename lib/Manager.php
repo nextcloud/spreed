@@ -802,9 +802,11 @@ class Manager {
 			$room->setReadOnly(Room::READ_ONLY);
 			$room->setListable(Room::LISTABLE_NONE);
 
+			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room,[[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
+				'displayName' => $user ? $user->getDisplayName() : $userId,
 			]]);
 			return $room;
 		}
@@ -814,9 +816,11 @@ class Manager {
 		try {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
+			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room,[[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
+				'displayName' => $user ? $user->getDisplayName() : $userId,
 			]]);
 		}
 

@@ -90,9 +90,13 @@ class RoomServiceTest extends TestCase {
 		$user1 = $this->createMock(IUser::class);
 		$user1->method('getUID')
 			->willReturn('uid1');
+		$user1->method('getDisplayName')
+			->willReturn('display-1');
 		$user2 = $this->createMock(IUser::class);
 		$user2->method('getUID')
 			->willReturn('uid2');
+		$user2->method('getDisplayName')
+			->willReturn('display-2');
 
 		$room = $this->createMock(Room::class);
 		$this->participantService->expects($this->once())
@@ -100,10 +104,12 @@ class RoomServiceTest extends TestCase {
 			->with($room, [[
 				'actorType' => 'users',
 				'actorId' => 'uid1',
+				'displayName' => 'display-1',
 				'participantType' => Participant::OWNER,
 			], [
 				'actorType' => 'users',
 				'actorId' => 'uid2',
+				'displayName' => 'display-2',
 				'participantType' => Participant::OWNER,
 			]]);
 

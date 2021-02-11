@@ -182,6 +182,7 @@ class ParticipantService {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
+					'displayName' => $user->getDisplayName(),
 					// need to use "USER" here, because "USER_SELF_JOINED" only works for public calls
 					'participantType' => Participant::USER,
 				]]);
@@ -190,6 +191,7 @@ class ParticipantService {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
+					'displayName' => $user->getDisplayName(),
 					'participantType' => Participant::USER_SELF_JOINED,
 				]]);
 			} else {
@@ -279,6 +281,9 @@ class ParticipantService {
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType($participant['actorType']);
 			$attendee->setActorId($participant['actorId']);
+			if (isset($participant['displayName'])) {
+				$attendee->setDisplayName($participant['displayName']);
+			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
@@ -338,10 +343,12 @@ class ParticipantService {
 		$missingUsers = array_diff($users, $participants);
 
 		foreach ($missingUsers as $userId) {
-			if ($this->userManager->userExists($userId)) {
+			$user = $this->userManager->get($userId);
+			if ($user instanceof IUser) {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $userId,
+					'actorId' => $user->getUID(),
+					'displayName' => $user->getDisplayName(),
 					'participantType' => Participant::OWNER,
 				]]);
 			}
