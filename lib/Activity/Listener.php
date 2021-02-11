@@ -28,6 +28,7 @@ use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Activity\IManager;
@@ -75,7 +76,7 @@ class Listener {
 		$listener = static function (ModifyParticipantEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->setActive($event->getRoom());
+			$listener->setActive($event->getRoom(), $event->getParticipant());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
@@ -97,8 +98,12 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 	}
 
-	public function setActive(Room $room): void {
-		$room->setActiveSince($this->timeFactory->getDateTime(), !$this->userSession->isLoggedIn());
+	public function setActive(Room $room, Participant $participant): void {
+		$room->setActiveSince(
+			$this->timeFactory->getDateTime(),
+			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED,
+			$participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
+		);
 	}
 
 	/**
