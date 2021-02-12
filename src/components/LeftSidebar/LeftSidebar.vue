@@ -53,7 +53,7 @@
 				<template v-if="isSearching">
 					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 						<Caption
-							:title="t('spreed', 'Listed conversations')" />
+							:title="t('spreed', 'Open conversations')" />
 						<Conversation
 							v-for="item of searchResultsListedConversations"
 							:key="item.id"

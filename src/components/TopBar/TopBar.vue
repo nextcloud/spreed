@@ -85,7 +85,6 @@
 			<ActionSeparator
 				v-if="showModerationOptions" />
 			<ActionButton
-				v-if="showModerationOptions"
 				icon="icon-settings"
 				:close-after-click="true"
 				@click="showConversationSettings">
