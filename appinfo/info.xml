@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>12.0.0-dev.3</version>
+	<version>12.0.0-dev.4</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -68,6 +68,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<post-migration>
 			<step>OCA\Talk\Migration\CreateHelpCommand</step>
 			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
+			<step>OCA\Talk\Migration\CacheUserDisplayNames</step>
 		</post-migration>
 		<install>
 			<step>OCA\Talk\Migration\CreateHelpCommand</step>
