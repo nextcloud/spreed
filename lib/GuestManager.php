@@ -112,29 +112,6 @@ class GuestManager {
 	}
 
 	/**
-	 * @param string $sessionHash
-	 * @param bool $allowEmpty
-	 * @return string
-	 * @throws ParticipantNotFoundException
-	 */
-	public function getNameBySessionHash(string $sessionHash, bool $allowEmpty = false): string {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('display_name')
-			->from('talk_guestnames')
-			->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		if (isset($row['display_name']) && ($allowEmpty || $row['display_name'] !== '')) {
-			return $row['display_name'];
-		}
-
-		throw new ParticipantNotFoundException();
-	}
-
-	/**
 	 * @param string[] $sessionHashes
 	 * @return string[]
 	 */

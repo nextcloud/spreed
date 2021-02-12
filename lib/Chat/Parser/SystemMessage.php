@@ -28,6 +28,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
@@ -82,6 +83,7 @@ class SystemMessage {
 	public function parseMessage(Message $chatMessage): void {
 		$this->l = $chatMessage->getL10n();
 		$comment = $chatMessage->getComment();
+		$room = $chatMessage->getRoom();
 		$data = json_decode($chatMessage->getMessage(), true);
 		if (!\is_array($data)) {
 			throw new \OutOfBoundsException('Invalid message');
@@ -89,7 +91,7 @@ class SystemMessage {
 
 		$message = $data['message'];
 		$parameters = $data['parameters'];
-		$parsedParameters = ['actor' => $this->getActorFromComment($comment)];
+		$parsedParameters = ['actor' => $this->getActorFromComment($room, $comment)];
 
 		$participant = $chatMessage->getParticipant();
 		if (!$participant->isGuest()) {
@@ -293,7 +295,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator demoted {user} from moderator');
 			}
 		} elseif ($message === 'guest_moderator_promoted') {
-			$parsedParameters['user'] = $this->getGuest($parameters['session']);
+			$parsedParameters['user'] = $this->getGuest($room, $parameters['session']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
@@ -306,7 +308,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator promoted {user} to moderator');
 			}
 		} elseif ($message === 'guest_moderator_demoted') {
-			$parsedParameters['user'] = $this->getGuest($parameters['session']);
+			$parsedParameters['user'] = $this->getGuest($room, $parameters['session']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
@@ -380,8 +382,9 @@ class SystemMessage {
 		if (!\is_array($data)) {
 			throw new \OutOfBoundsException('Invalid message');
 		}
+		$room = $chatMessage->getRoom();
 
-		$parsedParameters = ['actor' => $this->getActor($data['deleted_by_type'], $data['deleted_by_id'])];
+		$parsedParameters = ['actor' => $this->getActor($room, $data['deleted_by_type'], $data['deleted_by_id'])];
 
 		$participant = $chatMessage->getParticipant();
 		$currentActorId = $participant->getAttendee()->getActorId();
@@ -485,13 +488,13 @@ class SystemMessage {
 		];
 	}
 
-	protected function getActorFromComment(IComment $comment): array {
-		return $this->getActor($comment->getActorType(), $comment->getActorId());
+	protected function getActorFromComment(Room $room, IComment $comment): array {
+		return $this->getActor($room, $comment->getActorType(), $comment->getActorId());
 	}
 
-	protected function getActor(string $actorType, string $actorId): array {
+	protected function getActor(Room $room, string $actorType, string $actorId): array {
 		if ($actorType === Attendee::ACTOR_GUESTS) {
-			return $this->getGuest($actorId);
+			return $this->getGuest($room, $actorId);
 		}
 
 		return $this->getUser($actorId);
@@ -517,21 +520,23 @@ class SystemMessage {
 		return $uid;
 	}
 
-	protected function getGuest(string $sessionHash): array {
-		if (!isset($this->guestNames[$sessionHash])) {
-			$this->guestNames[$sessionHash] = $this->getGuestName($sessionHash);
+	protected function getGuest(Room $room, string $actorId): array {
+		if (!isset($this->guestNames[$actorId])) {
+			$this->guestNames[$actorId] = $this->getGuestName($room, $actorId);
 		}
 
 		return [
 			'type' => 'guest',
-			'id' => 'guest/' . $sessionHash,
-			'name' => $this->guestNames[$sessionHash],
+			'id' => 'guest/' . $actorId,
+			'name' => $this->guestNames[$actorId],
 		];
 	}
 
-	protected function getGuestName(string $sessionHash): string {
+	protected function getGuestName(Room $room, string $actorId): string {
 		try {
-			return $this->l->t('%s (guest)', [$this->guestManager->getNameBySessionHash($sessionHash)]);
+			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
+			$name = $participant->getAttendee()->getDisplayName();
+			return $this->l->t('%s (guest)', [$name]);
 		} catch (ParticipantNotFoundException $e) {
 			return $this->l->t('Guest');
 		}

@@ -411,10 +411,13 @@ class SystemMessageTest extends TestCase {
 				->willReturn($recipientId);
 		}
 
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
 		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getGuest', 'parseCall', 'getFileFromShare']);
 		$parser->expects($this->once())
 			->method('getActorFromComment')
-			->with($comment)
+			->with($room, $comment)
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 		$parser->expects($this->any())
 			->method('getUser')
@@ -422,7 +425,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(['id' => $parameters['user'] ?? 'user', 'type' => 'user']);
 		$parser->expects($this->any())
 			->method('getGuest')
-			->with($parameters['session'] ?? 'guest')
+			->with($room, $parameters['session'] ?? 'guest')
 			->willReturn(['id' => $parameters['session'] ?? 'guest', 'type' => 'guest']);
 
 		if ($message === 'call_ended') {
@@ -452,8 +455,6 @@ class SystemMessageTest extends TestCase {
 				->method('getFileFromShare');
 		}
 
-		/** @var Room|MockObject $room */
-		$room = $this->createMock(Room::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage(json_encode([
 			'message' => $message,
@@ -486,14 +487,15 @@ class SystemMessageTest extends TestCase {
 		/** @var IComment|MockObject $comment */
 		$comment = $this->createMock(IComment::class);
 
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
 		$parser = $this->getParser(['getActorFromComment']);
 		$parser->expects($this->any())
 			->method('getActorFromComment')
-			->with($comment)
+			->with($room, $comment)
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 
-		/** @var Room|MockObject $room */
-		$room = $this->createMock(Room::class);
 		/** @var Participant|MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
@@ -790,6 +792,9 @@ class SystemMessageTest extends TestCase {
 	 * @param array $expected
 	 */
 	public function testGetActor(string $actorType, array $guestData, array $userData, array $expected) {
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
 		$chatMessage = $this->createMock(IComment::class);
 		$chatMessage->expects($this->once())
 			->method('getActorType')
@@ -805,7 +810,7 @@ class SystemMessageTest extends TestCase {
 		} else {
 			$parser->expects($this->once())
 				->method('getGuest')
-				->with('author-id')
+				->with($room, 'author-id')
 				->willReturn($guestData);
 		}
 
@@ -819,7 +824,7 @@ class SystemMessageTest extends TestCase {
 				->willReturn($userData);
 		}
 
-		$this->assertSame($expected, self::invokePrivate($parser, 'getActorFromComment', [$chatMessage]));
+		$this->assertSame($expected, self::invokePrivate($parser, 'getActorFromComment', [$room, $chatMessage]));
 	}
 
 	public function dataGetUser(): array {
@@ -894,49 +899,68 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetGuest() {
-		$sessionHash = sha1('name');
+		$actorId = sha1('name');
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
 		$parser = $this->getParser(['getGuestName']);
 		$parser->expects($this->once())
 			->method('getGuestName')
-			->with($sessionHash)
+			->with($room, $actorId)
 			->willReturn('name');
 
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => 'guest/' . $sessionHash,
+			'id' => 'guest/' . $actorId,
 			'name' => 'name',
-		], self::invokePrivate($parser, 'getGuest', [$sessionHash]));
+		], self::invokePrivate($parser, 'getGuest', [$room, $actorId]));
 
 		// Cached call: no call to getGuestName() again
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => 'guest/' . $sessionHash,
+			'id' => 'guest/' . $actorId,
 			'name' => 'name',
-		], self::invokePrivate($parser, 'getGuest', [$sessionHash]));
+		], self::invokePrivate($parser, 'getGuest', [$room, $actorId]));
 	}
 
 	public function testGetGuestName() {
-		$sessionHash = sha1('name');
-		$this->guestManager->expects($this->once())
-			->method('getNameBySessionHash')
-			->with($sessionHash)
-			->willReturn('name');
+		$actorId = sha1('name');
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
+		$attendee = Attendee::fromParams([
+			'displayName' => 'name',
+		]);
+
+		/** @var Participant|MockObject $room */
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')
+			->willReturn($attendee);
+
+		$room->method('getParticipantByActor')
+			->with(Attendee::ACTOR_GUESTS, $actorId)
+			->willReturn($participant);
 
 		$parser = $this->getParser();
 		self::invokePrivate($parser, 'l', [$this->l]);
-		$this->assertSame('name (guest)', self::invokePrivate($parser, 'getGuestName', [$sessionHash]));
+		$this->assertSame('name (guest)', self::invokePrivate($parser, 'getGuestName', [$room, $actorId]));
 	}
 
 	public function testGetGuestNameThrows() {
-		$sessionHash = sha1('name');
-		$this->guestManager->expects($this->once())
-			->method('getNameBySessionHash')
-			->with($sessionHash)
+		$actorId = sha1('name');
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+
+		$room->method('getParticipantByActor')
+			->with(Attendee::ACTOR_GUESTS, $actorId)
 			->willThrowException(new ParticipantNotFoundException());
 
 		$parser = $this->getParser();
 		self::invokePrivate($parser, 'l', [$this->l]);
-		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$sessionHash]));
+		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$room, $actorId]));
 	}
 
 	public function dataParseCall(): array {

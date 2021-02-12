@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
@@ -937,14 +938,20 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($comment);
 
 		if (is_string($guestName)) {
-			$this->guestManager->expects($this->once())
-				->method('getNameBySessionHash')
-				->with('random-hash')
-				->willReturn($guestName);
+			$room->method('getParticipantByActor')
+				->with(Attendee::ACTOR_GUESTS, 'random-hash')
+				->willReturn($participant);
+
+			$attendee = Attendee::fromRow([
+				'actor_type' => 'guests',
+				'actor_id' => 'random-hash',
+				'display_name' => $guestName,
+			]);
+			$participant->method('getAttendee')
+				->willReturn($attendee);
 		} else {
-			$this->guestManager->expects($this->any())
-				->method('getNameBySessionHash')
-				->with('random-hash')
+			$room->method('getParticipantByActor')
+				->with(Attendee::ACTOR_GUESTS, 'random-hash')
 				->willThrowException(new ParticipantNotFoundException());
 		}
 

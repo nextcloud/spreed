@@ -27,6 +27,7 @@ namespace OCA\Talk\Tests\php\Chat\Parser;
 use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -443,9 +444,8 @@ class UserMentionTest extends \Test\TestCase {
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 
-		$this->guestManager->expects($this->once())
-			->method('getNameBySessionHash')
-			->with('123456')
+		$room->method('getParticipantByActor')
+			->with(Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
@@ -483,9 +483,8 @@ class UserMentionTest extends \Test\TestCase {
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 
-		$this->guestManager->expects($this->once())
-			->method('getNameBySessionHash')
-			->with('123456')
+		$room->method('getParticipantByActor')
+			->with(Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
@@ -523,10 +522,17 @@ class UserMentionTest extends \Test\TestCase {
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 
-		$this->guestManager->expects($this->once())
-			->method('getNameBySessionHash')
-			->with('abcdef')
-			->willReturn('Name');
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'guests',
+			'actor_id' => 'abcdef',
+			'display_name' => 'Name',
+		]);
+		$participant->method('getAttendee')
+			->willReturn($attendee);
+
+		$room->method('getParticipantByActor')
+			->with(Attendee::ACTOR_GUESTS, 'abcdef')
+			->willReturn($participant);
 		$this->l->expects($this->any())
 			->method('t')
 			->willReturnCallback(function ($text, $parameters = []) {
