@@ -844,6 +844,7 @@
     "Only normal chat messages can be deleted" : "Só é posíbel poden eliminar as mensaxes normais da conversa",
     "An error occurred while deleting the message" : "Produciuse un erro ao eliminar a mensaxe",
     "{stack} in {board}" : "{stack} en {board}",
+    "Deck Card" : "Tarxeta do Deck",
     "Remove" : "Retirar",
     "[Unknown username]" : "[Nome de usuario descoñecido]",
     "Scroll to bottom" : "Desprazarse ata o final",
