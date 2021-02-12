@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.0.0-RC.1 – 2021-02-12
+### Added
+- Allow resending email invitations
+  [#5052](https://github.com/nextcloud/spreed/pull/5052)
+- Added support for turns:// protocol
+  [#5087](https://github.com/nextcloud/spreed/pull/5087)
+
+### Changed
+- Bring up the conversation creation-dialog when clicking on a group to prevent accidentally spam
+  [#5062](https://github.com/nextcloud/spreed/pull/5062)
+
+### Fixed
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5077](https://github.com/nextcloud/spreed/pull/5077)
+- Split the turn test to report whether UDP and/or TCP work
+  [#5104](https://github.com/nextcloud/spreed/pull/5104)
+- Fix collaboration resource options not loading
+  [#5140](https://github.com/nextcloud/spreed/pull/5140)
+- Hide the upload option when the user has no quota assigned
+  [#5036](https://github.com/nextcloud/spreed/pull/5036)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5041](https://github.com/nextcloud/spreed/pull/5041)
+- Fix capabilities check for image preview size
+  [#5033](https://github.com/nextcloud/spreed/pull/5033)
+- Prevent duplicated call summaries when multiple people leave a call on the HPB within a short time period
+  [#5042](https://github.com/nextcloud/spreed/pull/5042)
+
 ## 11.0.0-alpha.4 – 2021-01-25
 ### Added
 - Allow pagination for main grid view
