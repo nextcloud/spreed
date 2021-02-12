@@ -463,12 +463,7 @@ export default {
 		// Checks whether the conversations list is scrolled all the way to the top
 		// or not
 		handleScroll() {
-			const scrollTop = this.$refs.scroller.scrollTop
-			if (scrollTop === 0) {
-				this.isScrolledToTop = true
-			} else {
-				this.isScrolledToTop = false
-			}
+			this.isScrolledToTop = this.$refs.scroller.scrollTop === 0
 		},
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
