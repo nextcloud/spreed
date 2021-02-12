@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use Doctrine\DBAL\Exception;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
@@ -61,11 +60,7 @@ class GuestController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		try {
-			$this->guestManager->updateName($this->getRoom(), $participant, $displayName);
-		} catch (Exception $e) {
-			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
-		}
+		$this->guestManager->updateName($this->getRoom(), $participant, $displayName);
 
 		return new DataResponse();
 	}

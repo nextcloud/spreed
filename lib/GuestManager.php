@@ -28,6 +28,7 @@ use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Service\ParticipantService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -59,6 +60,9 @@ class GuestManager {
 	/** @var IUserSession */
 	protected $userSession;
 
+	/** @var ParticipantService */
+	private $participantService;
+
 	/** @var IURLGenerator */
 	protected $url;
 
@@ -73,6 +77,7 @@ class GuestManager {
 								IMailer $mailer,
 								Defaults $defaults,
 								IUserSession $userSession,
+								ParticipantService $participantService,
 								IURLGenerator $url,
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
@@ -81,6 +86,7 @@ class GuestManager {
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->userSession = $userSession;
+		$this->participantService = $participantService;
 		$this->url = $url;
 		$this->l = $l;
 		$this->dispatcher = $dispatcher;
@@ -90,32 +96,16 @@ class GuestManager {
 	 * @param Room $room
 	 * @param Participant $participant
 	 * @param string $displayName
-	 * @throws Exception
 	 */
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
-		$sessionHash = $participant->getAttendee()->getActorId();
-		$dispatchEvent = true;
+		$attendee = $participant->getAttendee();
+		if ($attendee->getDisplayName() !== $displayName) {
+			$this->participantService->updateDisplayNameForActor(
+				$attendee->getActorType(),
+				$attendee->getActorId(),
+				$displayName
+			);
 
-		try {
-			$oldName = $this->getNameBySessionHash($sessionHash, true);
-
-			if ($oldName !== $displayName) {
-				$query = $this->connection->getQueryBuilder();
-				$query->update('talk_guestnames')
-					->set('display_name', $query->createNamedParameter($displayName))
-					->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-				$query->execute();
-			} else {
-				$dispatchEvent = false;
-			}
-		} catch (ParticipantNotFoundException $e) {
-			$this->connection->insertIfNotExist('*PREFIX*talk_guestnames', [
-				'session_hash' => $sessionHash,
-				'display_name' => $displayName,
-			], ['session_hash']);
-		}
-
-		if ($dispatchEvent) {
 			$event = new ModifyParticipantEvent($room, $participant, 'name', $displayName);
 			$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_UPDATE, $event);
 		}
