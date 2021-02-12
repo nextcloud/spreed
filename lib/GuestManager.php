@@ -23,16 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use Doctrine\DBAL\Exception;
 use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Service\ParticipantService;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -44,9 +40,6 @@ class GuestManager {
 	public const EVENT_BEFORE_EMAIL_INVITE = self::class . '::preInviteByEmail';
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
-
-	/** @var IDBConnection */
-	protected $connection;
 
 	/** @var Config */
 	protected $talkConfig;
@@ -72,8 +65,7 @@ class GuestManager {
 	/** @var IEventDispatcher */
 	protected $dispatcher;
 
-	public function __construct(IDBConnection $connection,
-								Config $talkConfig,
+	public function __construct(Config $talkConfig,
 								IMailer $mailer,
 								Defaults $defaults,
 								IUserSession $userSession,
@@ -81,7 +73,6 @@ class GuestManager {
 								IURLGenerator $url,
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
-		$this->connection = $connection;
 		$this->talkConfig = $talkConfig;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
