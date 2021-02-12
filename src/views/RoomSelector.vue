@@ -87,6 +87,7 @@ export default {
 		return {
 			rooms: [],
 			selectedRoom: null,
+			currentRoom: null,
 			loading: true,
 		}
 	},
@@ -94,6 +95,7 @@ export default {
 		availableRooms() {
 			return this.rooms.filter((room) => {
 				return room.type !== CONVERSATION.TYPE.CHANGELOG
+					&& (!this.currentRoom || this.currentRoom !== room.token)
 					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
@@ -102,6 +104,11 @@ export default {
 	},
 	beforeMount() {
 		this.fetchRooms()
+
+		const $store = OCA.Talk?.instance?.$store
+		if ($store) {
+			this.currentRoom = $store.getters.getToken()
+		}
 	},
 	methods: {
 		fetchRooms() {
