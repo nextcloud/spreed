@@ -120,14 +120,13 @@ class Listener {
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
+		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
 
-		if ((\count($userIds) + $room->getActiveGuests()) === 1) {
+		if ((\count($userIds) + $numGuests) === 1) {
 			// Single user pinged or guests only => no summary/activity
 			$room->resetActiveSince();
 			return false;
 		}
-
-		$numGuests = $room->getActiveGuests();
 
 		if (!$room->resetActiveSince()) {
 			// Race-condition, the room was already reset.

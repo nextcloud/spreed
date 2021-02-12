@@ -79,6 +79,30 @@ class AttendeeMapper extends QBMapper {
 
 	/**
 	 * @param int $roomId
+	 * @param string $actorType
+	 * @param int|null $lastJoinedCall
+	 * @return int
+	 */
+	public function getActorsCountByType(int $roomId, string $actorType, ?int $lastJoinedCall = null): int {
+		$query = $this->db->getQueryBuilder();
+		$query->select($query->func()->count('*', 'num_actors'))
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)));
+
+		if ($lastJoinedCall !== null) {
+			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_INT)));
+		}
+
+		$result = $query->execute();
+		$count = (int) $result->fetchOne();
+		$result->closeCursor();
+
+		return $count;
+	}
+
+	/**
+	 * @param int $roomId
 	 * @param int[] $participantType
 	 * @return int
 	 */

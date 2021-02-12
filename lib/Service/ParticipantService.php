@@ -706,6 +706,20 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param \DateTime|null $maxLastJoined
+	 * @return int
+	 */
+	public function getGuestCount(Room $room, \DateTime $maxLastJoined = null): int {
+		$maxLastJoinedTimestamp = null;
+		if ($maxLastJoined !== null) {
+			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
+		}
+
+		return $this->attendeeMapper->getActorsCountByType($room->getId(), Attendee::ACTOR_GUESTS, $maxLastJoinedTimestamp);
+	}
+
+	/**
+	 * @param Room $room
 	 * @return string[]
 	 */
 	public function getParticipantUserIdsNotInCall(Room $room): array {
