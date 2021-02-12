@@ -68,11 +68,13 @@ class RoomService {
 				[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $actor->getUID(),
+					'displayName' => $actor->getDisplayName(),
 					'participantType' => Participant::OWNER,
 				],
 				[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $targetUser->getUID(),
+					'displayName' => $targetUser->getDisplayName(),
 					'participantType' => Participant::OWNER,
 				],
 			]);

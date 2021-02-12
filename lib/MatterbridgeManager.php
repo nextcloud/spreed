@@ -309,6 +309,7 @@ class MatterbridgeManager {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $botUserId,
+					'displayName' => $botUser->getDisplayName(),
 					'participantType' => Participant::USER,
 				]]);
 			}
