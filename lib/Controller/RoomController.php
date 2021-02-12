@@ -1618,7 +1618,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoom($room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
 			} else {
-				$participant = $this->participantService->joinRoomAsNewGuest($room, $password, $result['result']);
+				$participant = $this->participantService->joinRoomAsNewGuest($room, $password, $result['result'], $previousParticipant);
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);

@@ -151,12 +151,7 @@ export default {
 		},
 
 		isOwnMessageQuoted() {
-			let actorId = this.actorId
-			if (this.actorType === 'guests') {
-				actorId = 'guest/' + actorId
-			}
-
-			return actorId === this.$store.getters.getActorId()
+			return this.actorId === this.$store.getters.getActorId()
 				&& this.actorType === this.$store.getters.getActorType()
 		},
 

@@ -213,11 +213,12 @@ class ParticipantService {
 	 * @param Room $room
 	 * @param string $password
 	 * @param bool $passedPasswordProtection
+	 * @param ?Participant $previousParticipant
 	 * @return Participant
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsNewGuest(Room $room, string $password, bool $passedPasswordProtection = false): Participant {
+	public function joinRoomAsNewGuest(Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null): Participant {
 		$event = new JoinRoomGuestEvent($room, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUEST_CONNECT, $event);
 
@@ -234,21 +235,27 @@ class ParticipantService {
 			$lastMessage = (int) $room->getLastMessage()->getId();
 		}
 
-		$randomActorId = $this->secureRandom->generate(255);
+		if ($previousParticipant instanceof Participant) {
+			$attendee = $previousParticipant->getAttendee();
+		} else {
+			$randomActorId = $this->secureRandom->generate(255);
 
-		$attendee = new Attendee();
-		$attendee->setRoomId($room->getId());
-		$attendee->setActorType(Attendee::ACTOR_GUESTS);
-		$attendee->setActorId($randomActorId);
-		$attendee->setParticipantType(Participant::GUEST);
-		$attendee->setLastReadMessage($lastMessage);
-		$this->attendeeMapper->insert($attendee);
+			$attendee = new Attendee();
+			$attendee->setRoomId($room->getId());
+			$attendee->setActorType(Attendee::ACTOR_GUESTS);
+			$attendee->setActorId($randomActorId);
+			$attendee->setParticipantType(Participant::GUEST);
+			$attendee->setLastReadMessage($lastMessage);
+			$this->attendeeMapper->insert($attendee);
+		}
 
 		$session = $this->sessionService->createSessionForAttendee($attendee);
 
-		// Update the random guest id
-		$attendee->setActorId(sha1($session->getSessionId()));
-		$this->attendeeMapper->update($attendee);
+		if (!$previousParticipant instanceof Participant) {
+			// Update the random guest id
+			$attendee->setActorId(sha1($session->getSessionId()));
+			$this->attendeeMapper->update($attendee);
+		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUEST_CONNECT, $event);
 
@@ -381,8 +388,7 @@ class ParticipantService {
 			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		}
 
-		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS
-			|| $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+		if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			$this->attendeeMapper->delete($participant->getAttendee());
 		}
 
@@ -696,6 +702,20 @@ class ParticipantService {
 		return array_map(static function (Attendee $attendee) {
 			return $attendee->getActorId();
 		}, $attendees);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param \DateTime|null $maxLastJoined
+	 * @return int
+	 */
+	public function getGuestCount(Room $room, \DateTime $maxLastJoined = null): int {
+		$maxLastJoinedTimestamp = null;
+		if ($maxLastJoined !== null) {
+			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
+		}
+
+		return $this->attendeeMapper->getActorsCountByType($room->getId(), Attendee::ACTOR_GUESTS, $maxLastJoinedTimestamp);
 	}
 
 	/**

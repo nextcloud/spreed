@@ -27,13 +27,11 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import sha1 from 'crypto-js/sha1'
 import { PARTICIPANT } from '../constants'
 
 const state = {
 	userId: null,
 	sessionId: null,
-	sessionHash: null,
 	actorId: null,
 	actorType: null,
 	displayName: '',
@@ -46,9 +44,6 @@ const getters = {
 	getSessionId: (state) => () => {
 		return state.sessionId
 	},
-	getSessionHash: (state) => () => {
-		return state.sessionHash
-	},
 	getActorId: (state) => () => {
 		return state.actorId
 	},
@@ -59,14 +54,8 @@ const getters = {
 		return state.displayName
 	},
 	getParticipantIdentifier: (state) => () => {
-		if (state.actorType === 'guests') {
-			return {
-				actorType: 'guests',
-				sessionId: state.sessionId,
-			}
-		}
 		return {
-			actorType: 'users',
+			actorType: state.actorType,
 			actorId: state.actorId,
 		}
 	},
@@ -91,7 +80,6 @@ const mutations = {
 	 */
 	setSessionId(state, sessionId) {
 		state.sessionId = sessionId
-		state.sessionHash = sha1(sessionId)
 	},
 	/**
 	 * Set the actorId
@@ -146,6 +134,7 @@ const actions = {
 	 * @param {object} participant The participant data
 	 * @param {int} participant.participantType The type of the participant
 	 * @param {string} participant.sessionId The session id of the participant
+	 * @param {string} participant.actorId The actor id of the participant
 	 */
 	setCurrentParticipant(context, participant) {
 		context.commit('setSessionId', participant.sessionId)
@@ -154,7 +143,7 @@ const actions = {
 			|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
 			context.commit('setUserId', null)
 			context.commit('setActorType', 'guests')
-			context.commit('setActorId', 'guest/' + context.getters.getSessionHash())
+			context.commit('setActorId', participant.actorId)
 			// FIXME context.commit('setDisplayName', '')
 		}
 	},

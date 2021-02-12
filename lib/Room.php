@@ -318,6 +318,10 @@ class Room {
 		return $this->description;
 	}
 
+	/**
+	 * @deprecated Use ParticipantService::getGuestCount() instead
+	 * @return int
+	 */
 	public function getActiveGuests(): int {
 		return $this->activeGuests;
 	}

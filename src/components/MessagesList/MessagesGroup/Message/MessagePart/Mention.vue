@@ -70,8 +70,13 @@ export default {
 			return this.type === 'guest'
 		},
 		isCurrentGuest() {
+			// On mention bubbles the id is actually "guest/ACTOR_ID" for guests
+			// This is to make sure guests can never collide with users,
+			// while storing them as "… @id …" in chat messages.
+			// So when comparing a guest we have to prefix "guest/"
+			// when comparing the id
 			return this.$store.getters.getActorType() === 'guests'
-				&& this.id === ('guest/' + this.$store.getters.getSessionHash())
+				&& this.id === ('guest/' + this.$store.getters.getActorId())
 		},
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
