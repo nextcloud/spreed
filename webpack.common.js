@@ -50,6 +50,7 @@ module.exports = {
 				loader: 'babel-loader',
 				exclude: babelLoaderExcludeNodeModulesExcept([
 					'@juliushaertl/vue-richtext',
+					'color.js',
 					'fast-xml-parser',
 					'hot-patcher',
 					'nextcloud-vue-collections',
