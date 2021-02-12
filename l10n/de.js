@@ -846,6 +846,7 @@ OC.L10N.register(
     "Only normal chat messages can be deleted" : "Nur normale Chat-Nachrichten können gelöscht werden",
     "An error occurred while deleting the message" : "Beim Löschen der Nachricht ist ein Fehler aufgetreten",
     "{stack} in {board}" : "{stack} in {board}",
+    "Deck Card" : "Deck-Karte",
     "Remove" : "Entfernen",
     "[Unknown username]" : "[Unbekannter Benutzername]",
     "Scroll to bottom" : "Nach unten blättern",
