@@ -25,42 +25,55 @@
 		v-bind="navElement">
 		<a
 			:id="anchorId"
+			ref="acli"
 			:class="{ 'active' : isActive }"
 			href="#"
 			class="acli"
 			:aria-label="conversationLinkAriaLabel"
+			@mouseover="handleHover"
+			@focus="handleFocus"
+			@blur="handleBlur"
+			@mouseleave="handleMouseleave"
+			@keydown.tab="handleTab"
 			@click="onClick">
 			<!-- default slot for avatar or icon -->
 			<slot name="icon" />
-			<div class="acli__content">
-				<div class="acli__content__line-one">
-					<span class="acli__content__line-one__title">
-						{{ title }}
-					</span>
-					<span
-						v-if="{hasDetails}"
-						class="acli__content__line-one__details">
-						{{ details }}
-					</span>
+			<div class="acli-content">
+				<div class="acli-content__main">
+					<div class="acli-content__line-one">
+						<span class="acli-content__line-one__title">
+							{{ title }}
+						</span>
+						<span
+							v-if="{hasDetails}"
+							class="acli-content__line-one__details">
+							{{ details }}
+						</span>
+					</div>
+					<div class="acli-content__line-two">
+						<span class="acli-content__line-two__subtitle">
+							<slot name="subtitle" />
+						</span>
+						<span v-if="!displayActions" class="acli-content__line-two__counter">
+							<slot
+								name="counter" />
+						</span>
+					</div>
 				</div>
-				<div class="acli__content__line-two">
-					<span class="acli__content__line-two__subtitle">
-						<slot name="subtitle" />
-					</span>
-					<span class="acli__content__line-two__counter">
+				<div
+					v-show="displayActions"
+					class="acli-content__actions"
+					@click.prevent.stop="">
+					<Actions
+						ref="actions"
+						menu-align="right"
+						:aria-label="conversationSettingsAriaLabel">
 						<slot
-							name="counter" />
-					</span>
+							name="actions" />
+					</Actions>
 				</div>
 			</div>
 		</a>
-		<Actions
-			v-if="hasActions"
-			menu-align="right"
-			:aria-label="conversationSettingsAriaLabel"
-			class="actions">
-			<slot name="actions" />
-		</Actions>
 	</nav-element>
 </template>
 
@@ -112,10 +125,18 @@ export default {
 			default: '',
 		},
 	},
+
+	data() {
+		return {
+			linkIsFocused: false,
+			displayActions: false,
+		}
+	},
 	computed: {
 		isActive() {
 			return this.to && this.$store.getters.getToken() === this.to.params.token
 		},
+
 		hasDetails() {
 			return (this.details !== '' && !this.$slots.counter)
 		},
@@ -150,6 +171,42 @@ export default {
 		// forward click event
 		onClick(event) {
 			this.$emit('click', event)
+		},
+
+		handleHover() {
+			this.showActions()
+		},
+
+		handleFocus() {
+			this.linkIsFocused = true
+			this.showActions()
+		},
+
+		handleBlur(e) {
+			this.linkIsFocused = false
+		},
+
+		showActions() {
+			if (this.hasActions) {
+				this.displayActions = true
+			}
+		},
+
+		handleMouseleave() {
+			this.displayActions = false
+		},
+
+		handleTab(e) {
+			if (this.linkIsFocused && this.hasActions) {
+				console.debug('preventdefault')
+				e.preventDefault()
+				this.$refs.actions.$refs.menuButton.focus()
+				this.linkIsFocused = false
+			} else {
+				this.displayActions = false
+				this.$refs.actions.$refs.menuButton.blur()
+			}
+
 		},
 	},
 }
@@ -189,11 +246,17 @@ export default {
 		background-color: var(--color-primary-light);
 	}
 
-	&__content {
-		width: 240px;
+	&-content {
+		display: flex;
+		justify-content: space-between;
+		width: 210px;
 		// same as the acli left padding for
 		// nice visual balance around the avatar
 		margin-left: 8px;
+		&__main {
+			flex: 1 1 auto;
+			width: calc(100% - 44px);
+		}
 
 		&__line-one {
 			display: flex;
@@ -203,20 +266,11 @@ export default {
 
 			&__title {
 				overflow: hidden;
-				padding-right: 52px;
 				flex-grow: 1;
 				cursor: pointer;
 				text-overflow: ellipsis;
 				color: var(--color-main-text);
 
-			}
-			&__actions {
-				margin: -5px 0 -3px 0;
-				&.action-item {
-					position: absolute;
-					top: 7px;
-					right: 2px;
-				}
 			}
 		}
 
@@ -225,7 +279,6 @@ export default {
 			align-items: flex-start;
 			justify-content: space-between;
 			white-space: nowrap;
-			width: 232px;
 
 			&__subtitle {
 				overflow: hidden;
@@ -236,9 +289,11 @@ export default {
 				text-overflow: ellipsis;
 				color: var(--color-text-lighter);
 			}
-			&__counter {
-				margin-right: 22px;
-			}
+		}
+		&__actions {
+			flex: 0 0 auto;
+			align-self: center;
+			justify-content: center;
 		}
 	}
 }
