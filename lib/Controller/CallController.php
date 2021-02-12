@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -45,8 +44,6 @@ class CallController extends AEnvironmentAwareController {
 	private $participantService;
 	/** @var IUserManager */
 	private $userManager;
-	/** @var GuestManager */
-	private $guestManager;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
@@ -54,12 +51,10 @@ class CallController extends AEnvironmentAwareController {
 								IRequest $request,
 								ParticipantService $participantService,
 								IUserManager $userManager,
-								GuestManager $guestManager,
 								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
 		$this->participantService = $participantService;
 		$this->userManager = $userManager;
-		$this->guestManager = $guestManager;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -75,23 +70,6 @@ class CallController extends AEnvironmentAwareController {
 		$timeout = $this->timeFactory->getTime() - 30;
 		$result = [];
 		$participants = $this->participantService->getParticipantsInCall($this->room);
-
-
-		$guestSessions = array_filter(array_map(static function (Participant $participant) use ($timeout) {
-			$session = $participant->getSession();
-			if (!$session || $participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
-				return null;
-			}
-
-			if ($session->getLastPing() < $timeout) {
-				// User is not active in call
-				return null;
-			}
-
-			return sha1($session->getSessionId());
-		}, $participants));
-
-		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
 
 		foreach ($participants as $participant) {
 			/** @var Session $session */
@@ -113,7 +91,7 @@ class CallController extends AEnvironmentAwareController {
 						}
 					}
 				} else {
-					$displayName = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
+					$displayName = $participant->getAttendee()->getDisplayName();
 				}
 
 				$result[] = [

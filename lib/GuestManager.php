@@ -111,36 +111,6 @@ class GuestManager {
 		}
 	}
 
-	/**
-	 * @param string[] $sessionHashes
-	 * @return string[]
-	 */
-	public function getNamesBySessionHashes(array $sessionHashes): array {
-		if (empty($sessionHashes)) {
-			return [];
-		}
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('*')
-			->from('talk_guestnames')
-			->where($query->expr()->in('session_hash', $query->createNamedParameter($sessionHashes, IQueryBuilder::PARAM_STR_ARRAY)));
-
-		$result = $query->execute();
-
-		$map = [];
-
-		while ($row = $result->fetch()) {
-			if ($row['display_name'] === '') {
-				continue;
-			}
-
-			$map[$row['session_hash']] = $row['display_name'];
-		}
-		$result->closeCursor();
-
-		return $map;
-	}
-
 	public function sendEmailInvitation(Room $room, Participant $participant): void {
 		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
 			throw new \InvalidArgumentException('Cannot send email for non-email participant actor type');

@@ -92,7 +92,7 @@ class SearchPlugin implements ISearchPlugin {
 			}
 		}
 
-		$userIds = $guestSessionHashes = [];
+		$userIds = $guestAttendees = [];
 		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
 			// Add potential leavers of one-to-one rooms again.
 			$participants = json_decode($this->room->getName(), true);
@@ -104,7 +104,7 @@ class SearchPlugin implements ISearchPlugin {
 			foreach ($participants as $participant) {
 				$attendee = $participant->getAttendee();
 				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
-					$guestSessionHashes[] = $attendee->getActorId();
+					$guestAttendees[] = $attendee;
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$userIds[] = $attendee->getActorId();
 				}
@@ -112,7 +112,7 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		$this->searchUsers($search, $userIds, $searchResult);
-		$this->searchGuests($search, $guestSessionHashes, $searchResult);
+		$this->searchGuests($search, $guestAttendees, $searchResult);
 
 		return false;
 	}
@@ -167,40 +167,45 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
-	protected function searchGuests(string $search, array $guestSessionHashes, ISearchResult $searchResult): void {
-		if (empty($guestSessionHashes)) {
+	/**
+	 * @param string $search
+	 * @param Attendee[] $attendees
+	 * @param ISearchResult $searchResult
+	 */
+	protected function searchGuests(string $search, array $attendees, ISearchResult $searchResult): void {
+		if (empty($attendees)) {
 			$type = new SearchResultType('guests');
 			$searchResult->addResultSet($type, [], []);
 			return;
 		}
 
 		$search = strtolower($search);
-		$displayNames = $this->guestManager->getNamesBySessionHashes($guestSessionHashes);
 		$currentSessionHash = null;
 		if (!$this->userId) {
+			// Best effort: Might not work on guests that reloaded but not worth too much performance impact atm.
 			$currentSessionHash = sha1($this->talkSession->getSessionForRoom($this->room->getToken()));
 		}
 
 		$matches = $exactMatches = [];
-		foreach ($guestSessionHashes as $guestSessionHash) {
-			if ($currentSessionHash === $guestSessionHash) {
+		foreach ($attendees as $attendee) {
+			if ($currentSessionHash === $attendee->getActorId()) {
 				// Do not suggest the current guest
 				continue;
 			}
 
-			$name = $displayNames[$guestSessionHash] ?? $this->l->t('Guest');
+			$name = $attendee->getDisplayName() ?: $this->l->t('Guest');
 			if ($search === '') {
-				$matches[] = $this->createGuestResult($guestSessionHash, $name);
+				$matches[] = $this->createGuestResult($attendee->getActorId(), $name);
 				continue;
 			}
 
 			if (strtolower($name) === $search) {
-				$exactMatches[] = $this->createGuestResult($guestSessionHash, $name);
+				$exactMatches[] = $this->createGuestResult($attendee->getActorId(), $name);
 				continue;
 			}
 
 			if (stripos($name, $search) !== false) {
-				$matches[] = $this->createGuestResult($guestSessionHash, $name);
+				$matches[] = $this->createGuestResult($attendee->getActorId(), $name);
 				continue;
 			}
 		}
@@ -228,12 +233,12 @@ class SearchPlugin implements ISearchPlugin {
 		];
 	}
 
-	protected function createGuestResult(string $uid, string $name): array {
+	protected function createGuestResult(string $actorId, string $name): array {
 		return [
 			'label' => $name,
 			'value' => [
 				'shareType' => 'guest',
-				'shareWith' => 'guest/' . $uid,
+				'shareWith' => 'guest/' . $actorId,
 			],
 		];
 	}
