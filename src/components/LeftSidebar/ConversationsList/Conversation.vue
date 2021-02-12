@@ -84,11 +84,13 @@
 			<ActionSeparator />
 
 			<ActionButton v-if="canLeaveConversation"
+				:close-after-click="true"
 				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
 				{{ t('spreed', 'Leave conversation') }}
 			</ActionButton>
 			<ActionButton v-if="canDeleteConversation"
+				:close-after-click="true"
 				icon="icon-delete-critical"
 				class="critical"
 				@click.prevent.exact="deleteConversation">
