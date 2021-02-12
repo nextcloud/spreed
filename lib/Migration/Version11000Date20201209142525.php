@@ -116,29 +116,10 @@ class Version11000Date20201209142525 extends SimpleMigrationStep {
 	 * @param array $options
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		if (!$this->connection->tableExists('talk_guests')) {
-			return;
-		}
-
-		$insert = $this->connection->getQueryBuilder();
-		$insert->insert('talk_guestnames')
-			->values([
-				'session_hash' => $insert->createParameter('session_hash'),
-				'display_name' => $insert->createParameter('display_name'),
-			]);
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('*')
-			->from('talk_guests');
-
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$insert
-				->setParameter('session_hash', (string) $row['session_hash'])
-				->setParameter('display_name', (string) $row['display_name'])
-			;
-			$insert->execute();
-		}
-		$result->closeCursor();
+		/**
+		 * Table is dropped in favor of talk_attendees::display_name
+		 * We can't link the data to a room and therefor create a related
+		 * attendee, so unluckily it makes no sense to take over the data
+		 */
 	}
 }
