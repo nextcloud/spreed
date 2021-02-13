@@ -846,6 +846,7 @@ OC.L10N.register(
     "Only normal chat messages can be deleted" : "Pouze normální zprávy mohou být smazány",
     "An error occurred while deleting the message" : "Při mazání zprávy došlo k chybě",
     "{stack} in {board}" : "{stack} v {board}",
+    "Deck Card" : "Karta aplikace Deck",
     "Remove" : "Odebrat",
     "[Unknown username]" : "[Neznámé uživatelské jméno]",
     "Scroll to bottom" : "Odrolovat na konec",
