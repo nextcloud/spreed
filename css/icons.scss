@@ -106,17 +106,19 @@
 		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
 	}
 
+	// Patch material design icons' span wrong height
+	.material-design-icon {
+		display: contents;
+	}
+}
+
+.popover.vue-popover-theme.open {
 	.icon-delete-critical {
 		@include icon-color('delete', 'actions', $color-error, 1, true);
 		&:hover,
 		&:focus {
 			filter: initial;
 		}
-	}
-
-	// Patch material design icons' span wrong height
-	.material-design-icon {
-		display: contents;
 	}
 }
 
