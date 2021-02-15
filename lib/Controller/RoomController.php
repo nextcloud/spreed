@@ -1128,17 +1128,7 @@ class RoomController extends AEnvironmentAwareController {
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
-		$guestSessions = array_filter(array_map(static function (Participant $participant) {
-			$session = $participant->getSession();
-			if (!$session || $participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
-				return null;
-			}
-
-			return sha1($session->getSessionId());
-		}, $participants));
-
 		$cleanGuests = false;
-		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
 
 		/** @var Participant[] $participants */
 		foreach ($participants as $participant) {
@@ -1202,7 +1192,7 @@ class RoomController extends AEnvironmentAwareController {
 				if ($this->getAPIVersion() < 3) {
 					$result['userId'] = '';
 				}
-				$result['displayName'] = $guestNames[$participant->getAttendee()->getActorId()] ?? '';
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($this->getAPIVersion() >= 3) {
 				// Other types are only reported on v3 or later
 				$result['displayName'] = $participant->getAttendee()->getActorId();

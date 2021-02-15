@@ -26,7 +26,6 @@ namespace OCA\Talk\Chat;
 
 use OCA\Talk\Events\ChatMessageEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -49,18 +48,13 @@ class MessageParser {
 	/** @var IUserManager */
 	private $userManager;
 
-	/** @var GuestManager */
-	private $guestManager;
-
 	/** @var array */
 	protected $guestNames = [];
 
 	public function __construct(IEventDispatcher $dispatcher,
-								IUserManager $userManager,
-								GuestManager $guestManager) {
+								IUserManager $userManager) {
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
-		$this->guestManager = $guestManager;
 	}
 
 	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
@@ -88,7 +82,8 @@ class MessageParser {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {
 				try {
-					$displayName = $this->guestManager->getNameBySessionHash($comment->getActorId());
+					$participant = $message->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, $comment->getActorId());
+					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException $e) {
 				}
 				$this->guestNames[$comment->getActorId()] = $displayName;

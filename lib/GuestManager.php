@@ -23,15 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use Doctrine\DBAL\Exception;
 use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -43,9 +40,6 @@ class GuestManager {
 	public const EVENT_BEFORE_EMAIL_INVITE = self::class . '::preInviteByEmail';
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
-
-	/** @var IDBConnection */
-	protected $connection;
 
 	/** @var Config */
 	protected $talkConfig;
@@ -59,6 +53,9 @@ class GuestManager {
 	/** @var IUserSession */
 	protected $userSession;
 
+	/** @var ParticipantService */
+	private $participantService;
+
 	/** @var IURLGenerator */
 	protected $url;
 
@@ -68,19 +65,19 @@ class GuestManager {
 	/** @var IEventDispatcher */
 	protected $dispatcher;
 
-	public function __construct(IDBConnection $connection,
-								Config $talkConfig,
+	public function __construct(Config $talkConfig,
 								IMailer $mailer,
 								Defaults $defaults,
 								IUserSession $userSession,
+								ParticipantService $participantService,
 								IURLGenerator $url,
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
-		$this->connection = $connection;
 		$this->talkConfig = $talkConfig;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->userSession = $userSession;
+		$this->participantService = $participantService;
 		$this->url = $url;
 		$this->l = $l;
 		$this->dispatcher = $dispatcher;
@@ -90,88 +87,19 @@ class GuestManager {
 	 * @param Room $room
 	 * @param Participant $participant
 	 * @param string $displayName
-	 * @throws Exception
 	 */
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
-		$sessionHash = $participant->getAttendee()->getActorId();
-		$dispatchEvent = true;
+		$attendee = $participant->getAttendee();
+		if ($attendee->getDisplayName() !== $displayName) {
+			$this->participantService->updateDisplayNameForActor(
+				$attendee->getActorType(),
+				$attendee->getActorId(),
+				$displayName
+			);
 
-		try {
-			$oldName = $this->getNameBySessionHash($sessionHash, true);
-
-			if ($oldName !== $displayName) {
-				$query = $this->connection->getQueryBuilder();
-				$query->update('talk_guestnames')
-					->set('display_name', $query->createNamedParameter($displayName))
-					->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-				$query->execute();
-			} else {
-				$dispatchEvent = false;
-			}
-		} catch (ParticipantNotFoundException $e) {
-			$this->connection->insertIfNotExist('*PREFIX*talk_guestnames', [
-				'session_hash' => $sessionHash,
-				'display_name' => $displayName,
-			], ['session_hash']);
-		}
-
-		if ($dispatchEvent) {
 			$event = new ModifyParticipantEvent($room, $participant, 'name', $displayName);
 			$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_UPDATE, $event);
 		}
-	}
-
-	/**
-	 * @param string $sessionHash
-	 * @param bool $allowEmpty
-	 * @return string
-	 * @throws ParticipantNotFoundException
-	 */
-	public function getNameBySessionHash(string $sessionHash, bool $allowEmpty = false): string {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('display_name')
-			->from('talk_guestnames')
-			->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		if (isset($row['display_name']) && ($allowEmpty || $row['display_name'] !== '')) {
-			return $row['display_name'];
-		}
-
-		throw new ParticipantNotFoundException();
-	}
-
-	/**
-	 * @param string[] $sessionHashes
-	 * @return string[]
-	 */
-	public function getNamesBySessionHashes(array $sessionHashes): array {
-		if (empty($sessionHashes)) {
-			return [];
-		}
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('*')
-			->from('talk_guestnames')
-			->where($query->expr()->in('session_hash', $query->createNamedParameter($sessionHashes, IQueryBuilder::PARAM_STR_ARRAY)));
-
-		$result = $query->execute();
-
-		$map = [];
-
-		while ($row = $result->fetch()) {
-			if ($row['display_name'] === '') {
-				continue;
-			}
-
-			$map[$row['session_hash']] = $row['display_name'];
-		}
-		$result->closeCursor();
-
-		return $map;
 	}
 
 	public function sendEmailInvitation(Room $room, Participant $participant): void {

@@ -143,6 +143,7 @@ class AttendeeMapper extends QBMapper {
 			'room_id' => $row['room_id'],
 			'actor_type' => $row['actor_type'],
 			'actor_id' => $row['actor_id'],
+			'display_name' => (string) $row['display_name'],
 			'pin' => $row['pin'],
 			'participant_type' => (int) $row['participant_type'],
 			'favorite' => (bool) $row['favorite'],

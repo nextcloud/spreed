@@ -157,8 +157,7 @@ class SearchPluginTest extends \Test\TestCase {
 			->with('fo', $this->anything(), $result)
 			->willReturnCallback(function ($search, $guests, $result) {
 				array_map(function ($guest) {
-					$this->assertIsString($guest);
-					$this->assertSame(40, strlen($guest));
+					$this->assertInstanceOf(Attendee::class, $guest);
 				}, $guests);
 			});
 
@@ -217,11 +216,11 @@ class SearchPluginTest extends \Test\TestCase {
 
 	public function dataSearchGuests() {
 		return [
-			['test', [], [], [], []],
-			['', ['abcdef'], [], [['abcdef' => 'Guest']], []],
-			['Guest', ['abcdef'], [], [], [['abcdef' => 'Guest']]],
-			['est', ['abcdef', 'foobar'], ['foobar' => 'est'], [['abcdef' => 'Guest']], [['foobar' => 'est']]],
-			['Ast', ['abcdef', 'foobar'], ['foobar' => 'ast'], [], [['foobar' => 'ast']]],
+			['test', [], [], []],
+			['', ['abcdef' => ''], [['abcdef' => 'Guest']], []],
+			['Guest', ['abcdef' => ''], [], [['abcdef' => 'Guest']]],
+			['est', ['abcdef' => '', 'foobar' => 'est'], [['abcdef' => 'Guest']], [['foobar' => 'est']]],
+			['Ast', ['abcdef' => '', 'foobar' => 'ast'], [], [['foobar' => 'ast']]],
 		];
 	}
 
@@ -233,16 +232,19 @@ class SearchPluginTest extends \Test\TestCase {
 	 * @param array $expected
 	 * @param array $expectedExact
 	 */
-	public function testSearchGuests($search, array $sessionHashes, array $displayNames, array $expected, array $expectedExact) {
+	public function testSearchGuests($search, array $guests, array $expected, array $expectedExact) {
 		$result = $this->createMock(ISearchResult::class);
 		$result->expects($this->once())
 			->method('addResultSet')
 			->with($this->anything(), $expected, $expectedExact);
 
-		$this->guestManager->expects($this->any())
-			->method('getNamesBySessionHashes')
-			->with($sessionHashes)
-			->willReturn($displayNames);
+		$attendees = [];
+		foreach ($guests as $actorId => $displayName) {
+			$attendees[] = Attendee::fromRow([
+				'actorId' => $actorId,
+				'displayName' => $displayName,
+			]);
+		}
 
 		$plugin = $this->getPlugin(['createGuestResult']);
 		$plugin->expects($this->any())
@@ -251,7 +253,7 @@ class SearchPluginTest extends \Test\TestCase {
 				return [$hash => $name];
 			});
 
-		self::invokePrivate($plugin, 'searchGuests', [$search, $sessionHashes, $result]);
+		self::invokePrivate($plugin, 'searchGuests', [$search, $attendees, $result]);
 	}
 
 	protected function createUserMock(array $userData) {
@@ -309,12 +311,12 @@ class SearchPluginTest extends \Test\TestCase {
 
 	/**
 	 * @dataProvider dataCreateGuestResult
-	 * @param string $sessionHash
+	 * @param string $actorId
 	 * @param string $name
 	 * @param array $expected
 	 */
-	public function testCreateGuestResult(string $sessionHash, string $name, array $expected): void {
+	public function testCreateGuestResult(string $actorId, string $name, array $expected): void {
 		$plugin = $this->getPlugin();
-		$this->assertEquals($expected, self::invokePrivate($plugin, 'createGuestResult', [$sessionHash, $name]));
+		$this->assertEquals($expected, self::invokePrivate($plugin, 'createGuestResult', [$actorId, $name]));
 	}
 }

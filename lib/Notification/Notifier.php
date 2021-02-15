@@ -30,6 +30,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -365,7 +366,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('Deleted user in {call}') . "\n{message}";
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
 					$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('Guest in {call}') . "\n{message}";
@@ -380,7 +381,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user sent a message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
 					$subject = $l->t('{guest} (guest) sent a message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest sent a message in conversation {call}');
@@ -395,7 +396,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user replied to your message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
@@ -409,7 +410,7 @@ class Notifier implements INotifier {
 			$subject = $l->t('A deleted user mentioned you in conversation {call}');
 		} else {
 			try {
-				$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+				$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
 				$subject = $l->t('{guest} (guest) mentioned you in conversation {call}');
 			} catch (ParticipantNotFoundException $e) {
 				$subject = $l->t('A guest mentioned you in conversation {call}');
@@ -434,12 +435,14 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * @param Room $room
 	 * @param string $actorId
 	 * @return array
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getGuestParameter(string $actorId): array {
-		$name = $this->guestManager->getNameBySessionHash($actorId);
+	protected function getGuestParameter(Room $room, string $actorId): array {
+		$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
+		$name = $participant->getAttendee()->getDisplayName();
 		if (trim($name) === '') {
 			throw new ParticipantNotFoundException('Empty name');
 		}

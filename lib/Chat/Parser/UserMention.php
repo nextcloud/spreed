@@ -132,7 +132,8 @@ class UserMention {
 				];
 			} elseif ($mention['type'] === 'guest') {
 				try {
-					$displayName = $this->guestManager->getNameBySessionHash(substr($mention['id'], strlen('guest/')));
+					$participant = $chatMessage->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
 				} catch (ParticipantNotFoundException $e) {
 					$displayName = $this->l->t('Guest');
 				}

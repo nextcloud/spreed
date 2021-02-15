@@ -28,19 +28,10 @@ namespace OCA\Talk\Migration;
 use Closure;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
-use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 class Version11000Date20201209142525 extends SimpleMigrationStep {
-	/** @var IDBConnection */
-	protected $connection;
-
-	public function __construct(IDBConnection $connection) {
-		$this->connection = $connection;
-	}
-
-
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -108,37 +99,5 @@ class Version11000Date20201209142525 extends SimpleMigrationStep {
 		}
 
 		return $changedSchema ? $schema : null;
-	}
-
-	/**
-	 * @param IOutput $output
-	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
-	 */
-	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		if (!$this->connection->tableExists('talk_guests')) {
-			return;
-		}
-
-		$insert = $this->connection->getQueryBuilder();
-		$insert->insert('talk_guestnames')
-			->values([
-				'session_hash' => $insert->createParameter('session_hash'),
-				'display_name' => $insert->createParameter('display_name'),
-			]);
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('*')
-			->from('talk_guests');
-
-		$result = $query->execute();
-		while ($row = $result->fetch()) {
-			$insert
-				->setParameter('session_hash', (string) $row['session_hash'])
-				->setParameter('display_name', (string) $row['display_name'])
-			;
-			$insert->execute();
-		}
-		$result->closeCursor();
 	}
 }
