@@ -41,6 +41,11 @@ class Version11001Date20210212105406 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
+		/**
+		 * Table is dropped in favor of talk_attendees::display_name
+		 * We can't link the data to a room and therefor create a related
+		 * attendee, so unluckily it makes no sense to take over the data
+		 */
 		if ($schema->hasTable('talk_guestnames')) {
 			$schema->dropTable('talk_guestnames');
 			return $schema;

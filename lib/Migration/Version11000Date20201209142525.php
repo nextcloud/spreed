@@ -28,19 +28,10 @@ namespace OCA\Talk\Migration;
 use Closure;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
-use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 class Version11000Date20201209142525 extends SimpleMigrationStep {
-	/** @var IDBConnection */
-	protected $connection;
-
-	public function __construct(IDBConnection $connection) {
-		$this->connection = $connection;
-	}
-
-
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -108,18 +99,5 @@ class Version11000Date20201209142525 extends SimpleMigrationStep {
 		}
 
 		return $changedSchema ? $schema : null;
-	}
-
-	/**
-	 * @param IOutput $output
-	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
-	 */
-	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		/**
-		 * Table is dropped in favor of talk_attendees::display_name
-		 * We can't link the data to a room and therefor create a related
-		 * attendee, so unluckily it makes no sense to take over the data
-		 */
 	}
 }
