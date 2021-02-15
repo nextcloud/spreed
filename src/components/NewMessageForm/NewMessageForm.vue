@@ -303,7 +303,7 @@ export default {
 					clearTimeout(timeout)
 
 					// If successful, deletes the temporary message from the store
-					this.$store.dispatch('deleteMessage', temporaryMessage)
+					this.$store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
