@@ -105,7 +105,9 @@
 	.icon-leave-call {
 		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
 	}
+}
 
+.popover.vue-popover-theme.open {
 	.icon-delete-critical {
 		@include icon-color('delete', 'actions', $color-error, 1, true);
 		&:hover,
