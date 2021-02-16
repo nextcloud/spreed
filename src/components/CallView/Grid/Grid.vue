@@ -79,16 +79,35 @@
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
 							<div
-								v-for="video in displayedVideos"
+								v-for="(video, key) in displayedVideos"
 								:key="video"
 								class="dev-mode-video video"
-								v-text="video" />
-							<h1 class="dev-mode__title">
+								:class="{'dev-mode-screenshot': screenshotMode}">
+								<img :src="placeholderImage(key)">
+								<VideoBottomBar
+									:has-shadow="false"
+									:model="placeholderModel(key)"
+									:shared-data="placeholderSharedData(key)"
+									:token="token"
+									:participant-name="placeholderName(key)" />
+							</div>
+							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
 							</h1>
+							<div v-else
+								class="dev-mode-video--self video"
+								:style="{'background': 'url(' + placeholderImage(8) + ')'}">
+								<LocalMediaControls
+									:has-shadow="false"
+									:model="placeholderModel(8)"
+									:local-call-participant-model="placeholderModel(8)"
+									:shared-data="placeholderSharedData(8)"
+									:token="token"
+									:participant-name="placeholderName(8)" />
+							</div>
 						</template>
 						<LocalVideo
-							v-if="!isStripe"
+							v-if="!isStripe && !screenshotMode"
 							ref="localVideo"
 							class="video"
 							:is-grid="true"
@@ -110,7 +129,7 @@
 					</button>
 				</div>
 				<LocalVideo
-					v-if="isStripe"
+					v-if="isStripe && !screenshotMode"
 					ref="localVideo"
 					class="video"
 					:fit-video="true"
@@ -130,7 +149,7 @@
 						class="pages-indicator__dot"
 						:class="{'pages-indicator__dot--active': index === currentPage }" />
 				</div>
-				<div v-if="devMode" class="dev-mode__data">
+				<div v-if="devMode && !screenshotMode" class="dev-mode__data">
 					<p>GRID INFO</p>
 					<p>Videos (total): {{ videosCount }}</p>
 					<p>Displayed videos n: {{ displayedVideos.length }}</p>
@@ -153,20 +172,25 @@ import debounce from 'debounce'
 import Video from '../shared/Video'
 import LocalVideo from '../shared/LocalVideo'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { generateFilePath } from '@nextcloud/router'
 import EmptyCallView from '../shared/EmptyCallView'
+import VideoBottomBar from '../shared/VideoBottomBar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 import ChevronUp from 'vue-material-design-icons/ChevronUp'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
+import LocalMediaControls from '../shared/LocalMediaControls'
 
 export default {
 	name: 'Grid',
 
 	components: {
+		LocalMediaControls,
 		Video,
 		LocalVideo,
 		EmptyCallView,
+		VideoBottomBar,
 		ChevronRight,
 		ChevronLeft,
 		ChevronUp,
@@ -211,12 +235,16 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		screenshotMode: {
+			type: Boolean,
+			default: false,
+		},
 		/**
 		 * The number of dummy videos in dev mode
 		 */
 		dummies: {
 			type: Number,
-			default: 10,
+			default: 8,
 		},
 		/**
 		 * Display the overflow of videos in separate pages;
@@ -510,6 +538,67 @@ export default {
 			}
 		},
 
+		placeholderImage(i) {
+			return generateFilePath('spreed', 'docs', 'screenshotplaceholders/placeholder-' + i + '.jpeg')
+		},
+
+		placeholderName(i) {
+			switch (i) {
+			case 0:
+				return 'Sandra'
+			case 1:
+				return 'Chris'
+			case 2:
+				return 'Edeltraut'
+			case 3:
+				return 'Arthur'
+			case 4:
+				return 'Roeland'
+			case 5:
+				return 'Vanessa'
+			case 6:
+				return 'Emily'
+			case 7:
+				return 'Tobias'
+			case 8:
+				return 'Vincent'
+			}
+		},
+
+		placeholderModel(i) {
+			return {
+				attributes: {
+					audioAvailable: i === 1 || i === 2 || i === 4 || i === 5 || i === 6 || i === 7 || i === 8,
+					audioEnabled: i === 8,
+					videoAvailable: true,
+					screen: false,
+					currentVolume: 0.75,
+					volumeThreshold: 0.75,
+					localScreen: false,
+					raisedHand: {
+						state: i === 0 || i === 1 || i === 6,
+					},
+				},
+				forceMute: () => {},
+				on: () => {},
+				off: () => {},
+				getWebRtc: () => {
+					return {
+						connection: {
+							getSendVideoIfAvailable: () => {},
+						},
+					}
+				},
+			}
+		},
+
+		placeholderSharedData() {
+			return {
+				videoEnabled: true,
+				screenVisible: false,
+			}
+		},
+
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
 			// TODO: properly handle resizes when not on first page:
@@ -737,12 +826,31 @@ export default {
 }
 
 .dev-mode-video {
-	border: 1px solid #00FF41;
-	color: #00FF41;
+	&:not(.dev-mode-screenshot) {
+		border: 1px solid #00FF41;
+		color: #00FF41;
+	}
 	font-size: 30px;
 	text-align: center;
 	vertical-align: middle;
-	padding-top: 80px;
+	position: relative;
+
+	&--self {
+		background-size: cover !important;
+
+		& > div {
+			width: 100%;
+			bottom: calc(-100% + 50px);
+			position: relative;
+			left: calc(50% - 88px);
+		}
+	}
+
+	img {
+		object-fit: cover;
+		height: 100%;
+		width: 100%
+	}
 }
 
 .dev-mode__title {
