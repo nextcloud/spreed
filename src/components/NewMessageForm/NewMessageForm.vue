@@ -176,15 +176,22 @@ export default {
 			}
 		},
 
-		disabled() {
+		isReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
-			|| !this.currentConversationIsJoined
+		},
+
+		disabled() {
+			return this.isReadOnly || !this.currentConversationIsJoined
 		},
 
 		placeholderText() {
-			return this.disabled
-				? t('spreed', 'This conversation has been locked')
-				: t('spreed', 'Write message, @ to mention someone …')
+			if (this.isReadonly) {
+				return t('spreed', 'This conversation has been locked')
+			} else if (!this.currentConversationIsJoined) {
+				return t('spreed', 'Joining conversation …')
+			} else {
+				return t('spreed', 'Write message, @ to mention someone …')
+			}
 		},
 
 		messageToBeReplied() {
