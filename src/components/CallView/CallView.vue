@@ -174,7 +174,7 @@ export default {
 			type: String,
 			required: true,
 		},
-		// Determines wether this component is used in the sidebar
+		// Determines whether this component is used in the sidebar
 		isSidebar: {
 			type: Boolean,
 			default: false,
