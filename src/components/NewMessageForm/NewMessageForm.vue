@@ -64,7 +64,7 @@
 					<EmojiPicker @select="addEmoji">
 						<button
 							type="button"
-							disabled="disabled"
+							:disabled="disabled"
 							class="nc-button nc-button__main"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
