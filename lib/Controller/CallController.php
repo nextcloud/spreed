@@ -69,16 +69,9 @@ class CallController extends AEnvironmentAwareController {
 	public function getPeersForCall(): DataResponse {
 		$timeout = $this->timeFactory->getTime() - 30;
 		$result = [];
-		$participants = $this->participantService->getParticipantsInCall($this->room);
+		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
 
 		foreach ($participants as $participant) {
-			/** @var Session $session */
-			$session = $participant->getSession();
-			if ($session->getLastPing() < $timeout) {
-				// User is not active in call
-				continue;
-			}
-
 			if ($this->getAPIVersion() >= 3) {
 				$displayName = $participant->getAttendee()->getActorId();
 				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -99,8 +92,8 @@ class CallController extends AEnvironmentAwareController {
 					'actorId' => $participant->getAttendee()->getActorId(),
 					'displayName' => $displayName,
 					'token' => $this->room->getToken(),
-					'lastPing' => $session->getLastPing(),
-					'sessionId' => $session->getSessionId(),
+					'lastPing' => $participant->getSession()->getLastPing(),
+					'sessionId' => $participant->getSession()->getSessionId(),
 				];
 			} else {
 				$userId = '';
@@ -111,8 +104,8 @@ class CallController extends AEnvironmentAwareController {
 				$result[] = [
 					'userId' => $userId,
 					'token' => $this->room->getToken(),
-					'lastPing' => $session->getLastPing(),
-					'sessionId' => $session->getSessionId(),
+					'lastPing' => $participant->getSession()->getLastPing(),
+					'sessionId' => $participant->getSession()->getSessionId(),
 				];
 			}
 		}
