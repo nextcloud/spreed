@@ -30,6 +30,7 @@ title: Constants
 * `1` in-call
 * `2` provides audio
 * `4` provides video
+* `8` uses SIP dial-in
 
 ## Participant notification levels
 * `0` Default (`1` for one-to-one conversations, `2` for other conversations)

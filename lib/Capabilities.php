@@ -71,6 +71,7 @@ class Capabilities implements IPublicCapability {
 				'delete-messages',
 				'mention-flag',
 				'in-call-flags',
+				'conversation-call-flags',
 				'notification-levels',
 				'invite-groups-and-mails',
 				'locked-one-to-one-rooms',
