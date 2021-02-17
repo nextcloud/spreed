@@ -133,6 +133,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 ## Deleting a chat message
 
+* Required capability: `delete-messages`
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/{messageId}`
 
@@ -161,6 +162,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 ## Mark chat as read
 
+* Required capability: `chat-read-marker`
 * Method: `POST`
 * Endpoint: `/chat/{token}/read`
 * Data:

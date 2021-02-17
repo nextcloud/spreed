@@ -1,6 +1,7 @@
 # Signaling API
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
 
 ## Get signaling settings
 

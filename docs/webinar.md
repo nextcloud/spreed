@@ -6,8 +6,11 @@ Group and public conversations can be used to host webinars. Those online meetin
 * Only moderators can read and write chat messages
 * Normal users can only join the room. They then pull the room endpoint regularly for an update and should start the chat and signaling as well as allowing to join the call, once the lobby got disabled.
 
+## Base endpoint
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
 ## Set lobby for a conversation
 
@@ -29,6 +32,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
 
+    - Data: See array definition in [Get user´s conversations](conversation.md#get-user-s-conversations)
+
 ## Enabled or disable SIP dial-in
 
 * Required capability: `sip-support`
@@ -48,3 +53,5 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `412 Precondition Failed` When SIP is not configured on the server
+
+    - Data: See array definition in [Get user´s conversations](conversation.md#get-user-s-conversations)

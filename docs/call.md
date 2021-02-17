@@ -1,6 +1,8 @@
 # Call API
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
+* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
 ## Get list of connected participants
 
@@ -17,11 +19,14 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
         Array of participants, each participant has at least:
 
-        field | type | Description
-        ------|------|------------
-        `userId` | string | Is empty for guests
-        `lastPing` | int | Timestamp of the last ping of the user (should be used for sorting)
-        `sessionId` | string | 512 character long string
+        field | type | API | Description
+        ------|------|-----|------------
+        `userId` | string | v1 and v2 only | Is empty for guests
+        `actorType` | string | v3 | Actor type of the attendee (see [Constants - Attendee types](constants.md#attendee-types))
+        `actorId` | string | v3 | The user id, guest random id or email address of the attendee
+        `displayName` | string | v3 | The display name of the attendee
+        `lastPing` | int | * | Timestamp of the last ping of the user (should be used for sorting)
+        `sessionId` | string | * | 512 character long string
 
 ## Join a call
 

@@ -21,7 +21,7 @@ nav:
   - 'Call experience': 'call-experience.md'
   - Constants: 'constants.md'
   - Capabilities: 'capabilities.md'
-  - 'API v1.0':
+  - 'API documentation':
       - 'Conversations management': 'conversation.md'
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'

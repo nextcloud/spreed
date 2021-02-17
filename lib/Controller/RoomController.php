@@ -1835,7 +1835,7 @@ class RoomController extends AEnvironmentAwareController {
 	public function resendInvitations(?int $attendeeId): DataResponse {
 		$participants = [];
 
-		// targetting specific participant
+		// targeting specific participant
 		if ($attendeeId !== null) {
 			try {
 				$participants[] = $this->room->getParticipantByAttendeeId($attendeeId);
