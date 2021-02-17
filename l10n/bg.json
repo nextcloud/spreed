@@ -262,9 +262,6 @@
     "STUN servers" : "STUN сървъри",
     "TURN server URL" : "URL на TURN сървъра",
     "TURN server protocols" : "Протоколи на TURN сървър",
-    "UDP and TCP" : "UDP и TCP",
-    "UDP only" : "само UDP",
-    "TCP only" : "само TCP",
     "Copy link" : "Копирай връзката",
     "Settings" : "Настройки",
     "Dismiss" : "Отхвърляне",
@@ -317,6 +314,9 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена.",
     "Android app" : "Android приложение",
     "iOS app" : "iOS приложениер",
+    "UDP and TCP" : "UDP и TCP",
+    "UDP only" : "само UDP",
+    "TCP only" : "само TCP",
     "Share link" : "Сподели връзка",
     "Enabled" : "Включено"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

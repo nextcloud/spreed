@@ -162,9 +162,6 @@
     "Blocked" : "I bllokuar",
     "Saved" : "U ruajt",
     "TURN server protocols" : "Protokollet e serverit TURN",
-    "UDP and TCP" : "UDP dhe TCP",
-    "UDP only" : "Vetëm UDP",
-    "TCP only" : "Vetëm TCP",
     "Copy link" : "Kopjo linkun",
     "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Show your screen" : "Shfaq ekranin tënd",
@@ -226,6 +223,9 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
+    "UDP and TCP" : "UDP dhe TCP",
+    "UDP only" : "Vetëm UDP",
+    "TCP only" : "Vetëm TCP",
     "Share link" : "Shpërndaj ndërlidhjen",
     "Enabled" : "I aktivizuar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
