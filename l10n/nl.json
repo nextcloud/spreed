@@ -587,16 +587,9 @@
     "STUN servers" : "STUN servers",
     "A STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
     "TURN server schemes" : "TURN server schema's",
-    "turn: and turns:" : "turn: en turns:",
-    "turn: only" : "turn: alleen",
-    "turns: only" : "turns: alleen",
     "TURN server URL" : "TURN server URL",
     "TURN server secret" : "TURN server secret",
     "TURN server protocols" : "TURN server protocollen",
-    "UDP and TCP" : "UDP en TCP",
-    "UDP only" : "Alleen udp",
-    "TCP only" : "Alleen tcp",
-    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: Succesvolle ICE-kandidaten geretourneerd door de TURN-server",
     "Error: No working ICE candidates returned by the TURN server" : "Fout: geen werkende ICE-kandidaten geretourneerd door de TURN-server",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor UDP geretourneerd door de TURN-server",
@@ -1002,6 +995,9 @@
     "New in Talk 9" : "Nieuw in Talk 9",
     "{user} wants to talk with you" : "{user} wil een gesprek met je beginnen",
     "Signaling server URL" : "Signaling server URL",
+    "UDP and TCP" : "UDP en TCP",
+    "UDP only" : "Alleen udp",
+    "TCP only" : "Alleen tcp",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "Een TURN server wordt gebruikt om verkeer van deelnemers achter een firewall te proxyen. Als individuele deelnemers niet rechtstreeks met anderen kunnen verbinden, is TURN server vermoedelijk vereist. Zie {linkstart}deze documentatie{linkend} voor instructies.",
     "This conversation is read only" : "Dit gesprek is alleen-lezen",
     "Conversation, " : "Gesprekken,",
@@ -1022,6 +1018,10 @@
     "More info on Matterbridge." : "Meer info over Matterbridge.",
     "Enabled" : "Ingeschakeld",
     "Show matterbridge log" : "Toon matterbridge logbestand",
-    "Add new bridged channel" : "Toevoegen overbruggingskanaal"
+    "Add new bridged channel" : "Toevoegen overbruggingskanaal",
+    "turn: and turns:" : "turn: en turns:",
+    "turn: only" : "turn: alleen",
+    "turns: only" : "turns: alleen",
+    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

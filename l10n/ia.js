@@ -13,8 +13,6 @@ OC.L10N.register(
     "Pending" : "Pendente",
     "Error" : "Error",
     "Saved" : "Salveguardate",
-    "UDP only" : "solo UDP",
-    "TCP only" : "solo TCP",
     "Copy link" : "Copiar ligamine",
     "Settings" : "Configurationes",
     "Dismiss" : "Dimitter",
@@ -51,6 +49,8 @@ OC.L10N.register(
     "TURN server" : "servitor TURN",
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
+    "UDP only" : "solo UDP",
+    "TCP only" : "solo TCP",
     "Share link" : "Compartir ligamine",
     "Enabled" : "Activate"
 },
