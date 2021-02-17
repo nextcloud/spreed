@@ -587,16 +587,9 @@
     "STUN servers" : "Server STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un server STUN è utilizzato per determinare l'indirizzo IP pubblico dei partecipanti dietro a un router.",
     "TURN server schemes" : "Schemi del server TURN",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "solo turn:",
-    "turns: only" : "solo turns:",
     "TURN server URL" : "URL server TURN",
     "TURN server secret" : "Segreto del server TURN",
     "TURN server protocols" : "Protocolli server TURN",
-    "UDP and TCP" : "UDP e TCP",
-    "UDP only" : "Solo UDP",
-    "TCP only" : "Solo TCP",
-    "turns: scheme must be used with a domain" : "Lo schema turns: deve essere utilizzato con un dominio",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: Candidati ICE validi restituiti dal server TURN",
     "Error: No working ICE candidates returned by the TURN server" : "OK: Candidati ICE non funzionanti restituiti dal server TURN",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Errore: nessun candidato ICE funzionante restituito per UDP dal server TURN ",
@@ -1002,6 +995,9 @@
     "New in Talk 9" : "Nuovo in Talk 9",
     "{user} wants to talk with you" : "{user} vuole parlare con te.",
     "Signaling server URL" : "URL server di segnalazione",
+    "UDP and TCP" : "UDP e TCP",
+    "UDP only" : "Solo UDP",
+    "TCP only" : "Solo TCP",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is mostlikely required. See {linkstart}this documentation{linkend} for setup instructions." : "Un server TURN viene utilizzato per per inoltrare il traffico dai partecipanti dietro un firewall. Se i singoli partecipanti non possono connettersi ad altri, è molto probabile che sia richiesto un server TURN. Vedi {linkstart}questa documentazione{linkend} per le istruzioni di configurazione.",
     "This conversation is read only" : "Questa conversazione è in sola lettura",
     "Conversation, " : "Conversazione",
@@ -1022,6 +1018,10 @@
     "More info on Matterbridge." : "Maggiori info su Matterbridge.",
     "Enabled" : "Abilitato",
     "Show matterbridge log" : "Mostra il log di matterbridge",
-    "Add new bridged channel" : "Aggiungi nuovo canale collegato"
+    "Add new bridged channel" : "Aggiungi nuovo canale collegato",
+    "turn: and turns:" : "turn: e turns:",
+    "turn: only" : "solo turn:",
+    "turns: only" : "solo turns:",
+    "turns: scheme must be used with a domain" : "Lo schema turns: deve essere utilizzato con un dominio"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
