@@ -119,7 +119,7 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getRoom(AEnvironmentAwareController $controller): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomByToken($token, $this->userId);
+		$room = $this->manager->getRoomByToken($token);
 		$controller->setRoom($room);
 	}
 
@@ -130,7 +130,8 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
+		$sessionId = $this->talkSession->getSessionForRoom($token);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 		$controller->setRoom($room);
 
 		$participant = $room->getParticipant($this->userId);
@@ -149,13 +150,14 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
-		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
+		$sessionId = $this->talkSession->getSessionForRoom($token);
+		$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 		$controller->setRoom($room);
 
-		$sessionId = $this->talkSession->getSessionForRoom($token);
 		if ($sessionId !== null) {
 			$participant = $room->getParticipantBySession($sessionId);
 		} else {
+			// FIXME is this still needed? Maybe for users joining public links?
 			$participant = $room->getParticipant($this->userId);
 		}
 		$controller->setParticipant($participant);

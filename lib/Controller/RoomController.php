@@ -264,14 +264,15 @@ class RoomController extends AEnvironmentAwareController {
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $includeLastMessage, $isSIPBridgeRequest);
+			$sessionId = $this->session->getSessionForRoom($token);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId, $includeLastMessage, $isSIPBridgeRequest);
 
 			$participant = null;
 			try {
 				$participant = $room->getParticipant($this->userId);
 			} catch (ParticipantNotFoundException $e) {
 				try {
-					$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
+					$participant = $room->getParticipantBySession($sessionId);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
@@ -1568,8 +1569,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
+		$sessionId = $this->session->getSessionForRoom($token);
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1585,9 +1587,8 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (ParticipantNotFoundException $e) {
 			}
 		} else {
-			$sessionForToken = $this->session->getSessionForRoom($token);
 			try {
-				$previousParticipant = $room->getParticipantBySession($sessionForToken);
+				$previousParticipant = $room->getParticipantBySession($sessionId);
 				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}
@@ -1595,7 +1596,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($previousSession instanceof Session && $previousSession->getSessionId() !== '0') {
 			if ($force === false && $previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
-				// Previous session was active in the call, show a warning
+				// Previous session is/was active in the call, show a warning
 				return new DataResponse([
 					'sessionId' => $previousSession->getSessionId(),
 					'inCall' => $previousSession->getInCall(),
@@ -1672,7 +1673,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			$participant = $room->getParticipantBySession($sessionId);
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException $e) {

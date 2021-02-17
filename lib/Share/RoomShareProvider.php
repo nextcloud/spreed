@@ -173,7 +173,7 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		try {
-			$room->getParticipant($share->getSharedBy());
+			$room->getParticipant($share->getSharedBy(), false);
 		} catch (ParticipantNotFoundException $e) {
 			// If the sharer is not a participant of the room even if the room
 			// exists the error is still "Room not found".

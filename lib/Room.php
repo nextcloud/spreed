@@ -35,6 +35,7 @@ use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SelectHelper;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -402,28 +403,46 @@ class Room {
 
 	/**
 	 * @param string|null $userId
+	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
+	 *                                     string to try loading a specific session
+	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipant(?string $userId): Participant {
+	public function getParticipant(?string $userId, $sessionId = null): Participant {
 		if (!is_string($userId) || $userId === '') {
 			throw new ParticipantNotFoundException('Not a user');
 		}
 
 		if ($this->currentUser === $userId && $this->participant instanceof Participant) {
-			return $this->participant;
+			if (!$sessionId
+				|| ($this->participant->getSession() instanceof Session
+					&& $this->participant->getSession()->getSessionId() === $sessionId)) {
+				return $this->participant;
+			}
 		}
 
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
+
+		if ($sessionId !== false) {
+			$helper->selectSessionsTable($query);
+			if ($sessionId !== null) {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+					$query->expr()->eq('a.id', 's.attendee_id')
+				));
+			} else {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
+			}
+		}
+
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -479,9 +498,7 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
@@ -498,19 +515,33 @@ class Room {
 
 	/**
 	 * @param int $attendeeId
+	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
+	 *                                     string to try loading a specific session
+	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
-	public function getParticipantByAttendeeId(int $attendeeId): Participant {
+	public function getParticipantByAttendeeId(int $attendeeId, $sessionId = null): Participant {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
+
+		if ($sessionId !== false) {
+			$helper->selectSessionsTable($query);
+			if ($sessionId !== null) {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+					$query->expr()->eq('a.id', 's.attendee_id')
+				));
+			} else {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
+			}
+		}
+
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -525,24 +556,38 @@ class Room {
 	/**
 	 * @param string $actorType
 	 * @param string $actorId
+	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
+	 *                                     string to try loading a specific session
+	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
-	public function getParticipantByActor(string $actorType, string $actorId): Participant {
+	public function getParticipantByActor(string $actorType, string $actorId, $sessionId = null): Participant {
 		if ($actorType === Attendee::ACTOR_USERS) {
 			return $this->getParticipant($actorId);
 		}
 
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
-		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
+
+		if ($sessionId !== false) {
+			$helper->selectSessionsTable($query);
+			if ($sessionId !== null) {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+					$query->expr()->eq('a.id', 's.attendee_id')
+				));
+			} else {
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
+			}
+		}
+
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();

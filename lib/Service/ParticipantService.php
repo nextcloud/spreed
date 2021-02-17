@@ -586,6 +586,7 @@ class ParticipantService {
 	 * @return Participant[]
 	 */
 	public function getParticipantsForRoom(Room $room): array {
+		// FIXME Need to make sure a user is skipped when at least one session is in the call
 		$query = $this->connection->getQueryBuilder();
 
 		$helper = new SelectHelper();
@@ -665,6 +666,7 @@ class ParticipantService {
 		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
+			// Currently we only care if the user has a session at all, so we can select any: #ThisIsFine
 			->leftJoin(
 				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
@@ -739,14 +741,14 @@ class ParticipantService {
 			->from('talk_attendees', 'a')
 			->leftJoin(
 				'a', 'talk_sessions', 's',
-				$query->expr()->eq('s.attendee_id', 'a.id')
+				$query->expr()->andX(
+					$query->expr()->eq('s.attendee_id', 'a.id'),
+					$query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
+				)
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($query->expr()->orX(
-				$query->expr()->eq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
-				$query->expr()->isNull('s.in_call')
-			));
+			->andWhere($query->expr()->isNull('s.in_call'));
 
 		$userIds = [];
 		$result = $query->execute();
