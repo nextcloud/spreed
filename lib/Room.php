@@ -724,6 +724,9 @@ class Room {
 			->set('last_message', $query->createNamedParameter((int) $message->getId()))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
+
+		$this->lastMessage = $message;
+		$this->lastMessageId = (int) $message->getId();
 	}
 
 	public function resetActiveSince(): bool {
