@@ -4,24 +4,6 @@
 * Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
 * Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
 
-## Get listed conversations
-
-* Method: `GET`
-* Endpoint: `/listed-room`
-
-* Response:
-    - Status code:
-        + `200 OK`
-        + `401 Unauthorized` when the user is not logged in
-
-    - Header:
-
-        field | type | Description
-        ------|------|------------
-        `searchTerm` | string | search term
-
-    - Data: See array definition in `Get user´s conversations`
-
 ## Get user´s conversations
 
 * Method: `GET`
@@ -65,8 +47,8 @@
         `hasCall` | bool | * | Flag if the conversation has an active call
         `callFlag` | int | v3 | Combined flag of all participants in the current call (see [constants list](constants.md#participant-in-call-flag), only available with `conversation-call-flags` capability)
         `canStartCall` | bool | * | Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)
-        `canDeleteConversation` | bool | 🆕 v2 | Flag if the user can delete the conversation for everyone (not possible without moderator permissions or in one-to-one conversations)
-        `canLeaveConversation` | bool | 🆕 v2 | Flag if the user can leave the conversation (not possible for the last user with moderator permissions)
+        `canDeleteConversation` | bool | v2 | Flag if the user can delete the conversation for everyone (not possible without moderator permissions or in one-to-one conversations)
+        `canLeaveConversation` | bool | v2 | Flag if the user can leave the conversation (not possible for the last user with moderator permissions)
         `lastActivity` | int | * | Timestamp of the last activity in the conversation, in seconds and UTC time zone
         `isFavorite` | bool | * | Flag if the conversation is favorited by the user
         `notificationLevel` | int | * | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
@@ -90,7 +72,7 @@
 
     field | type | Description
     ------|------|------------
-    `roomType` | int |
+    `roomType` | int | See [constants list](constants.md#conversation-types)
     `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `source = 'circles'`], only available with `circles-support` capability))
     `source` | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)
     `roomName` | string | conversation name (Not available for `roomType = 1`)
@@ -121,6 +103,25 @@
         field | type | Description
         ------|------|------------
         `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.
+
+    - Data: See array definition in `Get user´s conversations`
+
+## Get open conversations
+
+* Required capability: `listable-rooms`
+* Method: `GET`
+* Endpoint: `/listed-room`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` when the user is not logged in
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `searchTerm` | string | search term
 
     - Data: See array definition in `Get user´s conversations`
 
@@ -156,8 +157,8 @@
 
 ## Set description for a conversation
 
+* Required capability: `room-description`
 * Method: `PUT`
-* API: v3
 * Endpoint: `/room/{token}/description`
 * Data:
 
@@ -199,6 +200,7 @@
 
 ## Set read-only for a conversation
 
+* Required capability: `read-only-rooms`
 * Method: `PUT`
 * Endpoint: `/room/{token}/read-only`
 * Data:
@@ -283,12 +285,13 @@
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When the the given level is invalid
+        + `400 Bad Request` When the given level is invalid
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Set listable scope for a conversation
+## Open a conversation
 
+* Required capability: `listable-rooms`
 * Method: `PUT`
 * Endpoint: `/room/{token}/listable`
 * Data:

@@ -26,17 +26,18 @@
 
         field | type | API | Description
         ------|------|-----|------------
-        `userId` | string | v1 + v2| Is empty for guests
+        `userId` | string | v1 + v2 only | Is empty for guests
         `attendeeId` | int | v3 | Unique attendee id
         `actorType` | string | v3 | Currently known `users|guests|emails|groups`
         `actorId` | string | v3 | The unique identifier for the given actor type
-        `displayName` | string | | Can be empty for guests
-        `participantType` | int | | Permissions level of the participant
-        `lastPing` | int | | Timestamp of the last ping of the user (should be used for sorting)
-        `sessionId` | string | | `'0'` if not connected, otherwise a 512 character long string
-        `status` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
-        `statusIcon` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
-        `statusMessage` | string | | Optional: Only available with `includeStatus=true` and for users with a set status
+        `displayName` | string | * | Can be empty for guests
+        `participantType` | int | * | Permissions level of the participant (see [constants list](constants.md#participant-types))
+        `lastPing` | int | * | Timestamp of the last ping of the user (should be used for sorting)
+        `inCall` | int | * | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))
+        `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
+        `status` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation 
+        `statusIcon` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
+        `statusMessage` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
 
 ## Add a participant to a conversation
 
@@ -87,7 +88,7 @@
 
 ## Delete a participant from a conversation
 
-* API: Only `v1` and `v2`
+* API: Only `v1` and `v2` (Use [Delete an attendee by id from a conversation](#delete-an-attendee-by-id-from-a-conversation) in later version)
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants`
 * Data:
@@ -119,7 +120,7 @@
 
 ## Remove a guest from a conversation
 
-* API: Only `v1` and `v2`
+* API: Only `v1` and `v2` (Use [Delete an attendee by id from a conversation](#delete-an-attendee-by-id-from-a-conversation) in later versions)
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/guests`
 * Data:
@@ -154,11 +155,7 @@
         + `404 Not Found` When the conversation could not be found for the participant
         + `409 Conflict` When the user already has an active session in the conversation. The suggested behaviour is to ask the user whether they want to kill the old session and force join unless the last ping is older than 60 seconds or older than 40 seconds when the conflicting session is not marked as in a call.
 
-    - Data in case of `200 OK`:
-
-        field | type | Description
-        ------|------|------------
-        `sessionId` | string | 512 character long string
+    - Data in case of `200 OK`: See array definition in [Get user´s conversations](conversation.md#get-user-s-conversations)
 
     - Data in case of `409 Conflict`:
 
@@ -170,13 +167,14 @@
 
 ## Resend participant emails
 
+* Required capability: `sip-support`
 * Method: `POST`
 * Endpoint: `/room/{token}/participants/resend-invitations`
 * Data:
 
     field | type | Description
     ------|------|------------
-    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
+    `attendeeId` | int or null | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
@@ -241,6 +239,7 @@
 Note: This is only allowed with validate SIP bridge requests
 
 * API: Only `v3` or later
+* Required capability: `sip-support`
 * Method: `GET`
 * Endpoint: `/room/{token}/pin/{pin}`
 
@@ -254,6 +253,7 @@ Note: This is only allowed with validate SIP bridge requests
 
 ## Set display name as a guest
 
+* API: Only `v1`
 * Method: `POST`
 * Endpoint: `/guest/{token}/name`
 * Data:
