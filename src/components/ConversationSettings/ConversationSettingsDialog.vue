@@ -27,22 +27,15 @@
 		:show-navigation="true">
 		<!-- Notifications settings -->
 		<AppSettingsSection
-			:title="t('spreed', 'Chat notifications')"
+			:title="t('spreed', 'Chat Notifications')"
 			class="app-settings-section">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 		<!-- Guest access -->
 		<AppSettingsSection
-			v-if="canFullModerate"
 			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
 			<LinkShareSettings ref="linkShareSettings" />
-		</AppSettingsSection>
-		<!-- Notifications settings -->
-		<AppSettingsSection
-			:title="t('spreed', 'Chat Notifications')"
-			class="app-settings-section">
-			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 		<!-- TODO sepatate these 2 settings and rename the settings sections
 		all the settings in this component are conversation settings. Proposal:
