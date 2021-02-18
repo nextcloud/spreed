@@ -41,7 +41,7 @@
         `listable` | int | * | Listable scope for the room (only available with `listable-rooms` capability)
         `count` | int | 🏴 v1 | **Deprecated:** ~~Number of active users~~ - always returns `0`
         `numGuests` | int | 🏴 v1 | Number of active guests
-        `lastPing` | int | * | Timestamp of the last ping of the current user (should be used for sorting)
+        `lastPing` | int | * | Timestamp of the last ping of the current user
         `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
         `hasPassword` | bool | * | Flag if the conversation has a password
         `hasCall` | bool | * | Flag if the conversation has an active call
