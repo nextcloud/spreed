@@ -1110,7 +1110,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$maxPingAge = $this->timeFactory->getTime() - 100;
-		$participants = $this->participantService->getParticipantsForRoom($this->room, true); // FIXME should return some what session info?
+		$participants = $this->participantService->getParticipantsForRoom($this->room, true);
 		$results = $headers = $statuses = [];
 
 		if ($this->userId !== null
@@ -1130,9 +1130,32 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$cleanGuests = false;
-
-		/** @var Participant[] $participants */
 		foreach ($participants as $participant) {
+			$attendeeId = $participant->getAttendee()->getId();
+			if (isset($results[$attendeeId])) {
+				$session = $participant->getSession();
+				if (!$session instanceof Session) {
+					// If the user has an entry already and this has no session we don't need it anymore.
+					continue;
+				}
+
+				if ($session->getLastPing() <= $maxPingAge) {
+					if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
+						$cleanGuests = true;
+					} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+						$this->participantService->leaveRoomAsSession($this->room, $participant);
+					}
+					// Session expired, ignore
+					continue;
+				}
+
+				// Combine the session values: All inCall bit flags, newest lastPing and any sessionId (for online checking)
+				$results[$attendeeId]['inCall'] |= $session->getInCall();
+				$results[$attendeeId]['lastPing'] = max($results[$attendeeId]['lastPing'], $session->getLastPing());
+				$results[$attendeeId]['sessionId'] = $results[$attendeeId]['sessionId'] !== '0' ? $results[$attendeeId]['sessionId'] : $session->getSessionId();
+				continue;
+			}
+
 			$result = [
 				'inCall' => Participant::FLAG_DISCONNECTED,
 				'lastPing' => 0,
@@ -1140,7 +1163,7 @@ class RoomController extends AEnvironmentAwareController {
 				'participantType' => $participant->getAttendee()->getParticipantType(),
 			];
 			if ($this->getAPIVersion() >= 3) {
-				$result['attendeeId'] = $participant->getAttendee()->getId();
+				$result['attendeeId'] = $attendeeId;
 				$result['actorId'] = $participant->getAttendee()->getActorId();
 				$result['actorType'] = $participant->getAttendee()->getActorType();
 				$result['attendeePin'] = '';
@@ -1202,14 +1225,14 @@ class RoomController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$results[] = $result;
+			$results[$attendeeId] = $result;
 		}
 
 		if ($cleanGuests) {
 			$this->participantService->cleanGuestParticipants($this->room);
 		}
 
-		return new DataResponse($results, Http::STATUS_OK, $headers);
+		return new DataResponse(array_values($results), Http::STATUS_OK, $headers);
 	}
 
 	/**
