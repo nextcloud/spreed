@@ -35,14 +35,14 @@
         `attendeePin` | string | v3 | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
         `actorType` | string | v3 | Currently known `users|guests|emails|groups`
         `actorId` | string | v3 | The unique identifier for the given actor type
-        `participantInCall` | bool | 🏴 v1 | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
-        `participantFlags` | int | * | Flags of the current user (only available with `in-call-flags` capability)
+        `participantInCall` | bool | 🏴 v1 | **Deprecated:** ~~Flag if a **random** active session of the current user (might be from a different device) is in the call (deprecated, use `participantFlags` instead)~~
+        `participantFlags` | int | * | **Deprecated:** ~~Flags of a **random** active session of the current user (might be from a different device) (only available with `in-call-flags` capability)~~
         `readOnly` | int | * | Read-only state for the current user (only available with `read-only-rooms` capability)
         `listable` | int | * | Listable scope for the room (only available with `listable-rooms` capability)
         `count` | int | 🏴 v1 | **Deprecated:** ~~Number of active users~~ - always returns `0`
         `numGuests` | int | 🏴 v1 | Number of active guests
-        `lastPing` | int | * | Timestamp of the last ping of the current user
-        `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
+        `lastPing` | int | * | **Deprecated:** ~~Timestamp of the last ping of a **random** active session of the current user (might be from a different device)~~
+        `sessionId` | string | * | `'0'` if not connected, otherwise an up to 512 character long string that is the identifier of a **random** active session of the current user (might be from a different device), should only be used to pre-check if the user joined in another device, but this might be outdated by the time of usage, so better check via [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation)
         `hasPassword` | bool | * | Flag if the conversation has a password
         `hasCall` | bool | * | Flag if the conversation has an active call
         `callFlag` | int | v3 | Combined flag of all participants in the current call (see [constants list](constants.md#participant-in-call-flag), only available with `conversation-call-flags` capability)

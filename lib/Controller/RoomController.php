@@ -198,7 +198,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		$rooms = $this->manager->getRoomsForUser($this->userId, true);
+		$rooms = $this->manager->getRoomsForUser($this->userId, true, true);
 		$readPrivacy = $this->talkConfig->getUserReadPrivacy($this->userId);
 		if ($readPrivacy === Participant::PRIVACY_PUBLIC) {
 			$roomIds = array_map(static function (Room $room) {

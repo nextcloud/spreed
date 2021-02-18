@@ -299,26 +299,29 @@ class Manager {
 
 	/**
 	 * @param string $userId
+	 * @param bool $loadSession Loads a random session if possible for the user
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForUser(string $userId, bool $includeLastMessage = false): array {
-		// FIXME hand in a list of sessions or how do we want to do it here?
+	public function getRoomsForUser(string $userId, bool $loadSession = false, bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-				$query->expr()->eq('a.id', 's.attendee_id')
-			))
 			->where($query->expr()->isNotNull('a.id'));
+
+		if ($loadSession) {
+			$helper->selectSessionsTable($query);
+			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id')
+			));
+		}
 
 		if ($includeLastMessage) {
 			$this->loadLastMessageInfo($query);
