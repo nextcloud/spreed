@@ -306,6 +306,7 @@ OC.L10N.register(
     "Search" : "Търсене",
     "Grid view" : "Решетъчен изглед",
     "Send" : "Изпрати",
+    "Error while sharing file" : "Грешка при споделяне на файл",
     "Default" : "Стандартен",
     "Access to microphone & camera is only possible with HTTPS" : "Достъпът до микрофона и камерата е възможен само при HTTPS",
     "Access to microphone & camera was denied" : "Достъпът до микрофона и камерата е отказан",
