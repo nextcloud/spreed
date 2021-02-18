@@ -583,21 +583,24 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param bool $loadSession Loads a random session if possible for the users
 	 * @return Participant[]
 	 */
-	public function getParticipantsForRoom(Room $room): array {
-		// FIXME Need to make sure a user is skipped when at least one session is in the call
+	public function getParticipantsForRoom(Room $room, bool $loadSession = false): array {
 		$query = $this->connection->getQueryBuilder();
 
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			->leftJoin(
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($loadSession) {
+			$helper->selectSessionsTable($query);
+			$query->leftJoin(
 				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
-			)
-			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+			);
+		}
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}

@@ -476,7 +476,7 @@ class RoomController extends AEnvironmentAwareController {
 		$numActiveGuests = 0;
 		$cleanGuests = false;
 		$participantList = [];
-		$participants = $this->participantService->getParticipantsForRoom($room);
+		$participants = $this->participantService->getParticipantsForRoom($room, true); // FIXME NEEDS the session but can potentially kill APIv1?
 		uasort($participants, function (Participant $participant1, Participant $participant2) {
 			$s1 = $participant1->getSession() ? $participant1->getSession()->getLastPing() : 0;
 			$s2 = $participant2->getSession() ? $participant2->getSession()->getLastPing() : 0;
@@ -1110,7 +1110,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$maxPingAge = $this->timeFactory->getTime() - 100;
-		$participants = $this->participantService->getParticipantsForRoom($this->room);
+		$participants = $this->participantService->getParticipantsForRoom($this->room, true); // FIXME should return some what session info?
 		$results = $headers = $statuses = [];
 
 		if ($this->userId !== null

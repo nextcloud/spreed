@@ -35,7 +35,6 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Session;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
