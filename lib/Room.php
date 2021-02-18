@@ -432,13 +432,14 @@ class Room {
 			->setMaxResults(1);
 
 		if ($sessionId !== false) {
-			$helper->selectSessionsTable($query);
 			if ($sessionId !== null) {
+				$helper->selectSessionsTable($query);
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
 					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
 					$query->expr()->eq('a.id', 's.attendee_id')
 				));
 			} else {
+				$helper->selectSessionsTable($query); // FIXME PROBLEM
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
 			}
 		}
@@ -499,7 +500,7 @@ class Room {
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
 		$query->from('talk_attendees', 'a')
-			->andWhere($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
+			->where($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
 		$result = $query->execute();
@@ -526,18 +527,20 @@ class Room {
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
 		$query->from('talk_attendees', 'a')
-			->andWhere($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
+			->where($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
 
 		if ($sessionId !== false) {
-			$helper->selectSessionsTable($query);
 			if ($sessionId !== null) {
+				$helper->selectSessionsTable($query);
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
 					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
 					$query->expr()->eq('a.id', 's.attendee_id')
 				));
 			} else {
+				$helper->selectSessionsTableMax($query);
+				$query->groupBy('a.id');
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
 			}
 		}
@@ -569,7 +572,7 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
-		$helper->selectSessionsTable($query);
+		$helper->selectAttendeesTable($query);
 		$query->from('talk_attendees', 'a')
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
@@ -577,13 +580,15 @@ class Room {
 			->setMaxResults(1);
 
 		if ($sessionId !== false) {
-			$helper->selectSessionsTable($query);
 			if ($sessionId !== null) {
+				$helper->selectSessionsTable($query);
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
 					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
 					$query->expr()->eq('a.id', 's.attendee_id')
 				));
 			} else {
+				$helper->selectSessionsTableMax($query);
+				$query->groupBy('a.id');
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
 			}
 		}
