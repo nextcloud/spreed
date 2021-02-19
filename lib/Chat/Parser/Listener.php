@@ -96,5 +96,25 @@ class Listener {
 				$event->stopPropagation();
 			}
 		});
+
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
+			$chatMessage = $event->getMessage();
+
+			if ($chatMessage->getMessageType() !== 'comment_deleted') {
+				return;
+			}
+
+			/** @var SystemMessage $parser */
+			$parser = \OC::$server->query(SystemMessage::class);
+
+			try {
+				$parser->parseDeletedMessage($chatMessage);
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			} catch (\RuntimeException $e) {
+				$event->stopPropagation();
+			}
+		}, 9999);// First things first
 	}
 }

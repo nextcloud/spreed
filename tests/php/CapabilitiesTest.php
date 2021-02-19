@@ -65,6 +65,7 @@ class CapabilitiesTest extends TestCase {
 			'last-room-activity',
 			'no-ping',
 			'system-messages',
+			'delete-messages',
 			'mention-flag',
 			'in-call-flags',
 			'notification-levels',
