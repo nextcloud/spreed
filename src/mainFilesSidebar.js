@@ -25,6 +25,7 @@
 import Vue from 'vue'
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp'
 import FilesSidebarTabApp from './FilesSidebarTabApp'
+import './init'
 
 // Store
 import Vuex from 'vuex'

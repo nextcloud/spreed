@@ -36,6 +36,7 @@ import sidebarStore from './sidebarStore'
 import talkHashStore from './talkHashStore'
 import tokenStore from './tokenStore'
 import windowVisibilityStore from './windowVisibilityStore'
+import messageActionsStore from './messageActionsStore'
 
 Vue.use(Vuex)
 
@@ -57,6 +58,7 @@ export default new Store({
 		talkHashStore,
 		tokenStore,
 		windowVisibilityStore,
+		messageActionsStore,
 	},
 
 	mutations,
