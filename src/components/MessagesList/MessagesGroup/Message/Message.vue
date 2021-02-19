@@ -29,9 +29,9 @@ the main body of the message as well as a quote.
 		:id="`message_${id}`"
 		ref="message"
 		class="message"
-		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
-		@mouseover="showActions=true"
-		@mouseleave="showActions=false">
+		:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+		@mouseover="handleMouseover"
+		@mouseleave="handleMouseleave">
 		<div v-if="isFirstMessage && showAuthor"
 			class="message__author"
 			role="heading"
@@ -59,7 +59,7 @@ the main body of the message as well as a quote.
 				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
-			<div class="message__main__right">
+			<div v-if="!isDeletedMessage" class="message__main__right">
 				<span
 					v-tooltip.auto="messageDate"
 					class="date"
@@ -169,7 +169,7 @@ import {
 	showError,
 	showSuccess,
 	showWarning,
-	TOAST_DEFAULT_TIMEOUT
+	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 
 export default {
@@ -359,7 +359,7 @@ export default {
 
 		showCommonReadIcon() {
 			return this.conversation.lastCommonReadMessage >= this.id
-				&& this.showSentIcon
+				&& this.showSentIcon && !this.isDeletedMessage
 		},
 
 		showSentIcon() {
@@ -368,6 +368,7 @@ export default {
 				&& !this.isDeleting
 				&& this.actorType === this.participant.actorType
 				&& this.actorId === this.participant.actorId
+				&& !this.isDeletedMessage
 		},
 
 		messagesList() {
@@ -594,6 +595,14 @@ export default {
 
 			this.isDeleting = false
 		},
+
+		handleMouseover() {
+			this.showActions = true
+		},
+
+		handleMouseleave() {
+			this.showActions = false
+		},
 	},
 }
 </script>
@@ -636,10 +645,10 @@ export default {
 			}
 
 			&.deleted-message {
-				background-color: var(--color-background-dark);
 				color: var(--color-text-lighter);
-				padding: var(--border-radius) var(--border-radius-large);
+				display: flex;
 				border-radius: var(--border-radius-large);
+				align-items: center;
 			}
 
 			::v-deep .rich-text--wrapper {
