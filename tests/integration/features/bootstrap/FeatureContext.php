@@ -1103,6 +1103,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $type
+	 * @param string $id
+	 * @param string $metaData
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSharesRichObjectToRoom($user, $type, $id, $metaData, $identifier, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share',
+			new TableNode([
+				['objectType', $type],
+				['objectId', $id],
+				['metaData', $metaData],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$messages['shared::' . $type . '::' . $id] = $response['id'];
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
