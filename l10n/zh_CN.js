@@ -530,6 +530,7 @@ OC.L10N.register(
     "Start time (optional)" : "开始时间（可选）",
     "Save" : "保存",
     "Edit" : "编辑",
+    "Delete" : "删除",
     "Password" : "密码",
     "API token" : "API 令牌",
     "Login" : "登录",
