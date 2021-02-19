@@ -24,9 +24,9 @@
 	<Modal @close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-				<h2>{{ t('spreed', 'Link to a conversation') }}</h2>
+				<h2>{{ dialogTitle }}</h2>
 				<div id="room-list">
-					<ul v-if="!loading">
+					<ul v-if="!loading && availableRooms.length > 0">
 						<li v-for="room in availableRooms"
 							:key="room.token"
 							:class="{selected: selectedRoom === room.token }"
@@ -38,9 +38,16 @@
 							<span>{{ room.displayName }}</span>
 						</li>
 					</ul>
+					<div v-else-if="!loading">
+						{{ t('spreed', 'No conversations found') }}
+					</div>
 				</div>
 				<div id="modal-buttons">
-					<button v-if="!loading" class="primary" @click="select">
+					<button
+						v-if="!loading && availableRooms.length > 0"
+						class="primary"
+						:disabled="!selectedRoom"
+						@click="select">
 						{{ t('spreed', 'Select conversation') }}
 					</button>
 				</div>
@@ -53,6 +60,7 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { CONVERSATION } from '../constants'
 import ConversationIcon from '../components/ConversationIcon'
 
 export default {
@@ -61,31 +69,34 @@ export default {
 		ConversationIcon,
 		Modal,
 	},
+	props: {
+		dialogTitle: {
+			type: String,
+			default: t('spreed', 'Link to a conversation'),
+		},
+		/**
+		 * Whether to only show conversations to which
+		 * the user can post messages.
+		 */
+		showPostableOnly: {
+			type: Boolean,
+			default: false,
+		},
+	},
 	data() {
 		return {
 			rooms: [],
 			selectedRoom: null,
+			currentRoom: null,
 			loading: true,
-			// TODO: should be included once this is properly available
-			types: {
-				ROOM_TYPE_ONE_TO_ONE: 1,
-				ROOM_TYPE_GROUP: 2,
-				ROOM_TYPE_PUBLIC: 3,
-				ROOM_TYPE_CHANGELOG: 4,
-			},
 		}
 	},
 	computed: {
-		currentRoom() {
-			if (OCA.SpreedMe && OCA.SpreedMe.app.activeRoom) {
-				return OCA.SpreedMe.app.activeRoom.get('token')
-			}
-			return null
-		},
 		availableRooms() {
 			return this.rooms.filter((room) => {
-				return room.token !== this.currentRoom
-					&& room.type !== this.types.ROOM_TYPE_CHANGELOG
+				return room.type !== CONVERSATION.TYPE.CHANGELOG
+					&& (!this.currentRoom || this.currentRoom !== room.token)
+					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
 			})
@@ -93,6 +104,11 @@ export default {
 	},
 	beforeMount() {
 		this.fetchRooms()
+
+		const $store = OCA.Talk?.instance?.$store
+		if ($store) {
+			this.currentRoom = $store.getters.getToken()
+		}
 	},
 	methods: {
 		fetchRooms() {
@@ -138,6 +154,7 @@ export default {
 #room-list {
 	overflow-y: auto;
 	flex: 0 1 auto;
+	height: 100%;
 }
 
 li {
@@ -159,6 +176,9 @@ li {
 	& > span {
 		padding: 5px 5px 5px 10px;
 		vertical-align: middle;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 }
 
