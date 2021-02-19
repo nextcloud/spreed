@@ -1515,6 +1515,15 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($state === Room::READ_ONLY) {
+			$participants = $this->participantService->getParticipantsInCall($this->room);
+
+			// kick out all participants out of the call
+			foreach ($participants as $participant) {
+				$this->participantService->changeInCall($this->room, $participant, Participant::FLAG_DISCONNECTED);
+			}
+		}
+
 		return new DataResponse();
 	}
 
