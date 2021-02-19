@@ -792,7 +792,7 @@ class Room {
 			$query = $this->db->getQueryBuilder();
 			$query->delete('talk_attendees')
 				->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->in('participant_type', $query->createNamedParameter([Participant::GUEST, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
+				->andWhere($query->expr()->in('participant_type', $query->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
 			$query->execute();
 		}
 
