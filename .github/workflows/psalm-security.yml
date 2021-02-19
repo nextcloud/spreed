@@ -1,8 +1,11 @@
 name: Psalm Security Analysis
 
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - master
+      - stable*
   schedule:
     - cron: '0 0 * * 0'
 
