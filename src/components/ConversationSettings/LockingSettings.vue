@@ -23,6 +23,7 @@
 	<div class="app-settings-subsection">
 		<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
 			{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
+			{{ t('spreed', 'This will also terminate ongoing calls.') }}
 		</div>
 		<div>
 			<input id="moderation_settings_lock_conversation_checkbox"
