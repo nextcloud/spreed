@@ -172,11 +172,11 @@ class MessageSearch implements IProvider {
 		$messageStr = $message->getMessage();
 		$search = $replace = [];
 		foreach ($message->getMessageParameters() as $key => $parameter) {
-			$search = '{' . $key . '}';
+			$search[] = '{' . $key . '}';
 			if ($parameter['type'] === 'user') {
-				$replace = '@' . $parameter['name'];
+				$replace[] = '@' . $parameter['name'];
 			} else {
-				$replace = $parameter['name'];
+				$replace[] = $parameter['name'];
 			}
 		}
 		$messageStr = str_replace($search, $replace, $messageStr);
