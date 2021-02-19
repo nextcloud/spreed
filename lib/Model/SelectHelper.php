@@ -42,6 +42,7 @@ class SelectHelper {
 			->addSelect($alias . 'password')
 			->addSelect($alias . 'active_guests')
 			->addSelect($alias . 'active_since')
+			->addSelect($alias . 'call_flag')
 			->addSelect($alias . 'last_activity')
 			->addSelect($alias . 'last_message')
 			->addSelect($alias . 'lobby_timer')

@@ -44,7 +44,7 @@
         field | type | API | Description
         ------|------|-----|------------
         `token` | string | * | Token identifier of the conversation which is used for further interaction
-        `type` | int | * | See list of conversation types in the [constants list](constants.md#Conversation-types)
+        `type` | int | * | See list of conversation types in the [constants list](constants.md#conversation-types)
         `name` | string | * | Name of the conversation (can also be empty)
         `displayName` | string | * | `name` if non empty, otherwise it falls back to a list of participants
         `description` | string | v3 | Description of the conversation (can also be empty) (only available with `room-description` capability)
@@ -63,6 +63,7 @@
         `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
         `hasPassword` | bool | * | Flag if the conversation has a password
         `hasCall` | bool | * | Flag if the conversation has an active call
+        `callFlag` | int | v3 | Combined flag of all participants in the current call (see [constants list](constants.md#participant-in-call-flag), only available with `conversation-call-flags` capability)
         `canStartCall` | bool | * | Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)
         `canDeleteConversation` | bool | 🆕 v2 | Flag if the user can delete the conversation for everyone (not possible without moderator permissions or in one-to-one conversations)
         `canLeaveConversation` | bool | 🆕 v2 | Flag if the user can leave the conversation (not possible for the last user with moderator permissions)

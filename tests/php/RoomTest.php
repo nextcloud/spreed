@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php;
 use OC\EventDispatcher\EventDispatcher;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -72,6 +73,7 @@ class RoomTest extends TestCase {
 			'description',
 			'passy',
 			0,
+			Participant::FLAG_DISCONNECTED,
 			null,
 			null,
 			0

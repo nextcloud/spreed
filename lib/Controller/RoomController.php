@@ -586,6 +586,7 @@ class RoomController extends AEnvironmentAwareController {
 				'description' => '',
 				'lastCommonReadMessage' => 0,
 				'listable' => Room::LISTABLE_NONE,
+				'callFlag' => Participant::FLAG_DISCONNECTED,
 			]);
 		}
 
@@ -614,6 +615,7 @@ class RoomController extends AEnvironmentAwareController {
 				'readOnly' => $room->getReadOnly(),
 				'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 				'lastActivity' => $lastActivity,
+				'callFlag' => $room->getCallFlag(),
 				'lobbyState' => $room->getLobbyState(),
 				'lobbyTimer' => $lobbyTimer,
 				'sipEnabled' => $room->getSIPEnabled(),
@@ -637,6 +639,7 @@ class RoomController extends AEnvironmentAwareController {
 			'readOnly' => $room->getReadOnly(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
+			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),
 			'notificationLevel' => $attendee->getNotificationLevel(),
 			'lobbyState' => $room->getLobbyState(),
