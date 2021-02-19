@@ -24,6 +24,7 @@
 		<div class="app-settings-subsection">
 			<div id="moderation_settings_enable_lobby_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
+				{{ t('spreed', 'This will also remove non-moderators from ongoing calls.') }}
 			</div>
 			<div>
 				<input id="moderation_settings_enable_lobby_checkbox"
