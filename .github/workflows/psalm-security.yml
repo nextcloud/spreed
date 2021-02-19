@@ -36,7 +36,6 @@ jobs:
 
       - name: Psalm
         uses: docker://vimeo/psalm-github-actions
-        working-directory: apps/${{ env.APP_NAME }}
         with:
           security_analysis: true
           report_file: results.sarif
