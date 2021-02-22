@@ -1,6 +1,53 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.2 – 2021-02-22
+### Added
+- Added pagination to the gridview in case there are too many participants
+  [#4991](https://github.com/nextcloud/spreed/pull/4991)
+
+### Changed
+- Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
+  [#5011](https://github.com/nextcloud/spreed/pull/5011)
+- Allow SIP dial-in in non-public conversations too
+  [#4955](https://github.com/nextcloud/spreed/pull/4955)
+
+### Fixed
+- Drop guest moderators when changing a conversation to group conversation
+  [#5231](https://github.com/nextcloud/spreed/pull/5231)
+- Fix collaboration resource options not loading
+  [#5141](https://github.com/nextcloud/spreed/pull/5141)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5078](https://github.com/nextcloud/spreed/pull/5078)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5050](https://github.com/nextcloud/spreed/pull/5050)
+- Add upload editor in files sidebar mode
+  [#5113](https://github.com/nextcloud/spreed/pull/5113)
+
+## 10.0.6 – 2021-02-22
+### Changed
+- Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
+  [#5012](https://github.com/nextcloud/spreed/pull/5012)
+
+### Fixed
+- Drop guest moderators when changing a conversation to group conversation
+  [#5228](https://github.com/nextcloud/spreed/pull/5228)
+- Fix collaboration resource options not loading
+  [#5142](https://github.com/nextcloud/spreed/pull/5142)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5079](https://github.com/nextcloud/spreed/pull/5079)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5051](https://github.com/nextcloud/spreed/pull/5051)
+- Add upload editor in files sidebar mode
+  [#5111](https://github.com/nextcloud/spreed/pull/5111)
+
+## 9.0.8 – 2021-02-22
+### Fixed
+- Fix collaboration resource options not loading
+  [#5143](https://github.com/nextcloud/spreed/pull/5143)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5080](https://github.com/nextcloud/spreed/pull/5080)
+
 ## 10.1.1 – 2021-01-08
 ### Fixed
 - Fix chat notifications not being sent when user is not active in a chat
