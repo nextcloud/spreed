@@ -1,7 +1,95 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 11.0.0-RC.1 – 2021-02-12
+## 11.0.0 – 2021-02-22
+### Added
+- Implement read status for messages including a privacy setting
+  [#4231](https://github.com/nextcloud/spreed/pull/4231)
+- Allow moderators to "open" conversations so users can join themselves
+  [#4706](https://github.com/nextcloud/spreed/pull/4706)
+- Add conversation descriptions
+  [#4546](https://github.com/nextcloud/spreed/pull/4546)
+- Allow pagination for main grid view
+  [#4958](https://github.com/nextcloud/spreed/pull/4958)
+- Allow to send messages again when they failed
+  [#4975](https://github.com/nextcloud/spreed/pull/4975)
+- You can now push to talk/mute with the space key
+  [#4328](https://github.com/nextcloud/spreed/pull/4328)
+- Added support for turns:// protocol
+  [#5087](https://github.com/nextcloud/spreed/pull/5087)
+- Add basic support for Opera
+  [#4974](https://github.com/nextcloud/spreed/pull/4974)
+- Allow resending email invitations
+  [#5052](https://github.com/nextcloud/spreed/pull/5052)
+- Allow to collapse the video strip to focus more on the promoted speaker or screenshare
+  [#4363](https://github.com/nextcloud/spreed/pull/4363)
+- Improve previews of images and allow animation of gifs
+  [#4472](https://github.com/nextcloud/spreed/pull/4472)
+- Allow to "Raise hand" in a call
+  [#4569](https://github.com/nextcloud/spreed/pull/4569)
+- Compatibility with Nextcloud 21
+
+### Changed
+- Bring up the conversation creation-dialog when clicking on a group to prevent accidentally spam
+  [#5062](https://github.com/nextcloud/spreed/pull/5062)
+- User different border color when own message is quoted
+  [#4940](https://github.com/nextcloud/spreed/pull/4940)
+- Move matterbridge settings into the conversation settings dialog
+  [#4907](https://github.com/nextcloud/spreed/pull/4907)
+- Updated database structure so all tables have a primary key for database cluster support
+  [#4735](https://github.com/nextcloud/spreed/pull/4735)
+
+### Fixed
+- For more details look at the changelog of the alphas and the rc
+
+## 10.1.2 – 2021-02-22
+### Added
+- Added pagination to the gridview in case there are too many participants
+  [#4991](https://github.com/nextcloud/spreed/pull/4991)
+
+### Changed
+- Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
+  [#5011](https://github.com/nextcloud/spreed/pull/5011)
+- Allow SIP dial-in in non-public conversations too
+  [#4955](https://github.com/nextcloud/spreed/pull/4955)
+
+### Fixed
+- Drop guest moderators when changing a conversation to group conversation
+  [#5231](https://github.com/nextcloud/spreed/pull/5231)
+- Fix collaboration resource options not loading
+  [#5141](https://github.com/nextcloud/spreed/pull/5141)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5078](https://github.com/nextcloud/spreed/pull/5078)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5050](https://github.com/nextcloud/spreed/pull/5050)
+- Add upload editor in files sidebar mode
+  [#5113](https://github.com/nextcloud/spreed/pull/5113)
+
+## 10.0.6 – 2021-02-22
+### Changed
+- Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
+  [#5012](https://github.com/nextcloud/spreed/pull/5012)
+
+### Fixed
+- Drop guest moderators when changing a conversation to group conversation
+  [#5228](https://github.com/nextcloud/spreed/pull/5228)
+- Fix collaboration resource options not loading
+  [#5142](https://github.com/nextcloud/spreed/pull/5142)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5079](https://github.com/nextcloud/spreed/pull/5079)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5051](https://github.com/nextcloud/spreed/pull/5051)
+- Add upload editor in files sidebar mode
+  [#5111](https://github.com/nextcloud/spreed/pull/5111)
+
+## 9.0.8 – 2021-02-22
+### Fixed
+- Fix collaboration resource options not loading
+  [#5143](https://github.com/nextcloud/spreed/pull/5143)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5080](https://github.com/nextcloud/spreed/pull/5080)
+
+## 11.0.0-rc.1 – 2021-02-12
 ### Added
 - Allow resending email invitations
   [#5052](https://github.com/nextcloud/spreed/pull/5052)
@@ -162,7 +250,7 @@ All notable changes to this project will be documented in this file.
   [#4195](https://github.com/nextcloud/spreed/pull/4195)
 - Updated database structure so all tables have a primary key for database cluster support
   [#4735](https://github.com/nextcloud/spreed/pull/4735)
-  
+
 ### Fixed
 - Diff against alpha.1: Revert update of @babel/preset-env which breaks the compiled JS
   [#4808](https://github.com/nextcloud/spreed/pull/4808)
