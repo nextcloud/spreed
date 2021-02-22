@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.9 – 2021-02-22
+### Fixed
+- Fix collaboration resource options not loading
+  [#5143](https://github.com/nextcloud/spreed/pull/5143)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5080](https://github.com/nextcloud/spreed/pull/5080)
+
 ## 9.0.8 – 2021-01-08
 ### Fixed
 - Don't remove a chat when a self-joined user leaves
