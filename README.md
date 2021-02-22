@@ -2,7 +2,7 @@
 
 **A video & audio conferencing app for Nextcloud**
 
-![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png)
+![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.jpg)
 
 ## Why is this so awesome?
 

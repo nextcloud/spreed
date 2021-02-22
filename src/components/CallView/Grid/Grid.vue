@@ -545,23 +545,23 @@ export default {
 		placeholderName(i) {
 			switch (i) {
 			case 0:
-				return 'Sandra'
+				return 'Sandra McKinney'
 			case 1:
-				return 'Chris'
+				return 'Chris Wurst'
 			case 2:
-				return 'Edeltraut'
+				return 'Edeltraut Bobb'
 			case 3:
-				return 'Arthur'
+				return 'Arthur Blitz'
 			case 4:
-				return 'Roeland'
+				return 'Roeland Douma'
 			case 5:
-				return 'Vanessa'
+				return 'Vanessa Steg'
 			case 6:
-				return 'Emily'
+				return 'Emily Grant'
 			case 7:
-				return 'Tobias'
+				return 'Tobias Kaminsky'
 			case 8:
-				return 'Vincent'
+				return 'Adrian Ada'
 			}
 		},
 
