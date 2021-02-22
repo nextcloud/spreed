@@ -100,7 +100,7 @@ All notable changes to this project will be documented in this file.
 - Add upload editor in files sidebar mode
   [#5111](https://github.com/nextcloud/spreed/pull/5111)
 
-## 9.0.8 – 2021-02-22
+## 9.0.9 – 2021-02-22
 ### Fixed
 - Fix collaboration resource options not loading
   [#5143](https://github.com/nextcloud/spreed/pull/5143)
