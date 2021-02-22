@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.6 – 2021-02-22
+### Changed
+- Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
+  [#5012](https://github.com/nextcloud/spreed/pull/5012)
+
+### Fixed
+- Drop guest moderators when changing a conversation to group conversation
+  [#5228](https://github.com/nextcloud/spreed/pull/5228)
+- Fix collaboration resource options not loading
+  [#5142](https://github.com/nextcloud/spreed/pull/5142)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5079](https://github.com/nextcloud/spreed/pull/5079)
+- Fix mentioning of users with subnames, e.g. "foo" and "foobar"
+  [#5051](https://github.com/nextcloud/spreed/pull/5051)
+- Add upload editor in files sidebar mode
+  [#5111](https://github.com/nextcloud/spreed/pull/5111)
+
+## 9.0.8 – 2021-02-22
+### Fixed
+- Fix collaboration resource options not loading
+  [#5143](https://github.com/nextcloud/spreed/pull/5143)
+- Fixed a bug that would prevent attachments going into the Talk/ folder
+  [#5080](https://github.com/nextcloud/spreed/pull/5080)
+
 ## 10.0.5 – 2021-01-08
 ### Fixed
 - Fix CSP violation in Safari with worker-src from avatar blurring
