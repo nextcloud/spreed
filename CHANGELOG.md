@@ -50,7 +50,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Bring up the conversation creation-dialog when clicking on a group to prevent accidentally spam
   [#5062](https://github.com/nextcloud/spreed/pull/5062)
-- User different border color when own message is quoted
+- Use different border color when own message is quoted
   [#4940](https://github.com/nextcloud/spreed/pull/4940)
 - Move matterbridge settings into the conversation settings dialog
   [#4907](https://github.com/nextcloud/spreed/pull/4907)
