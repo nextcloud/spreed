@@ -277,6 +277,8 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
     "Send" : "Stuur",
+    "Do not disturb" : "Moenie pla nie",
+    "Away" : "Weg",
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",

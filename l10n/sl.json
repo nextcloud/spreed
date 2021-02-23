@@ -595,8 +595,6 @@
     "{schema} scheme must be used with a domain" : "Shema {schema} mora biti uporabljena z domeno.",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: strežnik TURN vrača uspešno zaznane kandidate ICE",
     "Error: No working ICE candidates returned by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama kandidateov ICE",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE za TCP",
     "Testing whether the TURN server returns ICE candidates" : "Preizkušanje, ali strežnik TURN vrne seznam kandidatov ICE",
     "Test this server" : "Preizkusi strežnik",
     "TURN servers" : "Strežniki TURN",
@@ -1024,6 +1022,8 @@
     "More info on Matterbridge." : "Več podrobnosti o Matterbridge.",
     "Enabled" : "Omogočeno",
     "Show matterbridge log" : "Pokaži dnevniški zapis matterbridge",
-    "Add new bridged channel" : "Dodaj nov premostitveni kanal"
+    "Add new bridged channel" : "Dodaj nov premostitveni kanal",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE za TCP"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }
