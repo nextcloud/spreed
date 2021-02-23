@@ -589,13 +589,14 @@ OC.L10N.register(
     "STUN servers" : "STUN sunucuları",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN sunucusu bir yönelticinin arkasındaki katılımcının herkese açık adresinin belirlenmesinde kullanılır.",
     "TURN server schemes" : "TURN sunucu şemaları",
+    "{option1} and {option2}" : "{option1} ve {option2}",
+    "{option} only" : "yalnız {option}",
     "TURN server URL" : "TURN sunucusunun adresi",
     "TURN server secret" : "TURN sunucu parolası",
     "TURN server protocols" : "TURN sunucu iletişim kuralları",
+    "{schema} scheme must be used with a domain" : "{schema} şeması bir etki alanı ile birlikte kullanılmalıdır",
     "OK: Successful ICE candidates returned by the TURN server" : "Tamam: TURN sunucusu tarafından çalışan ICE adayları bildirildi",
     "Error: No working ICE candidates returned by the TURN server" : "Sorun: TURN sunucusu tarafından çalışan bir ICE adayı bildirilmedi",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Sorun: TURN sunucusu tarafından UDP için çalışan bir ICE adayı bildirilmedi",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Sorun: TURN sunucusu tarafından TCP için çalışan bir ICE adayı bildirilmedi",
     "Testing whether the TURN server returns ICE candidates" : "TURN sunucusunun ICE adaylarını bildirip bildirmediği sınanıyor",
     "Test this server" : "Bu sunucuyu sına",
     "TURN servers" : "TURN sunucuları",
@@ -1029,6 +1030,8 @@ OC.L10N.register(
     "turn: and turns:" : "turn: ve turns:",
     "turn: only" : "yalnız turn:",
     "turns: only" : "yalnız turns:",
-    "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır"
+    "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Sorun: TURN sunucusu tarafından UDP için çalışan bir ICE adayı bildirilmedi",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Sorun: TURN sunucusu tarafından TCP için çalışan bir ICE adayı bildirilmedi"
 },
 "nplurals=2; plural=(n > 1);");

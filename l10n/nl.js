@@ -597,8 +597,6 @@ OC.L10N.register(
     "{schema} scheme must be used with a domain" : "{schema} schema moet worden gebruikt met een domein",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: Succesvolle ICE-kandidaten geretourneerd door de TURN-server",
     "Error: No working ICE candidates returned by the TURN server" : "Fout: geen werkende ICE-kandidaten geretourneerd door de TURN-server",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor UDP geretourneerd door de TURN-server",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor TCP geretourneerd door de TURN-server",
     "Testing whether the TURN server returns ICE candidates" : "Controleren of de TURN-server ICE-kandidaten retourneert",
     "Test this server" : "Test deze server",
     "TURN servers" : "TURN servers",
@@ -1032,6 +1030,8 @@ OC.L10N.register(
     "turn: and turns:" : "turn: en turns:",
     "turn: only" : "turn: alleen",
     "turns: only" : "turns: alleen",
-    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt"
+    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor UDP geretourneerd door de TURN-server",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor TCP geretourneerd door de TURN-server"
 },
 "nplurals=2; plural=(n != 1);");
