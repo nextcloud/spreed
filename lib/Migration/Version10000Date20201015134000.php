@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Type;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -220,7 +221,16 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				->setParameter('last_mention_message', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
 				;
 
-			$insert->execute();
+			try {
+				$insert->execute();
+			} catch (\Exception $e) {
+				if (get_class($e) === UniqueConstraintViolationException::class) {
+					// UniqueConstraintViolationException before 21
+					continue;
+				}
+
+				throw $e;
+			}
 		}
 		$result->closeCursor();
 	}
