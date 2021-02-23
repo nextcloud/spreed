@@ -587,9 +587,12 @@
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se usa para determinar la dirección IP pública de participantes que estén tras un router.",
     "TURN server schemes" : "Esquemas de servidor TURN (Traversal Using Relays around NAT)",
+    "{option1} and {option2}" : "{option1} y {option2}",
+    "{option} only" : "Soo {option}",
     "TURN server URL" : "URL del servidor TURN",
     "TURN server secret" : "Secreto del servidor TURN",
     "TURN server protocols" : "Protocolos de servidor TURN",
+    "{schema} scheme must be used with a domain" : "El esquema {schema} debe usarse co nun dominio",
     "OK: Successful ICE candidates returned by the TURN server" : "OK: El servidor TURN ha devuelto candidatos ICE con éxito",
     "Error: No working ICE candidates returned by the TURN server" : "Error: El servidor TURN no ha devuelto candidatos ICE que funcionen",
     "Testing whether the TURN server returns ICE candidates" : "Probando si el servidor TURN devuelve candidatos ICE",
@@ -1020,6 +1023,7 @@
     "turn: and turns:" : "turn: y turns:",
     "turn: only" : "turn: sólo",
     "turns: only" : "turns: sólo",
-    "turns: scheme must be used with a domain" : "turns: debe usarse el esquema con un dominio"
+    "turns: scheme must be used with a domain" : "turns: debe usarse el esquema con un dominio",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Error: El servidor TURN no ha devuelto por UDP ningún candidato ICE que funcione"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
