@@ -595,8 +595,6 @@
     "{schema} scheme must be used with a domain" : "O esquema {schema} debe usarse cun dominio",
     "OK: Successful ICE candidates returned by the TURN server" : "Correcto: o servidor TURN devolveu satisfactoriamente candidatos ICE",
     "Error: No working ICE candidates returned by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE traballando",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a UDP para UDP traballando",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a TCP para TCP traballando",
     "Testing whether the TURN server returns ICE candidates" : "Probe se o servidor TURN devolve candidatos ICE",
     "Test this server" : "Probar este servidor",
     "TURN servers" : "Servidores TURN",
@@ -1030,6 +1028,8 @@
     "turn: and turns:" : "turn: e turns:",
     "turn: only" : "Só turn:",
     "turns: only" : "Só turns:",
-    "turns: scheme must be used with a domain" : "turns: o esquema debe usarse cun dominio"
+    "turns: scheme must be used with a domain" : "turns: o esquema debe usarse cun dominio",
+    "Error: No working ICE candidates returned for UDP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a UDP para UDP traballando",
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a TCP para TCP traballando"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
