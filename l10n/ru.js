@@ -609,6 +609,7 @@ OC.L10N.register(
     "Start time (optional)" : "Время начала (необязательно)",
     "Save" : "Сохранить",
     "Edit" : "Редактировать",
+    "Delete" : "Удалить",
     "Password" : "Пароль",
     "API token" : "API токен",
     "Login" : "Вход",
