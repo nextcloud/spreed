@@ -115,7 +115,6 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				joinConversation(to.params.token)
-				this.$store.dispatch('markConversationRead', to.params.token)
 			}
 		},
 

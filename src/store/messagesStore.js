@@ -332,6 +332,7 @@ const actions = {
 		}
 		// set the id to the last message
 		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id })
+		context.dispatch('markConversationRead', token)
 	},
 
 	async updateLastReadMessage(context, { token, id = 0 }) {
@@ -343,6 +344,8 @@ const actions = {
 		// optimistic early commit to avoid indicator flickering
 		context.commit('updateConversationLastReadMessage', { token, lastReadMessage: id })
 		await updateLastReadMessage(token, id)
+
+		// TODO: update unread counters if possible (otherwise user needs to wait for conversation list refresh)
 	},
 }
 
