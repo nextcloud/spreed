@@ -311,8 +311,13 @@ class BackendNotifier {
 		$changed = [];
 		$users = [];
 
-		$participants = $this->participantService->getParticipantsForRoom($room);
+		$participants = $this->participantService->getParticipantsForAllSessions($room);
 		foreach ($participants as $participant) {
+			$session = $participant->getSession();
+			if (!$session instanceof Session) {
+				continue;
+			}
+
 			$attendee = $participant->getAttendee();
 			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
 				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
@@ -320,29 +325,22 @@ class BackendNotifier {
 			}
 
 			$data = [
-				'inCall' => Participant::FLAG_DISCONNECTED,
-				'lastPing' => 0,
-				'sessionId' => '0',
+				'inCall' => $session->getInCall(),
+				'lastPing' => $session->getLastPing(),
+				'sessionId' => $session->getSessionId(),
+				'nextcloudSessionId' => $session->getSessionId(),
 				'participantType' => $attendee->getParticipantType(),
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
 			}
 
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
-				$data['inCall'] = $session->getInCall();
-				$data['lastPing'] = $session->getLastPing();
-				$data['sessionId'] = $session->getSessionId();
-				$data['nextcloudSessionId'] = $session->getSessionId();
+			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
+				$users[] = $data;
+			}
 
-				if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
-					$users[] = $data;
-				}
-
-				if (\in_array($session->getSessionId(), $sessionIds, true)) {
-					$changed[] = $data;
-				}
+			if (\in_array($session->getSessionId(), $sessionIds, true)) {
+				$changed[] = $data;
 			}
 		}
 
