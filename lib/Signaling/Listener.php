@@ -100,16 +100,7 @@ class Listener {
 
 			/** @var Messages $messages */
 			$messages = \OC::$server->query(Messages::class);
-			/** @var ParticipantService $participantService */
-			$participantService = \OC::$server->query(ParticipantService::class);
-
-			$participants = $participantService->getParticipantsForRoom($room);
-			foreach ($participants as $participant) {
-				$session = $participant->getSession();
-				if ($session instanceof Session) {
-					$messages->addMessage($session->getSessionId(), $session->getSessionId(), 'refresh-participant-list');
-				}
-			}
+			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, $listener);
 	}
