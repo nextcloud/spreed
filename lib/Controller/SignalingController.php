@@ -382,11 +382,11 @@ class SignalingController extends OCSController {
 		$timestamp = min($this->timeFactory->getTime() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
 		// "- 1" is needed because only the participants whose last ping is
 		// greater than the given timestamp are returned.
-		$participants = $this->participantService->getParticipantsForRoom($room);
+		$participants = $this->participantService->getParticipantsForAllSessions($room, $timestamp - 1);
 		foreach ($participants as $participant) {
 			$session = $participant->getSession();
 			if (!$session instanceof Session) {
-				// User is not active
+				// This is just to make Psalm happy, since we select by session it's always with one.
 				continue;
 			}
 
