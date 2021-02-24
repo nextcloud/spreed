@@ -34,6 +34,18 @@
 				:disabled="isReadOnlyStateLoading"
 				@change="toggleReadOnly">
 			<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
+
+			<h3>{{ t('spreed', 'Limit writing to a conversation') }}</h3>
+			<p>
+				<Multiselect id="writing_conversations"
+					v-model="writingConversations"
+					:options="writingConversationOptions"
+					:placeholder="t('spreed', 'Limit writing to conversations')"
+					label="label"
+					track-by="value"
+					:disabled="loading || loadingWritingConversations"
+					@input="saveWritingConversations" />
+			</p>
 		</div>
 	</div>
 </template>
@@ -41,9 +53,20 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+
+const writingConversationOptions = [
+	{ value: 0, label: t('spreed', 'Everyone can read and write') },
+	{ value: 1, label: t('spreed', 'Lock conversation') },
+	{ value: 2, label: t('spreed', 'Only Moderators can write') },
+]
 
 export default {
 	name: 'LockingSettings',
+
+	components: {
+		Multiselect,
+	},
 
 	props: {
 		token: {
@@ -55,6 +78,9 @@ export default {
 	data() {
 		return {
 			isReadOnlyStateLoading: false,
+			writingConversationOptions,
+			writingConversations: writingConversationOptions[0],
+			loadingWritingConversations: false,
 		}
 	},
 
@@ -92,6 +118,19 @@ export default {
 				}
 			}
 			this.isReadOnlyStateLoading = false
+		},
+
+		async saveWritingConversations() {
+			this.loadingWritingConversations = true
+			try {
+				await this.$store.dispatch('setConversationState', {
+					token: this.token,
+					state: this.writingConversations,
+				})
+			} catch (e) {
+
+			}
+			this.loadingWritingConversations = false
 		},
 	},
 

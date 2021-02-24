@@ -62,6 +62,7 @@ class Room {
 
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
+	public const WRITE_ONLY_MOD = 2;
 
 	/**
 	 * Only visible when joined

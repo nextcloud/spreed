@@ -335,6 +335,22 @@ const changeReadOnlyState = async function(token, readOnly) {
 }
 
 /**
+ * Change the converstaion state
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} state The new state to set
+ */
+const changeConversationState = async function(token, state) {
+	try {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/conversation-state`, {
+			state: state,
+		})
+		return response
+	} catch (error) {
+		console.debug('Error while updating converstation state: ', error)
+	}
+}
+
+/**
  * Change the listable scope
  * @param {string} token The token of the conversation to be modified
  * @param {int} listable The new listable scope to set
@@ -375,4 +391,5 @@ export {
 	setConversationPassword,
 	setConversationName,
 	setConversationDescription,
+	changeConversationState,
 }
