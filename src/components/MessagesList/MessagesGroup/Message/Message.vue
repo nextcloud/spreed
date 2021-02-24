@@ -122,6 +122,13 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<ActionButton
+						v-if="isPrivateReplyable"
+						icon="icon-user"
+						:close-after-click="true"
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply private') }}
+					</ActionButton>
 					<template
 						v-for="action in messageActions">
 						<ActionButton
@@ -132,13 +139,6 @@ the main body of the message as well as a quote.
 							{{ action.label }}
 						</ActionButton>
 					</template>
-					<ActionButton
-						v-if="isPrivateReplyable"
-						icon="icon-user"
-						:close-after-click="true"
-						@click.stop="handlePrivateReply">
-						{{ t('spreed', 'Reply private') }}
-					</ActionButton>
 					<ActionButton
 						v-if="isDeleteable"
 						icon="icon-delete"
