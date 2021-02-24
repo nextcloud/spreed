@@ -127,7 +127,7 @@ the main body of the message as well as a quote.
 						icon="icon-user"
 						:close-after-click="true"
 						@click.stop="handlePrivateReply">
-						{{ t('spreed', 'Reply private') }}
+						{{ t('spreed', 'Reply privately') }}
 					</ActionButton>
 					<template
 						v-for="action in messageActions">
