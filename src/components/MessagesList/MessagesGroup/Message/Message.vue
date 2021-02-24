@@ -170,7 +170,7 @@ import Quote from '../../../Quote'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { PARTICIPANT, CONVERSATION } from '../../../../constants'
+import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../constants'
 import moment from '@nextcloud/moment'
 import {
 	showError,
@@ -503,9 +503,12 @@ export default {
 		},
 
 		isPrivateReplyable() {
-			return (this.conversation.type === 3
-			&& !this.isMyMsg
-			&& this.actorType !== 'guests')
+			return this.isReplyable
+				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
+					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
+				&& !this.isMyMsg
+				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
 		},
 
 		messageActions() {
