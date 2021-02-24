@@ -95,7 +95,7 @@ class Messages {
 				]
 			);
 
-		$participants = $this->participantService->getParticipantsWithSession($room);
+		$participants = $this->participantService->getParticipantsForAllSessions($room);
 		foreach ($participants as $participant) {
 			$session = $participant->getSession();
 			if ($session instanceof Session) {

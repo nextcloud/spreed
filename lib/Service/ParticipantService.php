@@ -603,21 +603,26 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param int $maxAge
 	 * @return Participant[]
 	 */
-	public function getParticipantsWithSession(Room $room): array {
+	public function getParticipantsForAllSessions(Room $room, int $maxAge = 0): array {
 		$query = $this->connection->getQueryBuilder();
 
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
-		$query->from('talk_attendees', 'a')
+		$query->from('talk_sessions', 's')
 			->leftJoin(
-				'a', 'talk_sessions', 's',
+				's', 'talk_attendees', 'a',
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('s.id'));
+
+		if ($maxAge > 0) {
+			$query->andWhere($query->expr()->gt('s.last_ping', $query->createNamedParameter($maxAge, IQueryBuilder::PARAM_INT)));
+		}
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}
