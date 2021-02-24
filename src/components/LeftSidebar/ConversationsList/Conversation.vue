@@ -396,6 +396,10 @@ export default {
 	}
 }
 
+::v-deep .app-navigation-entry__counter {
+	margin: 0 0 0 0 !important;
+}
+
 .has-unread-messages {
 	::v-deep .acli__content__line-one__title {
 		font-weight: bold;
