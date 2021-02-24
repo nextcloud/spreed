@@ -27,12 +27,13 @@
 		:show-navigation="true">
 		<!-- Notifications settings -->
 		<AppSettingsSection
-			:title="t('spreed', 'Chat Notifications')"
+			:title="t('spreed', 'Chat notifications')"
 			class="app-settings-section">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 		<!-- Guest access -->
 		<AppSettingsSection
+			v-if="canFullModerate"
 			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
 			<LinkShareSettings ref="linkShareSettings" />
