@@ -122,6 +122,13 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<ActionButton
+						v-if="isPrivateReplyable"
+						icon="icon-user"
+						:close-after-click="true"
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply privately') }}
+					</ActionButton>
 					<template
 						v-for="action in messageActions">
 						<ActionButton
@@ -163,7 +170,7 @@ import Quote from '../../../Quote'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { PARTICIPANT, CONVERSATION } from '../../../../constants'
+import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../constants'
 import moment from '@nextcloud/moment'
 import {
 	showError,
@@ -171,6 +178,7 @@ import {
 	showWarning,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import { createOneToOneConversation } from '../../../../services/conversationsService'
 
 export default {
 	name: 'Message',
@@ -494,6 +502,15 @@ export default {
 					|| this.isMyMsg)
 		},
 
+		isPrivateReplyable() {
+			return this.isReplyable
+				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
+					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
+				&& !this.isMyMsg
+				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
 		messageActions() {
 			return this.$store.getters.messageActions
 		},
@@ -602,6 +619,13 @@ export default {
 
 		handleMouseleave() {
 			this.showActions = false
+		},
+		async handlePrivateReply() {
+			// open the 1:1 conversation
+			const response = await createOneToOneConversation(this.actorId)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
