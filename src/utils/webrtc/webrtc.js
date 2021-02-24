@@ -31,8 +31,6 @@ import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
 import {
 	showError,
-	TOAST_PERMANENT_TIMEOUT,
-	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 
 let webrtc
@@ -897,7 +895,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
 		let message
-		let timeout = TOAST_PERMANENT_TIMEOUT
+		let timeout = -1
 		if ((error.name === 'NotSupportedError'
 				&& webrtc.capabilities.supportRTCPeerConnection)
 			|| (error.name === 'NotAllowedError'
@@ -906,7 +904,7 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			message += ': ' + t('spreed', 'Please move your setup to HTTPS')
 		} else if (error.name === 'NotAllowedError') {
 			message = t('spreed', 'Access to microphone & camera was denied')
-			timeout = TOAST_DEFAULT_TIMEOUT
+			timeout = 7
 		} else if (!webrtc.capabilities.support) {
 			console.error('WebRTC not supported')
 
