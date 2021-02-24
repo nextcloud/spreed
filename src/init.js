@@ -50,5 +50,5 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 
 EventBus.$on('Signaling::joinRoom', (payload) => {
 	const token = payload[0]
-	store.dispatch('handleRoomJoined', token)
+	store.dispatch('updateLastJoinedConversationToken', token)
 })

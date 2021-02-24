@@ -96,7 +96,7 @@ const actions = {
 		context.commit('updateTokenAndFileIdForToken', { newToken, newFileId })
 	},
 
-	handleRoomJoined({ commit }, token) {
+	updateLastJoinedConversationToken({ commit }, token) {
 		commit('updateLastJoinedConversationToken', { token })
 	},
 }
