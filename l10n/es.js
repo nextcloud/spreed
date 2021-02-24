@@ -947,6 +947,7 @@ OC.L10N.register(
     "Mention room" : "Mencionar habitación",
     "The conversation does not exist" : "La conversación no existe",
     "Join a conversation or start a new one!" : "Únete a una conversación o inicia una nueva.",
+    "No conversations found" : "No se han encontrado conversaciones",
     "Select conversation" : "Selecciona conversación",
     "Link to a conversation" : "Enlace a una conversación",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te has unido a la conversación en otra ventana o dispositivo. Nextcloud Talk no admite esto en la actualidad, por lo que se ha cerrado esta sesión.",
