@@ -169,7 +169,7 @@ the main body of the message as well as a quote.
 			<div v-if="isLastReadMessage"
 				v-observe-visibility="lastReadMessageVisibilityChanged">
 				<div v-if="!isLastMessage" class="new-message-marker">
-					<span>{{ t('spreed', 'New messages') }}</span>
+					<span>----- {{ t('spreed', 'Unread messages') }} -----</span>
 				</div>
 			</div>
 		</div>

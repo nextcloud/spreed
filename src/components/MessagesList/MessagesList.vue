@@ -909,7 +909,7 @@ export default {
 		},
 
 		onWindowFocus() {
-			this.updateReadMarkerAfterScroll()
+			this.debounceUpdateReadMarkerAfterScroll()
 		},
 	},
 }
