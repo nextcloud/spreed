@@ -47,6 +47,7 @@
 			:aria-label="t('spreed', 'Conversation messages')"
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:token="token"
+			:is-visible="isVisible"
 			@setChatScrolledToBottom="setScrollStatus" />
 		<NewMessageForm
 			role="region"
@@ -68,6 +69,13 @@ export default {
 	components: {
 		MessagesList,
 		NewMessageForm,
+	},
+
+	props: {
+		isVisible: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	data: function() {

@@ -103,6 +103,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
+		isVisible: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	data: function() {
@@ -138,7 +143,7 @@ export default {
 
 	computed: {
 		isWindowVisible() {
-			return this.$store.getters.windowIsVisible()
+			return this.$store.getters.windowIsVisible() && this.isVisible
 		},
 
 		/**
@@ -247,11 +252,14 @@ export default {
 	},
 
 	watch: {
-		isWindowVisible(visible) {
+		isWindowVisible: debounce(function(visible) {
 			if (visible) {
+				this.scrollToFocussedMessage()
 				this.onWindowFocus()
 			}
-		},
+			// FIXME: the sidebar takes much longer to open, this is why we need a higher value here
+			// need to investigate why the sidebar takes that long to open and is not even animated
+		}, 100),
 		chatIdentifier: {
 			immediate: true,
 			handler() {
@@ -382,6 +390,35 @@ export default {
 			return moment.unix(message.timestamp)
 		},
 
+		scrollToFocussedMessage() {
+			let focussed = null
+			if (this.$route?.hash?.startsWith('#message_')) {
+				// scroll to message in URL anchor
+				focussed = this.focusMessage(this.$route.hash.substr(9), false)
+			}
+
+			if (!focussed && this.conversation.lastReadMessage) {
+				// scroll to last read message if visible in the current pages
+				focussed = this.focusMessage(this.conversation.lastReadMessage, false, false)
+			}
+
+			// TODO: in case the element is not in a page but does exist in the DB,
+			// we need to scroll up / down to the page where it would exist after
+			// loading said pages
+
+			if (!focussed) {
+				// if no anchor was present or the message to focus on did not exist,
+				// scroll to bottom
+				this.scrollToBottom()
+			}
+
+			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
+			// also clear in case lastReadMessage is zero which is due to an older bug
+			if (this.conversation.lastReadMessage === 0 || (this.isWindowVisible && document.hasFocus() && this.scroller.scrollHeight <= this.scroller.offsetHeight)) {
+				this.$store.dispatch('clearLastReadMessage', { token: this.token })
+			}
+		},
+
 		async handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
 				// prevent sticky mode before we have loaded anything
@@ -408,32 +445,7 @@ export default {
 				// focus on next tick to make sure the DOM elements
 				// for known messages are already rendered
 				this.$nextTick(() => {
-					let focussed = null
-					if (this.$route?.hash?.startsWith('#message_')) {
-						// scroll to message in URL anchor
-						focussed = this.focusMessage(this.$route.hash.substr(9), false)
-					}
-
-					if (!focussed && this.conversation.lastReadMessage) {
-						// scroll to last read message if visible in the current pages
-						focussed = this.focusMessage(this.conversation.lastReadMessage, false, false)
-					}
-
-					// TODO: in case the element is not in a page but does exist in the DB,
-					// we need to scroll up / down to the page where it would exist after
-					// loading said pages
-
-					if (!focussed) {
-						// if no anchor was present or the message to focus on did not exist,
-						// scroll to bottom
-						this.scrollToBottom()
-					}
-
-					// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
-					// also clear in case lastReadMessage is zero which is due to an older bug
-					if (this.conversation.lastReadMessage === 0 || (document.hasFocus() && this.scroller.scrollHeight <= this.scroller.offsetHeight)) {
-						this.$store.dispatch('clearLastReadMessage', { token: this.token })
-					}
+					this.scrollToFocussedMessage()
 				})
 			} else if (this.cancelLookForNewMessages) {
 				this.cancelLookForNewMessages()
@@ -735,12 +747,12 @@ export default {
 			}
 
 			const unreadMessage = this.unreadMessageComponent
-			if (!unreadMessage?.seen) {
+			if (!unreadMessage || !unreadMessage.seen) {
 				return
 			}
 
 			// if we're at bottom of the chat and focussed, then simply clear the marker
-			if (this.isSticky && document.hasFocus()) {
+			if (this.isSticky && this.isWindowVisible && document.hasFocus()) {
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
 			}
