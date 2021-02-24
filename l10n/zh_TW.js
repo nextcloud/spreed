@@ -283,6 +283,7 @@ OC.L10N.register(
     "Enter a password" : "輸入密碼",
     "Save" : "儲存",
     "Edit" : "編輯",
+    "Delete" : "刪除",
     "Password" : "密碼",
     "API token" : "API token",
     "Login" : "帳號",
