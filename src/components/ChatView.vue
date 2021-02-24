@@ -70,13 +70,6 @@ export default {
 		NewMessageForm,
 	},
 
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
-	},
-
 	data: function() {
 		return {
 			isDraggingOver: false,
@@ -108,6 +101,10 @@ export default {
 			} else {
 				return undefined
 			}
+		},
+
+		token() {
+			return this.$store.getters.getToken()
 		},
 	},
 

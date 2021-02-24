@@ -23,6 +23,14 @@
 const state = {
 	token: '',
 	fileIdForToken: null,
+	/**
+	 * The joining of a room with the signaling server always lags
+	 * behind the "joining" of it in talk's UI. For this reason we
+	 * might have a  window of time in which we might be in
+	 * conversation B in talk's UI while still leaving conversation
+	 * A in the signaling server.
+	 **/
+	lastJoinedConversationToken: '',
 }
 
 const getters = {
@@ -31,6 +39,9 @@ const getters = {
 	},
 	getFileIdForToken: (state) => () => {
 		return state.fileIdForToken
+	},
+	currentConversationIsJoined() {
+		return state.lastJoinedConversationToken === state.token
 	},
 }
 
@@ -56,6 +67,10 @@ const mutations = {
 		state.token = newToken
 		state.fileIdForToken = newFileId
 	},
+
+	updateLastJoinedConversationToken(state, { token }) {
+		state.lastJoinedConversationToken = token
+	},
 }
 
 const actions = {
@@ -79,6 +94,10 @@ const actions = {
 	 */
 	updateTokenAndFileIdForToken(context, { newToken, newFileId }) {
 		context.commit('updateTokenAndFileIdForToken', { newToken, newFileId })
+	},
+
+	updateLastJoinedConversationToken({ commit }, token) {
+		commit('updateLastJoinedConversationToken', { token })
 	},
 }
 

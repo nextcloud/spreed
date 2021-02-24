@@ -24,6 +24,7 @@
 // entry points
 
 import store from './store'
+import { EventBus } from './services/EventBus'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
@@ -46,3 +47,8 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 	}
 	store.dispatch('addMessageAction', messageAction)
 }
+
+EventBus.$on('Signaling::joinRoom', (payload) => {
+	const token = payload[0]
+	store.dispatch('updateLastJoinedConversationToken', token)
+})

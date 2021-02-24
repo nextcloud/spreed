@@ -40,6 +40,8 @@
 				<div
 					v-if="canUploadFiles || canShareFiles">
 					<Actions
+						ref="uploadMenu"
+						:disabled="disabled"
 						default-icon="icon-clip-add-file"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
@@ -59,11 +61,11 @@
 						</ActionButton>
 					</Actions>
 				</div>
-				<div
-					v-if="!isReadOnly">
+				<div>
 					<EmojiPicker @select="addEmoji">
 						<button
 							type="button"
+							:disabled="disabled"
 							class="nc-button nc-button__main"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
@@ -86,7 +88,7 @@
 						ref="advancedInput"
 						v-model="text"
 						:token="token"
-						:active-input="!isReadOnly"
+						:active-input="!disabled"
 						:placeholder-text="placeholderText"
 						:aria-label="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
@@ -94,7 +96,7 @@
 						@files-pasted="handlePastedFiles" />
 				</div>
 				<button
-					:disabled="isReadOnly"
+					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
 					class="nc-button nc-button__main"
@@ -179,10 +181,18 @@ export default {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
+		disabled() {
+			return this.isReadOnly || !this.currentConversationIsJoined
+		},
+
 		placeholderText() {
-			return this.isReadOnly
-				? t('spreed', 'This conversation has been locked')
-				: t('spreed', 'Write message, @ to mention someone …')
+			if (this.isReadonly) {
+				return t('spreed', 'This conversation has been locked')
+			} else if (!this.currentConversationIsJoined) {
+				return t('spreed', 'Joining conversation …')
+			} else {
+				return t('spreed', 'Write message, @ to mention someone …')
+			}
 		},
 
 		messageToBeReplied() {
@@ -194,7 +204,7 @@ export default {
 		},
 
 		canShareFiles() {
-			return !this.currentUserIsGuest && !this.isReadOnly
+			return !this.currentUserIsGuest
 		},
 
 		canUploadFiles() {
@@ -206,6 +216,16 @@ export default {
 
 		attachmentFolderFreeSpace() {
 			return this.$store.getters.getAttachmentFolderFreeSpace()
+		},
+
+		currentConversationIsJoined() {
+			return this.$store.getters.currentConversationIsJoined
+		},
+	},
+
+	watch: {
+		disabled(newValue) {
+			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
 		},
 	},
 
