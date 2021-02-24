@@ -72,7 +72,6 @@ import SHA1 from 'crypto-js/sha1'
 import {
 	showError,
 	showInfo,
-	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
@@ -300,12 +299,12 @@ export default {
 					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
 						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
 						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
-							timeout: TOAST_PERMANENT_TIMEOUT,
+							timeout: -1,
 						})
 					} else {
 						console.error('Error while accessing camera: ', error.message, error.name)
 						this.notificationHandle = showError(t('spreed', 'Error while accessing camera'), {
-							timeout: TOAST_PERMANENT_TIMEOUT,
+							timeout: -1,
 						})
 					}
 				}
