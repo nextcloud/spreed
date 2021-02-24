@@ -789,6 +789,7 @@ export default {
 					})
 					this.setChatScrolledToBottom(true)
 
+					this.updateReadMarkerAfterScroll()
 				} else {
 					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
 					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
