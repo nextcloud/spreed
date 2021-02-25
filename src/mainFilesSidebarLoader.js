@@ -22,6 +22,7 @@
 
 import FilesSidebarCallView from './views/FilesSidebarCallView'
 import { leaveConversation } from './services/participantsService'
+import './init'
 
 const isEnabled = function(fileInfo) {
 	if (fileInfo && !fileInfo.isDirectory()) {

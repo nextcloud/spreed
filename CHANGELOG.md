@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.1.0 – 2021-02-23
+### Added
+- Integrate with Deck to allow posting Deck cards to Talk conversations
+  [#5201](https://github.com/nextcloud/spreed/pull/5201)
+  [#5202](https://github.com/nextcloud/spreed/pull/5202)
+  [#5203](https://github.com/nextcloud/spreed/pull/5203)
+- Allow other apps to register message actions, e.g. Deck can create a Deck card out of a chat message
+  [#5204](https://github.com/nextcloud/spreed/pull/5204)
+- Allow to delete chat messages
+  [#5205](https://github.com/nextcloud/spreed/pull/5205)
+  [#5206](https://github.com/nextcloud/spreed/pull/5206)
+- Add information about callFlags of a conversation to the API so mobile clients can show if it's a audio or video call
+  [#5208](https://github.com/nextcloud/spreed/pull/5208)
+
+### Fixed
+- Prevent loading old messages twice on scroll which could skip some messages
+  [#5209](https://github.com/nextcloud/spreed/pull/5209)
+
 ## 11.0.0 – 2021-02-22
 ### Added
 - Implement read status for messages including a privacy setting

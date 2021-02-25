@@ -65,8 +65,10 @@ class CapabilitiesTest extends TestCase {
 			'last-room-activity',
 			'no-ping',
 			'system-messages',
+			'delete-messages',
 			'mention-flag',
 			'in-call-flags',
+			'conversation-call-flags',
 			'notification-levels',
 			'invite-groups-and-mails',
 			'locked-one-to-one-rooms',
@@ -84,6 +86,7 @@ class CapabilitiesTest extends TestCase {
 			'phonebook-search',
 			'raise-hand',
 			'room-description',
+			'rich-object-sharing',
 		];
 	}
 

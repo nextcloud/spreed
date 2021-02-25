@@ -24,6 +24,7 @@
 
 import Vue from 'vue'
 import App from './App'
+import './init'
 
 // Store
 import Vuex from 'vuex'
@@ -70,7 +71,7 @@ Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 
-export default new Vue({
+const instance = new Vue({
 	el: '#content',
 	store,
 	router,
@@ -154,3 +155,11 @@ Sidebar.prototype.close = function() {
 Object.assign(window.OCA.Files, {
 	Sidebar: new Sidebar(),
 })
+
+// make the instance available to global components that might run on the same page
+if (!window.OCA.Talk) {
+	window.OCA.Talk = {}
+}
+OCA.Talk.instance = instance
+
+export default instance

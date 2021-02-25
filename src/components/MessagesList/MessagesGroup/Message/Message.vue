@@ -29,9 +29,9 @@ the main body of the message as well as a quote.
 		:id="`message_${id}`"
 		ref="message"
 		class="message"
-		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
-		@mouseover="showActions=true"
-		@mouseleave="showActions=false">
+		:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+		@mouseover="handleMouseover"
+		@mouseleave="handleMouseleave">
 		<div v-if="isFirstMessage && showAuthor"
 			class="message__author"
 			role="heading"
@@ -52,11 +52,14 @@ the main body of the message as well as a quote.
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				<CallButton />
 			</div>
+			<div v-else-if="isDeletedMessage" class="message__main__text deleted-message">
+				<RichText :text="message" :arguments="richParameters" :autolink="true" />
+			</div>
 			<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
 				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
-			<div class="message__main__right">
+			<div v-if="!isDeletedMessage" class="message__main__right">
 				<span
 					v-tooltip.auto="messageDate"
 					class="date"
@@ -87,7 +90,7 @@ the main body of the message as well as a quote.
 						title=""
 						:size="16" />
 				</div>
-				<div v-else-if="isTemporary && !isTemporaryUpload"
+				<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
 					v-tooltip.auto="loadingIconTooltip"
 					class="icon-loading-small message-status"
 					:aria-label="loadingIconTooltip" />
@@ -119,6 +122,23 @@ the main body of the message as well as a quote.
 						@click.stop="handleReply">
 						{{ t('spreed', 'Reply') }}
 					</ActionButton>
+					<template
+						v-for="action in messageActions">
+						<ActionButton
+							:key="action.label"
+							:icon="action.icon"
+							:close-after-click="true"
+							@click="action.callback(messageAPIData)">
+							{{ action.label }}
+						</ActionButton>
+					</template>
+					<ActionButton
+						v-if="isDeleteable"
+						icon="icon-delete"
+						:close-after-click="true"
+						@click.stop="handleDelete">
+						{{ t('spreed', 'Delete') }}
+					</ActionButton>
 				</Actions>
 			</div>
 		</div>
@@ -138,13 +158,19 @@ import RichText from '@juliushaertl/vue-richtext'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
+import Reload from 'vue-material-design-icons/Reload'
 import Quote from '../../../Quote'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 import { PARTICIPANT, CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
-import Reload from 'vue-material-design-icons/Reload'
+import {
+	showError,
+	showSuccess,
+	showWarning,
+	TOAST_DEFAULT_TIMEOUT,
+} from '@nextcloud/dialogs'
 
 export default {
 	name: 'Message',
@@ -265,6 +291,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * The type of the message.
+		 */
+		messageType: {
+			type: String,
+			required: true,
+		},
+		/**
 		 * The parent message's id.
 		 */
 		parent: {
@@ -283,12 +316,17 @@ export default {
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
 			showReloadButton: false,
+			isDeleting: false,
 		}
 	},
 
 	computed: {
+		messageObject() {
+			return this.$store.getters.message(this.token, this.id)
+		},
+
 		hasActions() {
-			return this.isReplyable && !this.isConversationReadOnly
+			return (this.isReplyable || this.isDeleteable) && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {
@@ -297,6 +335,10 @@ export default {
 
 		isSystemMessage() {
 			return this.systemMessage !== ''
+		},
+
+		isDeletedMessage() {
+			return this.messageType === 'comment_deleted'
 		},
 
 		messageTime() {
@@ -317,14 +359,16 @@ export default {
 
 		showCommonReadIcon() {
 			return this.conversation.lastCommonReadMessage >= this.id
-				&& this.showSentIcon
+				&& this.showSentIcon && !this.isDeletedMessage
 		},
 
 		showSentIcon() {
 			return !this.isSystemMessage
 				&& !this.isTemporary
+				&& !this.isDeleting
 				&& this.actorType === this.participant.actorType
 				&& this.actorId === this.participant.actorId
+				&& !this.isDeletedMessage
 		},
 
 		messagesList() {
@@ -394,7 +438,7 @@ export default {
 
 		// Determines whether the date has to be displayed or not
 		hasDate() {
-			if (this.isTemporary || this.sendingFailure) {
+			if (this.isTemporary || this.isDeleting || this.sendingFailure) {
 				// Never on temporary or failed messages
 				return false
 			}
@@ -432,6 +476,35 @@ export default {
 			return t('spreed', 'You can not send messages to this conversation at the moment')
 		},
 
+		isMyMsg() {
+			return this.actorId === this.$store.getters.getActorId()
+				&& this.actorType === this.$store.getters.getActorType()
+		},
+
+		isDeleteable() {
+			const isFileShare = this.message === '{file}'
+				&& this.messageParameters?.file
+
+			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
+				&& this.messageType === 'comment'
+				&& !this.isDeleting
+				&& !isFileShare
+				&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
+					|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR
+					|| this.isMyMsg)
+		},
+
+		messageActions() {
+			return this.$store.getters.messageActions
+		},
+
+		messageAPIData() {
+			return {
+				message: this.messageObject,
+				metadata: this.conversation,
+				apiVersion: 'v3',
+			}
+		},
 	},
 
 	watch: {
@@ -489,8 +562,46 @@ export default {
 			})
 			EventBus.$emit('focusChatInput')
 		},
-		handleDelete() {
-			this.$store.dispatch('deleteMessage', this.message)
+		async handleDelete() {
+			this.isDeleting = true
+			try {
+				const statusCode = await this.$store.dispatch('deleteMessage', {
+					message: {
+						token: this.token,
+						id: this.id,
+					},
+					placeholder: t('spreed', 'Deleting message'),
+				})
+
+				if (statusCode === 202) {
+					showWarning(t('spreed', 'Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services'), {
+						timeout: TOAST_DEFAULT_TIMEOUT * 2,
+					})
+				} else if (statusCode === 200) {
+					showSuccess(t('spreed', 'Message deleted successfully'))
+				}
+			} catch (e) {
+				if (e?.response?.status === 400) {
+					showError(t('spreed', 'Message could not be deleted because it is too old'))
+				} else if (e?.response?.status === 405) {
+					showError(t('spreed', 'Only normal chat messages can be deleted'))
+				} else {
+					showError(t('spreed', 'An error occurred while deleting the message'))
+					console.error(e)
+				}
+				this.isDeleting = false
+				return
+			}
+
+			this.isDeleting = false
+		},
+
+		handleMouseover() {
+			this.showActions = true
+		},
+
+		handleMouseleave() {
+			this.showActions = false
 		},
 	},
 }
@@ -531,6 +642,13 @@ export default {
 				text-align: center;
 				padding: 0 20px;
 				width: 100%;
+			}
+
+			&.deleted-message {
+				color: var(--color-text-lighter);
+				display: flex;
+				border-radius: var(--border-radius-large);
+				align-items: center;
 			}
 
 			::v-deep .rich-text--wrapper {

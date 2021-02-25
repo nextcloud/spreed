@@ -270,6 +270,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['sipEnabled'])) {
 				$data['sipEnabled'] = (string) $room['sipEnabled'];
 			}
+			if (isset($expectedRoom['callFlag'])) {
+				$data['callFlag'] = (int) $room['callFlag'];
+			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
@@ -976,7 +979,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userAddAttendeeToRoom($user, $newType, $newId, $identifier, $statusCode, $apiVersion = 'v1') {
-		var_dump($newType);
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
@@ -1104,6 +1106,54 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $type
+	 * @param string $id
+	 * @param string $metaData
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSharesRichObjectToRoom($user, $type, $id, $metaData, $identifier, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share',
+			new TableNode([
+				['objectType', $type],
+				['objectId', $id],
+				['metaData', $metaData],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$messages['shared::' . $type . '::' . $id] = $response['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userDeletesMessageFromRoom($user, $message, $identifier, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$messages[$message],
+			new TableNode([['message', $message]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
@@ -1192,18 +1242,43 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $message
+	 * @param string $apiVersion
+	 */
+	public function userReceivedDeleteMessage($user, $identifier, $message, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
+		$this->assertStatusCode($this->response, 200);
+
+		$actual = $this->getDataFromResponse($this->response);
+
+		foreach ($actual as $m) {
+			if ($m['systemMessage'] === 'message_deleted') {
+				if (isset($m['parent']['id']) && $m['parent']['id'] === self::$messages[$message]) {
+					return;
+				}
+			}
+		}
+		Assert::fail('Missing message_deleted system message for "' . $message . '"');
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param string $knwonMessage
+	 * @param string $knownMessage
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knwonMessage, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knownMessage, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$messages[$knwonMessage]);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$messages[$knownMessage]);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$this->compareDataResponse($formData);

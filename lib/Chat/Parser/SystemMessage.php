@@ -89,7 +89,7 @@ class SystemMessage {
 
 		$message = $data['message'];
 		$parameters = $data['parameters'];
-		$parsedParameters = ['actor' => $this->getActor($comment)];
+		$parsedParameters = ['actor' => $this->getActorFromComment($comment)];
 
 		$participant = $chatMessage->getParticipant();
 		if (!$participant->isGuest()) {
@@ -329,6 +329,10 @@ class SystemMessage {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} elseif ($message === 'object_shared') {
+			$parsedParameters['object'] = $parameters['metaData'];
+			$parsedMessage = '{object}';
+			$chatMessage->setMessageType('comment');
 		} elseif ($message === 'matterbridge_config_added') {
 			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats.');
 			if ($currentUserIsActor) {
@@ -353,6 +357,57 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} stopped Matterbridge.');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You stopped Matterbridge.');
+			}
+		} elseif ($message === 'message_deleted') {
+			$parsedMessage = $this->l->t('{actor} deleted a message');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You deleted a message');
+			}
+		} else {
+			throw new \OutOfBoundsException('Unknown subject');
+		}
+
+		$chatMessage->setMessage($parsedMessage, $parsedParameters, $message);
+	}
+
+	/**
+	 * @param Message $chatMessage
+	 * @throws \OutOfBoundsException
+	 */
+	public function parseDeletedMessage(Message $chatMessage): void {
+		$this->l = $chatMessage->getL10n();
+		$data = json_decode($chatMessage->getMessage(), true);
+		if (!\is_array($data)) {
+			throw new \OutOfBoundsException('Invalid message');
+		}
+
+		$parsedParameters = ['actor' => $this->getActor($data['deleted_by_type'], $data['deleted_by_id'])];
+
+		$participant = $chatMessage->getParticipant();
+		$currentActorId = $participant->getAttendee()->getActorId();
+
+		$authorIsActor = $data['deleted_by_type'] === $chatMessage->getComment()->getActorType()
+			&& $data['deleted_by_id'] === $chatMessage->getComment()->getActorId();
+
+		if (!$participant->isGuest()) {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
+				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
+				$currentActorId === $parsedParameters['actor']['id'];
+		} else {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
+				$participant->getAttendee()->getActorType() === 'guest' &&
+				$currentActorId === $parsedParameters['actor']['id'];
+		}
+
+		if ($chatMessage->getMessageType() === 'comment_deleted') {
+			$message = 'message_deleted';
+			$parsedMessage = $this->l->t('Message deleted by author');
+
+			if (!$authorIsActor) {
+				$parsedMessage = $this->l->t('Message deleted by {actor}');
+			}
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('Message deleted by you');
 			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
@@ -430,12 +485,16 @@ class SystemMessage {
 		];
 	}
 
-	protected function getActor(IComment $comment): array {
-		if ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
-			return $this->getGuest($comment->getActorId());
+	protected function getActorFromComment(IComment $comment): array {
+		return $this->getActor($comment->getActorType(), $comment->getActorId());
+	}
+
+	protected function getActor(string $actorType, string $actorId): array {
+		if ($actorType === Attendee::ACTOR_GUESTS) {
+			return $this->getGuest($actorId);
 		}
 
-		return $this->getUser($comment->getActorId());
+		return $this->getUser($actorId);
 	}
 
 	protected function getUser(string $uid): array {

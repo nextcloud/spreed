@@ -154,6 +154,16 @@ return [
 			],
 		],
 		[
+			'name' => 'Chat#deleteMessage',
+			'url' => '/api/{apiVersion}/chat/{token}/{messageId}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+				'messageId' => '^[0-9]+$',
+			],
+		],
+		[
 			'name' => 'Chat#setReadMarker',
 			'url' => '/api/{apiVersion}/chat/{token}/read',
 			'verb' => 'POST',
@@ -166,6 +176,15 @@ return [
 			'name' => 'Chat#mentions',
 			'url' => '/api/{apiVersion}/chat/{token}/mentions',
 			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Chat#shareObjectToChat',
+			'url' => '/api/{apiVersion}/chat/{token}/share',
+			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',

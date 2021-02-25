@@ -187,6 +187,7 @@ class Manager {
 			(string) $row['description'],
 			(string) $row['password'],
 			(int) $row['active_guests'],
+			(int) $row['call_flag'],
 			$activeSince,
 			$lastActivity,
 			(int) $row['last_message'],

@@ -44,7 +44,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
-        `messageType` | string | Currently known types are `comment`, `system` and `command`
+        `messageType` | string | Currently known types are `comment`, `comment_deleted`, `system` and `command`
         `isReplyable` | bool | True if the user can post a reply to this message (only available with `chat-replies` capability)
         `referenceId` | string | A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
@@ -96,6 +96,69 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
 
+## Share a rich object to the chat
+
+See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob/master/lib/public/RichObjectStrings/Definitions.php) for more details on supported rich objects and required data.
+
+* Required capability: `rich-object-sharing`
+* Method: `POST`
+* Endpoint: `/chat/{token}/share`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `objectType` | string | The object type
+    `objectId` | string | The object id
+    `metaData` | string | JSON encoded array of the rich objects data
+    `actorDisplayName` | string | Guest display name (ignored for logged in users)
+    `referenceId` | string | A reference string to be able to identify the message again in a "get messages" request, should be a random sha256 (only available with `chat-reference-id` capability)
+
+* Response:
+    - Status code:
+        + `201 Created`
+        + `400 Bad Request` In case the meta data is invalid
+        + `403 Forbidden` When the conversation is read-only
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+        + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+
+    - Data:
+        The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+
+## Deleting a chat message
+
+* Method: `DELETE`
+* Endpoint: `/chat/{token}/{messageId}`
+
+* Response:
+    - Status code:
+        + `200 OK` - When deleting was successful
+        + `202 Accepted` - When deleting was successful but Matterbridge is enabled so the message was leaked to other services
+        + `400 Bad Request` The message is already older than 6 hours
+        + `403 Forbidden` When the message is not from the current user and the user not a moderator
+        + `403 Forbidden` When the conversation is read-only
+        + `404 Not Found` When the conversation or chat message could not be found for the participant
+        + `405 Method Not Allowed` When the message is not a normal chat message
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+
+    - Data:
+        The full message array of the new system message "You deleted a message", as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+        The parent message is the object of the deleted message with the replaced text "Message deleted by you".
+        This message should not be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
+
+
 ## Mark chat as read
 
 * Method: `POST`
@@ -117,7 +180,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
-
 
 
 ## Get mention autocomplete suggestions
@@ -177,3 +239,4 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
+* `message_deleted` - Message deleted by {actor} (Should not be shown to the user)

@@ -399,10 +399,21 @@ class SystemMessageTest extends TestCase {
 
 		/** @var IComment|MockObject $comment */
 		$comment = $this->createMock(IComment::class);
+		if ($recipientId && strpos($recipientId, 'guest::') !== false) {
+			$comment->method('getActorType')
+				->willReturn('guests');
+			$comment->method('getActorId')
+				->willReturn(substr($recipientId, strlen('guest::')));
+		} else {
+			$comment->method('getActorType')
+				->willReturn('users');
+			$comment->method('getActorId')
+				->willReturn($recipientId);
+		}
 
-		$parser = $this->getParser(['getActor', 'getUser', 'getGuest', 'parseCall', 'getFileFromShare']);
+		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getGuest', 'parseCall', 'getFileFromShare']);
 		$parser->expects($this->once())
-			->method('getActor')
+			->method('getActorFromComment')
 			->with($comment)
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 		$parser->expects($this->any())
@@ -475,9 +486,9 @@ class SystemMessageTest extends TestCase {
 		/** @var IComment|MockObject $comment */
 		$comment = $this->createMock(IComment::class);
 
-		$parser = $this->getParser(['getActor']);
+		$parser = $this->getParser(['getActorFromComment']);
 		$parser->expects($this->any())
-			->method('getActor')
+			->method('getActorFromComment')
 			->with($comment)
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 
@@ -808,7 +819,7 @@ class SystemMessageTest extends TestCase {
 				->willReturn($userData);
 		}
 
-		$this->assertSame($expected, self::invokePrivate($parser, 'getActor', [$chatMessage]));
+		$this->assertSame($expected, self::invokePrivate($parser, 'getActorFromComment', [$chatMessage]));
 	}
 
 	public function dataGetUser(): array {

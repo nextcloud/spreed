@@ -28,6 +28,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\GuestManager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -46,6 +47,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\RichObjectStrings\IValidator;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -75,6 +77,8 @@ class ChatControllerTest extends TestCase {
 	protected $autoCompleteManager;
 	/** @var IUserStatusManager|MockObject */
 	protected $statusManager;
+	/** @var MatterbridgeManager|MockObject */
+	protected $matterbridgeManager;
 	/** @var SearchPlugin|MockObject */
 	protected $searchPlugin;
 	/** @var ISearchResult|MockObject */
@@ -83,6 +87,8 @@ class ChatControllerTest extends TestCase {
 	protected $eventDispatcher;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
+	/** @var IValidator|MockObject */
+	protected $richObjectValidator;
 	/** @var IL10N|MockObject */
 	private $l;
 
@@ -109,10 +115,12 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->statusManager = $this->createMock(IUserStatusManager::class);
+		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->richObjectValidator = $this->createMock(IValidator::class);
 		$this->l = $this->createMock(IL10N::class);
 
 		$this->room = $this->createMock(Room::class);
@@ -142,10 +150,12 @@ class ChatControllerTest extends TestCase {
 			$this->messageParser,
 			$this->autoCompleteManager,
 			$this->statusManager,
+			$this->matterbridgeManager,
 			$this->searchPlugin,
 			$this->searchResult,
 			$this->timeFactory,
 			$this->eventDispatcher,
+			$this->richObjectValidator,
 			$this->l
 		);
 	}
@@ -606,6 +616,94 @@ class ChatControllerTest extends TestCase {
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
+	}
+
+	public function testShareObjectToChatByUser() {
+		$participant = $this->createMock(Participant::class);
+
+		$richData = [
+			'call-type' => 'one2one',
+			'type' => 'call',
+			'id' => 'R4nd0mToken',
+		];
+
+		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
+		$this->chatManager->expects($this->once())
+			->method('addSystemMessage')
+			->with($this->room,
+				'users',
+				$this->userId,
+				json_encode([
+					'message' => 'object_shared',
+					'parameters' => [
+						'objectType' => 'call',
+						'objectId' => 'R4nd0mToken',
+						'metaData' => [
+							'call-type' => 'one2one',
+							'type' => 'call',
+							'id' => 'R4nd0mToken',
+						],
+					],
+				]),
+				$this->newMessageDateTimeConstraint
+			)
+			->willReturn($comment);
+
+		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->once())
+			->method('getVisibility')
+			->willReturn(true);
+		$chatMessage->expects($this->once())
+			->method('toArray')
+			->willReturn([
+				'id' => 42,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId,
+				'actorDisplayName' => 'displayName',
+				'timestamp' => $date->getTimestamp(),
+				'message' => '{object}',
+				'messageParameters' => $richData,
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+				'referenceId' => '',
+			]);
+
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($this->room, $participant, $comment, $this->l)
+			->willReturn($chatMessage);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($chatMessage);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->shareObjectToChat($richData['type'], $richData['id'], json_encode(['call-type' => $richData['call-type']]));
+		$expected = new DataResponse([
+			'id' => 42,
+			'token' => 'testToken',
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+			'actorDisplayName' => 'displayName',
+			'timestamp' => $date->getTimestamp(),
+			'message' => '{object}',
+			'messageParameters' => $richData,
+			'systemMessage' => '',
+			'messageType' => 'comment',
+			'isReplyable' => true,
+			'referenceId' => '',
+		], Http::STATUS_CREATED);
+
+		$this->assertEquals($expected->getStatus(), $response->getStatus());
+		$this->assertEquals($expected->getData(), $response->getData());
 	}
 
 	public function testReceiveHistoryByUser() {
