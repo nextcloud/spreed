@@ -31,6 +31,7 @@ import {
 	leaveCall,
 } from '../services/callsService'
 import { PARTICIPANT } from '../constants'
+import { EventBus } from '../services/EventBus'
 
 const state = {
 	participants: {
@@ -39,11 +40,16 @@ const state = {
 	},
 	inCall: {
 	},
+	connecting: {
+	},
 }
 
 const getters = {
 	isInCall: (state) => (token) => {
 		return !!(state.inCall[token] && Object.keys(state.inCall[token]).length > 0)
+	},
+	isConnecting: (state) => (token) => {
+		return !!(state.connecting[token] && Object.keys(state.connecting[token]).length > 0)
 	},
 	/**
 	 * Gets the participants array
@@ -124,11 +130,25 @@ const mutations = {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
 				Vue.delete(state.inCall[token], sessionId)
 			}
+
+			if (state.connecting[token] && state.connecting[token][sessionId]) {
+				Vue.delete(state.connecting[token], sessionId)
+			}
 		} else {
 			if (!state.inCall[token]) {
 				Vue.set(state.inCall, token, {})
 			}
 			Vue.set(state.inCall[token], sessionId, flags)
+
+			if (!state.connecting[token]) {
+				Vue.set(state.connecting, token, {})
+			}
+			Vue.set(state.connecting[token], sessionId, flags)
+		}
+	},
+	finishedConnecting(state, { token, sessionId }) {
+		if (state.connecting[token] && state.connecting[token][sessionId]) {
+			Vue.delete(state.connecting[token], sessionId)
 		}
 	},
 	/**
@@ -286,6 +306,16 @@ const actions = {
 			inCall: flags,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+
+		EventBus.$once('Signaling::usersInRoom', () => {
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		})
+
+		setTimeout(() => {
+			// If by accident we never receive a users list, just switch to
+			// "Waiting for others to join the call …" after some seconds.
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		}, 10000)
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier }) {
