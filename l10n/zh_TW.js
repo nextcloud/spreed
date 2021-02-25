@@ -299,7 +299,6 @@ OC.L10N.register(
     "Password protect" : "密碼防護",
     "Close" : "關閉",
     "Conversation name" : "對話名稱",
-    "Allow guests to join via link " : "允許訪客透過連結加入",
     "Camera" : "相機",
     "Reply" : "回覆",
     "Remove" : "移除",
@@ -310,6 +309,7 @@ OC.L10N.register(
     "Invalid path selected" : "所選的路徑無效",
     "moderator" : "主持人",
     "guest" : "訪客",
+    "Searching …" : "正在搜尋……",
     "No results" : "沒有符合搜尋的項目",
     "Add users or groups" : "增加使用者或者群組",
     "Participants" : "參與者",
@@ -332,6 +332,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP 和 TCP",
     "UDP only" : "僅UDP",
     "TCP only" : "僅TCP",
+    "Allow guests to join via link " : "允許訪客透過連結加入",
     "Projects" : "專案項目",
     "Share link" : "分享連結",
     "Enabled" : "已啟用"
