@@ -106,6 +106,10 @@ const mutations = {
 	setConversationDescription(state, { token, description }) {
 		Vue.set(state.conversations[token], 'description', description)
 	},
+
+	changeNotificationLevel(state, { token, notificationLevel }) {
+		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
+	},
 }
 
 const actions = {
@@ -313,6 +317,10 @@ const actions = {
 		conversation.lastActivity = (new Date().getTime()) / 1000
 
 		commit('addConversation', conversation)
+	},
+
+	changeNotificationLevel({ commit }, { token, notificationLevel }) {
+		commit('changeNotificationLevel', { token, notificationLevel })
 	},
 }
 

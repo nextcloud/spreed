@@ -336,6 +336,7 @@ export default {
 						this.$store.dispatch('deleteConversation', this.item.token)
 					} catch (error) {
 						console.debug(`error while deleting conversation ${error}`)
+						showError(t('spreed', 'Error while deleting conversation'))
 					}
 				}.bind(this)
 			)

@@ -24,12 +24,24 @@
 		role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
-		:show-navigation="false">
+		:show-navigation="true">
+		<!-- Notifications settings -->
 		<AppSettingsSection
+			:title="t('spreed', 'Chat notifications')"
+			class="app-settings-section">
+			<NotificationsSettings :conversation="conversation" />
+		</AppSettingsSection>
+		<!-- Guest access -->
+		<AppSettingsSection
+			v-if="canFullModerate"
 			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
 			<LinkShareSettings ref="linkShareSettings" />
 		</AppSettingsSection>
+		<!-- TODO sepatate these 2 settings and rename the settings sections
+		all the settings in this component are conversation settings. Proposal:
+		move lock conversation in destructive actions and create a separate
+		section for listablesettings -->
 		<AppSettingsSection
 			v-if="canFullModerate"
 			:title="t('spreed', 'Conversation settings')"
@@ -37,6 +49,7 @@
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
 		</AppSettingsSection>
+		<!-- Meeting settings -->
 		<AppSettingsSection
 			v-if="canFullModerate"
 			:title="t('spreed', 'Meeting settings')"
@@ -49,6 +62,16 @@
 			:title="t('spreed', 'Matterbridge')"
 			class="app-settings-section">
 			<MatterbridgeSettings />
+		</AppSettingsSection>
+		<!-- Destructive actions -->
+		<AppSettingsSection
+			v-if="canLeaveConversation || canDeleteConversation"
+			:title="t('spreed', 'Danger zone')"
+			class="app-settings-section">
+			<DangerZone
+				:conversation="conversation"
+				:can-leave-conversation="canLeaveConversation"
+				:can-delete-conversation="canDeleteConversation" />
 		</AppSettingsSection>
 	</AppSettingsDialog>
 </template>
@@ -65,6 +88,8 @@ import LobbySettings from './LobbySettings'
 import SipSettings from './SipSettings'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import { loadState } from '@nextcloud/initial-state'
+import DangerZone from './DangerZone'
+import NotificationsSettings from './NotificationsSettings'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -78,6 +103,8 @@ export default {
 		LockingSettings,
 		SipSettings,
 		MatterbridgeSettings,
+		DangerZone,
+		NotificationsSettings,
 	},
 
 	data() {
@@ -95,19 +122,31 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
 		participantType() {
 			return this.conversation.participantType
 		},
+
 		canFullModerate() {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canDeleteConversation() {
+			return this.conversation.canDeleteConversation
+		},
+
+		canLeaveConversation() {
+			return this.conversation.canLeaveConversation
 		},
 	},
 
 	mounted() {
 		subscribe('show-conversation-settings', this.handleShowSettings)
+		subscribe('hide-conversation-settings', this.handleHideSettings)
 	},
 
 	methods: {
@@ -118,8 +157,13 @@ export default {
 			})
 		},
 
+		handleHideSettings() {
+			this.showSettings = false
+		},
+
 		beforeDestroy() {
 			unsubscribe('show-conversation-settings', this.handleShowSettings)
+			unsubscribe('hide-conversation-settings', this.handleHideSettings)
 		},
 	},
 }
