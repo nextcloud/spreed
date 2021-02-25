@@ -447,6 +447,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
 			!$currentParticipant->hasModeratorPermissions()) {
 			// No participants and chat messages for users in the lobby.
+			$roomData['hasCall'] = false;
 			return $roomData;
 		}
 
@@ -700,6 +701,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
 			!$currentParticipant->hasModeratorPermissions()) {
 			// No participants and chat messages for users in the lobby.
+			$roomData['hasCall'] = false;
 			return $roomData;
 		}
 
