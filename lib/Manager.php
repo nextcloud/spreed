@@ -299,11 +299,11 @@ class Manager {
 
 	/**
 	 * @param string $userId
-	 * @param bool $loadSession Loads a random session if possible for the user
+	 * @param array $sessionIds A list of talk sessions to consider for loading (otherwise no session is loaded)
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForUser(string $userId, bool $loadSession = false, bool $includeLastMessage = false): array {
+	public function getRoomsForUser(string $userId, array $sessionIds = [], bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -316,10 +316,11 @@ class Manager {
 			))
 			->where($query->expr()->isNotNull('a.id'));
 
-		if ($loadSession) {
-			$helper->selectSessionsTable($query); // FIXME ?
+		if (!empty($sessionIds)) {
+			$helper->selectSessionsTable($query);
 			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-				$query->expr()->eq('a.id', 's.attendee_id')
+				$query->expr()->eq('a.id', 's.attendee_id'),
+				$query->expr()->in('s.session_id', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY))
 			));
 		}
 
