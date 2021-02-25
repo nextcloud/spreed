@@ -282,15 +282,6 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#setConversationState',
-			'url' => '/api/{apiVersion}/room/{token}/conversation-state',
-			'verb' => 'PUT',
-			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
 			'name' => 'Room#setListable',
 			'url' => '/api/{apiVersion}/room/{token}/listable',
 			'verb' => 'PUT',

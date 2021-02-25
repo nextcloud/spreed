@@ -25,25 +25,14 @@
 			{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
 		</div>
 		<div>
-			<input id="moderation_settings_lock_conversation_checkbox"
-				aria-describedby="moderation_settings_lock_conversation_hint"
-				type="checkbox"
-				class="checkbox"
-				name="moderation_settings_lock_conversation_checkbox"
-				:checked="isReadOnly"
-				:disabled="isReadOnlyStateLoading"
-				@change="toggleReadOnly">
-			<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
-
 			<h3>{{ t('spreed', 'Limit writing to a conversation') }}</h3>
 			<p>
-				<Multiselect id="writing_conversations"
+				<Multiselect id="limit_writing"
 					v-model="writingConversations"
 					:options="writingConversationOptions"
 					:placeholder="t('spreed', 'Limit writing to conversations')"
 					label="label"
 					track-by="value"
-					:disabled="loading || loadingWritingConversations"
 					@input="saveWritingConversations" />
 			</p>
 		</div>
@@ -79,7 +68,7 @@ export default {
 		return {
 			isReadOnlyStateLoading: false,
 			writingConversationOptions,
-			writingConversations: writingConversationOptions[0],
+			writingConversations: writingConversationOptions[this.isReadOnly],
 			loadingWritingConversations: false,
 		}
 	},
@@ -95,7 +84,7 @@ export default {
 	},
 
 	methods: {
-		async toggleReadOnly() {
+		async saveWritingConversations() {
 			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
 			this.isReadOnlyStateLoading = true
 			try {
@@ -118,19 +107,6 @@ export default {
 				}
 			}
 			this.isReadOnlyStateLoading = false
-		},
-
-		async saveWritingConversations() {
-			this.loadingWritingConversations = true
-			try {
-				await this.$store.dispatch('setConversationState', {
-					token: this.token,
-					state: this.writingConversations,
-				})
-			} catch (e) {
-
-			}
-			this.loadingWritingConversations = false
 		},
 	},
 

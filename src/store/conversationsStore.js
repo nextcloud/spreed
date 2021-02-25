@@ -26,7 +26,6 @@ import {
 	setSIPEnabled,
 	changeLobbyState,
 	changeReadOnlyState,
-	changeConversationState,
 	changeListable,
 	addToFavorites,
 	removeFromFavorites,
@@ -244,18 +243,6 @@ const actions = {
 
 		await changeReadOnlyState(token, readOnly)
 		conversation.readOnly = readOnly
-
-		commit('addConversation', conversation)
-	},
-
-	async setConversationState({ commit, getters }, { token, state }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
-			return
-		}
-
-		await changeConversationState(token, state)
-		conversation.state = state
 
 		commit('addConversation', conversation)
 	},

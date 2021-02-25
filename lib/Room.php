@@ -819,7 +819,7 @@ class Room {
 			return false;
 		}
 
-		if (!in_array($newState, [self::READ_ONLY, self::READ_WRITE], true)) {
+		if (!in_array($newState, [self::READ_ONLY, self::READ_WRITE, self::WRITE_ONLY_MOD], true)) {
 			return false;
 		}
 
