@@ -29,7 +29,7 @@
 			</div>
 			<template v-else>
 				<CallView :token="token" :is-sidebar="true" />
-				<ChatView :token="token" />
+				<ChatView />
 			</template>
 		</aside>
 	</transition>

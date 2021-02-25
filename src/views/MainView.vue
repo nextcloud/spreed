@@ -5,7 +5,7 @@
 			<TopBar
 				:is-in-call="showChatInSidebar" />
 			<transition name="fade">
-				<ChatView v-if="!showChatInSidebar" :token="token" />
+				<ChatView v-if="!showChatInSidebar" />
 				<template v-else>
 					<CallView
 						:token="token" />

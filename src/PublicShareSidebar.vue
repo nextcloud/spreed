@@ -37,7 +37,7 @@
 					:is-sidebar="true" />
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
-				<ChatView :token="token" />
+				<ChatView />
 			</template>
 		</aside>
 	</transition>
