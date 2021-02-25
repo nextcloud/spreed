@@ -57,6 +57,7 @@ const getters = {
 		return {
 			actorType: state.actorType,
 			actorId: state.actorId,
+			sessionId: state.sessionId,
 		}
 	},
 }

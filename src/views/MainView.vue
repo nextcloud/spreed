@@ -20,7 +20,6 @@ import CallView from '../components/CallView/CallView'
 import ChatView from '../components/ChatView'
 import LobbyScreen from '../components/LobbyScreen'
 import TopBar from '../components/TopBar/TopBar'
-import { PARTICIPANT } from '../constants'
 import isInLobby from '../mixins/isInLobby'
 import isInCall from '../mixins/isInCall'
 import participant from '../mixins/participant'
@@ -60,7 +59,7 @@ export default {
 	watch: {
 		isInLobby: function(isInLobby) {
 			// User is now blocked by the lobby
-			if (isInLobby && this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+			if (isInLobby && this.isInCall) {
 				this.$store.dispatch('leaveCall', {
 					token: this.token,
 					participantIdentifier: this.$store.getters.getParticipantIdentifier(),

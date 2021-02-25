@@ -37,9 +37,14 @@ const state = {
 	},
 	peers: {
 	},
+	inCall: {
+	},
 }
 
 const getters = {
+	isInCall: (state) => (token) => {
+		return !!(state.inCall[token] && Object.keys(state.inCall[token]).length > 0)
+	},
 	/**
 	 * Gets the participants array
 	 * @param {object} state the state object.
@@ -112,6 +117,18 @@ const mutations = {
 			Vue.delete(state.participants[token], index)
 		} else {
 			console.error(`The conversation you are trying to purge doesn't exist`)
+		}
+	},
+	setInCall(state, { token, sessionId, flags }) {
+		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+			if (state.inCall[token] && state.inCall[token][sessionId]) {
+				Vue.delete(state.inCall[token], sessionId)
+			}
+		} else {
+			if (!state.inCall[token]) {
+				Vue.set(state.inCall, token, {})
+			}
+			Vue.set(state.inCall[token], sessionId, flags)
 		}
 	},
 	/**
@@ -247,11 +264,21 @@ const actions = {
 	},
 
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
+		if (!participantIdentifier?.sessionId) {
+			console.error('Trying to join call without sessionId')
+		}
+
 		const index = getters.getParticipantIndex(token, participantIdentifier)
 		if (index === -1) {
 			console.error('Participant not found', participantIdentifier)
 			return
 		}
+
+		commit('setInCall', {
+			token,
+			sessionId: participantIdentifier.sessionId,
+			flags,
+		})
 
 		await joinCall(token, flags)
 
@@ -262,8 +289,13 @@ const actions = {
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier }) {
+		if (!participantIdentifier?.sessionId) {
+			console.error('Trying to leave call without sessionId')
+		}
+
 		const index = getters.getParticipantIndex(token, participantIdentifier)
 		if (index === -1) {
+			console.error('Participant not found', participantIdentifier)
 			return
 		}
 
@@ -273,6 +305,12 @@ const actions = {
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+
+		commit('setInCall', {
+			token,
+			sessionId: participantIdentifier.sessionId,
+			flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+		})
 	},
 
 	/**

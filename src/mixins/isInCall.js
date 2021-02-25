@@ -19,14 +19,11 @@
  *
  */
 
-import { PARTICIPANT } from '../constants'
 import SessionStorage from '../services/SessionStorage'
 import { EventBus } from '../services/EventBus'
 
 /**
- * A mixin to check whether the current session of a user is in a call or not.
- *
- * Components using this mixin require a "participant" property with, at least, the "inCall" property.
+ * A mixin to check whether the user joined the call of the current token in this PHP session or not.
  */
 export default {
 
@@ -39,7 +36,7 @@ export default {
 	computed: {
 		isInCall() {
 			return this.sessionStorageJoinedConversation === this.$store.getters.getToken()
-				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.$store.getters.isInCall(this.$store.getters.getToken())
 		},
 	},
 
