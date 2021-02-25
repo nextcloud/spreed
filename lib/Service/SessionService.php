@@ -85,9 +85,6 @@ class SessionService {
 	 * @throws UniqueConstraintViolationException
 	 */
 	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
-		// Currently a participant can only join once
-		$this->sessionMapper->deleteByAttendeeId($attendee->getId());
-
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
 
