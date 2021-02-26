@@ -135,6 +135,8 @@ export default {
 			immediate: true,
 			handler(isChatTheActiveTab) {
 				this.forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab)
+				// recheck the file info in case the sharing info was changed
+				this.setTalkSidebarSupportedForFile(this.fileInfo)
 			},
 		},
 	},
