@@ -56,6 +56,7 @@
 		</a>
 		<Actions
 			v-if="hasActions"
+			container="#content-vue"
 			menu-align="right"
 			:aria-label="conversationSettingsAriaLabel"
 			class="actions">

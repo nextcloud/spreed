@@ -23,7 +23,9 @@
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<CallButton class="top-bar__button" />
 		<!-- Call layout switcher -->
-		<Actions slot="trigger">
+		<Actions
+			slot="trigger"
+			container="#content-vue">
 			<ActionButton v-if="isInCall"
 				:icon="changeViewIconClass"
 				@click="changeView">
@@ -36,6 +38,7 @@
 			class="top-bar__button"
 			menu-align="right"
 			:aria-label="t('spreed', 'Conversation actions')"
+			container="#content-vue"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
@@ -90,7 +93,8 @@
 		</Actions>
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
-			close-after-click="true">
+			close-after-click="true"
+			container="#content-vue">
 			<ActionButton
 				:icon="iconMenuPeople"
 				@click="openSidebar" />
