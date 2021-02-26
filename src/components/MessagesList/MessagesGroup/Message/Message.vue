@@ -114,6 +114,7 @@ the main body of the message as well as a quote.
 				<Actions
 					v-show="showActions && hasActions"
 					class="message__main__right__actions"
+					container="#content-vue"
 					:class="{ 'tall' : isTallEnough }">
 					<ActionButton
 						v-if="isReplyable"

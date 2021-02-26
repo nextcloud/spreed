@@ -135,6 +135,7 @@
 			<Actions
 				v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
+				container="#content-vue"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
 					:close-after-click="true"
