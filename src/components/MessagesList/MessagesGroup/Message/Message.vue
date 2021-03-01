@@ -145,6 +145,13 @@ the main body of the message as well as a quote.
 							</ActionButton>
 						</template>
 						<ActionButton
+							v-if="!isSystemMessage"
+							icon="icon-external"
+							:close-after-click="true"
+							@click.stop.prevent="handleCopyMessageLink">
+							{{ t('spreed', 'Copy message link') }}
+						</ActionButton>
+						<ActionButton
 							v-if="isDeleteable"
 							icon="icon-delete"
 							:close-after-click="true"
@@ -185,6 +192,7 @@ import {
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { createOneToOneConversation } from '../../../../services/conversationsService'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'Message',
@@ -633,6 +641,16 @@ export default {
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+
+		async handleCopyMessageLink() {
+			try {
+				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
+				await this.$copyText(link)
+				showSuccess(t('spreed', 'Message link copied to clipboard.'))
+			} catch (error) {
+				showError(t('spreed', 'The link could not be copied.'))
+			}
 		},
 	},
 }
