@@ -42,7 +42,7 @@
 			<div class="call-button-wrapper">
 				<CallButton class="call-button" />
 			</div>
-			<ChatView :token="token" />
+			<ChatView />
 			<UploadEditor />
 		</template>
 	</div>
