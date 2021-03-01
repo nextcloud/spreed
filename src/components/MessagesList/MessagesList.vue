@@ -749,7 +749,7 @@ export default {
 				return
 			}
 
-			if (!this.unreadMessageElement || !this.unreadMessageElement.getAttribute('data-seen')) {
+			if (!this.unreadMessageElement || this.unreadMessageElement.getAttribute('data-seen') !== 'true') {
 				return
 			}
 
@@ -772,7 +772,7 @@ export default {
 				return
 			}
 
-			const messageId = firstVisibleMessage.getAttribute('data-message-id')
+			const messageId = parseInt(firstVisibleMessage.getAttribute('data-message-id'), 10)
 			if (messageId <= this.conversation.lastReadMessage) {
 				// it was probably a scroll up, don't update
 				return
