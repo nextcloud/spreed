@@ -28,11 +28,12 @@
 			<h3>{{ t('spreed', 'Limit writing to a conversation') }}</h3>
 			<p>
 				<Multiselect id="limit_writing"
-					v-model="writingConversations"
+					v-model="writingConversationSelected"
 					:options="writingConversationOptions"
 					:placeholder="t('spreed', 'Limit writing to conversations')"
 					label="label"
 					track-by="value"
+					:disabled="isReadOnlyStateLoading"
 					@input="saveWritingConversations" />
 			</p>
 		</div>
@@ -45,9 +46,9 @@ import { CONVERSATION } from '../../constants'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 const writingConversationOptions = [
-	{ value: 0, label: t('spreed', 'Everyone can read and write') },
-	{ value: 1, label: t('spreed', 'Lock conversation') },
-	{ value: 2, label: t('spreed', 'Only Moderators can write') },
+	{ value: 0, label: t('spreed', 'Everyone can write') },
+	{ value: 2, label: t('spreed', 'Only moderators can write') },
+	{ value: 1, label: t('spreed', 'Read only') },
 ]
 
 export default {
@@ -68,7 +69,7 @@ export default {
 		return {
 			isReadOnlyStateLoading: false,
 			writingConversationOptions,
-			writingConversations: writingConversationOptions[this.isReadOnly],
+			writingConversationSelected: [],
 			loadingWritingConversations: false,
 		}
 	},
@@ -83,9 +84,13 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.writingConversationSelected = this.writingConversationOptions[this.conversation.readOnly]
+	},
+
 	methods: {
 		async saveWritingConversations() {
-			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
+			const newReadOnly = this.writingConversationSelected.value
 			this.isReadOnlyStateLoading = true
 			try {
 				await this.$store.dispatch('setReadOnlyState', {
@@ -112,3 +117,9 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+	.multiselect {
+		width: 100%;
+	}
+</style>
