@@ -169,7 +169,7 @@ the main body of the message as well as a quote.
 			<div v-if="isLastReadMessage"
 				v-observe-visibility="lastReadMessageVisibilityChanged">
 				<div v-if="!isLastMessage" class="new-message-marker">
-					<span>----- {{ t('spreed', 'Unread messages') }} -----</span>
+					<span>{{ t('spreed', 'Unread messages') }}</span>
 				</div>
 			</div>
 		</div>
@@ -801,14 +801,21 @@ export default {
 }
 
 .new-message-marker {
-	margin: 20px 0;
-	text-align: center;
+	position: relative;
+	margin: 40px 15px 0 -45px;
+	border-top: 1px solid var(--color-border);
 
 	span {
-		background-color: var(--color-primary-light);
-		color: var(--color-text-lighter);
-		padding: 10px  20px;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		padding: 0 7px 0 7px;
+		text-align: center;
+		white-space: nowrap;
+
 		border-radius: var(--border-radius);
+		background-color: var(--color-main-background);
 	}
 }
 
