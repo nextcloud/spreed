@@ -94,6 +94,7 @@
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
+			container="#content-vue"
 			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
 			<ActionText
