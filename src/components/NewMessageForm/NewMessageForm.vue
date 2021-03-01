@@ -41,6 +41,7 @@
 					v-if="canUploadFiles || canShareFiles">
 					<Actions
 						ref="uploadMenu"
+						container="#content-vue"
 						:disabled="disabled"
 						default-icon="icon-clip-add-file"
 						:aria-label="t('spreed', 'Share files to the conversation')"
