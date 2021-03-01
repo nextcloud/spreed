@@ -25,6 +25,9 @@
 			<div id="moderation_settings_enable_lobby_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
 			</div>
+			<div v-if="hasCall" class="app-settings-section__hint">
+				{{ t('spreed', 'This will also remove non-moderators from the ongoing call.') }}
+			</div>
 			<div>
 				<input id="moderation_settings_enable_lobby_checkbox"
 					aria-describedby="moderation_settings_enable_lobby_hint"
@@ -93,6 +96,10 @@ export default {
 	},
 
 	computed: {
+		hasCall() {
+			return this.conversation.hasCall
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},

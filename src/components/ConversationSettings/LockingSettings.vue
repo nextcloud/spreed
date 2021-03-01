@@ -24,6 +24,9 @@
 		<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
 			{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
 		</div>
+		<div v-if="hasCall" class="app-settings-section__hint">
+			{{ t('spreed', 'This will also terminate the ongoing call.') }}
+		</div>
 		<div>
 			<input id="moderation_settings_lock_conversation_checkbox"
 				aria-describedby="moderation_settings_lock_conversation_hint"
@@ -59,6 +62,10 @@ export default {
 	},
 
 	computed: {
+		hasCall() {
+			return this.conversation.hasCall
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
