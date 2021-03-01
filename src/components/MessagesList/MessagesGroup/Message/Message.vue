@@ -28,6 +28,8 @@ the main body of the message as well as a quote.
 	<li
 		:id="`message_${id}`"
 		ref="message"
+		:data-message-id="id"
+		:data-seen="seen"
 		class="message"
 		:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
 		@mouseover="handleMouseover"

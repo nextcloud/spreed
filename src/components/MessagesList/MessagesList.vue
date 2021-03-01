@@ -147,17 +147,17 @@ export default {
 		},
 
 		/**
-		 * Finds the first unread message component
+		 * Finds the first unread message element
 		 *
-		 * @returns {object} Vue component of the message or null if not found
+		 * @returns {object} DOM element of the first unread message
 		 */
-		unreadMessageComponent() {
+		unreadMessageElement() {
 			let el = document.getElementById('message_' + this.conversation.lastReadMessage)
 			if (el) {
 				el = el.closest('.message')
 			}
 
-			return el?.__vue__
+			return el
 		},
 
 		/**
@@ -749,8 +749,7 @@ export default {
 				return
 			}
 
-			const unreadMessage = this.unreadMessageComponent
-			if (!unreadMessage || !unreadMessage.seen) {
+			if (!this.unreadMessageElement || !this.unreadMessageElement.getAttribute('data-seen')) {
 				return
 			}
 
@@ -762,18 +761,18 @@ export default {
 				return
 			}
 
-			if (this.unreadMessageComponent.$refs.message.offsetTop - this.scroller.scrollTop > 0) {
+			if (this.unreadMessageElement.offsetTop - this.scroller.scrollTop > 0) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
 
-			const firstVisibleMessage = this.findFirstVisibleMessage(unreadMessage.$refs.message)
+			const firstVisibleMessage = this.findFirstVisibleMessage(this.unreadMessageElement)
 			if (!firstVisibleMessage) {
 				console.warn('First visible message not found: ', firstVisibleMessage)
 				return
 			}
 
-			const messageId = firstVisibleMessage.__vue__.id
+			const messageId = firstVisibleMessage.getAttribute('data-message-id')
 			if (messageId <= this.conversation.lastReadMessage) {
 				// it was probably a scroll up, don't update
 				return
