@@ -414,8 +414,11 @@ export default {
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
 			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.conversation.lastReadMessage === 0 || (this.isWindowVisible && document.hasFocus() && this.scroller.scrollHeight <= this.scroller.offsetHeight)) {
-				this.$store.dispatch('clearLastReadMessage', { token: this.token })
+			if (this.conversation.lastReadMessage === 0
+				|| (this.isWindowVisible && document.hasFocus() && this.scroller.scrollHeight <= this.scroller.offsetHeight)
+			) {
+				// clear after a delay, unless scrolling can resume in-between
+				this.debounceUpdateReadMarkerAfterScroll()
 			}
 		},
 
@@ -752,7 +755,9 @@ export default {
 			}
 
 			// if we're at bottom of the chat and focussed, then simply clear the marker
-			if (this.isSticky && this.isWindowVisible && document.hasFocus()) {
+			if (this.conversation.lastReadMessage === 0
+				|| (this.isSticky && this.isWindowVisible && document.hasFocus())
+			) {
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
 			}

@@ -147,14 +147,9 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
  * @param {int} lastReadMessage id of the last read message to set
  */
 const updateLastReadMessage = async function(token, lastReadMessage) {
-	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/read`, {
-			lastReadMessage,
-		})
-		return response
-	} catch (error) {
-		console.error(`Error while updating the last read message to {lastReadMessage}`, error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/read`, {
+		lastReadMessage,
+	})
 }
 
 export {

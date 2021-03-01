@@ -344,8 +344,6 @@ const actions = {
 		// optimistic early commit to avoid indicator flickering
 		context.commit('updateConversationLastReadMessage', { token, lastReadMessage: id })
 		await updateLastReadMessage(token, id)
-
-		// TODO: update unread counters if possible (otherwise user needs to wait for conversation list refresh)
 	},
 }
 
