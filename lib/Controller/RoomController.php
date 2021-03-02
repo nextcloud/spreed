@@ -1533,7 +1533,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 * @RequireModeratorParticipant
 	 *
-	 * @param int $state
+	 * @param int $scope
 	 * @return DataResponse
 	 */
 	public function setListable(int $scope): DataResponse {
