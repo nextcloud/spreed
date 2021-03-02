@@ -256,7 +256,9 @@ export default {
 			// a setTimeout was recommended by the library author here:
 			// https://github.com/fritx/vue-at/issues/114#issuecomment-565777450
 			setTimeout(() => {
-				this.$refs.at.closePanel()
+				if (this.$refs.at) {
+					this.$refs.at.closePanel()
+				}
 			}, 100)
 		},
 		onPaste(e) {
