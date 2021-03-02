@@ -57,6 +57,11 @@
 				@click.stop.prevent="copyLinkToConversation">
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
+			<ActionButton
+				:close-after-click="true"
+				@click.prevent.exact="markConversationAsRead">
+				{{ t('spreed', 'Mark as read') }}
+			</ActionButton>
 
 			<ActionSeparator />
 
@@ -311,6 +316,10 @@ export default {
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
+		},
+
+		markConversationAsRead() {
+			this.$store.dispatch('clearLastReadMessage', { token: this.item.token })
 		},
 
 		/**
