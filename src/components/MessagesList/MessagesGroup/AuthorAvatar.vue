@@ -25,6 +25,7 @@
 		class="messages__avatar__icon"
 		:user="authorId"
 		:show-user-status="false"
+		menu-container="#content-vue"
 		menu-position="left"
 		:display-name="displayName" />
 	<div v-else-if="isDeletedUser"

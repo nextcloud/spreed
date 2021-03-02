@@ -28,6 +28,7 @@
 			:size="44"
 			:user="item.name"
 			:display-name="item.displayName"
+			menu-container="#content-vue"
 			menu-position="left"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"

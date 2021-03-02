@@ -65,7 +65,9 @@
 				<div
 					v-if="!isReadOnly"
 					class="new-message-form__button">
-					<EmojiPicker @select="addEmoji">
+					<EmojiPicker
+						container="#content-vue"
+						@select="addEmoji">
 						<button
 							type="button"
 							class="nc-button nc-button__main"

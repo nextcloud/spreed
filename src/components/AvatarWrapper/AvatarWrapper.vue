@@ -29,6 +29,7 @@
 		<Avatar v-else-if="id"
 			:user="id"
 			:display-name="name"
+			menu-container="#content-vue"
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"

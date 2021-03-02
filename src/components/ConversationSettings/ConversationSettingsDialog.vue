@@ -24,7 +24,8 @@
 		role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
-		:show-navigation="false">
+		:show-navigation="false"
+		container="#content-vue">
 		<AppSettingsSection
 			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
