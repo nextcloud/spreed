@@ -24,7 +24,8 @@
 		role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
-		:show-navigation="true">
+		:show-navigation="true"
+		container="#content-vue">
 		<!-- Notifications settings -->
 		<AppSettingsSection
 			:title="t('spreed', 'Chat notifications')"

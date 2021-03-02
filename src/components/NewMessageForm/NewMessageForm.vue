@@ -63,7 +63,9 @@
 					</Actions>
 				</div>
 				<div>
-					<EmojiPicker @select="addEmoji">
+					<EmojiPicker
+						container="#content-vue"
+						@select="addEmoji">
 						<button
 							type="button"
 							:disabled="disabled"

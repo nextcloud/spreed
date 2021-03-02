@@ -20,7 +20,11 @@
 -->
 
 <template>
-	<AppSettingsDialog :open.sync="showSettings" :show-navigation="true" first-selected-section="keyboard shortcuts">
+	<AppSettingsDialog
+		:open.sync="showSettings"
+		:show-navigation="true"
+		first-selected-section="keyboard shortcuts"
+		container="#content-vue">
 		<AppSettingsSection :title="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />

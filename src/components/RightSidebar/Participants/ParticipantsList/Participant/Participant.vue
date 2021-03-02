@@ -42,7 +42,8 @@
 			:show-user-status-compact="false"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
-			:offline="isOffline" />
+			:offline="isOffline"
+			menu-container="#content-vue" />
 		<div
 			class="participant-row__user-wrapper"
 			:class="{

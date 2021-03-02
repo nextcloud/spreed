@@ -35,7 +35,8 @@
 		<!-- New group form -->
 		<Modal
 			v-if="modal"
-			@close="closeModal">
+			@close="closeModal"
+			container="#content-vue">
 			<!-- Wrapper for content & navigation -->
 			<div
 				class="new-group-conversation talk-modal">
