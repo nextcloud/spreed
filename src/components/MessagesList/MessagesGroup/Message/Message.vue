@@ -144,6 +144,12 @@ the main body of the message as well as a quote.
 								@click.stop.prevent="handleCopyMessageLink">
 								{{ t('spreed', 'Copy message link') }}
 							</ActionButton>
+							<ActionButton
+								v-if="isReplyable"
+								:close-after-click="true"
+								@click.stop="handleMarkAsUnread">
+								{{ t('spreed', 'Mark as unread') }}
+							</ActionButton>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template
 								v-for="action in messageActions">
@@ -374,7 +380,7 @@ export default {
 		},
 
 		hasActionsMenu() {
-			return (this.isPrivateReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
+			return (this.isPrivateReplyable || this.isReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {
@@ -683,6 +689,10 @@ export default {
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
+		},
+
+		handleMarkAsUnread() {
+			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: this.id })
 		},
 	},
 }
