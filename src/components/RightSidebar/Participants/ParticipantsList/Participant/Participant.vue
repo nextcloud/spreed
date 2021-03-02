@@ -40,6 +40,7 @@
 			:size="44"
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
+			:preloaded-user-status="preloadedUserStatus"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
 			:offline="isOffline"
@@ -395,6 +396,25 @@ export default {
 		},
 		canBePromoted() {
 			return this.canModerate && !this.isModerator
+		},
+		preloadedUserStatus() {
+			if (this.participant.hasOwnProperty('statusMessage')) {
+				// We preloaded the status when via participants API
+				return {
+					status: this.participant.status || null,
+					message: this.participant.statusMessage || null,
+					icon: this.participant.statusIcon || null,
+				}
+			}
+			if (this.participant.hasOwnProperty('status')) {
+				// We preloaded the status when via search API
+				return {
+					status: this.participant.status.status || null,
+					message: this.participant.status.message || null,
+					icon: this.participant.status.icon || null,
+				}
+			}
+			return undefined
 		},
 	},
 
