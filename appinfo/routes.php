@@ -207,7 +207,7 @@ return [
 			'url' => '/api/{apiVersion}/listed-room',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 			],
 		],
 		[
@@ -286,7 +286,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/listable',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

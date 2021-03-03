@@ -13,7 +13,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 2    |
       | roomName | room |
-    When user "creator" allows listing room "room" for "none" with 200
+    When user "creator" allows listing room "room" for "none" with 200 (v4)
     Then user "regular-user" joins room "room" with 404
     And user "user-guest@example.com" joins room "room" with 404
     And user "guest" joins room "room" with 404
@@ -22,7 +22,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "none" with 200
+    And user "creator" allows listing room "room" for "none" with 200 (v4)
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200
@@ -40,7 +40,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 2    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "users" with 200
+    And user "creator" allows listing room "room" for "users" with 200 (v4)
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 404
     And user "guest" joins room "room" with 404
@@ -53,7 +53,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "users" with 200
+    And user "creator" allows listing room "room" for "users" with 200 (v4)
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200
@@ -71,7 +71,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 2    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "all" with 200
+    And user "creator" allows listing room "room" for "all" with 200 (v4)
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 404
@@ -85,7 +85,7 @@ Feature: conversation/join-listable
     Given user "creator" creates room "room"
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "all" with 200
+    And user "creator" allows listing room "room" for "all" with 200 (v4)
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200

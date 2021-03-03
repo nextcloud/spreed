@@ -164,7 +164,7 @@ Feature: System messages
     Given user "participant1" creates room "room"
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" allows listing room "room" for "all" with 200
+    And user "participant1" allows listing room "room" for "all" with 200 (v4)
     When user "participant2" joins room "room" with 200
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
@@ -216,9 +216,9 @@ Feature: System messages
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
-    When user "participant1" allows listing room "room" for "all" with 200
-    And user "participant1" allows listing room "room" for "users" with 200
-    And user "participant1" allows listing room "room" for "none" with 200
+    When user "participant1" allows listing room "room" for "all" with 200 (v4)
+    And user "participant1" allows listing room "room" for "users" with 200 (v4)
+    And user "participant1" allows listing room "room" for "none" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room | users     | participant1 | participant1-displayname | listable_none        |

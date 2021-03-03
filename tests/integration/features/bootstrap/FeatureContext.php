@@ -139,59 +139,59 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" cannot find any listed rooms \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $apiVersion
 	 */
-	public function userCannotFindAnyListedRooms($user, $apiVersion = 'v3') {
+	public function userCannotFindAnyListedRooms(string $user, string $apiVersion) {
 		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, null);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms with (\d+)(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" cannot find any listed rooms with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userCannotFindAnyListedRoomsWithStatus($user, $statusCode, $apiVersion = 'v3') {
+	public function userCannotFindAnyListedRoomsWithStatus(string $user, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/listed-room');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms with term "([^"]*)"(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" cannot find any listed rooms with term "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $term
 	 * @param string $apiVersion
 	 */
-	public function userCannotFindAnyListedRoomsWithTerm($user, $term, $apiVersion = 'v3') {
+	public function userCannotFindAnyListedRoomsWithTerm(string $user, string $term, string $apiVersion) {
 		$this->userCanFindListedRoomsWithTerm($user, $term, $apiVersion, null);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" can find listed rooms(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" can find listed rooms \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCanFindListedRooms($user, $apiVersion = 'v3', TableNode $formData = null) {
+	public function userCanFindListedRooms(string $user, string $apiVersion, TableNode $formData = null) {
 		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, $formData);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" can find listed rooms with term "([^"]*)"(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" can find listed rooms with term "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $term
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCanFindListedRoomsWithTerm($user, $term, $apiVersion = 'v3', TableNode $formData = null) {
+	public function userCanFindListedRoomsWithTerm(string $user, string $term, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$suffix = '';
 		if ($term !== '') {
@@ -921,15 +921,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all|\d+)" with (\d+)(?: \((v3)\))?$/
+	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all|\d+)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
-	 * @param string $newState
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param string|int $newState
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userChangesListableScopeOfTheRoom($user, $identifier, $newState, $statusCode, $apiVersion = 'v3') {
+	public function userChangesListableScopeOfTheRoom(string $user, string $identifier, $newState, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		if ($newState === 'none') {
 			$newStateValue = 0; // Room::LISTABLE_NONE
