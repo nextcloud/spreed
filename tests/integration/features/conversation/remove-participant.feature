@@ -8,7 +8,7 @@ Feature: public
 # Removing an owner
 #
   Scenario: Owner removes self participant from empty public room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room"
@@ -16,7 +16,7 @@ Feature: public
     Then user "participant1" is not participant of room "room"
 
   Scenario: Owner removes self participant from public room when there are other users in the room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -27,7 +27,7 @@ Feature: public
     And user "participant2" is participant of room "room"
 
   Scenario: Owner removes self participant from public room when there are other moderators in the room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -42,7 +42,7 @@ Feature: public
 # Removing a moderator
 #
   Scenario: Owner removes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
@@ -52,7 +52,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: Moderator removes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -64,7 +64,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: Moderator removes self participant from empty public room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -76,7 +76,7 @@ Feature: public
     Then user "participant2" is not participant of room "room"
 
   Scenario: Moderator removes self participant from public room when there are other users in the room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -91,7 +91,7 @@ Feature: public
     And user "participant3" is participant of room "room"
 
   Scenario: Moderator removes self participant from public room when there are other moderators in the room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -107,7 +107,7 @@ Feature: public
     And user "participant3" is participant of room "room"
 
   Scenario: User removes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -118,7 +118,7 @@ Feature: public
     Then user "participant3" is participant of room "room"
 
   Scenario: Stranger removes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
@@ -131,7 +131,7 @@ Feature: public
 # Removing a user
 #
   Scenario: Owner removes user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
@@ -140,7 +140,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: Moderator removes user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -151,7 +151,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: User removes user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -161,7 +161,7 @@ Feature: public
     Then user "participant3" is participant of room "room"
 
   Scenario: Stranger removes user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
@@ -173,7 +173,7 @@ Feature: public
 # Removing a stranger
 #
   Scenario: Owner removes stranger
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant3" is not participant of room "room"
@@ -181,7 +181,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: Moderator removes stranger
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -191,7 +191,7 @@ Feature: public
     Then user "participant3" is not participant of room "room"
 
   Scenario: User removes stranger
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -200,7 +200,7 @@ Feature: public
     And user "participant3" is not participant of room "room"
 
   Scenario: Stranger removes stranger
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant3" is not participant of room "room"

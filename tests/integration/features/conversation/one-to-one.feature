@@ -10,12 +10,12 @@ Feature: one-to-one
     Then user "participant3" is participant of the following rooms
 
   Scenario: User1 invites themself to a one2one room
-    When user "participant1" tries to create room with 403
+    When user "participant1" tries to create room with 403 (v4)
       | roomType | 1 |
       | invite   | participant1 |
 
   Scenario: User1 invites user2 to a one2one room and user3 is not part of it
-    When user "participant1" creates room "room1"
+    When user "participant1" creates room "room1" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of the following rooms
@@ -30,7 +30,7 @@ Feature: one-to-one
     And user "participant3" is not participant of room "room1"
 
   Scenario: User1 invites user2 to a one2one room and leaves it
-    Given user "participant1" creates room "room2"
+    Given user "participant1" creates room "room2" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room2"
@@ -44,7 +44,7 @@ Feature: one-to-one
       | room2 | 1    | 1               | participant2-displayname |
 
   Scenario: User1 invites user2 to a one2one room and tries to delete it
-    Given user "participant1" creates room "room3"
+    Given user "participant1" creates room "room3" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room3"
@@ -54,7 +54,7 @@ Feature: one-to-one
     And user "participant2" is participant of room "room3"
 
   Scenario: User1 invites user2 to a one2one room and tries to remove user2
-    Given user "participant1" creates room "room4"
+    Given user "participant1" creates room "room4" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room4"
@@ -64,7 +64,7 @@ Feature: one-to-one
     And user "participant2" is participant of room "room4"
 
   Scenario: User1 invites user2 to a one2one room and tries to rename it
-    Given user "participant1" creates room "room5"
+    Given user "participant1" creates room "room5" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room5"
@@ -72,7 +72,7 @@ Feature: one-to-one
     When user "participant1" renames room "room5" to "new name" with 400
 
   Scenario: User1 invites user2 to a one2one room and tries to make it public
-    Given user "participant1" creates room "room6"
+    Given user "participant1" creates room "room6" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room6"
@@ -83,7 +83,7 @@ Feature: one-to-one
       | room6 | 1    | 1               | participant1-displayname, participant2-displayname |
 
   Scenario: User1 invites user2 to a one2one room and tries to invite user3
-    Given user "participant1" creates room "room7"
+    Given user "participant1" creates room "room7" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room7"
@@ -97,7 +97,7 @@ Feature: one-to-one
     Then user "participant3" is participant of the following rooms
 
   Scenario: User1 invites user2 to a one2one room and promote user2 to moderator
-    Given user "participant1" creates room "room8"
+    Given user "participant1" creates room "room8" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room8"
@@ -105,7 +105,7 @@ Feature: one-to-one
     When user "participant1" promotes "participant2" in room "room8" with 400
 
   Scenario: User1 invites user2 to a one2one room and demote user2 to moderator
-    Given user "participant1" creates room "room9"
+    Given user "participant1" creates room "room9" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room9"
@@ -113,7 +113,7 @@ Feature: one-to-one
     When user "participant1" demotes "participant2" in room "room9" with 400
 
   Scenario: User1 invites user2 to a one2one room and promote non-invited user
-    Given user "participant1" creates room "room10"
+    Given user "participant1" creates room "room10" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room10"
@@ -121,7 +121,7 @@ Feature: one-to-one
     When user "participant1" promotes "participant3" in room "room10" with 404
 
   Scenario: User1 invites user2 to a one2one room and demote non-invited user
-    Given user "participant1" creates room "room11"
+    Given user "participant1" creates room "room11" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room11"
@@ -129,7 +129,7 @@ Feature: one-to-one
     When user "participant1" demotes "participant3" in room "room11" with 404
 
   Scenario: User1 invites user2 to a one2one room twice, it's the same room
-    Given user "participant1" creates room "room12"
+    Given user "participant1" creates room "room12" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room12"
@@ -140,7 +140,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms
       | id     | type | participantType | participants |
       | room12 | 1    | 1               | participant1-displayname, participant2-displayname |
-    When user "participant1" creates room "room13" with 200
+    When user "participant1" creates room "room13" with 200 (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room12"
@@ -153,7 +153,7 @@ Feature: one-to-one
       | room12 | 1    | 1               | participant1-displayname, participant2-displayname |
 
   Scenario: User1 invites user2 to a one2one room, leaves and does it again, it's the same room
-    Given user "participant1" creates room "room14"
+    Given user "participant1" creates room "room14" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room14"
@@ -171,7 +171,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms
       | id     | type | participantType | participants |
       | room14 | 1    | 1               | participant2-displayname |
-    When user "participant1" creates room "room15" with 200
+    When user "participant1" creates room "room15" with 200 (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room14"

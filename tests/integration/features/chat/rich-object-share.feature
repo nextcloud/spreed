@@ -3,7 +3,7 @@ Feature: chat/public
     Given user "participant1" exists
 
   Scenario: Share a rich object to a chat
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
@@ -13,7 +13,7 @@ Feature: chat/public
 
 
   Scenario: Share an invalid rich object to a chat
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"MISSINGname":"Another room","call-type":"group"}' to room "public room" with 400 (v1)

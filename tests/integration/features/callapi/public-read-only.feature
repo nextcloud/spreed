@@ -5,7 +5,7 @@ Feature: callapi/public-read-only
     And user "participant3" exists
 
   Scenario: User1 invites user2 to a public room and they cant join the call in a locked conversation
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -27,7 +27,7 @@ Feature: callapi/public-read-only
     And user "participant2" sees 2 peers in call "room" with 200
 
   Scenario: User1 invites user2 to a public room and user3 cant join the call in a locked conversation
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -47,7 +47,7 @@ Feature: callapi/public-read-only
     And user "participant3" sees 2 peers in call "room" with 200
 
   Scenario: User1 invites user2 to a public room and guest cant join the call in a locked conversation
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200

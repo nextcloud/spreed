@@ -10,7 +10,7 @@ Feature: callapi/public
     Then user "participant3" is participant of the following rooms
 
   Scenario: User1 invites user2 to a public room and they can do everything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -44,7 +44,7 @@ Feature: callapi/public
     And user "participant2" sees 0 peers in call "room" with 200
 
   Scenario: User1 invites user2 to a public room and user3 can do everything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -77,7 +77,7 @@ Feature: callapi/public
     And user "participant3" sees 0 peers in call "room" with 404
 
   Scenario: User1 invites user2 to a public room and guest can do everything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200

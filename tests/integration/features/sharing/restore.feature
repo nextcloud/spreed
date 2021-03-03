@@ -6,7 +6,7 @@ Feature: delete
     Given user "participant3" exists
 
   Scenario: restore deleted share
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -54,7 +54,7 @@ Feature: delete
       | share_with_displayname | Group room |
 
   Scenario: restore share deleted after moving it
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -103,7 +103,7 @@ Feature: delete
       | share_with_displayname | Group room |
 
   Scenario: restore deleted share after owner updated it
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200

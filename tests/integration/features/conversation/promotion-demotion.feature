@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: Owner promotes/demotes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -22,7 +22,7 @@ Feature: public
       | room | 3    | 3               | participant1-displayname, participant2-displayname |
 
   Scenario: Moderator promotes/demotes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -41,7 +41,7 @@ Feature: public
       | room | 3    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: User promotes/demotes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -63,7 +63,7 @@ Feature: public
       | room | 3    | 2               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: Stranger promotes/demotes moderator
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200

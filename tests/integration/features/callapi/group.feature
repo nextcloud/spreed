@@ -12,7 +12,7 @@ Feature: callapi/group
     Then user "participant3" is participant of the following rooms
 
   Scenario: User1 invites group attendees1 to a group room and they can do everything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     Then user "participant1" is participant of room "room"
@@ -52,7 +52,7 @@ Feature: callapi/group
     And user "participant2" sees 0 peers in call "room" with 200
 
   Scenario: User1 invites group attendees1 to a group room and user3 can't do anything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     Then user "participant1" is participant of room "room"
@@ -81,7 +81,7 @@ Feature: callapi/group
     And user "participant3" sees 0 peers in call "room" with 404
 
   Scenario: User1 invites group attendees1 to a group room and guest can't do anything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     Then user "participant1" is participant of room "room"

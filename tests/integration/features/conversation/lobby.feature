@@ -7,7 +7,7 @@ Feature: conversation/lobby
     Given user "participant4" exists
 
   Scenario: set lobby state in group room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -21,7 +21,7 @@ Feature: conversation/lobby
     And user "participant3" sets lobby state for room "room" to "no lobby" with 403 (v4)
 
   Scenario: set lobby state in public room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -45,7 +45,7 @@ Feature: conversation/lobby
     And user "guest2" sets lobby state for room "room" to "no lobby" with 401 (v4)
 
   Scenario: set lobby state in one-to-one room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     When user "participant1" sets lobby state for room "room" to "non moderators" with 400 (v4)
@@ -66,7 +66,7 @@ Feature: conversation/lobby
     And user "participant2" sets lobby state for room "file welcome (2).txt room" to "no lobby" with 403 (v4)
 
   Scenario: set lobby state of a room not joined to
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant2" sets lobby state for room "room" to "non moderators" with 404 (v4)
@@ -75,7 +75,7 @@ Feature: conversation/lobby
 
 
   Scenario: participants can join the room when the lobby is active
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -91,7 +91,7 @@ Feature: conversation/lobby
     And user "guest2" joins room "room" with 200
 
   Scenario: participants can join a password protected room when the lobby is active
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
@@ -111,7 +111,7 @@ Feature: conversation/lobby
       | password | foobar |
 
   Scenario: lobby prevents chats for non moderators
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -151,7 +151,7 @@ Feature: conversation/lobby
     And user "guest2" sees the following messages in room "room" with 412
 
   Scenario: lobby prevents calls for non moderators
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -182,7 +182,7 @@ Feature: conversation/lobby
     And user "guest" leaves call "room" with 200
 
   Scenario: lobby prevents some room actions for non moderators
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -215,7 +215,7 @@ Feature: conversation/lobby
 
   # Not all the values are checked in the test, only the most relevant ones
   Scenario: participants can get some room information when the lobby is active
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200

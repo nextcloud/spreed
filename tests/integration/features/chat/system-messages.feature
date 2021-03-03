@@ -8,7 +8,7 @@ Feature: System messages
     And user "participant3" is member of group "attendees1"
 
   Scenario: Creating an empty room
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     Then user "participant1" sees the following system messages in room "room" with 200
@@ -16,7 +16,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Rename a room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" renames room "room" to "system test" with 200
@@ -26,7 +26,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Set a description
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" sets description for room "room" to "New description" with 200
@@ -36,7 +36,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Removes a description
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" sets description for room "room" to "New description" with 200
@@ -48,7 +48,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Toggle guests
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" makes room "room" public with 200
@@ -64,7 +64,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Toggle password
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" sets password "123456" for room "room" with 200
@@ -80,7 +80,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Creating a group room
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     Then user "participant1" sees the following system messages in room "room" with 200
@@ -90,7 +90,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Creating a one2one room
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" sees the following system messages in room "room" with 200
@@ -98,7 +98,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Adding participant to room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" adds "participant2" to room "room" with 200
@@ -112,7 +112,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Joining public room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" joins room "room" with 200
@@ -161,7 +161,7 @@ Feature: System messages
       | file last share room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Joining listed room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" allows listing room "room" for "all" with 200 (v4)
@@ -178,7 +178,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Participant escalation
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     Then user "participant1" sees the following system messages in room "room" with 200
@@ -212,7 +212,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Changing listable scope of room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -235,7 +235,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Locking a room
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200

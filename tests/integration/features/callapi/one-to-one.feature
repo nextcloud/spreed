@@ -10,7 +10,7 @@ Feature: callapi/one-to-one
     Then user "participant3" is participant of the following rooms
 
   Scenario: User1 invites user2 to a one2one room and they can do everything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room"
@@ -43,7 +43,7 @@ Feature: callapi/one-to-one
     And user "participant2" sees 0 peers in call "room" with 200
 
   Scenario: User1 invites user2 to a one2one room and user3 can't do anything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room"
@@ -75,7 +75,7 @@ Feature: callapi/one-to-one
     And user "participant3" sees 0 peers in call "room" with 404
 
   Scenario: User1 invites user2 to a one2one room and guest can't do anything
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room"
@@ -106,7 +106,7 @@ Feature: callapi/one-to-one
     And user "guest" sees 0 peers in call "room" with 404
 
   Scenario: Sending a message into a one-to-one chat re-adds the participants
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room"

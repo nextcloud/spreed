@@ -5,7 +5,7 @@ Feature: chat/public
     Given user "participant3" exists
 
   Scenario: owner can send and receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" sends message "Message 1" to room "public room" with 201
@@ -14,7 +14,7 @@ Feature: chat/public
       | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
@@ -24,7 +24,7 @@ Feature: chat/public
       | public room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited but joined user can send and receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant3" joins room "public room" with 200
@@ -34,7 +34,7 @@ Feature: chat/public
       | public room | users     | participant3 | participant3-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant3" sends message "Message 1" to room "public room" with 404
@@ -42,7 +42,7 @@ Feature: chat/public
     Then user "participant3" sees the following messages in room "public room" with 404
 
   Scenario: joined guest can send and receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "guest" joins room "public room" with 200
@@ -52,7 +52,7 @@ Feature: chat/public
       | public room | guests    | guest   |                  | Message 1 | []                |
 
   Scenario: not joined guest can not send nor receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "guest" sends message "Message 1" to room "public room" with 404
@@ -60,7 +60,7 @@ Feature: chat/public
     Then user "guest" sees the following messages in room "public room" with 404
 
   Scenario: everyone in a public room can receive messages from everyone in that room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200

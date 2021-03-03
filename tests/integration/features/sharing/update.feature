@@ -6,7 +6,7 @@ Feature: update
     Given user "participant3" exists
 
   Scenario: update share with an owned one-to-one room
-    Given user "participant1" creates room "own one-to-one room"
+    Given user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" shares "welcome.txt" with room "own one-to-one room" with OCS 100
@@ -53,7 +53,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with a one-to-one room invited to
-    Given user "participant2" creates room "one-to-one room invited to"
+    Given user "participant2" creates room "one-to-one room invited to" (v4)
       | roomType | 1 |
       | invite   | participant1 |
     And user "participant1" shares "welcome.txt" with room "one-to-one room invited to" with OCS 100
@@ -100,7 +100,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with an owned group room
-    Given user "participant1" creates room "own group room"
+    Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "own group room" to "Own group room" with 200
@@ -149,7 +149,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with a group room invited to
-    Given user "participant2" creates room "group room invited to"
+    Given user "participant2" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200
@@ -198,7 +198,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with an owned public room
-    Given user "participant1" creates room "own public room"
+    Given user "participant1" creates room "own public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "own public room" to "Own public room" with 200
@@ -265,7 +265,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with a public room invited to
-    Given user "participant2" creates room "public room invited to"
+    Given user "participant2" creates room "public room invited to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room invited to" to "Public room invited to" with 200
@@ -332,7 +332,7 @@ Feature: update
       | expiration             | +3 days |
 
   Scenario: update share with a public room self joined to
-    Given user "participant2" creates room "public room self joined to"
+    Given user "participant2" creates room "public room self joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room self joined to" to "Public room self joined to" with 200
@@ -401,7 +401,7 @@ Feature: update
 
 
   Scenario: update (unknown) share with a one-to-one room not invited to
-    Given user "participant2" creates room "one-to-one room not invited to"
+    Given user "participant2" creates room "one-to-one room not invited to" (v4)
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant2" shares "welcome.txt" with room "one-to-one room not invited to" with OCS 100
@@ -434,7 +434,7 @@ Feature: update
       | share_with_displayname | participant2-displayname |
 
   Scenario: update (unknown) share with a group room not invited to
-    Given user "participant2" creates room "group room not invited to"
+    Given user "participant2" creates room "group room not invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200
@@ -469,7 +469,7 @@ Feature: update
       | share_with_displayname | Group room not invited to |
 
   Scenario: update (unknown) share with a public room not joined to
-    Given user "participant2" creates room "public room not joined to"
+    Given user "participant2" creates room "public room not joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room not joined to" to "Public room not joined to" with 200
@@ -508,7 +508,7 @@ Feature: update
 
 
   Scenario: update received share with an owned one-to-one room
-    Given user "participant2" creates room "own one-to-one room"
+    Given user "participant2" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant1 |
     And user "participant1" shares "welcome.txt" with room "own one-to-one room" with OCS 100
@@ -541,7 +541,7 @@ Feature: update
       | share_with_displayname | participant1-displayname |
 
   Scenario: update received share with a one-to-one room invited to
-    Given user "participant1" creates room "one-to-one room invited to"
+    Given user "participant1" creates room "one-to-one room invited to" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" shares "welcome.txt" with room "one-to-one room invited to" with OCS 100
@@ -574,7 +574,7 @@ Feature: update
       | share_with_displayname | participant1-displayname |
 
   Scenario: update received share with an owned group room
-    Given user "participant2" creates room "own group room"
+    Given user "participant2" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "own group room" to "Own group room" with 200
@@ -609,7 +609,7 @@ Feature: update
       | share_with_displayname | Own group room |
 
   Scenario: update received share with a group room invited to
-    Given user "participant1" creates room "group room invited to"
+    Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
@@ -656,7 +656,7 @@ Feature: update
       | share_with_displayname | Group room invited to |
 
   Scenario: update received share with a group room no longer invited to
-    Given user "participant1" creates room "group room no longer invited to"
+    Given user "participant1" creates room "group room no longer invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room no longer invited to" to "Group room no longer invited to" with 200
@@ -696,7 +696,7 @@ Feature: update
       | share_with_displayname | Group room no longer invited to |
 
   Scenario: update received share with an owned public room
-    Given user "participant2" creates room "own public room"
+    Given user "participant2" creates room "own public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "own public room" to "Own public room" with 200
@@ -746,7 +746,7 @@ Feature: update
       | token                  | A_TOKEN |
 
   Scenario: update received share with a public room invited to
-    Given user "participant1" creates room "public room invited to"
+    Given user "participant1" creates room "public room invited to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room invited to" to "Public room invited to" with 200
@@ -796,7 +796,7 @@ Feature: update
       | token                  | A_TOKEN |
 
   Scenario: update received share with a public room self joined to
-    Given user "participant1" creates room "public room self joined to"
+    Given user "participant1" creates room "public room self joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room self joined to" with 200
@@ -846,7 +846,7 @@ Feature: update
       | token                  | A_TOKEN |
 
   Scenario: update received share with a public room no longer joined to
-    Given user "participant1" creates room "public room no longer joined to"
+    Given user "participant1" creates room "public room no longer joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room no longer joined to" to "Public room no longer joined to" with 200
@@ -890,7 +890,7 @@ Feature: update
 
 
   Scenario: update received share after moving it
-    Given user "participant1" creates room "group room invited to"
+    Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
@@ -939,7 +939,7 @@ Feature: update
       | share_with_displayname | Group room invited to |
 
   Scenario: update received share with a room no longer invited to after moving it
-    Given user "participant1" creates room "group room invited to"
+    Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
@@ -983,7 +983,7 @@ Feature: update
 
 
   Scenario: update received share with increased permissions
-    Given user "participant1" creates room "group room invited to"
+    Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
@@ -1023,7 +1023,7 @@ Feature: update
 
 
   Scenario: update share after sharee deleted it
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -1062,7 +1062,7 @@ Feature: update
     And the OCS status code should be "404"
 
   Scenario: update received share after deleting it
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200

@@ -7,7 +7,7 @@ Feature: move
     Given user "participant4" exists
 
   Scenario: move share to another folder
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -53,7 +53,7 @@ Feature: move
 #  # When an own share is moved into a received shared folder the ownership of
 #  # the share is handed over to the folder owner.
 #  Scenario: move share to received shared folder from a user in the room
-#    Given user "participant1" creates room "group room"
+#    Given user "participant1" creates room "group room" (v4)
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200
@@ -104,7 +104,7 @@ Feature: move
 #      | share_with_displayname | Group room |
 
 #  Scenario: move share to received shared folder from a user not in the room
-#    Given user "participant1" creates room "group room"
+#    Given user "participant1" creates room "group room" (v4)
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200
@@ -155,7 +155,7 @@ Feature: move
 #      | share_with_displayname | Group room |
 
 #  Scenario: move share to received shared folder which is also a received shared folder
-#    Given user "participant1" creates room "group room"
+#    Given user "participant1" creates room "group room" (v4)
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200
@@ -209,7 +209,7 @@ Feature: move
 #    And the HTTP status code should be "200"
 
   Scenario: move received share to another folder
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -257,7 +257,7 @@ Feature: move
   # Received shares can not be moved into other shares (general limitation of
   # the sharing system, not related to room shares).
   Scenario: move received share to shared folder
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200

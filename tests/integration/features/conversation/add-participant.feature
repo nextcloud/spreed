@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: Owner invites a user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -18,7 +18,7 @@ Feature: public
     And user "participant3" is not participant of room "room"
 
   Scenario: User invites a user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -39,7 +39,7 @@ Feature: public
     And user "participant3" is not participant of room "room"
 
   Scenario: Moderator invites a user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
@@ -63,7 +63,7 @@ Feature: public
       | room | 3    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: Moderator invites a user who self-joined
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" joins room "room" with 200
@@ -76,7 +76,7 @@ Feature: public
     Given group "group1" exists
     And user "participant2" is member of group "group1"
     And user "participant3" is member of group "group1"
-    And user "participant1" creates room "room"
+    And user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" joins room "room" with 200
@@ -91,7 +91,7 @@ Feature: public
       | room | 3    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: Stranger invites a user
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant3" adds "participant2" to room "room" with 404

@@ -7,7 +7,7 @@ Feature: callapi/group-read-only
     And user "participant2" is member of group "attendees1"
 
   Scenario: User1 invites group attendees1 to a group room and they cant join the call in a locked conversation
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     Then user "participant1" is participant of room "room"

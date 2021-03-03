@@ -7,7 +7,7 @@ Feature: set-description
     Given user "not joined user" exists
 
   Scenario: a description of 500 characters can be set
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "owner" sets description for room "group room" to "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C" with 200
@@ -16,7 +16,7 @@ Feature: set-description
       | 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C |
 
   Scenario: a description longer than 500 characters can not be set
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "owner" sets description for room "group room" to "the description" with 200
@@ -26,7 +26,7 @@ Feature: set-description
       | the description |
 
   Scenario: a description of 500 multibyte characters can be set
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "owner" sets description for room "group room" to "०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च" with 200
@@ -35,7 +35,7 @@ Feature: set-description
       | ०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च |
 
   Scenario: a description longer than 500 multibyte characters can not be set
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "owner" sets description for room "group room" to "the description" with 200
@@ -47,7 +47,7 @@ Feature: set-description
 
 
   Scenario: owner can not set description in one-to-one room
-    Given user "owner" creates room "one-to-one room"
+    Given user "owner" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | moderator |
     When user "owner" sets description for room "one-to-one room" to "the description" with 400
@@ -62,7 +62,7 @@ Feature: set-description
 
 
   Scenario: owner can set description in group room
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "owner" adds "moderator" to room "group room" with 200
@@ -80,7 +80,7 @@ Feature: set-description
       | the description |
 
   Scenario: moderator can set description in group room
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "owner" adds "moderator" to room "group room" with 200
@@ -98,7 +98,7 @@ Feature: set-description
       | the description |
 
   Scenario: others can not set description in group room
-    Given user "owner" creates room "group room"
+    Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "owner" adds "moderator" to room "group room" with 200
@@ -122,7 +122,7 @@ Feature: set-description
 
 
   Scenario: owner can set description in public room
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200
@@ -153,7 +153,7 @@ Feature: set-description
       | the description |
 
   Scenario: moderator can set description in public room
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200
@@ -184,7 +184,7 @@ Feature: set-description
       | the description |
 
   Scenario: guest moderator can set description in public room
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200
@@ -215,7 +215,7 @@ Feature: set-description
       | the description |
 
   Scenario: others can not set description in public room
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200
@@ -301,7 +301,7 @@ Feature: set-description
 
 
   Scenario: room list returns the description if the description is set
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200
@@ -323,7 +323,7 @@ Feature: set-description
       | room | the description |
 
   Scenario: room list returns an empty value if the description is not set
-    Given user "owner" creates room "public room"
+    Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "owner" adds "moderator" to room "public room" with 200

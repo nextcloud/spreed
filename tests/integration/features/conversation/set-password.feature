@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: Owner sets a room password
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -20,7 +20,7 @@ Feature: public
     Then user "participant3" joins room "room" with 200
 
   Scenario: Moderator sets a room password
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -37,7 +37,7 @@ Feature: public
     Then user "participant3" joins room "room" with 200
 
   Scenario: User sets a room password
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -56,7 +56,7 @@ Feature: public
     Then user "participant3" joins room "room" with 403
 
   Scenario: Stranger sets a room password
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms

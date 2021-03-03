@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: Owner renames
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room"
@@ -13,7 +13,7 @@ Feature: public
     Then user "participant1" is participant of room "room"
 
   Scenario: Moderator renames
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room"
@@ -23,7 +23,7 @@ Feature: public
     When user "participant2" renames room "room" to "new name" with 200
 
   Scenario: User renames
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room"
@@ -32,7 +32,7 @@ Feature: public
     When user "participant2" renames room "room" to "new name" with 403
 
   Scenario: Stranger renames
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room"

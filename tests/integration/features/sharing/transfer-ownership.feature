@@ -6,7 +6,7 @@ Feature: transfer-ownership
     Given user "participant3" exists
 
   Scenario: transfer ownership of a file shared with a room to a user in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -49,7 +49,7 @@ Feature: transfer-ownership
       | share_with_displayname | Group room |
 
   Scenario: transfer ownership of a file reshared with a room to a user in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -102,7 +102,7 @@ Feature: transfer-ownership
   # This is a special case in which even if the (now) sharer is not in a room
   # the room share is valid and other participants can access that share.
   Scenario: transfer ownership of a file shared with a room to a user not in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200

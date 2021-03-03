@@ -7,7 +7,7 @@ Feature: chat/group
     And user "participant2" is member of group "attendees1"
 
   Scenario: owner can send and receive chat messages to and from group room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     When user "participant1" sends message "Message 1" to room "group room" with 201
@@ -16,7 +16,7 @@ Feature: chat/group
       | group room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from group room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     When user "participant2" sends message "Message 1" to room "group room" with 201
@@ -25,7 +25,7 @@ Feature: chat/group
       | group room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to nor from group room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     When user "participant3" sends message "Message 1" to room "group room" with 404
@@ -33,7 +33,7 @@ Feature: chat/group
     Then user "participant3" sees the following messages in room "group room" with 404
 
   Scenario: guest can not send nor receive chat messages to nor from group room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     And user "guest" joins call "group room" with 404
@@ -42,7 +42,7 @@ Feature: chat/group
     Then user "guest" sees the following messages in room "group room" with 404
 
   Scenario: everyone in a group room can receive messages from everyone in that room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
     When user "participant1" sends message "Message 1" to room "group room" with 201

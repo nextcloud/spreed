@@ -6,7 +6,7 @@ Feature: delete
     Given user "participant3" exists
 
   Scenario: delete share with an owned one-to-one room
-    Given user "participant1" creates room "own one-to-one room"
+    Given user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" shares "welcome.txt" with room "own one-to-one room" with OCS 100
@@ -19,7 +19,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with a one-to-one room invited to
-    Given user "participant2" creates room "one-to-one room invited to"
+    Given user "participant2" creates room "one-to-one room invited to" (v4)
       | roomType | 1 |
       | invite   | participant1 |
     And user "participant1" shares "welcome.txt" with room "one-to-one room invited to" with OCS 100
@@ -32,7 +32,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with an owned group room
-    Given user "participant1" creates room "own group room"
+    Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "own group room" with 200
@@ -46,7 +46,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with a group room invited to
-    Given user "participant2" creates room "group room invited to"
+    Given user "participant2" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" adds "participant1" to room "group room invited to" with 200
@@ -60,7 +60,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with an owned public room
-    Given user "participant1" creates room "own public room"
+    Given user "participant1" creates room "own public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "own public room" with 200
@@ -77,7 +77,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with a public room invited to
-    Given user "participant2" creates room "public room invited to"
+    Given user "participant2" creates room "public room invited to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" adds "participant1" to room "public room invited to" with 200
@@ -94,7 +94,7 @@ Feature: delete
     And the OCS status code should be "404"
 
   Scenario: delete share with a public room self joined to
-    Given user "participant2" creates room "public room self joined to"
+    Given user "participant2" creates room "public room self joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" joins room "public room self joined to" with 200
@@ -113,7 +113,7 @@ Feature: delete
 
 
   Scenario: delete (unknown) share with a one-to-one room not invited to
-    Given user "participant2" creates room "one-to-one room not invited to"
+    Given user "participant2" creates room "one-to-one room not invited to" (v4)
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant2" shares "welcome.txt" with room "one-to-one room not invited to" with OCS 100
@@ -144,7 +144,7 @@ Feature: delete
       | share_with_displayname | participant2-displayname |
 
   Scenario: delete (unknown) share with a group room not invited to
-    Given user "participant2" creates room "group room not invited to"
+    Given user "participant2" creates room "group room not invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200
@@ -177,7 +177,7 @@ Feature: delete
       | share_with_displayname | Group room not invited to |
 
   Scenario: delete (unknown) share with a public room not joined to
-    Given user "participant2" creates room "public room not joined to"
+    Given user "participant2" creates room "public room not joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room not joined to" to "Public room not joined to" with 200
@@ -214,7 +214,7 @@ Feature: delete
 
 
   Scenario: delete share with a user who also received that share through a room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -239,7 +239,7 @@ Feature: delete
       | share_with_displayname | Group room |
 
   Scenario: delete share with a room including a user who also received that share directly
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
@@ -266,7 +266,7 @@ Feature: delete
 
 
   Scenario: delete received share
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
@@ -304,7 +304,7 @@ Feature: delete
 
 
   Scenario: delete share received directly and through a room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200

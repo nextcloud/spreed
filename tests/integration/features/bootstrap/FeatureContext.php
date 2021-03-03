@@ -487,19 +487,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" creates room "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" creates room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesRoom($user, $identifier, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userCreatesRoom(string $user, string $identifier, string $apiVersion, TableNode $formData = null) {
 		$this->userCreatesRoomWith($user, $identifier, 201, $apiVersion, $formData);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" creates room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" creates room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -507,7 +507,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesRoomWith($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $formData);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -521,14 +521,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" tries to create room with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" tries to create room with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userTriesToCreateRoom($user, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userTriesToCreateRoom(string $user, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $formData);
 		$this->assertStatusCode($this->response, $statusCode);

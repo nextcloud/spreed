@@ -9,7 +9,7 @@ Feature: create
     And the command output contains the text "No calls in progress"
 
   Scenario: Users only chatting
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     Then user "participant1" joins room "room" with 200
@@ -22,7 +22,7 @@ Feature: create
 
 
   Scenario: Call in progress
-    When user "participant1" creates room "room"
+    When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
 

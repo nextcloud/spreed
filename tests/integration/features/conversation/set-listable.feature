@@ -4,7 +4,7 @@ Feature: conversation/set-listable
     Given user "regular-user" exists
 
   Scenario Outline: Setting listable attribute
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "creator" allows listing room "room" for "<listable>" with 200 (v4)
@@ -18,13 +18,13 @@ Feature: conversation/set-listable
       | 2        |
 
   Scenario: Cannot set invalid listable attribute value
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     Then user "creator" allows listing room "room" for "5" with 400 (v4)
 
   Scenario: Only moderators and owners can change listable attribute
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "moderator" exists
@@ -42,7 +42,7 @@ Feature: conversation/set-listable
     And user "guest" allows listing room "room" for "users" with 401 (v4)
 
   Scenario: Cannot change listable attribute of one to one conversations
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 1            |
       | invite   | regular-user |
     Then user "creator" allows listing room "room" for "all" with 400 (v4)

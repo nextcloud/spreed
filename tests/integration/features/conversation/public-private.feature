@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: Owner makes room private/public
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -21,7 +21,7 @@ Feature: public
       | room | 3    | 1               | participant1-displayname |
 
   Scenario: Moderator makes room private/public
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -39,7 +39,7 @@ Feature: public
       | room | 3    | 1               | participant1-displayname, participant2-displayname |
 
   Scenario: User makes room private/public
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms
@@ -60,7 +60,7 @@ Feature: public
       | room | 2    | 1               | participant1-displayname, participant2-displayname |
 
   Scenario: Stranger makes room private/public
-    Given user "participant1" creates room "room"
+    Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms

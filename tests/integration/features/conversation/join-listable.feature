@@ -10,7 +10,7 @@ Feature: conversation/join-listable
   # Non-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Nobody can join a non-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
     When user "creator" allows listing room "room" for "none" with 200 (v4)
@@ -19,7 +19,7 @@ Feature: conversation/join-listable
     And user "guest" joins room "room" with 404
 
   Scenario: Anyone can join a non-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
     And user "creator" allows listing room "room" for "none" with 200 (v4)
@@ -37,7 +37,7 @@ Feature: conversation/join-listable
   # User-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Only regular users can join a user-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
     And user "creator" allows listing room "room" for "users" with 200 (v4)
@@ -50,7 +50,7 @@ Feature: conversation/join-listable
       | regular-user  | USER            | users     |
 
   Scenario: Anyone can join a user-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
     And user "creator" allows listing room "room" for "users" with 200 (v4)
@@ -68,7 +68,7 @@ Feature: conversation/join-listable
   # All-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Only users with accounts can join an all-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
     And user "creator" allows listing room "room" for "all" with 200 (v4)
@@ -82,7 +82,7 @@ Feature: conversation/join-listable
       | user-guest@example.com | USER              | users     |
 
   Scenario: Anyone can join an all-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
     And user "creator" allows listing room "room" for "all" with 200 (v4)

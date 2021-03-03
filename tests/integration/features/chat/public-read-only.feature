@@ -7,7 +7,7 @@ Feature: chat/public-read-only
     And user "participant2" is member of group "attendees1"
 
   Scenario: owner can send and receive chat messages to and from group room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" sends message "Message 1" to room "public room" with 201
@@ -27,7 +27,7 @@ Feature: chat/public-read-only
       | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from group room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
@@ -48,7 +48,7 @@ Feature: chat/public-read-only
       | public room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited but joined user can send and receive chat messages to and from public room
-    Given user "participant1" creates room "public room"
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant3" joins room "public room" with 200
