@@ -716,6 +716,7 @@ OC.L10N.register(
     "Start time has been updated" : "Čas zahájení byl upraven",
     "Error occurred while updating start time" : "Při úpravě času došlo k chybě",
     "Locking the conversation prevents anyone to post messages or start calls." : "Zamčení konverzace zabrání posílat zprávy nebo volat",
+    "This will also terminate the ongoing call." : "Toto ukončí i probíhající hovor.",
     "Lock conversation" : "Uzamknout konverzaci",
     "Error occurred when locking the conversation" : "Při uzamykání konverzace došlo k chybě",
     "Error occurred when unlocking the conversation" : "Při odemykání konverzace došlo k chybě",
