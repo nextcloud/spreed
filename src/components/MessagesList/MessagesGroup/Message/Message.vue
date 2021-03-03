@@ -111,43 +111,47 @@ the main body of the message as well as a quote.
 						:size="16" />
 				</div>
 				<!-- Message Actions -->
-				<Actions
-					v-show="showActions && hasActions"
+				<div
+					v-show="showActions"
 					class="message__main__right__actions"
-					container="#content-vue"
 					:class="{ 'tall' : isTallEnough }">
-					<ActionButton
-						v-if="isReplyable"
-						icon="icon-reply"
-						:close-after-click="true"
-						@click.stop="handleReply">
-						{{ t('spreed', 'Reply') }}
-					</ActionButton>
-					<ActionButton
-						v-if="isPrivateReplyable"
-						icon="icon-user"
-						:close-after-click="true"
-						@click.stop="handlePrivateReply">
-						{{ t('spreed', 'Reply privately') }}
-					</ActionButton>
-					<template
-						v-for="action in messageActions">
+					<Actions
+						v-show="isReplyable">
 						<ActionButton
-							:key="action.label"
-							:icon="action.icon"
-							:close-after-click="true"
-							@click="action.callback(messageAPIData)">
-							{{ action.label }}
+							icon="icon-reply"
+							@click.stop="handleReply">
+							{{ t('spreed', 'Reply') }}
 						</ActionButton>
-					</template>
-					<ActionButton
-						v-if="isDeleteable"
-						icon="icon-delete"
-						:close-after-click="true"
-						@click.stop="handleDelete">
-						{{ t('spreed', 'Delete') }}
-					</ActionButton>
-				</Actions>
+					</Actions>
+					<Actions
+						v-show="hasActionsMenu"
+						container="#content-vue">
+						<ActionButton
+							v-if="isPrivateReplyable"
+							icon="icon-user"
+							:close-after-click="true"
+							@click.stop="handlePrivateReply">
+							{{ t('spreed', 'Reply privately') }}
+						</ActionButton>
+						<template
+							v-for="action in messageActions">
+							<ActionButton
+								:key="action.label"
+								:icon="action.icon"
+								:close-after-click="true"
+								@click="action.callback(messageAPIData)">
+								{{ action.label }}
+							</ActionButton>
+						</template>
+						<ActionButton
+							v-if="isDeleteable"
+							icon="icon-delete"
+							:close-after-click="true"
+							@click.stop="handleDelete">
+							{{ t('spreed', 'Delete') }}
+						</ActionButton>
+					</Actions>
+				</div>
 			</div>
 		</div>
 	</li>
@@ -334,8 +338,8 @@ export default {
 			return this.$store.getters.message(this.token, this.id)
 		},
 
-		hasActions() {
-			return (this.isReplyable || this.isDeleteable) && !this.isConversationReadOnly
+		hasActionsMenu() {
+			return (this.isPrivateReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {
@@ -696,7 +700,8 @@ export default {
 			font-size: $chat-font-size;
 			flex: 1 0 auto;
 			padding: 0 8px 0 8px;
-			&__actions.action-item {
+			&__actions {
+				display: flex;
 				position: absolute;
 				top: -8px;
 				right: 50px;
