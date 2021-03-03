@@ -474,10 +474,6 @@ class ParticipantService {
 			return;
 		}
 
-		if ($session->getInCall() === $flags) {
-			return;
-		}
-
 		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
