@@ -833,15 +833,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $lobbyStateString
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyStateString, $statusCode, $apiVersion = 'v1') {
+	public function userSetsLobbyStateForRoomTo(string $user, string $identifier, string $lobbyStateString, int $statusCode, string $apiVersion) {
 		if ($lobbyStateString === 'no lobby') {
 			$lobbyState = 0;
 		} elseif ($lobbyStateString === 'non moderators') {
@@ -859,15 +859,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @When /^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $SIPStateString
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSetsSIPStateForRoomTo($user, $identifier, $SIPStateString, $statusCode, $apiVersion = 'v1') {
+	public function userSetsSIPStateForRoomTo(string $user, string $identifier, string $SIPStateString, int $statusCode, string $apiVersion) {
 		if ($SIPStateString === 'disabled') {
 			$SIPState = 0;
 		} elseif ($SIPStateString === 'enabled') {

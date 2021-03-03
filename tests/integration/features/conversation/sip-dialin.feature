@@ -17,7 +17,7 @@ Feature: public
     And user "participant1" is participant of the following rooms (v3)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |
-    When user "participant1" sets SIP state for room "room" to "enabled" with 200 (v3)
+    When user "participant1" sets SIP state for room "room" to "enabled" with 200 (v4)
     Then user "participant1" is participant of the following rooms (v3)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 1          | **PIN**     |
@@ -33,7 +33,7 @@ Feature: public
       | 1               | 0        | users     | participant1      | **PIN**     |
       | 3               | 0        | users     | participant2      | **PIN**     |
       | 3               | 0        | users     | participant3      | **PIN**     |
-    When user "participant2" sets SIP state for room "room" to "disabled" with 403 (v3)
+    When user "participant2" sets SIP state for room "room" to "disabled" with 403 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v3)
       | participantType | inCall   | actorType | actorId           | attendeePin |
       | 4               | 0        | emails    | test@example.tld  | **PIN**     |
@@ -41,7 +41,7 @@ Feature: public
       | 1               | 0        | users     | participant1      | **PIN**     |
       | 3               | 0        | users     | participant2      | **PIN**     |
       | 3               | 0        | users     | participant3      | **PIN**     |
-    When user "participant1" sets SIP state for room "room" to "disabled" with 200 (v3)
+    When user "participant1" sets SIP state for room "room" to "disabled" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v3)
       | participantType | inCall   | actorType | actorId           | attendeePin |
       | 4               | 0        | emails    | test@example.tld  |             |
@@ -61,7 +61,7 @@ Feature: public
     And user "participant2" is participant of the following rooms (v3)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |
-    When user "participant2" sets SIP state for room "room" to "enabled" with 403 (v3)
+    When user "participant2" sets SIP state for room "room" to "enabled" with 403 (v4)
     And user "participant2" is participant of the following rooms (v3)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |

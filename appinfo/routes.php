@@ -437,21 +437,19 @@ return [
 		],
 		[
 			'name' => 'Room#setLobby',
-			'url' => '/api/{apiVersion}/room/{token}/{webinar}/lobby',
+			'url' => '/api/{apiVersion}/room/{token}/webinar/lobby',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
-				'webinar' => 'webinary?',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
 			'name' => 'Room#setSIPEnabled',
-			'url' => '/api/{apiVersion}/room/{token}/{webinar}/sip',
+			'url' => '/api/{apiVersion}/room/{token}/webinar/sip',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v3',
-				'webinar' => 'webinary?',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
