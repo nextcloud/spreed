@@ -199,7 +199,7 @@ return [
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 			],
 		],
 		[

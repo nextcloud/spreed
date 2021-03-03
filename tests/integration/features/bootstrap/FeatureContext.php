@@ -211,12 +211,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following rooms(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" is participant of the following rooms \((v4)\)$/
 	 *
 	 * @param string $user
+	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms($user, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userIsParticipantOfRooms(string $user, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
 		$this->assertStatusCode($this->response, 200);
@@ -280,30 +281,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
 			}
 			if (isset($expectedRoom['participants'])) {
-				$participantNames = array_map(function ($participant) {
-					return $participant['name'];
-				}, $room['participants']);
-
-				// When participants have the same last ping the order in which they
-				// are returned from the server is undefined. That is the most
-				// common case during the tests, so by default the list of
-				// participants returned by the server is sorted alphabetically. In
-				// order to check the exact order of participants returned by the
-				// server " [exact order]" can be appended in the test definition to
-				// the list of expected participants of the room.
-				if (strpos($expectedRoom['participants'], ' [exact order]') === false) {
-					sort($participantNames);
-				} else {
-					// "end(array_keys(..." would generate the Strict Standards
-					// error "Only variables should be passed by reference".
-					$participantNamesKeys = array_keys($participantNames);
-					$lastParticipantKey = end($participantNamesKeys);
-
-					// Append " [exact order]" to the last participant so the
-					// imploded string is the same as the expected one.
-					$participantNames[$lastParticipantKey] .= ' [exact order]';
-				}
-				$data['participants'] = implode(', ', $participantNames);
+				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
 
 			return $data;

@@ -7,9 +7,9 @@ Feature: callapi/group
     And user "participant2" is member of group "attendees1"
 
   Scenario: User has no rooms
-    Then user "participant1" is participant of the following rooms
-    Then user "participant2" is participant of the following rooms
-    Then user "participant3" is participant of the following rooms
+    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant3" is participant of the following rooms (v4)
 
   Scenario: User1 invites group attendees1 to a group room and they can do everything
     When user "participant1" creates room "room" (v4)
@@ -26,7 +26,7 @@ Feature: callapi/group
       | flags | 1 |
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
-    Then user "participant1" is participant of the following rooms (v3)
+    Then user "participant1" is participant of the following rooms (v4)
       | id   | type | callFlag |
       | room | 2    | 1        |
     Then user "participant2" joins room "room" with 200
@@ -35,7 +35,7 @@ Feature: callapi/group
     And user "participant2" joins call "room" with 200
     Then user "participant1" sees 2 peers in call "room" with 200
     And user "participant2" sees 2 peers in call "room" with 200
-    Then user "participant1" is participant of the following rooms (v3)
+    Then user "participant1" is participant of the following rooms (v4)
       | id   | type | callFlag |
       | room | 2    | 7        |
     Then user "participant1" leaves call "room" with 200

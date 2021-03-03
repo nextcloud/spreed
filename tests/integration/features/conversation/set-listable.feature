@@ -8,7 +8,7 @@ Feature: conversation/set-listable
       | roomType | 2 |
       | roomName | room |
     When user "creator" allows listing room "room" for "<listable>" with 200 (v4)
-    Then user "creator" is participant of the following rooms (v3)
+    Then user "creator" is participant of the following rooms (v4)
       | id   | type | listable   |
       | room | 2    | <listable> |
     Examples:

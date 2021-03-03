@@ -14,11 +14,11 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" is participant of the following rooms (v3)
+    And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |
     When user "participant1" sets SIP state for room "room" to "enabled" with 200 (v4)
-    Then user "participant1" is participant of the following rooms (v3)
+    Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 1          | **PIN**     |
     When user "participant1" adds user "participant2" to room "room" with 200 (v3)
@@ -58,10 +58,10 @@ Feature: public
     Given user "participant2" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" is participant of the following rooms (v3)
+    And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |
     When user "participant2" sets SIP state for room "room" to "enabled" with 403 (v4)
-    And user "participant2" is participant of the following rooms (v3)
+    And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |

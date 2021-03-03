@@ -5,9 +5,9 @@ Feature: callapi/public
     And user "participant3" exists
 
   Scenario: User has no rooms
-    Then user "participant1" is participant of the following rooms
-    Then user "participant2" is participant of the following rooms
-    Then user "participant3" is participant of the following rooms
+    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant3" is participant of the following rooms (v4)
 
   Scenario: User1 invites user2 to a public room and they can do everything
     When user "participant1" creates room "room" (v4)

@@ -309,16 +309,16 @@ Feature: set-description
     And user "owner" adds "invited user" to room "public room" with 200
     And user "not invited but joined user" joins room "public room" with 200
     When user "owner" sets description for room "public room" to "the description" with 200
-    Then user "owner" is participant of the following rooms (v3)
+    Then user "owner" is participant of the following rooms (v4)
       | name | description     |
       | room | the description |
-    And user "moderator" is participant of the following rooms (v3)
+    And user "moderator" is participant of the following rooms (v4)
       | name | description     |
       | room | the description |
-    And user "invited user" is participant of the following rooms (v3)
+    And user "invited user" is participant of the following rooms (v4)
       | name | description     |
       | room | the description |
-    And user "not invited but joined user" is participant of the following rooms (v3)
+    And user "not invited but joined user" is participant of the following rooms (v4)
       | name | description     |
       | room | the description |
 
@@ -331,15 +331,15 @@ Feature: set-description
     And user "owner" adds "invited user" to room "public room" with 200
     And user "not invited but joined user" joins room "public room" with 200
     When user "owner" sets description for room "public room" to "" with 200
-    Then user "owner" is participant of the following rooms (v3)
+    Then user "owner" is participant of the following rooms (v4)
       | name | description |
       | room |             |
-    And user "moderator" is participant of the following rooms (v3)
+    And user "moderator" is participant of the following rooms (v4)
       | name | description |
       | room |             |
-    And user "invited user" is participant of the following rooms (v3)
+    And user "invited user" is participant of the following rooms (v4)
       | name | description |
       | room |             |
-    And user "not invited but joined user" is participant of the following rooms (v3)
+    And user "not invited but joined user" is participant of the following rooms (v4)
       | name | description |
       | room |             |
