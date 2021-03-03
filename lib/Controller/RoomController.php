@@ -235,7 +235,7 @@ class RoomController extends AEnvironmentAwareController {
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoomV2andV3($room, null);
+				$return[] = $this->formatRoom($room, null);
 			} catch (RoomNotFoundException $e) {
 			} catch (\RuntimeException $e) {
 			}
