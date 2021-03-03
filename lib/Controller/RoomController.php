@@ -228,8 +228,6 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getListedRooms(string $searchTerm = ''): DataResponse {
-		$event = new UserEvent($this->userId);
-
 		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
 
 		$return = [];
