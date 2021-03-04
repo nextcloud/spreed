@@ -261,7 +261,7 @@ Feature: set-description
     And user "owner of file" shares "welcome.txt" with user "user with access to file" with OCS 100
     And user "user with access to file" accepts last share
     And user "owner of file" shares "welcome.txt" by link with OCS 100
-    And user "guest" gets the room for last share with 200
+    And user "guest" gets the room for last share with 200 (v1)
     And user "owner of file" joins room "file last share room" with 200
     And user "user with access to file" joins room "file last share room" with 200
     And user "guest" joins room "file last share room" with 200
@@ -287,7 +287,7 @@ Feature: set-description
     And user "owner of file" shares "welcome.txt" by link with OCS 100
       | password | 123456 |
       | sendPasswordByTalk | true |
-    And user "guest" creates the password request room for last share with 201
+    And user "guest" creates the password request room for last share with 201 (v1)
     And user "guest" joins room "password request for last share room" with 200
     And user "owner of file" joins room "password request for last share room" with 200
     When user "owner of file" sets description for room "password request for last share room" to "the description" with 200

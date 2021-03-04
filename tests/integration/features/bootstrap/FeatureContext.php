@@ -520,14 +520,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" gets the room for path "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param string $path
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userGetsTheRoomForPath($user, $path, $statusCode, $apiVersion = 'v1') {
+	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion) {
 		$fileId = $this->getFileIdForPath($user, $path);
 
 		$this->setCurrentUser($user);
@@ -607,13 +607,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" gets the room for last share with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" gets the room for last share with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userGetsTheRoomForLastShare($user, $statusCode, $apiVersion = 'v1') {
+	public function userGetsTheRoomForLastShare(string $user, int $statusCode, string $apiVersion) {
 		$shareToken = $this->sharingContext->getLastShareToken();
 
 		$this->setCurrentUser($user);
@@ -632,13 +632,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" creates the password request room for last share with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" creates the password request room for last share with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userCreatesThePasswordRequestRoomForLastShare($user, $statusCode, $apiVersion = 'v1') {
+	public function userCreatesThePasswordRequestRoomForLastShare(string $user, int $statusCode, string $apiVersion) {
 		$shareToken = $this->sharingContext->getLastShareToken();
 
 		$this->setCurrentUser($user);

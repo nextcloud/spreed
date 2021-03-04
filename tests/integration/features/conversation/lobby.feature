@@ -56,8 +56,8 @@ Feature: conversation/lobby
   Scenario: set lobby state in file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
-    And user "participant1" gets the room for path "welcome.txt" with 200
-    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
+    And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     And user "participant1" joins room "file welcome.txt room" with 200
     And user "participant2" joins room "file welcome (2).txt room" with 200
     When user "participant1" sets lobby state for room "file welcome.txt room" to "non moderators" with 403 (v4)

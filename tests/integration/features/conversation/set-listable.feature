@@ -52,6 +52,6 @@ Feature: conversation/set-listable
     Given user "creator" logs in
     And user "creator" shares "welcome.txt" with user "regular-user" with OCS 100
     And user "regular-user" accepts last share
-    When user "creator" gets the room for path "welcome.txt" with 200
+    When user "creator" gets the room for path "welcome.txt" with 200 (v1)
     And user "creator" joins room "file welcome.txt room" with 200
     Then user "creator" allows listing room "file welcome.txt room" for "all" with 403 (v4)
