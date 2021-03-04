@@ -352,6 +352,11 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		lastReadMessageId: {
+			type: Number,
+			default: 0,
+		},
 	},
 
 	data() {
@@ -368,7 +373,9 @@ export default {
 
 	computed: {
 		isLastReadMessage() {
-			return this.id === this.conversation.lastReadMessage
+			// note: not reading lastReadMessage from the conversation as we want to define it externally
+			// to have closer control on marker's visibility behavior
+			return this.id === this.lastReadMessageId
 				&& (!this.conversation.lastMessage
 				|| this.id !== this.conversation.lastMessage.id)
 		},
@@ -690,7 +697,16 @@ export default {
 		},
 
 		handleMarkAsUnread() {
-			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: this.id })
+			// update in backend
+			this.$store.dispatch('updateLastReadMessage', {
+				token: this.token,
+				id: this.id,
+			})
+			// update visually
+			this.$store.dispatch('setVisualLastReadMessageId', {
+				token: this.token,
+				id: this.conversation.lastReadMessage,
+			})
 		},
 	},
 }

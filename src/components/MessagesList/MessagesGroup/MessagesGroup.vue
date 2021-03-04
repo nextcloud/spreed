@@ -41,6 +41,7 @@
 					:key="message.id"
 					v-bind="message"
 					:is-first-message="index === 0"
+					:last-read-message-id="lastReadMessageId"
 					:actor-type="actorType"
 					:actor-id="actorId"
 					:actor-display-name="actorDisplayName"
@@ -85,6 +86,11 @@ export default {
 		messages: {
 			type: Array,
 			required: true,
+		},
+
+		lastReadMessageId: {
+			type: Number,
+			default: 0,
 		},
 	},
 

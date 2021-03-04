@@ -44,6 +44,7 @@ get the messagesList array and loop through the list to generate the messages.
 			:key="item[0].id"
 			:style="{ height: item.height + 'px' }"
 			v-bind="item"
+			:last-read-message-id="visualLastReadMessageId"
 			:messages="item"
 			@deleteMessage="handleDeleteMessage" />
 		<template v-if="!messagesGroupedByAuthor.length">
@@ -144,6 +145,10 @@ export default {
 	computed: {
 		isWindowVisible() {
 			return this.$store.getters.windowIsVisible() && this.isVisible
+		},
+
+		visualLastReadMessageId() {
+			return this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
 		/**
@@ -397,9 +402,9 @@ export default {
 				focussed = this.focusMessage(this.$route.hash.substr(9), false)
 			}
 
-			if (!focussed && this.conversation.lastReadMessage) {
+			if (!focussed && this.visualLastReadMessageId) {
 				// scroll to last read message if visible in the current pages
-				focussed = this.focusMessage(this.conversation.lastReadMessage, false, false)
+				focussed = this.focusMessage(this.visualLastReadMessageId, false, false)
 			}
 
 			// TODO: in case the element is not in a page but does exist in the DB,
@@ -414,19 +419,22 @@ export default {
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
 			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.conversation.lastReadMessage === 0
-				|| (this.isWindowVisible && document.hasFocus() && this.scroller.scrollHeight <= this.scroller.offsetHeight)
-			) {
+			if (this.visualLastReadMessageId === 0 || this.scroller.scrollHeight <= this.scroller.offsetHeight) {
 				// clear after a delay, unless scrolling can resume in-between
-				this.debounceUpdateReadMarkerAfterScroll()
+				this.debounceUpdateReadMarkerPosition()
 			}
 		},
 
 		async handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
+
 				// prevent sticky mode before we have loaded anything
 				this.setChatScrolledToBottom(false)
 
+				this.$store.dispatch('setVisualLastReadMessageId', {
+					token: this.token,
+					id: this.conversation.lastReadMessage,
+				})
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					// first time load, initialize important properties
 					this.$store.dispatch('setFirstKnownMessageId', {
@@ -664,7 +672,7 @@ export default {
 				this.previousScrollTopValue = scrollTop
 			}
 
-			this.debounceUpdateReadMarkerAfterScroll()
+			this.debounceUpdateReadMarkerPosition()
 		},
 
 		/**
@@ -735,11 +743,32 @@ export default {
 			return previousEl
 		},
 
-		debounceUpdateReadMarkerAfterScroll: debounce(function() {
-			this.updateReadMarkerAfterScroll()
-		}, 3000),
+		/**
+		 * Sync the visual marker position with what is currently in the store.
+		 * This separation exists to avoid jumpy marker while scrolling.
+		 *
+		 * Also see updateReadMarkerPosition() for the backend update.
+		 */
+		refreshReadMarkerPosition() {
+			this.$store.dispatch('setVisualLastReadMessageId', {
+				token: this.token,
+				id: this.conversation.lastReadMessage,
+			})
+		},
 
-		updateReadMarkerAfterScroll() {
+		debounceUpdateReadMarkerPosition: debounce(function() {
+			this.updateReadMarkerPosition()
+		}, 1000),
+
+		/**
+		 * Recalculates the current read marker position based on the first visible element,
+		 * but only do so if the previous marker was already seen.
+		 *
+		 * The new marker position will be sent to the backend but not applied visually.
+		 * Visually, the marker will only move the next time the user is focussing back to this
+		 * conversation in refreshReadMarkerPosition()
+		 */
+		updateReadMarkerPosition() {
 			if (!this.conversation) {
 				return
 			}
@@ -749,14 +778,13 @@ export default {
 				return
 			}
 
+			// first unread message has not been seen yet, so don't move it
 			if (!this.unreadMessageElement || this.unreadMessageElement.getAttribute('data-seen') !== 'true') {
 				return
 			}
 
-			// if we're at bottom of the chat and focussed, then simply clear the marker
-			if (this.conversation.lastReadMessage === 0
-				|| (this.isSticky && this.isWindowVisible && document.hasFocus())
-			) {
+			// if we're at bottom of the chat, then simply clear the marker
+			if (this.conversation.lastReadMessage === 0 || this.isSticky) {
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
 			}
@@ -779,6 +807,9 @@ export default {
 			}
 
 			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId })
+
+			// we don't call setVisualLastReadMessageId yet, it will update the next time the
+			// user focussed back on the conversation. See refreshReadMarkerPosition().
 		},
 
 		/**
@@ -805,7 +836,7 @@ export default {
 					})
 					this.setChatScrolledToBottom(true)
 
-					this.updateReadMarkerAfterScroll()
+					this.updateReadMarkerPosition()
 				} else {
 					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
 					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
@@ -925,7 +956,7 @@ export default {
 		},
 
 		onWindowFocus() {
-			this.debounceUpdateReadMarkerAfterScroll()
+			this.refreshReadMarkerPosition()
 		},
 	},
 }

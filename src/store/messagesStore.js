@@ -38,6 +38,11 @@ const state = {
 	 * Map of conversation token to last known message id
 	 */
 	lastKnown: {},
+
+	/**
+	 * Cached last read message id for display.
+	 */
+	visualLastReadMessageId: {},
 }
 
 const getters = {
@@ -99,6 +104,13 @@ const getters = {
 	getLastKnownMessageId: (state) => (token) => {
 		if (state.lastKnown[token]) {
 			return state.lastKnown[token]
+		}
+		return null
+	},
+
+	getVisualLastReadMessageId: (state) => (token) => {
+		if (state.visualLastReadMessageId[token]) {
+			return state.visualLastReadMessageId[token]
 		}
 		return null
 	},
@@ -186,6 +198,15 @@ const mutations = {
 	},
 
 	/**
+	 * @param {object} state current store state;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last read chat message
+	 */
+	setVisualLastReadMessageId(state, { token, id }) {
+		Vue.set(state.visualLastReadMessageId, token, id)
+	},
+
+	/**
 	 * Deletes the messages entry from the store for the given conversation token.
 	 *
 	 * @param {object} state current store state
@@ -197,6 +218,9 @@ const mutations = {
 		}
 		if (state.lastKnown[token]) {
 			Vue.delete(state.lastKnown, token)
+		}
+		if (state.visualLastReadMessageId[token]) {
+			Vue.delete(state.visualLastReadMessageId, token)
 		}
 		if (state.messages[token]) {
 			Vue.delete(state.messages, token)
@@ -313,6 +337,15 @@ const actions = {
 	 */
 	setLastKnownMessageId(context, { token, id }) {
 		context.commit('setLastKnownMessageId', { token, id })
+	},
+
+	/**
+	 * @param {object} context default store context;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last read chat message
+	 */
+	setVisualLastReadMessageId(context, { token, id }) {
+		context.commit('setVisualLastReadMessageId', { token, id })
 	},
 
 	/**
