@@ -125,6 +125,7 @@ the main body of the message as well as a quote.
 					</Actions>
 					<Actions
 						v-show="hasActionsMenu"
+						:force-menu="true"
 						container="#content-vue">
 						<template
 							v-for="action in messageActions">
