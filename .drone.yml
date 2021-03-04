@@ -1,30 +1,4 @@
 kind: pipeline
-name: compatibility
-
-steps:
-  - name: app-code-check
-    image: nextcloudci/php7.3:php7.3-5
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - sh -c "if [ $(./occ app:check-code --skip-validate-info $APP_NAME | wc -l) -ne 5 ]; then ./occ app:check-code --skip-validate-info $APP_NAME; fi"
-      - cd apps/$APP_NAME/
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-    - pull_request
-    - push
-
----
-kind: pipeline
 name: int-sqlite-callapi
 
 steps:
