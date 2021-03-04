@@ -11,8 +11,11 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     When user "guest" creates the password request room for last share with 201 (v1)
     Then user "participant1" is participant of room "password request for last share room" (v4)
-      | name        | type | participantType | participants |
-      | welcome.txt | 3    | 1               | participant1-displayname |
+      | name        | type | participantType |
+      | welcome.txt | 3    | 1               |
+    And user "participant1" sees the following attendees in room "welcome.txt" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
     And user "guest" is not participant of room "password request for last share room" (v4)
 
   Scenario: create password-request room for folder shared by link
@@ -22,8 +25,11 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     When user "guest" creates the password request room for last share with 201 (v1)
     Then user "participant1" is participant of room "password request for last share room" (v4)
-      | name | type | participantType | participants |
-      | test | 3    | 1               | participant1-displayname |
+      | name | type | participantType |
+      | test | 3    | 1               |
+    And user "participant1" sees the following attendees in room "test" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
     And user "guest" is not participant of room "password request for last share room" (v4)
 
   Scenario: create password-request room for folder reshared by link
@@ -34,8 +40,11 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     When user "guest" creates the password request room for last share with 201 (v1)
     Then user "participant2" is participant of room "password request for last share room" (v4)
-      | name | type | participantType | participants |
-      | test | 3    | 1               | participant2-displayname |
+      | name | type | participantType |
+      | test | 3    | 1               |
+    And user "participant2" sees the following attendees in room "test" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant2 | 1               |
     And user "participant1" is not participant of room "password request for last share room" (v4)
     And user "guest" is not participant of room "password request for last share room" (v4)
 
