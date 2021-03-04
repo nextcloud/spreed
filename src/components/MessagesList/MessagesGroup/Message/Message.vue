@@ -489,9 +489,10 @@ export default {
 				&& this.messageType === 'comment'
 				&& !this.isDeleting
 				&& !isFileShare
-				&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
-					|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR
-					|| this.isMyMsg)
+				&& (this.isMyMsg
+					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+						&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
+							|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR)))
 		},
 
 		messageActions() {
