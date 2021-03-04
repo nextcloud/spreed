@@ -20,8 +20,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |
@@ -35,7 +35,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |

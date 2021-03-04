@@ -119,7 +119,7 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     And user "guest" creates the password request room for last share with 201 (v1)
     And user "participant1" joins room "password request for last share room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "password request for last share room" with 400
+    When user "participant1" adds user "participant2" to room "password request for last share room" with 400 (v4)
     Then user "participant2" is not participant of room "password request for last share room" (v4)
 
 

@@ -26,8 +26,8 @@ Feature: public
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     When user "participant2" sets password "foobar" for room "room" with 200 (v4)
     Then user "participant3" joins room "room" with 403 (v4)
     Then user "participant3" joins room "room" with 200 (v4)
@@ -43,7 +43,7 @@ Feature: public
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     When user "participant2" sets password "foobar" for room "room" with 403 (v4)
     Then user "participant3" joins room "room" with 200 (v4)
     And user "participant3" leaves room "room" with 200 (v4)

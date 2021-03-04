@@ -35,7 +35,7 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     When user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 404 (v4)
@@ -49,7 +49,7 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     When user "participant1" leaves room "room" with 200 (v4)
@@ -63,7 +63,7 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     When user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
@@ -77,7 +77,7 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)

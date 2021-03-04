@@ -10,8 +10,8 @@ Feature: delete
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" deletes last share
     When user "participant2" restores last share
@@ -58,8 +58,8 @@ Feature: delete
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "/Talk/welcome.txt" to "/Talk/renamed.txt" with 201
     And user "participant2" deletes last share
@@ -107,8 +107,8 @@ Feature: delete
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" deletes last share
     And user "participant1" updates last share with

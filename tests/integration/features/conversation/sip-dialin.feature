@@ -21,9 +21,9 @@ Feature: public
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 1          | **PIN**     |
-    When user "participant1" adds user "participant2" to room "room" with 200 (v3)
-    When user "participant1" adds "participant3" to room "room" with 200 (v3)
-    When user "participant1" adds email "test@example.tld" to room "room" with 200 (v3)
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    When user "participant1" adds email "test@example.tld" to room "room" with 200 (v4)
     # Guests don't get a PIN as they can not be recognized and are deleted on leave
     When user "guest" joins room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)

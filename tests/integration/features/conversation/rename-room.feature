@@ -17,9 +17,9 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room" (v4)
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant2" is participant of room "room" (v4)
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     When user "participant2" renames room "room" to "new name" with 200 (v4)
 
   Scenario: User renames
@@ -27,7 +27,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room" (v4)
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant2" is participant of room "room" (v4)
     When user "participant2" renames room "room" to "new name" with 403 (v4)
 

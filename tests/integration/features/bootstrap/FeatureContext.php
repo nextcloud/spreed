@@ -936,34 +936,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
-	 *
-	 * @param string $user
-	 * @param string $newUser
-	 * @param string $identifier
-	 * @param string $statusCode
-	 * @param string $apiVersion
-	 */
-	public function userAddUserToRoom($user, $newUser, $identifier, $statusCode, $apiVersion = 'v1') {
-		$this->setCurrentUser($user);
-		$this->sendRequest(
-			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
-			new TableNode([['newParticipant', $newUser]])
-		);
-		$this->assertStatusCode($this->response, $statusCode);
-	}
-
-	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle) "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
 	 * @param string $newId
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userAddAttendeeToRoom($user, $newType, $newId, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
@@ -976,16 +958,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $isPromotion
 	 * @param string $participant
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userPromoteDemoteInRoom($user, $isPromotion, $participant, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion) {
 		$requestParameters = [['participant', $participant]];
 
 		if (substr($participant, 0, strlen('guest')) === 'guest') {

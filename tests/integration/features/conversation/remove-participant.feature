@@ -19,7 +19,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
     When user "participant1" removes "participant1" from room "room" with 400 (v4)
@@ -30,8 +30,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
     When user "participant1" removes "participant1" from room "room" with 200 (v4)
@@ -45,8 +45,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant3" to room "room" with 200
-    And user "participant1" promotes "participant3" in room "room" with 200
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" in room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant1" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
@@ -55,10 +55,10 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
-    And user "participant1" promotes "participant3" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" in room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
@@ -67,8 +67,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
@@ -79,11 +79,11 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
-    And user "participant2" adds "participant3" to room "room" with 200
+    And user "participant2" adds user "participant3" to room "room" with 200 (v4)
     And user "participant2" is participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant2" from room "room" with 400 (v4)
@@ -94,12 +94,12 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
-    And user "participant2" adds "participant3" to room "room" with 200
-    And user "participant2" promotes "participant3" in room "room" with 200
+    And user "participant2" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant2" promotes "participant3" in room "room" with 200 (v4)
     And user "participant2" is participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant2" from room "room" with 200 (v4)
@@ -110,9 +110,9 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
-    And user "participant1" promotes "participant3" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" in room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 403 (v4)
     Then user "participant3" is participant of room "room" (v4)
@@ -121,8 +121,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant3" to room "room" with 200
-    And user "participant1" promotes "participant3" in room "room" with 200
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" in room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is participant of room "room" (v4)
@@ -134,7 +134,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant1" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
@@ -143,9 +143,9 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
@@ -154,8 +154,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 403 (v4)
     Then user "participant3" is participant of room "room" (v4)
@@ -164,7 +164,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant3" is participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is participant of room "room" (v4)
@@ -184,8 +184,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    When user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant3" is not participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is not participant of room "room" (v4)
@@ -194,7 +194,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant3" is not participant of room "room" (v4)
     When user "participant2" removes "participant3" from room "room" with 403 (v4)
     And user "participant3" is not participant of room "room" (v4)

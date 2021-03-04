@@ -14,7 +14,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -53,7 +53,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -65,7 +65,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" removes themselves from room "group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -78,7 +78,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" leaves room "group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -109,7 +109,7 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
     When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
@@ -154,7 +154,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" creates folder "test"
     And user "participant1" shares "test" with room "group room" with OCS 100
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
@@ -185,7 +185,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
@@ -232,7 +232,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -254,7 +254,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
@@ -277,7 +277,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" removes themselves from room "group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -299,7 +299,7 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     When user "participant2" removes themselves from room "group room" with 200 (v4)
@@ -369,8 +369,8 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "Talk/welcome.txt" to "Talk/renamed.txt"
     And user "participant3" moves file "Talk/welcome.txt" to "Talk/renamed too.txt"
@@ -406,7 +406,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
@@ -450,10 +450,10 @@ Feature: hooks
     Given user "participant2" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant2" adds "participant1" to room "group room" with 200
+    And user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" removes "participant1" from room "group room" with 200 (v4)
-    When user "participant2" adds "participant1" to room "group room" with 200
+    When user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     Then user "participant1" gets all shares
     And the list of returned shares has 0 shares
     And user "participant2" gets all received shares
@@ -463,10 +463,10 @@ Feature: hooks
     Given user "participant2" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant2" adds "participant1" to room "group room" with 200
+    And user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" removes themselves from room "group room" with 200 (v4)
-    When user "participant2" adds "participant1" to room "group room" with 200
+    When user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     Then user "participant1" gets all shares
     And the list of returned shares has 0 shares
     And user "participant2" gets all received shares
@@ -491,12 +491,12 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant1" gets last share
     And the OCS status code should be "404"
     And user "participant1" gets all shares
@@ -539,10 +539,10 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" removes "participant2" from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -561,11 +561,11 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     And user "participant1" removes "participant2" from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -584,10 +584,10 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" removes themselves from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -606,11 +606,11 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     And user "participant2" removes themselves from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -677,12 +677,12 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" removes "participant2" from room "group room" with 200 (v4)
-    When user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -746,7 +746,7 @@ Feature: hooks
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "own group room" with 200
+    And user "participant1" adds user "participant2" to room "own group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "own group room" with OCS 100
     When user "participant1" deletes room "own group room" with 200 (v4)
     Then user "participant1" gets last share
@@ -758,7 +758,7 @@ Feature: hooks
     Given user "participant1" creates room "own public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "own public room" with 200
+    And user "participant1" adds user "participant2" to room "own public room" with 200 (v4)
     And user "participant3" joins room "own public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "own public room" with OCS 100
     When user "participant1" deletes room "own public room" with 200 (v4)
@@ -773,7 +773,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     When user "participant1" deletes room "group room" with 200 (v4)
@@ -786,7 +786,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
@@ -817,7 +817,7 @@ Feature: hooks
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "Talk/welcome.txt" to "Talk/renamed.txt"
     And user "participant2" shares "Talk/renamed.txt" with user "participant3" with OCS 100
@@ -858,9 +858,9 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "yet another group room" to "Yet another group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant2" to room "another group room" with 200
-    And user "participant1" adds "participant2" to room "yet another group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "another group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "yet another group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "welcome.txt" with room "another group room" with OCS 100
     And user "participant1" shares "welcome.txt" with room "yet another group room" with OCS 100
@@ -916,7 +916,7 @@ Feature: hooks
     Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "group room invited to" with OCS 100
     When user "participant2" is deleted
     Then user "participant1" gets last share
@@ -927,8 +927,8 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
-    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     When user "participant2" is deleted
     Then user "participant1" gets last share
@@ -959,8 +959,8 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
-    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     When user "participant2" is deleted
@@ -992,8 +992,8 @@ Feature: hooks
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
-    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant4" with OCS 100
     And user "participant4" accepts last share

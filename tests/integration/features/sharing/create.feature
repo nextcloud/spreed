@@ -78,7 +78,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "own group room" to "Own group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "own group room" with 200
+    And user "participant1" adds user "participant2" to room "own group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "own group room"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -107,7 +107,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room invited to"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -147,7 +147,7 @@ Feature: create
     Given user "participant2" creates room "group room no longer invited to" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant2" adds "participant1" to room "group room no longer invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room no longer invited to" with 200 (v4)
     And user "participant2" removes "participant1" from room "group room no longer invited to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room no longer invited to"
     Then the OCS status code should be "404"
@@ -162,7 +162,7 @@ Feature: create
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "own public room" to "Own public room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "own public room" with 200
+    And user "participant1" adds user "participant2" to room "own public room" with 200 (v4)
     And user "participant3" joins room "own public room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "own public room"
     Then share is returned with
@@ -206,7 +206,7 @@ Feature: create
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room invited to" to "Public room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "public room invited to" with 200
+    And user "participant2" adds user "participant1" to room "public room invited to" with 200 (v4)
     And user "participant3" joins room "public room invited to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "public room invited to"
     Then share is returned with
@@ -322,8 +322,8 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with user "participant1" with OCS 100
     And user "participant1" accepts last share
     When user "participant1" shares "welcome (2).txt" with room "group room"
@@ -371,7 +371,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with user "participant1" with OCS 100
     And user "participant1" accepts last share
     When user "participant1" shares "welcome (2).txt" with room "group room"
@@ -418,8 +418,8 @@ Feature: create
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with user "participant1"
       | permissions            | 1 |
     And share is returned with
@@ -454,7 +454,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room"
       | expireDate | +3 days |
     Then share is returned with
@@ -485,7 +485,7 @@ Feature: create
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room"
       | expireDate | invalid date |
     Then the OCS status code should be "404"
@@ -500,7 +500,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room"
       | permissions | 1 |
     Then share is returned with
@@ -534,13 +534,13 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "another group room" to "Another group room" with 200 (v4)
-    And user "participant1" adds "participant3" to room "another group room" with 200
+    And user "participant1" adds user "participant3" to room "another group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "another group room"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -604,7 +604,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" shares "welcome.txt" with room "group room"
     Then the OCS status code should be "403"
@@ -639,7 +639,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" shares "Talk/welcome.txt" with room "group room"
     Then the OCS status code should be "403"
@@ -678,13 +678,13 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "another group room" to "Another group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "another group room" with 200
+    And user "participant1" adds user "participant2" to room "another group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "another group room"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -724,7 +724,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" shares "welcome.txt" with user "participant2"
     Then share is returned with
@@ -768,7 +768,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant1" shares "welcome.txt" with room "group room"

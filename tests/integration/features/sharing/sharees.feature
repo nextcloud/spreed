@@ -102,7 +102,7 @@ Feature: sharees
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | room |
     Then "exact rooms" sharees returned is empty
@@ -114,7 +114,7 @@ Feature: sharees
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | group room |
     Then "exact rooms" sharees returned are
@@ -126,12 +126,12 @@ Feature: sharees
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "another group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "another group room invited to" to "Another group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "another group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "another group room invited to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | group room |
     Then "exact rooms" sharees returned are
@@ -248,7 +248,7 @@ Feature: sharees
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds user "participant2" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "group room not invited to" (v4)
       | roomType | 2 |
       | roomName | room |

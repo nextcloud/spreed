@@ -65,9 +65,9 @@ Feature: set-description
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "group room" with 200
-    And user "owner" promotes "moderator" in room "group room" with 200
-    And user "owner" adds "invited user" to room "group room" with 200
+    And user "owner" adds user "moderator" to room "group room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "group room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
     When user "owner" sets description for room "group room" to "the description" with 200 (v4)
     Then user "owner" is participant of room "group room" (v4)
       | description     |
@@ -83,9 +83,9 @@ Feature: set-description
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "group room" with 200
-    And user "owner" promotes "moderator" in room "group room" with 200
-    And user "owner" adds "invited user" to room "group room" with 200
+    And user "owner" adds user "moderator" to room "group room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "group room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
     When user "moderator" sets description for room "group room" to "the description" with 200 (v4)
     Then user "owner" is participant of room "group room" (v4)
       | description     |
@@ -101,9 +101,9 @@ Feature: set-description
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "group room" with 200
-    And user "owner" promotes "moderator" in room "group room" with 200
-    And user "owner" adds "invited user" to room "group room" with 200
+    And user "owner" adds user "moderator" to room "group room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "group room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
     And user "owner" sets description for room "group room" to "the description" with 200 (v4)
     When user "invited user" sets description for room "group room" to "invited user description" with 403 (v4)
     And user "not invited user" sets description for room "group room" to "not invited user description" with 404 (v4)
@@ -125,12 +125,12 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     And user "guest moderator" joins room "public room" with 200 (v4)
-    And user "owner" promotes "guest moderator" in room "public room" with 200
+    And user "owner" promotes "guest moderator" in room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     When user "owner" sets description for room "public room" to "the description" with 200 (v4)
     Then user "owner" is participant of room "public room" (v4)
@@ -156,12 +156,12 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     And user "guest moderator" joins room "public room" with 200 (v4)
-    And user "owner" promotes "guest moderator" in room "public room" with 200
+    And user "owner" promotes "guest moderator" in room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     When user "moderator" sets description for room "public room" to "the description" with 200 (v4)
     Then user "owner" is participant of room "public room" (v4)
@@ -187,12 +187,12 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     And user "guest moderator" joins room "public room" with 200 (v4)
-    And user "owner" promotes "guest moderator" in room "public room" with 200
+    And user "owner" promotes "guest moderator" in room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     When user "guest moderator" sets description for room "public room" to "the description" with 200 (v4)
     Then user "owner" is participant of room "public room" (v4)
@@ -218,12 +218,12 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     And user "guest moderator" joins room "public room" with 200 (v4)
-    And user "owner" promotes "guest moderator" in room "public room" with 200
+    And user "owner" promotes "guest moderator" in room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     And user "owner" sets description for room "public room" to "the description" with 200 (v4)
     When user "invited user" sets description for room "public room" to "invited user description" with 403 (v4)
@@ -304,9 +304,9 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     When user "owner" sets description for room "public room" to "the description" with 200 (v4)
     Then user "owner" is participant of the following rooms (v4)
@@ -326,9 +326,9 @@ Feature: set-description
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "owner" adds "moderator" to room "public room" with 200
-    And user "owner" promotes "moderator" in room "public room" with 200
-    And user "owner" adds "invited user" to room "public room" with 200
+    And user "owner" adds user "moderator" to room "public room" with 200 (v4)
+    And user "owner" promotes "moderator" in room "public room" with 200 (v4)
+    And user "owner" adds user "invited user" to room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
     When user "owner" sets description for room "public room" to "" with 200 (v4)
     Then user "owner" is participant of the following rooms (v4)

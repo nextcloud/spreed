@@ -31,7 +31,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" gets last share
     Then share is returned with
@@ -64,7 +64,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" renames room "group room" to "New room name" with 200 (v4)
     When user "participant1" gets last share
@@ -97,7 +97,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room"
       | expireDate | -3 days |
     And share is returned with
@@ -123,7 +123,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "/Talk/welcome.txt" to "/Talk/renamed.txt" with 201
     And user "participant1" updates last share with
@@ -153,7 +153,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" deletes file "welcome.txt"
     When user "participant1" gets last share
@@ -174,7 +174,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -246,7 +246,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -415,7 +415,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -462,7 +462,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -491,7 +491,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -705,7 +705,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "public room invited to" with OCS 100
-    And user "participant2" adds "participant1" to room "public room invited to" with 200
+    And user "participant2" adds user "participant1" to room "public room invited to" with 200 (v4)
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
     And share 0 is returned with
@@ -782,7 +782,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -811,7 +811,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -903,7 +903,7 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -935,13 +935,13 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "own group room" to "Own group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "own group room" with 200
+    And user "participant1" adds user "participant2" to room "own group room" with 200 (v4)
     And user "participant2" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
-    And user "participant2" adds "participant3" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
+    And user "participant2" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -1003,13 +1003,13 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "own group room" to "Own group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "own group room" with 200
+    And user "participant1" adds user "participant2" to room "own group room" with 200 (v4)
     And user "participant2" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
-    And user "participant2" adds "participant3" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
+    And user "participant2" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -1046,13 +1046,13 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "own group room" to "Own group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "own group room" with 200
+    And user "participant1" adds user "participant2" to room "own group room" with 200 (v4)
     And user "participant2" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant2" renames room "group room invited to" to "Group room invited to" with 200 (v4)
-    And user "participant2" adds "participant1" to room "group room invited to" with 200
-    And user "participant2" adds "participant3" to room "group room invited to" with 200
+    And user "participant2" adds user "participant1" to room "group room invited to" with 200 (v4)
+    And user "participant2" adds user "participant3" to room "group room invited to" with 200 (v4)
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
@@ -1072,7 +1072,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" deletes last share
     When user "participant1" gets deleted shares
@@ -1085,8 +1085,8 @@ Feature: get
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" deletes last share
     When user "participant2" gets deleted shares
@@ -1113,7 +1113,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" deletes file "welcome.txt"
     When user "participant1" gets deleted shares
@@ -1147,7 +1147,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" gets the share-type DAV property for "Talk/welcome.txt"
     Then the response contains a share-types DAV property with
@@ -1159,7 +1159,7 @@ Feature: get
     And user "participant2" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
@@ -1174,7 +1174,7 @@ Feature: get
     And user "participant2" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
@@ -1189,7 +1189,7 @@ Feature: get
     And user "participant2" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "Talk/welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
@@ -1204,7 +1204,7 @@ Feature: get
     And user "participant2" creates room "another group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
@@ -1260,7 +1260,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" gets the DAV properties for "/"
     Then the list of returned files for "participant1" is
@@ -1280,7 +1280,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" deletes last share
     When user "participant1" gets the DAV properties for "/"
@@ -1296,7 +1296,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" deletes last share
     When user "participant2" gets the DAV properties for "/"
@@ -1313,7 +1313,7 @@ Feature: get
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" deletes file "welcome.txt"
     When user "participant1" gets the DAV properties for "/"

@@ -55,8 +55,8 @@ Feature: chat/mentions
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source |
       | all          | room                     | calls  |
@@ -77,8 +77,8 @@ Feature: chat/mentions
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "group room" for "part" with 200
       | id           | label                    | source |
       | participant2 | participant2-displayname | users  |
@@ -96,8 +96,8 @@ Feature: chat/mentions
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "group room" for "unknown" with 200
     And user "participant2" gets the following candidate mentions in room "group room" for "unknown" with 200
     And user "participant3" gets the following candidate mentions in room "group room" for "unknown" with 200
@@ -106,8 +106,8 @@ Feature: chat/mentions
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     Then user "participant4" gets the following candidate mentions in room "group room" for "" with 404
 
 
@@ -124,7 +124,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "" with 200
@@ -156,7 +156,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "part" with 200
@@ -181,7 +181,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest1" joins room "public room" with 200 (v4)
     And user "guest2" joins room "public room" with 200 (v4)
@@ -208,7 +208,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest1" joins room "public room" with 200 (v4)
     And guest "guest1" sets name to "FooBar" in room "public room" with 200
@@ -232,7 +232,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "unknown" with 200
@@ -244,7 +244,7 @@ Feature: chat/mentions
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     And user "participant3" joins room "public room" with 200 (v4)
     And user "guest" joins room "public room" with 200 (v4)
     Then user "participant4" gets the following candidate mentions in room "public room" for "" with 404

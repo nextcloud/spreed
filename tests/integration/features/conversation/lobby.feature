@@ -10,9 +10,9 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant1" sets lobby state for room "room" to "no lobby" with 200 (v4)
     And user "participant2" sets lobby state for room "room" to "non moderators" with 200 (v4)
@@ -24,12 +24,12 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant1" sets lobby state for room "room" to "no lobby" with 200 (v4)
@@ -78,16 +78,16 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
 
   Scenario: participants can join a password protected room when the lobby is active
@@ -95,9 +95,9 @@ Feature: conversation/lobby
       | roomType | 3 |
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
@@ -106,7 +106,7 @@ Feature: conversation/lobby
       | password | foobar |
     And user "guest" joins room "room" with 200 (v4)
       | password | foobar |
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
       | password | foobar |
 
@@ -114,15 +114,15 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant1" sends message "Message 1" to room "room" with 201
@@ -154,15 +154,15 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant1" joins call "room" with 200
@@ -185,15 +185,15 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant1" leaves room "room" with 200 (v4)
@@ -218,15 +218,15 @@ Feature: conversation/lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" adds "participant3" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    And user "participant1" promotes "guest" in room "room" with 200
+    And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201

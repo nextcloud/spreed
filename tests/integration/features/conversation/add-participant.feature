@@ -8,7 +8,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -25,7 +25,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -33,7 +33,7 @@ Feature: public
       | id   | type | participantType |
       | room | 3    | 3               |
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant2" adds "participant3" to room "room" with 403
+    When user "participant2" adds user "participant3" to room "room" with 403 (v4)
     And user "participant3" is not participant of room "room" (v4)
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
@@ -44,8 +44,8 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "room" with 200
-    When user "participant1" promotes "participant2" in room "room" with 200
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -53,7 +53,7 @@ Feature: public
       | id   | type | participantType |
       | room | 3    | 2               |
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant2" adds "participant3" to room "room" with 200
+    When user "participant2" adds user "participant3" to room "room" with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -78,7 +78,7 @@ Feature: public
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 5               |
-    When user "participant1" adds "participant2" to room "room" with 200
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
@@ -96,8 +96,8 @@ Feature: public
       | roomName | room |
     And user "participant2" joins room "room" with 200 (v4)
     # participant3 already present, so it will be skipped
-    And user "participant1" adds "participant3" to room "room" with 200
-    When user "participant1" adds group "group1" to room "room" with 200
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    When user "participant1" adds group "group1" to room "room" with 200 (v4)
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
@@ -114,7 +114,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant3" adds "participant2" to room "room" with 404
+    And user "participant3" adds user "participant2" to room "room" with 404 (v4)
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |

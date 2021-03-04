@@ -11,8 +11,8 @@ Feature: move
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" creates folder "/test"
     When user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
@@ -57,8 +57,8 @@ Feature: move
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-#    And user "participant1" adds "participant2" to room "group room" with 200
-#    And user "participant1" adds "participant3" to room "group room" with 200
+#    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+#    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
 #    And user "participant3" creates folder "/test"
 #    And user "participant3" shares "/test" with user "participant1" with OCS 100
 #    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -108,8 +108,8 @@ Feature: move
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-#    And user "participant1" adds "participant2" to room "group room" with 200
-#    And user "participant1" adds "participant3" to room "group room" with 200
+#    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+#    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
 #    And user "participant4" creates folder "/test"
 #    And user "participant4" shares "/test" with user "participant1" with OCS 100
 #    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -159,7 +159,7 @@ Feature: move
 #      | roomType | 2 |
 #      | roomName | room |
 #    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-#    And user "participant1" adds "participant2" to room "group room" with 200
+#    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
 #    And user "participant3" creates folder "/test"
 #    And user "participant3" shares "/test" with user "participant4" with OCS 100
 #    And user "participant4" shares "/test" with user "participant1" with OCS 100
@@ -213,8 +213,8 @@ Feature: move
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" creates folder "/test"
     When user "participant2" moves file "Talk/welcome.txt" to "test/renamed.txt" with 201
@@ -261,8 +261,8 @@ Feature: move
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200 (v4)
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant3" creates folder "/test"
     And user "participant3" shares "/test" with user "participant2" with OCS 100
     And user "participant2" accepts last share

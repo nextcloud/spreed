@@ -30,7 +30,7 @@ Feature: chat/public-read-only
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     When user "participant2" sends message "Message 1" to room "public room" with 201
     Then user "participant2" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |

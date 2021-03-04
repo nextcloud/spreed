@@ -313,7 +313,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -385,7 +385,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/moderators',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -394,7 +394,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/moderators',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
