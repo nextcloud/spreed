@@ -30,39 +30,40 @@ the main body of the message as well as a quote.
 		ref="message"
 		:data-message-id="id"
 		:data-seen="seen"
-		class="message"
-		:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
-		@mouseover="handleMouseover"
-		@mouseleave="handleMouseleave">
-		<div>
+		class="message">
+		<div
+			:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+			class="message-body"
+			@mouseover="handleMouseover"
+			@mouseleave="handleMouseleave">
 			<div v-if="isFirstMessage && showAuthor"
-				class="message__author"
+				class="message-body__author"
 				role="heading"
 				aria-level="4">
 				{{ actorDisplayName }}
 			</div>
 			<div
 				ref="messageMain"
-				class="message__main">
+				class="message-body__main">
 				<div v-if="isSingleEmoji"
-					class="message__main__text">
+					class="message-body__main__text">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<div class="single-emoji">
 						{{ message }}
 					</div>
 				</div>
-				<div v-else-if="showJoinCallButton" class="message__main__text call-started">
+				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 					<CallButton />
 				</div>
-				<div v-else-if="isDeletedMessage" class="message__main__text deleted-message">
+				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				</div>
-				<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
+				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				</div>
-				<div v-if="!isDeletedMessage" class="message__main__right">
+				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span
 						v-tooltip.auto="messageDate"
 						class="date"
@@ -116,7 +117,7 @@ the main body of the message as well as a quote.
 					<!-- Message Actions -->
 					<div
 						v-show="showActions"
-						class="message__main__right__actions"
+						class="message-body__main__right__actions"
 						:class="{ 'tall' : isTallEnough }">
 						<Actions
 							v-show="isReplyable">
@@ -174,11 +175,11 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 			</div>
-			<div v-if="isLastReadMessage"
-				v-observe-visibility="lastReadMessageVisibilityChanged">
-				<div v-if="!isLastMessage" class="new-message-marker">
-					<span>{{ t('spreed', 'Unread messages') }}</span>
-				</div>
+		</div>
+		<div v-if="isLastReadMessage"
+			v-observe-visibility="lastReadMessageVisibilityChanged">
+			<div class="new-message-marker">
+				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
 	</li>
@@ -366,13 +367,10 @@ export default {
 	},
 
 	computed: {
-		isLastMessage() {
-			return this.conversation.lastMessage
-				&& this.id === this.conversation.lastMessage.id
-		},
-
 		isLastReadMessage() {
 			return this.id === this.conversation.lastReadMessage
+				&& (!this.conversation.lastMessage
+				|| this.id !== this.conversation.lastMessage.id)
 		},
 
 		messageObject() {
@@ -702,7 +700,7 @@ export default {
 @import '../../../../assets/variables';
 @import '../../../../assets/buttons';
 
-.message {
+.message-body {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
@@ -789,7 +787,7 @@ export default {
 
 // Increase the padding for regular messages to improve readability and
 // allow some space for the reply button
-.message:not(.system) {
+.message-body:not(.system) {
 	padding: 12px 4px 12px 8px;
 	margin: -6px 0;
 }
@@ -814,7 +812,7 @@ export default {
 
 .new-message-marker {
 	position: relative;
-	margin: 40px 15px 0 -45px;
+	margin: 20px 15px 20px -45px;
 	border-top: 1px solid var(--color-border);
 
 	span {
