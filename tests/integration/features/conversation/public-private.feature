@@ -9,65 +9,55 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
     When user "participant1" makes room "room" private with 200
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 2    | 1               | participant1-displayname |
+      | id   | type | participantType |
+      | room | 2    | 1               |
     When user "participant1" makes room "room" public with 200
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
 
   Scenario: Moderator makes room private/public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" promotes "participant2" in room "room" with 200
     When user "participant2" makes room "room" private with 200
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 2    | 1               | participant1-displayname, participant2-displayname |
+      | id   | type | participantType |
+      | room | 2    | 1               |
     When user "participant2" makes room "room" public with 200
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname, participant2-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
 
   Scenario: User makes room private/public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
     And user "participant1" adds "participant2" to room "room" with 200
     When user "participant2" makes room "room" private with 403
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 3    | 1               | participant1-displayname, participant2-displayname |
+      | id   | type | participantType |
+      | room | 3    | 1               |
     When user "participant1" makes room "room" private with 200
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 2    | 1               | participant1-displayname, participant2-displayname |
+      | id   | type | participantType |
+      | room | 2    | 1               |
     When user "participant2" makes room "room" public with 403
     Then user "participant1" is participant of the following rooms (v4)
-    # FIXME
-      | id   | type | participantType | participants |
-      | room | 2    | 1               | participant1-displayname, participant2-displayname |
+      | id   | type | participantType |
+      | room | 2    | 1               |
 
   Scenario: Stranger makes room private/public
     Given user "participant1" creates room "room" (v4)

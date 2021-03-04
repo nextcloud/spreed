@@ -58,12 +58,12 @@ Feature: chat/one-to-one
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    And user "participant1" is participant of room "one-to-one room"
-    And user "participant2" is participant of room "one-to-one room"
+    And user "participant1" is participant of room "one-to-one room" (v4)
+    And user "participant2" is participant of room "one-to-one room" (v4)
     When user "participant1" removes themselves from room "one-to-one room" with 200
-    Then user "participant1" is not participant of room "one-to-one room"
+    Then user "participant1" is not participant of room "one-to-one room" (v4)
     When user "participant2" sends message "Message" to room "one-to-one room" with 201
-    Then user "participant1" is participant of room "one-to-one room"
+    Then user "participant1" is participant of room "one-to-one room" (v4)
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
       | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | one-to-one room | users     | participant2 | participant2-displayname | Message   | []                |

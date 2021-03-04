@@ -10,8 +10,8 @@ Feature: callapi/group-read-only
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
-    Then user "participant1" is participant of room "room"
-    And user "participant2" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
     When user "participant1" locks room "room" with 200

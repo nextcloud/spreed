@@ -15,8 +15,8 @@ Feature: callapi/public
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
-    Then user "participant1" is participant of room "room"
-    And user "participant2" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
     Then user "participant1" joins room "room" with 200
@@ -44,8 +44,8 @@ Feature: callapi/public
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
-    Then user "participant1" is participant of room "room"
-    Then user "participant3" is not participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    Then user "participant3" is not participant of room "room" (v4)
     And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
@@ -78,8 +78,8 @@ Feature: callapi/public
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
-    Then user "participant1" is participant of room "room"
-    Then user "participant3" is not participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    Then user "participant3" is not participant of room "room" (v4)
     And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
@@ -113,7 +113,7 @@ Feature: callapi/public
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
-    Then user "participant1" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
@@ -140,7 +140,7 @@ Feature: callapi/public
       | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
-    Then user "participant1" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200

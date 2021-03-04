@@ -231,21 +231,21 @@ Feature: conversation/lobby
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" sets description for room "room" to "the description" with 200
-    Then user "participant1" is participant of room "room" (v3)
+    Then user "participant1" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage                                  |
       | room | the description | 3    | 1               | You set the description to "the description" |
-    And user "participant2" is participant of room "room" (v3)
+    And user "participant2" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage                                      |
       | room | the description | 3    | 2               | {actor} set the description to "the description" |
-    And user "participant3" is participant of room "room" (v3)
+    And user "participant3" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 3               |             |
-    And user "participant4" is participant of room "room" (v3)
+    And user "participant4" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 5               |             |
-    And user "guest" is participant of room "room" (v3)
+    And user "guest" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage                                       |
       | room | the description | 3    | 6               | {actor} set the description to "the description"  |
-    And user "guest2" is participant of room "room" (v3)
+    And user "guest2" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 4               |             |

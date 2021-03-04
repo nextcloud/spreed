@@ -11,7 +11,7 @@ Feature: set-description
       | roomType | 2 |
       | roomName | room |
     When user "owner" sets description for room "group room" to "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C" with 200
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description                                                                                                                                                                                              |
       | 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C |
 
@@ -21,7 +21,7 @@ Feature: set-description
       | roomName | room |
     And user "owner" sets description for room "group room" to "the description" with 200
     When user "owner" sets description for room "group room" to "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C0" with 400
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description     |
       | the description |
 
@@ -30,7 +30,7 @@ Feature: set-description
       | roomType | 2 |
       | roomName | room |
     When user "owner" sets description for room "group room" to "०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च" with 200
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description                                                                                                                                                                                              |
       | ०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च |
 
@@ -40,7 +40,7 @@ Feature: set-description
       | roomName | room |
     And user "owner" sets description for room "group room" to "the description" with 200
     When user "owner" sets description for room "group room" to "०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०" with 400
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description     |
       | the description |
 
@@ -52,10 +52,10 @@ Feature: set-description
       | invite   | moderator |
     When user "owner" sets description for room "one-to-one room" to "the description" with 400
     And user "moderator" sets description for room "one-to-one room" to "the description" with 400
-    Then user "owner" is participant of room "one-to-one room" (v3)
+    Then user "owner" is participant of room "one-to-one room" (v4)
       | description |
       |             |
-    And user "moderator" is participant of room "one-to-one room" (v3)
+    And user "moderator" is participant of room "one-to-one room" (v4)
       | description |
       |             |
 
@@ -69,13 +69,13 @@ Feature: set-description
     And user "owner" promotes "moderator" in room "group room" with 200
     And user "owner" adds "invited user" to room "group room" with 200
     When user "owner" sets description for room "group room" to "the description" with 200
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "group room" (v3)
+    And user "moderator" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "group room" (v3)
+    And user "invited user" is participant of room "group room" (v4)
       | description     |
       | the description |
 
@@ -87,13 +87,13 @@ Feature: set-description
     And user "owner" promotes "moderator" in room "group room" with 200
     And user "owner" adds "invited user" to room "group room" with 200
     When user "moderator" sets description for room "group room" to "the description" with 200
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "group room" (v3)
+    And user "moderator" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "group room" (v3)
+    And user "invited user" is participant of room "group room" (v4)
       | description     |
       | the description |
 
@@ -109,13 +109,13 @@ Feature: set-description
     And user "not invited user" sets description for room "group room" to "not invited user description" with 404
     # Guest user names in tests must being with "guest"
     And user "guest not joined" sets description for room "group room" to "guest not joined description" with 404
-    Then user "owner" is participant of room "group room" (v3)
+    Then user "owner" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "group room" (v3)
+    And user "moderator" is participant of room "group room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "group room" (v3)
+    And user "invited user" is participant of room "group room" (v4)
       | description     |
       | the description |
 
@@ -133,22 +133,22 @@ Feature: set-description
     And user "owner" promotes "guest moderator" in room "public room" with 200
     And user "guest" joins room "public room" with 200
     When user "owner" sets description for room "public room" to "the description" with 200
-    Then user "owner" is participant of room "public room" (v3)
+    Then user "owner" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "public room" (v3)
+    And user "moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "public room" (v3)
+    And user "invited user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "not invited but joined user" is participant of room "public room" (v3)
+    And user "not invited but joined user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest moderator" is participant of room "public room" (v3)
+    And user "guest moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest" is participant of room "public room" (v3)
+    And user "guest" is participant of room "public room" (v4)
       | description     |
       | the description |
 
@@ -164,22 +164,22 @@ Feature: set-description
     And user "owner" promotes "guest moderator" in room "public room" with 200
     And user "guest" joins room "public room" with 200
     When user "moderator" sets description for room "public room" to "the description" with 200
-    Then user "owner" is participant of room "public room" (v3)
+    Then user "owner" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "public room" (v3)
+    And user "moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "public room" (v3)
+    And user "invited user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "not invited but joined user" is participant of room "public room" (v3)
+    And user "not invited but joined user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest moderator" is participant of room "public room" (v3)
+    And user "guest moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest" is participant of room "public room" (v3)
+    And user "guest" is participant of room "public room" (v4)
       | description     |
       | the description |
 
@@ -195,22 +195,22 @@ Feature: set-description
     And user "owner" promotes "guest moderator" in room "public room" with 200
     And user "guest" joins room "public room" with 200
     When user "guest moderator" sets description for room "public room" to "the description" with 200
-    Then user "owner" is participant of room "public room" (v3)
+    Then user "owner" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "public room" (v3)
+    And user "moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "public room" (v3)
+    And user "invited user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "not invited but joined user" is participant of room "public room" (v3)
+    And user "not invited but joined user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest moderator" is participant of room "public room" (v3)
+    And user "guest moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest" is participant of room "public room" (v3)
+    And user "guest" is participant of room "public room" (v4)
       | description     |
       | the description |
 
@@ -232,22 +232,22 @@ Feature: set-description
     And user "guest" sets description for room "public room" to "guest description" with 403
     # Guest user names in tests must being with "guest"
     And user "guest not joined" sets description for room "public room" to "guest not joined description" with 404
-    Then user "owner" is participant of room "public room" (v3)
+    Then user "owner" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "moderator" is participant of room "public room" (v3)
+    And user "moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "invited user" is participant of room "public room" (v3)
+    And user "invited user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "not invited but joined user" is participant of room "public room" (v3)
+    And user "not invited but joined user" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest moderator" is participant of room "public room" (v3)
+    And user "guest moderator" is participant of room "public room" (v4)
       | description     |
       | the description |
-    And user "guest" is participant of room "public room" (v3)
+    And user "guest" is participant of room "public room" (v4)
       | description     |
       | the description |
 
@@ -268,13 +268,13 @@ Feature: set-description
     When user "owner of file" sets description for room "file last share room" to "owner of file description" with 403
     And user "user with access to file" sets description for room "file last share room" to "user with access to file description" with 403
     And user "guest" sets description for room "file last share room" to "guest description" with 403
-    Then user "owner of file" is participant of room "file last share room" (v3)
+    Then user "owner of file" is participant of room "file last share room" (v4)
       | description |
       |             |
-    And user "user with access to file" is participant of room "file last share room" (v3)
+    And user "user with access to file" is participant of room "file last share room" (v4)
       | description |
       |             |
-    And user "guest" is participant of room "file last share room" (v3)
+    And user "guest" is participant of room "file last share room" (v4)
       | description |
       |             |
 
@@ -291,10 +291,10 @@ Feature: set-description
     And user "guest" joins room "password request for last share room" with 200
     And user "owner of file" joins room "password request for last share room" with 200
     When user "owner of file" sets description for room "password request for last share room" to "the description" with 200
-    Then user "owner of file" is participant of room "password request for last share room" (v3)
+    Then user "owner of file" is participant of room "password request for last share room" (v4)
       | description     |
       | the description |
-    And user "guest" is participant of room "password request for last share room" (v3)
+    And user "guest" is participant of room "password request for last share room" (v4)
       | description     |
       | the description |
 

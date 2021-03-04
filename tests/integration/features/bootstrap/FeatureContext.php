@@ -243,6 +243,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private function assertRooms($rooms, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
+			if (!isset(self::$identifierToToken[$room['name']])) {
+				self::$identifierToToken[$room['name']] = $room['token'];
+			}
+			if (!isset(self::$tokenToIdentifier[$room['token']])) {
+				self::$tokenToIdentifier[$room['token']] = $room['name'];
+			}
+
 			$data = [];
 			if (isset($expectedRoom['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$room['token']];
@@ -289,7 +296,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $isOrNotParticipant
@@ -297,7 +304,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userIsParticipantOfRoom(string $user, string $isOrNotParticipant, string $identifier, string $apiVersion, TableNode $formData = null) {
 		if (strpos($user, 'guest') === 0) {
 			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion, $formData);
 
@@ -432,7 +439,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier, $apiVersion = 'v1', TableNode $formData = null) {
+	private function guestIsParticipantOfRoom(string $guest, string $isOrNotParticipant, string $identifier, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($guest);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 

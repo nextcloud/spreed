@@ -13,8 +13,8 @@ Feature: callapi/one-to-one
     When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Then user "participant1" is participant of room "room"
-    And user "participant2" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
     Then user "participant1" joins room "room" with 200
@@ -46,8 +46,8 @@ Feature: callapi/one-to-one
     When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Then user "participant1" is participant of room "room"
-    Then user "participant3" is not participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
+    Then user "participant3" is not participant of room "room" (v4)
     And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
@@ -78,7 +78,7 @@ Feature: callapi/one-to-one
     When user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Then user "participant1" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" joins room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
@@ -109,16 +109,16 @@ Feature: callapi/one-to-one
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    And user "participant1" is participant of room "room"
-    And user "participant2" is participant of room "room"
+    And user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
     When user "participant1" removes themselves from room "room" with 200
-    Then user "participant1" is not participant of room "room"
+    Then user "participant1" is not participant of room "room" (v4)
     When user "participant2" joins room "room" with 200
-    Then user "participant1" is not participant of room "room"
+    Then user "participant1" is not participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 404
     And user "participant2" sees 0 peers in call "room" with 200
     When user "participant2" joins call "room" with 200
-    Then user "participant1" is participant of room "room"
+    Then user "participant1" is participant of room "room" (v4)
     And user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
 
