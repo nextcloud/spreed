@@ -13,7 +13,7 @@ Feature: create
     And user "participant1" is participant of the following rooms (v4)
       | name  | type | participantType |
       | room1 | 2    | 3               |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 3               |
 
@@ -24,7 +24,7 @@ Feature: create
     And user "participant1" is participant of the following rooms (v4)
       | name  | type | participantType |
       | room1 | 2    | 2               |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 2               |
 
@@ -35,7 +35,7 @@ Feature: create
     And user "participant1" is participant of the following rooms (v4)
       | name  | type | participantType |
       | room1 | 2    | 1               |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
 
@@ -49,7 +49,7 @@ Feature: create
     And user "participant2" is participant of the following rooms (v4)
       | name  | type | participantType |
       | room1 | 3    | 3               |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
@@ -64,7 +64,7 @@ Feature: create
     And user "participant2" is participant of the following rooms (v4)
       | name  | type | readOnly | hasPassword | participantType |
       | room1 | 3    | 1        | 1           | 3               |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |

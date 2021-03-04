@@ -347,15 +347,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following attendees in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sees the following attendees in room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode $formData
 	 */
-	public function userSeesAttendeesInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesAttendeesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
 		$this->assertStatusCode($this->response, $statusCode);

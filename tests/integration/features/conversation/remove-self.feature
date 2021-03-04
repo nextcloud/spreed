@@ -25,7 +25,7 @@ Feature: public
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |
-    And user "participant2" sees the following attendees in room "room" with 200 (v3)
+    And user "participant2" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 2               |

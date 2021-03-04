@@ -42,7 +42,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms (v4)
       | id    | type | participantType |
       | room2 | 1    | 1               |
-    And user "participant2" sees the following attendees in room "room2" with 200 (v3)
+    And user "participant2" sees the following attendees in room "room2" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant2 | 1               |
 
@@ -94,7 +94,7 @@ Feature: one-to-one
     And user "participant3" is not participant of room "room7" (v4)
     When user "participant1" adds "participant3" to room "room7" with 400
     And user "participant3" is not participant of room "room7" (v4)
-    And user "participant1" sees the following attendees in room "room7" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room7" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 1               |
@@ -174,7 +174,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms (v4)
       | id     | type | participantType |
       | room14 | 1    | 1               |
-    And user "participant2" sees the following attendees in room "room14" with 200 (v3)
+    And user "participant2" sees the following attendees in room "room14" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant2 | 1               |
     When user "participant1" creates room "room15" with 200 (v4)
@@ -188,7 +188,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms (v4)
       | id     | type | participantType |
       | room14 | 1    | 1               |
-    And user "participant2" sees the following attendees in room "room14" with 200 (v3)
+    And user "participant2" sees the following attendees in room "room14" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 1               |

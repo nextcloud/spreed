@@ -16,7 +16,7 @@ Feature: public
       | id   | type | participantType |
       | room | 3    | 3               |
     And user "participant3" is not participant of room "room" (v4)
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
@@ -35,7 +35,7 @@ Feature: public
     And user "participant3" is not participant of room "room" (v4)
     When user "participant2" adds "participant3" to room "room" with 403
     And user "participant3" is not participant of room "room" (v4)
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
@@ -63,7 +63,7 @@ Feature: public
     And user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 2               |
@@ -74,7 +74,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant2" joins room "room" with 200
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 5               |
@@ -82,7 +82,7 @@ Feature: public
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
@@ -101,7 +101,7 @@ Feature: public
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
@@ -115,7 +115,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant3" adds "participant2" to room "room" with 404
-    And user "participant1" sees the following attendees in room "room" with 200 (v3)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
     And user "participant2" is not participant of room "room" (v4)

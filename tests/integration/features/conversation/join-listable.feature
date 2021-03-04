@@ -26,7 +26,7 @@ Feature: conversation/join-listable
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER_SELF_JOINED  | users     |
@@ -44,7 +44,7 @@ Feature: conversation/join-listable
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 404
     And user "guest" joins room "room" with 404
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId       | participantType | actorType |
       | creator       | OWNER           | users     |
       | regular-user  | USER            | users     |
@@ -57,7 +57,7 @@ Feature: conversation/join-listable
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |
@@ -75,7 +75,7 @@ Feature: conversation/join-listable
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 404
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |
@@ -89,7 +89,7 @@ Feature: conversation/join-listable
     When user "regular-user" joins room "room" with 200
     And user "user-guest@example.com" joins room "room" with 200
     And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |
