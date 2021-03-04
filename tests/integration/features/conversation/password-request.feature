@@ -131,7 +131,7 @@ Feature: conversation/password-request
     And user "guest" creates the password request room for last share with 201 (v1)
     And user "guest" joins room "password request for last share room" with 200 (v4)
     And user "participant1" joins room "password request for last share room" with 200 (v4)
-    When user "guest" leaves room "password request for last share room" with 200
+    When user "guest" leaves room "password request for last share room" with 200 (v4)
     Then user "participant1" is not participant of room "password request for last share room" (v4)
     And user "guest" is not participant of room "password request for last share room" (v4)
 
@@ -142,7 +142,7 @@ Feature: conversation/password-request
     And user "participant2" creates the password request room for last share with 201 (v1)
     And user "participant2" joins room "password request for last share room" with 200 (v4)
     And user "participant1" joins room "password request for last share room" with 200 (v4)
-    When user "participant2" leaves room "password request for last share room" with 200
+    When user "participant2" leaves room "password request for last share room" with 200 (v4)
     Then user "participant1" is not participant of room "password request for last share room" (v4)
     And user "participant2" is not participant of room "password request for last share room" (v4)
 
@@ -153,7 +153,7 @@ Feature: conversation/password-request
     And user "guest" creates the password request room for last share with 201 (v1)
     And user "guest" joins room "password request for last share room" with 200 (v4)
     And user "participant1" joins room "password request for last share room" with 200 (v4)
-    When user "participant1" leaves room "password request for last share room" with 200
+    When user "participant1" leaves room "password request for last share room" with 200 (v4)
     Then user "participant1" is not participant of room "password request for last share room" (v4)
     And user "guest" is not participant of room "password request for last share room" (v4)
 

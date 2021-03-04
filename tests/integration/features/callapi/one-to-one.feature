@@ -32,13 +32,13 @@ Feature: callapi/one-to-one
     Then user "participant1" leaves call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
-    Then user "participant1" leaves room "room" with 200
+    Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
     Then user "participant2" leaves call "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
-    Then user "participant2" leaves room "room" with 200
+    Then user "participant2" leaves room "room" with 200 (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
 
@@ -64,13 +64,13 @@ Feature: callapi/one-to-one
     Then user "participant3" leaves call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
-    Then user "participant3" leaves room "room" with 200
+    Then user "participant3" leaves room "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant1" leaves call "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
-    Then user "participant1" leaves room "room" with 200
+    Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
 
@@ -95,13 +95,13 @@ Feature: callapi/one-to-one
     Then user "guest" leaves call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
-    Then user "guest" leaves room "room" with 200
+    Then user "guest" leaves room "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" leaves call "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
-    Then user "participant1" leaves room "room" with 200
+    Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
 

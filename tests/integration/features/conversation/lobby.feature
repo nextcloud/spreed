@@ -196,12 +196,12 @@ Feature: conversation/lobby
     And user "participant1" promotes "guest" in room "room" with 200
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
-    Then user "participant1" leaves room "room" with 200
-    And user "participant2" leaves room "room" with 200
-    And user "participant3" leaves room "room" with 200
-    And user "participant4" leaves room "room" with 200
-    And user "guest" leaves room "room" with 200
-    And user "guest2" leaves room "room" with 200
+    Then user "participant1" leaves room "room" with 200 (v4)
+    And user "participant2" leaves room "room" with 200 (v4)
+    And user "participant3" leaves room "room" with 200 (v4)
+    And user "participant4" leaves room "room" with 200 (v4)
+    And user "guest" leaves room "room" with 200 (v4)
+    And user "guest2" leaves room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 200 (v4)

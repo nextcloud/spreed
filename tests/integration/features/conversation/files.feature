@@ -320,7 +320,7 @@ Feature: conversation/files
     And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
-    When user "participant1" leaves room "file welcome (2).txt room" with 200
+    When user "participant1" leaves room "file welcome (2).txt room" with 200 (v4)
     Then user "participant1" is participant of room "file welcome (2).txt room" (v4)
 
   Scenario: user with access to a file is not removed from its room after leaving it
@@ -331,7 +331,7 @@ Feature: conversation/files
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
     And user "participant2" joins room "file welcome.txt room" with 200 (v4)
     And user "participant2" is participant of room "file welcome.txt room" (v4)
-    When user "participant2" leaves room "file welcome.txt room" with 200
+    When user "participant2" leaves room "file welcome.txt room" with 200 (v4)
     Then user "participant2" is participant of room "file welcome.txt room" (v4)
 
 
@@ -341,7 +341,7 @@ Feature: conversation/files
     And user "participant1" gets the room for last share with 200 (v1)
     And user "participant1" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
-    When user "participant1" leaves room "file last share room" with 200
+    When user "participant1" leaves room "file last share room" with 200 (v4)
     Then user "participant1" is participant of room "file last share room" (v4)
 
   Scenario: user with access to a file shared by link is not removed from its room after leaving it
@@ -351,7 +351,7 @@ Feature: conversation/files
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
     And user "participant2" is participant of room "file last share room" (v4)
-    When user "participant2" leaves room "file last share room" with 200
+    When user "participant2" leaves room "file last share room" with 200 (v4)
     Then user "participant2" is participant of room "file last share room" (v4)
 
   Scenario: user without access to a file shared by link is removed from its room after leaving it
@@ -363,7 +363,7 @@ Feature: conversation/files
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
     And user "participant2" is participant of room "file last share room" (v4)
-    When user "participant2" leaves room "file last share room" with 200
+    When user "participant2" leaves room "file last share room" with 200 (v4)
     Then user "participant2" is not participant of room "file last share room" (v4)
 
   Scenario: guest is removed from the room of a file shared by link after leaving it
@@ -371,7 +371,7 @@ Feature: conversation/files
     And user "guest" gets the room for last share with 200 (v1)
     And user "guest" joins room "file last share room" with 200 (v4)
     And user "guest" is participant of room "file last share room" (v4)
-    When user "guest" leaves room "file last share room" with 200
+    When user "guest" leaves room "file last share room" with 200 (v4)
     And user "guest" is not participant of room "file last share room" (v4)
 
 
@@ -452,7 +452,7 @@ Feature: conversation/files
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
     And user "participant1" joins room "file welcome.txt room" with 200 (v4)
-    And user "participant1" leaves room "file welcome.txt room" with 200
+    And user "participant1" leaves room "file welcome.txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome.txt room" (v4)
     When user "participant1" deletes last share
     Then user "participant1" is participant of room "file welcome.txt room" (v4)
@@ -464,7 +464,7 @@ Feature: conversation/files
     And user "participant2" accepts last share
     And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     And user "participant2" joins room "file welcome (2).txt room" with 200 (v4)
-    And user "participant2" leaves room "file welcome (2).txt room" with 200
+    And user "participant2" leaves room "file welcome (2).txt room" with 200 (v4)
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     When user "participant1" deletes last share
     Then user "participant2" is participant of room "file welcome (2).txt room" (v4)
@@ -477,7 +477,7 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" by link with OCS 100
     And user "participant1" gets the room for last share with 200 (v1)
     And user "participant1" joins room "file last share room" with 200 (v4)
-    And user "participant1" leaves room "file last share room" with 200
+    And user "participant1" leaves room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     When user "participant1" deletes last share
     Then user "participant1" is participant of room "file last share room" (v4)
@@ -490,7 +490,7 @@ Feature: conversation/files
     And user "participant1" shares "welcome.txt" by link with OCS 100
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
-    And user "participant2" leaves room "file last share room" with 200
+    And user "participant2" leaves room "file last share room" with 200 (v4)
     And user "participant2" is participant of room "file last share room" (v4)
     When user "participant1" deletes last share
     Then user "participant2" is participant of room "file last share room" (v4)
@@ -507,7 +507,7 @@ Feature: conversation/files
     And user "participant2" logs in
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
-    And user "participant2" leaves room "file last share room" with 200
+    And user "participant2" leaves room "file last share room" with 200 (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     When user "participant1" deletes last share
     Then user "participant2" is not participant of room "file last share room" (v4)
@@ -518,7 +518,7 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" by link with OCS 100
     And user "guest" gets the room for last share with 200 (v1)
     And user "guest" joins room "file last share room" with 200 (v4)
-    And user "guest" leaves room "file last share room" with 200
+    And user "guest" leaves room "file last share room" with 200 (v4)
     When user "participant1" deletes last share
     Then user "guest" is not participant of room "file last share room" (v4)
     And user "guest" joins room "file last share room" with 404 (v4)

@@ -18,7 +18,7 @@ Feature: create
     Then the command was successful
     And the command output contains the text "No calls in progress"
 
-    Then user "participant1" leaves room "room" with 200
+    Then user "participant1" leaves room "room" with 200 (v4)
 
 
   Scenario: Call in progress
@@ -35,7 +35,7 @@ Feature: create
     And the command output contains the text "There are currently 1 calls in progress with 1 participants"
 
     Then user "participant1" leaves call "room" with 200
-    And user "participant1" leaves room "room" with 200
+    And user "participant1" leaves room "room" with 200 (v4)
 
     Given invoking occ with "talk:active-calls"
     Then the command was successful

@@ -306,7 +306,7 @@ Feature: create
       | roomType | 3 |
       | roomName | room |
     And user "participant1" joins room "public room no longer joined to" with 200 (v4)
-    And user "participant1" leaves room "public room no longer joined to" with 200
+    And user "participant1" leaves room "public room no longer joined to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "public room no longer joined to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"

@@ -532,5 +532,5 @@ Feature: chat/mentions
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant3" is participant of room "file last share room" (v4)
     When user "participant1" sends message "hi @participant3" to room "file last share room" with 201
-    And user "participant3" leaves room "file last share room" with 200
+    And user "participant3" leaves room "file last share room" with 200 (v4)
     Then user "participant3" is not participant of room "file last share room" (v4)

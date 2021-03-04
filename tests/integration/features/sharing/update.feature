@@ -853,7 +853,7 @@ Feature: update
     And user "participant2" joins room "public room no longer joined to" with 200 (v4)
     And user "participant3" joins room "public room no longer joined to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room no longer joined to" with OCS 100
-    And user "participant2" leaves room "public room no longer joined to" with 200
+    And user "participant2" leaves room "public room no longer joined to" with 200 (v4)
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expiration             | +3 days |

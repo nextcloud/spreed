@@ -80,7 +80,7 @@ Feature: hooks
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
-    When user "participant2" leaves room "group room" with 200
+    When user "participant2" leaves room "group room" with 200 (v4)
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -111,7 +111,7 @@ Feature: hooks
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant1" adds "participant2" to room "public room" with 200
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
-    When user "participant2" leaves room "public room" with 200
+    When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -143,7 +143,7 @@ Feature: hooks
       | roomName | room |
     And user "participant2" joins room "public room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
-    When user "participant2" leaves room "public room" with 200
+    When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
     And the OCS status code should be "404"
     And user "participant2" gets last share
@@ -324,7 +324,7 @@ Feature: hooks
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
-    When user "participant2" leaves room "public room" with 200
+    When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -348,7 +348,7 @@ Feature: hooks
     And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
-    When user "participant2" leaves room "public room" with 200
+    When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -478,7 +478,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
-    And user "participant1" leaves room "public room" with 200
+    And user "participant1" leaves room "public room" with 200 (v4)
     When user "participant1" joins room "public room" with 200 (v4)
     Then user "participant1" gets all shares
     And the list of returned shares has 0 shares
@@ -631,7 +631,7 @@ Feature: hooks
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
-    And user "participant2" leaves room "public room" with 200
+    And user "participant2" leaves room "public room" with 200 (v4)
     When user "participant2" joins room "public room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
@@ -655,7 +655,7 @@ Feature: hooks
     And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
-    And user "participant2" leaves room "public room" with 200
+    And user "participant2" leaves room "public room" with 200 (v4)
     When user "participant2" joins room "public room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
