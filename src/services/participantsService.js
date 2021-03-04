@@ -185,32 +185,6 @@ const removeCurrentUserFromConversation = async function(token) {
 	return response
 }
 
-const removeUserFromConversation = async function(token, userId) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants`, {
-			params: {
-				participant: userId,
-			},
-		})
-		return response
-	} catch (error) {
-		console.debug(error)
-	}
-}
-
-const removeGuestFromConversation = async function(token, sessionId) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/guests`, {
-			params: {
-				participant: sessionId,
-			},
-		})
-		return response
-	} catch (error) {
-		console.debug(error)
-	}
-}
-
 const removeAttendeeFromConversation = async function(token, attendeeId) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/attendees`, {
 		params: {
@@ -267,8 +241,6 @@ export {
 	leaveConversationSync,
 	addParticipant,
 	removeCurrentUserFromConversation,
-	removeUserFromConversation,
-	removeGuestFromConversation,
 	removeAttendeeFromConversation,
 	promoteToModerator,
 	demoteFromModerator,

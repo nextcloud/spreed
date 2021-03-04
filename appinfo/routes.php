@@ -318,26 +318,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#removeParticipantFromRoom',
-			'url' => '/api/{apiVersion}/room/{token}/participants',
-			'verb' => 'DELETE',
-			'requirements' => [
-				'apiVersion' => 'v(4)',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
 			'name' => 'Room#removeSelfFromRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/self',
-			'verb' => 'DELETE',
-			'requirements' => [
-				'apiVersion' => 'v(4)',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
-			'name' => 'Room#removeGuestFromRoom',
-			'url' => '/api/{apiVersion}/room/{token}/participants/guests',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v(4)',
