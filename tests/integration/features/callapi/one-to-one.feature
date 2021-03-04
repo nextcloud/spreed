@@ -111,7 +111,7 @@ Feature: callapi/one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
-    When user "participant1" removes themselves from room "room" with 200
+    When user "participant1" removes themselves from room "room" with 200 (v4)
     Then user "participant1" is not participant of room "room" (v4)
     When user "participant2" joins room "room" with 200 (v4)
     Then user "participant1" is not participant of room "room" (v4)

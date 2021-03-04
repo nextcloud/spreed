@@ -202,7 +202,7 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | moderator_promoted |
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
-    When user "participant1" removes "participant2" from room "room" with 200
+    When user "participant1" removes "participant2" from room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room       | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | user_removed |

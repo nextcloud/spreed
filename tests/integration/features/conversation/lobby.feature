@@ -208,8 +208,8 @@ Feature: conversation/lobby
     And user "participant4" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
-    And user "participant2" removes themselves from room "room" with 200
-    And user "participant3" removes themselves from room "room" with 200
+    And user "participant2" removes themselves from room "room" with 200 (v4)
+    And user "participant3" removes themselves from room "room" with 200 (v4)
 
 
 

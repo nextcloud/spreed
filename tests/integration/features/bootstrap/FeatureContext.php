@@ -703,21 +703,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userLeavesRoom($user, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userLeavesRoom(string $user, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/self');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $toRemove
@@ -725,7 +725,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userRemovesUserFromRoom($user, $toRemove, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string$apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',

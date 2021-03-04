@@ -384,7 +384,7 @@ Feature: conversation/files
     And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
-    When user "participant1" removes themselves from room "file welcome (2).txt room" with 200
+    When user "participant1" removes themselves from room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is not participant of room "file welcome (2).txt room" (v4)
     And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
     Then user "participant1" is participant of room "file welcome (2).txt room" (v4)
@@ -397,7 +397,7 @@ Feature: conversation/files
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
     And user "participant2" joins room "file welcome.txt room" with 200 (v4)
     And user "participant2" is participant of room "file welcome.txt room" (v4)
-    When user "participant2" removes themselves from room "file welcome.txt room" with 200
+    When user "participant2" removes themselves from room "file welcome.txt room" with 200 (v4)
     And user "participant2" is not participant of room "file welcome.txt room" (v4)
     And user "participant2" joins room "file welcome.txt room" with 200 (v4)
     Then user "participant2" is participant of room "file welcome.txt room" (v4)
@@ -409,7 +409,7 @@ Feature: conversation/files
     And user "participant1" gets the room for last share with 200 (v1)
     And user "participant1" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
-    When user "participant1" removes themselves from room "file last share room" with 200
+    When user "participant1" removes themselves from room "file last share room" with 200 (v4)
     And user "participant1" is not participant of room "file last share room" (v4)
     And user "participant1" joins room "file last share room" with 200 (v4)
     Then user "participant1" is participant of room "file last share room" (v4)
@@ -421,7 +421,7 @@ Feature: conversation/files
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
     And user "participant2" is participant of room "file last share room" (v4)
-    When user "participant2" removes themselves from room "file last share room" with 200
+    When user "participant2" removes themselves from room "file last share room" with 200 (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     And user "participant2" joins room "file last share room" with 200 (v4)
     Then user "participant2" is participant of room "file last share room" (v4)
@@ -435,7 +435,7 @@ Feature: conversation/files
     And user "participant2" gets the room for last share with 200 (v1)
     And user "participant2" joins room "file last share room" with 200 (v4)
     And user "participant2" is participant of room "file last share room" (v4)
-    When user "participant2" removes themselves from room "file last share room" with 200
+    When user "participant2" removes themselves from room "file last share room" with 200 (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     And user "participant2" joins room "file last share room" with 200 (v4)
     Then user "participant2" is participant of room "file last share room" (v4)

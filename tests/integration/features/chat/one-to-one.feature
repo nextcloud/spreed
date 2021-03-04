@@ -60,7 +60,7 @@ Feature: chat/one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "one-to-one room" (v4)
     And user "participant2" is participant of room "one-to-one room" (v4)
-    When user "participant1" removes themselves from room "one-to-one room" with 200
+    When user "participant1" removes themselves from room "one-to-one room" with 200 (v4)
     Then user "participant1" is not participant of room "one-to-one room" (v4)
     When user "participant2" sends message "Message" to room "one-to-one room" with 201
     Then user "participant1" is participant of room "one-to-one room" (v4)

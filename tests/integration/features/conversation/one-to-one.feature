@@ -35,7 +35,7 @@ Feature: one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "room2" (v4)
     And user "participant2" is participant of room "room2" (v4)
-    When user "participant1" removes themselves from room "room2" with 200
+    When user "participant1" removes themselves from room "room2" with 200 (v4)
     Then user "participant1" is not participant of room "room2" (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of room "room2" (v4)
@@ -62,7 +62,7 @@ Feature: one-to-one
       | invite   | participant2 |
     Then user "participant1" is participant of room "room4" (v4)
     And user "participant2" is participant of room "room4" (v4)
-    When user "participant1" removes "participant2" from room "room4" with 400
+    When user "participant1" removes "participant2" from room "room4" with 400 (v4)
     Then user "participant1" is participant of room "room4" (v4)
     And user "participant2" is participant of room "room4" (v4)
 
@@ -167,7 +167,7 @@ Feature: one-to-one
     And user "participant2" is participant of the following rooms (v4)
       | id     | type | participantType |
       | room14 | 1    | 1               |
-    When user "participant1" removes themselves from room "room14" with 200
+    When user "participant1" removes themselves from room "room14" with 200 (v4)
     Then user "participant1" is not participant of room "room14" (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of room "room14" (v4)

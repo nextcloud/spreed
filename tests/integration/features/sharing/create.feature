@@ -148,7 +148,7 @@ Feature: create
       | roomType | 2 |
       | roomName | room |
     And user "participant2" adds "participant1" to room "group room no longer invited to" with 200
-    And user "participant2" removes "participant1" from room "group room no longer invited to" with 200
+    And user "participant2" removes "participant1" from room "group room no longer invited to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room no longer invited to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"

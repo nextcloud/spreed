@@ -322,7 +322,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -331,7 +331,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/self',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

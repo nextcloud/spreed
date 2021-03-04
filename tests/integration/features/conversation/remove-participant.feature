@@ -12,7 +12,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant1" is participant of room "room" (v4)
-    When user "participant1" removes "participant1" from room "room" with 200
+    When user "participant1" removes "participant1" from room "room" with 200 (v4)
     Then user "participant1" is not participant of room "room" (v4)
 
   Scenario: Owner removes self participant from public room when there are other users in the room
@@ -22,7 +22,7 @@ Feature: public
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
-    When user "participant1" removes "participant1" from room "room" with 400
+    When user "participant1" removes "participant1" from room "room" with 400 (v4)
     Then user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
 
@@ -34,7 +34,7 @@ Feature: public
     And user "participant1" promotes "participant2" in room "room" with 200
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
-    When user "participant1" removes "participant1" from room "room" with 200
+    When user "participant1" removes "participant1" from room "room" with 200 (v4)
     Then user "participant1" is not participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
 
@@ -48,7 +48,7 @@ Feature: public
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant1" promotes "participant3" in room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant1" removes "participant3" from room "room" with 200
+    When user "participant1" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: Moderator removes moderator
@@ -60,7 +60,7 @@ Feature: public
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant1" promotes "participant3" in room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 200
+    When user "participant2" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: Moderator removes self participant from empty public room
@@ -69,10 +69,10 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" removes "participant1" from room "room" with 200
+    And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
-    When user "participant2" removes "participant2" from room "room" with 200
+    When user "participant2" removes "participant2" from room "room" with 200 (v4)
     Then user "participant2" is not participant of room "room" (v4)
 
   Scenario: Moderator removes self participant from public room when there are other users in the room
@@ -81,12 +81,12 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" removes "participant1" from room "room" with 200
+    And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
     And user "participant2" adds "participant3" to room "room" with 200
     And user "participant2" is participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant2" from room "room" with 400
+    When user "participant2" removes "participant2" from room "room" with 400 (v4)
     Then user "participant2" is participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
 
@@ -96,13 +96,13 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" promotes "participant2" in room "room" with 200
-    And user "participant1" removes "participant1" from room "room" with 200
+    And user "participant1" removes "participant1" from room "room" with 200 (v4)
     And user "participant1" is not participant of room "room" (v4)
     And user "participant2" adds "participant3" to room "room" with 200
     And user "participant2" promotes "participant3" in room "room" with 200
     And user "participant2" is participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant2" from room "room" with 200
+    When user "participant2" removes "participant2" from room "room" with 200 (v4)
     Then user "participant2" is not participant of room "room" (v4)
     And user "participant3" is participant of room "room" (v4)
 
@@ -114,7 +114,7 @@ Feature: public
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant1" promotes "participant3" in room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 403
+    When user "participant2" removes "participant3" from room "room" with 403 (v4)
     Then user "participant3" is participant of room "room" (v4)
 
   Scenario: Stranger removes moderator
@@ -124,7 +124,7 @@ Feature: public
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant1" promotes "participant3" in room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 404
+    When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is participant of room "room" (v4)
 
 #
@@ -136,7 +136,7 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant1" removes "participant3" from room "room" with 200
+    When user "participant1" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: Moderator removes user
@@ -147,7 +147,7 @@ Feature: public
     And user "participant1" promotes "participant2" in room "room" with 200
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 200
+    When user "participant2" removes "participant3" from room "room" with 200 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: User removes user
@@ -157,7 +157,7 @@ Feature: public
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 403
+    When user "participant2" removes "participant3" from room "room" with 403 (v4)
     Then user "participant3" is participant of room "room" (v4)
 
   Scenario: Stranger removes user
@@ -166,7 +166,7 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 404
+    When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is participant of room "room" (v4)
 
 #
@@ -177,7 +177,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant1" removes "participant3" from room "room" with 404
+    When user "participant1" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: Moderator removes stranger
@@ -187,7 +187,7 @@ Feature: public
     And user "participant1" adds "participant2" to room "room" with 200
     When user "participant1" promotes "participant2" in room "room" with 200
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 404
+    When user "participant2" removes "participant3" from room "room" with 404 (v4)
     Then user "participant3" is not participant of room "room" (v4)
 
   Scenario: User removes stranger
@@ -196,7 +196,7 @@ Feature: public
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 403
+    When user "participant2" removes "participant3" from room "room" with 403 (v4)
     And user "participant3" is not participant of room "room" (v4)
 
   Scenario: Stranger removes stranger
@@ -204,5 +204,5 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     And user "participant3" is not participant of room "room" (v4)
-    When user "participant2" removes "participant3" from room "room" with 404
+    When user "participant2" removes "participant3" from room "room" with 404 (v4)
     And user "participant3" is not participant of room "room" (v4)
