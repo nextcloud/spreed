@@ -19,7 +19,7 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    When user "participant1" renames room "room" to "system test" with 200
+    When user "participant1" renames room "room" to "system test" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | conversation_renamed |
@@ -29,7 +29,7 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    When user "participant1" sets description for room "room" to "New description" with 200
+    When user "participant1" sets description for room "room" to "New description" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | description_set |
@@ -39,8 +39,8 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" sets description for room "room" to "New description" with 200
-    When user "participant1" sets description for room "room" to "" with 200
+    And user "participant1" sets description for room "room" to "New description" with 200 (v4)
+    When user "participant1" sets description for room "room" to "" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | description_removed |
@@ -51,12 +51,12 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    When user "participant1" makes room "room" public with 200
+    When user "participant1" makes room "room" public with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | guests_allowed |
       | room | users     | participant1 | participant1-displayname | conversation_created |
-    When user "participant1" makes room "room" private with 200
+    When user "participant1" makes room "room" private with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | guests_disallowed |
@@ -67,12 +67,12 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    When user "participant1" sets password "123456" for room "room" with 200
+    When user "participant1" sets password "123456" for room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room       | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | password_set |
       | room | users     | participant1 | participant1-displayname | conversation_created |
-    When user "participant1" sets password "" for room "room" with 200
+    When user "participant1" sets password "" for room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | password_removed |
@@ -239,8 +239,8 @@ Feature: System messages
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
-    When user "participant1" locks room "room" with 200
-    And user "participant1" unlocks room "room" with 200
+    When user "participant1" locks room "room" with 200 (v4)
+    And user "participant1" unlocks room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room | users     | participant1 | participant1-displayname | read_only_off        |

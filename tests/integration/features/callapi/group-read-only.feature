@@ -14,14 +14,14 @@ Feature: callapi/group-read-only
     And user "participant2" is participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
-    When user "participant1" locks room "room" with 200
+    When user "participant1" locks room "room" with 200 (v4)
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 403
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant2" joins call "room" with 403
     Then user "participant1" sees 0 peers in call "room" with 403
     And user "participant2" sees 0 peers in call "room" with 403
-    When user "participant1" unlocks room "room" with 200
+    When user "participant1" unlocks room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200
     And user "participant2" joins call "room" with 200
     Then user "participant1" sees 2 peers in call "room" with 200

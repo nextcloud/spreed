@@ -232,7 +232,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -250,7 +250,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -259,7 +259,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -268,7 +268,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/description',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -277,7 +277,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/read-only',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -295,7 +295,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/password',
 			'verb' => 'PUT',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

@@ -72,7 +72,7 @@ Feature: one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "room5" (v4)
     And user "participant2" is participant of room "room5" (v4)
-    When user "participant1" renames room "room5" to "new name" with 400
+    When user "participant1" renames room "room5" to "new name" with 400 (v4)
 
   Scenario: User1 invites user2 to a one2one room and tries to make it public
     Given user "participant1" creates room "room6" (v4)
@@ -80,7 +80,7 @@ Feature: one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "room6" (v4)
     And user "participant2" is participant of room "room6" (v4)
-    When user "participant1" makes room "room6" public with 400
+    When user "participant1" makes room "room6" public with 400 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id    | type | participantType |
       | room6 | 1    | 1               |

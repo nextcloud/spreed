@@ -763,15 +763,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" renames room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" renames room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $newName
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userRenamesRoom($user, $identifier, $newName, $statusCode, $apiVersion = 'v1') {
+	public function userRenamesRoom(string $user, string $identifier, string $newName, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier],
@@ -781,16 +781,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sets description for room "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @When /^user "([^"]*)" sets description for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $description
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode
 	 */
-	public function userSetsDescriptionForRoomTo($user, $identifier, $description, $statusCode, $apiVersion = 'v3') {
+	public function userSetsDescriptionForRoomTo(string $user, string $identifier, string $description, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' .$apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/description',
@@ -800,15 +800,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @When /^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $password
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSetsTheRoomPassword($user, $password, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userSetsTheRoomPassword(string $user, string $password, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/password',
@@ -870,15 +870,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $newType
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userChangesTypeOfTheRoom($user, $identifier, $newType, $statusCode, $apiVersion = 'v1') {
+	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$newType === 'public' ? 'POST' : 'DELETE',
@@ -888,15 +888,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newState
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userChangesReadOnlyStateOfTheRoom($user, $newState, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userChangesReadOnlyStateOfTheRoom(string $user, string $newState, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/read-only',

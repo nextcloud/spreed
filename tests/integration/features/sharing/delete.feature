@@ -147,7 +147,7 @@ Feature: delete
     Given user "participant2" creates room "group room not invited to" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200
+    And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200 (v4)
     And user "participant2" adds "participant3" to room "group room not invited to" with 200
     And user "participant2" shares "welcome.txt" with room "group room not invited to" with OCS 100
     When user "participant1" deletes last share
@@ -180,7 +180,7 @@ Feature: delete
     Given user "participant2" creates room "public room not joined to" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" renames room "public room not joined to" to "Public room not joined to" with 200
+    And user "participant2" renames room "public room not joined to" to "Public room not joined to" with 200 (v4)
     And user "participant2" adds "participant3" to room "public room not joined to" with 200
     And user "participant2" shares "welcome.txt" with room "public room not joined to" with OCS 100
     When user "participant1" deletes last share
@@ -217,7 +217,7 @@ Feature: delete
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -269,7 +269,7 @@ Feature: delete
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -307,7 +307,7 @@ Feature: delete
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100

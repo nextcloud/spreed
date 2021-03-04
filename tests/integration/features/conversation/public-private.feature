@@ -11,11 +11,11 @@ Feature: public
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    When user "participant1" makes room "room" private with 200
+    When user "participant1" makes room "room" private with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
-    When user "participant1" makes room "room" public with 200
+    When user "participant1" makes room "room" public with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -29,11 +29,11 @@ Feature: public
       | room | 3    | 1               |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" promotes "participant2" in room "room" with 200
-    When user "participant2" makes room "room" private with 200
+    When user "participant2" makes room "room" private with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
-    When user "participant2" makes room "room" public with 200
+    When user "participant2" makes room "room" public with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -46,15 +46,15 @@ Feature: public
       | id   | type | participantType |
       | room | 3    | 1               |
     And user "participant1" adds "participant2" to room "room" with 200
-    When user "participant2" makes room "room" private with 403
+    When user "participant2" makes room "room" private with 403 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    When user "participant1" makes room "room" private with 200
+    When user "participant1" makes room "room" private with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
-    When user "participant2" makes room "room" public with 403
+    When user "participant2" makes room "room" public with 403 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
@@ -66,15 +66,15 @@ Feature: public
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    When user "participant2" makes room "room" private with 404
+    When user "participant2" makes room "room" private with 404 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
-    When user "participant1" makes room "room" private with 200
+    When user "participant1" makes room "room" private with 200 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
-    When user "participant2" makes room "room" public with 404
+    When user "participant2" makes room "room" public with 404 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 2    | 1               |
