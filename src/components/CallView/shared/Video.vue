@@ -169,10 +169,14 @@ export default {
 			}
 		},
 
+		isNotConnected() {
+			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
+		},
+
 		containerClass() {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
-				'not-connected': !this.placeholderForPromoted && this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED,
+				'not-connected': !this.placeholderForPromoted && this.isNotConnected,
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
@@ -187,7 +191,7 @@ export default {
 
 		avatarClass() {
 			return {
-				'icon-loading': this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
+				'icon-loading': this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
 			}
 		},
 
