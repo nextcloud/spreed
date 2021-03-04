@@ -41,6 +41,8 @@
 					:key="message.id"
 					v-bind="message"
 					:is-first-message="index === 0"
+					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
+					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
 					:last-read-message-id="lastReadMessageId"
 					:actor-type="actorType"
 					:actor-id="actorId"
@@ -86,6 +88,16 @@ export default {
 		messages: {
 			type: Array,
 			required: true,
+		},
+
+		previousMessageId: {
+			type: Number,
+			default: 0,
+		},
+
+		nextMessageId: {
+			type: Number,
+			default: 0,
 		},
 
 		lastReadMessageId: {

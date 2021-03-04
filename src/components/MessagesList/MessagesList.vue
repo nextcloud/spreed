@@ -40,12 +40,14 @@ get the messagesList array and loop through the list to generate the messages.
 				class="icon-loading" />
 		</div>
 		<MessagesGroup
-			v-for="item of messagesGroupedByAuthor"
+			v-for="(item, index) of messagesGroupedByAuthor"
 			:key="item[0].id"
 			:style="{ height: item.height + 'px' }"
 			v-bind="item"
 			:last-read-message-id="visualLastReadMessageId"
 			:messages="item"
+			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
+			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0"
 			@deleteMessage="handleDeleteMessage" />
 		<template v-if="!messagesGroupedByAuthor.length">
 			<LoadingPlaceholder
@@ -676,45 +678,6 @@ export default {
 		},
 
 		/**
-		 * Find the next message element following the given message DOM element.
-		 *
-		 * This traverses the next messages and message groups to find the next one.
-		 *
-		 * @param {object} messageEl DOM element for message to start with
-		 * @returns {object} DOM element for the next message or null if none found
-		 */
-		findNextMessageElement(messageEl) {
-			// pick the previous message
-			let searchEl = messageEl.nextElementSibling
-			while (searchEl && !searchEl.matches('.message')) {
-				searchEl = searchEl.nextElementSibling
-			}
-
-			if (searchEl) {
-				return searchEl
-			} else {
-				// nothing found, then need to search in the next message group
-				searchEl = messageEl.closest('.message-group').nextElementSibling
-				while (searchEl && !searchEl.matches('.message-group')) {
-					searchEl = searchEl.nextElementSibling
-				}
-
-				// found the next message group
-				if (searchEl) {
-					// pick the first message
-					searchEl = searchEl.querySelector('.message:first-child')
-				}
-
-				if (searchEl) {
-					// we found it!
-					return searchEl
-				}
-			}
-
-			return null
-		},
-
-		/**
 		 * Finds the last message that is fully visible in the scroller viewport
 		 *
 		 * Starts searching forward after the given message element until we reach
@@ -736,8 +699,7 @@ export default {
 				}
 
 				previousEl = el
-				// note: for scability reasons we don't simply "get all elements"
-				el = this.findNextMessageElement(el)
+				el = document.getElementById('message_' + el.getAttribute('data-next-message-id'))
 			}
 
 			return previousEl
