@@ -49,11 +49,11 @@ title: Capabilities
 * `config => attachments => folder` - User defined folder where items should be uploaded to
 * `config => conversations => can-create` - Whether the user can create public and group conversations, if not only one-to-one conversations are allowed
 * `force-mute` - "forceMute" signaling messages can be sent to mute other participants.
-* `conversation-v2` - The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).
+* `conversation-v2` - ~~The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).~~ Replaced by API v4 when `conversation-v4` is set.
 * `chat-reference-id` - an optional referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message
 
 ## 10.1
-* `conversation-v3` - Whether conversations API v3 is available
+* `conversation-v3` - ~~Whether conversations API v3 is available~~ Replaced by API v4 when `conversation-v4` is set.
 * `sip-support` - Whether SIP can be configured and enabled by moderators. The conversations API will come with some new values `sipEnabled` which signals whether this conversation has SIP configured as well as `canEnableSIP` to see if a user can enable it. When it is enabled `attendeePin` will contain the unique dial-in code for this user.
 
 ## 11.0
@@ -69,3 +69,6 @@ title: Capabilities
 * `delete-messages` - Allows to delete chat messages up to 6 hours for your own messages or when being a moderator. On deleting the message text will be replaced and a follow up system message will make sure clients and users update it in their cache and storage.
 * `rich-object-sharing` - Rich objects can be shared to chats. See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob/master/lib/public/RichObjectStrings/Definitions.php) for more details on supported rich objects and required data.
 * `conversation-call-flags` - Whether the room api provides the `callFlag` to tell apart video and audio calls
+
+## 12.0
+* `conversation-v4` - Whether conversations API v4 is available. This also means that v1, v2 and v3 are **not** available anymore. The changes on API v4 allow a user to have multiple sessions in the same conversation on different devices which is incompatible with the data structure that was used by the previous APIs.
