@@ -285,6 +285,16 @@ const actions = {
 	},
 
 	/**
+	 * Remove temporary message from store after receiving the parsed one from server
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} message the temporary message;
+	 */
+	removeTemporaryMessageFromStore(context, message) {
+		context.commit('deleteMessage', message)
+	},
+
+	/**
 	 * @param {object} context default store context;
 	 * @param {string} token Token of the conversation
 	 * @param {string} id Id of the first known chat message

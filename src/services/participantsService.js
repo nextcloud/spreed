@@ -50,18 +50,14 @@ const joinConversation = async(token) => {
 			force: forceJoin,
 		})
 
-		const conversation = response.data.ocs.data
-		if (conversation.actorType !== 'guests') {
-			store.dispatch('addConversation', response.data.ocs.data)
-		}
-
 		// Update the participant and actor session after a force join
+		store.dispatch('setCurrentParticipant', response.data.ocs.data)
+		store.dispatch('addConversation', response.data.ocs.data)
 		store.dispatch('updateSessionId', {
 			token: token,
 			participantIdentifier: store.getters.getParticipantIdentifier(),
 			sessionId: response.data.ocs.data.sessionId,
 		})
-		store.dispatch('setCurrentParticipant', response.data.ocs.data)
 
 		// FIXME Signaling should not be synchronous
 		await signalingJoinConversation(token, response.data.ocs.data.sessionId)
