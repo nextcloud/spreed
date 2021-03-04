@@ -563,9 +563,11 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $this->participant->getAttendee();
-		if (!$this->participant->hasModeratorPermissions(false)
-			&& ($message->getActorType() !== $attendee->getActorType()
-				|| $message->getActorId() !== $attendee->getActorId())) {
+		$isOwnMessage = $message->getActorType() === $attendee->getActorType()
+			&& $message->getActorId() === $attendee->getActorId();
+		if (!$isOwnMessage
+			&& (!$this->participant->hasModeratorPermissions(false)
+				|| $this->room->getType() === Room::ONE_TO_ONE_CALL)) {
 			// Actor is not a moderator or not the owner of the message
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
