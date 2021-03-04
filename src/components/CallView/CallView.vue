@@ -686,14 +686,6 @@ export default {
 	vertical-align: top; /* fix white line below video */
 }
 
-#videos .videoContainer.not-connected ::v-deep {
-	video,
-	.avatardiv,
-	.avatar.guest {
-		opacity: 0.5;
-	}
-}
-
 #videos .videoContainer ::v-deep .avatardiv {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }

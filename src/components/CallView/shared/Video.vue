@@ -439,6 +439,13 @@ export default {
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
+.not-connected {
+	video,
+	.avatar-container {
+		opacity: 0.5;
+	}
+}
+
 .video-container-grid {
 	position: relative;
 	height: 100%;
