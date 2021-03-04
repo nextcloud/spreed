@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.3 – 2021-03-04
+### Fixed
+- Fixed a bug in the migration that could prevent copying all participants to the attendee table
+  [#5245](https://github.com/nextcloud/spreed/pull/5245)
+
 ## 10.1.2 – 2021-02-22
 ### Added
 - Added pagination to the gridview in case there are too many participants
