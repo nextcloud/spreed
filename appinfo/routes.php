@@ -340,7 +340,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/guests',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -349,7 +349,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/attendees',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -367,7 +367,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/participants/resend-invitations',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -403,7 +403,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -412,7 +412,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -421,7 +421,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/pin/{pin}',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v3',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 				'pin' => '^\d{7,32}$',
 			],
@@ -431,7 +431,7 @@ return [
 			'url' => '/api/{apiVersion}/room/{token}/notify',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
