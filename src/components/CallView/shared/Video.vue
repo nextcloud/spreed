@@ -173,6 +173,10 @@ export default {
 			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
 		},
 
+		isLoading() {
+			return this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
+		},
+
 		containerClass() {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
@@ -191,7 +195,7 @@ export default {
 
 		avatarClass() {
 			return {
-				'icon-loading': this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
+				'icon-loading': this.isLoading,
 			}
 		},
 
