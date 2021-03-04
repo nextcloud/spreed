@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.1.1 – 2021-03-04
+### Fixed
+- Fixed a bug in the migration that could prevent copying all participants to the attendee table
+  [#5244](https://github.com/nextcloud/spreed/pull/5244)
+
+## 10.1.3 – 2021-03-04
+### Fixed
+- Fixed a bug in the migration that could prevent copying all participants to the attendee table
+  [#5245](https://github.com/nextcloud/spreed/pull/5245)
+
 ## 11.1.0 – 2021-02-23
 ### Added
 - Integrate with Deck to allow posting Deck cards to Talk conversations
