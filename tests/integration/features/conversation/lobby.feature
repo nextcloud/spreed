@@ -165,21 +165,21 @@ Feature: conversation/lobby
     And user "participant1" promotes "guest" in room "room" with 200 (v4)
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
-    Then user "participant1" joins call "room" with 200
-    And user "participant2" joins call "room" with 200
-    And user "participant3" joins call "room" with 412
-    And user "participant4" joins call "room" with 412
-    And user "guest" joins call "room" with 200
-    And user "guest2" joins call "room" with 412
-    And user "participant1" sees 3 peers in call "room" with 200
-    And user "participant2" sees 3 peers in call "room" with 200
-    And user "participant3" sees 0 peers in call "room" with 412
-    And user "participant4" sees 0 peers in call "room" with 412
-    And user "guest" sees 3 peers in call "room" with 200
-    And user "guest2" sees 0 peers in call "room" with 412
-    And user "participant1" leaves call "room" with 200
-    And user "participant2" leaves call "room" with 200
-    And user "guest" leaves call "room" with 200
+    Then user "participant1" joins call "room" with 200 (v4)
+    And user "participant2" joins call "room" with 200 (v4)
+    And user "participant3" joins call "room" with 412 (v4)
+    And user "participant4" joins call "room" with 412 (v4)
+    And user "guest" joins call "room" with 200 (v4)
+    And user "guest2" joins call "room" with 412 (v4)
+    And user "participant1" sees 3 peers in call "room" with 200 (v4)
+    And user "participant2" sees 3 peers in call "room" with 200 (v4)
+    And user "participant3" sees 0 peers in call "room" with 412 (v4)
+    And user "participant4" sees 0 peers in call "room" with 412 (v4)
+    And user "guest" sees 3 peers in call "room" with 200 (v4)
+    And user "guest2" sees 0 peers in call "room" with 412 (v4)
+    And user "participant1" leaves call "room" with 200 (v4)
+    And user "participant2" leaves call "room" with 200 (v4)
+    And user "guest" leaves call "room" with 200 (v4)
 
   Scenario: lobby prevents some room actions for non moderators
     Given user "participant1" creates room "room" (v4)

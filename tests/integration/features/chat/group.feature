@@ -36,7 +36,7 @@ Feature: chat/group
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
-    And user "guest" joins call "group room" with 404
+    And user "guest" joins call "group room" with 404 (v4)
     When user "guest" sends message "Message 1" to room "group room" with 404
     And user "participant1" sends message "Message 2" to room "group room" with 201
     Then user "guest" sees the following messages in room "group room" with 404

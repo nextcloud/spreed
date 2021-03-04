@@ -985,15 +985,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userJoinsCall($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userJoinsCall(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier],
@@ -1013,29 +1013,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" leaves call "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" leaves call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userLeavesCall($user, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userLeavesCall(string $user, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees (\d+) peers in call "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sees (\d+) peers in call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
-	 * @param string $numPeers
+	 * @param int $numPeers
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSeesPeersInCall($user, $numPeers, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userSeesPeersInCall(string $user, int $numPeers, string $identifier, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);

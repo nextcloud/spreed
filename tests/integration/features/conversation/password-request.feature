@@ -165,9 +165,9 @@ Feature: conversation/password-request
       | sendPasswordByTalk | true |
     And user "guest" creates the password request room for last share with 201 (v1)
     And user "guest" joins room "password request for last share room" with 200 (v4)
-    When user "guest" joins call "password request for last share room" with 200
-    Then user "guest" sees 1 peers in call "password request for last share room" with 200
-    And user "participant1" sees 1 peers in call "password request for last share room" with 200
+    When user "guest" joins call "password request for last share room" with 200 (v4)
+    Then user "guest" sees 1 peers in call "password request for last share room" with 200 (v4)
+    And user "participant1" sees 1 peers in call "password request for last share room" with 200 (v4)
 
   Scenario: owner can join a call
     Given user "participant1" shares "welcome.txt" by link with OCS 100
@@ -176,10 +176,10 @@ Feature: conversation/password-request
     And user "guest" creates the password request room for last share with 201 (v1)
     And user "guest" joins room "password request for last share room" with 200 (v4)
     And user "participant1" joins room "password request for last share room" with 200 (v4)
-    And user "guest" joins call "password request for last share room" with 200
-    When user "participant1" joins call "password request for last share room" with 200
-    Then user "guest" sees 2 peers in call "password request for last share room" with 200
-    And user "participant1" sees 2 peers in call "password request for last share room" with 200
+    And user "guest" joins call "password request for last share room" with 200 (v4)
+    When user "participant1" joins call "password request for last share room" with 200 (v4)
+    Then user "guest" sees 2 peers in call "password request for last share room" with 200 (v4)
+    And user "participant1" sees 2 peers in call "password request for last share room" with 200 (v4)
 
 
 

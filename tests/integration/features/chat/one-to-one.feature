@@ -34,7 +34,7 @@ Feature: chat/one-to-one
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    And user "guest" joins call "one-to-one room" with 404
+    And user "guest" joins call "one-to-one room" with 404 (v4)
     When user "guest" sends message "Message 1" to room "one-to-one room" with 404
     And user "participant1" sends message "Message 2" to room "one-to-one room" with 201
     Then user "guest" sees the following messages in room "one-to-one room" with 404
