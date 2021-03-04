@@ -1049,7 +1049,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sends message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sends message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $message
@@ -1073,7 +1073,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $type
@@ -1103,7 +1103,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $message
@@ -1121,7 +1121,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $message
@@ -1139,7 +1139,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $message
@@ -1166,7 +1166,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sends reply "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sends reply "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $reply
@@ -1193,7 +1193,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -1209,7 +1209,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -1234,7 +1234,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -1307,7 +1307,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following system messages in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sees the following system messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -1348,7 +1348,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" gets the following candidate mentions in room "([^"]*)" for "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" gets the following candidate mentions in room "([^"]*)" for "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -1396,7 +1396,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $name
@@ -1439,7 +1439,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v(1|2|3))\))?$/
+	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $setting
