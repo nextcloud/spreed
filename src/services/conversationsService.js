@@ -33,7 +33,7 @@ let maintenanceWarning = null
  */
 const fetchConversations = async function() {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'room')
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + 'room')
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
@@ -59,7 +59,7 @@ const fetchConversations = async function() {
  */
 const fetchConversation = async function(token) {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}`)
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}`)
 
 		if (maintenanceWarning) {
 			maintenanceWarning.hideToast()
@@ -94,7 +94,7 @@ const checkTalkVersionHash = function(response) {
  * @param {object} options options
  */
 const searchListedConversations = async function({ searchText }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + 'listed-room', Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + 'listed-room', Object.assign(options, {
 		params: {
 			searchTerm: searchText,
 		},
@@ -139,7 +139,7 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
  */
 const createOneToOneConversation = async function(userId) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room`, { roomType: CONVERSATION.TYPE.ONE_TO_ONE, invite: userId })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room`, { roomType: CONVERSATION.TYPE.ONE_TO_ONE, invite: userId })
 		return response
 	} catch (error) {
 		console.debug('Error creating new one to one conversation: ', error)
@@ -153,7 +153,7 @@ const createOneToOneConversation = async function(userId) {
  */
 const createGroupConversation = async function(invite, source) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, invite, source: source || 'groups' })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, invite, source: source || 'groups' })
 		return response
 	} catch (error) {
 		console.debug('Error creating new group conversation: ', error)
@@ -166,7 +166,7 @@ const createGroupConversation = async function(invite, source) {
  */
 const createPrivateConversation = async function(conversationName) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, roomName: conversationName })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, roomName: conversationName })
 		return response
 	} catch (error) {
 		console.debug('Error creating new private conversation: ', error)
@@ -179,7 +179,7 @@ const createPrivateConversation = async function(conversationName) {
  */
 const createPublicConversation = async function(conversationName) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room`, { roomType: CONVERSATION.TYPE.PUBLIC, roomName: conversationName })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room`, { roomType: CONVERSATION.TYPE.PUBLIC, roomName: conversationName })
 		return response
 	} catch (error) {
 		console.debug('Error creating new public conversation: ', error)
@@ -192,7 +192,7 @@ const createPublicConversation = async function(conversationName) {
  * @param {string} password the password to be set
  */
 const setConversationPassword = async function(token, password) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/password`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/password`, {
 		password,
 	})
 	return response
@@ -204,7 +204,7 @@ const setConversationPassword = async function(token, password) {
  * @param {string} name the name to be set
  */
 const setConversationName = async function(token, name) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}`, {
 		roomName: name,
 	})
 	return response
@@ -216,7 +216,7 @@ const setConversationName = async function(token, name) {
  */
 const deleteConversation = async function(token) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}`)
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}`)
 		return response
 	} catch (error) {
 		console.debug('Error while deleting the conversation: ', error)
@@ -229,7 +229,7 @@ const deleteConversation = async function(token) {
  */
 const addToFavorites = async function(token) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/favorite`)
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/favorite`)
 		return response
 	} catch (error) {
 		console.debug('Error while adding the conversation to favorites: ', error)
@@ -242,7 +242,7 @@ const addToFavorites = async function(token) {
  */
 const removeFromFavorites = async function(token) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/favorite`)
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/favorite`)
 		return response
 	} catch (error) {
 		console.debug('Error while removing the conversation from favorites: ', error)
@@ -256,7 +256,7 @@ const removeFromFavorites = async function(token) {
  */
 const setNotificationLevel = async function(token, level) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/notify`, { level })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/notify`, { level })
 		return response
 	} catch (error) {
 		console.debug('Error while setting the notification level: ', error)
@@ -269,7 +269,7 @@ const setNotificationLevel = async function(token, level) {
  */
 const makePublic = async function(token) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/public`)
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/public`)
 		return response
 	} catch (error) {
 		console.debug('Error while making the conversation public: ', error)
@@ -282,7 +282,7 @@ const makePublic = async function(token) {
  */
 const makePrivate = async function(token) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/public`)
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/public`)
 		return response
 	} catch (error) {
 		console.debug('Error while making the conversation private: ', error)
@@ -295,7 +295,7 @@ const makePrivate = async function(token) {
  * @param {int} newState The new SIP state to set
  */
 const setSIPEnabled = async function(token, newState) {
-	return axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/webinar/sip`, {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/webinar/sip`, {
 		state: newState,
 	})
 }
@@ -308,7 +308,7 @@ const setSIPEnabled = async function(token, newState) {
  */
 const changeLobbyState = async function(token, newState, timestamp) {
 	try {
-		const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/webinar/lobby`, {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/webinar/lobby`, {
 			state: newState,
 			timer: timestamp,
 		})
@@ -325,7 +325,7 @@ const changeLobbyState = async function(token, newState, timestamp) {
  */
 const changeReadOnlyState = async function(token, readOnly) {
 	try {
-		const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/read-only`, {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/read-only`, {
 			state: readOnly,
 		})
 		return response
@@ -340,14 +340,14 @@ const changeReadOnlyState = async function(token, readOnly) {
  * @param {int} listable The new listable scope to set
  */
 const changeListable = async function(token, listable) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/listable`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/listable`, {
 		scope: listable,
 	})
 	return response
 }
 
 const setConversationDescription = async function(token, description) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/description`, {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/description`, {
 		description,
 	})
 	return response

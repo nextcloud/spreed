@@ -46,7 +46,7 @@ const joinConversation = async(token) => {
 	const forceJoin = SessionStorage.getItem('joined_conversation') === token
 
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants/active`, {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/active`, {
 			force: forceJoin,
 		})
 
@@ -132,7 +132,7 @@ const forceJoinConversation = async(token) => {
  * @param {string} token The conversation token;
  */
 const rejoinConversation = async(token) => {
-	return axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants/active`)
+	return axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/active`)
 }
 
 /**
@@ -145,7 +145,7 @@ const leaveConversation = async function(token) {
 		// FIXME Signaling should not be synchronous
 		await signalingLeaveConversation(token)
 
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants/active`)
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/active`)
 		return response
 	} catch (error) {
 		console.debug(error)
@@ -158,7 +158,7 @@ const leaveConversation = async function(token) {
  * @param {string} token The conversation token;
  */
 const leaveConversationSync = function(token) {
-	axios.delete(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/active')
+	axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/active`)
 }
 
 /**
@@ -168,7 +168,7 @@ const leaveConversationSync = function(token) {
  * @param {string} source the source Source of the participant as returned by the autocomplete suggestion endpoint (default is users)
  */
 const addParticipant = async function(token, newParticipant, source) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants`, {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants`, {
 		newParticipant,
 		source,
 	})
@@ -181,13 +181,13 @@ const addParticipant = async function(token, newParticipant, source) {
  * @param {string} token The conversation token;
  */
 const removeCurrentUserFromConversation = async function(token) {
-	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants/self`)
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/self`)
 	return response
 }
 
 const removeUserFromConversation = async function(token, userId) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants`, {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants`, {
 			params: {
 				participant: userId,
 			},
@@ -200,7 +200,7 @@ const removeUserFromConversation = async function(token, userId) {
 
 const removeGuestFromConversation = async function(token, sessionId) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/participants/guests`, {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/guests`, {
 			params: {
 				participant: sessionId,
 			},
@@ -212,7 +212,7 @@ const removeGuestFromConversation = async function(token, sessionId) {
 }
 
 const removeAttendeeFromConversation = async function(token, attendeeId) {
-	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3', 2) + `room/${token}/attendees`, {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/attendees`, {
 		params: {
 			attendeeId,
 		},
@@ -221,12 +221,12 @@ const removeAttendeeFromConversation = async function(token, attendeeId) {
 }
 
 const promoteToModerator = async(token, options) => {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/moderators', options)
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/moderators`, options)
 	return response
 }
 
 const demoteFromModerator = async(token, options) => {
-	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/moderators', {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/moderators`, {
 		params: options,
 	})
 	return response
@@ -236,12 +236,12 @@ const fetchParticipants = async(token, options) => {
 	options = options || {}
 	options.params = options.params || {}
 	options.params.includeStatus = true
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants', options)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants`, options)
 	return response
 }
 
 const setGuestUserName = async(token, userName) => {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest', 2) + token + '/name', {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `/guest/${token}/name`, {
 		displayName: userName,
 	})
 	return response
@@ -255,7 +255,7 @@ const setGuestUserName = async(token, userName) => {
  * @param {int} attendeeId attendee id to target, or null for all
  */
 const resendInvitations = async(token, { attendeeId = null }) => {
-	await axios.post(generateOcsUrl('apps/spreed/api/v3/room', 2) + token + '/participants/resend-invitations', {
+	await axios.post(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}/participants/resend-invitations`, {
 		attendeeId,
 	})
 }

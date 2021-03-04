@@ -112,7 +112,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v4', 2) + 'room').then((response) => {
 				this.rooms = response.data.ocs.data.sort(this.sortConversations)
 				this.loading = false
 			})

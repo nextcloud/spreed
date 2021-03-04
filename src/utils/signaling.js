@@ -242,7 +242,7 @@ Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 
 Signaling.Base.prototype.joinCall = function(token, flags) {
 	return new Promise((resolve, reject) => {
-		axios.post(generateOcsUrl('apps/spreed/api/v1/call', 2) + token, {
+		axios.post(generateOcsUrl('apps/spreed/api/v4/call', 2) + token, {
 			flags: flags,
 		})
 			.then(function() {
@@ -273,7 +273,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 			return
 		}
 
-		axios.delete(generateOcsUrl('apps/spreed/api/v1/call', 2) + token)
+		axios.delete(generateOcsUrl('apps/spreed/api/v4/call', 2) + token)
 			.then(function() {
 				this._trigger('leaveCall', [token, keepToken])
 				this._leaveCallSuccess(token)

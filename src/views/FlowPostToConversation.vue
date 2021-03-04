@@ -77,7 +77,7 @@ export default {
 	},
 	methods: {
 		fetchRooms() {
-			axios.get(generateOcsUrl('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('/apps/spreed/api/v4', 2) + 'room').then((response) => {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {
 					return room.readOnly === CONVERSATION.STATE.READ_WRITE
 				})

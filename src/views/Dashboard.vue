@@ -153,7 +153,7 @@ export default {
 
 	methods: {
 		fetchRooms() {
-			axios.get(generateOcsUrl('apps/spreed/api/v2', 2) + 'room').then((response) => {
+			axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + 'room').then((response) => {
 				const rooms = response.data.ocs.data
 				const importantRooms = rooms.filter((conversation) => {
 					return conversation.hasCall
