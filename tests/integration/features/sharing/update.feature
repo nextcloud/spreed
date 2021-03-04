@@ -203,7 +203,7 @@ Feature: update
       | roomName | room |
     And user "participant1" renames room "own public room" to "Own public room" with 200
     And user "participant1" adds "participant2" to room "own public room" with 200
-    And user "participant3" joins room "own public room" with 200
+    And user "participant3" joins room "own public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "own public room" with OCS 100
     When user "participant1" updates last share with
       | permissions            | 1 |
@@ -270,7 +270,7 @@ Feature: update
       | roomName | room |
     And user "participant2" renames room "public room invited to" to "Public room invited to" with 200
     And user "participant2" adds "participant1" to room "public room invited to" with 200
-    And user "participant3" joins room "public room invited to" with 200
+    And user "participant3" joins room "public room invited to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room invited to" with OCS 100
     When user "participant1" updates last share with
       | permissions            | 1 |
@@ -336,8 +336,8 @@ Feature: update
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room self joined to" to "Public room self joined to" with 200
-    And user "participant1" joins room "public room self joined to" with 200
-    And user "participant3" joins room "public room self joined to" with 200
+    And user "participant1" joins room "public room self joined to" with 200 (v4)
+    And user "participant3" joins room "public room self joined to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room self joined to" with OCS 100
     When user "participant1" updates last share with
       | permissions            | 1 |
@@ -701,7 +701,7 @@ Feature: update
       | roomName | room |
     And user "participant2" renames room "own public room" to "Own public room" with 200
     And user "participant2" adds "participant1" to room "own public room" with 200
-    And user "participant3" joins room "own public room" with 200
+    And user "participant3" joins room "own public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "own public room" with OCS 100
     When user "participant2" updates last share with
       | permissions            | 1 |
@@ -751,7 +751,7 @@ Feature: update
       | roomName | room |
     And user "participant1" renames room "public room invited to" to "Public room invited to" with 200
     And user "participant1" adds "participant2" to room "public room invited to" with 200
-    And user "participant3" joins room "public room invited to" with 200
+    And user "participant3" joins room "public room invited to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room invited to" with OCS 100
     When user "participant2" updates last share with
       | permissions            | 1 |
@@ -800,8 +800,8 @@ Feature: update
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room self joined to" with 200
-    And user "participant2" joins room "public room self joined to" with 200
-    And user "participant3" joins room "public room self joined to" with 200
+    And user "participant2" joins room "public room self joined to" with 200 (v4)
+    And user "participant3" joins room "public room self joined to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room self joined to" with OCS 100
     When user "participant2" updates last share with
       | permissions            | 1 |
@@ -850,8 +850,8 @@ Feature: update
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room no longer joined to" to "Public room no longer joined to" with 200
-    And user "participant2" joins room "public room no longer joined to" with 200
-    And user "participant3" joins room "public room no longer joined to" with 200
+    And user "participant2" joins room "public room no longer joined to" with 200 (v4)
+    And user "participant3" joins room "public room no longer joined to" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room no longer joined to" with OCS 100
     And user "participant2" leaves room "public room no longer joined to" with 200
     When user "participant2" updates last share with

@@ -33,7 +33,7 @@ Feature: hooks
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     Then user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -141,7 +141,7 @@ Feature: hooks
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
     When user "participant2" leaves room "public room" with 200
     Then user "participant1" gets last share
@@ -322,7 +322,7 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     When user "participant2" leaves room "public room" with 200
     Then user "participant1" gets last share
@@ -345,7 +345,7 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     When user "participant2" leaves room "public room" with 200
@@ -476,10 +476,10 @@ Feature: hooks
     Given user "participant2" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" joins room "public room" with 200
+    And user "participant1" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant1" leaves room "public room" with 200
-    When user "participant1" joins room "public room" with 200
+    When user "participant1" joins room "public room" with 200 (v4)
     Then user "participant1" gets all shares
     And the list of returned shares has 0 shares
     And user "participant2" gets all received shares
@@ -629,10 +629,10 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" leaves room "public room" with 200
-    When user "participant2" joins room "public room" with 200
+    When user "participant2" joins room "public room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -652,11 +652,11 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
-    And user "participant2" joins room "public room" with 200
+    And user "participant2" joins room "public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
     And user "participant2" leaves room "public room" with 200
-    When user "participant2" joins room "public room" with 200
+    When user "participant2" joins room "public room" with 200 (v4)
     Then user "participant2" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -759,7 +759,7 @@ Feature: hooks
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "own public room" with 200
-    And user "participant3" joins room "own public room" with 200
+    And user "participant3" joins room "own public room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "own public room" with OCS 100
     When user "participant1" deletes room "own public room" with 200
     Then user "participant1" gets last share

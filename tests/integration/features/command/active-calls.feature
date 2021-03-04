@@ -12,7 +12,7 @@ Feature: create
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    Then user "participant1" joins room "room" with 200
+    Then user "participant1" joins room "room" with 200 (v4)
 
     Given invoking occ with "talk:active-calls"
     Then the command was successful
@@ -26,7 +26,7 @@ Feature: create
       | roomType | 3 |
       | roomName | room |
 
-    Then user "participant1" joins room "room" with 200
+    Then user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200
 
     Given invoking occ with "talk:active-calls"

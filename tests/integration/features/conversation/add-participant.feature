@@ -73,7 +73,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" joins room "room" with 200
+    And user "participant2" joins room "room" with 200 (v4)
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
@@ -94,7 +94,7 @@ Feature: public
     And user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" joins room "room" with 200
+    And user "participant2" joins room "room" with 200 (v4)
     # participant3 already present, so it will be skipped
     And user "participant1" adds "participant3" to room "room" with 200
     When user "participant1" adds group "group1" to room "room" with 200

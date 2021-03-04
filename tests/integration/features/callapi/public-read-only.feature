@@ -14,9 +14,9 @@ Feature: callapi/public-read-only
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
     When user "participant1" locks room "room" with 200
-    And user "participant1" joins room "room" with 200
+    And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 403
-    And user "participant2" joins room "room" with 200
+    And user "participant2" joins room "room" with 200 (v4)
     And user "participant2" joins call "room" with 403
     Then user "participant1" sees 0 peers in call "room" with 403
     And user "participant2" sees 0 peers in call "room" with 403
@@ -34,9 +34,9 @@ Feature: callapi/public-read-only
     Then user "participant1" is participant of room "room" (v4)
     Then user "participant3" is not participant of room "room" (v4)
     When user "participant1" locks room "room" with 200
-    And user "participant1" joins room "room" with 200
+    And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 403
-    And user "participant3" joins room "room" with 200
+    And user "participant3" joins room "room" with 200 (v4)
     And user "participant3" joins call "room" with 403
     Then user "participant1" sees 0 peers in call "room" with 403
     And user "participant3" sees 0 peers in call "room" with 403
@@ -54,9 +54,9 @@ Feature: callapi/public-read-only
     Then user "participant1" is participant of room "room" (v4)
     When user "participant1" locks room "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
-    Then user "participant1" joins room "room" with 200
+    Then user "participant1" joins room "room" with 200 (v4)
     Then user "participant1" joins call "room" with 403
-    Then user "guest" joins room "room" with 200
+    Then user "guest" joins room "room" with 200 (v4)
     And user "guest" joins call "room" with 403
     Then user "participant1" sees 0 peers in call "room" with 403
     And user "guest" sees 0 peers in call "room" with 403

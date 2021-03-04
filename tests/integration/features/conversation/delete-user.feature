@@ -44,4 +44,4 @@ Feature: conversation/delete-user
       | roomType | 3 |
       | roomName | public room |
     When user "participant2" is deleted
-    Then user "participant1" joins room "public room" with 404
+    Then user "participant1" joins room "public room" with 404 (v4)

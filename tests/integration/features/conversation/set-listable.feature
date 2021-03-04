@@ -34,8 +34,8 @@ Feature: conversation/set-listable
     And user "creator" adds "moderator" to room "room" with 200
     And user "creator" allows listing room "room" for "all" with 200 (v4)
     When user "creator" promotes "moderator" in room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 200
-    And user "guest" joins room "room" with 200
+    And user "user-guest@example.com" joins room "room" with 200 (v4)
+    And user "guest" joins room "room" with 200 (v4)
     Then user "moderator" allows listing room "room" for "none" with 200 (v4)
     And user "regular-user" allows listing room "room" for "users" with 403 (v4)
     And user "user-guest@example.com" allows listing room "room" for "users" with 403 (v4)
@@ -53,5 +53,5 @@ Feature: conversation/set-listable
     And user "creator" shares "welcome.txt" with user "regular-user" with OCS 100
     And user "regular-user" accepts last share
     When user "creator" gets the room for path "welcome.txt" with 200 (v1)
-    And user "creator" joins room "file welcome.txt room" with 200
+    And user "creator" joins room "file welcome.txt room" with 200 (v4)
     Then user "creator" allows listing room "file welcome.txt room" for "all" with 403 (v4)

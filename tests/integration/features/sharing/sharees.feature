@@ -200,7 +200,7 @@ Feature: sharees
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
-    And user "participant2" joins room "public room self joined to" with 200
+    And user "participant2" joins room "public room self joined to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | room |
     Then "exact rooms" sharees returned is empty
@@ -212,7 +212,7 @@ Feature: sharees
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
-    And user "participant2" joins room "public room self joined to" with 200
+    And user "participant2" joins room "public room self joined to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | public room |
     Then "exact rooms" sharees returned are
@@ -224,12 +224,12 @@ Feature: sharees
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
-    And user "participant2" joins room "public room self joined to" with 200
+    And user "participant2" joins room "public room self joined to" with 200 (v4)
     And user "participant1" creates room "another public room self joined to" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" renames room "another public room self joined to" to "Another public room" with 200
-    And user "participant2" joins room "another public room self joined to" with 200
+    And user "participant2" joins room "another public room self joined to" with 200 (v4)
     When user "participant2" gets sharees for
       | search | public room |
     Then "exact rooms" sharees returned are

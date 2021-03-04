@@ -115,8 +115,8 @@ Feature: System messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    When user "participant1" joins room "room" with 200
-    And user "participant2" joins room "room" with 200
+    When user "participant1" joins room "room" with 200 (v4)
+    And user "participant2" joins room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | conversation_created |
@@ -128,8 +128,8 @@ Feature: System messages
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
-    When user "participant1" joins room "file welcome.txt room" with 200
-    And user "participant2" joins room "file welcome.txt room" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200 (v4)
+    And user "participant2" joins room "file welcome.txt room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "file welcome.txt room" with 200
       | room                  | actorType | actorId      | actorDisplayName         | systemMessage |
       | file welcome.txt room | users     | participant2 | participant2-displayname | user_added |
@@ -149,8 +149,8 @@ Feature: System messages
     # stored in the session) to be able to join it.
     And user "participant2" logs in
     And user "participant2" gets the room for last share with 200 (v1)
-    When user "participant1" joins room "file last share room" with 200
-    And user "participant2" joins room "file last share room" with 200
+    When user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant2" joins room "file last share room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "file last share room" with 200
       | room                 | actorType | actorId      | actorDisplayName         | systemMessage |
       | file last share room | users     | participant1 | participant1-displayname | user_added |
@@ -165,7 +165,7 @@ Feature: System messages
       | roomType | 2 |
       | roomName | room |
     And user "participant1" allows listing room "room" for "all" with 200 (v4)
-    When user "participant2" joins room "room" with 200
+    When user "participant2" joins room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room | users     | participant2 | participant2-displayname | user_added           |

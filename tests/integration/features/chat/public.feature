@@ -27,7 +27,7 @@ Feature: chat/public
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant3" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
     When user "participant3" sends message "Message 1" to room "public room" with 201
     Then user "participant3" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
@@ -45,7 +45,7 @@ Feature: chat/public
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "guest" joins room "public room" with 200
+    And user "guest" joins room "public room" with 200 (v4)
     When user "guest" sends message "Message 1" to room "public room" with 201
     Then user "guest" sees the following messages in room "public room" with 200
       | room        | actorType | actorId | actorDisplayName | message   | messageParameters |
@@ -64,7 +64,7 @@ Feature: chat/public
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "guest" joins room "public room" with 200
+    And user "guest" joins room "public room" with 200 (v4)
     When user "participant1" sends message "Message 1" to room "public room" with 201
     And user "participant2" sends message "Message 2" to room "public room" with 201
     And user "guest" sends message "Message 3" to room "public room" with 201

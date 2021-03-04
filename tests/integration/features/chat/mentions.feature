@@ -125,8 +125,8 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source |
       | all          | room                     | calls  |
@@ -157,8 +157,8 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "part" with 200
       | id           | label                    | source |
       | participant2 | participant2-displayname | users  |
@@ -182,9 +182,9 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest1" joins room "public room" with 200
-    And user "guest2" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest1" joins room "public room" with 200 (v4)
+    And user "guest2" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "uest" with 200
       | id           | label                    | source |
       | GUEST_ID     | Guest                    | guests |
@@ -209,10 +209,10 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest1" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest1" joins room "public room" with 200 (v4)
     And guest "guest1" sets name to "FooBar" in room "public room" with 200
-    And user "guest2" joins room "public room" with 200
+    And user "guest2" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "oob" with 200
       | id           | label                    | source |
       | GUEST_ID     | FooBar                   | guests |
@@ -233,8 +233,8 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest" joins room "public room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "public room" for "unknown" with 200
     And user "participant2" gets the following candidate mentions in room "public room" for "unknown" with 200
     And user "participant3" gets the following candidate mentions in room "public room" for "unknown" with 200
@@ -245,8 +245,8 @@ Feature: chat/mentions
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "participant3" joins room "public room" with 200
-    And user "guest" joins room "public room" with 200
+    And user "participant3" joins room "public room" with 200 (v4)
+    And user "guest" joins room "public room" with 200 (v4)
     Then user "participant4" gets the following candidate mentions in room "public room" for "" with 404
     And user "guest2" gets the following candidate mentions in room "public room" for "" with 404
 
@@ -256,7 +256,7 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant1" gets the room for path "welcome.txt" with 200 (v1)
-    And user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant1" joins room "file welcome.txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome.txt room" (v4)
     And user "participant2" is not participant of room "file welcome.txt room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file welcome.txt room" for "" with 200
@@ -269,8 +269,8 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
-    And user "participant1" joins room "file welcome (2).txt room" with 200
-    And user "participant2" joins room "file welcome (2).txt room" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
+    And user "participant2" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 200
@@ -286,8 +286,8 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
-    And user "participant1" joins room "file welcome (2).txt room" with 200
-    And user "participant2" joins room "file welcome (2).txt room" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
+    And user "participant2" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "part" with 200
@@ -301,8 +301,8 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
-    And user "participant1" joins room "file welcome (2).txt room" with 200
-    And user "participant2" joins room "file welcome (2).txt room" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
+    And user "participant2" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "unknown" with 200
@@ -312,8 +312,8 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     When user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
-    And user "participant1" joins room "file welcome (2).txt room" with 200
-    And user "participant2" joins room "file welcome (2).txt room" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
+    And user "participant2" joins room "file welcome (2).txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome (2).txt room" (v4)
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
     Then user "participant3" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 404
@@ -322,7 +322,7 @@ Feature: chat/mentions
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
-    And user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant1" joins room "file welcome.txt room" with 200 (v4)
     And user "participant1" is participant of room "file welcome.txt room" (v4)
     And user "participant2" is not participant of room "file welcome.txt room" (v4)
     When user "participant1" sends message "hi @participant2" to room "file welcome.txt room" with 201
@@ -335,7 +335,7 @@ Feature: chat/mentions
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     When user "participant1" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     Then user "participant1" gets the following candidate mentions in room "file last share room" for "" with 200
@@ -353,18 +353,18 @@ Feature: chat/mentions
     And user "participant4" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     When user "participant1" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
-    And user "participant2" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant2" joins room "file last share room" with 200 (v4)
     # Users without access to a file shared by link need to log in (so further
     # requests keep the same session) and get the room (so the share token is
     # stored in the session) to be able to join it.
     And user "participant3" logs in
     And user "participant3" gets the room for last share with 200 (v1)
-    And user "participant3" joins room "file last share room" with 200
+    And user "participant3" joins room "file last share room" with 200 (v4)
     # Guests need to get the room (so the share token is stored in the session)
     # to be able to join it.
     And user "guest" gets the room for last share with 200 (v1)
-    And user "guest" joins room "file last share room" with 200
+    And user "guest" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is participant of room "file last share room" (v4)
     And user "participant3" is participant of room "file last share room" (v4)
@@ -407,18 +407,18 @@ Feature: chat/mentions
     And user "participant4" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     When user "participant2" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
-    And user "participant2" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant2" joins room "file last share room" with 200 (v4)
     # Users without access to a file shared by link need to log in (so further
     # requests keep the same session) and get the room (so the share token is
     # stored in the session) to be able to join it.
     And user "participant3" logs in
     And user "participant3" gets the room for last share with 200 (v1)
-    And user "participant3" joins room "file last share room" with 200
+    And user "participant3" joins room "file last share room" with 200 (v4)
     # Guests need to get the room (so the share token is stored in the session)
     # to be able to join it.
     And user "guest" gets the room for last share with 200 (v1)
-    And user "guest" joins room "file last share room" with 200
+    And user "guest" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is participant of room "file last share room" (v4)
     And user "participant3" is participant of room "file last share room" (v4)
@@ -454,18 +454,18 @@ Feature: chat/mentions
     And user "participant4" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     When user "participant2" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
-    And user "participant2" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant2" joins room "file last share room" with 200 (v4)
     # Users without access to a file shared by link need to log in (so further
     # requests keep the same session) and get the room (so the share token is
     # stored in the session) to be able to join it.
     And user "participant3" logs in
     And user "participant3" gets the room for last share with 200 (v1)
-    And user "participant3" joins room "file last share room" with 200
+    And user "participant3" joins room "file last share room" with 200 (v4)
     # Guests need to get the room (so the share token is stored in the session)
     # to be able to join it.
     And user "guest" gets the room for last share with 200 (v1)
-    And user "guest" joins room "file last share room" with 200
+    And user "guest" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is participant of room "file last share room" (v4)
     And user "participant3" is participant of room "file last share room" (v4)
@@ -480,8 +480,8 @@ Feature: chat/mentions
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     When user "participant2" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
-    And user "participant2" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant2" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is participant of room "file last share room" (v4)
     Then user "participant3" gets the following candidate mentions in room "file last share room" for "" with 404
@@ -492,7 +492,7 @@ Feature: chat/mentions
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     And user "participant1" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     When user "participant1" sends message "hi @participant2" to room "file last share room" with 201
@@ -507,11 +507,11 @@ Feature: chat/mentions
     # stored in the session) to be able to join it.
     And user "participant3" logs in
     And user "participant3" gets the room for last share with 200 (v1)
-    And user "participant3" joins room "file last share room" with 200
+    And user "participant3" joins room "file last share room" with 200 (v4)
     # Guests need to get the room (so the share token is stored in the session)
     # to be able to join it.
     And user "guest" gets the room for last share with 200 (v1)
-    And user "guest" joins room "file last share room" with 200
+    And user "guest" joins room "file last share room" with 200 (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     When user "participant3" sends message "hi @participant2" to room "file last share room" with 201
     And user "guest" sends message "hello @participant2" to room "file last share room" with 201
@@ -522,13 +522,13 @@ Feature: chat/mentions
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
     And user "participant1" gets the room for last share with 200 (v1)
-    And user "participant1" joins room "file last share room" with 200
+    And user "participant1" joins room "file last share room" with 200 (v4)
     # Users without access to a file shared by link need to log in (so further
     # requests keep the same session) and get the room (so the share token is
     # stored in the session) to be able to join it.
     And user "participant3" logs in
     And user "participant3" gets the room for last share with 200 (v1)
-    And user "participant3" joins room "file last share room" with 200
+    And user "participant3" joins room "file last share room" with 200 (v4)
     And user "participant1" is participant of room "file last share room" (v4)
     And user "participant3" is participant of room "file last share room" (v4)
     When user "participant1" sends message "hi @participant3" to room "file last share room" with 201

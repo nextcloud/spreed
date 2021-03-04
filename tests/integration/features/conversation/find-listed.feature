@@ -63,8 +63,8 @@ Feature: conversation/find-listed
       | roomName | public-room |
     And user "creator" allows listing room "group-room" for "users" with 200 (v4)
     And user "creator" allows listing room "public-room" for "users" with 200 (v4)
-    When user "regular-user" joins room "group-room" with 200
-    And user "regular-user" joins room "public-room" with 200
+    When user "regular-user" joins room "group-room" with 200 (v4)
+    And user "regular-user" joins room "public-room" with 200 (v4)
     Then user "regular-user" cannot find any listed rooms (v4)
 
   Scenario: Participants cannot search for already joined listed rooms
@@ -76,8 +76,8 @@ Feature: conversation/find-listed
       | roomName | public-room |
     And user "creator" allows listing room "group-room" for "users" with 200 (v4)
     And user "creator" allows listing room "public-room" for "users" with 200 (v4)
-    When user "regular-user" joins room "group-room" with 200
-    And user "regular-user" joins room "public-room" with 200
+    When user "regular-user" joins room "group-room" with 200 (v4)
+    And user "regular-user" joins room "public-room" with 200 (v4)
     Then user "regular-user" cannot find any listed rooms (v4)
 
   Scenario: Users can use search terms to find listed rooms
@@ -122,5 +122,5 @@ Feature: conversation/find-listed
       | roomType | 3                  |
       | roomName | public-room-listed |
     And user "creator" allows listing room "public-room-listed" for "all" with 200 (v4)
-    When user "guest" joins room "public-room" with 200
+    When user "guest" joins room "public-room" with 200 (v4)
     Then user "guest" cannot find any listed rooms with 401 (v4)

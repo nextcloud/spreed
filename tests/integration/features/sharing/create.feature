@@ -163,7 +163,7 @@ Feature: create
       | roomName | room |
     And user "participant1" renames room "own public room" to "Own public room" with 200
     And user "participant1" adds "participant2" to room "own public room" with 200
-    And user "participant3" joins room "own public room" with 200
+    And user "participant3" joins room "own public room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "own public room"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -207,7 +207,7 @@ Feature: create
       | roomName | room |
     And user "participant2" renames room "public room invited to" to "Public room invited to" with 200
     And user "participant2" adds "participant1" to room "public room invited to" with 200
-    And user "participant3" joins room "public room invited to" with 200
+    And user "participant3" joins room "public room invited to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "public room invited to"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -250,8 +250,8 @@ Feature: create
       | roomType | 3 |
       | roomName | room |
     And user "participant2" renames room "public room self joined to" to "Public room self joined to" with 200
-    And user "participant1" joins room "public room self joined to" with 200
-    And user "participant3" joins room "public room self joined to" with 200
+    And user "participant1" joins room "public room self joined to" with 200 (v4)
+    And user "participant3" joins room "public room self joined to" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "public room self joined to"
     Then share is returned with
       | uid_owner              | participant1 |
@@ -305,7 +305,7 @@ Feature: create
     Given user "participant2" creates room "public room no longer joined to" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" joins room "public room no longer joined to" with 200
+    And user "participant1" joins room "public room no longer joined to" with 200 (v4)
     And user "participant1" leaves room "public room no longer joined to" with 200
     When user "participant1" shares "welcome.txt" with room "public room no longer joined to"
     Then the OCS status code should be "404"

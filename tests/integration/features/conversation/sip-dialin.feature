@@ -25,7 +25,7 @@ Feature: public
     When user "participant1" adds "participant3" to room "room" with 200 (v3)
     When user "participant1" adds email "test@example.tld" to room "room" with 200 (v3)
     # Guests don't get a PIN as they can not be recognized and are deleted on leave
-    When user "guest" joins room "room" with 200
+    When user "guest" joins room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | participantType | inCall   | actorType | actorId           | attendeePin |
       | 4               | 0        | emails    | test@example.tld  | **PIN**     |

@@ -743,7 +743,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "public room self-joined to" with OCS 100
-    And user "participant1" joins room "public room self-joined to" with 200
+    And user "participant1" joins room "public room self-joined to" with 200 (v4)
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
     And share 0 is returned with

@@ -30,7 +30,7 @@ Feature: chat/password
       | roomType | 3 |
       | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
-    And user "participant3" joins room "public password protected room" with 200
+    And user "participant3" joins room "public password protected room" with 200 (v4)
       | password | foobar |
     When user "participant3" sends message "Message 1" to room "public password protected room" with 201
     Then user "participant3" sees the following messages in room "public password protected room" with 200
@@ -51,7 +51,7 @@ Feature: chat/password
       | roomType | 3 |
       | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
-    And user "guest" joins room "public password protected room" with 200
+    And user "guest" joins room "public password protected room" with 200 (v4)
       | password | foobar |
     When user "guest" sends message "Message 1" to room "public password protected room" with 201
     Then user "guest" sees the following messages in room "public password protected room" with 200
@@ -73,9 +73,9 @@ Feature: chat/password
       | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     And user "participant1" adds "participant2" to room "public password protected room" with 200
-    And user "participant3" joins room "public password protected room" with 200
+    And user "participant3" joins room "public password protected room" with 200 (v4)
       | password | foobar |
-    And user "guest" joins room "public password protected room" with 200
+    And user "guest" joins room "public password protected room" with 200 (v4)
       | password | foobar |
     When user "participant1" sends message "Message 1" to room "public password protected room" with 201
     And user "participant2" sends message "Message 2" to room "public password protected room" with 201

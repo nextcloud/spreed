@@ -60,7 +60,7 @@ Feature: public
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" joins room "room" with 200
+    And user "participant2" joins room "room" with 200 (v4)
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 5               |
