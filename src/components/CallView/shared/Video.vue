@@ -27,12 +27,15 @@
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
 		<transition name="fade">
-			<video
-				v-show="showVideo"
-				ref="video"
-				:disablePictureInPicture="!isBig"
-				:class="videoClass"
-				class="video" />
+			<div v-show="showVideo"
+				:class="videoWrapperClass"
+				class="videoWrapper">
+				<video
+					ref="video"
+					:disablePictureInPicture="!isBig"
+					:class="videoClass"
+					class="video" />
+			</div>
 		</transition>
 		<transition name="fade">
 			<Screen
@@ -186,6 +189,12 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
+			}
+		},
+
+		videoWrapperClass() {
+			return {
+				'icon-loading': this.isLoading,
 			}
 		},
 
@@ -488,9 +497,16 @@ export default {
 	align-items: center;
 }
 
+.videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
+}
+
+.videoWrapper.icon-loading:after {
+	height: 60px;
+	width: 60px;
+	margin: -32px 0 0 -32px;
 }
 
 .video--fit {
