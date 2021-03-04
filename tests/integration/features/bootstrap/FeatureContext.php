@@ -534,7 +534,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/file/' . $fileId);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '200') {
+		if ($statusCode !== 200) {
 			return;
 		}
 
@@ -620,7 +620,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/publicshare/' . $shareToken);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '200') {
+		if ($statusCode !== 200) {
 			return;
 		}
 
@@ -645,7 +645,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/publicshareauth', ['shareToken' => $shareToken]);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '201') {
+		if ($statusCode !== 201) {
 			return;
 		}
 
@@ -673,7 +673,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '200') {
+		if ($statusCode !== 200) {
 			return;
 		}
 
@@ -1040,7 +1040,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode === '200') {
+		if ($statusCode === 200) {
 			$response = $this->getDataFromResponse($this->response);
 			Assert::assertCount((int) $numPeers, $response);
 		} else {
