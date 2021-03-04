@@ -40,7 +40,7 @@ Feature: public
       | roomType | 3 |
       | roomName | room |
     When user "participant1" removes themselves from room "room" with 200 (v4)
-    Then user "participant2" gets room "room" with 404 (v3)
+    Then user "participant2" gets room "room" with 404 (v4)
 
   Scenario: User removes the room from their room list
     Given user "participant1" creates room "room" (v4)

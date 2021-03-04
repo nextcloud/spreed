@@ -52,7 +52,7 @@ Feature: one-to-one
       | invite   | participant2 |
     Then user "participant1" is participant of room "room3" (v4)
     And user "participant2" is participant of room "room3" (v4)
-    When user "participant1" deletes room "room3" with 400
+    When user "participant1" deletes room "room3" with 400 (v4)
     Then user "participant1" is participant of room "room3" (v4)
     And user "participant2" is participant of room "room3" (v4)
 
