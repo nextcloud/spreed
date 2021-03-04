@@ -332,13 +332,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
 
 				if ($formData) {
-					$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
-
-					$rooms = [$this->getDataFromResponse($this->response)];
-
-					$this->assertRooms($rooms, $formData);
+					$this->assertRooms([$room], $formData);
 				}
-
 				return;
 			}
 		}
