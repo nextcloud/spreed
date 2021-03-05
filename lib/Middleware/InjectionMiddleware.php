@@ -134,7 +134,7 @@ class InjectionMiddleware extends Middleware {
 		$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 		$controller->setRoom($room);
 
-		$participant = $room->getParticipant($this->userId);
+		$participant = $room->getParticipant($this->userId, $sessionId);
 		$controller->setParticipant($participant);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions(false)) {

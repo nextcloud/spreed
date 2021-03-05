@@ -300,7 +300,7 @@ class MatterbridgeManager {
 
 		// check if the bot user is member of the room and add or remove it
 		try {
-			$participant = $room->getParticipant($botUserId);
+			$room->getParticipant($botUserId, false);
 			if (!$isBridgeEnabled) {
 				$this->participantService->removeUser($room, $botUser, Room::PARTICIPANT_REMOVED);
 			}

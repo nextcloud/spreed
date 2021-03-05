@@ -821,7 +821,7 @@ class Manager {
 		$room = $this->createRoomObject($row);
 
 		try {
-			$room->getParticipant($userId);
+			$room->getParticipant($userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room,[[
@@ -924,7 +924,7 @@ class Manager {
 					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 					$room->getParticipantBySession($sessionId);
 				} else {
-					$room->getParticipant($userId);
+					$room->getParticipant($userId, false);
 				}
 			} catch (ParticipantNotFoundException $e) {
 				// Do not leak the name of rooms the user is not a part of

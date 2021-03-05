@@ -82,7 +82,7 @@ class MessageParser {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {
 				try {
-					$participant = $message->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, $comment->getActorId());
+					$participant = $message->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, $comment->getActorId(), false);
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException $e) {
 				}

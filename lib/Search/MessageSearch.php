@@ -163,7 +163,7 @@ class MessageSearch implements IProvider {
 	}
 
 	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment, ISearchQuery $query): SearchResultEntry {
-		$participant = $room->getParticipant($user->getUID());
+		$participant = $room->getParticipant($user->getUID(), false);
 
 		$id = (int) $comment->getId();
 		$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);

@@ -325,7 +325,7 @@ class Notifier {
 		}
 
 		try {
-			$participant = $room->getParticipant($userId);
+			$participant = $room->getParticipant($userId, false);
 			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 				if ($room->getType() === Room::ONE_TO_ONE_CALL) {

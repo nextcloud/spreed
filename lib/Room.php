@@ -567,7 +567,7 @@ class Room {
 	 */
 	public function getParticipantByActor(string $actorType, string $actorId, $sessionId = null): Participant {
 		if ($actorType === Attendee::ACTOR_USERS) {
-			return $this->getParticipant($actorId);
+			return $this->getParticipant($actorId, $sessionId);
 		}
 
 		$query = $this->db->getQueryBuilder();

@@ -37,6 +37,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SessionService;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
@@ -77,19 +78,10 @@ class Listener {
 			/** @var Messages $messages */
 			$messages = \OC::$server->query(Messages::class);
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
-
-			// When "addMessageForAllParticipants" is called the participant is
-			// no longer in the room, so the message needs to be explicitly
-			// added for the participant.
-			$participant = $event->getParticipant();
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
-				$messages->addMessage($session->getSessionId(), $session->getSessionId(), 'refresh-participant-list');
-			}
 		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, $listener);
 
 		$listener = static function (RoomEvent $event) {
 			$room = $event->getRoom();
@@ -149,11 +141,14 @@ class Listener {
 			// If the participant is not active in the room the "participants"
 			// request will be sent anyway, although with an empty "changed"
 			// property.
-			$participant = $event->getParticipant();
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
+
+			/** @var SessionService $sessionService */
+			$sessionService = \OC::$server->query(SessionService::class);
+			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
 			}
+
 			$notifier->participantsModified($event->getRoom(), $sessionIds);
 		});
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function (RoomEvent $event) {
@@ -187,10 +182,17 @@ class Listener {
 			/** @var BackendNotifier $notifier */
 			$notifier = \OC::$server->query(BackendNotifier::class);
 
-			$participant = $event->getParticipant();
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
-				$notifier->roomSessionsRemoved($event->getRoom(), [$session->getSessionId()]);
+			$sessionIds = [];
+
+			/** @var SessionService $sessionService */
+			$sessionService = \OC::$server->query(SessionService::class);
+			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+			foreach ($sessions as $session) {
+				$sessionIds[] = $session->getSessionId();
+			}
+
+			if (!empty($sessionIds)) {
+				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
 			}
 		});
 
@@ -202,13 +204,20 @@ class Listener {
 			/** @var BackendNotifier $notifier */
 			$notifier = \OC::$server->query(BackendNotifier::class);
 
-			$participant = $event->getParticipant();
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
+			$sessionIds = [];
+
+			/** @var SessionService $sessionService */
+			$sessionService = \OC::$server->query(SessionService::class);
+			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+			foreach ($sessions as $session) {
+				$sessionIds[] = $session->getSessionId();
+			}
+
+			if (!empty($sessionIds)) {
 				$notifier->roomInCallChanged(
 					$event->getRoom(),
 					$event->getNewValue(),
-					[$session->getSessionId()]
+					$sessionIds
 				);
 			}
 		};
@@ -236,10 +245,17 @@ class Listener {
 			/** @var BackendNotifier $notifier */
 			$notifier = \OC::$server->query(BackendNotifier::class);
 
-			$participant = $event->getParticipant();
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
-				$notifier->participantsModified($event->getRoom(), [$session->getSessionId()]);
+			$sessionIds = [];
+
+			/** @var SessionService $sessionService */
+			$sessionService = \OC::$server->query(SessionService::class);
+			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+			foreach ($sessions as $session) {
+				$sessionIds[] = $session->getSessionId();
+			}
+
+			if (!empty($sessionIds)) {
+				$notifier->participantsModified($event->getRoom(), $sessionIds);
 			}
 		});
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND , static function (ChatParticipantEvent $event) {

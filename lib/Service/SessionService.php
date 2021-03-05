@@ -80,6 +80,14 @@ class SessionService {
 
 	/**
 	 * @param Attendee $attendee
+	 * @return Session[]
+	 */
+	public function getAllSessionsForAttendee(Attendee $attendee): array {
+		return $this->sessionMapper->findByAttendeeId($attendee->getId());
+	}
+
+	/**
+	 * @param Attendee $attendee
 	 * @param string $forceSessionId
 	 * @return Session
 	 * @throws UniqueConstraintViolationException

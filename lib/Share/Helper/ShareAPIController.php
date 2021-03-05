@@ -86,7 +86,7 @@ class ShareAPIController {
 
 		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 		try {
-			$room->getParticipant($this->userId);
+			$room->getParticipant($this->userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			// Removing the conversation token from the leaked data if not a participant.
 			// Adding some unique but reproducable part to the share_with here
@@ -168,7 +168,7 @@ class ShareAPIController {
 		}
 
 		try {
-			$room->getParticipant($user);
+			$room->getParticipant($user, false);
 		} catch (ParticipantNotFoundException $e) {
 			return false;
 		}

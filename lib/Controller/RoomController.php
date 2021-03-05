@@ -266,7 +266,7 @@ class RoomController extends AEnvironmentAwareController {
 
 			$participant = null;
 			try {
-				$participant = $room->getParticipant($this->userId);
+				$participant = $room->getParticipant($this->userId, $sessionId);
 			} catch (ParticipantNotFoundException $e) {
 				try {
 					$participant = $room->getParticipantBySession($sessionId);
@@ -631,7 +631,7 @@ class RoomController extends AEnvironmentAwareController {
 			$room = $this->manager->getOne2OneRoom($currentUser->getUID(), $targetUser->getUID());
 			$this->participantService->ensureOneToOneRoomIsFilled($room);
 			return new DataResponse(
-				$this->formatRoom($room, $room->getParticipant($currentUser->getUID())),
+				$this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)),
 				Http::STATUS_OK
 			);
 		} catch (RoomNotFoundException $e) {
@@ -640,7 +640,7 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$room = $this->roomService->createOneToOneConversation($currentUser, $targetUser);
 			return new DataResponse(
-				$this->formatRoom($room, $room->getParticipant($currentUser->getUID())),
+				$this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)),
 				Http::STATUS_CREATED
 			);
 		} catch (InvalidArgumentException $e) {
@@ -691,7 +691,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$this->participantService->addUsers($room, $participants);
 
-		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -755,7 +755,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$this->participantService->addUsers($room, $participants);
 
-		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -780,7 +780,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -1307,7 +1307,7 @@ class RoomController extends AEnvironmentAwareController {
 		$previousSession = null;
 		if ($this->userId !== null) {
 			try {
-				$previousParticipant = $room->getParticipant($this->userId);
+				$previousParticipant = $room->getParticipant($this->userId, $sessionId);
 				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}

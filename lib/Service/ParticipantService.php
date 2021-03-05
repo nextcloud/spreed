@@ -402,12 +402,14 @@ class ParticipantService {
 	public function removeAttendee(Room $room, Participant $participant, string $reason): void {
 		$isUser = $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
 
+		$sessions = $this->sessionService->getAllSessionsForAttendee($participant->getAttendee());
+
 		if ($isUser) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
-			$event = new RemoveUserEvent($room, $participant, $user, $reason);
+			$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
 		} else {
-			$event = new RemoveParticipantEvent($room, $participant, $reason);
+			$event = new RemoveParticipantEvent($room, $participant, $reason, $sessions);
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
 		}
 
@@ -423,20 +425,21 @@ class ParticipantService {
 
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
-			$participant = $room->getParticipant($user->getUID());
+			$participant = $room->getParticipant($user->getUID(), false);
 		} catch (ParticipantNotFoundException $e) {
 			return;
 		}
 
-		$event = new RemoveUserEvent($room, $participant, $user, $reason);
+		$attendee = $participant->getAttendee();
+		$sessions = $this->sessionService->getAllSessionsForAttendee($attendee);
+
+		$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
 
-		$session = $participant->getSession();
-		if ($session instanceof Session) {
+		foreach ($sessions as $session) {
 			$this->sessionMapper->delete($session);
 		}
 
-		$attendee = $participant->getAttendee();
 		$this->attendeeMapper->delete($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);

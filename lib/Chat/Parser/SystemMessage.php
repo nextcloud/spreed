@@ -534,7 +534,7 @@ class SystemMessage {
 
 	protected function getGuestName(Room $room, string $actorId): string {
 		try {
-			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
+			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId, false);
 			$name = $participant->getAttendee()->getDisplayName();
 			return $this->l->t('%s (guest)', [$name]);
 		} catch (ParticipantNotFoundException $e) {
