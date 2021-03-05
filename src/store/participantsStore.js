@@ -286,6 +286,7 @@ const actions = {
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
 		if (!participantIdentifier?.sessionId) {
 			console.error('Trying to join call without sessionId')
+			return
 		}
 
 		const index = getters.getParticipantIndex(token, participantIdentifier)
