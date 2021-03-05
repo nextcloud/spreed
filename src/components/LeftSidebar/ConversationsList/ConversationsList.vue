@@ -111,9 +111,11 @@ export default {
 				return
 			}
 			if (from.name === 'conversation') {
+				console.log('### leaveConversation: ' + from.params.token)
 				leaveConversation(from.params.token)
 			}
 			if (to.name === 'conversation') {
+				console.log('### joinConversation: ' + to.params.token)
 				joinConversation(to.params.token)
 				this.$store.dispatch('markConversationRead', to.params.token)
 			}

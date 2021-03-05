@@ -64,6 +64,7 @@ const sessionIssueHandler = {
 			}
 
 			console.debug(`Deleted session detected for token ${token}, redirecting to not found page`)
+			debugger
 			this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
 			this.$store.dispatch('updateToken', '')
 		},

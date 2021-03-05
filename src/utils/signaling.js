@@ -169,8 +169,11 @@ Signaling.Base.prototype.emit = function(ev, data) {
 }
 
 Signaling.Base.prototype.leaveCurrentRoom = function() {
+	console.log('Signaling.Base.leaveCurrentRoom()')
+	console.trace()
 	if (this.currentRoomToken) {
 		this.leaveRoom(this.currentRoomToken)
+		// FIXME: isn't this supposed to happen after the async leaveRoom has finished ?
 		this.currentRoomToken = null
 		this.nextcloudSessionId = null
 	}
@@ -189,6 +192,10 @@ Signaling.Base.prototype.leaveCurrentCall = function() {
 }
 
 Signaling.Base.prototype.joinRoom = function(token, sessionId) {
+	if (token === this.currentRoomToken) {
+		return
+	}
+	console.log('### joinRoom begin token=' + token)
 	return new Promise((resolve, reject) => {
 		console.debug('Joined')
 		this.currentRoomToken = token
@@ -203,6 +210,7 @@ Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 			this.currentCallFlags = null
 		}
 		this._joinRoomSuccess(token, sessionId)
+		console.log('### joinRoom end token=' + token + ' currentRoomToken=' + this.currentRoomToken)
 	})
 }
 
@@ -210,7 +218,13 @@ Signaling.Base.prototype._leaveRoomSuccess = function(/* token */) {
 	// Override in subclasses if necessary.
 }
 
+Signaling.Base.prototype._leaveRoomBefore = function(/* token */) {
+	// Override in subclasses if necessary.
+}
+
 Signaling.Base.prototype.leaveRoom = function(token) {
+	console.log('### Leaveroom token=' + token + ' currentRoomToken=' + this.currentRoomToken)
+	this._leaveRoomBefore(token)
 	this.leaveCurrentCall()
 		.then(() => {
 			this._trigger('leaveRoom', [token])
@@ -224,6 +238,7 @@ Signaling.Base.prototype.leaveRoom = function(token) {
 					this.currentRoomToken = null
 					this.nextcloudSessionId = null
 				}
+				console.log('### Leaveroom end token=' + token)
 			})
 		})
 }
@@ -369,6 +384,7 @@ Signaling.Internal.prototype._sendMessages = function(messages) {
 
 Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 	this.sessionId = sessionId
+	// FIXME: why not pass in the token ?
 	this._startPullingMessages()
 }
 
@@ -392,6 +408,7 @@ Signaling.Internal.prototype.sendCallMessage = function(data) {
 	 * @private
 	 */
 Signaling.Internal.prototype._startPullingMessages = function() {
+	console.log('_startPullingMessages currentRoomToken=' + this.currentRoomToken)
 	const token = this.currentRoomToken
 	if (!token) {
 		return
@@ -405,8 +422,10 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	// Connect to the messages endpoint and pull for new messages
 	const { request, cancel } = CancelableRequest(pullSignalingMessages)
 	this.pullMessagesRequest = cancel
+	this.pullMessagesRequest.token = token
 	request(token)
 		.then(function(result) {
+			console.log('pullMessages token=' + token + ': received messages: ', result)
 			this.pullMessagesFails = 0
 			if (this.pullMessageErrorToast) {
 				this.pullMessageErrorToast.hideToast()
@@ -435,6 +454,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			this._startPullingMessages()
 		}.bind(this))
 		.catch(function(error) {
+			console.error('pullMessagesRequest for token ' + token + ' error: ', error)
 			if (token !== this.currentRoomToken) {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
@@ -494,6 +514,23 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 		console.error('Sending pending signaling messages has failed.')
 		this.isSendingMessages = false
 	}.bind(this))
+}
+
+Signaling.Internal.prototype._leaveRoomBefore = function(token) {
+	console.log('Signaling.Internal._leaveRoomBefore() token=' + token +
+		' currentRoomToken=' + this.currentRoomToken + ' pullMessagesRequest.token=' + this.pullMessagesRequest?.token)
+	// note: we can't rely on this.currentRoomToken because in some cases it's already cleared
+	if (this.pullMessagesRequest?.token === token) {
+	//if (this.pullMessagesRequest) {
+		console.log('Signaling.Internal.leaveCurrentRoom: cancelling pull messages request for token ' + this.pullMessagesRequest.token)
+		// FIXME: what if we're cancelling a request from the newly joined room ?
+		// but limiting by token isn't reliable because switching from A->B->A sometimes
+		// causes the currentRoomToken to be null
+		this.pullMessagesRequest('canceled')
+		this.pullMessagesRequest = null
+	} else if (this.pullMessagesRequest) {
+		console.log('Signaling.Internal.leaveCurrentRoom: token mismatch, not cancelling')
+	}
 }
 
 function Standalone(settings, urls) {
