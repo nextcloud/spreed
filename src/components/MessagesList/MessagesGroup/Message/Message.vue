@@ -134,6 +134,14 @@ the main body of the message as well as a quote.
 							@click.stop="handlePrivateReply">
 							{{ t('spreed', 'Reply privately') }}
 						</ActionButton>
+						<ActionButton
+							v-if="!isSystemMessage"
+							icon="icon-external"
+							:close-after-click="true"
+							@click.stop.prevent="handleCopyMessageLink">
+							{{ t('spreed', 'Copy message link') }}
+						</ActionButton>
+						<ActionSeparator v-if="messageActions.length > 0" />
 						<template
 							v-for="action in messageActions">
 							<ActionButton
@@ -144,20 +152,15 @@ the main body of the message as well as a quote.
 								{{ action.label }}
 							</ActionButton>
 						</template>
-						<ActionButton
-							v-if="!isSystemMessage"
-							icon="icon-external"
-							:close-after-click="true"
-							@click.stop.prevent="handleCopyMessageLink">
-							{{ t('spreed', 'Copy message link') }}
-						</ActionButton>
-						<ActionButton
-							v-if="isDeleteable"
-							icon="icon-delete"
-							:close-after-click="true"
-							@click.stop="handleDelete">
-							{{ t('spreed', 'Delete') }}
-						</ActionButton>
+						<template v-if="isDeleteable">
+							<ActionSeparator />
+							<ActionButton
+								icon="icon-delete"
+								:close-after-click="true"
+								@click.stop="handleDelete">
+								{{ t('spreed', 'Delete') }}
+							</ActionButton>
+						</template>
 					</Actions>
 				</div>
 			</div>
@@ -168,6 +171,7 @@ the main body of the message as well as a quote.
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton'
 import DeckCard from './MessagePart/DeckCard'
@@ -211,6 +215,7 @@ export default {
 		Check,
 		CheckAll,
 		Reload,
+		ActionSeparator,
 	},
 
 	mixins: [
