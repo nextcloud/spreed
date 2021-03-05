@@ -581,10 +581,6 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
 		}
-		if (this.signalingConnectionError !== null) {
-			this.signalingConnectionError.hideToast()
-			this.signalingConnectionError = null
-		}
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		this.sendHello()
 	}.bind(this)
@@ -849,10 +845,21 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			return
 		}
 
+		if (this.signalingConnectionError === null) {
+			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		}
+
 		// TODO(fancycode): How should this be handled better?
 		console.error('Could not connect to server', data)
 		this.reconnect()
 		return
+	}
+
+	if (this.signalingConnectionError !== null) {
+		this.signalingConnectionError.hideToast()
+		this.signalingConnectionError = null
 	}
 
 	const resumedSession = !!this.resumeId
