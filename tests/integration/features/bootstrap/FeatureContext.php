@@ -46,6 +46,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array[] */
 	protected static $userToSessionId;
 	/** @var array[] */
+	protected static $userToAttendeeId;
+	/** @var array[] */
 	protected static $messages;
 
 	/** @var string */
@@ -90,6 +92,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$identifierToToken[$identifier];
 	}
 
+	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
+		if (!isset(self::$userToAttendeeId[$type][$id])) {
+			if ($user !== null) {
+				$this->userLoadsAttendeeIdsInRoom($user, $room, 'v4');
+			} else {
+				throw new \Exception('Attendee id unknown, please call userLoadsAttendeeIdsInRoom with a user that has access before');
+			}
+		}
+
+		return self::$userToAttendeeId[$type][$id];
+	}
+
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -107,6 +121,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [];
 		self::$userToSessionId = [];
+		self::$userToAttendeeId = [];
 		self::$messages = [];
 
 		$this->createdUsers = [];
@@ -378,6 +393,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['attendeePin'] = $attendee['attendeePin'] ? '**PIN**' : '';
 				}
 
+				if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
+					self::$userToAttendeeId[$attendee['actorType']] = [];
+				}
+				self::$userToAttendeeId[$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
+
 				$result[] = $data;
 			}
 
@@ -397,6 +417,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($expected, $result);
 		} else {
 			Assert::assertNull($formData);
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" loads attendees attendee ids in room "([^"]*)" \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $apiVersion
+	 */
+	public function userLoadsAttendeeIdsInRoom(string $user, string $identifier, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
+		$this->assertStatusCode($this->response, 200);
+		$attendees = $this->getDataFromResponse($this->response);
+
+		foreach ($attendees as $attendee) {
+			if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
+				self::$userToAttendeeId[$attendee['actorType']] = [];
+			}
+			self::$userToAttendeeId[$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
 		}
 	}
 
@@ -717,14 +758,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param string $toRemove
 	 * @param string $identifier
-	 * @param string $statusCode
+	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
 	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string$apiVersion): void {
+		if ($toRemove === 'stranger') {
+			$attendeeId = 123456789;
+		} else {
+			$attendeeId = $this->getAttendeeId('users', $toRemove, $identifier, $statusCode === 200 ? $user : null);
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
-			new TableNode([['participant', $toRemove]])
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees',
+			new TableNode([['attendeeId', $attendeeId]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -963,12 +1010,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion): void {
-		$requestParameters = [['participant', $participant]];
-
-		if (substr($participant, 0, strlen('guest')) === 'guest') {
+		if (strpos($participant, 'guest') === 0) {
 			$sessionId = self::$userToSessionId[$participant];
-			$requestParameters = [['sessionId', $sessionId]];
+			$attendeeId = $this->getAttendeeId('guests', sha1($sessionId), $identifier, $statusCode === 200 ? $user : null);
+		} else {
+			$attendeeId = $this->getAttendeeId('users', $participant, $identifier, $statusCode === 200 ? $user : null);
 		}
+
+		$requestParameters = [['attendeeId', $attendeeId]];
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(

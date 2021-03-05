@@ -12,6 +12,7 @@ Feature: public
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
     When user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
@@ -30,6 +31,7 @@ Feature: public
     And user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
     And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     When user "participant2" promotes "participant3" in room "room" with 200 (v4)
     Then user "participant3" is participant of the following rooms (v4)
@@ -49,6 +51,7 @@ Feature: public
     And user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
     When user "participant2" promotes "participant3" in room "room" with 403 (v4)
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
@@ -70,6 +73,7 @@ Feature: public
     And user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
     When user "participant2" promotes "participant3" in room "room" with 404 (v4)
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
