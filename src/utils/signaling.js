@@ -518,6 +518,7 @@ function Standalone(settings, urls) {
 	this.initialReconnectIntervalMs = 1000
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
+	this.helloResponseErrorCount = 0
 	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
@@ -845,8 +846,20 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			return
 		}
 
-		if (this.signalingConnectionError === null) {
+		this.helloResponseErrorCount++
+
+		if (this.signalingConnectionError === null && this.helloResponseErrorCount < 5) {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		} else if (this.helloResponseErrorCount === 5) {
+			// Switch to a different message as several errors in a row in hello
+			// responses indicate that the signaling server might be unable to
+			// connect to Nextcloud.
+			if (this.signalingConnectionError) {
+				this.signalingConnectionError.hideToast()
+			}
+			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Something might be wrong in the signaling server configuration'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
@@ -856,6 +869,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		this.reconnect()
 		return
 	}
+
+	this.helloResponseErrorCount = 0
 
 	if (this.signalingConnectionError !== null) {
 		this.signalingConnectionError.hideToast()
