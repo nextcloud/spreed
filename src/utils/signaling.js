@@ -448,7 +448,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
-				EventBus.$emit('deletedSessionDetected')
+				EventBus.$emit('deletedSessionDetected', { token })
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
@@ -1130,7 +1130,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				return
 			}
 			console.error('User or session was removed from the conversation, redirecting')
-			EventBus.$emit('deletedSessionDetected')
+			EventBus.$emit('deletedSessionDetected', { token: this.currentRoomToken })
 			break
 		}
 		// eslint-disable-next-line no-fallthrough

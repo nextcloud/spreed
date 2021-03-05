@@ -233,8 +233,7 @@ export default {
 					this.refreshCurrentConversation()
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
-					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-					this.$store.dispatch('updateToken', '')
+					EventBus.$emit('deletedSessionDetected', { token: this.token })
 				}
 			}
 		})
@@ -437,9 +436,8 @@ export default {
 					singleConversation: true,
 				})
 			} catch (exception) {
-				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-				this.$store.dispatch('updateToken', '')
+				console.info('Conversation received, but the current conversation is not in the list')
+				EventBus.$emit('deletedSessionDetected', { token })
 				this.$store.dispatch('hideSidebar')
 			} finally {
 				this.isRefreshingCurrentConversation = false

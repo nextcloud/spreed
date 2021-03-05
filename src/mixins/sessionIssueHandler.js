@@ -55,7 +55,15 @@ const sessionIssueHandler = {
 			})
 		},
 
-		deletedSessionTriggered() {
+		deletedSessionTriggered({ token }) {
+			if (token !== this.$route.params.token) {
+				console.debug(`Deleted session detected for token ${token}, but user already switched to another conversation: ignoring`)
+				// if user already moved away from the "missing or deleted conversation"
+				// don't bother redirecting to the not found page
+				return
+			}
+
+			console.debug(`Deleted session detected for token ${token}, redirecting to not found page`)
 			this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
 			this.$store.dispatch('updateToken', '')
 		},
