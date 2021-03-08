@@ -91,17 +91,17 @@ export default {
 		},
 
 		previousMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 
 		nextMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 
 		lastReadMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 	},

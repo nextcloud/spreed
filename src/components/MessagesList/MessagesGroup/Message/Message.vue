@@ -356,17 +356,17 @@ export default {
 		},
 
 		previousMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 
 		nextMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 
 		lastReadMessageId: {
-			type: Number,
+			type: [String, Number],
 			default: 0,
 		},
 	},
@@ -709,15 +709,11 @@ export default {
 		},
 
 		handleMarkAsUnread() {
-			// update in backend
+			// update in backend + visually
 			this.$store.dispatch('updateLastReadMessage', {
 				token: this.token,
 				id: this.previousMessageId,
-			})
-			// update visually
-			this.$store.dispatch('setVisualLastReadMessageId', {
-				token: this.token,
-				id: this.conversation.lastReadMessage,
+				updateVisually: true,
 			})
 		},
 	},

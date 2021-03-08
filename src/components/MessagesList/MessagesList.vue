@@ -735,6 +735,12 @@ export default {
 				return
 			}
 
+			// to fix issues, this scenario should not happen
+			if (this.conversation.lastReadMessage === 0) {
+				this.$store.dispatch('clearLastReadMessage', { token: this.token, updateVisually: true })
+				return
+			}
+
 			if (this.conversation.lastReadMessage === this.conversation.lastMessage?.id) {
 				// already at bottom, nothing to do
 				return
@@ -746,7 +752,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat, then simply clear the marker
-			if (this.conversation.lastReadMessage === 0 || this.isSticky) {
+			if (this.isSticky) {
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
 			}
@@ -768,10 +774,9 @@ export default {
 				return
 			}
 
-			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId })
-
-			// we don't call setVisualLastReadMessageId yet, it will update the next time the
-			// user focussed back on the conversation. See refreshReadMarkerPosition().
+			// we don't update visually here, it will update the next time the
+			// user focusses back on the conversation. See refreshReadMarkerPosition().
+			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId, updateVisually: false })
 		},
 
 		/**
@@ -797,8 +802,6 @@ export default {
 						behavior: 'smooth',
 					})
 					this.setChatScrolledToBottom(true)
-
-					this.updateReadMarkerPosition()
 				} else {
 					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
 					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
@@ -915,6 +918,11 @@ export default {
 
 		setChatScrolledToBottom(boolean) {
 			this.$emit('setChatScrolledToBottom', boolean)
+			if (boolean) {
+				// mark as read if marker was seen
+				// we have to do this early because unfocussing the window will remove the stickiness
+				this.debounceUpdateReadMarkerPosition()
+			}
 		},
 
 		onWindowFocus() {

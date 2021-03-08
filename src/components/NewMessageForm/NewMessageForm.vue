@@ -339,9 +339,10 @@ export default {
 						})
 					}
 					if (message.id > this.conversation.lastReadMessage) {
-						this.$store.dispatch('updateConversationLastReadMessage', {
+						this.$store.dispatch('updateLastReadMessage', {
 							token: this.token,
-							lastReadMessage: message.id,
+							id: message.id,
+							updateVisually: true,
 						})
 					}
 				} catch (error) {
