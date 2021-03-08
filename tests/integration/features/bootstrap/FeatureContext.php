@@ -157,7 +157,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userCannotFindAnyListedRoomsWithStatus($user, $statusCode, $apiVersion = 'v3') {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/listed-room');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
