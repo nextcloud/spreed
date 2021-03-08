@@ -1072,10 +1072,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 				delete leftUsers[joinedUsers[i].sessionid]
 
 				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
-					if (this.ownSessionJoined && joinedUsers[i].sessionid !== this.sessionId) {
-						console.error('Duplicated session detected for the same user.')
-						EventBus.$emit('duplicateSessionDetected')
-					} else if (joinedUsers[i].sessionid === this.sessionId) {
+					if (joinedUsers[i].sessionid === this.sessionId) {
 						// We are ignoring joins before we found our own message,
 						// as otherwise you get the warning for your own old session immediately
 						this.ownSessionJoined = true
