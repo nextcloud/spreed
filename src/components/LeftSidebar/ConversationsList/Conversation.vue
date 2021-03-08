@@ -397,6 +397,10 @@ export default {
 	}
 }
 
+::v-deep .action-text__title {
+	margin-left: 12px;
+}
+
 .has-unread-messages {
 	::v-deep .acli__content__line-one__title {
 		font-weight: bold;
