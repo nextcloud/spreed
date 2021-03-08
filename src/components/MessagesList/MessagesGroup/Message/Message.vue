@@ -134,6 +134,14 @@ the main body of the message as well as a quote.
 							@click.stop="handlePrivateReply">
 							{{ t('spreed', 'Reply privately') }}
 						</ActionButton>
+						<ActionButton
+							v-if="isReplyable"
+							icon="icon-external"
+							:close-after-click="true"
+							@click.stop.prevent="handleCopyMessageLink">
+							{{ t('spreed', 'Copy message link') }}
+						</ActionButton>
+						<ActionSeparator v-if="messageActions.length > 0" />
 						<template
 							v-for="action in messageActions">
 							<ActionButton
@@ -144,13 +152,15 @@ the main body of the message as well as a quote.
 								{{ action.label }}
 							</ActionButton>
 						</template>
-						<ActionButton
-							v-if="isDeleteable"
-							icon="icon-delete"
-							:close-after-click="true"
-							@click.stop="handleDelete">
-							{{ t('spreed', 'Delete') }}
-						</ActionButton>
+						<template v-if="isDeleteable">
+							<ActionSeparator v-if="isReplyable || messageActions.length > 0" />
+							<ActionButton
+								icon="icon-delete"
+								:close-after-click="true"
+								@click.stop="handleDelete">
+								{{ t('spreed', 'Delete') }}
+							</ActionButton>
+						</template>
 					</Actions>
 				</div>
 			</div>
@@ -161,6 +171,7 @@ the main body of the message as well as a quote.
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton'
 import DeckCard from './MessagePart/DeckCard'
@@ -185,6 +196,7 @@ import {
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { createOneToOneConversation } from '../../../../services/conversationsService'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'Message',
@@ -203,6 +215,7 @@ export default {
 		Check,
 		CheckAll,
 		Reload,
+		ActionSeparator,
 	},
 
 	mixins: [
@@ -633,6 +646,16 @@ export default {
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+
+		async handleCopyMessageLink() {
+			try {
+				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
+				await this.$copyText(link)
+				showSuccess(t('spreed', 'Message link copied to clipboard.'))
+			} catch (error) {
+				showError(t('spreed', 'The link could not be copied.'))
+			}
 		},
 	},
 }
