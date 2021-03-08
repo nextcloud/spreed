@@ -191,7 +191,26 @@ class Listener {
 				$sessionIds[] = $session->getSessionId();
 			}
 
+			if ($event->getParticipant()->getSession()) {
+				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
+				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+			}
+
 			if (!empty($sessionIds)) {
+				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+			}
+		});
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, static function (ParticipantEvent $event) {
+			if (self::isUsingInternalSignaling()) {
+				return;
+			}
+
+			/** @var BackendNotifier $notifier */
+			$notifier = \OC::$server->query(BackendNotifier::class);
+
+			$sessionIds = [];
+			if ($event->getParticipant()->getSession()) {
+				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
 				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
 			}
 		});
