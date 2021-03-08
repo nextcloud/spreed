@@ -32,7 +32,13 @@
 			v-if="!isLoading"
 			class="image-container"
 			:class="{'playable': isPlayable}">
-			<span v-if="isPlayable" class="play-video-button icon-play-white" />
+			<span v-if="isPlayable" class="play-video-button">
+				<PlayCircleOutline
+					:size="48"
+					decorative
+					fill-color="#ffffff"
+					title="" />
+			</span>
 			<img v-if="!failed"
 				v-tooltip="previewTooltip"
 				:class="previewImageClass"
@@ -69,6 +75,7 @@ import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Close from 'vue-material-design-icons/Close'
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
 import { getCapabilities } from '@nextcloud/capabilities'
 
 const PREVIEW_TYPE = {
@@ -84,6 +91,7 @@ export default {
 	components: {
 		ProgressBar,
 		Close,
+		PlayCircleOutline,
 	},
 
 	directives: {
@@ -445,17 +453,13 @@ export default {
 
 			.play-video-button {
 				position: absolute;
+				height: 48px; /* for proper vertical centering */
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				padding: 22px;
-				border: 2px solid white;
-				border-radius: 25px;
 				opacity: 0.8;
 				z-index: 1;
 				transition: opacity 250ms ease-in-out;
-				background-size: 25px;
-				background-position-x: 11px;
 			}
 
 			&:hover {
