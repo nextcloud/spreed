@@ -28,141 +28,160 @@ the main body of the message as well as a quote.
 	<li
 		:id="`message_${id}`"
 		ref="message"
-		class="message"
-		:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
-		@mouseover="handleMouseover"
-		@mouseleave="handleMouseleave">
-		<div v-if="isFirstMessage && showAuthor"
-			class="message__author"
-			role="heading"
-			aria-level="4">
-			{{ actorDisplayName }}
-		</div>
+		:data-message-id="id"
+		:data-seen="seen"
+		:data-next-message-id="nextMessageId"
+		:data-previous-message-id="previousMessageId"
+		class="message">
 		<div
-			ref="messageMain"
-			class="message__main">
-			<div v-if="isSingleEmoji"
-				class="message__main__text">
-				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
-				<div class="single-emoji">
-					{{ message }}
+			:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+			class="message-body"
+			@mouseover="handleMouseover"
+			@mouseleave="handleMouseleave">
+			<div v-if="isFirstMessage && showAuthor"
+				class="message-body__author"
+				role="heading"
+				aria-level="4">
+				{{ actorDisplayName }}
+			</div>
+			<div
+				ref="messageMain"
+				class="message-body__main">
+				<div v-if="isSingleEmoji"
+					class="message-body__main__text">
+					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
+					<div class="single-emoji">
+						{{ message }}
+					</div>
 				</div>
-			</div>
-			<div v-else-if="showJoinCallButton" class="message__main__text call-started">
-				<RichText :text="message" :arguments="richParameters" :autolink="true" />
-				<CallButton />
-			</div>
-			<div v-else-if="isDeletedMessage" class="message__main__text deleted-message">
-				<RichText :text="message" :arguments="richParameters" :autolink="true" />
-			</div>
-			<div v-else class="message__main__text" :class="{'system-message': isSystemMessage}">
-				<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
-				<RichText :text="message" :arguments="richParameters" :autolink="true" />
-			</div>
-			<div v-if="!isDeletedMessage" class="message__main__right">
-				<span
-					v-tooltip.auto="messageDate"
-					class="date"
-					:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
-					:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
-				<!-- Message delivery status indicators -->
-				<div v-if="sendingFailure"
-					v-tooltip.auto="sendingErrorIconTooltip"
-					class="message-status sending-failed"
-					:class="{'retry-option': sendingErrorCanRetry}"
-					:aria-label="sendingErrorIconTooltip"
-					tabindex="0"
-					@mouseover="showReloadButton = true"
-					@focus="showReloadButton = true"
-					@mouseleave="showReloadButton = true"
-					@blur="showReloadButton = true">
-					<button
-						v-if="sendingErrorCanRetry && showReloadButton"
-						class="nc-button nc-button__main--dark"
-						@click="handleRetry">
-						<Reload
+				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
+					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<CallButton />
+				</div>
+				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
+					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+				</div>
+				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
+					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
+					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+				</div>
+				<div v-if="!isDeletedMessage" class="message-body__main__right">
+					<span
+						v-tooltip.auto="messageDate"
+						class="date"
+						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
+						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
+					<!-- Message delivery status indicators -->
+					<div v-if="sendingFailure"
+						v-tooltip.auto="sendingErrorIconTooltip"
+						class="message-status sending-failed"
+						:class="{'retry-option': sendingErrorCanRetry}"
+						:aria-label="sendingErrorIconTooltip"
+						tabindex="0"
+						@mouseover="showReloadButton = true"
+						@focus="showReloadButton = true"
+						@mouseleave="showReloadButton = true"
+						@blur="showReloadButton = true">
+						<button
+							v-if="sendingErrorCanRetry && showReloadButton"
+							class="nc-button nc-button__main--dark"
+							@click="handleRetry">
+							<Reload
+								decorative
+								title=""
+								:size="16" />
+						</button>
+						<AlertCircle v-else
 							decorative
 							title=""
 							:size="16" />
-					</button>
-					<AlertCircle v-else
-						decorative
-						title=""
-						:size="16" />
-				</div>
-				<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
-					v-tooltip.auto="loadingIconTooltip"
-					class="icon-loading-small message-status"
-					:aria-label="loadingIconTooltip" />
-				<div v-else-if="showCommonReadIcon"
-					v-tooltip.auto="commonReadIconTooltip"
-					class="message-status"
-					:aria-label="commonReadIconTooltip">
-					<CheckAll decorative
-						title=""
-						:size="16" />
-				</div>
-				<div v-else-if="showSentIcon"
-					v-tooltip.auto="sentIconTooltip"
-					class="message-status"
-					:aria-label="sentIconTooltip">
-					<Check decorative
-						title=""
-						:size="16" />
-				</div>
-				<!-- Message Actions -->
-				<div
-					v-show="showActions"
-					class="message__main__right__actions"
-					:class="{ 'tall' : isTallEnough }">
-					<Actions
-						v-show="isReplyable">
-						<ActionButton
-							icon="icon-reply"
-							@click.stop="handleReply">
-							{{ t('spreed', 'Reply') }}
-						</ActionButton>
-					</Actions>
-					<Actions
-						v-show="hasActionsMenu"
-						:force-menu="true"
-						container="#content-vue">
-						<ActionButton
-							v-if="isPrivateReplyable"
-							icon="icon-user"
-							:close-after-click="true"
-							@click.stop="handlePrivateReply">
-							{{ t('spreed', 'Reply privately') }}
-						</ActionButton>
-						<ActionButton
-							v-if="isReplyable"
-							icon="icon-external"
-							:close-after-click="true"
-							@click.stop.prevent="handleCopyMessageLink">
-							{{ t('spreed', 'Copy message link') }}
-						</ActionButton>
-						<ActionSeparator v-if="messageActions.length > 0" />
-						<template
-							v-for="action in messageActions">
+					</div>
+					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
+						v-tooltip.auto="loadingIconTooltip"
+						class="icon-loading-small message-status"
+						:aria-label="loadingIconTooltip" />
+					<div v-else-if="showCommonReadIcon"
+						v-tooltip.auto="commonReadIconTooltip"
+						class="message-status"
+						:aria-label="commonReadIconTooltip">
+						<CheckAll decorative
+							title=""
+							:size="16" />
+					</div>
+					<div v-else-if="showSentIcon"
+						v-tooltip.auto="sentIconTooltip"
+						class="message-status"
+						:aria-label="sentIconTooltip">
+						<Check decorative
+							title=""
+							:size="16" />
+					</div>
+					<!-- Message Actions -->
+					<div
+						v-show="showActions"
+						class="message-body__main__right__actions"
+						:class="{ 'tall' : isTallEnough }">
+						<Actions
+							v-show="isReplyable">
 							<ActionButton
-								:key="action.label"
-								:icon="action.icon"
-								:close-after-click="true"
-								@click="action.callback(messageAPIData)">
-								{{ action.label }}
+								icon="icon-reply"
+								@click.stop="handleReply">
+								{{ t('spreed', 'Reply') }}
 							</ActionButton>
-						</template>
-						<template v-if="isDeleteable">
-							<ActionSeparator v-if="isReplyable || messageActions.length > 0" />
+						</Actions>
+						<Actions
+							v-show="hasActionsMenu"
+							:force-menu="true"
+							container="#content-vue">
 							<ActionButton
-								icon="icon-delete"
+								v-if="isPrivateReplyable"
+								icon="icon-user"
 								:close-after-click="true"
-								@click.stop="handleDelete">
-								{{ t('spreed', 'Delete') }}
+								@click.stop="handlePrivateReply">
+								{{ t('spreed', 'Reply privately') }}
 							</ActionButton>
-						</template>
-					</Actions>
+							<ActionButton
+								v-if="isReplyable"
+								icon="icon-external"
+								:close-after-click="true"
+								@click.stop.prevent="handleCopyMessageLink">
+								{{ t('spreed', 'Copy message link') }}
+							</ActionButton>
+							<ActionButton
+								v-if="isReplyable"
+								:close-after-click="true"
+								@click.stop="handleMarkAsUnread">
+								{{ t('spreed', 'Mark as unread') }}
+							</ActionButton>
+							<ActionSeparator v-if="messageActions.length > 0" />
+							<template
+								v-for="action in messageActions">
+								<ActionButton
+									:key="action.label"
+									:icon="action.icon"
+									:close-after-click="true"
+									@click="action.callback(messageAPIData)">
+									{{ action.label }}
+								</ActionButton>
+							</template>
+							<template v-if="isDeleteable">
+								<ActionSeparator v-if="isReplyable || messageActions.length > 0" />
+								<ActionButton
+									icon="icon-delete"
+									:close-after-click="true"
+									@click.stop="handleDelete">
+									{{ t('spreed', 'Delete') }}
+								</ActionButton>
+							</template>
+						</Actions>
+					</div>
 				</div>
+			</div>
+		</div>
+		<div v-if="isLastReadMessage"
+			v-observe-visibility="lastReadMessageVisibilityChanged">
+			<div class="new-message-marker">
+				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
 	</li>
@@ -337,6 +356,21 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		previousMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
+
+		nextMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
+
+		lastReadMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
 	},
 
 	data() {
@@ -346,16 +380,26 @@ export default {
 			isTallEnough: false,
 			showReloadButton: false,
 			isDeleting: false,
+			// whether the message was seen, only used if this was marked as last read message
+			seen: false,
 		}
 	},
 
 	computed: {
+		isLastReadMessage() {
+			// note: not reading lastReadMessage from the conversation as we want to define it externally
+			// to have closer control on marker's visibility behavior
+			return this.id === this.lastReadMessageId
+				&& (!this.conversation.lastMessage
+				|| this.id !== this.conversation.lastMessage.id)
+		},
+
 		messageObject() {
 			return this.$store.getters.message(this.token, this.id)
 		},
 
 		hasActionsMenu() {
-			return (this.isPrivateReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
+			return (this.isPrivateReplyable || this.isReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
 		},
 
 		isConversationReadOnly() {
@@ -571,6 +615,12 @@ export default {
 	},
 
 	methods: {
+		lastReadMessageVisibilityChanged(isVisible) {
+			if (isVisible) {
+				this.seen = true
+			}
+		},
+
 		highlightAnimation() {
 			// trigger CSS highlight animation by setting a class
 			this.$refs.message.classList.add('highlight-animation')
@@ -659,6 +709,15 @@ export default {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
+
+		handleMarkAsUnread() {
+			// update in backend + visually
+			this.$store.dispatch('updateLastReadMessage', {
+				token: this.token,
+				id: this.previousMessageId,
+				updateVisually: true,
+			})
+		},
 	},
 }
 </script>
@@ -667,7 +726,7 @@ export default {
 @import '../../../../assets/variables';
 @import '../../../../assets/buttons';
 
-.message {
+.message-body {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
@@ -754,7 +813,7 @@ export default {
 
 // Increase the padding for regular messages to improve readability and
 // allow some space for the reply button
-.message:not(.system) {
+.message-body:not(.system) {
 	padding: 12px 4px 12px 8px;
 	margin: -6px 0;
 }
@@ -775,6 +834,25 @@ export default {
 	0% { background-color: var(--color-background-hover); }
 	50% { background-color: var(--color-background-hover); }
 	100% { background-color: rgba(var(--color-background-hover), 0); }
+}
+
+.new-message-marker {
+	position: relative;
+	margin: 20px 15px 20px -45px;
+	border-top: 1px solid var(--color-border);
+
+	span {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		padding: 0 7px 0 7px;
+		text-align: center;
+		white-space: nowrap;
+
+		border-radius: var(--border-radius);
+		background-color: var(--color-main-background);
+	}
 }
 
 .message-status {

@@ -107,6 +107,14 @@ const mutations = {
 		Vue.set(state.conversations[token], 'description', description)
 	},
 
+	updateConversationLastReadMessage(state, { token, lastReadMessage }) {
+		Vue.set(state.conversations[token], 'lastReadMessage', lastReadMessage)
+	},
+
+	updateConversationLastMessage(state, { token, lastMessage }) {
+		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
+	},
+
 	changeNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
 	},
@@ -317,6 +325,14 @@ const actions = {
 		conversation.lastActivity = (new Date().getTime()) / 1000
 
 		commit('addConversation', conversation)
+	},
+
+	async updateConversationLastMessage({ commit }, { token, lastMessage }) {
+		commit('updateConversationLastMessage', { token, lastMessage })
+	},
+
+	async updateConversationLastReadMessage({ commit }, { token, lastReadMessage }) {
+		commit('updateConversationLastReadMessage', { token, lastReadMessage })
 	},
 
 	changeNotificationLevel({ commit }, { token, notificationLevel }) {

@@ -442,9 +442,6 @@ export default {
 				this.$store.dispatch('purgeConversationsStore')
 				conversations.data.ocs.data.forEach(conversation => {
 					this.$store.dispatch('addConversation', conversation)
-					if (conversation.token === this.$store.getters.getToken()) {
-						this.$store.dispatch('markConversationRead', this.$store.getters.getToken())
-					}
 				})
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the

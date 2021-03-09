@@ -427,7 +427,6 @@ export default {
 
 				// this.$store.dispatch('purgeConversationsStore')
 				this.$store.dispatch('addConversation', response.data.ocs.data)
-				this.$store.dispatch('markConversationRead', token)
 
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the

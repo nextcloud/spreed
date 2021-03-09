@@ -20,7 +20,10 @@
  *
  */
 import Vue from 'vue'
-import { deleteMessage } from '../services/messagesService'
+import {
+	deleteMessage,
+	updateLastReadMessage,
+} from '../services/messagesService'
 
 const state = {
 	/**
@@ -35,6 +38,11 @@ const state = {
 	 * Map of conversation token to last known message id
 	 */
 	lastKnown: {},
+
+	/**
+	 * Cached last read message id for display.
+	 */
+	visualLastReadMessageId: {},
 }
 
 const getters = {
@@ -96,6 +104,13 @@ const getters = {
 	getLastKnownMessageId: (state) => (token) => {
 		if (state.lastKnown[token]) {
 			return state.lastKnown[token]
+		}
+		return null
+	},
+
+	getVisualLastReadMessageId: (state) => (token) => {
+		if (state.visualLastReadMessageId[token]) {
+			return state.visualLastReadMessageId[token]
 		}
 		return null
 	},
@@ -183,6 +198,15 @@ const mutations = {
 	},
 
 	/**
+	 * @param {object} state current store state;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last read chat message
+	 */
+	setVisualLastReadMessageId(state, { token, id }) {
+		Vue.set(state.visualLastReadMessageId, token, id)
+	},
+
+	/**
 	 * Deletes the messages entry from the store for the given conversation token.
 	 *
 	 * @param {object} state current store state
@@ -194,6 +218,9 @@ const mutations = {
 		}
 		if (state.lastKnown[token]) {
 			Vue.delete(state.lastKnown, token)
+		}
+		if (state.visualLastReadMessageId[token]) {
+			Vue.delete(state.visualLastReadMessageId, token)
 		}
 		if (state.messages[token]) {
 			Vue.delete(state.messages, token)
@@ -313,6 +340,15 @@ const actions = {
 	},
 
 	/**
+	 * @param {object} context default store context;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last read chat message
+	 */
+	setVisualLastReadMessageId(context, { token, id }) {
+		context.commit('setVisualLastReadMessageId', { token, id })
+	},
+
+	/**
 	 * Deletes the messages of a conversation
 	 *
 	 * @param {object} context default store context;
@@ -320,6 +356,51 @@ const actions = {
 	 */
 	deleteMessages(context, token) {
 		context.commit('deleteMessages', token)
+	},
+
+	/**
+	 * Clears the last read message marker by moving it to the last message
+	 * in the conversation.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} token the token of the conversation to be updated;
+	 * @param {bool} updateVisually whether to also clear the marker visually in the UI;
+	 */
+	async clearLastReadMessage(context, { token, updateVisually = false }) {
+		const conversation = context.getters.conversations[token]
+		if (!conversation || !conversation.lastMessage) {
+			return
+		}
+		// set the id to the last message
+		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually: updateVisually })
+		context.dispatch('markConversationRead', token)
+	},
+
+	/**
+	 * Updates the last read message in the store and also in the backend.
+	 * Optionally also updated the marker visually in the UI if specified.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} token the token of the conversation to be updated;
+	 * @param {number} id the id of the message on which to set the read marker;
+	 * @param {bool} updateVisually whether to also update the marker visually in the UI;
+	 */
+	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
+		const conversation = Object.assign({}, context.getters.conversations[token])
+		if (!conversation || conversation.lastReadMessage === id) {
+			return
+		}
+
+		if (id === 0) {
+			console.warn('updateLastReadMessage: should not set read marker with id=0')
+		}
+
+		// optimistic early commit to avoid indicator flickering
+		context.commit('updateConversationLastReadMessage', { token, lastReadMessage: id })
+		if (updateVisually) {
+			context.commit('setVisualLastReadMessageId', { token, id })
+		}
+		await updateLastReadMessage(token, id)
 	},
 }
 
