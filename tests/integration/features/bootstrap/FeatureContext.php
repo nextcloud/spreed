@@ -1010,7 +1010,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion): void {
-		if (strpos($participant, 'guest') === 0) {
+		if ($participant === 'stranger') {
+			$attendeeId = 123456789;
+		} elseif (strpos($participant, 'guest') === 0) {
 			$sessionId = self::$userToSessionId[$participant];
 			$attendeeId = $this->getAttendeeId('guests', sha1($sessionId), $identifier, $statusCode === 200 ? $user : null);
 		} else {

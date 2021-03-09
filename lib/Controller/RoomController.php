@@ -1189,8 +1189,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($this->participant->getAttendee()->getId() === $targetParticipant->getAttendee()->getId()) {
-			// FIXME switch to removeSelfFromRoomLogic()
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+			return $this->removeSelfFromRoomLogic($this->room, $targetParticipant);
 		}
 
 		if ($targetParticipant->getAttendee()->getParticipantType() === Participant::OWNER) {

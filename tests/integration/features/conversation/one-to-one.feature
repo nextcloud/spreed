@@ -125,7 +125,7 @@ Feature: one-to-one
     And user "participant1" is participant of room "room10" (v4)
     And user "participant3" is not participant of room "room10" (v4)
     And user "participant1" loads attendees attendee ids in room "room10" (v4)
-    When user "participant1" promotes "participant3" in room "room10" with 404 (v4)
+    When user "participant1" promotes "stranger" in room "room10" with 404 (v4)
 
   Scenario: User1 invites user2 to a one2one room and demote non-invited user
     Given user "participant1" creates room "room11" (v4)
@@ -134,7 +134,7 @@ Feature: one-to-one
     And user "participant1" is participant of room "room11" (v4)
     And user "participant3" is not participant of room "room11" (v4)
     And user "participant1" loads attendees attendee ids in room "room11" (v4)
-    When user "participant1" demotes "participant3" in room "room11" with 404 (v4)
+    When user "participant1" demotes "stranger" in room "room11" with 404 (v4)
 
   Scenario: User1 invites user2 to a one2one room twice, it's the same room
     Given user "participant1" creates room "room12" (v4)
