@@ -54,7 +54,7 @@ const leaveCall = async function(token) {
 }
 
 const fetchPeers = async function(token, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v3', 2) + `call/${token}`, options)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + `call/${token}`, options)
 	return response
 }
 

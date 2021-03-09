@@ -184,6 +184,7 @@ import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import Reload from 'vue-material-design-icons/Reload'
 import Quote from '../../../Quote'
+import isInCall from '../../../../mixins/isInCall'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
@@ -220,6 +221,7 @@ export default {
 
 	mixins: [
 		participant,
+		isInCall,
 	],
 
 	inheritAttrs: false,
@@ -411,8 +413,8 @@ export default {
 		showJoinCallButton() {
 			return this.systemMessage === 'call_started'
 				&& this.conversation.hasCall
-				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 				&& this.isLastCallStartedMessage
+				&& !this.isInCall
 		},
 
 		isSingleEmoji() {

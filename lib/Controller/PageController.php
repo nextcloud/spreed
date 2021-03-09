@@ -216,7 +216,7 @@ class PageController extends Controller {
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
 				try {
-					$participant = $room->getParticipant($this->userId);
+					$participant = $room->getParticipant($this->userId, false);
 					$requirePassword = $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED;
 				} catch (ParticipantNotFoundException $e) {
 					$requirePassword = true;

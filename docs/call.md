@@ -1,8 +1,9 @@
 # Call API
 
-* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
-* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
-* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
+* API v1: 🏁 Removed with API v4
+* API v2: 🏁 Removed with API v4
+* API v3: 🏁 Removed with API v4
+* API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`
 
 ## Get list of connected participants
 
@@ -21,12 +22,11 @@
 
         field | type | API | Description
         ------|------|-----|------------
-        `userId` | string | v1 and v2 only | Is empty for guests
-        `actorType` | string | v3 | Actor type of the attendee (see [Constants - Attendee types](constants.md#attendee-types))
-        `actorId` | string | v3 | The user id, guest random id or email address of the attendee
-        `displayName` | string | v3 | The display name of the attendee
-        `lastPing` | int | * | Timestamp of the last ping of the user (should be used for sorting)
-        `sessionId` | string | * | 512 character long string
+        `actorType` | string | v4 | Actor type of the attendee (see [Constants - Attendee types](constants.md#attendee-types))
+        `actorId` | string | v4 | The user id, guest random id or email address of the attendee
+        `displayName` | string | v4 | The display name of the attendee
+        `lastPing` | int | v4 | Timestamp of the last ping of the user (should be used for sorting)
+        `sessionId` | string | v4 | 512 character long string
 
 ## Join a call
 

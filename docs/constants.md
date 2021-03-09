@@ -19,7 +19,7 @@ title: Constants
 * `1` regular users only, excluding guest app users
 * `2` everyone
 
-### Webinary lobby states
+### Webinar lobby states
 * `0` no lobby
 * `1` lobby for non moderators
 

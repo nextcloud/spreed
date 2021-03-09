@@ -89,7 +89,7 @@ class Listener {
 		}
 
 		try {
-			$participant = $room->getParticipant($userId);
+			$participant = $room->getParticipant($userId, false);
 			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
 				return;
 			}

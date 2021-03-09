@@ -62,6 +62,10 @@ export default {
 			return this.$store.getters.getToken()
 		},
 
+		isConnecting() {
+			return this.$store.getters.isConnecting(this.token)
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
@@ -95,16 +99,24 @@ export default {
 
 		iconClass() {
 			return {
-				'icon-public': this.isPublicConversation,
-				'icon-contacts': !this.isPublicConversation,
+				'icon-loading': this.isConnecting,
+				'icon-public': !this.isConnecting && this.isPublicConversation,
+				'icon-contacts': !this.isConnecting && !this.isPublicConversation,
 			}
 		},
 
 		title() {
+			if (this.isConnecting) {
+				return t('spreed', 'Connecting …')
+			}
 			return t('spreed', 'Waiting for others to join the call …')
 		},
 
 		message() {
+			if (this.isConnecting) {
+				return ''
+			}
+
 			if (this.isPasswordRequestConversation || this.isFileConversation) {
 				return ''
 			}

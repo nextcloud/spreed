@@ -185,7 +185,7 @@ class Notifier implements INotifier {
 		}
 
 		try {
-			$participant = $room->getParticipant($userId);
+			$participant = $room->getParticipant($userId, false);
 			$this->participants[$roomId][$userId] = $participant;
 			return $participant;
 		} catch (ParticipantNotFoundException $e) {
@@ -441,7 +441,7 @@ class Notifier implements INotifier {
 	 * @throws ParticipantNotFoundException
 	 */
 	protected function getGuestParameter(Room $room, string $actorId): array {
-		$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
+		$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId, false);
 		$name = $participant->getAttendee()->getDisplayName();
 		if (trim($name) === '') {
 			throw new ParticipantNotFoundException('Empty name');

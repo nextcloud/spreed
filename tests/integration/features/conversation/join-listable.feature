@@ -10,23 +10,23 @@ Feature: conversation/join-listable
   # Non-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Nobody can join a non-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
-    When user "creator" allows listing room "room" for "none" with 200
-    Then user "regular-user" joins room "room" with 404
-    And user "user-guest@example.com" joins room "room" with 404
-    And user "guest" joins room "room" with 404
+    When user "creator" allows listing room "room" for "none" with 200 (v4)
+    Then user "regular-user" joins room "room" with 404 (v4)
+    And user "user-guest@example.com" joins room "room" with 404 (v4)
+    And user "guest" joins room "room" with 404 (v4)
 
   Scenario: Anyone can join a non-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "none" with 200
-    When user "regular-user" joins room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 200
-    And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    And user "creator" allows listing room "room" for "none" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    And user "user-guest@example.com" joins room "room" with 200 (v4)
+    And user "guest" joins room "room" with 200 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER_SELF_JOINED  | users     |
@@ -37,27 +37,27 @@ Feature: conversation/join-listable
   # User-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Only regular users can join a user-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "users" with 200
-    When user "regular-user" joins room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 404
-    And user "guest" joins room "room" with 404
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    And user "creator" allows listing room "room" for "users" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    And user "user-guest@example.com" joins room "room" with 404 (v4)
+    And user "guest" joins room "room" with 404 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId       | participantType | actorType |
       | creator       | OWNER           | users     |
       | regular-user  | USER            | users     |
 
   Scenario: Anyone can join a user-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "users" with 200
-    When user "regular-user" joins room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 200
-    And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    And user "creator" allows listing room "room" for "users" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    And user "user-guest@example.com" joins room "room" with 200 (v4)
+    And user "guest" joins room "room" with 200 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |
@@ -68,28 +68,28 @@ Feature: conversation/join-listable
   # All-listed rooms
   # -----------------------------------------------------------------------------
   Scenario: Only users with accounts can join an all-listed group room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 2    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "all" with 200
-    When user "regular-user" joins room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 200
-    And user "guest" joins room "room" with 404
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    And user "creator" allows listing room "room" for "all" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    And user "user-guest@example.com" joins room "room" with 200 (v4)
+    And user "guest" joins room "room" with 404 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |
       | user-guest@example.com | USER              | users     |
 
   Scenario: Anyone can join an all-listed public room
-    Given user "creator" creates room "room"
+    Given user "creator" creates room "room" (v4)
       | roomType | 3    |
       | roomName | room |
-    And user "creator" allows listing room "room" for "all" with 200
-    When user "regular-user" joins room "room" with 200
-    And user "user-guest@example.com" joins room "room" with 200
-    And user "guest" joins room "room" with 200
-    Then user "creator" sees the following attendees in room "room" with 200 (v3)
+    And user "creator" allows listing room "room" for "all" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    And user "user-guest@example.com" joins room "room" with 200 (v4)
+    And user "guest" joins room "room" with 200 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
       | actorId                | participantType   | actorType |
       | creator                | OWNER             | users     |
       | regular-user           | USER              | users     |

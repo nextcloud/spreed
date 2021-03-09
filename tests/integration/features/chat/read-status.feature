@@ -32,7 +32,7 @@ Feature: public
     Given user "participant1" creates room "chatting" (v3)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "chatting" with 200
+    And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
 
     When user "participant1" sets setting "read_status_privacy" to "1" with 200 (v1)
     Then user "participant1" has capability "spreed=>config=>chat=>read-privacy" set to "1"
@@ -59,7 +59,7 @@ Feature: public
     Given user "participant1" creates room "chatting" (v3)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "chatting" with 200
+    And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
 
     When user "participant1" sets setting "read_status_privacy" to "0" with 200 (v1)
     Then user "participant1" has capability "spreed=>config=>chat=>read-privacy" set to "0"
@@ -87,7 +87,7 @@ Feature: public
     Given user "participant1" creates room "chatting" (v3)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds "participant2" to room "chatting" with 200
+    And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
 
     When user "participant1" sets setting "read_status_privacy" to "0" with 200 (v1)
     Then user "participant1" has capability "spreed=>config=>chat=>read-privacy" set to "0"
@@ -103,7 +103,7 @@ Feature: public
     When user "participant1" reads message "Message 2" in room "chatting" with 200
     Then last response has last common read message header set to "Message 2"
 
-    And user "participant1" adds "participant3" to room "chatting" with 200
+    And user "participant1" adds user "participant3" to room "chatting" with 200 (v4)
 
     When user "participant1" reads message "Message 2" in room "chatting" with 200
     Then last response has last common read message header set to "Message 2"

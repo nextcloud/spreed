@@ -93,7 +93,7 @@ class ConversationProvider implements IProvider {
 
 			// Logged in users need to have a regular participant,
 			// before they can do anything with the room.
-			$participant = $room->getParticipant($userId);
+			$participant = $room->getParticipant($userId, false);
 			return $participant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED;
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');

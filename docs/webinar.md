@@ -8,9 +8,10 @@ Group and public conversations can be used to host webinars. Those online meetin
 
 ## Base endpoint
 
-* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
-* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
-* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
+* API v1: 🏁 Removed with API v4
+* API v2: 🏁 Removed with API v4
+* API v3: 🏁 Removed with API v4
+* API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`
 
 ## Set lobby for a conversation
 

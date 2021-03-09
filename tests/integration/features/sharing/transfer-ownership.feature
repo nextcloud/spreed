@@ -6,12 +6,12 @@ Feature: transfer-ownership
     Given user "participant3" exists
 
   Scenario: transfer ownership of a file shared with a room to a user in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When transfering ownership from "participant1" to "participant2"
     Then user "participant1" gets last share
@@ -49,12 +49,12 @@ Feature: transfer-ownership
       | share_with_displayname | Group room |
 
   Scenario: transfer ownership of a file reshared with a room to a user in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
-    And user "participant1" adds "participant2" to room "group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant3" shares "welcome.txt" with user "participant1" with OCS 100
     And user "participant1" accepts last share
     And user "participant1" shares "welcome (2).txt" with room "group room" with OCS 100
@@ -102,11 +102,11 @@ Feature: transfer-ownership
   # This is a special case in which even if the (now) sharer is not in a room
   # the room share is valid and other participants can access that share.
   Scenario: transfer ownership of a file shared with a room to a user not in the room
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" renames room "group room" to "Group room" with 200
-    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When transfering ownership from "participant1" to "participant2"
     Then user "participant1" gets last share

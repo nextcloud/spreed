@@ -72,42 +72,28 @@ class CallController extends AEnvironmentAwareController {
 		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
 
 		foreach ($participants as $participant) {
-			if ($this->getAPIVersion() >= 3) {
-				$displayName = $participant->getAttendee()->getActorId();
-				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-					if ($participant->getAttendee()->getDisplayName()) {
-						$displayName = $participant->getAttendee()->getDisplayName();
-					} else {
-						$user = $this->userManager->get($participant->getAttendee()->getActorId());
-						if ($user instanceof IUser) {
-							$displayName = $user->getDisplayName();
-						}
-					}
-				} else {
+			$displayName = $participant->getAttendee()->getActorId();
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				if ($participant->getAttendee()->getDisplayName()) {
 					$displayName = $participant->getAttendee()->getDisplayName();
+				} else {
+					$user = $this->userManager->get($participant->getAttendee()->getActorId());
+					if ($user instanceof IUser) {
+						$displayName = $user->getDisplayName();
+					}
 				}
-
-				$result[] = [
-					'actorType' => $participant->getAttendee()->getActorType(),
-					'actorId' => $participant->getAttendee()->getActorId(),
-					'displayName' => $displayName,
-					'token' => $this->room->getToken(),
-					'lastPing' => $participant->getSession()->getLastPing(),
-					'sessionId' => $participant->getSession()->getSessionId(),
-				];
 			} else {
-				$userId = '';
-				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-					$userId = $participant->getAttendee()->getActorId();
-				}
-
-				$result[] = [
-					'userId' => $userId,
-					'token' => $this->room->getToken(),
-					'lastPing' => $participant->getSession()->getLastPing(),
-					'sessionId' => $participant->getSession()->getSessionId(),
-				];
+				$displayName = $participant->getAttendee()->getDisplayName();
 			}
+
+			$result[] = [
+				'actorType' => $participant->getAttendee()->getActorType(),
+				'actorId' => $participant->getAttendee()->getActorId(),
+				'displayName' => $displayName,
+				'token' => $this->room->getToken(),
+				'lastPing' => $participant->getSession()->getLastPing(),
+				'sessionId' => $participant->getSession()->getSessionId(),
+			];
 		}
 
 		return new DataResponse($result);

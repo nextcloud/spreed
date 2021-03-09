@@ -251,7 +251,7 @@ class BackendNotifier {
 		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
-		$participants = $this->participantService->getParticipantsForRoom($room);
+		$participants = $this->participantService->getSessionsAndParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
 			if ($attendee->getActorType() !== Attendee::ACTOR_USERS

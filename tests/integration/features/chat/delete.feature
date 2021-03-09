@@ -4,10 +4,10 @@ Feature: chat/reply
     Given user "participant2" exists
 
   Scenario: moderator deletes their own message
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
@@ -26,10 +26,10 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: user deletes their own message
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
@@ -48,10 +48,10 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: moderator deletes other user message
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
@@ -67,10 +67,10 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: moderator deletes their own message which got replies
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "group room" with 201
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
@@ -94,10 +94,10 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: user deletes their own message which got replies
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "group room" with 201
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
@@ -121,10 +121,10 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: moderator deletes other user message
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "group room" with 201
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200

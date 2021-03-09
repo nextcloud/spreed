@@ -351,7 +351,7 @@ class SignalingController extends OCSController {
 				if ($this->userId) {
 					// For logged in users we check if they are still part of the public conversation,
 					// if not they were removed instead of having a conflict.
-					$room->getParticipant($this->userId);
+					$room->getParticipant($this->userId, false);
 				}
 
 				// Session was killed, make the UI redirect to an error
@@ -563,14 +563,14 @@ class SignalingController extends OCSController {
 						// If the user joins the session might not be known to the server yet.
 						// In this case we load by actor information and use the session id as new session.
 						try {
-							$participant = $room->getParticipantByActor($actorType, $actorId);
+							$participant = $room->getParticipantByActor($actorType, $actorId, false);
 						} catch (ParticipantNotFoundException $e) {
 						}
 					}
 				}
 			} else {
 				try {
-					$participant = $room->getParticipantByActor($actorType, $actorId);
+					$participant = $room->getParticipantByActor($actorType, $actorId, false);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
@@ -596,7 +596,7 @@ class SignalingController extends OCSController {
 			} elseif (!empty($userId)) {
 				// User trying to join room.
 				try {
-					$participant = $room->getParticipant($userId);
+					$participant = $room->getParticipant($userId, false);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}

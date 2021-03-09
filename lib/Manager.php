@@ -299,25 +299,30 @@ class Manager {
 
 	/**
 	 * @param string $userId
+	 * @param array $sessionIds A list of talk sessions to consider for loading (otherwise no session is loaded)
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForUser(string $userId, bool $includeLastMessage = false): array {
+	public function getRoomsForUser(string $userId, array $sessionIds = [], bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-				$query->expr()->eq('a.id', 's.attendee_id')
-			))
 			->where($query->expr()->isNotNull('a.id'));
+
+		if (!empty($sessionIds)) {
+			$helper->selectSessionsTable($query);
+			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id'),
+				$query->expr()->in('s.session_id', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY))
+			));
+		}
 
 		if ($includeLastMessage) {
 			$this->loadLastMessageInfo($query);
@@ -391,9 +396,6 @@ class Manager {
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-				$query->expr()->eq('a.id', 's.attendee_id')
-			))
 			->where($query->expr()->isNull('a.id'))
 			->andWhere($query->expr()->in('r.type', $query->createNamedParameter($allowedRoomTypes, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($query->expr()->in('r.listable', $query->createNamedParameter($allowedListedTypes, IQueryBuilder::PARAM_INT_ARRAY)));
@@ -435,14 +437,10 @@ class Manager {
 		if ($userId !== null) {
 			// Non guest user
 			$helper->selectAttendeesTable($query);
-			$helper->selectSessionsTable($query);
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
-				))
-				->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-					$query->expr()->eq('a.id', 's.attendee_id')
 				))
 				->andWhere($query->expr()->isNotNull('a.id'));
 		}
@@ -483,12 +481,13 @@ class Manager {
 	 *
 	 * @param string $token
 	 * @param string|null $userId
+	 * @param string|null $sessionId
 	 * @param bool $includeLastMessage
 	 * @param bool $isSIPBridgeRequest
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForUserByToken(string $token, ?string $userId, bool $includeLastMessage = false, bool $isSIPBridgeRequest = false): Room {
+	public function getRoomForUserByToken(string $token, ?string $userId, ?string $sessionId = null, bool $includeLastMessage = false, bool $isSIPBridgeRequest = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -499,15 +498,18 @@ class Manager {
 		if ($userId !== null) {
 			// Non guest user
 			$helper->selectAttendeesTable($query);
-			$helper->selectSessionsTable($query);
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
 					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
 					$query->expr()->eq('a.room_id', 'r.id')
-				))
-				->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				));
+			if ($sessionId !== null) {
+				$helper->selectSessionsTable($query);
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
 					$query->expr()->eq('a.id', 's.attendee_id')
 				));
+			}
 		}
 
 		if ($includeLastMessage) {
@@ -584,25 +586,30 @@ class Manager {
 	 * @param string $token
 	 * @param string $actorType
 	 * @param string $actorId
+	 * @param string|null $sessionId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByActor(string $token, string $actorType, string $actorId): Room {
+	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
 		$query->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
-			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-				$query->expr()->eq('a.id', 's.attendee_id')
-			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		if ($sessionId !== null) {
+			$helper->selectSessionsTable($query);
+			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+				$query->expr()->eq('a.id', 's.attendee_id')
+			));
+		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -814,7 +821,7 @@ class Manager {
 		$room = $this->createRoomObject($row);
 
 		try {
-			$room->getParticipant($userId);
+			$room->getParticipant($userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room,[[
@@ -917,7 +924,7 @@ class Manager {
 					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 					$room->getParticipantBySession($sessionId);
 				} else {
-					$room->getParticipant($userId);
+					$room->getParticipant($userId, false);
 				}
 			} catch (ParticipantNotFoundException $e) {
 				// Do not leak the name of rooms the user is not a part of

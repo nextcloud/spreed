@@ -55,6 +55,19 @@ class SessionMapper extends QBMapper {
 
 	/**
 	 * @param int $attendeeId
+	 * @return Session[]
+	 */
+	public function findByAttendeeId(int $attendeeId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('attendee_id', $query->createNamedParameter($attendeeId)));
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @param int $attendeeId
 	 * @return int Number of deleted entities
 	 */
 	public function deleteByAttendeeId(int $attendeeId): int {

@@ -10,47 +10,64 @@ Feature: create
     Given invoking occ with "talk:room:create room1 --user participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
-    And user "participant1" is participant of the following rooms
-      | name  | type | participantType | participants |
-      | room1 | 2    | 3               | participant1-displayname |
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 2    | 3               |
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 3               |
 
   Scenario: Create a group room for participant1 as moderator
     Given invoking occ with "talk:room:create room1 --user participant1 --moderator participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
-    And user "participant1" is participant of the following rooms
-      | name  | type | participantType | participants |
-      | room1 | 2    | 2               | participant1-displayname |
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 2    | 2               |
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 2               |
 
   Scenario: Create a group room for participant1 as owner
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
-    And user "participant1" is participant of the following rooms
-      | name  | type | participantType | participants |
-      | room1 | 2    | 1               | participant1-displayname |
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 2    | 1               |
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
 
   Scenario: Create a public room for participant1 as owner group1 as users
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --group group1"
     And the command output contains the text "Room successfully created"
     Then the command was successful
-    And user "participant1" is participant of the following rooms
-      | name  | type | participantType | participants |
-      | room1 | 3    | 1               | participant1-displayname, participant2-displayname |
-    And user "participant2" is participant of the following rooms
-      | name  | type | participantType | participants |
-      | room1 | 3    | 3               | participant1-displayname, participant2-displayname |
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 3    | 1               |
+    And user "participant2" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 3    | 3               |
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
 
   Scenario: Create a public room for participant1 as owner group1 as users with password and readonly and listable
     Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --group group1 --readonly --listable 2 --password test"
     And the command output contains the text "Room successfully created"
     Then the command was successful
-    And user "participant1" is participant of the following rooms
-      | name  | type | readOnly | hasPassword | participantType | participants |
-      | room1 | 3    | 1        | 1           | 1               | participant1-displayname, participant2-displayname |
-    And user "participant2" is participant of the following rooms
-      | name  | type | readOnly | hasPassword | participantType | participants |
-      | room1 | 3    | 1        | 1           | 3               | participant1-displayname, participant2-displayname |
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | readOnly | hasPassword | participantType |
+      | room1 | 3    | 1        | 1           | 1               |
+    And user "participant2" is participant of the following rooms (v4)
+      | name  | type | readOnly | hasPassword | participantType |
+      | room1 | 3    | 1        | 1           | 3               |
+    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
 
 
 
@@ -58,7 +75,7 @@ Feature: create
     When invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --description 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C"
     Then the command was successful
     And the command output contains the text "Room successfully created"
-    And user "participant1" is participant of the following rooms (v3)
+    And user "participant1" is participant of the following rooms (v4)
       | name  | type | participantType | description |
       | room1 | 3    | 1               | 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678C |
 
@@ -71,7 +88,7 @@ Feature: create
     When invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --description ०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च"
     Then the command was successful
     And the command output contains the text "Room successfully created"
-    And user "participant1" is participant of the following rooms (v3)
+    And user "participant1" is participant of the following rooms (v4)
       | name  | type | participantType | description |
       | room1 | 3    | 1               | ०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च |
 

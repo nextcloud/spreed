@@ -80,14 +80,19 @@ class SessionService {
 
 	/**
 	 * @param Attendee $attendee
+	 * @return Session[]
+	 */
+	public function getAllSessionsForAttendee(Attendee $attendee): array {
+		return $this->sessionMapper->findByAttendeeId($attendee->getId());
+	}
+
+	/**
+	 * @param Attendee $attendee
 	 * @param string $forceSessionId
 	 * @return Session
 	 * @throws UniqueConstraintViolationException
 	 */
 	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
-		// Currently a participant can only join once
-		$this->sessionMapper->deleteByAttendeeId($attendee->getId());
-
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
 

@@ -3,7 +3,7 @@ Feature: chat/reference-id
     Given user "participant1" exists
 
   Scenario: user can send a message with a reference id and see it afterwards
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" sends message "Message 1" with reference id "ref 1" to room "group room" with 201
@@ -14,7 +14,7 @@ Feature: chat/reference-id
       | group room | users     | participant1 | participant1-displayname | Message 1 | []                | ref 1       |
 
   Scenario: user can send a message with the same reference id
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" sends message "Message 1" with reference id "ref 1" to room "group room" with 201
@@ -25,7 +25,7 @@ Feature: chat/reference-id
       | group room | users     | participant1 | participant1-displayname | Message 1 | []                | ref 1       |
 
   Scenario: too long references dont break the api
-    Given user "participant1" creates room "group room"
+    Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     When user "participant1" sends message "Message 1" with reference id "1234567890123456789012345678901234567890" to room "group room" with 201

@@ -1,8 +1,9 @@
 # Participant API
 
-* Base endpoint for API v1 is: `/ocs/v2.php/apps/spreed/api/v1`
-* Base endpoint for API v2 is: `/ocs/v2.php/apps/spreed/api/v2`
-* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
+* API v1: 🏁 Removed with API v4
+* API v2: 🏁 Removed with API v4
+* API v3: 🏁 Removed with API v4
+* API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`
 
 ## Get list of participants in a conversation
 
@@ -26,10 +27,9 @@
 
         field | type | API | Description
         ------|------|-----|------------
-        `userId` | string | v1 + v2 only | Is empty for guests
-        `attendeeId` | int | v3 | Unique attendee id
-        `actorType` | string | v3 | Currently known `users|guests|emails|groups`
-        `actorId` | string | v3 | The unique identifier for the given actor type
+        `attendeeId` | int | * | Unique attendee id
+        `actorType` | string | * | Currently known `users|guests|emails|groups`
+        `actorId` | string | * | The unique identifier for the given actor type
         `displayName` | string | * | Can be empty for guests
         `participantType` | int | * | Permissions level of the participant (see [constants list](constants.md#participant-types))
         `lastPing` | int | * | Timestamp of the last ping of the user (should be used for sorting)
@@ -67,7 +67,6 @@
 
 ## Delete an attendee by id from a conversation
 
-* API: Only `v3` or later
 * Method: `DELETE`
 * Endpoint: `/room/{token}/attendees`
 * Data:
@@ -75,27 +74,6 @@
     field | type | Description
     ------|------|------------
     `attendeeId` | int | The participant to delete
-
-* Response:
-    - Status code:
-        + `200 OK`
-        + `400 Bad Request` When the participant is a moderator or owner
-        + `400 Bad Request` When there are no other moderators or owners left
-        + `403 Forbidden` When the current user is not a moderator or owner
-        + `403 Forbidden` When the participant to remove is an owner
-        + `404 Not Found` When the conversation could not be found for the participant
-        + `404 Not Found` When the participant to remove could not be found
-
-## Delete a participant from a conversation
-
-* API: Only `v1` and `v2` (Use [Delete an attendee by id from a conversation](#delete-an-attendee-by-id-from-a-conversation) in later version)
-* Method: `DELETE`
-* Endpoint: `/room/{token}/participants`
-* Data:
-
-    field | type | Description
-    ------|------|------------
-    `participant` | string | User to remove
 
 * Response:
     - Status code:
@@ -118,25 +96,6 @@
         + `400 Bad Request` When the participant is a moderator or owner and there are no other moderators or owners left.
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Remove a guest from a conversation
-
-* API: Only `v1` and `v2` (Use [Delete an attendee by id from a conversation](#delete-an-attendee-by-id-from-a-conversation) in later versions)
-* Method: `DELETE`
-* Endpoint: `/room/{token}/participants/guests`
-* Data:
-
-    field | type | Description
-    ------|------|------------
-    `participant` | string | Session ID of the guest to remove
-
-* Response:
-    - Status code:
-        + `200 OK`
-        + `400 Bad Request` When the target participant is not a guest
-        + `403 Forbidden` When the current user is not a moderator or owner
-        + `404 Not Found` When the conversation could not be found for the participant
-        + `404 Not Found` When the target participant could not be found
-
 ## Join a conversation (available for call and chat)
 
 * Method: `POST`
@@ -145,7 +104,7 @@
 
     field | type | Description
     ------|------|------------
-    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the conversation has `hasPassword` set to true.
+    `password` | string | Optional: Password is only required for users which are self joined or guests and only when the conversation has `hasPassword` set to true.
     `force` | bool | If set to `false` and the user has an active session already a `409 Conflict` will be returned (Default: true - to keep the old behaviour)
 
 * Response:
@@ -153,7 +112,7 @@
         + `200 OK`
         + `403 Forbidden` When the password is required and didn't match
         + `404 Not Found` When the conversation could not be found for the participant
-        + `409 Conflict` When the user already has an active session in the conversation. The suggested behaviour is to ask the user whether they want to kill the old session and force join unless the last ping is older than 60 seconds or older than 40 seconds when the conflicting session is not marked as in a call.
+        + `409 Conflict` When the user already has an active Talk session in the conversation with this Nextcloud session. The suggested behaviour is to ask the user whether they want to kill the old session and force join unless the last ping is older than 60 seconds or older than 40 seconds when the conflicting session is not marked as in a call.
 
     - Data in case of `200 OK`: See array definition in [Get user´s conversations](conversation.md#get-user-s-conversations)
 
@@ -174,7 +133,7 @@
 
     field | type | Description
     ------|------|------------
-    `attendeeId` | int or null | Attendee id can be used for guests and users
+    `attendeeId` | int or null | Attendee id can be used for guests and users, not setting it will resend all invitations
 
 * Response:
     - Status code:
@@ -198,11 +157,9 @@
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | API | Description
-    ------|------|-----|------------
-    `participant` | string or null | v1 + v2 | User to demote
-    `sessionId` | string or null | v1 + v2 | Guest session to demote
-    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
+    field | type | Description
+    ------|------|------------
+    `attendeeId` | int | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
@@ -219,11 +176,9 @@
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | API | Description
-    ------|------|-----|------------
-    `participant` | string or null | v1 + v2 | User to demote
-    `sessionId` | string or null | v1 + v2 | Guest session to demote
-    `attendeeId` | int or null | v3 | Attendee id can be used for guests and users
+    field | type | Description
+    ------|------|------------
+    `attendeeId` | int | Attendee id can be used for guests and users
 
 * Response:
     - Status code:
@@ -238,7 +193,6 @@
 
 Note: This is only allowed with validate SIP bridge requests
 
-* API: Only `v3` or later
 * Required capability: `sip-support`
 * Method: `GET`
 * Endpoint: `/room/{token}/pin/{pin}`

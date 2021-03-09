@@ -919,7 +919,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		// The user joined the room.
 		$oldParticipant = $participantService->joinRoom($room, $testUser, '');
 		$oldSessionId = $oldParticipant->getSession()->getSessionId();
-		$result = $this->performBackendRequest([
+		$this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
 				'roomid' => $room->getToken(),
@@ -928,14 +928,14 @@ class SignalingControllerTest extends \Test\TestCase {
 				'action' => 'join',
 			],
 		]);
-		$participant = $room->getParticipant($this->userId);
+		$participant = $room->getParticipant($this->userId, $oldSessionId);
 		$this->assertEquals($oldSessionId, $participant->getSession()->getSessionId());
 
 		// The user is reloading the browser which will join him with another
 		// session id.
 		$newParticipant = $participantService->joinRoom($room, $testUser, '');
 		$newSessionId = $newParticipant->getSession()->getSessionId();
-		$result = $this->performBackendRequest([
+		$this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
 				'roomid' => $room->getToken(),
@@ -946,11 +946,11 @@ class SignalingControllerTest extends \Test\TestCase {
 		]);
 
 		// Now the new session id is stored in the database.
-		$participant = $room->getParticipant($this->userId);
+		$participant = $room->getParticipant($this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 
 		// Leaving the old session id...
-		$result = $this->performBackendRequest([
+		$this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
 				'roomid' => $room->getToken(),
@@ -961,7 +961,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		]);
 
 		// ...will keep the new session id in the database.
-		$participant = $room->getParticipant($this->userId);
+		$participant = $room->getParticipant($this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 	}
 }

@@ -363,13 +363,8 @@ class ParticipantService {
 	}
 
 	public function leaveRoomAsSession(Room $room, Participant $participant): void {
-		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
-			$event = new ParticipantEvent($room, $participant);
-			$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
-		} else {
-			$event = new RemoveParticipantEvent($room, $participant, Room::PARTICIPANT_LEFT);
-			$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
-		}
+		$event = new ParticipantEvent($room, $participant);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
@@ -392,22 +387,20 @@ class ParticipantService {
 			$this->attendeeMapper->delete($participant->getAttendee());
 		}
 
-		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_GUESTS) {
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
-		} else {
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
-		}
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
 	}
 
 	public function removeAttendee(Room $room, Participant $participant, string $reason): void {
 		$isUser = $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
 
+		$sessions = $this->sessionService->getAllSessionsForAttendee($participant->getAttendee());
+
 		if ($isUser) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
-			$event = new RemoveUserEvent($room, $participant, $user, $reason);
+			$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
 		} else {
-			$event = new RemoveParticipantEvent($room, $participant, $reason);
+			$event = new RemoveParticipantEvent($room, $participant, $reason, $sessions);
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
 		}
 
@@ -423,20 +416,21 @@ class ParticipantService {
 
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
-			$participant = $room->getParticipant($user->getUID());
+			$participant = $room->getParticipant($user->getUID(), false);
 		} catch (ParticipantNotFoundException $e) {
 			return;
 		}
 
-		$event = new RemoveUserEvent($room, $participant, $user, $reason);
+		$attendee = $participant->getAttendee();
+		$sessions = $this->sessionService->getAllSessionsForAttendee($attendee);
+
+		$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
 
-		$session = $participant->getSession();
-		if ($session instanceof Session) {
+		foreach ($sessions as $session) {
 			$this->sessionMapper->delete($session);
 		}
 
-		$attendee = $participant->getAttendee();
 		$this->attendeeMapper->delete($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
@@ -590,6 +584,26 @@ class ParticipantService {
 
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+
+		return $this->getParticipantsFromQuery($query, $room);
+	}
+
+	/**
+	 * Get all sessions and attendees without a session for the room
+	 *
+	 * This will return multiple items for the same attendee if the attendee
+	 * has multiple sessions in the room.
+	 *
+	 * @param Room $room
+	 * @return Participant[]
+	 */
+	public function getSessionsAndParticipantsForRoom(Room $room): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
 			->leftJoin(
@@ -618,7 +632,7 @@ class ParticipantService {
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('s.id'));
+			->andWhere($query->expr()->isNotNull('a.id'));
 
 		if ($maxAge > 0) {
 			$query->andWhere($query->expr()->gt('s.last_ping', $query->createNamedParameter($maxAge, IQueryBuilder::PARAM_INT)));
@@ -663,14 +677,16 @@ class ParticipantService {
 
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTable($query);
+		$helper->selectSessionsTableMax($query);
 		$query->from('talk_attendees', 'a')
+			// Currently we only care if the user has a session at all, so we can select any: #ThisIsFine
 			->leftJoin(
 				'a', 'talk_sessions', 's',
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)))
+			->groupBy('a.id');
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}
@@ -739,14 +755,14 @@ class ParticipantService {
 			->from('talk_attendees', 'a')
 			->leftJoin(
 				'a', 'talk_sessions', 's',
-				$query->expr()->eq('s.attendee_id', 'a.id')
+				$query->expr()->andX(
+					$query->expr()->eq('s.attendee_id', 'a.id'),
+					$query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
+				)
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($query->expr()->orX(
-				$query->expr()->eq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
-				$query->expr()->isNull('s.in_call')
-			));
+			->andWhere($query->expr()->isNull('s.in_call'));
 
 		$userIds = [];
 		$result = $query->execute();

@@ -195,7 +195,7 @@ trait TRoomCommand {
 	 */
 	protected function setRoomOwner(Room $room, string $userId): void {
 		try {
-			$participant = $room->getParticipant($userId);
+			$participant = $room->getParticipant($userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 		}
@@ -271,7 +271,7 @@ trait TRoomCommand {
 			}
 
 			try {
-				$room->getParticipant($user->getUID());
+				$room->getParticipant($user->getUID(), false);
 
 				// nothing to do, user is a participant already
 				continue;
@@ -299,7 +299,7 @@ trait TRoomCommand {
 		$users = [];
 		foreach ($userIds as $userId) {
 			try {
-				$room->getParticipant($userId);
+				$room->getParticipant($userId, false);
 			} catch (ParticipantNotFoundException $e) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
@@ -322,7 +322,7 @@ trait TRoomCommand {
 		$participants = [];
 		foreach ($userIds as $userId) {
 			try {
-				$participant = $room->getParticipant($userId);
+				$participant = $room->getParticipant($userId, false);
 			} catch (ParticipantNotFoundException $e) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
@@ -347,7 +347,7 @@ trait TRoomCommand {
 		$participants = [];
 		foreach ($userIds as $userId) {
 			try {
-				$participant = $room->getParticipant($userId);
+				$participant = $room->getParticipant($userId, false);
 			} catch (ParticipantNotFoundException $e) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
