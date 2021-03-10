@@ -833,4 +833,14 @@ export default {
 		height: $clickable-area;
 	}
 }
+
+::v-deep button.action-item,
+::v-deep .action-item__menutoggle {
+	// Fix screensharing icon width
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: transparent;
+	}
+}
 </style>
