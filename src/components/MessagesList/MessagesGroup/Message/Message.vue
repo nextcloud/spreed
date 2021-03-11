@@ -34,15 +34,12 @@ the main body of the message as well as a quote.
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
-		:class="{'hover': showActions && !isSystemMessage, 'system' : isSystemMessage}"
 		@keydown.up.prevent="jumpToPrevious"
 		@keydown.down.prevent="jumpToNext"
 		@focus="isFocussed=true"
-		@blur="isFocussed=false"
-		@mouseover="isHovered=true"
-		@mouseleave="isHovered=false">
+		@blur="handleBlur">
 		<div
-			:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+			:class="{'hover': showHover, 'system' : isSystemMessage}"
 			class="message-body"
 			@mouseover="handleMouseover"
 			@mouseleave="handleMouseleave">
@@ -129,13 +126,15 @@ the main body of the message as well as a quote.
 						v-if="hasActions"
 						v-show="showActions"
 						class="message-body__main__right__actions"
-						:class="{ 'tall' : isTallEnough }">
+						:class="{ 'tall' : isTallEnough, 'hidden-visually': !showActions }">
 						<Actions
 							v-show="isReplyable"
-							@focus="isActionFocussed=true"
-							@blur="isActionFocussed=false">
+							@focus="handleActionFocus"
+							@blur="handleActionBlur">
 							<ActionButton
 								icon="icon-reply"
+								@focus="handleActionFocus"
+								@blur="handleActionBlur"
 								@click.stop="handleReply">
 								{{ t('spreed', 'Reply') }}
 							</ActionButton>
@@ -143,8 +142,10 @@ the main body of the message as well as a quote.
 						<Actions
 							:force-menu="true"
 							container="#content-vue"
-							@focus="isActionFocussed=true"
-							@blur="isActionFocussed=false">
+							@focus="handleActionFocus"
+							@blur="handleActionBlur"
+							@open="handleActionMenuOpen"
+							@close="handleActionMenuClose">
 							<ActionButton
 								v-if="isPrivateReplyable"
 								icon="icon-user"
@@ -394,6 +395,7 @@ export default {
 			isFocussed: false,
 			isHovered: false,
 			isActionFocussed: false,
+			isActionMenuOpen: false,
 		}
 	},
 
@@ -415,7 +417,15 @@ export default {
 		},
 
 		showActions() {
-			return (this.isFocussed || this.isHovered || this.isActionFocussed)
+			console.log('isFocussed: ', this.isFocussed, ' isHovered: ', this.isHovered, ' isActionFocussed: ', this.isActionFocussed, ' isActionMenuOpen: ', this.isActionMenuOpen)
+			return (this.isFocussed || this.isHovered || this.isActionFocussed || this.isActionMenuOpen)
+		},
+		showHover() {
+			if (this.isFocussed) {
+				// keyboard focus also allowed on system messages
+				return true
+			}
+			return this.showActions && !this.isSystemMessage && !this.isDeletedMessage
 		},
 
 		isConversationReadOnly() {
@@ -639,6 +649,29 @@ export default {
 	},
 
 	methods: {
+		handleActionFocus() {
+			console.log('handleActionFocus')
+			this.isActionFocussed = true;
+		},
+		handleActionBlur() {
+			console.log('handleActionBlur')
+			this.isActionFocussed = false;
+		},
+		handleActionMenuOpen() {
+			console.log('handleActionMenuOpen')
+			this.isActionMenuOpen = true
+		},
+		handleActionMenuClose() {
+			console.log('handleActionMenuClose')
+			this.isActionMenuOpen = false
+		},
+		handleBlur() {
+			// delay resetting the flag because we want the actions to stay visible
+			// when tabbing, and if the tab lands onto an action it will set isFocussed to true again
+			this.$nextTick(() => {
+				this.isFocussed = false
+			})
+		},
 		lastReadMessageVisibilityChanged(isVisible) {
 			if (isVisible) {
 				this.seen = true
@@ -655,6 +688,9 @@ export default {
 			const el = document.getElementById('message_' + this.nextMessageId)
 			if (el) {
 				el.focus()
+			} else {
+				// FIXME: emit a more generic event like "moving beyond bottom" and let the container(s) decide what control to focus
+				EventBus.$emit('focusChatInput')
 			}
 		},
 
@@ -723,11 +759,11 @@ export default {
 		},
 
 		handleMouseover() {
-			this.showActions = true
+			this.isHovered = true
 		},
 
 		handleMouseleave() {
-			this.showActions = false
+			this.isHovered = false
 		},
 		async handlePrivateReply() {
 			// open the 1:1 conversation
