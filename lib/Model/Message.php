@@ -156,6 +156,10 @@ class Message {
 	 * Specifies whether a message can be replied to
 	 */
 	public function isReplyable(): bool {
+		if ($this->getRoom()->getReadOnly() === Room::READ_ONLY) {
+			return false;
+		}
+
 		return $this->getMessageType() !== 'system' &&
 			$this->getMessageType() !== 'command' &&
 			$this->getMessageType() !== 'comment_deleted' &&
