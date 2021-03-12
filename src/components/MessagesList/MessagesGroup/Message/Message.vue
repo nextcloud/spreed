@@ -118,6 +118,7 @@ the main body of the message as well as a quote.
 					</div>
 					<!-- Message Actions -->
 					<div
+						v-if="hasActions"
 						v-show="showActions"
 						class="message-body__main__right__actions"
 						:class="{ 'tall' : isTallEnough }">
@@ -130,7 +131,6 @@ the main body of the message as well as a quote.
 							</ActionButton>
 						</Actions>
 						<Actions
-							v-show="hasActionsMenu"
 							:force-menu="true"
 							container="#content-vue">
 							<ActionButton
@@ -141,14 +141,12 @@ the main body of the message as well as a quote.
 								{{ t('spreed', 'Reply privately') }}
 							</ActionButton>
 							<ActionButton
-								v-if="isReplyable"
 								icon="icon-external"
 								:close-after-click="true"
 								@click.stop.prevent="handleCopyMessageLink">
 								{{ t('spreed', 'Copy message link') }}
 							</ActionButton>
 							<ActionButton
-								v-if="isReplyable"
 								:close-after-click="true"
 								@click.stop="handleMarkAsUnread">
 								{{ t('spreed', 'Mark as unread') }}
@@ -165,7 +163,7 @@ the main body of the message as well as a quote.
 								</ActionButton>
 							</template>
 							<template v-if="isDeleteable">
-								<ActionSeparator v-if="isReplyable || messageActions.length > 0" />
+								<ActionSeparator />
 								<ActionButton
 									icon="icon-delete"
 									:close-after-click="true"
@@ -398,10 +396,6 @@ export default {
 			return this.$store.getters.message(this.token, this.id)
 		},
 
-		hasActionsMenu() {
-			return (this.isPrivateReplyable || this.isReplyable || this.isDeleteable || this.messageActions.length > 0) && !this.isConversationReadOnly
-		},
-
 		isConversationReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
@@ -519,6 +513,10 @@ export default {
 			return this.isSystemMessage || !this.showActions || this.isTallEnough
 		},
 
+		hasActions() {
+			return !this.isSystemMessage
+		},
+
 		isTemporaryUpload() {
 			return this.isTemporary && this.messageParameters.file
 		},
@@ -555,6 +553,10 @@ export default {
 		},
 
 		isDeleteable() {
+			if (this.isConversationReadOnly) {
+				return false
+			}
+
 			const isFileShare = this.message === '{file}'
 				&& this.messageParameters?.file
 
