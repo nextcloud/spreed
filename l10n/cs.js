@@ -610,7 +610,7 @@ OC.L10N.register(
     "Copy link" : "Zkopírovat odkaz",
     "Connecting …" : "Připojování…",
     "Waiting for others to join the call …" : "Čekání na ostatní, až se připojí k hovoru…",
-    "You can invite others in the participant tab of the sidebar" : "V kartě účastníci na bočním panelu je možné pozvat ostatní",
+    "You can invite others in the participant tab of the sidebar" : "Ostatní je možné pozvat v kartě účastníci (na postranním panelu)",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Ostatní je možné pozvat na kartě účastníci v bočním panelu nebo sdílet tento odkaz pro pozvání ostatních!",
     "Share this link to invite others!" : "Pro pozvání dalších lidí sdílejte tento odkaz!",
     "Conversation link copied to clipboard." : "Odkaz na konverzaci zkopírován do schránky",
