@@ -1032,7 +1032,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst.",
     "Use speaker view" : "Sprecheransicht verwenden",
     "Share link" : "Link teilen",
-    "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "Zu viele Videos, um in das Fenster zu passen. Maximieren Sie das Fenster oder wechsele für eine bessere Erfahrung zur \"Sprecheransicht\".",
+    "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "Zu viele Videos, um in das Fenster zu passen. Maximiere das Fenster oder wechsele für eine bessere Erfahrung zur \"Sprecheransicht\".",
     "Select a conversation to add to the project" : "Wähle eine Unterhaltung um diese einem Projekt hinzu zufügen",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Der von Dir verwendete Browser wird von Nextcloud Talk nicht vollständig unterstützt. Bitte verwende die neueste Version von Mozilla Firefox, Microsoft Edge, Google Chrome oder Apple Safari.",
     "Error while uploading file" : "Fehler beim Hochladen der Datei",
