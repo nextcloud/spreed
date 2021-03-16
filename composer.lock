@@ -173,22 +173,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "13358232752afbcf543ba03ddd9ec6faedf0fd3a"
+                "reference": "245bf545b36a4519f96e33bed3e1e9a2673216de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/13358232752afbcf543ba03ddd9ec6faedf0fd3a",
-                "reference": "13358232752afbcf543ba03ddd9ec6faedf0fd3a",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/245bf545b36a4519f96e33bed3e1e9a2673216de",
+                "reference": "245bf545b36a4519f96e33bed3e1e9a2673216de",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3 || ~8.0.0"
+                "php": "^7.3 || ~8.0.0",
+                "psr/container": "^1.0",
+                "psr/event-dispatcher": "^1.0",
+                "psr/log": "^1.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "21.0.0-dev"
+                    "dev-master": "22.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -202,11 +204,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "support": {
-                "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
-            },
-            "time": "2020-12-29T22:55:20+00:00"
+            "time": "2021-03-05T23:26:19+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -3108,5 +3106,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "1.1.0"
 }
