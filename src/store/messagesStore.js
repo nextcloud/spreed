@@ -401,7 +401,10 @@ const actions = {
 			context.commit('setVisualLastReadMessageId', { token, id })
 		}
 
-		await updateLastReadMessage(token, id)
+		if (context.getters.getUserId()) {
+			// only update on server side if there's an actual user, not guest
+			await updateLastReadMessage(token, id)
+		}
 
 		if (updateVisually) {
 			// refetch to get more accurate values for unreadMessages, unreadMention, etc
