@@ -24,12 +24,23 @@ import Vue from 'vue'
 
 const state = {
 	messagesToBeReplied: {},
+
+	/**
+	 * Cached last message input by conversation token
+	 */
+	currentMessageInput: {},
 }
 
 const getters = {
 	getMessageToBeReplied: (state) => (token) => {
 		if (state.messagesToBeReplied[token]) {
 			return state.messagesToBeReplied[token]
+		}
+	},
+
+	currentMessageInput: (state) => (token) => {
+		if (state.currentMessageInput[token]) {
+			return state.currentMessageInput[token]
 		}
 	},
 }
@@ -46,14 +57,29 @@ const mutations = {
 		Vue.set(state.messagesToBeReplied, [messageToBeReplied.token], messageToBeReplied)
 	},
 	/**
-	 * Add a message to be replied to the store. This message is generated when the
-	 * reply button is clicked.
+	 * Removes message to be replied from the store for the
+	 * given conversation.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} token The message to be replied;
+	 * @param {string} token The conversation token
 	 */
 	removeMessageToBeReplied(state, token) {
 		Vue.delete(state.messagesToBeReplied, token)
+	},
+
+	/**
+	 * Sets the current message input for a given conversation
+	 *
+	 * @param {object} state Current store state;
+	 * @param {string} token The conversation token;
+	 * @param {string} text Message text to set or null to clear it;
+	 */
+	setCurrentMessageInput(state, { token, text = null }) {
+		if (text !== null) {
+			Vue.set(state.currentMessageInput, token, text)
+		} else {
+			Vue.delete(state.currentMessageInput, token)
+		}
 	},
 }
 
@@ -69,6 +95,7 @@ const actions = {
 	addMessageToBeReplied(context, messageToBeReplied) {
 		context.commit('addMessageToBeReplied', messageToBeReplied)
 	},
+
 	/**
 	 * Remove a message to be replied to the store. This is used either when the message
 	 * has been replied to or the user finally decides to dismiss the reply operation.
@@ -79,6 +106,28 @@ const actions = {
 	 */
 	removeMessageToBeReplied(context, token) {
 		context.commit('removeMessageToBeReplied', token)
+	},
+
+	/**
+	 * Clears current messages from a deleted conversation
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} token the token of the conversation to be deleted;
+	 */
+	deleteMessages(context, token) {
+		context.commit('removeMessageToBeReplied', token)
+		context.commit('setCurrentMessageInput', { token, text: null })
+	},
+
+	/**
+	 * Stores the current message input for a given conversation
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} token the token of the conversation to be deleted;
+	 * @param {string} text string to set or null to clear it;
+	 */
+	setCurrentMessageInput(context, { token, text }) {
+		context.commit('setCurrentMessageInput', { token, text })
 	},
 }
 
