@@ -49,7 +49,6 @@ import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
 import BrowserStorage from './services/BrowserStorage'
 import { getCurrentUser } from '@nextcloud/auth'
-import { fetchConversation } from './services/conversationsService'
 import {
 	joinConversation,
 	leaveConversationSync,
@@ -420,13 +419,9 @@ export default {
 
 			try {
 				/**
-				 * Fetches the conversations from the server and then adds them one by one
-				 * to the store.
+				 * Fetches a single conversation
 				 */
-				const response = await fetchConversation(token)
-
-				// this.$store.dispatch('purgeConversationsStore')
-				this.$store.dispatch('addConversation', response.data.ocs.data)
+				await this.$store.dispatch('fetchConversation', { token })
 
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the
