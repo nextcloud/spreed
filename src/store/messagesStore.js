@@ -405,11 +405,6 @@ const actions = {
 			// only update on server side if there's an actual user, not guest
 			await updateLastReadMessage(token, id)
 		}
-
-		if (updateVisually) {
-			// refetch to get more accurate values for unreadMessages, unreadMention, etc
-			context.dispatch('fetchConversation', { token })
-		}
 	},
 }
 
