@@ -230,11 +230,24 @@ export default {
 		disabled(newValue) {
 			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
 		},
+
+		text(newValue) {
+			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
+		},
+
+		token(token) {
+			if (token) {
+				this.text = this.$store.getters.currentMessageInput(token) || ''
+			} else {
+				this.text = ''
+			}
+		},
 	},
 
 	mounted() {
 		EventBus.$on('uploadStart', this.handleUploadStart)
 		EventBus.$on('retryMessage', this.handleRetryMessage)
+		this.text = this.$store.getters.currentMessageInput(this.token) || ''
 	},
 
 	beforeDestroy() {
