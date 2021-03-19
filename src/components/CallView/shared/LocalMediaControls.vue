@@ -68,55 +68,60 @@
 					fill-color="#ffffff"
 					decorative />
 			</button>
-			<button
+			<Actions
 				v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
 				:aria-label="screenSharingButtonAriaLabel"
 				:class="screenSharingButtonClass"
 				class="app-navigation-entry-utils-menu-button"
-				@click.stop="toggleScreenSharingMenu">
+				:boundaries-element="boundaryElement"
+				container="#content-vue"
+				@update:open="screenSharingMenuOpen = true"
+				@update:close="screenSharingMenuOpen = false">
+				<!-- Actions button icon -->
 				<Monitor
 					v-if="model.attributes.localScreen"
+					slot="icon"
 					:size="24"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 				<MonitorOff
 					v-if="!model.attributes.localScreen"
+					slot="icon"
 					:size="24"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-			</button>
-			<div id="screensharing-menu" :class="{ open: screenSharingMenuOpen }" class="app-navigation-entry-menu">
-				<ul>
-					<li v-if="!model.attributes.localScreen && splitScreenSharingMenu" id="share-screen-entry">
-						<button id="share-screen-button" @click="shareScreen">
-							<span class="icon-screen" />
-							<span>{{ t('spreed', 'Share whole screen') }}</span>
-						</button>
-					</li>
-					<li v-if="!model.attributes.localScreen && splitScreenSharingMenu" id="share-window-entry">
-						<button id="share-window-button" @click="shareWindow">
-							<span class="icon-share-window" />
-							<span>{{ t('spreed', 'Share a single window') }}</span>
-						</button>
-					</li>
-					<li v-if="model.attributes.localScreen" id="show-screen-entry">
-						<button id="show-screen-button" @click="showScreen">
-							<span class="icon-screen" />
-							<span>{{ t('spreed', 'Show your screen') }}</span>
-						</button>
-					</li>
-					<li v-if="model.attributes.localScreen" id="stop-screen-entry">
-						<button id="stop-screen-button" @click="stopScreen">
-							<span class="icon-screen-off" />
-							<span>{{ t('spreed', 'Stop screensharing') }}</span>
-						</button>
-					</li>
-				</ul>
-			</div>
+				<!-- /Actions button icon -->
+				<!-- Actions -->
+				<ActionButton v-if="!screenSharingMenuOpen" @click.stop="toggleScreenSharingMenu" />
+				<ActionButton
+					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
+					icon="icon-screen"
+					@click="shareScreen">
+					{{ t('spreed', 'Share whole screen') }}
+				</ActionButton>
+				<ActionButton
+					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
+					icon="icon-share-window"
+					@click="shareWindow">
+					{{ t('spreed', 'Share a single window') }}
+				</ActionButton>
+				<ActionButton
+					v-if="model.attributes.localScreen"
+					icon="icon-screen"
+					@click="showScreen">
+					{{ t('spreed', 'Show your screen') }}
+				</ActionButton>
+				<ActionButton
+					v-if="model.attributes.localScreen"
+					icon="icon-screen-off"
+					@click="stopScreen">
+					{{ t('spreed', 'Stop screensharing') }}
+				</ActionButton>
+			</Actions>
 			<button
 				v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand')"
@@ -729,22 +734,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables.scss';
 
-#screensharing-menu {
-	bottom: 44px;
-	left: calc(50% - 64px);
-	right: initial;
-	color: initial;
-	text-shadow: initial;
-	font-size: 13px;
-}
-
-#screensharing-menu.app-navigation-entry-menu:after {
-	top: 100%;
-	left: calc(50% - 5px);
-	border-top-color: #fff;
-	border-bottom-color: transparent;
-}
-
 .buttons-bar {
 	button, .action-item {
 		vertical-align: middle;
@@ -842,6 +831,16 @@ export default {
 	}
 	&__button {
 		height: $clickable-area;
+	}
+}
+
+::v-deep button.action-item,
+::v-deep .action-item__menutoggle {
+	// Fix screensharing icon width
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: transparent;
 	}
 }
 </style>
