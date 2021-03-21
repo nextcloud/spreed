@@ -604,6 +604,8 @@ OC.L10N.register(
     "A participant raised their hand." : "一位參與者舉起了手。",
     "Previous page of videos" : "視頻的上一頁",
     "Next page of videos" : "視頻的下一頁",
+    "Collapse stripe" : "收合 stripe",
+    "Expand stripe" : "展開 stripe",
     "Copy link" : "複製連結",
     "Connecting …" : "連線中...",
     "Waiting for others to join the call …" : "等待其他人加入通話...",
