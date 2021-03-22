@@ -90,6 +90,7 @@ class Capabilities implements IPublicCapability {
 				'raise-hand',
 				'room-description',
 				'rich-object-sharing',
+				'temp-user-avatar-api',
 			],
 			'config' => [
 				'attachments' => [
