@@ -600,5 +600,17 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+
+
+		[
+			'name' => 'TempAvatar#postAvatar',
+			'url' => '/temp-user-avatar',
+			'verb' => 'POST',
+		],
+		[
+			'name' => 'TempAvatar#deleteAvatar',
+			'url' => '/temp-user-avatar',
+			'verb' => 'DELETE',
+		],
 	],
 ];
