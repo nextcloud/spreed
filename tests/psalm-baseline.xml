@@ -212,6 +212,11 @@
       <code>\GuzzleHttp\Exception\ConnectException</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Controller/TempAvatarController.php">
+    <UndefinedClass occurrences="1">
+      <code>Filesystem</code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Files/TemplateLoader.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
@@ -239,9 +244,6 @@
   <file src="lib/Flow/Operation.php">
     <InvalidArgument occurrences="1"/>
   </file>
-  <file src="lib/Manager.php">
-    <InvalidArgument occurrences="10"/>
-  </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">
       <code>IAuthTokenProvider</code>
@@ -259,12 +261,6 @@
     <InvalidArrayAccess occurrences="1">
       <code>$return['num_rooms']</code>
     </InvalidArrayAccess>
-  </file>
-  <file src="lib/Migration/Version7000Date20190724121136.php">
-    <InvalidArgument occurrences="1"/>
-  </file>
-  <file src="lib/Migration/Version7000Date20190724121137.php">
-    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/Notification/Notifier.php">
     <InvalidPropertyAssignmentValue occurrences="3">
