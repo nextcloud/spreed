@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OC\Files\Filesystem;
+use OC\NotSquareException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -119,8 +120,10 @@ class TempAvatarController extends OCSController {
 			$avatar = $this->avatarManager->getAvatar($this->userId);
 			$avatar->set($image);
 			return new DataResponse();
+		} catch (NotSquareException $e) {
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
-			$this->logger->error('Failed to delete avatar', [
+			$this->logger->error('Failed to post avatar', [
 				'exception' => $e,
 			]);
 
