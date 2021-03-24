@@ -29,6 +29,7 @@ import {
 	changeListable,
 	addToFavorites,
 	removeFromFavorites,
+	fetchConversation,
 	setConversationName,
 	setConversationDescription } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
@@ -333,6 +334,11 @@ const actions = {
 
 	async updateConversationLastReadMessage({ commit }, { token, lastReadMessage }) {
 		commit('updateConversationLastReadMessage', { token, lastReadMessage })
+	},
+
+	async fetchConversation({ dispatch }, { token }) {
+		const response = await fetchConversation(token)
+		dispatch('addConversation', response.data.ocs.data)
 	},
 
 	changeNotificationLevel({ commit }, { token, notificationLevel }) {

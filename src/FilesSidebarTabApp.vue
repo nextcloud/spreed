@@ -52,7 +52,6 @@
 
 import { EventBus } from './services/EventBus'
 import { getFileConversation } from './services/filesIntegrationServices'
-import { fetchConversation } from './services/conversationsService'
 import {
 	joinConversation,
 	leaveConversation,
@@ -262,8 +261,7 @@ export default {
 				return
 			}
 
-			const response = await fetchConversation(this.token)
-			this.$store.dispatch('addConversation', response.data.ocs.data)
+			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 
 		/**

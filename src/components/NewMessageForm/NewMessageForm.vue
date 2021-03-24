@@ -228,6 +228,10 @@ export default {
 
 	watch: {
 		disabled(newValue) {
+			// the menu is not always available
+			if (!this.$refs.uploadMenu) {
+				return
+			}
 			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
 		},
 

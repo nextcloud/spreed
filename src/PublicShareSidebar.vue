@@ -50,7 +50,6 @@ import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
 import CallButton from './components/TopBar/CallButton'
 import { EventBus } from './services/EventBus'
-import { fetchConversation } from './services/conversationsService'
 import { getPublicShareConversationData } from './services/filesIntegrationServices'
 import {
 	joinConversation,
@@ -201,15 +200,17 @@ export default {
 			}
 
 			try {
-				const response = await fetchConversation(this.token)
-				this.$store.dispatch('addConversation', response.data.ocs.data)
+				await this.$store.dispatch('fetchConversation', { token: this.token })
 
 				// Although the current participant is automatically added to
 				// the participants store it must be explicitly set in the
 				// actors store.
 				if (!this.$store.getters.getUserId()) {
+					// Set the current actor/participant for guests
+					const conversation = this.$store.getters.conversation(this.token)
+
 					// Setting a guest only uses "sessionId" and "participantType".
-					this.$store.dispatch('setCurrentParticipant', response.data.ocs.data)
+					this.$store.dispatch('setCurrentParticipant', conversation)
 				}
 			} catch (exception) {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)

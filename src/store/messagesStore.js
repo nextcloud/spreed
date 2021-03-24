@@ -386,7 +386,7 @@ const actions = {
 	 * @param {bool} updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
-		const conversation = Object.assign({}, context.getters.conversations[token])
+		const conversation = context.getters.conversations[token]
 		if (!conversation || conversation.lastReadMessage === id) {
 			return
 		}
@@ -400,7 +400,11 @@ const actions = {
 		if (updateVisually) {
 			context.commit('setVisualLastReadMessageId', { token, id })
 		}
-		await updateLastReadMessage(token, id)
+
+		if (context.getters.getUserId()) {
+			// only update on server side if there's an actual user, not guest
+			await updateLastReadMessage(token, id)
+		}
 	},
 }
 

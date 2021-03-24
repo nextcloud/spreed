@@ -712,13 +712,16 @@ export default {
 			}
 		},
 
-		handleMarkAsUnread() {
+		async handleMarkAsUnread() {
 			// update in backend + visually
-			this.$store.dispatch('updateLastReadMessage', {
+			await this.$store.dispatch('updateLastReadMessage', {
 				token: this.token,
 				id: this.previousMessageId,
 				updateVisually: true,
 			})
+
+			// reload conversation to update additional attributes that have computed values
+			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 	},
 }
