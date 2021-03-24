@@ -24,59 +24,65 @@
 	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<h3>{{ t('spreed', 'Restrict SIP configuration') }}</h3>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
+		<p v-if="!showForm"
+			class="settings-hint">
+			{{ t('spreed', 'SIP configration is only possible with a high-performance backend.') }}
 		</p>
+		<template v-else>
+			<h3>{{ t('spreed', 'Restrict SIP configuration') }}</h3>
 
-		<Multiselect
-			v-model="sipGroups"
-			class="sip-bridge__sip-groups-select"
-			:options="groups"
-			:placeholder="t('spreed', 'Enable SIP configuration')"
-			:disabled="loading"
-			:multiple="true"
-			:searchable="true"
-			:tag-width="60"
-			:loading="loadingGroups"
-			:show-no-options="false"
-			:close-on-select="false"
-			track-by="id"
-			label="displayname"
-			@search-change="searchGroup" />
+			<p class="settings-hint">
+				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
+			</p>
 
-		<h3>{{ t('spreed', 'Shared secret') }}</h3>
-
-		<input v-model="sharedSecret"
-			type="text"
-			name="shared-secret"
-			class="sip-bridge__shared-secret"
-			:disabled="loading"
-			:placeholder="t('spreed', 'Shared secret')"
-			:aria-label="t('spreed', 'Shared secret')">
-
-		<h3>{{ t('spreed', 'Dial-in information') }}</h3>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
-		</p>
-
-		<textarea
-			v-model="dialInInfo"
-			name="message"
-			class="sip-bridge__dialin-info"
-			rows="4"
-			:disabled="loading"
-			:placeholder="t('spreed', 'Phone number (Country)')" />
-
-		<p>
-			<button class="button primary"
+			<Multiselect
+				v-model="sipGroups"
+				class="sip-bridge__sip-groups-select"
+				:options="groups"
+				:placeholder="t('spreed', 'Enable SIP configuration')"
 				:disabled="loading"
-				@click="saveSIPSettings">
-				{{ saveLabel }}
-			</button>
-		</p>
+				:multiple="true"
+				:searchable="true"
+				:tag-width="60"
+				:loading="loadingGroups"
+				:show-no-options="false"
+				:close-on-select="false"
+				track-by="id"
+				label="displayname"
+				@search-change="searchGroup" />
+
+			<h3>{{ t('spreed', 'Shared secret') }}</h3>
+
+			<input v-model="sharedSecret"
+				type="text"
+				name="shared-secret"
+				class="sip-bridge__shared-secret"
+				:disabled="loading"
+				:placeholder="t('spreed', 'Shared secret')"
+				:aria-label="t('spreed', 'Shared secret')">
+
+			<h3>{{ t('spreed', 'Dial-in information') }}</h3>
+
+			<p class="settings-hint">
+				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
+			</p>
+
+			<textarea
+				v-model="dialInInfo"
+				name="message"
+				class="sip-bridge__dialin-info"
+				rows="4"
+				:disabled="loading"
+				:placeholder="t('spreed', 'Phone number (Country)')" />
+
+			<p>
+				<button class="button primary"
+					:disabled="loading"
+					@click="saveSIPSettings">
+					{{ saveLabel }}
+				</button>
+			</p>
+		</template>
 	</div>
 </template>
 
@@ -99,6 +105,7 @@ export default {
 		return {
 			loading: false,
 			loadingGroups: false,
+			showForm: true,
 			groups: [],
 			sipGroups: [],
 			saveLabel: t('spreed', 'Save changes'),
@@ -117,6 +124,9 @@ export default {
 		this.sharedSecret = loadState('spreed', 'sip_bridge_shared_secret')
 		this.searchGroup('')
 		this.loading = false
+
+		const signaling = loadState('spreed', 'signaling_servers')
+		this.showForm = signaling.servers.length > 0
 	},
 
 	methods: {
