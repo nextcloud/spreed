@@ -21,3 +21,6 @@ updates:
     versions:
     - ">= 4.a"
     - "< 5"
+  - dependency-name: webdav
+    versions:
+    - ">= 4"
