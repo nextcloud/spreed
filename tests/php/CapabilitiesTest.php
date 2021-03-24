@@ -87,6 +87,7 @@ class CapabilitiesTest extends TestCase {
 			'raise-hand',
 			'room-description',
 			'rich-object-sharing',
+			'temp-user-avatar-api',
 		];
 	}
 
