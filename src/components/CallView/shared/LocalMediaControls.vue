@@ -124,11 +124,11 @@
 			</Actions>
 			<button
 				v-shortkey.once="['r']"
-				v-tooltip="t('spreed', 'Lower hand')"
+				v-tooltip="t('spreed', 'Lower hand (r)')"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				:aria-label="t('spreed', 'Lower hand')"
+				:aria-label="t('spreed', 'Lower hand (r)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<Hand
@@ -279,9 +279,9 @@ export default {
 	computed: {
 		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand.state) {
-				return t('spreed', 'Raise hand')
+				return t('spreed', 'Raise hand (r)')
 			}
-			return t('spreed', 'Lower hand')
+			return t('spreed', 'Lower hand (r)')
 		},
 
 		audioButtonClass() {
