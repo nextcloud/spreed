@@ -1437,6 +1437,9 @@ class RoomController extends AEnvironmentAwareController {
 			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+			// Can not promote/demote groups
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($promote === $targetParticipant->hasModeratorPermissions()) {

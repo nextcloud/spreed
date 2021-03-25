@@ -106,6 +106,12 @@ class ParticipantService {
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
 		$attendee = $participant->getAttendee();
+
+		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+			// Can not promote/demote groups
+			return;
+		}
+
 		$oldType = $attendee->getParticipantType();
 
 		$event = new ModifyParticipantEvent($room, $participant, 'type', $participantType, $oldType);
