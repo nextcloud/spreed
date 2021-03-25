@@ -138,6 +138,12 @@
     "Talk to %s" : "Spreek met %s",
     "File is not shared, or shared but not with the user" : "Bestand is niet gedeeld, of wel gedeeld maar niet met de gebruiker",
     "No account available to delete." : "Geen account beschikbaar om te verwijderen.",
+    "No image file provided" : "Geen afbeelding opgegeven",
+    "File is too big" : "Bestand te groot",
+    "Invalid file provided" : "Ongeldig bestand aangeleverd",
+    "Invalid image" : "Afbeelding ongeldig",
+    "Unknown filetype" : "Onbekend bestandsformaat",
+    "An error occurred. Please contact your admin." : "Er trad een fout op. Neem contact op met je beheerder.",
     "Talk mentions" : "Talk-vermeldingen",
     "Write to conversation" : "Schrijf naar gesprek",
     "Writes event information into a conversation of your choice" : "Schrijft gebeurtenisinformatie in een gesprek naar keuze",
@@ -617,11 +623,9 @@
     "Share a single window" : "Venster delen",
     "Show your screen" : "Mijn scherm weergeven",
     "Stop screensharing" : "Stop schermdelen",
-    "Lower hand" : "Hand omlaag",
     "More actions" : "Meer acties",
     "Settings" : "Instellingen",
     "Dismiss" : "Weigeren",
-    "Raise hand" : "Hand opsteken",
     "No audio" : "Geen geluid",
     "Mute audio (m)" : "Geluid dempen (m)",
     "Unmute audio (m)" : "Geluid niet meer dempen (m)",
@@ -1045,6 +1049,8 @@
     "turns: only" : "turns: alleen",
     "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor UDP geretourneerd door de TURN-server",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor TCP geretourneerd door de TURN-server"
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor TCP geretourneerd door de TURN-server",
+    "Lower hand" : "Hand omlaag",
+    "Raise hand" : "Hand opsteken"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
