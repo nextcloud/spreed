@@ -301,14 +301,33 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 	}
 
-	public function addGroup(Room $room, IGroup $group): void {
+	/**
+	 * @param Room $room
+	 * @param IGroup $group
+	 * @param Participant[] $existingParticipants
+	 */
+	public function addGroup(Room $room, IGroup $group, array $existingParticipants = []): void {
 		$usersInGroup = $group->getUsers();
 
-		$participants = $this->getParticipantUserIds($room);
+		if (empty($existingParticipants)) {
+			$participants = $this->getParticipantsForRoom($room);
+		}
+
+		$participantsByUserId = [];
+		foreach ($existingParticipants as $participant) {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
+			}
+		}
 
 		$newParticipants = [];
 		foreach ($usersInGroup as $user) {
-			if (in_array($user->getUID(), $participants, true)) {
+			$existingParticipant = $participantsByUserId[$user->getUID()] ?? null;
+			if ($existingParticipant instanceof Participant) {
+				if ($existingParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->updateParticipantType($room, $existingParticipant, Participant::USER);
+				}
+
 				// Participant is already in the conversation, so skip them.
 				continue;
 			}

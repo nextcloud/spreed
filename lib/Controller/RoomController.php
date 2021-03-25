@@ -1034,7 +1034,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			$this->participantService->addGroup($this->room, $group);
+			$this->participantService->addGroup($this->room, $group, $participants);
 		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
