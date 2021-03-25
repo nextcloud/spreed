@@ -370,11 +370,9 @@ OC.L10N.register(
     "Share a single window" : "Del et enkelt vindu",
     "Show your screen" : "Vis din skjerm",
     "Stop screensharing" : "Stopp skjermdeling",
-    "Lower hand" : "Senk hånden",
     "More actions" : "Flere handlinger",
     "Settings" : "Innstillinger",
     "Dismiss" : "Forkast",
-    "Raise hand" : "Løft hånden",
     "No audio" : "Ingen lyd",
     "Mute audio (m)" : "Slå av lyd (m)",
     "Unmute audio (m)" : "Slå på lyd (m)",
@@ -512,6 +510,8 @@ OC.L10N.register(
     "Projects" : "Prosjekter",
     "Share link" : "Del lenke",
     "New in Talk 10" : "Nytt i Talk 10",
-    "Enabled" : "Aktivert"
+    "Enabled" : "Aktivert",
+    "Lower hand" : "Senk hånden",
+    "Raise hand" : "Løft hånden"
 },
 "nplurals=2; plural=(n != 1);");

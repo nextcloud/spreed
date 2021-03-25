@@ -619,11 +619,9 @@ OC.L10N.register(
     "Share a single window" : "Einzelnes Fenster teilen",
     "Show your screen" : "Ihren Bildschirm übertragen",
     "Stop screensharing" : "Bildschirmübertragung beenden",
-    "Lower hand" : "Hand herunternehmen",
     "More actions" : "Weitere Aktionen",
     "Settings" : "Einstellungen",
     "Dismiss" : "Ausblenden",
-    "Raise hand" : "Hand heben",
     "No audio" : "Kein Audio",
     "Mute audio (m)" : "Mikrofon stummschalten (m)",
     "Unmute audio (m)" : "Mikrofon einschalten (m)",
@@ -1047,6 +1045,8 @@ OC.L10N.register(
     "turns: only" : "Nur turns:",
     "turns: scheme must be used with a domain" : "turns: Schema muss mit einer Domain verwendet werden",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Fehler: Keine funktionierenden ICE-Kandidaten für UDP vom TURN-Server zurück gesendet",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fehler: Keine funktionierenden ICE-Kandidaten für TCP vom TURN-Server zurück gesendet"
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Fehler: Keine funktionierenden ICE-Kandidaten für TCP vom TURN-Server zurück gesendet",
+    "Lower hand" : "Hand herunternehmen",
+    "Raise hand" : "Hand heben"
 },
 "nplurals=2; plural=(n != 1);");

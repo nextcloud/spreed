@@ -594,11 +594,9 @@ OC.L10N.register(
     "Share a single window" : "Dijeli jedan prozor",
     "Show your screen" : "Pokaži svoj zaslon",
     "Stop screensharing" : "Prekini dijeljenje zaslona",
-    "Lower hand" : "Spusti ruku",
     "More actions" : "Dodatne radnje",
     "Settings" : "Postavke",
     "Dismiss" : "Zanemari",
-    "Raise hand" : "Podigni ruku",
     "No audio" : "Nema zvuka",
     "Mute audio (m)" : "Isključi zvuk (m)",
     "Unmute audio (m)" : "Uključi zvuk (m)",
@@ -968,6 +966,8 @@ OC.L10N.register(
     "More info on Matterbridge." : "Više informacija o Matterbridgeu.",
     "Enabled" : "Omogućeno",
     "Show matterbridge log" : "Prikaži zapisnik Matterbridgea",
-    "Add new bridged channel" : "Dodaj novi povezani kanal"
+    "Add new bridged channel" : "Dodaj novi povezani kanal",
+    "Lower hand" : "Spusti ruku",
+    "Raise hand" : "Podigni ruku"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

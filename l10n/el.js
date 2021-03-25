@@ -602,11 +602,9 @@ OC.L10N.register(
     "Share a single window" : "Κοινή χρήση απλού παραθύρου",
     "Show your screen" : "Εμφάνιση της οθόνης σας",
     "Stop screensharing" : "Διακόψτε την κοινή χρήση της οθόνης",
-    "Lower hand" : "Κατεβάστε το χέρι",
     "More actions" : "Περισσότερες δράσεις",
     "Settings" : "Ρυθμίσεις",
     "Dismiss" : "Αποδέσμευση",
-    "Raise hand" : "Σηκώστε το χέρι",
     "No audio" : "Χωρίς ήχο",
     "Mute audio (m)" : "Σίγαση ήχου (m)",
     "Unmute audio (m)" : "Ενεργοποίηση ήχου (m)",
@@ -994,6 +992,8 @@ OC.L10N.register(
     "More info on Matterbridge." : "Περισσότερες πληροφορίες στο Matterbridge.",
     "Enabled" : "Ενεργοποιημένο",
     "Show matterbridge log" : "Εμφάνιση αρχείου καταγραφής matterbridge",
-    "Add new bridged channel" : "Προσθήκη νέας σύνδεσης καναλιού"
+    "Add new bridged channel" : "Προσθήκη νέας σύνδεσης καναλιού",
+    "Lower hand" : "Κατεβάστε το χέρι",
+    "Raise hand" : "Σηκώστε το χέρι"
 },
 "nplurals=2; plural=(n != 1);");
