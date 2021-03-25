@@ -351,6 +351,7 @@ class ParticipantService {
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType(Attendee::ACTOR_GROUPS);
 			$attendee->setActorId($group->getGID());
+			$attendee->setDisplayName($group->getDisplayName());
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PUBLIC);
