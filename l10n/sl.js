@@ -619,11 +619,9 @@ OC.L10N.register(
     "Share a single window" : "Pokaži le okno v žarišču",
     "Show your screen" : "Pokaži zaslon",
     "Stop screensharing" : "Prekini prikaz zaslona",
-    "Lower hand" : "Spusti roko",
     "More actions" : "Več dejanj",
     "Settings" : "Nastavitve",
     "Dismiss" : "Opusti",
-    "Raise hand" : "Dvigni roko",
     "No audio" : "Brez zvoka",
     "Mute audio (m)" : "Utišaj zvok (m)",
     "Unmute audio (m)" : "Povrni zvok (m)",
@@ -1043,6 +1041,8 @@ OC.L10N.register(
     "Show matterbridge log" : "Pokaži dnevniški zapis matterbridge",
     "Add new bridged channel" : "Dodaj nov premostitveni kanal",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE za TCP"
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Napaka: strežnik TURN ni vrnil seznama delujočih kandidatov ICE za TCP",
+    "Lower hand" : "Spusti roko",
+    "Raise hand" : "Dvigni roko"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
