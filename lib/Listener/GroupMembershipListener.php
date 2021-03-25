@@ -62,7 +62,7 @@ class GroupMembershipListener implements IEventListener {
 	}
 
 	protected function addNewMemberToRooms(IGroup $group, IUser $user): void {
-		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUP, $group->getGID());
+		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $group->getGID());
 
 		foreach ($rooms as $room) {
 			$this->participantService->addUsers($room, [[
@@ -73,7 +73,7 @@ class GroupMembershipListener implements IEventListener {
 	}
 
 	protected function removeFormerMemberFromRooms(IGroup $group, IUser $user): void {
-		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUP, $group->getGID());
+		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $group->getGID());
 		if (empty($rooms)) {
 			return;
 		}
@@ -82,7 +82,7 @@ class GroupMembershipListener implements IEventListener {
 
 		$furtherMemberships = [];
 		foreach ($userGroupIds as $groupId) {
-			$groupRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUP, $groupId);
+			$groupRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $groupId);
 			foreach ($groupRooms as $room) {
 				$furtherMemberships[$room->getId()] = true;
 			}
