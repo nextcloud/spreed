@@ -98,6 +98,7 @@
 			v-if="canModerate && !isSearched"
 			container="#content-vue"
 			:aria-label="participantSettingsAriaLabel"
+			:force-menu="true"
 			class="participant-row__actions">
 			<ActionText
 				v-if="attendeePin"
@@ -123,7 +124,8 @@
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
-			<ActionSeparator />
+			<ActionSeparator
+				v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
 			<ActionButton
 				icon="icon-delete"
 				:close-after-click="true"
@@ -380,6 +382,9 @@ export default {
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
+		isGroup() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
+		},
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
 		},
@@ -393,9 +398,12 @@ export default {
 		canBeDemoted() {
 			return this.canModerate
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+				&& !this.isGroup
 		},
 		canBePromoted() {
-			return this.canModerate && !this.isModerator
+			return this.canModerate
+				&& !this.isModerator
+				&& !this.isGroup
 		},
 		preloadedUserStatus() {
 			if (this.participant.hasOwnProperty('statusMessage')) {

@@ -51,6 +51,7 @@ export const ATTENDEE = {
 		USERS: 'users',
 		GUESTS: 'guests',
 		EMAILS: 'emails',
+		GROUPS: 'groups',
 	},
 }
 export const PARTICIPANT = {
