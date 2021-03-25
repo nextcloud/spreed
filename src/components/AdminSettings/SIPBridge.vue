@@ -26,7 +26,7 @@
 
 		<p v-if="!showForm"
 			class="settings-hint">
-			{{ t('spreed', 'SIP configration is only possible with a high-performance backend.') }}
+			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</p>
 		<template v-else>
 			<h3>{{ t('spreed', 'Restrict SIP configuration') }}</h3>
