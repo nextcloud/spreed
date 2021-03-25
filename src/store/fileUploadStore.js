@@ -184,8 +184,13 @@ const actions = {
 		commit('setCurrentUploadId', uploadId)
 
 		files.forEach(file => {
-			// Get localurl for previews
-			const localUrl = URL.createObjectURL(file)
+			// Get localurl for some image previews
+			let localUrl = ''
+			if (file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpeg') {
+				localUrl = URL.createObjectURL(file)
+			} else {
+				localUrl = OC.MimeType.getIconUrl(file.type)
+			}
 			// Create a unique index for each file
 			const date = new Date()
 			const index = 'temp_' + date.getTime() + Math.random()
