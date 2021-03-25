@@ -593,11 +593,9 @@ OC.L10N.register(
     "Share a single window" : "단일 창 공유",
     "Show your screen" : "내 화면 보이기",
     "Stop screensharing" : "화면 공유 중지",
-    "Lower hand" : "낮은 손",
     "More actions" : "더 많은 활동",
     "Settings" : "설정",
     "Dismiss" : "무시",
-    "Raise hand" : "손을 들다",
     "No audio" : "오디오 없음",
     "Mute audio (m)" : "오디오 음소거 (m)",
     "Unmute audio (m)" : "소리를 끄다 (m)",
@@ -967,6 +965,8 @@ OC.L10N.register(
     "More info on Matterbridge." : "Matterbridge 의 더 많은 정보",
     "Enabled" : "활성화됨",
     "Show matterbridge log" : "matterbridge 로그 보기",
-    "Add new bridged channel" : "새로운 연결된 채널 추가"
+    "Add new bridged channel" : "새로운 연결된 채널 추가",
+    "Lower hand" : "낮은 손",
+    "Raise hand" : "손을 들다"
 },
 "nplurals=1; plural=0;");
