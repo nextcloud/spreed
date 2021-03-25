@@ -296,7 +296,7 @@ export default {
 			return this.participant.label
 		},
 		isHandRaised() {
-			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG_DISCONNECTED) {
+			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
 			}
 
