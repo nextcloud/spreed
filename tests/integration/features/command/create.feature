@@ -52,6 +52,7 @@ Feature: create
     And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
       | users      | participant2 | 3               |
 
   Scenario: Create a public room for participant1 as owner group1 as users with password and readonly and listable
@@ -67,6 +68,7 @@ Feature: create
     And user "participant1" sees the following attendees in room "room1" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
       | users      | participant2 | 3               |
 
 
