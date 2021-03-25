@@ -22,8 +22,8 @@
 <template>
 	<Modal v-if="showModal"
 		class="upload-editor"
-		@close="handleDismiss"
-		container="#content-vue">
+		container="#content-vue"
+		@close="handleDismiss">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="fileUploadInput"
