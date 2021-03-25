@@ -619,11 +619,9 @@ OC.L10N.register(
     "Share a single window" : "Sdílet jediné okno",
     "Show your screen" : "Zobrazit vaši obrazovku",
     "Stop screensharing" : "Přestat sdílet obrazovku",
-    "Lower hand" : "Přestat se hlásit",
     "More actions" : "Další akce",
     "Settings" : "Nastavení",
     "Dismiss" : "Zavřít",
-    "Raise hand" : "Hlásit se",
     "No audio" : "Žádný zvuk",
     "Mute audio (m)" : "Ztlumit zvuk (m)",
     "Unmute audio (m)" : "Zrušit ztlumení zvuku (m)",
@@ -1047,6 +1045,8 @@ OC.L10N.register(
     "turns: only" : "pouze turns:",
     "turns: scheme must be used with a domain" : "turns: popis musí být použit s doménou",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Chyba: TURN server neodpověděl přes UDP žádnými fungujícími ICE kandidáty",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Chyba: TURN server neodpověděl přes TCP žádnými fungujícími ICE kandidáty"
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Chyba: TURN server neodpověděl přes TCP žádnými fungujícími ICE kandidáty",
+    "Lower hand" : "Přestat se hlásit",
+    "Raise hand" : "Hlásit se"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
