@@ -619,11 +619,9 @@ OC.L10N.register(
     "Share a single window" : "Egyetlen ablak megosztása",
     "Show your screen" : "Saját képernyő megosztása",
     "Stop screensharing" : "Képernyőmegosztás befejezése",
-    "Lower hand" : "Kéz letétele",
     "More actions" : "További lehetőségek",
     "Settings" : "Beállítások",
     "Dismiss" : "Mellőzés",
-    "Raise hand" : "Kezet felemel",
     "No audio" : "Nincs hang",
     "Mute audio (m)" : "Hang némítása (m)",
     "Unmute audio (m)" : "Hang némításának feloldása (m)",
@@ -1042,6 +1040,8 @@ OC.L10N.register(
     "Show matterbridge log" : "Matterbridge napló megjelenítése",
     "Add new bridged channel" : "Új áthidalt csatorna hozzáadása",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Hiba: A TURN szerver nem adott vissza működő ICE-jelölteket UDP-re",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Hiba: A TURN szerver nem adott vissza működő ICE jelölteket TCP-re"
+    "Error: No working ICE candidates returned for TCP by the TURN server" : "Hiba: A TURN szerver nem adott vissza működő ICE jelölteket TCP-re",
+    "Lower hand" : "Kéz letétele",
+    "Raise hand" : "Kezet felemel"
 },
 "nplurals=2; plural=(n != 1);");
