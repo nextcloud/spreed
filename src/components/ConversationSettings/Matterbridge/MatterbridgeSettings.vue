@@ -72,8 +72,8 @@
 						class="icon icon-edit"
 						@click="showLogContent" />
 					<Modal v-if="logModal"
-						@close="closeLogModal"
-						container="#content-vue">
+						container="#content-vue"
+						@close="closeLogModal">
 						<div class="modal__content">
 							<textarea v-model="processLog" class="log-content" />
 						</div>
