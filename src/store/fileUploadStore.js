@@ -257,24 +257,33 @@ const actions = {
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
 				// Upload the file
-				await client.putFileContents(userRoot + uniquePath, currentFile, { onUploadProgress: progress => {
-					const uploadedSize = progress.loaded
-					commit('setUploadedSize', { state, uploadId, index, uploadedSize })
-				} })
+				await client.putFileContents(userRoot + uniquePath, currentFile, {
+					onUploadProgress: progress => {
+						const uploadedSize = progress.loaded
+						commit('setUploadedSize', { state, uploadId, index, uploadedSize })
+					},
+					contentLength: currentFile.size,
+				})
 				// Path for the sharing request
 				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
 				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
 			} catch (exception) {
-				console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
-				const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
 				let reason = 'failed-upload'
-				if (exception.response.status === 507) {
-					reason = 'quota'
-					showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
+				if (exception.response) {
+					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
+					if (exception.response.status === 507) {
+						reason = 'quota'
+						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
+					} else {
+						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					}
 				} else {
+					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
 					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
+
+				const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
 				dispatch('markTemporaryMessageAsFailed', {
