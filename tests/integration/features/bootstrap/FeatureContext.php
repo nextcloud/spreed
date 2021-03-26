@@ -1825,6 +1825,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	/**
+	 * @When /^user "([^"]*)" is not member of group "([^"]*)"$/
+	 * @param string $user
+	 * @param string $group
+	 */
+	public function removeUserFromGroup($user, $group) {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', "/cloud/users/$user/groups", [
+			'groupid' => $group,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
 	/*
 	 * Requests
 	 */
