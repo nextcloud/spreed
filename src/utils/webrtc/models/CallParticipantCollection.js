@@ -93,7 +93,9 @@ CallParticipantCollection.prototype = {
 			this._trigger('remove', [callParticipantModel])
 
 			callParticipantModel.destroy()
+			return true
 		}
+		return false
 	},
 
 }

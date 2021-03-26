@@ -118,6 +118,9 @@ class SettingsController extends OCSController {
 			return (int) $value === Participant::PRIVACY_PUBLIC ||
 				(int) $value === Participant::PRIVACY_PRIVATE;
 		}
+		if ($setting === 'play_sounds') {
+			return $value === 'yes' || $value === 'no';
+		}
 
 		return false;
 	}
