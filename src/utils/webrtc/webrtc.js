@@ -343,13 +343,16 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	disconnectedSessionIds.forEach(function(sessionId) {
 		console.debug('Remove disconnected peer', sessionId)
 		webrtc.removePeers(sessionId)
-		callParticipantCollection.remove(sessionId)
+
+		if (callParticipantCollection.remove(sessionId)) {
+			playLeaveSound = true
+		}
+
 		if (delayedConnectionToPeer[sessionId]) {
 			clearInterval(delayedConnectionToPeer[sessionId])
 			delete delayedConnectionToPeer[sessionId]
+			playLeaveSound = true
 		}
-
-		playLeaveSound = true
 	})
 
 	previousUsersInRoom = arrayDiff(previousUsersInRoom, disconnectedSessionIds)
