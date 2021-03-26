@@ -316,7 +316,7 @@ class ParticipantService {
 		$usersInGroup = $group->getUsers();
 
 		if (empty($existingParticipants)) {
-			$participants = $this->getParticipantsForRoom($room);
+			$existingParticipants = $this->getParticipantsForRoom($room);
 		}
 
 		$participantsByUserId = [];

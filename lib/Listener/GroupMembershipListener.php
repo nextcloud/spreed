@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
@@ -65,10 +67,17 @@ class GroupMembershipListener implements IEventListener {
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $group->getGID());
 
 		foreach ($rooms as $room) {
-			$this->participantService->addUsers($room, [[
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $user->getUID(),
-			]]);
+			try {
+				$participant = $room->getParticipant($user->getUID());
+				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->participantService->updateParticipantType($room, $participant, Participant::USER);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				$this->participantService->addUsers($room, [[
+					'actorType' => Attendee::ACTOR_USERS,
+					'actorId' => $user->getUID(),
+				]]);
+			}
 		}
 	}
 
