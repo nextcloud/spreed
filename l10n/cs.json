@@ -567,6 +567,7 @@
     "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Při instalaci Matterbridge pro Talk došlo k chybě. Prosím nainstalujte ho ručně.",
     "Failed to execute Matterbridge binary." : "Nepodařilo se spustit spustitelný soubor od Matterbridge.",
     "SIP configuration" : "Nastavení SIP",
+    "SIP configuration is only possible with a high-performance backend." : "Nastavení SIP je možné pouze při použití podpůrné vrstvy pro vysoký výkon.",
     "Restrict SIP configuration" : "Omezit nastavení SIP",
     "Only users of the following groups can enable SIP in conversations they moderate" : "SIP mohou zapnout pouze členové následujících skupin a to jen v konverzacích, které moderují",
     "Enable SIP configuration" : "Zapnout nastavení SIP",
