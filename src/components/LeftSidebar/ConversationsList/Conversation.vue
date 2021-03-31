@@ -20,11 +20,13 @@
 -->
 
 <template>
-	<AppContentListItem
+	<ListItem
 		:title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
-		:to="item.token ? { name: 'conversation', params: { token: item.token }} : ''"
-		:class="{ 'has-unread-messages': item.unreadMessages }"
+		:active="isActive"
+		:to="to"
+		:bold="!!item.unreadMessages"
+		:counter-number="item.unreadMessages"
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon
@@ -41,12 +43,6 @@
 				{{ conversationInformation }}
 			</template>
 		</template>
-		<AppNavigationCounter v-if="item.unreadMessages"
-			slot="counter"
-			class="counter"
-			:highlighted="counterShouldBePrimary">
-			<strong>{{ item.unreadMessages }}</strong>
-		</AppNavigationCounter>
 		<template v-if="!isSearchResult" slot="actions">
 			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
@@ -109,7 +105,7 @@
 				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>
 		</template>
-	</AppContentListItem>
+	</ListItem>
 </template>
 
 <script>
@@ -117,12 +113,11 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import ActionCaption from '@nextcloud/vue/dist/Components/ActionCaption'
-import AppContentListItem from './AppContentListItem/AppContentListItem'
-import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
 import ConversationIcon from './../../ConversationIcon'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
+import ListItem from '@nextcloud/vue/dist/Components/ListItem'
 
 export default {
 	name: 'Conversation',
@@ -130,8 +125,7 @@ export default {
 		ActionButton,
 		ActionSeparator,
 		ActionCaption,
-		AppContentListItem,
-		AppNavigationCounter,
+		ListItem,
 		ConversationIcon,
 		EyeOutline,
 	},
@@ -160,6 +154,7 @@ export default {
 		},
 	},
 	computed: {
+
 		counterShouldBePrimary() {
 			return this.item.unreadMention || (this.item.unreadMessages && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)
 		},
@@ -323,6 +318,14 @@ export default {
 
 			return author
 		},
+
+		to() {
+			return !this.isSearchResult ? { name: 'conversation', params: { token: this.item.token } } : ''
+		},
+
+		isActive() {
+			return this.$store.getters.getToken() === this.to.params.token
+		},
 	},
 	methods: {
 		async copyLinkToConversation() {
@@ -396,31 +399,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .counter {
-	font-size: 12px;
-	/*
-	 * Always add the bubble
-	 */
-	padding: 4px 6px !important;
-	border-radius: 10px;
-
-	&:not(.app-navigation-entry__counter--highlighted) {
-		background-color: var(--color-background-darker);
-	}
-
-	span {
-		padding: 2px 6px;
-	}
-}
 
 ::v-deep .action-text__title {
 	margin-left: 12px;
-}
-
-.has-unread-messages {
-	::v-deep .acli__content__line-one__title {
-		font-weight: bold;
-	}
 }
 
 .critical {
