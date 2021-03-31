@@ -209,7 +209,7 @@ OC.L10N.register(
     "There is a problem with the request of the trial. Please check your logs for further information." : "Probléma van próbaverzió lekérésével. Kérjük, ellenőrizze a naplóit további információkért.",
     "Too many requests are send from your servers address. Please try again later." : "Probléma van a példány hitelesítésével. Lehet, hogy kívülről nem érhető el az URL ellenőrzéséhez.",
     "There is already a trial registered for this Nextcloud instance." : "Már regisztrált egy próbaverziót ehhez a Nextcloud példányhoz.",
-    "Something unexpected happened. Please try again later." : "Valami váratlan történt. Kérlek, próbáld újra később.",
+    "Something unexpected happened. Please try again later." : "Valami váratlan történt. Kérjük, próbálja újra később.",
     "Failed to request trial because the trial server behaved wrongly. Please try again later." : "Nem sikerült kérni a próbaverziót, mert a próbakiszolgáló helytelenül viselkedett. Kérjük, próbálja újra később.",
     "Trial requested but failed to get account information. Please check back later." : "A próbaverzió kért, de nem sikerült megszerezni a fiók adatait. Kérjük, nézzen vissza később.",
     "There is a problem with the authentication of this request. Maybe it is not reachable from the outside to verify it's URL." : "Probléma van a kérés hitelesítésével. Lehet, hogy kívülről nem érhető el az URL az ellenőrzéséhez.",
