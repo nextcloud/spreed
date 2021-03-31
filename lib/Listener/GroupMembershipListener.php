@@ -103,7 +103,14 @@ class GroupMembershipListener implements IEventListener {
 		});
 
 		foreach ($rooms as $room) {
-			$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+			try {
+				$participant = $room->getParticipant($user->getUID());
+				$participantType = $participant->getAttendee()->getParticipantType();
+				if ($participantType === Participant::USER) {
+					$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+				}
+			} catch (ParticipantNotFoundException $e) {
+			}
 		}
 	}
 }

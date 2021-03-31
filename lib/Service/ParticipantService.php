@@ -479,6 +479,43 @@ class ParticipantService {
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
 		}
+
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
+			$this->removeGroupMembers($room, $participant, $reason);
+		}
+	}
+
+	public function removeGroupMembers(Room $room, Participant $removedGroupParticipant, string $reason): void {
+		$removedGroup = $this->groupManager->get($removedGroupParticipant->getAttendee()->getActorId());
+		if (!$removedGroup instanceof IGroup) {
+			return;
+		}
+
+		$attendeeGroups = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_GROUPS);
+
+		$groupsInRoom = [];
+		foreach ($attendeeGroups as $attendee) {
+			$groupsInRoom[] = $attendee->getActorId();
+		}
+
+		foreach ($removedGroup->getUsers() as $user) {
+			try {
+				$participant = $room->getParticipant($user->getUID());
+			} catch (ParticipantNotFoundException $e) {
+				continue;
+			}
+
+			$userGroups = $this->groupManager->getUserGroupIds($user);
+			$stillHasGroup = array_intersect($userGroups, $groupsInRoom);
+			if (!empty($stillHasGroup)) {
+				continue;
+			}
+
+			if ($participant->getAttendee()->getParticipantType() === Participant::USER) {
+				// Only remove normal users, not moderators/admins
+				$this->removeAttendee($room, $participant, $reason);
+			}
+		}
 	}
 
 	public function removeUser(Room $room, IUser $user, string $reason): void {
