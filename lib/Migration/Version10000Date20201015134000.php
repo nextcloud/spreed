@@ -104,6 +104,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('favorite', Types::BOOLEAN, [
 				'default' => 0,
+				'notnull' => false,
 			]);
 			$table->addColumn('notification_level', Types::INTEGER, [
 				'default' => Participant::NOTIFY_DEFAULT,
