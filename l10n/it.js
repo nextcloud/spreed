@@ -140,6 +140,7 @@ OC.L10N.register(
     "Talk to %s" : "Parla con %s",
     "File is not shared, or shared but not with the user" : "Il file non è condiviso, o condiviso ma non con l'utente",
     "No account available to delete." : "Nessun account disponibile da eliminare.",
+    "File is too big" : "Il file è troppo grande",
     "Talk mentions" : "Menzioni di Talk",
     "Write to conversation" : "Scrivi nella conversazione",
     "Writes event information into a conversation of your choice" : "Scrive le informazioni di evento in una conversazione di tua scelta",
