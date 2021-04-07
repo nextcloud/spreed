@@ -69,7 +69,7 @@ const setSIPSettings = async function(sipGroups, sharedSecret, dialInInfo) {
 
 const setPlaySounds = async function(enabled) {
 	const savableValue = enabled ? 'yes' : 'no'
-	if (store.getters.userId) {
+	if (store.getters.getUserId()) {
 		return axios.post(generateOcsUrl('apps/spreed/api/v1/settings', 2) + 'user', {
 			key: 'play_sounds',
 			value: savableValue,

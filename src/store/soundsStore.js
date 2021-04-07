@@ -20,11 +20,11 @@
  *
  */
 
-import { loadState } from '@nextcloud/initial-state'
+import fromStateOr from './helper'
 import BrowserStorage from '../services/BrowserStorage'
 
 const state = {
-	playSoundsUser: loadState('spreed', 'play_sounds'),
+	playSoundsUser: fromStateOr('spreed', 'play_sounds', false),
 	playSoundsGuest: BrowserStorage.getItem('play_sounds') !== 'no',
 }
 
