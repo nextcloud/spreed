@@ -18,11 +18,12 @@
  *
  */
 
-import { loadState } from '@nextcloud/initial-state'
+import fromStateOr from './helper'
 import { setReadStatusPrivacy } from '../services/settingsService'
+import { PRIVACY } from '../constants'
 
 const state = {
-	readStatusPrivacy: loadState('spreed', 'read_status_privacy'),
+	readStatusPrivacy: fromStateOr('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
 }
 
 const getters = {

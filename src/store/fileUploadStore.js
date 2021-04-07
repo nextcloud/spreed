@@ -23,15 +23,15 @@
 import Vue from 'vue'
 import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
-import { loadState } from '@nextcloud/initial-state'
+import fromStateOr from './helper'
 import { findUniquePath } from '../utils/fileUpload'
 import createTemporaryMessage from '../utils/temporaryMessage'
 import { EventBus } from '../services/EventBus'
 import { shareFile } from '../services/filesSharingServices'
 
 const state = {
-	attachmentFolder: loadState('spreed', 'attachment_folder'),
-	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space'),
+	attachmentFolder: fromStateOr('spreed', 'attachment_folder', ''),
+	attachmentFolderFreeSpace: fromStateOr('spreed', 'attachment_folder_free_space', 0),
 	uploads: {
 	},
 	currentUploadId: undefined,
