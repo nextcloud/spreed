@@ -350,7 +350,7 @@ export default {
 				// If successful, deletes the conversation from the store
 				this.$store.dispatch('deleteConversation', this.item.token)
 			} catch (error) {
-				if (error.response && error.response.status === 400) {
+				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
 					console.debug(`error while removing yourself from conversation ${error}`)
