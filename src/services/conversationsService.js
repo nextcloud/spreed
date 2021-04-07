@@ -44,7 +44,7 @@ const fetchConversations = async function() {
 
 		return response
 	} catch (error) {
-		if (error.response && error.response.status === 503 && !maintenanceWarning) {
+		if (error?.response?.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
@@ -70,7 +70,7 @@ const fetchConversation = async function(token) {
 
 		return response
 	} catch (error) {
-		if (error.response && error.response.status === 503 && !maintenanceWarning) {
+		if (error?.response?.status === 503 && !maintenanceWarning) {
 			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})

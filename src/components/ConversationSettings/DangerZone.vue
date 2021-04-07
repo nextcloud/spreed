@@ -83,7 +83,7 @@ export default {
 				this.$store.dispatch('deleteConversation', this.conversation)
 				this.hideConversationSettings()
 			} catch (error) {
-				if (error.response && error.response.status === 400) {
+				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
 					console.error(`error while removing yourself from conversation ${error}`)
