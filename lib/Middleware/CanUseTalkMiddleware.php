@@ -26,6 +26,7 @@ namespace OCA\Talk\Middleware;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
+use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;
@@ -33,17 +34,25 @@ use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\IControllerMethodReflector;
+use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
 	private IUserSession $userSession;
-	private Config $config;
+	private IControllerMethodReflector $reflector;
+	private Config $talkConfig;
+	private IConfig $serverConfig;
 
 	public function __construct(IUserSession $userSession,
-								Config $config) {
+								IControllerMethodReflector $reflector,
+								Config $talkConfig,
+								IConfig $serverConfig) {
 		$this->userSession = $userSession;
-		$this->config = $config;
+		$this->reflector = $reflector;
+		$this->talkConfig = $talkConfig;
+		$this->serverConfig = $serverConfig;
 	}
 
 	/**
@@ -54,7 +63,12 @@ class CanUseTalkMiddleware extends Middleware {
 	 */
 	public function beforeController($controller, $methodName): void {
 		$user = $this->userSession->getUser();
-		if ($user instanceof IUser && $this->config->isDisabledForUser($user)) {
+		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
+			throw new CanNotUseTalkException();
+		}
+
+		if ($this->reflector->hasAnnotation('RequireCallEnabled')
+			&& ((int) $this->serverConfig->getAppValue('spreed', 'start_calls')) === Room::START_CALL_NOONE) {
 			throw new CanNotUseTalkException();
 		}
 	}

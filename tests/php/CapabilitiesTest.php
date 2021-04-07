@@ -29,6 +29,7 @@ use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;
@@ -130,6 +131,7 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['spreed', 'has_reference_id', 'no', 'no'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
+				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_EVERYONE],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -139,6 +141,9 @@ class CapabilitiesTest extends TestCase {
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
+					],
+					'call' => [
+						'enabled' => true,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -209,6 +214,7 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['spreed', 'has_reference_id', 'no', 'yes'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
+				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_NOONE],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -224,6 +230,9 @@ class CapabilitiesTest extends TestCase {
 					'attachments' => [
 						'allowed' => true,
 						'folder' => '/Talk',
+					],
+					'call' => [
+						'enabled' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,

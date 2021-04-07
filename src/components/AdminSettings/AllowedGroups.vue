@@ -109,6 +109,7 @@ const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
 	{ value: 1, label: t('spreed', 'Users and moderators') },
 	{ value: 2, label: t('spreed', 'Moderators only') },
+	{ value: 3, label: t('spreed', 'Disable calls') },
 ]
 
 export default {

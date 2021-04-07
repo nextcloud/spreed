@@ -83,12 +83,14 @@ import isInLobby from '../../mixins/isInLobby'
 import participant from '../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import MenuDown from 'vue-material-design-icons/MenuDown'
 import Button from '@nextcloud/vue/dist/Components/Button'
+
 export default {
 	name: 'CallButton',
 
@@ -125,6 +127,7 @@ export default {
 	data() {
 		return {
 			loading: false,
+			callEnabled: false,
 		}
 	},
 
@@ -227,7 +230,8 @@ export default {
 		},
 
 		showStartCallButton() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
+			return this.callEnabled
+				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& !this.isInCall
 		},
 
@@ -239,6 +243,10 @@ export default {
 		currentConversationIsJoined() {
 			return this.$store.getters.currentConversationIsJoined
 		},
+	},
+
+	mounted() {
+		this.callEnabled = loadState('spreed', 'call_enabled')
 	},
 
 	methods: {
