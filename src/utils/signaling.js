@@ -439,13 +439,13 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
-			} else if (error.response && error.response.status === 409) {
+			} else if (error?.response?.status === 409) {
 				// Participant joined a second time and this session was killed
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
 				EventBus.$emit('duplicateSessionDetected')
-			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
+			} else if (error?.response?.status === 404 || error?.response?.status === 403) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
 				EventBus.$emit('deletedSessionDetected')
