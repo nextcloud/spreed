@@ -49,7 +49,7 @@
 			class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
-				'has-menu-icon': canModerate && !isSearched
+				'has-menu-icon': canBeModerated && !isSearched
 			}">
 			<div
 				ref="userName"
@@ -95,7 +95,7 @@
 				decorative />
 		</div>
 		<Actions
-			v-if="canModerate && !isSearched"
+			v-if="canBeModerated && !isSearched"
 			container="#content-vue"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
@@ -392,16 +392,16 @@ export default {
 			return this.isModerator
 				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
-		canModerate() {
+		canBeModerated() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER && !this.isSelf && this.selfIsModerator
 		},
 		canBeDemoted() {
-			return this.canModerate
+			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 				&& !this.isGroup
 		},
 		canBePromoted() {
-			return this.canModerate
+			return this.canBeModerated
 				&& !this.isModerator
 				&& !this.isGroup
 		},
