@@ -41,12 +41,8 @@ const shareFile = async function(path, token, referenceId) {
 				referenceId,
 			})
 	} catch (error) {
-		if (error.response
-			&& error.response.data
-			&& error.response.data.ocs
-			&& error.response.data.ocs.meta
-			&& error.response.data.ocs.meta.message) {
-			console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
+		if (error?.response?.data?.ocs?.meta?.message) {
+			console.error('Error while sharing file: ' + error.response.data.ocs.meta.message)
 			showError(error.response.data.ocs.meta.message)
 		} else {
 			console.error(`Error while sharing file: Unknown error`)

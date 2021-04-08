@@ -160,11 +160,11 @@ export default {
 				this.matterbridgeEnabled = true
 				this.saveMatterbridgeEnabled()
 				this.error = ''
-			} catch (e) {
-				console.error(e)
+			} catch (error) {
+				console.error(error)
 				showError(t('spreed', 'Failed to execute Matterbridge binary.'))
-				if (e.response && e.response.data && e.response.data.ocs && e.response.data.ocs.data && e.response.data.ocs.data.error) {
-					this.error = e.response.data.ocs.data.error
+				if (error?.response?.data?.ocs?.data?.error) {
+					this.error = error.response.data.ocs.data.error
 				} else {
 					this.error = 'binary'
 				}
