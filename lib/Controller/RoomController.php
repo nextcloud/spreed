@@ -673,23 +673,7 @@ class RoomController extends AEnvironmentAwareController {
 		// Create the room
 		$name = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
 		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
-
-		$usersInGroup = $targetGroup->getUsers();
-		$participants = [];
-		foreach ($usersInGroup as $user) {
-			if ($currentUser->getUID() === $user->getUID()) {
-				// Owner is already added.
-				continue;
-			}
-
-			$participants[] = [
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $user->getUID(),
-				'displayName' => $user->getDisplayName(),
-			];
-		}
-
-		$this->participantService->addUsers($room, $participants);
+		$this->participantService->addGroup($room, $targetGroup);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
@@ -996,6 +980,8 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			}
 
 			$results[$attendeeId] = $result;
@@ -1050,14 +1036,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			$usersInGroup = $group->getUsers();
-			foreach ($usersInGroup as $user) {
-				$participantsToAdd[] = [
-					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $user->getUID(),
-					'displayName' => $user->getDisplayName(),
-				];
-			}
+			$this->participantService->addGroup($this->room, $group, $participants);
 		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1458,6 +1437,9 @@ class RoomController extends AEnvironmentAwareController {
 			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+			// Can not promote/demote groups
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($promote === $targetParticipant->hasModeratorPermissions()) {

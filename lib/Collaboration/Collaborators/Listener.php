@@ -27,6 +27,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
@@ -61,7 +62,7 @@ class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(IManager::class . '::filterResults', static function (AutoCompleteEvent $event) {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if ($event->getItemType() !== 'call') {
 				return;
@@ -82,28 +83,28 @@ class Listener {
 		}
 
 		if (!empty($results['groups'])) {
-			$results['groups'] = array_filter($results['groups'], [$this, 'filterGroupResult']);
+			$results['groups'] = array_filter($results['groups'], [$this, 'filterBlockedGroupResult']);
 		}
 		if (!empty($results['exact']['groups'])) {
-			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterGroupResult']);
+			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterBlockedGroupResult']);
 		}
 
 		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterUserResult']);
+			$results['users'] = array_filter($results['users'], [$this, 'filterBlockedUserResult']);
 		}
 		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterUserResult']);
+			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterBlockedUserResult']);
 		}
 
 		return $results;
 	}
 
-	protected function filterUserResult(array $result): bool {
+	protected function filterBlockedUserResult(array $result): bool {
 		$user = $this->userManager->get($result['value']['shareWith']);
 		return $user instanceof IUser && !$this->config->isDisabledForUser($user);
 	}
 
-	protected function filterGroupResult(array $result): bool {
+	protected function filterBlockedGroupResult(array $result): bool {
 		return \in_array($result['value']['shareWith'], $this->allowedGroupIds, true);
 	}
 
@@ -114,17 +115,24 @@ class Listener {
 			return $results;
 		}
 
+		if (!empty($results['groups'])) {
+			$results['groups'] = array_filter($results['groups'], [$this, 'filterParticipantGroupResult']);
+		}
+		if (!empty($results['exact']['groups'])) {
+			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterParticipantGroupResult']);
+		}
+
 		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterParticipantResult']);
+			$results['users'] = array_filter($results['users'], [$this, 'filterParticipantUserResult']);
 		}
 		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterParticipantResult']);
+			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterParticipantUserResult']);
 		}
 
 		return $results;
 	}
 
-	protected function filterParticipantResult(array $result): bool {
+	protected function filterParticipantUserResult(array $result): bool {
 		$userId = $result['value']['shareWith'];
 
 		try {
@@ -133,6 +141,17 @@ class Listener {
 				// do list self-joined users so they can be added as permanent participants by moderators
 				return true;
 			}
+			return false;
+		} catch (ParticipantNotFoundException $e) {
+			return true;
+		}
+	}
+
+	protected function filterParticipantGroupResult(array $result): bool {
+		$groupId = $result['value']['shareWith'];
+
+		try {
+			$this->room->getParticipantByActor(Attendee::ACTOR_GROUPS, $groupId);
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return true;

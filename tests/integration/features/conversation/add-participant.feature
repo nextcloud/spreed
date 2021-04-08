@@ -105,6 +105,7 @@ Feature: public
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
+      | groups     | group1       | 3               |
       | users      | participant3 | 3               |
     And user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |

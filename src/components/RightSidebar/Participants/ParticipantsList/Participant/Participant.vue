@@ -49,7 +49,7 @@
 			class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
-				'has-menu-icon': canModerate && !isSearched
+				'has-menu-icon': canBeModerated && !isSearched
 			}">
 			<div
 				ref="userName"
@@ -95,9 +95,10 @@
 				decorative />
 		</div>
 		<Actions
-			v-if="canModerate && !isSearched"
+			v-if="canBeModerated && !isSearched"
 			container="#content-vue"
 			:aria-label="participantSettingsAriaLabel"
+			:force-menu="true"
 			class="participant-row__actions">
 			<ActionText
 				v-if="attendeePin"
@@ -123,12 +124,18 @@
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
-			<ActionSeparator />
+			<ActionSeparator
+				v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
 			<ActionButton
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
-				{{ t('spreed', 'Remove participant') }}
+				<template v-if="isGroup">
+					{{ t('spreed', 'Remove group and members') }}
+				</template>
+				<template v-else>
+					{{ t('spreed', 'Remove participant') }}
+				</template>
 			</ActionButton>
 		</Actions>
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
@@ -380,6 +387,9 @@ export default {
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
+		isGroup() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
+		},
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
 		},
@@ -387,15 +397,18 @@ export default {
 			return this.isModerator
 				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
-		canModerate() {
+		canBeModerated() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER && !this.isSelf && this.selfIsModerator
 		},
 		canBeDemoted() {
-			return this.canModerate
+			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+				&& !this.isGroup
 		},
 		canBePromoted() {
-			return this.canModerate && !this.isModerator
+			return this.canBeModerated
+				&& !this.isModerator
+				&& !this.isGroup
 		},
 		preloadedUserStatus() {
 			if (this.participant.hasOwnProperty('statusMessage')) {

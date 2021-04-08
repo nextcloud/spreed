@@ -777,6 +777,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" removes (user|group|email) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userRemovesAttendeeFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string$apiVersion): void {
+		if ($actorId === 'stranger') {
+			$attendeeId = 123456789;
+		} else {
+			$attendeeId = $this->getAttendeeId($actorType . 's', $actorId, $identifier, $statusCode === 200 ? $user : null);
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees',
+			new TableNode([['attendeeId', $attendeeId]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1819,6 +1844,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('POST', "/cloud/users/$user/groups", [
+			'groupid' => $group,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" is not member of group "([^"]*)"$/
+	 * @param string $user
+	 * @param string $group
+	 */
+	public function removeUserFromGroup($user, $group) {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', "/cloud/users/$user/groups", [
 			'groupid' => $group,
 		]);
 		$this->assertStatusCode($this->response, 200);

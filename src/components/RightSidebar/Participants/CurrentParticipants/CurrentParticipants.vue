@@ -32,7 +32,7 @@
 <script>
 
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
-import { PARTICIPANT } from '../../../../constants'
+import { ATTENDEE, PARTICIPANT } from '../../../../constants'
 import UserStatus from '../../../../mixins/userStatus'
 import Hint from '../../../Hint'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -112,6 +112,7 @@ export default {
 
 		/**
 		 * Sort two participants by:
+		 * - participants before groups
 		 * - online status
 		 * - in call
 		 * - who raised hand first
@@ -123,13 +124,27 @@ export default {
 		 * @param {int} participant1.participantType First participant type
 		 * @param {string} participant1.sessionId First participant session
 		 * @param {string} participant1.displayName First participant display name
+		 * @param {string} participant1.status First participant user status
+		 * @param {string} participant1.actorType First participant actor type
+		 * @param {int} participant1.inCall First participant in call flag
 		 * @param {object} participant2 Second participant
 		 * @param {int} participant2.participantType Second participant type
 		 * @param {string} participant2.sessionId Second participant session
 		 * @param {string} participant2.displayName Second participant display name
+		 * @param {string} participant2.actorType Second participant actor type
+		 * @param {string} participant2.status Second participant user status
+		 * @param {int} participant2.inCall Second participant in call flag
 		 * @returns {number}
 		 */
 		sortParticipants(participant1, participant2) {
+			const p1IsGroup = participant1.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
+			const p2IsGroup = participant2.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
+
+			if (p1IsGroup !== p2IsGroup) {
+				// Groups below participants
+				return p2IsGroup ? -1 : 1
+			}
+
 			let session1 = participant1.sessionId
 			let session2 = participant2.sessionId
 			if (participant1.status === 'offline') {

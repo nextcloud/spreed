@@ -50,6 +50,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IGroup;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroupManager;
@@ -105,6 +106,12 @@ class ParticipantService {
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
 		$attendee = $participant->getAttendee();
+
+		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+			// Can not promote/demote groups
+			return;
+		}
+
 		$oldType = $attendee->getParticipantType();
 
 		$event = new ModifyParticipantEvent($room, $participant, 'type', $participantType, $oldType);
@@ -302,6 +309,60 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param IGroup $group
+	 * @param Participant[] $existingParticipants
+	 */
+	public function addGroup(Room $room, IGroup $group, array $existingParticipants = []): void {
+		$usersInGroup = $group->getUsers();
+
+		if (empty($existingParticipants)) {
+			$existingParticipants = $this->getParticipantsForRoom($room);
+		}
+
+		$participantsByUserId = [];
+		foreach ($existingParticipants as $participant) {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
+			}
+		}
+
+		$newParticipants = [];
+		foreach ($usersInGroup as $user) {
+			$existingParticipant = $participantsByUserId[$user->getUID()] ?? null;
+			if ($existingParticipant instanceof Participant) {
+				if ($existingParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->updateParticipantType($room, $existingParticipant, Participant::USER);
+				}
+
+				// Participant is already in the conversation, so skip them.
+				continue;
+			}
+
+			$newParticipants[] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			];
+		}
+
+		try {
+			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_GROUPS, $group->getGID());
+		} catch (DoesNotExistException $e) {
+			$attendee = new Attendee();
+			$attendee->setRoomId($room->getId());
+			$attendee->setActorType(Attendee::ACTOR_GROUPS);
+			$attendee->setActorId($group->getGID());
+			$attendee->setDisplayName($group->getDisplayName());
+			$attendee->setParticipantType(Participant::USER);
+			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$this->attendeeMapper->insert($attendee);
+		}
+
+		$this->addUsers($room, $newParticipants);
+	}
+
+	/**
+	 * @param Room $room
 	 * @param string $email
 	 * @return Participant
 	 */
@@ -411,6 +472,43 @@ class ParticipantService {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+		}
+
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
+			$this->removeGroupMembers($room, $participant, $reason);
+		}
+	}
+
+	public function removeGroupMembers(Room $room, Participant $removedGroupParticipant, string $reason): void {
+		$removedGroup = $this->groupManager->get($removedGroupParticipant->getAttendee()->getActorId());
+		if (!$removedGroup instanceof IGroup) {
+			return;
+		}
+
+		$attendeeGroups = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_GROUPS);
+
+		$groupsInRoom = [];
+		foreach ($attendeeGroups as $attendee) {
+			$groupsInRoom[] = $attendee->getActorId();
+		}
+
+		foreach ($removedGroup->getUsers() as $user) {
+			try {
+				$participant = $room->getParticipant($user->getUID());
+			} catch (ParticipantNotFoundException $e) {
+				continue;
+			}
+
+			$userGroups = $this->groupManager->getUserGroupIds($user);
+			$stillHasGroup = array_intersect($userGroups, $groupsInRoom);
+			if (!empty($stillHasGroup)) {
+				continue;
+			}
+
+			if ($participant->getAttendee()->getParticipantType() === Participant::USER) {
+				// Only remove normal users, not moderators/admins
+				$this->removeAttendee($room, $participant, $reason);
+			}
 		}
 	}
 
