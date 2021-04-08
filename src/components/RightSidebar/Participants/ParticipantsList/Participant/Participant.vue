@@ -130,7 +130,12 @@
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
-				{{ t('spreed', 'Remove participant') }}
+				<template v-if="isGroup">
+					{{ t('spreed', 'Remove group and members') }}
+				</template>
+				<template v-else>
+					{{ t('spreed', 'Remove participant') }}
+				</template>
 			</ActionButton>
 		</Actions>
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
