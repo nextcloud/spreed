@@ -4,6 +4,7 @@ Feature: public
     Given user "participant2" exists
     Given user "participant3" exists
     And group "group1" exists
+    And group "group2" exists
     And user "participant2" is member of group "group1"
 
   Scenario: Owner invites a group
@@ -65,6 +66,57 @@ Feature: public
       | users      | participant1 | 1               |
       | groups     | group1       | 3               |
 
+  Scenario: User is removed from a group which is a member of a chat but has a second group
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | source | group |
+      | invite |group1 |
+    And user "participant2" is member of group "group2"
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
+      | users      | participant2 | 3               |
+    And user "participant1" adds group "group2" to room "room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
+      | users      | participant2 | 3               |
+      | groups     | group2       | 3               |
+    And user "participant2" is not member of group "group1"
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
+      | users      | participant2 | 3               |
+      | groups     | group2       | 3               |
+
+  Scenario: User is not removed from a chat when one group is removed but has a second group
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | source | group |
+      | invite |group1 |
+    And user "participant2" is member of group "group2"
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
+      | users      | participant2 | 3               |
+    And user "participant1" adds group "group2" to room "room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | groups     | group1       | 3               |
+      | users      | participant2 | 3               |
+      | groups     | group2       | 3               |
+    And user "participant1" removes group "group1" from room "room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | groups     | group2       | 3               |
+
   Scenario: User is removed from when their last group which is a member of a chat is removed
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
@@ -103,7 +155,7 @@ Feature: public
       | groups     | group1       | 3               |
       | users      | participant2 | 2               |
 
-  Scenario: Moderator is removed from a group which is a member of a chat but stays in the chat
+  Scenario: Group of a moderator is removed from a chat but moderator stays in the chat
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | source | group |
