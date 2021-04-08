@@ -76,6 +76,7 @@ class GroupMembershipListener implements IEventListener {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
+					'displayName' => $user->getDisplayName(),
 				]]);
 			}
 		}
