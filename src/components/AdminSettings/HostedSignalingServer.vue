@@ -50,14 +50,14 @@
 				placeholder="Jane Doe"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Name of the user requesting the trial')">
-			<h4>{{ t('spreed', 'E-mail of the user') }}</h4>
+			<h4>{{ t('spreed', 'Email of the user') }}</h4>
 			<input
 				v-model="hostedHPBEmail"
 				type="text"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
 				:disabled="loading"
-				:aria-label="t('spreed', 'E-mail of the user')">
+				:aria-label="t('spreed', 'Email of the user')">
 			<h4>{{ t('spreed', 'Language') }}</h4>
 			<select
 				v-model="hostedHPBLanguage"

@@ -237,7 +237,7 @@ export default {
 						},
 						login: {
 							type: 'text',
-							placeholder: t('spreed', 'User name or e-mail address'),
+							placeholder: t('spreed', 'User name or email address'),
 							icon: 'icon-user',
 						},
 						password: {
