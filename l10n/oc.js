@@ -717,10 +717,10 @@ OC.L10N.register(
     "Error while uploading file" : "Error en enviant lo fichièr",
     "New in Talk 10" : "Nòu dins Talk 10",
     "Enabled" : "Activada",
+    "Lower hand" : "Baissar la man",
+    "Raise hand" : "Levar la man",
     "turn: and turns:" : "turn: e turns:",
     "turn: only" : "turn: sonque",
-    "turns: only" : "turns: sonque",
-    "Lower hand" : "Baissar la man",
-    "Raise hand" : "Levar la man"
+    "turns: only" : "turns: sonque"
 },
 "nplurals=2; plural=(n > 1);");

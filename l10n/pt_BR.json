@@ -1051,13 +1051,13 @@
     "Enabled" : "Ativado",
     "Show matterbridge log" : "Mostrar log do matterbridge",
     "Add new bridged channel" : "Adicionar um novo canal integrado",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "turn: apenas",
-    "turns: only" : "turns: apenas",
-    "turns: scheme must be used with a domain" : "turns: o esquema deve ser usado com um domínio",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Erro: Nenhum candidato ICE funcional retornado para UDP pelo servidor TURN",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Erro: Nenhum candidato ICE funcional retornado para TCP pelo servidor TURN",
     "Lower hand" : "Baixar a mão",
-    "Raise hand" : "Levantar a mão"
+    "Raise hand" : "Levantar a mão",
+    "turn: and turns:" : "turn: e turns:",
+    "turn: only" : "turn: apenas",
+    "turns: only" : "turns: apenas",
+    "turns: scheme must be used with a domain" : "turns: o esquema deve ser usado com um domínio"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
