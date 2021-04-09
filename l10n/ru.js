@@ -1027,13 +1027,13 @@ OC.L10N.register(
     "Enabled" : "Включено",
     "Show matterbridge log" : "Открыть журнал matterbridge",
     "Add new bridged channel" : "Добавить связанный канал",
-    "turn: and turns:" : "turn: и turns:",
-    "turn: only" : "только turn:",
-    "turns: only" : "только turns:",
-    "turns: scheme must be used with a domain" : "turns: схема может быть использована только с указанием домена",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Ошибка: с сервера TURN не получено не одного рабочего кандидата ICE для протокола UDP",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Ошибка: с сервера TURN не получено не одного рабочего кандидата ICE для протокола TCP",
     "Lower hand" : "Опустить руку",
-    "Raise hand" : "Поднять руку"
+    "Raise hand" : "Поднять руку",
+    "turn: and turns:" : "turn: и turns:",
+    "turn: only" : "только turn:",
+    "turns: only" : "только turns:",
+    "turns: scheme must be used with a domain" : "turns: схема может быть использована только с указанием домена"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

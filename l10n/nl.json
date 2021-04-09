@@ -1051,13 +1051,13 @@
     "Enabled" : "Ingeschakeld",
     "Show matterbridge log" : "Toon matterbridge logbestand",
     "Add new bridged channel" : "Toevoegen overbruggingskanaal",
-    "turn: and turns:" : "turn: en turns:",
-    "turn: only" : "turn: alleen",
-    "turns: only" : "turns: alleen",
-    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor UDP geretourneerd door de TURN-server",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Fout: geen werkende ICE-kandidaten voor TCP geretourneerd door de TURN-server",
     "Lower hand" : "Hand omlaag",
-    "Raise hand" : "Hand opsteken"
+    "Raise hand" : "Hand opsteken",
+    "turn: and turns:" : "turn: en turns:",
+    "turn: only" : "turn: alleen",
+    "turns: only" : "turns: alleen",
+    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -1053,13 +1053,13 @@ OC.L10N.register(
     "Enabled" : "Włączone",
     "Show matterbridge log" : "Pokaż dziennik Matterbridge",
     "Add new bridged channel" : "Dodaj nowy połączony kanał",
-    "turn: and turns:" : "turn: i turny:",
-    "turn: only" : "turn: tylko",
-    "turns: only" : "turny: tylko",
-    "turns: scheme must be used with a domain" : "turny: schemat musi być używany z domeną",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Błąd: Nie działa zwrot kandydatów ICE do UDP przez serwer TURN",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Błąd: Nie działa zwrot kandydatów ICE do TCP przez serwer TURN",
     "Lower hand" : "Opuścić rękę",
-    "Raise hand" : "Podnieść rękę"
+    "Raise hand" : "Podnieść rękę",
+    "turn: and turns:" : "turn: i turny:",
+    "turn: only" : "turn: tylko",
+    "turns: only" : "turny: tylko",
+    "turns: scheme must be used with a domain" : "turny: schemat musi być używany z domeną"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
