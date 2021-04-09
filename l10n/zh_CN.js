@@ -1053,13 +1053,13 @@ OC.L10N.register(
     "Enabled" : "已启用",
     "Show matterbridge log" : "显示 Matterbridge 日志 ",
     "Add new bridged channel" : "添加新的桥接通道 ",
-    "turn: and turns:" : "turn: 和 turns:",
-    "turn: only" : "仅 turn:",
-    "turns: only" : "仅 turns:",
-    "turns: scheme must be used with a domain" : "turns：scheme 必须与域名一起使用",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "错误：TURN 服务器的 UDP 未返回可用的 ICE 候选",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "错误：TURN 服务器的 TCP 未返回可用的 ICE 候选",
     "Lower hand" : "放下手 ",
-    "Raise hand" : "举起手 "
+    "Raise hand" : "举起手 ",
+    "turn: and turns:" : "turn: 和 turns:",
+    "turn: only" : "仅 turn:",
+    "turns: only" : "仅 turns:",
+    "turns: scheme must be used with a domain" : "turns：scheme 必须与域名一起使用"
 },
 "nplurals=1; plural=0;");
