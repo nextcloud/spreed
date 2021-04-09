@@ -1053,13 +1053,13 @@ OC.L10N.register(
     "Enabled" : "Etkin",
     "Show matterbridge log" : "Matterbridge günlüğünü görüntüle",
     "Add new bridged channel" : "Yeni köprülenmiş kanal",
-    "turn: and turns:" : "turn: ve turns:",
-    "turn: only" : "yalnız turn:",
-    "turns: only" : "yalnız turns:",
-    "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Sorun: TURN sunucusu tarafından UDP için çalışan bir ICE adayı bildirilmedi",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Sorun: TURN sunucusu tarafından TCP için çalışan bir ICE adayı bildirilmedi",
     "Lower hand" : "Eli indir",
-    "Raise hand" : "El kaldır"
+    "Raise hand" : "El kaldır",
+    "turn: and turns:" : "turn: ve turns:",
+    "turn: only" : "yalnız turn:",
+    "turns: only" : "yalnız turns:",
+    "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır"
 },
 "nplurals=2; plural=(n > 1);");

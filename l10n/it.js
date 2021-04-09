@@ -1053,13 +1053,13 @@ OC.L10N.register(
     "Enabled" : "Abilitato",
     "Show matterbridge log" : "Mostra il log di matterbridge",
     "Add new bridged channel" : "Aggiungi nuovo canale collegato",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "solo turn:",
-    "turns: only" : "solo turns:",
-    "turns: scheme must be used with a domain" : "Lo schema turns: deve essere utilizzato con un dominio",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Errore: nessun candidato ICE funzionante restituito per UDP dal server TURN ",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Errore: nessun candidato ICE funzionante restituito per TCP dal server TURN ",
     "Lower hand" : "Abbassa la mano",
-    "Raise hand" : "Alza la mano"
+    "Raise hand" : "Alza la mano",
+    "turn: and turns:" : "turn: e turns:",
+    "turn: only" : "solo turn:",
+    "turns: only" : "solo turns:",
+    "turns: scheme must be used with a domain" : "Lo schema turns: deve essere utilizzato con un dominio"
 },
 "nplurals=2; plural=(n != 1);");

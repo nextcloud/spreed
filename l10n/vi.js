@@ -797,10 +797,10 @@ OC.L10N.register(
     "Enabled" : "Bật",
     "Show matterbridge log" : "Hiển thị nhật ký matterbridge",
     "Add new bridged channel" : "Thêm kênh bắc cầu mới",
-    "turns: scheme must be used with a domain" : "Lượt: lược đồ phải được sử dụng với một tên miền",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho UDP",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho TCP",
     "Lower hand" : "Đặt tay xuống",
-    "Raise hand" : "Giơ tay"
+    "Raise hand" : "Giơ tay",
+    "turns: scheme must be used with a domain" : "Lượt: lược đồ phải được sử dụng với một tên miền"
 },
 "nplurals=1; plural=0;");

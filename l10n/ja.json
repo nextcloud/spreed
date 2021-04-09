@@ -1044,13 +1044,13 @@
     "Enabled" : "有効",
     "Show matterbridge log" : "Matterbridgeログを表示する",
     "Add new bridged channel" : "新しいブリッジチャネルを追加",
-    "turn: and turns:" : "turn: と turns:",
-    "turn: only" : "turn: のみ",
-    "turns: only" : "turns: のみ",
-    "turns: scheme must be used with a domain" : "turns: スキームはドメインで使用する必要があります",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "エラー: TURNサーバーからUDP用に機能するICE候補が返されませんでした",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "エラー: TURNサーバーからTCPに対して有効なICE候補が返されませんでした",
     "Lower hand" : "手を下げる (r)",
-    "Raise hand" : "挙手 (r)"
+    "Raise hand" : "挙手 (r)",
+    "turn: and turns:" : "turn: と turns:",
+    "turn: only" : "turn: のみ",
+    "turns: only" : "turns: のみ",
+    "turns: scheme must be used with a domain" : "turns: スキームはドメインで使用する必要があります"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
