@@ -1040,13 +1040,13 @@ OC.L10N.register(
     "Enabled" : "Omogućeno",
     "Show matterbridge log" : "Prikaži zapisnik Matterbridgea",
     "Add new bridged channel" : "Dodaj novi povezani kanal",
-    "turn: and turns:" : "turn: i turns:",
-    "turn: only" : "turn: samo",
-    "turns: only" : "turns: samo",
-    "turns: scheme must be used with a domain" : "turns: shema se mora upotrebljavati s domenom",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Pogreška: poslužitelj TURN nije vratio ispravne ICE kandidate za UDP",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Pogreška: poslužitelj TURN nije vratio ispravne ICE kandidate za TCP",
     "Lower hand" : "Spusti ruku",
-    "Raise hand" : "Podigni ruku"
+    "Raise hand" : "Podigni ruku",
+    "turn: and turns:" : "turn: i turns:",
+    "turn: only" : "turn: samo",
+    "turns: only" : "turns: samo",
+    "turns: scheme must be used with a domain" : "turns: shema se mora upotrebljavati s domenom"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
