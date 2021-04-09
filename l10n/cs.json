@@ -1051,13 +1051,13 @@
     "Enabled" : "Zapnuto",
     "Show matterbridge log" : "Zobrazit záznam události v matterbridge",
     "Add new bridged channel" : "Přidat nový můstkem napojený kanál",
-    "turn: and turns:" : "turn: a turns:",
-    "turn: only" : "pouze turn:",
-    "turns: only" : "pouze turns:",
-    "turns: scheme must be used with a domain" : "turns: společně s doménou je třeba použít schéma",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Chyba: TURN server neodpověděl přes UDP žádnými fungujícími ICE kandidáty",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Chyba: TURN server neodpověděl přes TCP žádnými fungujícími ICE kandidáty",
     "Lower hand" : "Přestat se hlásit",
-    "Raise hand" : "Hlásit se"
+    "Raise hand" : "Hlásit se",
+    "turn: and turns:" : "turn: a turns:",
+    "turn: only" : "pouze turn:",
+    "turns: only" : "pouze turns:",
+    "turns: scheme must be used with a domain" : "turns: společně s doménou je třeba použít schéma"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
