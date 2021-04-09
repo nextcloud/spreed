@@ -42,8 +42,8 @@ use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IHasher;
-use OCP\Security\ISecureRandom;
 
 class Room {
 
@@ -134,8 +134,6 @@ class Room {
 	private $manager;
 	/** @var IDBConnection */
 	private $db;
-	/** @var ISecureRandom */
-	private $secureRandom;
 	/** @var IEventDispatcher */
 	private $dispatcher;
 	/** @var ITimeFactory */
@@ -191,7 +189,6 @@ class Room {
 
 	public function __construct(Manager $manager,
 								IDBConnection $db,
-								ISecureRandom $secureRandom,
 								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
 								IHasher $hasher,
@@ -208,16 +205,15 @@ class Room {
 								string $password,
 								int $activeGuests,
 								int $callFlag,
-								\DateTime $activeSince = null,
-								\DateTime $lastActivity = null,
+								?\DateTime $activeSince,
+								?\DateTime $lastActivity,
 								int $lastMessageId,
-								IComment $lastMessage = null,
-								\DateTime $lobbyTimer = null,
-								string $objectType = '',
-								string $objectId = '') {
+								?IComment $lastMessage,
+								?\DateTime $lobbyTimer,
+								string $objectType,
+								string $objectId) {
 		$this->manager = $manager;
 		$this->db = $db;
-		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
@@ -620,6 +616,12 @@ class Room {
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
+		if (class_exists(CriticalActionPerformedEvent::class))  {
+			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+				'Conversation "%s" deleted',
+				['name' => $this->getName()],
+			));
+		}
 	}
 
 	/**
