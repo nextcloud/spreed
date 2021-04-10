@@ -485,7 +485,6 @@ OC.L10N.register(
     "@-mentions only" : "само @-спомнување ",
     "Off" : "Исклучени",
     "URL of this Nextcloud instance" : "URL од оваа Nextcloud истанца",
-    "E-mail of the user" : "Е-пошта на корисник",
     "Language" : "Јазик",
     "Country" : "Држава",
     "Status" : "Статус",
@@ -599,7 +598,6 @@ OC.L10N.register(
     "Talk conversation" : "Talk раговор",
     "Matrix server URL" : "Matrix сервер URL",
     "Matrix channel" : "Matrix канал",
-    "User name or e-mail address" : "Корисничко име или е-пошта адреса",
     "Password" : "Лозинка",
     "Bot user name" : "Име на ботот",
     "Bot API key" : "API клуч за ботот",
@@ -765,7 +763,9 @@ OC.L10N.register(
     "Select a conversation to add to the project" : "Избери разговор за да го додадете во проект",
     "Error while uploading file" : "Грешка при прикачување на датотека",
     "New in Talk 10" : "Ново во Talk 10",
+    "E-mail of the user" : "Е-пошта на корисник",
     "Bridge with other services" : "Мост со други сервери",
-    "Enabled" : "Овозможен"
+    "Enabled" : "Овозможен",
+    "User name or e-mail address" : "Корисничко име или е-пошта адреса"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
