@@ -390,7 +390,6 @@ OC.L10N.register(
     "@-mentions only" : "Tik @ paminėjimai",
     "Off" : "Išjungta",
     "URL of this Nextcloud instance" : "Šio Nextcloud egzemplioriaus URL",
-    "E-mail of the user" : "Naudotojo el. paštas",
     "Language" : "Kalba",
     "Country" : "Šalis",
     "Status" : "Būsena",
@@ -487,7 +486,6 @@ OC.L10N.register(
     "Matrix channel" : "Matrix kanalas",
     "Channel name" : "Kanalo pavadinimas",
     "Rocket.Chat server URL" : "Rocket.Chat serverio URL",
-    "User name or e-mail address" : "Naudotojo vardas ar el. pašto adresas",
     "Password" : "Slaptažodis",
     "Rocket.Chat channel" : "Rocket.Chat kanalas",
     "API token" : "API prieigos raktas",
@@ -642,6 +640,8 @@ OC.L10N.register(
     "Share link" : "Bendrinimo nuoroda",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Nextcloud Pokalbiai nepalaiko pilnai jūsų naudojamos naršyklės. Naudokite naujausią Mozilla Firefox, Microsoft Edge, Google Chrome ar Apple Safari versiją.",
     "New in Talk 10" : "Nauja Pokalbiuose 10",
-    "Enabled" : "Įjungta"
+    "E-mail of the user" : "Naudotojo el. paštas",
+    "Enabled" : "Įjungta",
+    "User name or e-mail address" : "Naudotojo vardas ar el. pašto adresas"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

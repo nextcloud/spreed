@@ -494,7 +494,6 @@ OC.L10N.register(
     "URL of this Nextcloud instance" : "URL d'aquesta instància de Nextcloud",
     "Full name of the user requesting the trial" : "Nom complet de l'usuari que sol·licita la prova",
     "Name of the user requesting the trial" : "Nom de l'usuari que sol·licita la prova",
-    "E-mail of the user" : "Correu electrònic de l'usuari",
     "Language" : "Idioma",
     "Country" : "País",
     "Request signaling server trial" : "Sol·licita la prova del servidor de senyalització",
@@ -639,7 +638,6 @@ OC.L10N.register(
     "Team name" : "Nom de l'equip",
     "Channel name" : "Nom del canal",
     "Rocket.Chat server URL" : "URL del servidor Rocket.Chat",
-    "User name or e-mail address" : "Nom d'usuari o adreça electrònica",
     "Password" : "Contrasenya",
     "Rocket.Chat channel" : "Canal Rocket.Chat",
     "Zulip server URL" : "URL del servidor Zulip",
@@ -852,10 +850,12 @@ OC.L10N.register(
     "Select a conversation to add to the project" : "Seleccioneu una conversa per ser afegida al projecte",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "El navegador que utilitzeu no és totalment compatible amb Nextcloud Talk. Utilitzeu l'última versió de Mozilla Firefox, Microsoft Edge, Google Chrome o Apple Safari.",
     "Error while uploading file" : "S'ha produït un error en carregar el fitxer",
+    "E-mail of the user" : "Correu electrònic de l'usuari",
     "Bridge with other services" : "Pont amb altres serveis",
     "More info on Matterbridge." : "Més informació sobre Matterbridge.",
     "Enabled" : "Activat",
     "Show matterbridge log" : "Mostra el registre del matterbridge",
+    "User name or e-mail address" : "Nom d'usuari o adreça electrònica",
     "Add new bridged channel" : "Afegeix un canal pont nou"
 },
 "nplurals=2; plural=(n != 1);");

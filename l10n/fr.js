@@ -531,7 +531,6 @@ OC.L10N.register(
     "URL of this Nextcloud instance" : "URL de cette instance Nextcloud",
     "Full name of the user requesting the trial" : "Nom complet de l'utilisateur qui demande la période d'essai",
     "Name of the user requesting the trial" : "Nom de l'utilisateur qui demande la période d'essai",
-    "E-mail of the user" : "Courriel de l'utilisateur",
     "Language" : "Langue",
     "Country" : "Pays",
     "Request signaling server trial" : "Demande de période d'essai pour un serveur de signalement",
@@ -730,7 +729,6 @@ OC.L10N.register(
     "Team name" : "Nom d'équipe",
     "Channel name" : "Nom du canal",
     "Rocket.Chat server URL" : "URL du serveur Rocket.Chat",
-    "User name or e-mail address" : "Identifiant ou adresse e-mail",
     "Password" : "Mot de passe",
     "Rocket.Chat channel" : "Canal Rocket.Chat",
     "Zulip server URL" : "URL du serveur Zulip",
@@ -1009,10 +1007,12 @@ OC.L10N.register(
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Le navigateur que vous utilisez n'est pas entièrement pris en charge par Nextcloud Talk. Veuillez utiliser la dernière version de Mozilla Firefox, Microsoft Edge, Google Chrome ou Apple Safari.\n ",
     "Error while uploading file" : "Erreur lors de l'envoi du fichier",
     "New in Talk 10" : "Nouveautés de Talk 10",
+    "E-mail of the user" : "Courriel de l'utilisateur",
     "Bridge with other services" : "Lier à d'autres services",
     "More info on Matterbridge." : "Plus d'information sur Matterbridge.",
     "Enabled" : "Activé",
     "Show matterbridge log" : "Afficher le journal de Matterbridge",
+    "User name or e-mail address" : "Identifiant ou adresse e-mail",
     "Add new bridged channel" : "Ajouter un nouveau salon lié"
 },
 "nplurals=2; plural=(n > 1);");

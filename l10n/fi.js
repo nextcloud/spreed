@@ -184,7 +184,6 @@ OC.L10N.register(
     "All messages" : "Kaikki viestit",
     "@-mentions only" : "Vain @-maininnat",
     "Off" : "Pois",
-    "E-mail of the user" : "Käyttäjän sähköpostiosoite",
     "Language" : "Kieli",
     "Country" : "Maa",
     "Status" : "Tila",
@@ -272,7 +271,6 @@ OC.L10N.register(
     "Matrix channel" : "Matrix-kanava",
     "Mattermost user" : "Mattermost-käyttäjä",
     "Channel name" : "Kanavan nimi",
-    "User name or e-mail address" : "Käyttäjänimi tai sähköpostiosoite",
     "Password" : "Salasana",
     "Rocket.Chat channel" : "Rocket.Chat-kanava",
     "API token" : "API-poletti",
@@ -419,9 +417,11 @@ OC.L10N.register(
     "Share link" : "Jaa linkki",
     "Select a conversation to add to the project" : "Valitse projektiin lisättävä keskustelu",
     "Error while uploading file" : "Virhe tiedostoa lähettäessä",
+    "E-mail of the user" : "Käyttäjän sähköpostiosoite",
     "Bridge with other services" : "Siltaa muiden palvelujen kanssa",
     "More info on Matterbridge." : "Lisätietoja Matterbridgestä.",
     "Enabled" : "Käytössä",
-    "Show matterbridge log" : "Näytä matterbridge-loki"
+    "Show matterbridge log" : "Näytä matterbridge-loki",
+    "User name or e-mail address" : "Käyttäjänimi tai sähköpostiosoite"
 },
 "nplurals=2; plural=(n != 1);");
