@@ -499,7 +499,6 @@ OC.L10N.register(
     "URL of this Nextcloud instance" : "URL tejto inštancie Nextcloudu",
     "Full name of the user requesting the trial" : "Úplné meno používateľa, ktorý žiada o skúšobnú verziu",
     "Name of the user requesting the trial" : "Meno používateľa, ktorý žiada o skúšobnú verziu",
-    "E-mail of the user" : "E-mail používateľa",
     "Language" : "Jazyk",
     "Country" : "Krajina",
     "Request signaling server trial" : "Vyžiadať skúšobnú verziu signalizačného servera",
@@ -653,7 +652,6 @@ OC.L10N.register(
     "Team name" : "Názov tímu",
     "Channel name" : "Názov kanálu",
     "Rocket.Chat server URL" : "URL Rocket.Chat servera",
-    "User name or e-mail address" : "Používateľské meno alebo e-mailová adresa",
     "Password" : "Heslo",
     "Rocket.Chat channel" : "Rocket.Chat kanál",
     "Zulip server URL" : "URL Zulip servera",
@@ -876,10 +874,12 @@ OC.L10N.register(
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Prehliadač, ktorý používate, nie je službou Nextcloud Talk plne podporovaný. Použite najnovšiu verziu prehliadača Mozilla Firefox, Microsoft Edge, Google Chrome alebo Apple Safari.",
     "Error while uploading file" : "Chyba pri nahrávaní súboru",
     "New in Talk 10" : "Novinky v Rozhovory 10",
+    "E-mail of the user" : "E-mail používateľa",
     "Bridge with other services" : "Premostenie na ďalšie služby",
     "More info on Matterbridge." : "Viac informácií o Matterbridge.",
     "Enabled" : "Povolené",
     "Show matterbridge log" : "Zobraziť záznam udalostí matterbridge",
+    "User name or e-mail address" : "Používateľské meno alebo e-mailová adresa",
     "Add new bridged channel" : "Pridať nový premostený kanál"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
