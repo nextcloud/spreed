@@ -506,7 +506,6 @@ OC.L10N.register(
     "URL of this Nextcloud instance" : "Nextcloud instantzia honen URLa",
     "Full name of the user requesting the trial" : "Proba eskatzen duen erabiltzailearen izen osoa",
     "Name of the user requesting the trial" : "Proba eskatzen duen erabiltzailearen izena",
-    "E-mail of the user" : "Erabiltzailearen e-posta",
     "Language" : "Hizkuntza",
     "Country" : "Herrialdea",
     "Request signaling server trial" : "Eskatu seinalizazio zerbitzari proba",
@@ -655,7 +654,6 @@ OC.L10N.register(
     "Team name" : "Taldearen izena",
     "Channel name" : "Kanalaren izena",
     "Rocket.Chat server URL" : "Rocket.Chat zerbitzariraren URLa",
-    "User name or e-mail address" : "Erabiltzaile izena edo e-posta helbidea",
     "Password" : "Pasahitza",
     "Rocket.Chat channel" : "Rocket.Chat kanala",
     "Zulip server URL" : "Zulip zerbitzariaren URLa",
@@ -881,10 +879,12 @@ OC.L10N.register(
     "Select a conversation to add to the project" : "Hautatu elkarrizketa bat proiektuari gehitzeko",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "Nextcloud Talkek ez dauka erabateko euskarria erabiltzen ari zaren nabigatzailearentzat. Erabili Mozilla Firefox, Microsoft Edge, Google Chrome edo Apple Safari nabigatzaileen bertsio berriena.",
     "Error while uploading file" : "Errorea fitxategia kargatzean",
+    "E-mail of the user" : "Erabiltzailearen e-posta",
     "Bridge with other services" : "Zubiak egin beste zerbitzuetara",
     "More info on Matterbridge." : "Informazio gehiago Matterbridge-ri buruz.",
     "Enabled" : "Gaitua",
     "Show matterbridge log" : "Erakutsi matterbridge erregistroa",
+    "User name or e-mail address" : "Erabiltzaile izena edo e-posta helbidea",
     "Add new bridged channel" : "Gehitu zubidun kanal berria"
 },
 "nplurals=2; plural=(n != 1);");

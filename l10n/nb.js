@@ -329,7 +329,6 @@ OC.L10N.register(
     "General settings" : "Generelle innstillinger",
     "All messages" : "Alle meldinger",
     "Off" : "ett kvarter",
-    "E-mail of the user" : "Brukerens epostadresse",
     "Language" : "Språk",
     "Country" : "Land",
     "Status" : "Status",
@@ -511,6 +510,7 @@ OC.L10N.register(
     "Projects" : "Prosjekter",
     "Share link" : "Del lenke",
     "New in Talk 10" : "Nytt i Talk 10",
+    "E-mail of the user" : "Brukerens epostadresse",
     "Enabled" : "Aktivert",
     "Lower hand" : "Senk hånden",
     "Raise hand" : "Løft hånden"

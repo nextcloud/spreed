@@ -430,7 +430,6 @@ OC.L10N.register(
     "Talk conversation" : "محادثات",
     "Team name" : "اسم الفريق",
     "Channel name" : "اسم القناة",
-    "User name or e-mail address" : "اسم المستخدم او البريد الالكتروني",
     "Password" : "الكلمة السرية",
     "Server ID or name" : "معرف الخادم السحابي او الاسم",
     "Channel ID or name" : "معرف القناة او الاسم",
@@ -618,6 +617,7 @@ OC.L10N.register(
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "تستخدم متصفح غير مدعوم بالكامل من قبل نكست كلاود التحدث. استخدم اخر اصدار من فايرفوكس، مايكروسوفت ادج، قوقل كروم او ابل سفاري.",
     "Error while uploading file" : "خطأ اثناء رفع ملف",
     "Bridge with other services" : "الربط مع خدمات آخرى",
-    "Enabled" : "مفعلة"
+    "Enabled" : "مفعلة",
+    "User name or e-mail address" : "اسم المستخدم او البريد الالكتروني"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
