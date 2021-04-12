@@ -39,8 +39,6 @@
 				<Message
 					v-for="(message, index) of messages"
 					:key="message.id"
-					:next-message="(messages[index + 1] && messages[index + 1].id) || nextMessage"
-					:previous-message="(index > 0 && messages[index - 1].id) || previousMessage"
 					v-bind="message"
 					:is-first-message="index === 0"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
@@ -76,20 +74,6 @@ export default {
 		id: {
 			type: [String, Number],
 			required: true,
-		},
-		/**
-		 * Id of the next message
-		 */
-		nextMessage: {
-			type: [String, Number],
-			default: null,
-		},
-		/**
-		 * Id of the previous message
-		 */
-		previousMessage: {
-			type: [String, Number],
-			default: null,
 		},
 		/**
 		 * The conversation token.
