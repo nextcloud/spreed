@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.0.7 – 2021-04-12
+### Fixed
+- Only use the local file as preview for some types when uploading
+  [#5426](https://github.com/nextcloud/spreed/pull/5426)
+
 ## 10.0.6 – 2021-02-22
 ### Changed
 - Replace blur with average color in video backgrounds to improve performance on Chrome based browsers
