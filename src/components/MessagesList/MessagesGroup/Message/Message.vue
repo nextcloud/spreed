@@ -544,7 +544,7 @@ export default {
 			if (this.sendingFailure === 'quota') {
 				return t('spreed', 'Not enough free space to upload file')
 			}
-			return t('spreed', 'You can not send messages to this conversation at the moment')
+			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
 		isMyMsg() {

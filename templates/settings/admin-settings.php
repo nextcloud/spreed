@@ -14,7 +14,7 @@ style('spreed', ['settings-admin']);
 		<h2><?php p($l->t('Limit to groups')) ?></h2>
 		<p class="settings-hint"><?php p($l->t('When at least one group is selected, only people of the listed groups can be part of conversations.')); ?></p>
 		<p class="settings-hint"><?php p($l->t('Guests can still join public conversations.')); ?></p>
-		<p class="settings-hint"><?php p($l->t('Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.')); ?></p>
+		<p class="settings-hint"><?php p($l->t('Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.')); ?></p>
 	</div>
 
 	<div class="videocalls section" id="chat_commands">
