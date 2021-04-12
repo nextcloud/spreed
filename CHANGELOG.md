@@ -19,9 +19,9 @@ All notable changes to this project will be documented in this file.
   [#5455](https://github.com/nextcloud/spreed/pull/5455)
 
 - Only use the local file as preview for some types when uploading
-  [#5424](https://github.com/nextcloud/spreed/pull/5424)
+  [#5423](https://github.com/nextcloud/spreed/pull/5423)
 - Fix an issue with the migration to the new attendees table
-  [#5428](https://github.com/nextcloud/spreed/pull/5428)
+  [#5427](https://github.com/nextcloud/spreed/pull/5427)
 - Fix the background job checking the schema
   [#5374](https://github.com/nextcloud/spreed/pull/5374)
 - Fix a bug with the raised hand of users that disconnect
@@ -30,9 +30,9 @@ All notable changes to this project will be documented in this file.
 ## 11.1.2 – 2021-04-12
 ### Fixed
 - Only use the local file as preview for some types when uploading
-  [#5423](https://github.com/nextcloud/spreed/pull/5423)
+  [#5424](https://github.com/nextcloud/spreed/pull/5424)
 - Fix an issue with the migration to the new attendees table
-  [#5428](https://github.com/nextcloud/spreed/pull/5427)
+  [#5428](https://github.com/nextcloud/spreed/pull/5428)
 - Fix the background job checking the schema
   [#5373](https://github.com/nextcloud/spreed/pull/5373)
 - Fix a bug with the raised hand of users that disconnect
