@@ -61,6 +61,7 @@ You can use the Issue Template application to prefill most of the required infor
 **List of activated apps:**
 
 <details>
+
 ```
 If you have access to your command line run e.g.:
 sudo -u www-data php occ app:list
@@ -71,6 +72,7 @@ from within your server installation folder
 **Nextcloud configuration:**
 
 <details>
+
 ```
 If you have access to your command line run e.g.:
 sudo -u www-data php occ config:list system
@@ -85,6 +87,7 @@ Make sure to remove all sensitive content such as passwords. (e.g. database pass
 
 ### Server log (data/nextcloud.log)
 <details>
+
 ```
 Insert your server log here
 ```
