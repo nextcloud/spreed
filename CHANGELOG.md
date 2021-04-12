@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.1.2 – 2021-04-12
+### Fixed
+- Only use the local file as preview for some types when uploading
+  [#5423](https://github.com/nextcloud/spreed/pull/5423)
+- Fix an issue with the migration to the new attendees table
+  [#5428](https://github.com/nextcloud/spreed/pull/5427)
+- Fix the background job checking the schema
+  [#5373](https://github.com/nextcloud/spreed/pull/5373)
+- Fix a bug with the raised hand of users that disconnect
+  [#5419](https://github.com/nextcloud/spreed/pull/5419)
+
+## 10.1.4 – 2021-04-12
+### Fixed
+- Only use the local file as preview for some types when uploading
+  [#5425](https://github.com/nextcloud/spreed/pull/5425)
+- Fix an issue with the migration to the new attendees table
+  [#5245](https://github.com/nextcloud/spreed/pull/5245)
+  [#5429](https://github.com/nextcloud/spreed/pull/5429)
+
+## 10.0.7 – 2021-04-12
+### Fixed
+- Only use the local file as preview for some types when uploading
+  [#5426](https://github.com/nextcloud/spreed/pull/5426)
+
 ## 11.1.1 – 2021-03-04
 ### Fixed
 - Fixed a bug in the migration that could prevent copying all participants to the attendee table
