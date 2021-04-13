@@ -220,13 +220,13 @@ Feature: conversation/files
     When user "participant3" joins room "file test/renamed.txt room" with 200 (v4)
     Then user "participant3" is participant of room "file test/renamed.txt room" (v4)
 
-  Scenario: owner of a no longer shared file can not join its room
+  Scenario: owner of a no longer shared file can join its room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     And user "participant1" deletes last share
-    When user "participant1" joins room "file welcome (2).txt room" with 404 (v4)
-    Then user "participant1" is not participant of room "file welcome (2).txt room" (v4)
+    When user "participant1" joins room "file welcome (2).txt room" with 200 (v4)
+    Then user "participant1" is participant of room "file welcome (2).txt room" (v4)
 
   Scenario: user no longer with access to a file can not join its room
     Given user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
@@ -447,7 +447,7 @@ Feature: conversation/files
   # Participants are removed from the room for a no longer shared file once they
   # try to join the room again, but not when the file is unshared.
 
-  Scenario: owner is not participant of room for file no longer shared
+  Scenario: owner is participant of room for file no longer shared
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
@@ -456,8 +456,8 @@ Feature: conversation/files
     And user "participant1" is participant of room "file welcome.txt room" (v4)
     When user "participant1" deletes last share
     Then user "participant1" is participant of room "file welcome.txt room" (v4)
-    And user "participant1" joins room "file welcome.txt room" with 404 (v4)
-    And user "participant1" is not participant of room "file welcome.txt room" (v4)
+    And user "participant1" joins room "file welcome.txt room" with 200 (v4)
+    And user "participant1" is participant of room "file welcome.txt room" (v4)
 
   Scenario: user is not participant of room for file no longer with access to it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -473,7 +473,7 @@ Feature: conversation/files
 
 
 
-  Scenario: owner is not participant of room for file no longer shared by link
+  Scenario: owner is participant of room for file no longer shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
     And user "participant1" gets the room for last share with 200 (v1)
     And user "participant1" joins room "file last share room" with 200 (v4)
@@ -481,8 +481,8 @@ Feature: conversation/files
     And user "participant1" is participant of room "file last share room" (v4)
     When user "participant1" deletes last share
     Then user "participant1" is participant of room "file last share room" (v4)
-    And user "participant1" joins room "file last share room" with 404 (v4)
-    And user "participant1" is not participant of room "file last share room" (v4)
+    And user "participant1" joins room "file last share room" with 200 (v4)
+    And user "participant1" is participant of room "file last share room" (v4)
 
   Scenario: user is participant of room for file no longer shared by link but with access to it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
