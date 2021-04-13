@@ -15,7 +15,6 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Chào mừng bạn đến với vWorkspaceTalk!\nTrong cuộc trò chuyện này, bạn sẽ được thông báo về các tính năng mới có trong vWorkspace Talk.",
     "New in Talk %s" : "Cập nhật trong Talk %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge và Safari hiện có thể được sử dụng để tham gia vào các cuộc gọi âm thanh và video",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Các cuộc trò chuyện một đối một giờ đây tồn tại lâu dài và không thể ngẫu nhiên chuyển thành cuộc trò chuyện nhóm được nữa. Ngoài ra, khi một trong những người tham gia rời khỏi cuộc trò chuyện, cuộc trò chuyện sẽ không tự động bị xóa nữa. Chỉ khi cả hai người tham gia rời đi, cuộc trò chuyện sẽ bị xóa khỏi máy chủ",
     "- You can now notify all participants by posting \"@all\" into the chat" : "- Giờ đây, bạn có thể thông báo cho tất cả những người tham gia bằng cách đăng \"@all\" vào cuộc trò chuyện",
     "- With the \"arrow-up\" key you can repost your last message" : "- Với phím \"mũi tên lên\", bạn có thể đăng lại tin nhắn cuối cùng của mình",
     "- Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "Talk hiện có thể có các lệnh, hãy gửi \"/ help\" dưới dạng tin nhắn trò chuyện nếu quản trị viên của bạn có định một số cấu hình",
@@ -351,7 +350,6 @@
     "Testing whether the TURN server returns ICE candidates" : "Kiểm tra xem máy chủ TURN có trả về các ứng viên ICE hay không",
     "Test this server" : "Kiểm tra máy chủ này",
     "TURN servers" : "Máy chủ TURN",
-    "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia sau tường lửa. Nếu những người tham gia cá nhân không thể kết nối với những người khác, rất có thể cần phải có máy chủ TURN. Xem {linkstart} tài liệu này {linkend} để biết hướng dẫn thiết lập.",
     "{nickName} raised their hand." : "{nickName} giơ tay.",
     "A participant raised their hand." : "Một người tham gia giơ tay.",
     "Previous page of videos" : "Trang trước của video",
@@ -592,7 +590,6 @@
     "Message read by everyone who shares their reading status" : "Tin nhắn được đọc bởi tất cả những người chia sẻ trạng thái đọc của họ",
     "Failed to send the message. Click to try again" : "Không gửi được tin nhắn. Bấm để thử lại",
     "Not enough free space to upload file" : "Không đủ dung lượng trống để tải tệp lên",
-    "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
     "Deleting message" : "Đang xóa tin nhắn",
     "Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services" : "Đã xóa tin nhắn thành công, nhưng Matterbridge đã được định cấu hình và tin nhắn có thể đã được phân phối đến các dịch vụ khác",
     "Message deleted successfully" : "Đã xóa tin nhắn thành công",
@@ -763,6 +760,7 @@
     "Android app" : "Ứng dụng Android",
     "iOS app" : "Ứng dụng IOS",
     "New in Talk 6" : "Tính năng mới trên Talk 6",
+    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Các cuộc trò chuyện một đối một giờ đây tồn tại lâu dài và không thể ngẫu nhiên chuyển thành cuộc trò chuyện nhóm được nữa. Ngoài ra, khi một trong những người tham gia rời khỏi cuộc trò chuyện, cuộc trò chuyện sẽ không tự động bị xóa nữa. Chỉ khi cả hai người tham gia rời đi, cuộc trò chuyện sẽ bị xóa khỏi máy chủ",
     "New in Talk 7" : "Tính năng mới trên Talk 7",
     "New in Talk 8" : "Tính năng mới trên Talk 8",
     "New in Talk 9" : "Tính năng mới trên Talk 9",
@@ -797,8 +795,10 @@
     "Add new bridged channel" : "Thêm kênh bắc cầu mới",
     "Error: No working ICE candidates returned for UDP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho UDP",
     "Error: No working ICE candidates returned for TCP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho TCP",
+    "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia sau tường lửa. Nếu những người tham gia cá nhân không thể kết nối với những người khác, rất có thể cần phải có máy chủ TURN. Xem {linkstart} tài liệu này {linkend} để biết hướng dẫn thiết lập.",
     "Lower hand" : "Đặt tay xuống",
     "Raise hand" : "Giơ tay",
+    "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
     "turns: scheme must be used with a domain" : "Lượt: lược đồ phải được sử dụng với một tên miền"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
