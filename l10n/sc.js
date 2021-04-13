@@ -17,7 +17,6 @@ OC.L10N.register(
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Ti donamus sa benebènnida in Nextcloud Talk!\nIn custa cunversatzione t'amus a informare subra de elementos noos disponìbiles in Nextcloud Talk.",
     "New in Talk %s" : "Nou in Talk %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "Immoe podes impreare Microsoft Edge e Safari pro partetzipare in mutidas àudio e vìdeo",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Is cunversatziones fache a pare immoe sunt sighidas e non podent èssere furriadas prus in cunversatziones de grupu pro errore. Puru cando una persone lassat sa cunversatzione, custa no si cantzellat prus de manera automàtica. Sa cunversatzione si cantzellat dae su serbidore isceti chi is duas persones chi partetzipant dda lassant.",
     "- You can now notify all participants by posting \"@all\" into the chat" : "- Immoe podes imbiare notìficas a is partetzipantes iscriende \"@totus\" in sa tzarrada.",
     "- With the \"arrow-up\" key you can repost your last message" : "- Cun su tastu \"fertza-in-susu\" podes torrare a publicare s'ùrtimu messàgiu tuo.",
     "- Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "- Immoe Talk podet tènnere cumandos, imbia \"agiudu\" comente messàgiu de sa tzarrada pro bìdere chi chie amministrat nd'at cunfiguradu calecunu",
@@ -267,6 +266,7 @@ OC.L10N.register(
     "Details" : "Detàllios",
     "Privacy" : "Riservadesa",
     "Grid view" : "Bisione grìllia",
+    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Is cunversatziones fache a pare immoe sunt sighidas e non podent èssere furriadas prus in cunversatziones de grupu pro errore. Puru cando una persone lassat sa cunversatzione, custa no si cantzellat prus de manera automàtica. Sa cunversatzione si cantzellat dae su serbidore isceti chi is duas persones chi partetzipant dda lassant.",
     "Share link" : "Cumpartzi ligòngiu"
 },
 "nplurals=2; plural=(n != 1);");

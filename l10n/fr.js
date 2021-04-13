@@ -17,7 +17,6 @@ OC.L10N.register(
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bienvenue dans Nextcloud Talk !\nCette conversation vous permettra de vous tenir informés des nouveautés Nextcloud Talk.",
     "New in Talk %s" : "Nouveautés dans %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge et Safari peuvent désormais être utilisés pour participer aux appels audio et vidéo",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Les conversations en tête-à-tête sont maintenant persistantes et ne peuvent plus être accidentellement transformées en conversations de groupe. De plus, si un des participants quitte la conversation, la conversation n'est plus automatiquement supprimée. Seulement lorsque les deux participants quittent la conversation, celle-ci est supprimée du serveur",
     "- You can now notify all participants by posting \"@all\" into the chat" : "-  Vous pouvez notifier tous les participants en écrivant \"@all\" dans la discussion",
     "- With the \"arrow-up\" key you can repost your last message" : "- Avec la touche \"flèche du haut\" vous pouvez renvoyer votre dernier message",
     "- Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "- Talk peut maintenant utiliser des commandes, envoyez \"/help\" comme un message dans le tchat pour vérifier si l'administrateur en a configuré",
@@ -833,7 +832,6 @@ OC.L10N.register(
     "Message read by everyone who shares their reading status" : "Message lu par tous ceux qui partagent leur statut de lecture",
     "Failed to send the message. Click to try again" : "Échec de l'envoi du message. Cliquez pour réessayer",
     "Not enough free space to upload file" : "Espace libre insuffisant pour télécharger le fichier",
-    "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
     "Deleting message" : "Suppression d'un message",
     "{stack} in {board}" : "{stack} dans {board}",
     "Remove" : "Supprimer",
@@ -985,6 +983,7 @@ OC.L10N.register(
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
     "New in Talk 6" : "Nouveautés de Talk 6",
+    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Les conversations en tête-à-tête sont maintenant persistantes et ne peuvent plus être accidentellement transformées en conversations de groupe. De plus, si un des participants quitte la conversation, la conversation n'est plus automatiquement supprimée. Seulement lorsque les deux participants quittent la conversation, celle-ci est supprimée du serveur",
     "New in Talk 7" : "Nouveautés de Talk 7",
     "New in Talk 8" : "Nouveautés de Talk 8",
     "New in Talk 9" : "Nouveautés de Talk 9",
@@ -1016,6 +1015,7 @@ OC.L10N.register(
     "Enabled" : "Activé",
     "Show matterbridge log" : "Afficher le journal de Matterbridge",
     "User name or e-mail address" : "Identifiant ou adresse e-mail",
-    "Add new bridged channel" : "Ajouter un nouveau salon lié"
+    "Add new bridged channel" : "Ajouter un nouveau salon lié",
+    "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment"
 },
 "nplurals=2; plural=(n > 1);");
