@@ -595,7 +595,6 @@ OC.L10N.register(
     "Sending message" : "Mandadís del messatge",
     "Message sent" : "Messatge mandat",
     "Not enough free space to upload file" : "Pas pro d’espaci liure per enviar lo fichièr",
-    "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
     "Deleting message" : "Supression del messatge",
     "Remove" : "Suprimir",
     "Today" : "Uèi",
@@ -719,6 +718,7 @@ OC.L10N.register(
     "Enabled" : "Activada",
     "Lower hand" : "Baissar la man",
     "Raise hand" : "Levar la man",
+    "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
     "turn: and turns:" : "turn: e turns:",
     "turn: only" : "turn: sonque",
     "turns: only" : "turns: sonque"
