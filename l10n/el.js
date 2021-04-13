@@ -16,7 +16,6 @@ OC.L10N.register(
     "Guest" : "Επισκέπτης",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Καλωσήρθατε στο Nextcloud Talk!\nΣε αυτήν τη συζήτηση θα ενημερωθείτε για τις νέες διαθέσιμες δυνατότητες του Nextcloud Talk.",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Το Microsoft Edge και Safari μπορούν να χρησιμοποιηθούν για κλήσεις βίντεο και ήχου",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Οι συνομιλίες ένας προς ένα είναι σταθερές και δεν μπορούν πλέον να μετατραπούν σε ομαδικές συνομιλίες τυχαία. Επίσης, όταν ένας από τους συμμετέχοντες αποχωρήσει από τη συζήτηση, αυτή δεν διαγράφεται αυτόματα πλέον. Μόνο εάν και οι δύο συμμετέχοντες αποχωρήσουν, διαγράφεται από το διακομιστή",
     "- You can now notify all participants by posting \"@all\" into the chat" : "- Μπορείτε να ενημερώσετε όλους τους συμμετέχοντες γράφοντας \"@all\" στο chat",
     "- With the \"arrow-up\" key you can repost your last message" : "- Με το \"βελάκι-πάνω\" ξανά γράφεται το τελευταίο μήνυμα",
     "- Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "- Το Talk έχει πλέον εντολές, στείλτε \"/help\" σαν μήνυμα στο chat για να δείτε εάν ο διαχειριστής ρύθμισε κάποιες",
@@ -806,7 +805,6 @@ OC.L10N.register(
     "Message read by everyone who shares their reading status" : "Το μήνυμα διαβάστηκε από όλους όσους μοιράζονται την κατάσταση ανάγνωσής τους",
     "Failed to send the message. Click to try again" : "Αποτυχία αποστολής του μηνύματος. Κάντε κλικ για να δοκιμάσετε ξανά ",
     "Not enough free space to upload file" : "Δεν επαρκεί ο ελεύθερος χώρος για τη μεταφόρτωση του αρχείου",
-    "You can not send messages to this conversation at the moment" : "Δεν μπορείτε να στείλετε μηνύματα σε αυτή τη συνομιλία προς το παρόν",
     "Deleting message" : "Γίνεται διαγραφή μηνύματος",
     "Message deleted successfully" : "Το μήνυμα διαγράφηκε με επιτυχία ",
     "Message could not be deleted because it is too old" : "Δεν ήταν δυνατή η διαγραφή του μηνύματος επειδή είναι αρκετά παλιό ",
@@ -961,6 +959,7 @@ OC.L10N.register(
     "Android app" : "Εφαρμογή Android",
     "iOS app" : "Εφαρμογή iOS",
     "New in Talk 6" : "Νέο στο Talk 6",
+    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Οι συνομιλίες ένας προς ένα είναι σταθερές και δεν μπορούν πλέον να μετατραπούν σε ομαδικές συνομιλίες τυχαία. Επίσης, όταν ένας από τους συμμετέχοντες αποχωρήσει από τη συζήτηση, αυτή δεν διαγράφεται αυτόματα πλέον. Μόνο εάν και οι δύο συμμετέχοντες αποχωρήσουν, διαγράφεται από το διακομιστή",
     "New in Talk 7" : "Νέο στο Talk 7",
     "New in Talk 8" : "Νέο στο Talk 8",
     "New in Talk 9" : "Νέο στο Talk 9",
@@ -994,6 +993,7 @@ OC.L10N.register(
     "User name or e-mail address" : "Όνομα χρήστη ή διεύθυνση e-mail",
     "Add new bridged channel" : "Προσθήκη νέας σύνδεσης καναλιού",
     "Lower hand" : "Κατεβάστε το χέρι",
-    "Raise hand" : "Σηκώστε το χέρι"
+    "Raise hand" : "Σηκώστε το χέρι",
+    "You can not send messages to this conversation at the moment" : "Δεν μπορείτε να στείλετε μηνύματα σε αυτή τη συνομιλία προς το παρόν"
 },
 "nplurals=2; plural=(n != 1);");
