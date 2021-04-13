@@ -140,7 +140,7 @@ export default {
 			} catch (exception) {
 				this.checked = true
 				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
-					this.errorMessage = t('spreed', 'Error: Can not connect to server')
+					this.errorMessage = t('spreed', 'Error: Cannot connect to server')
 				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
 				} else if (exception.response.data.ocs.data.error) {
