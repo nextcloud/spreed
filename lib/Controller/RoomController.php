@@ -922,6 +922,7 @@ class RoomController extends AEnvironmentAwareController {
 				$results[$attendeeId]['inCall'] |= $session->getInCall();
 				$results[$attendeeId]['lastPing'] = max($results[$attendeeId]['lastPing'], $session->getLastPing());
 				$results[$attendeeId]['sessionId'] = $results[$attendeeId]['sessionId'] !== '0' ? $results[$attendeeId]['sessionId'] : $session->getSessionId();
+				$results[$attendeeId]['sessionIds'][] = $session->getSessionId();
 				continue;
 			}
 
@@ -929,6 +930,7 @@ class RoomController extends AEnvironmentAwareController {
 				'inCall' => Participant::FLAG_DISCONNECTED,
 				'lastPing' => 0,
 				'sessionId' => '0', // FIXME empty string or null?
+				'sessionIds' => [],
 				'participantType' => $participant->getAttendee()->getParticipantType(),
 				'attendeeId' => $attendeeId,
 				'actorId' => $participant->getAttendee()->getActorId(),
@@ -950,6 +952,7 @@ class RoomController extends AEnvironmentAwareController {
 				$result['inCall'] = $participant->getSession()->getInCall();
 				$result['lastPing'] = $participant->getSession()->getLastPing();
 				$result['sessionId'] = $participant->getSession()->getSessionId();
+				$result['sessionIds'] = [$participant->getSession()->getSessionId()];
 			}
 
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {

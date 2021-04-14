@@ -35,7 +35,8 @@
         `lastPing` | int | * | Timestamp of the last ping of the user (should be used for sorting)
         `inCall` | int | * | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))
         `sessionId` | string | * | `'0'` if not connected, otherwise a 512 character long string
-        `status` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation 
+        `sessionIds` | array | * | array of session ids, each are 512 character long strings, or empty if no session
+        `status` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
         `statusIcon` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
         `statusMessage` | string | * | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
 
