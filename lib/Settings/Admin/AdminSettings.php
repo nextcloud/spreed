@@ -113,10 +113,10 @@ class AdminSettings implements ISettings {
 	protected function initAllowedGroups(): void {
 		$this->initialState->provideInitialState('start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE));
 
-		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds());
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_conversations');
 		$this->initialState->provideInitialState('start_conversations', $groups);
 
-		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds());
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds(), 'allowed_groups');
 		$this->initialState->provideInitialState('allowed_groups', $groups);
 	}
 
@@ -479,14 +479,14 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initSIPBridge(): void {
-		$groups = $this->getGroupDetailsArray($this->talkConfig->getSIPGroups());
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getSIPGroups(), 'sip_bridge_groups');
 
 		$this->initialState->provideInitialState('sip_bridge_groups', $groups);
 		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
 		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
 	}
 
-	protected function getGroupDetailsArray(array $gids): array {
+	protected function getGroupDetailsArray(array $gids, string $configKey): array {
 		$groups = [];
 		foreach ($gids as $gid) {
 			$group = $this->groupManager->get($gid);
@@ -496,6 +496,13 @@ class AdminSettings implements ISettings {
 					'displayname' => $group->getDisplayName(),
 				];
 			}
+		}
+
+		if (count($gids) !== count($groups)) {
+			$gids = array_map(static function(array $group) {
+				return $group['id'];
+			}, $groups);
+			$this->serverConfig->setAppValue('spreed', $configKey, json_encode($gids));
 		}
 
 		return $groups;
