@@ -305,12 +305,20 @@ export default {
 			return this.participant.label
 		},
 		isHandRaised() {
+			let aggregatedState = false
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
 			}
 
-			const state = this.$store.getters.isParticipantRaisedHand(this.participant.sessionId)
-			return state
+			// show hand icon if at least one session has a raised hand
+			this.participant.sessionIds.forEach((sessionId) => {
+				const state = this.$store.getters.isParticipantRaisedHand(sessionId)
+				if (state === true) {
+					aggregatedState = true
+				}
+			})
+
+			return aggregatedState
 		},
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
