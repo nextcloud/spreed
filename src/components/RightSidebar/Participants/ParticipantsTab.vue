@@ -256,7 +256,7 @@ export default {
 						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
 						this.$store.dispatch('forceGuestName', {
 							token: token,
-							actorId: Hex.stringify(SHA1(participant.sessionId)),
+							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 							actorDisplayName: participant.displayName,
 						})
 					} else if (participant.actorType === 'users' && hasUserStatuses) {

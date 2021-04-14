@@ -147,7 +147,7 @@ const actions = {
 			participant: {
 				inCall: conversation.participantFlags,
 				lastPing: conversation.lastPing,
-				sessionId: conversation.sessionId,
+				sessionIds: [conversation.sessionId],
 				participantType: conversation.participantType,
 				attendeeId: conversation.attendeeId,
 				actorType: conversation.actorType,
