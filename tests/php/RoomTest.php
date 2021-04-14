@@ -31,7 +31,6 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\IHasher;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 

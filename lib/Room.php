@@ -616,7 +616,7 @@ class Room {
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
-		if (class_exists(CriticalActionPerformedEvent::class))  {
+		if (class_exists(CriticalActionPerformedEvent::class)) {
 			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 				'Conversation "%s" deleted',
 				['name' => $this->getName()],
