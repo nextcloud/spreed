@@ -305,20 +305,12 @@ export default {
 			return this.participant.label
 		},
 		isHandRaised() {
-			let aggregatedState = false
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
 			}
 
-			// show hand icon if at least one session has a raised hand
-			this.participant.sessionIds.forEach((sessionId) => {
-				const state = this.$store.getters.isParticipantRaisedHand(sessionId)
-				if (state === true) {
-					aggregatedState = true
-				}
-			})
-
-			return aggregatedState
+			const raisedState = this.$store.getters.getParticipantRaisedHand(this.participant.sessionIds)
+			return raisedState.state
 		},
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
@@ -352,8 +344,8 @@ export default {
 		participantType() {
 			return this.participant.participantType
 		},
-		sessionId() {
-			return this.participant.sessionId
+		sessionIds() {
+			return this.participant.sessionIds || []
 		},
 		lastPing() {
 			return this.participant.lastPing
@@ -383,14 +375,14 @@ export default {
 			}
 
 			// Guest
-			return this.sessionId !== '0' && this.sessionId === this.currentParticipant.sessionId
+			return this.sessionIds.length && this.sessionIds.indexOf(this.currentParticipant.sessionId) >= 0
 		},
 		selfIsModerator() {
 			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
 
 		isOffline() {
-			return /* this.participant.status === 'offline' || */ this.sessionId === '0'
+			return /* this.participant.status === 'offline' || */ !this.sessionIds.length
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1

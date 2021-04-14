@@ -46,11 +46,15 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
-	getParticipantRaisedHand: (state) => (sessionId) => {
-		return state.participantRaisedHands[sessionId] || { state: false, timestamp: null }
-	},
-	isParticipantRaisedHand: (state) => (sessionId) => {
-		return state.participantRaisedHands[sessionId]?.state
+	getParticipantRaisedHand: (state) => (sessionIds) => {
+		for (let i = 0; i < sessionIds.length; i++) {
+			if (state.participantRaisedHands[sessionIds[i]]) {
+				// note: only the raised states are stored, so no need to confirm
+				return state.participantRaisedHands[sessionIds[i]]
+			}
+		}
+
+		return { state: false, timestamp: null }
 	},
 	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
 		return state.backgroundImageAverageColorCache[videoBackgroundId]

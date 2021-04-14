@@ -145,19 +145,19 @@ export default {
 				return p2IsGroup ? -1 : 1
 			}
 
-			let session1 = participant1.sessionId
-			let session2 = participant2.sessionId
+			let hasSessions1 = !!participant1.sessionIds.length
+			let hasSessions2 = !!participant2.sessionIds.length
 			if (participant1.status === 'offline') {
-				session1 = '0'
+				hasSessions1 = false
 			}
 			if (participant2.status === 'offline') {
-				session2 = '0'
+				hasSessions2 = false
 			}
-			if (session1 === '0') {
-				if (session2 !== '0') {
+			if (!hasSessions1) {
+				if (hasSessions2) {
 					return 1
 				}
-			} else if (session2 === '0') {
+			} else if (!hasSessions2) {
 				return -1
 			}
 
@@ -167,8 +167,8 @@ export default {
 				return p1inCall ? -1 : 1
 			}
 
-			const p1HandRaised = this.$store.getters.getParticipantRaisedHand(session1)
-			const p2HandRaised = this.$store.getters.getParticipantRaisedHand(session2)
+			const p1HandRaised = this.$store.getters.getParticipantRaisedHand(participant1.sessionIds)
+			const p2HandRaised = this.$store.getters.getParticipantRaisedHand(participant2.sessionIds)
 			if (p1HandRaised.state !== p2HandRaised.state) {
 				return p1HandRaised.state ? -1 : 1
 			}
