@@ -51,12 +51,11 @@ class GroupDeletedListener implements IEventListener {
 	}
 
 	protected function removeGroupFromConfig(string $configKey, string $removeGroupId): void {
-
 		$json = $this->config->getAppValue('spreed', $configKey, '[]');
 		$array = json_decode($json, true);
 		$gids = \is_array($array) ? $array : [];
 
-		$gids = array_filter($gids, static function($gid) use ($removeGroupId) {
+		$gids = array_filter($gids, static function ($gid) use ($removeGroupId) {
 			return $gid !== $removeGroupId;
 		});
 

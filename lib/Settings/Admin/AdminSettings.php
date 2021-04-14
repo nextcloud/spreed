@@ -499,7 +499,7 @@ class AdminSettings implements ISettings {
 		}
 
 		if (count($gids) !== count($groups)) {
-			$gids = array_map(static function(array $group) {
+			$gids = array_map(static function (array $group) {
 				return $group['id'];
 			}, $groups);
 			$this->serverConfig->setAppValue('spreed', $configKey, json_encode($gids));
