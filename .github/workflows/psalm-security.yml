@@ -14,9 +14,15 @@ env:
 
 jobs:
   psalm:
-    name: Psalm
-
     runs-on: ubuntu-latest
+
+    strategy:
+      # do not stop on another job's failure
+      fail-fast: false
+      matrix:
+        server-versions: ['master']
+
+    name: Psalm Security ${{ matrix.server-versions }}
 
     steps:
       - name: Checkout server
