@@ -173,12 +173,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "5f551b047b50f96e8edb0131904b6a117ca18b86"
+                "reference": "aae151a47c39125bc49b18ddee211bc5cab20533"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/5f551b047b50f96e8edb0131904b6a117ca18b86",
-                "reference": "5f551b047b50f96e8edb0131904b6a117ca18b86",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/aae151a47c39125bc49b18ddee211bc5cab20533",
+                "reference": "aae151a47c39125bc49b18ddee211bc5cab20533",
                 "shasum": ""
             },
             "require": {
@@ -204,7 +204,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2021-03-22T23:34:54+00:00"
+            "time": "2021-04-13T23:43:29+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -2998,12 +2998,12 @@
             "version": "1.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "shasum": ""
             },

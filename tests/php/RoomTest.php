@@ -31,7 +31,6 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\IHasher;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
@@ -57,7 +56,6 @@ class RoomTest extends TestCase {
 		$room = new Room(
 			$this->createMock(Manager::class),
 			$this->createMock(IDBConnection::class),
-			$this->createMock(ISecureRandom::class),
 			$dispatcher,
 			$this->createMock(ITimeFactory::class),
 			$this->createMock(IHasher::class),
@@ -76,7 +74,11 @@ class RoomTest extends TestCase {
 			Participant::FLAG_DISCONNECTED,
 			null,
 			null,
-			0
+			0,
+			null,
+			null,
+			'',
+			''
 		);
 		$verificationResult = $room->verifyPassword('1234');
 		$this->assertSame($verificationResult, ['result' => true, 'url' => '']);
