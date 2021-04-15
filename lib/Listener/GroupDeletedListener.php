@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2021 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
