@@ -45,6 +45,7 @@ use OCA\Talk\Flow\Operation;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
+use OCA\Talk\Listener\GroupDeletedListener;
 use OCA\Talk\Listener\GroupMembershipListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\UserDeletedListener;
@@ -72,6 +73,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IServerContainer;
@@ -97,6 +99,7 @@ class Application extends App implements IBootstrap {
 
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
+		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		$context->registerEventListener(UserAddedEvent::class, GroupMembershipListener::class);
 		$context->registerEventListener(UserRemovedEvent::class, GroupMembershipListener::class);
