@@ -274,6 +274,10 @@ export default {
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', to.params.token)
 			}
+
+			if (to.name === 'notfound') {
+				this.setPageTitle('')
+			}
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
