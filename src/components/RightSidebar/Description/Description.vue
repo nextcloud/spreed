@@ -211,6 +211,10 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.checkOverflow()
+	},
+
 	watch: {
 		// Each time the prop changes, reflect the changes in the value stored in this component
 		description(newValue) {
