@@ -42,9 +42,6 @@ module.exports = {
 			{
 				test: /\.vue$/,
 				loader: 'vue-loader',
-				exclude: babelLoaderExcludeNodeModulesExcept([
-					'vue-material-design-icons',
-				]),
 			},
 			{
 				test: /\.js$/,
