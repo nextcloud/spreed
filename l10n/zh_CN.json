@@ -579,6 +579,7 @@
     "Delete this server" : "删除此服务器",
     "Status: Checking connection" : "状态：正在检查连接",
     "OK: Running version: {version}" : "OK：运行版本：{version}",
+    "Error: Cannot connect to server" : "错误：无法连接到服务器 ",
     "Error: Server did not respond with proper JSON" : "错误：服务器没有回复正确的JSON",
     "Error: Server responded with: {error}" : "错误：服务器回复：{error}",
     "Error: Unknown error occurred" : "错误：发生未知错误",

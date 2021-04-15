@@ -581,6 +581,7 @@ OC.L10N.register(
     "Delete this server" : "Excluir este servidor",
     "Status: Checking connection" : "Status: Verificando conexão",
     "OK: Running version: {version}" : "OK: Versão rodando: {version}",
+    "Error: Cannot connect to server" : "Erro: Não foi possível conectar ao servidor",
     "Error: Server did not respond with proper JSON" : "Erro: Servidor não respondeu com o JSON apropriado",
     "Error: Server responded with: {error}" : "Erro: Servidor respondeu com: {error}",
     "Error: Unknown error occurred" : "Erro: Ocorreu um erro desconhecido",
