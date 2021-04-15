@@ -219,31 +219,6 @@ class Notifier {
 	}
 
 	/**
-	 * Removes all the pending mention notifications for the room
-	 *
-	 * @param Room $chat
-	 * @param string $userId
-	 */
-	public function markMentionNotificationsRead(Room $chat, ?string $userId): void {
-		if ($userId === null || $userId === '') {
-			return;
-		}
-
-		$shouldFlush = $this->notificationManager->defer();
-		$notification = $this->notificationManager->createNotification();
-
-		$notification
-			->setApp('spreed')
-			->setObject('chat', $chat->getToken())
-			->setUser($userId);
-
-		$this->notificationManager->markProcessed($notification);
-		if ($shouldFlush) {
-			$this->notificationManager->flush();
-		}
-	}
-
-	/**
 	 * Returns the IDs of the users mentioned in the given comment.
 	 *
 	 * @param IComment $comment
