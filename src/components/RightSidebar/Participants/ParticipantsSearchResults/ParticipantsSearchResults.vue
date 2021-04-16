@@ -24,7 +24,7 @@
 		class="participants-search-results"
 		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<Caption
+			<AppNavigationCaption
 				:title="t('spreed', 'Add users')" />
 			<ParticipantsList
 				:items="addableUsers"
@@ -32,7 +32,7 @@
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
-			<Caption
+			<AppNavigationCaption
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				:items="addableGroups"
@@ -40,7 +40,7 @@
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
-			<Caption
+			<AppNavigationCaption
 				:title="t('spreed', 'Add emails')" />
 			<ParticipantsList
 				:items="addableEmails"
@@ -48,13 +48,13 @@
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
-			<Caption
+			<AppNavigationCaption
 				:title="t('spreed', 'Add circles')" />
 			<ParticipantsList
 				:items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
-		<Caption v-if="sourcesWithoutResults"
+		<AppNavigationCaption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
@@ -85,7 +85,7 @@
 
 <script>
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
-import Caption from '../../../Caption'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import Hint from '../../../Hint'
 
 export default {
@@ -93,7 +93,7 @@ export default {
 
 	components: {
 		ParticipantsList,
-		Caption,
+		AppNavigationCaption,
 		Hint,
 	},
 
