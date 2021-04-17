@@ -579,6 +579,7 @@
     "Delete this server" : "刪除此伺服器",
     "Status: Checking connection" : "狀態：正在檢查連接",
     "OK: Running version: {version}" : "OK：運行版本：{version}",
+    "Error: Cannot connect to server" : "錯誤：無法連接到伺服器",
     "Error: Server did not respond with proper JSON" : "錯誤：伺服器未使用正確的 JSON 回應",
     "Error: Server responded with: {error}" : "錯誤：伺服器回應：{error}",
     "Error: Unknown error occurred" : "錯誤：發生未知錯誤",
