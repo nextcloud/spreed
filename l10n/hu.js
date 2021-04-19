@@ -15,7 +15,7 @@ OC.L10N.register(
     "Talk" : "Beszélgetés",
     "Guest" : "Vendég",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Üdvözöljük a Nextcloud Beszélgetésben!\nEbben a beszélgetésben fogjuk tájékoztatni a Nextcloud Beszélgetés új funkcióiról.",
-    "New in Talk %s" : "Új a(z) % s beszélgetésben",
+    "New in Talk %s" : "Új a(z) %s beszélgetésben",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- A Microsoft Edge és a Safari mostantól használható hang- és videohívásokhoz",
     "- One-to-one conversations are now persistent and cannot be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- A négyszemközti beszélgetések most már tartósak, és nem lehet véletlenül csoportos beszélgetéssé alakítani őket. Emellett ha egy résztvevő elhagyja a beszélgetést, akkor most már nem kerül automatikusan törlésre. Csak ha mindkét fél elhagyja a beszélgetést, akkor kerül törlésre a kiszolgálóról",
     "- You can now notify all participants by posting \"@all\" into the chat" : "- Most már értesítheti az összes résztvevőt az *@all* beírásával a csevegésbe",
