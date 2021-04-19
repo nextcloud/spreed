@@ -177,5 +177,10 @@ trait TInitialState {
 			'play_sounds',
 			false
 		);
+
+		$this->initialState->provideInitialState(
+			'ask_guest_username',
+			(int) $this->serverConfig->getAppValue('spreed', 'ask_guest_username', '0')
+		);
 	}
 }
