@@ -326,7 +326,7 @@ export default {
 					}
 
 					if (this.item.token === this.$store.getters.getToken()) {
-						this.$router.push('/apps/spreed')
+						this.$router.push({ name: 'root', params: { skipLeaveWarning: true } })
 						this.$store.dispatch('updateToken', '')
 					}
 
