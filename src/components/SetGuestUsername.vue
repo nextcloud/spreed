@@ -209,10 +209,4 @@ export default {
 	}
 }
 
-.modal__content {
-	width: 50vw;
-	margin: 10vw 0;
-	text-align: center;
-}
-
 </style>
