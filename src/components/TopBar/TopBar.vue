@@ -153,9 +153,9 @@ export default {
 
 		labelFullscreen() {
 			if (this.isFullscreen) {
-				return t('spreed', 'Exit fullscreen (f)')
+				return t('spreed', 'Exit fullscreen (F)')
 			}
-			return t('spreed', 'Fullscreen (f)')
+			return t('spreed', 'Fullscreen (F)')
 		},
 
 		iconMenuPeople() {

@@ -124,11 +124,11 @@
 			</Actions>
 			<button
 				v-shortkey.once="['r']"
-				v-tooltip="t('spreed', 'Lower hand (r)')"
+				v-tooltip="t('spreed', 'Lower hand (R)')"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				:aria-label="t('spreed', 'Lower hand (r)')"
+				:aria-label="t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<Hand
@@ -279,9 +279,9 @@ export default {
 	computed: {
 		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand.state) {
-				return t('spreed', 'Raise hand (r)')
+				return t('spreed', 'Raise hand (R)')
 			}
-			return t('spreed', 'Lower hand (r)')
+			return t('spreed', 'Lower hand (R)')
 		},
 
 		audioButtonClass() {
@@ -311,7 +311,7 @@ export default {
 			}
 
 			return {
-				content: this.model.attributes.audioEnabled ? t('spreed', 'Mute audio (m)') : t('spreed', 'Unmute audio (m)'),
+				content: this.model.attributes.audioEnabled ? t('spreed', 'Mute audio (M)') : t('spreed', 'Unmute audio (M)'),
 				show: false,
 			}
 		},
@@ -358,14 +358,14 @@ export default {
 			}
 
 			if (this.model.attributes.videoEnabled) {
-				return t('spreed', 'Disable video (v)')
+				return t('spreed', 'Disable video (V)')
 			}
 
 			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
-				return t('spreed', 'Enable video (v)')
+				return t('spreed', 'Enable video (V)')
 			}
 
-			return t('spreed', 'Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time')
+			return t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
 		},
 
 		videoButtonAriaLabel() {
