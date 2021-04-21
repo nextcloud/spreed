@@ -271,7 +271,6 @@
     "Waiting for others to join the call …" : "等待其他人加入通話...",
     "Settings" : "設定",
     "Dismiss" : "取消",
-    "Mute audio (m)" : "靜音 (m)",
     "Mute audio" : "靜音",
     "Disable video" : "停用視訊",
     "Back" : "返回",
@@ -316,8 +315,6 @@
     "Search" : "搜尋",
     "Start call" : "通話",
     "Rename conversation" : "重新命名對話",
-    "Exit fullscreen (f)" : "離開全螢幕 (f)",
-    "Fullscreen (f)" : "全螢幕 (f)",
     "Grid view" : "網格檢視",
     "Send" : "傳送",
     "Say hi to your friends and colleagues!" : "跟大家打招呼",
@@ -330,9 +327,12 @@
     "UDP and TCP" : "UDP 和 TCP",
     "UDP only" : "僅UDP",
     "TCP only" : "僅TCP",
+    "Mute audio (m)" : "靜音 (m)",
     "Allow guests to join via link " : "允許訪客透過連結加入",
     "Projects" : "專案項目",
     "Share link" : "分享連結",
+    "Exit fullscreen (f)" : "離開全螢幕 (f)",
+    "Fullscreen (f)" : "全螢幕 (f)",
     "Enabled" : "已啟用"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

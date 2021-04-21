@@ -307,7 +307,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Rename conversation" : "تغییر نام مکالمه",
-    "Fullscreen (f)" : "تمام صفحه (f)",
     "Grid view" : "نمایش گرید",
     "Send" : "ارسال",
     "Say hi to your friends and colleagues!" : "به رفقا و همدرس‌هایتان سلام کنید!",
@@ -325,6 +324,7 @@ OC.L10N.register(
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
     "Projects" : "پروژه ها",
     "Share link" : "Share link",
+    "Fullscreen (f)" : "تمام صفحه (f)",
     "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");
