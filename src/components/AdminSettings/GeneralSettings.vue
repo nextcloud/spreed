@@ -32,7 +32,10 @@
 				class="checkbox"
 				:disabled="loading || loadingAskGuestUsername"
 				@change="saveAskGuestUsername">
-			<label for="ask_guest_username">{{ t('spreed', 'Ask guest for a displayname') }} <span class="icon-info" :title="t('spreed', 'If guest have no display name, nextcloud will ask it on guest joining to conversation')" /></label>
+			<label for="ask_guest_username">{{ t('spreed', 'Ask guest for a displayname') }}</label>
+		</p>
+		<p>
+			<em>{{ t('spreed', 'If guest have no display name, nextcloud will ask it on guest joining to conversation') }}</em>
 		</p>
 
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
