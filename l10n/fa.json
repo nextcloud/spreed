@@ -305,7 +305,6 @@
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Rename conversation" : "تغییر نام مکالمه",
-    "Fullscreen (f)" : "تمام صفحه (f)",
     "Grid view" : "نمایش گرید",
     "Send" : "ارسال",
     "Say hi to your friends and colleagues!" : "به رفقا و همدرس‌هایتان سلام کنید!",
@@ -323,6 +322,7 @@
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
     "Projects" : "پروژه ها",
     "Share link" : "Share link",
+    "Fullscreen (f)" : "تمام صفحه (f)",
     "Enabled" : "فعال شده"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
