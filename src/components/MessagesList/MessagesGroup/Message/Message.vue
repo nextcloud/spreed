@@ -544,6 +544,9 @@ export default {
 			if (this.sendingFailure === 'quota') {
 				return t('spreed', 'Not enough free space to upload file')
 			}
+			if (this.sendingFailure === 'failed-share') {
+				return t('spreed', 'You are not allowed to share files')
+			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
