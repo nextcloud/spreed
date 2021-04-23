@@ -25,4 +25,8 @@ module.exports = {
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
 	setupFilesAfterEnv: ['<rootDir>/src/test-setup.js'],
+	transform: {
+		// process `*.js` files with `babel-jest`
+		'.*\\.(js)$': 'babel-jest',
+	},
 }

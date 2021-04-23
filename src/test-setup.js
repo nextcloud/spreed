@@ -19,10 +19,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+// eslint-disable-next-line node/no-unpublished-import
+import 'regenerator-runtime/runtime'
+
 global.OC = {
 	requestToken: '123',
+	webroot: '/nc-webroot',
 	isUserAdmin() {
 		return true
+	},
+	getLanguage() {
+		return 'en-GB'
+	},
+	getLocale() {
+		return 'en_GB'
 	},
 }
 global.t = (app, text) => text

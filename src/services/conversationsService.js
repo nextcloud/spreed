@@ -103,9 +103,10 @@ const searchListedConversations = async function({ searchText }, options) {
 
 /**
  * Fetch possible conversations
+ *
  * @param {string} searchText The string that will be used in the search query.
  * @param {object} options options
- * @param {string} [token] The token of the conversation (if any)
+ * @param {string} [token] The token of the conversation (if any), or "new" for a new one
  * @param {boolean} [onlyUsers] Only return users
  */
 const searchPossibleConversations = async function({ searchText, token, onlyUsers }, options) {
