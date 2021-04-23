@@ -514,7 +514,7 @@ export default {
 		},
 
 		hasActions() {
-			return !this.isSystemMessage
+			return !this.isSystemMessage && !this.isTemporary
 		},
 
 		isTemporaryUpload() {
