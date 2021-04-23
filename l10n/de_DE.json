@@ -1038,7 +1038,7 @@
     "Unmute audio (m)" : "Mikrofon einschalten (m)",
     "Disable video (v)" : "Video deaktivieren (v)",
     "Enable video (v)" : "Video aktivieren (v)",
-    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Video aktivieren (v) - Ihre Verbindung wird kurz unterbrochen, wenn Sie Video zum ersten Mal aktivieren",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Video aktivieren (V) - Ihre Verbindung wird kurz unterbrochen, wenn Sie Video zum ersten Mal aktivieren",
     "This conversation is read only" : "Diese Unterhaltung ist schreibgeschützt",
     "Conversation, " : "Unterhaltung,",
     "Default location for attachments" : "Standardspeicherort für Anhänge",
