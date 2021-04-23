@@ -106,6 +106,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "Administratzaile batek {user} erabiltzaileari moderatzaile rola kendu dio",
     "{actor} shared a file which is no longer available" : "{actor} erabiltzaileak erabilgarri ez dagoen fitxategi bat partekatu du",
     "You shared a file which is no longer available" : "Eskuragarri ez dagoen fitxategi bat partekatu duzu",
+    "You started Matterbridge." : "Matterbridge hasi duzu.",
     "%s (guest)" : "%s (gonbidatua)",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Deia gonbidatu %nekin (Iraupena {duration})","Deia %n gonbidaturekin (Iraupena {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Deia {user1} eta {user2} erabiltzaileekin (Iraupena {duration})",
@@ -626,6 +627,7 @@ OC.L10N.register(
     "Favorite" : "Gogokoa",
     "Conversation settings" : "Elkarrizketaren ezarpenak",
     "Chat notifications" : "Txat jakinarazpenak",
+    "Meeting settings" : "Bileraren ezarpenak",
     "Matterbridge" : "Matterbridge",
     "Leave conversation" : "Atera elkarrizketatik",
     "Delete conversation" : "Ezabatu elkarrizketa",
@@ -639,6 +641,7 @@ OC.L10N.register(
     "Resend invitations" : "Birbidali gonbidapenak",
     "Invitations sent" : "Gonbidapenak bidalita",
     "Enable lobby" : "Gaitu atondoa",
+    "Meeting start time" : "Bileraren hasiera-ordua",
     "Start time (optional)" : "Hasiera-ordua (hautazkoa)",
     "Lock conversation" : "Blokeatu elkarrizketa",
     "Save" : "Gorde",
@@ -695,6 +698,7 @@ OC.L10N.register(
     "Mark as read" : "Markatu irakurri gisa",
     "Remove from favorites" : "Kendu gogokoetatik",
     "Add to favorites" : "Gehitu gogokoetara",
+    "Joining conversation …" : "Elkarrizketara batzen ...",
     "You: {lastMessage}" : "Zu: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "No matches" : "Ez dago bat datorrenik",
@@ -908,6 +912,8 @@ OC.L10N.register(
     "Enabled" : "Gaitua",
     "Show matterbridge log" : "Erakutsi matterbridge erregistroa",
     "User name or e-mail address" : "Erabiltzaile izena edo e-posta helbidea",
-    "Add new bridged channel" : "Gehitu zubidun kanal berria"
+    "Add new bridged channel" : "Gehitu zubidun kanal berria",
+    "Lower hand" : "Jaitsi eskua",
+    "Raise hand" : "Jaso eskua"
 },
 "nplurals=2; plural=(n != 1);");
