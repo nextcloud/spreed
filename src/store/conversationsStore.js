@@ -174,6 +174,7 @@ const actions = {
 	 * @param {object} context default store context;
 	 */
 	purgeConversationsStore(context) {
+		// TODO: also purge messages ??
 		context.commit('purgeConversationsStore')
 	},
 
@@ -200,6 +201,7 @@ const actions = {
 			return
 		}
 
+		// FIXME: logic is reversed
 		if (isFavorite) {
 			await removeFromFavorites(token)
 		} else {

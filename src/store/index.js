@@ -22,48 +22,8 @@
 
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
-import actorStore from './actorStore'
-import callViewStore from './callViewStore'
-import conversationsStore from './conversationsStore'
-import fileUploadStore from './fileUploadStore'
-import guestNameStore from './guestNameStore'
-import messagesStore from './messagesStore'
-import newGroupConversationStore from './newGroupConversationStore'
-import participantsStore from './participantsStore'
-import quoteReplyStore from './quoteReplyStore'
-import settingsStore from './settingsStore'
-import sidebarStore from './sidebarStore'
-import soundsStore from './soundsStore'
-import talkHashStore from './talkHashStore'
-import tokenStore from './tokenStore'
-import windowVisibilityStore from './windowVisibilityStore'
-import messageActionsStore from './messageActionsStore'
+import storeConfig from './storeConfig'
 
 Vue.use(Vuex)
 
-const mutations = {}
-
-export default new Store({
-	modules: {
-		actorStore,
-		callViewStore,
-		conversationsStore,
-		fileUploadStore,
-		guestNameStore,
-		messagesStore,
-		newGroupConversationStore,
-		participantsStore,
-		quoteReplyStore,
-		settingsStore,
-		sidebarStore,
-		soundsStore,
-		talkHashStore,
-		tokenStore,
-		windowVisibilityStore,
-		messageActionsStore,
-	},
-
-	mutations,
-
-	strict: process.env.NODE_ENV !== 'production',
-})
+export default new Store(storeConfig)

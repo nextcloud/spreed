@@ -24,6 +24,8 @@ module.exports = {
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
+	resetMocks: false,
+	setupFiles: ['jest-localstorage-mock'],
 	setupFilesAfterEnv: ['<rootDir>/src/test-setup.js'],
 	transform: {
 		// process `*.js` files with `babel-jest`
