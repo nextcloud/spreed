@@ -31,7 +31,9 @@ import Hex from 'crypto-js/enc-hex'
  * specified with its token.
  *
  * @param {string} token the conversation token;
- * @param {object} options options
+ * @param {object} options options;
+ * @param {string} lastKnownMessageId last known message id;
+ * @param {int} includeLastKnown whether to include the last known message in the response;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
@@ -39,10 +41,12 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
 			setReadMarker: 0,
 			lookIntoFuture: 0,
 			lastKnownMessageId,
+			// FIXME: change the function arg to boolean then convert to int for the API
 			includeLastKnown: includeLastKnown || 0,
 		},
 	}))
 
+	// TODO: move to action instead
 	if ('x-chat-last-common-read' in response.headers) {
 		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
 		store.dispatch('updateLastCommonReadMessage', {
@@ -91,10 +95,14 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {string} param0.message The message object
  * @param {string} param0.referenceId A reference id to identify the message later again
  * @param {Number} param0.parent The id of the message to be replied to
- * @param {object} options options
  */
-const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName, referenceId, replyTo: parent })
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }) {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
+		message,
+		actorDisplayName,
+		referenceId,
+		replyTo: parent,
+	})
 
 	if ('x-chat-last-common-read' in response.headers) {
 		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)

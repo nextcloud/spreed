@@ -42,6 +42,7 @@ import store from '../store/index'
  * @param {string} token The conversation token;
  */
 const joinConversation = async(token) => {
+	// FIXME: move complex logic to a store action instead, a service should not call the store
 	// When the token is in the last joined conversation, the user is reloading or force joining
 	const forceJoin = SessionStorage.getItem('joined_conversation') === token
 

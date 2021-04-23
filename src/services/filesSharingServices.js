@@ -41,6 +41,7 @@ const shareFile = async function(path, token, referenceId) {
 				referenceId,
 			})
 	} catch (error) {
+		// FIXME: errors should be handled by called instead
 		if (error?.response?.data?.ocs?.meta?.message) {
 			console.error('Error while sharing file: ' + error.response.data.ocs.meta.message)
 			showError(error.response.data.ocs.meta.message)
