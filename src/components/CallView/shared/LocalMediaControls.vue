@@ -96,29 +96,59 @@
 					decorative />
 				<!-- /Actions button icon -->
 				<!-- Actions -->
-				<ActionButton v-if="!screenSharingMenuOpen" @click.stop="toggleScreenSharingMenu" />
+				<ActionButton
+					v-if="!screenSharingMenuOpen"
+					@click.stop="toggleScreenSharingMenu">
+					<Monitor
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+					{{ screenSharingButtonTooltip }}
+				</ActionButton>
 				<ActionButton
 					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
-					icon="icon-screen"
 					@click="shareScreen">
+					<Monitor
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
 					{{ t('spreed', 'Share whole screen') }}
 				</ActionButton>
 				<ActionButton
 					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
-					icon="icon-share-window"
 					@click="shareWindow">
+					<MonitorScreenshot
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
 					{{ t('spreed', 'Share a single window') }}
 				</ActionButton>
 				<ActionButton
 					v-if="model.attributes.localScreen"
-					icon="icon-screen"
 					@click="showScreen">
+					<Monitor
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
 					{{ t('spreed', 'Show your screen') }}
 				</ActionButton>
 				<ActionButton
 					v-if="model.attributes.localScreen"
-					icon="icon-screen-off"
 					@click="stopScreen">
+					<MonitorOff
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
 			</Actions>
@@ -208,6 +238,7 @@ import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
 import MonitorOff from 'vue-material-design-icons/MonitorOff'
+import MonitorScreenshot from 'vue-material-design-icons/MonitorScreenshot'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
@@ -235,6 +266,7 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
+		MonitorScreenshot,
 		'VideoIcon': Video,
 		VideoOff,
 		Monitor,
