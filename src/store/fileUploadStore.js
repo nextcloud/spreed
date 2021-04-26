@@ -28,6 +28,7 @@ import { findUniquePath } from '../utils/fileUpload'
 import createTemporaryMessage from '../utils/temporaryMessage'
 import { EventBus } from '../services/EventBus'
 import { shareFile } from '../services/filesSharingServices'
+import { setAttachmentFolder } from '../services/settingsService'
 
 const state = {
 	attachmentFolder: fromStateOr('spreed', 'attachment_folder', ''),
@@ -316,7 +317,8 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {string} attachmentFolder Folder to store new attachments in
 	 */
-	setAttachmentFolder(context, attachmentFolder) {
+	async setAttachmentFolder(context, attachmentFolder) {
+		await setAttachmentFolder(attachmentFolder)
 		context.commit('setAttachmentFolder', attachmentFolder)
 	},
 

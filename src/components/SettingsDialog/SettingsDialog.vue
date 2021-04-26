@@ -129,10 +129,6 @@
 
 <script>
 import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
-import {
-	setAttachmentFolder,
-	setPlaySounds,
-} from '../../services/settingsService'
 import { PRIVACY } from '../../constants'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
@@ -206,14 +202,11 @@ export default {
 						throw new Error(t('spreed', 'Invalid path selected'))
 					}
 
-					const oldFolder = this.attachmentFolder
 					this.attachmentFolderLoading = true
 					try {
-						this.$store.commit('setAttachmentFolder', path)
-						await setAttachmentFolder(path)
+						this.$store.dispatch('setAttachmentFolder', path)
 					} catch (exception) {
 						showError(t('spreed', 'Error while setting attachment folder'))
-						this.$store.commit('setAttachmentFolder', oldFolder)
 					}
 					this.attachmentFolderLoading = false
 				})
@@ -237,8 +230,7 @@ export default {
 			this.playSoundsLoading = true
 			try {
 				try {
-					await setPlaySounds(status)
-					this.$store.commit('setPlaySounds', status)
+					await this.$store.dispatch('setPlaySounds', status)
 				} catch (e) {
 					showError(t('spreed', 'Failed to save sounds setting'))
 				}

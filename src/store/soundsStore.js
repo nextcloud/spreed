@@ -22,6 +22,7 @@
 
 import fromStateOr from './helper'
 import BrowserStorage from '../services/BrowserStorage'
+import { setPlaySounds } from '../services/settingsService'
 
 const state = {
 	userId: undefined,
@@ -72,7 +73,8 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {boolean} enabled Whether sounds should be played
 	 */
-	setPlaySounds({ commit }, enabled) {
+	async setPlaySounds({ commit }, enabled) {
+		await setPlaySounds(status)
 		commit('setPlaySounds', enabled)
 	},
 }
