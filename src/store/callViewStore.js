@@ -33,6 +33,7 @@ const state = {
 	lastIsStripeOpen: null,
 	presentationStarted: false,
 	selectedVideoPeerId: null,
+	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
 }
@@ -46,6 +47,7 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
+	isQualityWarningTooltipDismissed: (state) => state.qualityWarningTooltipDismissed,
 	getParticipantRaisedHand: (state) => (sessionIds) => {
 		for (let i = 0; i < sessionIds.length; i++) {
 			if (state.participantRaisedHands[sessionIds[i]]) {
@@ -80,6 +82,9 @@ const mutations = {
 	},
 	presentationStarted(state, value) {
 		state.presentationStarted = value
+	},
+	setQualityWarningTooltipDismissed(state, { qualityWarningTooltipDismissed }) {
+		state.qualityWarningTooltipDismissed = qualityWarningTooltipDismissed
 	},
 	setParticipantHandRaised(state, { sessionId, raisedHand }) {
 		if (!sessionId) {
@@ -119,6 +124,8 @@ const actions = {
 			isGrid = (isGrid === 'true')
 		}
 		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: true })
+
+		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: false })
 	},
 
 	leaveCall(context) {
@@ -209,6 +216,10 @@ const actions = {
 			isStripeOpen: context.getters.lastIsStripeOpen,
 		})
 		context.commit('presentationStarted', false)
+	},
+
+	dismissQualityWarningTooltip(context) {
+		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
 	},
 }
 

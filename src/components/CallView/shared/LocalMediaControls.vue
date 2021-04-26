@@ -219,7 +219,7 @@
 						<button
 							v-if="!isQualityWarningTooltipDismissed"
 							class="hint__button"
-							@click="isQualityWarningTooltipDismissed = true">
+							@click="dismissQualityWarningTooltip">
 							{{ t('spreed', 'Dismiss') }}
 						</button>
 					</div>
@@ -299,7 +299,6 @@ export default {
 			screenSharingMenuOpen: false,
 			splitScreenSharingMenu: false,
 			boundaryElement: document.querySelector('.main-view'),
-			isQualityWarningTooltipDismissed: false,
 			mouseover: false,
 			callAnalyzer: callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
@@ -436,6 +435,10 @@ export default {
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		isQualityWarningTooltipDismissed() {
+			return this.$store.getters.isQualityWarningTooltipDismissed
 		},
 
 		showQualityWarningTooltip() {
@@ -753,11 +756,15 @@ export default {
 			}
 			if (this.qualityWarningTooltip.action === 'disableScreenShare') {
 				this.model.stopSharingScreen()
-				this.isQualityWarningTooltipDismissed = true
+				this.dismissQualityWarningTooltip()
 			} else if (this.qualityWarningTooltip.action === 'disableVideo') {
 				this.model.disableVideo()
-				this.isQualityWarningTooltipDismissed = true
+				this.dismissQualityWarningTooltip()
 			}
+		},
+
+		dismissQualityWarningTooltip() {
+			this.$store.dispatch('dismissQualityWarningTooltip')
 		},
 	},
 }
