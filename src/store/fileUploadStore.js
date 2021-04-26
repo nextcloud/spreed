@@ -297,14 +297,23 @@ const actions = {
 			// Share each of those files to the conversation
 			for (const index in shareableFiles) {
 				const path = shareableFiles[index].sharePath
+				const temporaryMessage = shareableFiles[index].temporaryMessage
 				try {
-					const temporaryMessage = shareableFiles[index].temporaryMessage
 					const token = temporaryMessage.token
 					dispatch('markFileAsSharing', { uploadId, index })
 					await shareFile(path, token, temporaryMessage.referenceId)
 					dispatch('markFileAsShared', { uploadId, index })
-				} catch (exception) {
-					console.debug('An error happened when trying to share your file: ', exception)
+				} catch (error) {
+					if (error?.response?.status === 403) {
+						showError(t('spreed', 'You are not allowed to share files'))
+					} else {
+						showError(t('spreed', 'An error happened when trying to share your file'))
+					}
+					dispatch('markTemporaryMessageAsFailed', {
+						message: temporaryMessage,
+						reason: 'failed-share',
+					})
+					console.debug('An error happened when trying to share your file: ', error)
 				}
 			}
 		}
