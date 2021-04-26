@@ -24,6 +24,7 @@ import fromStateOr from './helper'
 import BrowserStorage from '../services/BrowserStorage'
 
 const state = {
+	userId: undefined,
 	playSoundsUser: fromStateOr('spreed', 'play_sounds', false),
 	playSoundsGuest: BrowserStorage.getItem('play_sounds') !== 'no',
 }
@@ -48,9 +49,23 @@ const mutations = {
 		state.playSoundsUser = enabled
 		state.playSoundsGuest = enabled
 	},
+
+	setUserId(state, userId) {
+		state.userId = userId
+	},
 }
 
 const actions = {
+
+	/**
+	 * @param {object} context default store context;
+	 * @param {object} user A NextcloudUser object as returned by @nextcloud/auth
+	 * @param {string} user.uid The user id of the user
+	 */
+	setCurrentUser(context, user) {
+		context.commit('setUserId', user.uid)
+	},
+
 	/**
 	 * Set the actor from the current user
 	 *

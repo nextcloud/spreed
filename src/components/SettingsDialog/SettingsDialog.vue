@@ -58,11 +58,11 @@
 			:title="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<input id="play_sounds"
-				v-model="playSounds"
-				:checked="readStatusPrivacyIsPublic"
-				:disabled="privacyLoading"
+				:checked="playSounds"
+				:disabled="playSoundsLoading"
 				type="checkbox"
-				class="checkbox">
+				class="checkbox"
+				@change="togglePlaySounds">
 			<label for="play_sounds">{{ t('settings', 'Play sounds when participants join a call or leave it') }}</label>
 			<em>{{ t('settings', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 		</AppSettingsSection>
@@ -153,23 +153,13 @@ export default {
 			showSettings: false,
 			attachmentFolderLoading: true,
 			privacyLoading: false,
+			playSoundsLoading: false,
 		}
 	},
 
 	computed: {
-		// Local settings
-		playSounds: {
-			get() {
-				return this.$store.getters.playSounds
-			},
-			set(status) {
-				this.$store.commit('setPlaySounds', status)
-				try {
-					setPlaySounds(status)
-				} catch (e) {
-					showError(t('spreed', 'Failed to save sounds setting'))
-				}
-			},
+		playSounds() {
+			return this.$store.getters.playSounds
 		},
 
 		attachmentFolder() {
@@ -241,6 +231,22 @@ export default {
 				showError(t('spreed', 'Error while setting read status privacy'))
 			}
 			this.privacyLoading = false
+		},
+
+		async togglePlaySounds() {
+			this.playSoundsLoading = true
+			try {
+				try {
+					await setPlaySounds(status)
+					this.$store.commit('setPlaySounds', status)
+				} catch (e) {
+					showError(t('spreed', 'Failed to save sounds setting'))
+				}
+				showSuccess(t('spreed', 'Sounds setting saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while saving sounds setting'))
+			}
+			this.playSoundsLoading = false
 		},
 
 		handleShowSettings() {
