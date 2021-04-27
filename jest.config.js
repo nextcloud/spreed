@@ -26,7 +26,10 @@ module.exports = {
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],
-	setupFilesAfterEnv: ['<rootDir>/src/test-setup.js'],
+	setupFilesAfterEnv: [
+		'<rootDir>/src/test-setup.js',
+	    'jest-mock-console/dist/setupTestFramework.js',
+	],
 	transform: {
 		// process `*.js` files with `babel-jest`
 		'.*\\.(js)$': 'babel-jest',
