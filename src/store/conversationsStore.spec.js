@@ -459,9 +459,10 @@ describe('conversationsStore', () => {
 		})
 
 		test('updates last activity', () => {
-			const testTime = new Date('2020-01-01').getTime()
+			const mockDate = new Date('2020-01-01')
 
-			Date.prototype.getTime = jest.fn().mockReturnValueOnce(testTime)
+			jest.spyOn(global, 'Date')
+				.mockImplementation(() => mockDate)
 
 			testConversation.lastActivity = 1200300
 
@@ -472,7 +473,7 @@ describe('conversationsStore', () => {
 			jest.useRealTimers()
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastActivity).toBe(testTime / 1000)
+			expect(changedConversation.lastActivity).toBe(mockDate.getTime() / 1000)
 		})
 	})
 })
