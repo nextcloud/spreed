@@ -25,11 +25,13 @@ import {
 	updateLastReadMessage,
 	fetchMessages,
 	lookForNewMessages,
+	postNewMessage,
 } from '../services/messagesService'
 
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../utils/cancelableRequest'
+import { showError } from '@nextcloud/dialogs'
 
 const state = {
 	/**
@@ -62,6 +64,10 @@ const state = {
 	 * messages before making another one.
 	 */
 	cancelLookForNewMessages: null,
+	/**
+	 * Stores the cancel function for the "postNewMessage" action
+	 */
+	cancelPostNewMessage: null,
 }
 
 const getters = {
@@ -142,6 +148,10 @@ const mutations = {
 
 	setCancelLookForNewMessages(state, cancelFunction) {
 		state.cancelLookForNewMessages = cancelFunction
+	},
+
+	setCancelPostNewMessage(state, cancelFunction) {
+		state.cancelPostNewMessage = cancelFunction
 	},
 
 	/**
@@ -636,6 +646,110 @@ const actions = {
 		if (context.state.cancelLookForNewMessages) {
 			context.state.cancelLookForNewMessages('canceled')
 			context.commit('setCancelLookForNewMessages', null)
+			return true
+		}
+		return false
+	},
+
+	async postNewMessage(context, temporaryMessage) {
+		const { request, cancel } = CancelableRequest(postNewMessage)
+		context.commit('setCancelPostNewMessage', cancel)
+
+		const timeout = setTimeout(() => {
+			context.dispatch('cancelPostNewMessage')
+			context.dispatch('markTemporaryMessageAsFailed', {
+				message: temporaryMessage,
+				reason: 'timeout',
+			})
+		}, 30000)
+
+		try {
+			const response = await request(temporaryMessage)
+			clearTimeout(timeout)
+
+			if ('x-chat-last-common-read' in response.headers) {
+				const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
+				context.dispatch('updateLastCommonReadMessage', {
+					token: temporaryMessage.token,
+					lastCommonReadMessage,
+				})
+			}
+
+			// If successful, deletes the temporary message from the store
+			context.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
+
+			const message = response.data.ocs.data
+			// And adds the complete version of the message received
+			// by the server
+			context.dispatch('processMessage', message)
+
+			const conversation = context.getters.conversation(temporaryMessage.token)
+
+			// update lastMessage and lastReadMessage
+			// do it conditionally because there could have been more messages appearing concurrently
+			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
+				context.dispatch('updateConversationLastMessage', {
+					token: conversation.token,
+					lastMessage: message,
+				})
+			}
+			if (conversation && message.id > conversation.lastReadMessage) {
+				context.dispatch('updateLastReadMessage', {
+					token: conversation.token,
+					id: message.id,
+					updateVisually: true,
+				})
+			}
+
+			return response
+		} catch (error) {
+			if (timeout) {
+				clearTimeout(timeout)
+			}
+
+			let statusCode = null
+			console.debug(`error while submitting message ${error}`, error)
+			if (error.isAxiosError) {
+				statusCode = error?.response?.status
+			}
+
+			// FIXME: don't use showError here but set a flag
+			// somewhere that makes Vue trigger the error message
+
+			// 403 when room is read-only, 412 when switched to lobby mode
+			if (statusCode === 403) {
+				showError(t('spreed', 'No permission to post messages in this conversation'))
+				context.dispatch('markTemporaryMessageAsFailed', {
+					message: temporaryMessage,
+					reason: 'read-only',
+				})
+			} else if (statusCode === 412) {
+				showError(t('spreed', 'No permission to post messages in this conversation'))
+				context.dispatch('markTemporaryMessageAsFailed', {
+					message: temporaryMessage,
+					reason: 'lobby',
+				})
+			} else {
+				showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
+				context.dispatch('markTemporaryMessageAsFailed', {
+					message: temporaryMessage,
+					reason: 'other',
+				})
+			}
+			throw error
+		}
+	},
+
+	/**
+	 * Cancels a previously running "postNewMessage" action if applicable.
+	 *
+	 * @param {object} context default store context;
+	 * @returns {bool} true if a request got cancelled, false otherwise
+	 */
+	cancelPostNewMessage(context) {
+		if (context.state.cancelPostNewMessage) {
+			context.state.cancelPostNewMessage('canceled')
+			context.commit('setCancelPostNewMessage', null)
 			return true
 		}
 		return false

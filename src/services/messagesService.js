@@ -22,7 +22,6 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import store from '../store/index'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 
@@ -76,22 +75,12 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {object} options request options
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo: parent,
 	}, options)
-
-	if ('x-chat-last-common-read' in response.headers) {
-		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
-		store.dispatch('updateLastCommonReadMessage', {
-			token,
-			lastCommonReadMessage,
-		})
-	}
-
-	return response
 }
 
 /**
