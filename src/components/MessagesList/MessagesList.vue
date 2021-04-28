@@ -71,8 +71,6 @@ get the messagesList array and loop through the list to generate the messages.
 <script>
 import moment from '@nextcloud/moment'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
-import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
@@ -116,18 +114,6 @@ export default {
 	data: function() {
 		return {
 			/**
-			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
-			 * which allows to cancel the previous long polling request for new
-			 * messages before making another one.
-			 */
-			cancelLookForNewMessages: () => {},
-			/**
-			 * Stores the cancel function returned by `cancelableFetchMessages`,
-			 * which allows to cancel the previous request for old messages
-			 * when quickly switching to a new conversation.
-			 */
-			cancelFetchMessages: () => {},
-			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
 			 * messages. This boolean allows us to show/hide the loader.
 			 */
@@ -140,7 +126,9 @@ export default {
 
 			pollingErrorTimeout: 1,
 
-			oldMessagesPromise: null,
+			loadingOldMessages: false,
+
+			destroying: false,
 		}
 	},
 
@@ -293,10 +281,8 @@ export default {
 		EventBus.$off('focusMessage', this.focusMessage)
 		EventBus.$off('routeChange', this.onRouteChange)
 
-		this.cancelLookForNewMessages()
-		// Prevent further lookForNewMessages requests after the component was
-		// destroyed.
-		this.cancelLookForNewMessages = null
+		this.$store.dispatch('cancelLookForNewMessages')
+		this.destroying = true
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
@@ -476,8 +462,8 @@ export default {
 				this.$nextTick(() => {
 					this.scrollToFocussedMessage()
 				})
-			} else if (this.cancelLookForNewMessages) {
-				this.cancelLookForNewMessages()
+			} else {
+				this.$store.dispatch('cancelLookForNewMessages')
 			}
 		},
 
@@ -509,56 +495,21 @@ export default {
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
-			/**
-			 * Clear previous requests if there's one pending
-			 */
-			this.cancelFetchMessages('canceled')
-
-			// Get a new cancelable request function and cancel function pair
-			const { request, cancel } = CancelableRequest(fetchMessages)
-			// Assign the new cancel function to our data value
-			this.cancelFetchMessages = cancel
-
-			const token = this.token
-			const lastKnownMessageId = this.$store.getters.getFirstKnownMessageId(token)
-			let newestKnownMessageId = 0
-
 			// Make the request
 			try {
-				this.oldMessagesPromise = request({ token, lastKnownMessageId, includeLastKnown: includeLastKnown ? '1' : '0' })
-				const messages = await this.oldMessagesPromise
-				// Process each messages and adds it to the store
-				messages.data.ocs.data.forEach(message => {
-					if (message.actorType === 'guests') {
-						this.$store.dispatch('setGuestNameIfEmpty', message)
-					}
-					this.$store.dispatch('processMessage', message)
-					newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+				this.loadingOldMessages = true
+				await this.$store.dispatch('fetchMessages', {
+					token: this.token,
+					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
+					includeLastKnown,
 				})
 
-				if (messages.headers['x-chat-last-given']) {
-					this.$store.dispatch('setFirstKnownMessageId', {
-						token: token,
-						id: parseInt(messages.headers['x-chat-last-given'], 10),
-					})
-				}
-
-				// For guests we also need to set the last known message id
-				// after the first grab of the history, otherwise they start loading
-				// the full history with getNewMessages().
-				if (includeLastKnown && newestKnownMessageId
-					&& !this.$store.getters.getLastKnownMessageId(token)) {
-					this.$store.dispatch('setLastKnownMessageId', {
-						token: token,
-						id: newestKnownMessageId,
-					})
-				}
-				this.oldMessagesPromise = null
+				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
-				this.oldMessagesPromise = null
+				this.loadingOldMessages = false
 			}
 		},
 
@@ -567,48 +518,17 @@ export default {
 		 * @param {boolean} scrollToBottom Whether we should try to automatically scroll to the bottom
 		 */
 		async getNewMessages(scrollToBottom = true) {
-			if (!this.cancelLookForNewMessages) {
+			if (this.destroying) {
 				return
 			}
 
-			// Clear previous requests if there's one pending
-			this.cancelLookForNewMessages('canceled')
-			// Get a new cancelable request function and cancel function pair
-			const { request, cancel } = CancelableRequest(lookForNewMessages)
-			// Assign the new cancel function to our data value
-			this.cancelLookForNewMessages = cancel
-			// Get the last message's id
-			const token = this.token
-			const lastKnownMessageId = this.$store.getters.getLastKnownMessageId(token)
-
 			// Make the request
 			try {
-				let lastMessage = null
-				const messages = await request({ token, lastKnownMessageId })
 				this.pollingErrorTimeout = 1
-
-				// Process each messages and adds it to the store
-				messages.data.ocs.data.forEach(message => {
-					if (message.actorType === 'guests') {
-						this.$store.dispatch('forceGuestName', message)
-					}
-					this.$store.dispatch('processMessage', message)
-					if (!lastMessage || message.id > lastMessage.id) {
-						lastMessage = message
-					}
+				await this.$store.dispatch('lookForNewMessages', {
+					token: this.token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
 				})
-
-				this.$store.dispatch('setLastKnownMessageId', {
-					token: token,
-					id: parseInt(messages.headers['x-chat-last-given'], 10),
-				})
-
-				if (this.conversation.lastMessage && lastMessage.id > this.conversation.lastMessage.id) {
-					this.$store.dispatch('updateConversationLastMessage', {
-						token: token,
-						lastMessage: lastMessage,
-					})
-				}
 
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
@@ -674,7 +594,7 @@ export default {
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
-				if (this.oldMessagesPromise) {
+				if (this.loadingOldMessages) {
 					// already loading, don't do it twice
 					return
 				}

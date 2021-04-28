@@ -23,9 +23,13 @@ import Vue from 'vue'
 import {
 	deleteMessage,
 	updateLastReadMessage,
+	fetchMessages,
+	lookForNewMessages,
 } from '../services/messagesService'
+
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
+import CancelableRequest from '../utils/cancelableRequest'
 
 const state = {
 	/**
@@ -45,6 +49,19 @@ const state = {
 	 * Cached last read message id for display.
 	 */
 	visualLastReadMessageId: {},
+
+	/**
+	 * Stores the cancel function returned by `cancelableFetchMessages`,
+	 * which allows to cancel the previous request for old messages
+	 * when quickly switching to a new conversation.
+	 */
+	cancelFetchMessages: null,
+	/**
+	 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+	 * which allows to cancel the previous long polling request for new
+	 * messages before making another one.
+	 */
+	cancelLookForNewMessages: null,
 }
 
 const getters = {
@@ -119,6 +136,14 @@ const getters = {
 }
 
 const mutations = {
+	setCancelFetchMessages(state, cancelFunction) {
+		state.cancelFetchMessages = cancelFunction
+	},
+
+	setCancelLookForNewMessages(state, cancelFunction) {
+		state.cancelLookForNewMessages = cancelFunction
+	},
+
 	/**
 	 * Adds a message to the store.
 	 * @param {object} state current store state;
@@ -465,6 +490,155 @@ const actions = {
 			// only update on server side if there's an actual user, not guest
 			await updateLastReadMessage(token, id)
 		}
+	},
+
+	/**
+	 * Fetches messages that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} token the conversation token;
+	 * @param {object} requestOptions request options;
+	 * @param {string} lastKnownMessageId last known message id;
+	 * @param {bool} includeLastKnown whether to include the last known message in the response;
+	 */
+	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
+		context.dispatch('cancelFetchMessages')
+
+		// Get a new cancelable request function and cancel function pair
+		const { request, cancel } = CancelableRequest(fetchMessages)
+		// Assign the new cancel function to our data value
+		context.commit('setCancelFetchMessages', cancel)
+
+		const response = await request({
+			token,
+			lastKnownMessageId,
+			includeLastKnown,
+		}, requestOptions)
+
+		let newestKnownMessageId = 0
+
+		if ('x-chat-last-common-read' in response.headers) {
+			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
+			context.dispatch('updateLastCommonReadMessage', {
+				token,
+				lastCommonReadMessage,
+			})
+		}
+
+		// Process each messages and adds it to the store
+		response.data.ocs.data.forEach(message => {
+			if (message.actorType === 'guests') {
+				context.dispatch('setGuestNameIfEmpty', message)
+			}
+			context.dispatch('processMessage', message)
+			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+		})
+
+		if (response.headers['x-chat-last-given']) {
+			context.dispatch('setFirstKnownMessageId', {
+				token: token,
+				id: parseInt(response.headers['x-chat-last-given'], 10),
+			})
+		}
+
+		// For guests we also need to set the last known message id
+		// after the first grab of the history, otherwise they start loading
+		// the full history with fetchMessages().
+		if (includeLastKnown && newestKnownMessageId
+			&& !context.getters.getLastKnownMessageId(token)) {
+			context.dispatch('setLastKnownMessageId', {
+				token: token,
+				id: newestKnownMessageId,
+			})
+		}
+
+		return response
+	},
+
+	/**
+	 * Cancels a previously running "fetchMessages" action if applicable.
+	 *
+	 * @param {object} context default store context;
+	 * @returns {bool} true if a request got cancelled, false otherwise
+	 */
+	cancelFetchMessages(context) {
+		if (context.state.cancelFetchMessages) {
+			context.state.cancelFetchMessages('canceled')
+			context.commit('setCancelFetchMessages', null)
+			return true
+		}
+		return false
+	},
+
+	/**
+	 * Fetches newly created messages that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} token The conversation token;
+	 * @param {object} requestOptions reuquest options;
+	 * @param {int} lastKnownMessageId The id of the last message in the store.
+	 */
+	async lookForNewMessages(context, { token, lastKnownMessageId, requestOptions }) {
+		context.dispatch('cancelLookForNewMessages')
+
+		// Get a new cancelable request function and cancel function pair
+		const { request, cancel } = CancelableRequest(lookForNewMessages)
+		// Assign the new cancel function to our data value
+		context.commit('setCancelLookForNewMessages', cancel)
+
+		const response = await request({ token, lastKnownMessageId }, requestOptions)
+
+		if ('x-chat-last-common-read' in response.headers) {
+			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
+			context.dispatch('updateLastCommonReadMessage', {
+				token,
+				lastCommonReadMessage,
+			})
+		}
+
+		let lastMessage = null
+		// Process each messages and adds it to the store
+		response.data.ocs.data.forEach(message => {
+			if (message.actorType === 'guests') {
+				context.dispatch('forceGuestName', message)
+			}
+			context.dispatch('processMessage', message)
+			if (!lastMessage || message.id > lastMessage.id) {
+				lastMessage = message
+			}
+		})
+
+		context.dispatch('setLastKnownMessageId', {
+			token: token,
+			id: parseInt(response.headers['x-chat-last-given'], 10),
+		})
+
+		const conversation = context.getters.conversation(token)
+		if (conversation && conversation.lastMessage && lastMessage.id > conversation.lastMessage.id) {
+			context.dispatch('updateConversationLastMessage', {
+				token: token,
+				lastMessage: lastMessage,
+			})
+		}
+
+		return response
+	},
+
+	/**
+	 * Cancels a previously running "lookForNewMessages" action if applicable.
+	 *
+	 * @param {object} context default store context;
+	 * @returns {bool} true if a request got cancelled, false otherwise
+	 */
+	cancelLookForNewMessages(context) {
+		if (context.state.cancelLookForNewMessages) {
+			context.state.cancelLookForNewMessages('canceled')
+			context.commit('setCancelLookForNewMessages', null)
+			return true
+		}
+		return false
 	},
 }
 
