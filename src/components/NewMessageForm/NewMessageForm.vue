@@ -126,7 +126,6 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
 import { CONVERSATION } from '../../constants'
-import createTemporaryMessage from '../../utils/temporaryMessage'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
 import CancelableRequest from '../../utils/cancelableRequest'
@@ -315,7 +314,7 @@ export default {
 		 */
 		async handleSubmit() {
 			if (this.parsedText !== '') {
-				const temporaryMessage = createTemporaryMessage(this.parsedText, this.token)
+				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
 				this.parsedText = ''
@@ -456,7 +455,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename })
+			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename })
 		},
 
 		/**

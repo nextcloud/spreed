@@ -135,9 +135,9 @@ export default {
 			this.$refs.fileUploadInput.click()
 		},
 
-		handleFileInput(event) {
+		async handleFileInput(event) {
 			const files = Object.values(event.target.files)
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
+			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
 		},
 
 		handleRemoveFileFromSelection(id) {
