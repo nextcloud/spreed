@@ -32,7 +32,7 @@
 			v-if="!isLoading"
 			class="image-container"
 			:class="{'playable': isPlayable}">
-			<span v-if="isPlayable" class="play-video-button">
+			<span v-if="isPlayable && !smallPreview" class="play-video-button">
 				<PlayCircleOutline
 					:size="48"
 					decorative
