@@ -23,34 +23,12 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
-import store from '../store/index'
-
-let maintenanceWarning = null
 
 /**
  * Fetches the conversations from the server.
  */
 const fetchConversations = async function() {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + 'room')
-
-		if (maintenanceWarning) {
-			maintenanceWarning.hideToast()
-			maintenanceWarning = null
-		}
-
-		checkTalkVersionHash(response)
-
-		return response
-	} catch (error) {
-		if (error?.response?.status === 503 && !maintenanceWarning) {
-			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		}
-		throw error
-	}
+	return axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + 'room')
 }
 
 /**
@@ -58,34 +36,7 @@ const fetchConversations = async function() {
  * @param {string} token The token of the conversation to be fetched.
  */
 const fetchConversation = async function(token) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}`)
-
-		if (maintenanceWarning) {
-			maintenanceWarning.hideToast()
-			maintenanceWarning = null
-		}
-
-		checkTalkVersionHash(response)
-
-		return response
-	} catch (error) {
-		if (error?.response?.status === 503 && !maintenanceWarning) {
-			maintenanceWarning = showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		}
-		throw error
-	}
-}
-
-const checkTalkVersionHash = function(response) {
-	const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
-	if (!newTalkCacheBusterHash) {
-		return
-	}
-
-	store.dispatch('setNextcloudTalkHash', newTalkCacheBusterHash)
+	return axios.get(generateOcsUrl('apps/spreed/api/v4', 2) + `room/${token}`)
 }
 
 /**

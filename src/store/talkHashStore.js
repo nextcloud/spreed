@@ -20,9 +20,12 @@
  *
  */
 
+import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+
 const state = {
 	initialNextcloudTalkHash: '',
 	isNextcloudTalkHashDirty: false,
+	maintenanceWarningToast: null,
 }
 
 const getters = {
@@ -50,6 +53,17 @@ const mutations = {
 	markNextcloudTalkHashDirty(state) {
 		state.isNextcloudTalkHashDirty = true
 	},
+
+	/**
+	 * Mark the NextcloudTalkHash as dirty
+	 *
+	 * @param {object} state current store state
+	 * @param {object} maintenanceWarningToast toast instance for the maintenance warning
+	 */
+	setMaintenanceWarningToast(state, maintenanceWarningToast) {
+		state.maintenanceWarningToast = maintenanceWarningToast
+	},
+
 }
 
 const actions = {
@@ -66,6 +80,34 @@ const actions = {
 		} else if (context.state.initialNextcloudTalkHash !== hash && !state.isNextcloudTalkHashDirty) {
 			console.debug('X-Nextcloud-Talk-Hash marked dirty: ', hash)
 			context.commit('markNextcloudTalkHashDirty')
+		}
+	},
+
+	updateTalkVersionHash(context, response) {
+		if (!response || !response.headers) {
+			return
+		}
+
+		const newTalkCacheBusterHash = response.headers['x-nextcloud-talk-hash']
+		if (!newTalkCacheBusterHash) {
+			return
+		}
+
+		context.dispatch('setNextcloudTalkHash', newTalkCacheBusterHash)
+	},
+
+	checkMaintenanceMode(context, response) {
+		if (response?.status === 503 && !context.state.maintenanceWarningToast) {
+			context.commit('setMaintenanceWarningToast', showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			}))
+		}
+	},
+
+	clearMaintenanceMode(context) {
+		if (context.state.maintenanceWarningToast) {
+			context.state.maintenanceWarningToast.hideToast()
+			context.commit('setMaintenanceWarningToast', null)
 		}
 	},
 }

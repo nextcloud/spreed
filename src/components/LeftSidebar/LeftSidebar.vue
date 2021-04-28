@@ -131,7 +131,6 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import {
 	createOneToOneConversation,
-	fetchConversations,
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService'
@@ -434,12 +433,8 @@ export default {
 			 * to the store.
 			 */
 			try {
-				const conversations = await fetchConversations()
+				await this.$store.dispatch('fetchConversations')
 				this.initialisedConversations = true
-				this.$store.dispatch('purgeConversationsStore')
-				conversations.data.ocs.data.forEach(conversation => {
-					this.$store.dispatch('addConversation', conversation)
-				})
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
