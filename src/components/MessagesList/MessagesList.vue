@@ -321,14 +321,30 @@ export default {
 		 * @returns {boolean} Boolean if the messages should be grouped or not
 		 */
 		messagesShouldBeGrouped(message1, message2) {
-			return message2 // Is there a previous message
-				&& (
-					message1.actorType !== 'bots' // Don't group messages of commands and bots
-					|| message1.actorId === 'changelog') // Apart from the changelog bot
-				&& (message1.systemMessage.length === 0) === (message2.systemMessage.length === 0) // Only group system messages with each others
-				&& message1.actorType === message2.actorType // To have the same author, the type
-				&& message1.actorId === message2.actorId // and the id of the author must be the same
-				&& !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
+			if (!message2) {
+				return false // No previous message
+			}
+
+			if (message1.actorType === 'bots' // Don't group messages of commands and bots
+				&& message1.actorId !== 'changelog') { // Apart from the changelog bot
+				return false
+			}
+
+			const message1IsSystem = message1.systemMessage.length !== 0
+			const message2IsSystem = message2.systemMessage.length !== 0
+
+			if (message1IsSystem !== message2IsSystem) {
+				// Only group system messages with each others
+				return false
+			}
+
+			if (!message1IsSystem // System messages are grouped independent from author
+				&& (message1.actorType !== message2.actorType // Otherwise the type and id need to match
+					|| message1.actorId !== message2.actorId)) {
+				return false
+			}
+
+			return !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
 		},
 
 		/**
