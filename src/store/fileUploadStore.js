@@ -24,7 +24,8 @@ import Vue from 'vue'
 import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
 import fromStateOr from './helper'
-import { findUniquePath } from '../utils/fileUpload'
+import { findUniquePath, getFileExtension } from '../utils/fileUpload'
+import moment from '@nextcloud/moment'
 import createTemporaryMessage from '../utils/temporaryMessage'
 import { EventBus } from '../services/EventBus'
 import { shareFile } from '../services/filesSharingServices'
@@ -186,7 +187,23 @@ const mutations = {
 
 const actions = {
 
-	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
+	/**
+	 * Initialises uploads and shares files to a conversation
+	 *
+	 * @param {object} files the files to be processed
+	 * @param {string} token the conversation's token where to share the files
+	 * @param {number} uploadId a unique id for the upload operation indexing
+	 * @param {bool} rename whether to rename the files (usually after pasting)
+	 */
+	initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false }) {
+		if (rename) {
+			files.forEach(file => {
+				// note: can't overwrite the original read-only name attribute
+				file.newName = moment(file.lastModified || file.lastModifiedDate).format('YYYYMMDD_HHmmss')
+					+ getFileExtension(file.name)
+			})
+		}
+
 		// Set last upload id
 		commit('setCurrentUploadId', uploadId)
 

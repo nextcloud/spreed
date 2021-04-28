@@ -125,7 +125,6 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
-import { processFiles } from '../../utils/fileUpload'
 import { CONVERSATION } from '../../constants'
 import createTemporaryMessage from '../../utils/temporaryMessage'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
@@ -457,7 +456,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			await processFiles(files, this.token, uploadId, rename)
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename })
 		},
 
 		/**
