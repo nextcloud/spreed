@@ -73,9 +73,9 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {boolean} enabled Whether sounds should be played
 	 */
-	async setPlaySounds({ commit }, enabled) {
-		await setPlaySounds(status)
-		commit('setPlaySounds', enabled)
+	async setPlaySounds(context, enabled) {
+		await setPlaySounds(!context.state.userId, status)
+		context.commit('setPlaySounds', enabled)
 	},
 }
 
