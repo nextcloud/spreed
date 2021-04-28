@@ -52,7 +52,6 @@ import CallButton from './components/TopBar/CallButton'
 import { EventBus } from './services/EventBus'
 import { getPublicShareConversationData } from './services/filesIntegrationServices'
 import {
-	joinConversation,
 	leaveConversationSync,
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
@@ -142,7 +141,7 @@ export default {
 
 			await this.getPublicShareConversationData()
 
-			await joinConversation(this.token)
+			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// No need to wait for it, but fetching the conversation needs to be
 			// done once the user has joined the conversation (otherwise only

@@ -53,8 +53,6 @@
 import { EventBus } from './services/EventBus'
 import { getFileConversation } from './services/filesIntegrationServices'
 import {
-	joinConversation,
-	leaveConversation,
 	leaveConversationSync,
 } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
@@ -184,7 +182,7 @@ export default {
 				return
 			}
 
-			await joinConversation(this.token)
+			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// The current participant (which is automatically set when fetching
 			// the current conversation) is needed for the MessagesList to start
@@ -218,6 +216,8 @@ export default {
 			EventBus.$off('Signaling::participantListChanged', OCA.Talk.fetchCurrentConversationWrapper)
 			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
 
+			// TODO: move to store under a special action ?
+
 			// Remove the conversation to ensure that the old data is not used
 			// before fetching it again if this conversation is joined again.
 			this.$store.dispatch('deleteConversation', this.token)
@@ -225,7 +225,7 @@ export default {
 			// if this conversation is joined again.
 			this.$store.dispatch('purgeParticipantsStore', this.token)
 
-			leaveConversation(this.token)
+			this.$store.dispatch('leaveConversation', { token: this.token })
 
 			this.$store.dispatch('updateTokenAndFileIdForToken', {
 				newToken: null,
