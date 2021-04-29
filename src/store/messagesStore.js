@@ -310,7 +310,7 @@ const actions = {
 			tempId += '-' + uploadId + '-' + Math.random()
 			messageParameters.file = {
 				type: 'file',
-				file: file,
+				file,
 				mimetype: file.type,
 				id: tempId,
 				name: file.newName || file.name,
