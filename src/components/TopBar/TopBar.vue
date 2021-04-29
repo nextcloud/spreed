@@ -129,13 +129,20 @@
 					@click="openSidebar" />
 			</Actions>
 		</div>
+		<CounterBubble
+			v-if="showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+			class="unread-messages-counter"
+			:highlighted="hasUnreadMentions">
+			{{ unreadMessagesCounter }}
+		</CounterBubble>
 	</div>
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 import CallButton from './CallButton'
 import BrowserStorage from '../../services/BrowserStorage'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
@@ -160,6 +167,7 @@ export default {
 		ActionButton,
 		Actions,
 		ActionLink,
+		CounterBubble,
 		CallButton,
 		ActionSeparator,
 		MicrophoneOff,
@@ -260,6 +268,13 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		unreadMessagesCounter() {
+			return this.conversation.unreadMessages
+		},
+		hasUnreadMentions() {
+			return this.conversation.unreadMention
+		},
+
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
@@ -279,6 +294,37 @@ export default {
 
 		renderedDescription() {
 			return this.renderContent(this.conversation.description)
+		},
+	},
+
+	watch: {
+		unreadMessagesCounter(newValue, oldValue) {
+			if (!this.isInCall || !this.showOpenSidebarButton) {
+				return
+			}
+
+			// new messages arrived
+			if (newValue > 0 && oldValue === 0) {
+				if (this.hasUnreadMentions) {
+					showMessage(t('spreed', 'You have been mentioned in the chat.'))
+				} else {
+					showMessage(t('spreed', 'You have new unread messages in the chat.'))
+				}
+			}
+		},
+
+		hasUnreadMentions(newValue, oldValue) {
+			if (!this.isInCall || !this.showOpenSidebarButton) {
+				return
+			}
+
+			// in some cases the user already had unread messages and saw the other notification
+			// but then got mentionned
+			// the limit of "> 1" is here to avoid seeing two notifications, one for the first non-mention
+			// unread message and the second for the mention
+			if (newValue && this.unreadMessagesCounter > 1) {
+				showMessage(t('spreed', 'You have been mentioned in the chat.'))
+			}
 		},
 	},
 
@@ -424,6 +470,12 @@ export default {
 		.icon {
 			margin-right: 4px !important;
 		}
+	}
+
+	.unread-messages-counter {
+		position: absolute;
+		top: 40px;
+		right: 10px;
 	}
 }
 
