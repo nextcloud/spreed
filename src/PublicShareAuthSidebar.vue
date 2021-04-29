@@ -43,7 +43,6 @@ import ChatView from './components/ChatView'
 import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import {
-	joinConversation,
 	leaveConversationSync,
 } from './services/participantsService'
 import { signalingKill } from './utils/webrtc/index'
@@ -120,7 +119,7 @@ export default {
 				this.$store.dispatch('setCurrentUser', getCurrentUser())
 			}
 
-			await joinConversation(this.token)
+			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// Fetching the conversation needs to be done once the user has
 			// joined the conversation (otherwise only limited data would be

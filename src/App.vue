@@ -50,7 +50,6 @@ import { EventBus } from './services/EventBus'
 import BrowserStorage from './services/BrowserStorage'
 import { getCurrentUser } from '@nextcloud/auth'
 import {
-	joinConversation,
 	leaveConversationSync,
 } from './services/participantsService'
 import {
@@ -204,7 +203,7 @@ export default {
 			// Update current token in the token store
 			this.$store.dispatch('updateToken', this.$route.params.token)
 			// Automatically join the conversation as well
-			joinConversation(this.$route.params.token)
+			this.$store.dispatch('joinConversation', { token: this.$route.params.token })
 		}
 
 		window.addEventListener('resize', this.onResize)
