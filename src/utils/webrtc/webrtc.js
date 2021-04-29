@@ -72,6 +72,7 @@ function createScreensharingPeer(signaling, sessionId) {
 			type: 'screen',
 			sharemyscreen: true,
 			enableDataChannels: false,
+			enableSimulcast: signaling.hasFeature('simulcast'),
 			receiveMedia: {
 				offerToReceiveAudio: 0,
 				offerToReceiveVideo: 0,
@@ -106,6 +107,7 @@ function createScreensharingPeer(signaling, sessionId) {
 				type: 'screen',
 				sharemyscreen: true,
 				enableDataChannels: false,
+				enableSimulcast: signaling.hasFeature('simulcast'),
 				receiveMedia: {
 					offerToReceiveAudio: 0,
 					offerToReceiveVideo: 0,
@@ -136,6 +138,7 @@ function checkStartPublishOwnPeer(signaling) {
 		id: currentSessionId,
 		type: 'video',
 		enableDataChannels: true,
+		enableSimulcast: signaling.hasFeature('simulcast'),
 		receiveMedia: {
 			offerToReceiveAudio: 0,
 			offerToReceiveVideo: 0,
@@ -285,6 +288,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				id: sessionId,
 				type: 'video',
 				enableDataChannels: true,
+				enableSimulcast: signaling.hasFeature('simulcast'),
 				receiveMedia: {
 					offerToReceiveAudio: 1,
 					offerToReceiveVideo: 1,
@@ -530,6 +534,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		detectSpeakingEvents: true,
 		connection: signaling,
 		enableDataChannels: true,
+		enableSimulcast: signaling.hasFeature('simulcast'),
 		nick: store.getters.getDisplayName(),
 	})
 
