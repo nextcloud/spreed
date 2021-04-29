@@ -19,6 +19,7 @@
  */
 
 import Vue from 'vue'
+import VueObserveVisibility from 'vue-observe-visibility'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar'
 import './init'
@@ -58,6 +59,7 @@ Vue.prototype.OCA = OCA
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+Vue.use(VueObserveVisibility)
 
 /**
  * Wraps all the body contents in its own container.

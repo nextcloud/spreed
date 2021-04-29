@@ -23,6 +23,7 @@
  */
 
 import Vue from 'vue'
+import VueObserveVisibility from 'vue-observe-visibility'
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp'
 import FilesSidebarTabApp from './FilesSidebarTabApp'
 import './init'
@@ -62,6 +63,7 @@ Vue.prototype.OCA = OCA
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+Vue.use(VueObserveVisibility)
 
 const newCallView = () => new Vue({
 	store,

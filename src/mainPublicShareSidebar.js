@@ -19,6 +19,7 @@
  */
 
 import Vue from 'vue'
+import VueObserveVisibility from 'vue-observe-visibility'
 import PublicShareSidebar from './PublicShareSidebar'
 import './init'
 
@@ -57,6 +58,7 @@ Vue.prototype.OCA = OCA
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+Vue.use(VueObserveVisibility)
 
 function adjustLayout() {
 	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
