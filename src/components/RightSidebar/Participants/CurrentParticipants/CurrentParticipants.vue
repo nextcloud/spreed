@@ -145,14 +145,19 @@ export default {
 				return p2IsGroup ? -1 : 1
 			}
 
-			let hasSessions1 = !!participant1.sessionIds.length
-			let hasSessions2 = !!participant2.sessionIds.length
+			const hasSessions1 = !!participant1.sessionIds.length
+			const hasSessions2 = !!participant2.sessionIds.length
+			/**
+			 * For now the user status is not overwriting the online-offline status anymore
+			 * It felt too weird having users appear as offline but they are in the call or chat actively
 			if (participant1.status === 'offline') {
 				hasSessions1 = false
 			}
 			if (participant2.status === 'offline') {
 				hasSessions2 = false
 			}
+			 */
+
 			if (!hasSessions1) {
 				if (hasSessions2) {
 					return 1
