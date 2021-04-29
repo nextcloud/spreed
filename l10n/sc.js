@@ -38,7 +38,7 @@ OC.L10N.register(
     "- Raise your hand in a call with the R key" : "- Àrtzia sa manu in una mutida cun su tastu R",
     "There are currently no commands available." : "No ddoe at cummandos disponìbiles in custu momentu.",
     "The command does not exist" : "Su cummandu no esistit",
-    "An error occurred while running the command. Please ask an administrator to check the logs." : "Ddoe at àpidu un'errore in s'esecutzione de su cummandu. Pedi a chie amministrat de castiare is registros.",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "B'at àpidu un'errore in s'esecutzione de su cummandu. Pedi a chie amministrat de castiare is registros.",
     "Talk updates ✅" : "Agiornamentos de Talk ✅",
     "{actor} created the conversation" : "{actor} at creadu sa cunversatzione",
     "You created the conversation" : "Tue as creadu sa cunversatzione",
