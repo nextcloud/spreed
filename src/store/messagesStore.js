@@ -24,6 +24,8 @@ import {
 	deleteMessage,
 	updateLastReadMessage,
 } from '../services/messagesService'
+import SHA1 from 'crypto-js/sha1'
+import Hex from 'crypto-js/enc-hex'
 
 const state = {
 	/**
@@ -284,6 +286,64 @@ const actions = {
 		context.commit('addMessage', systemMessage)
 
 		return response.status
+	},
+
+	/**
+	 * Creates a temporary message ready to be posted, based
+	 * on the message to be replied and the current actor
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} text message string;
+	 * @param {string} token conversation token;
+	 * @param {string} uploadId upload id;
+	 * @param {int} index index;
+	 * @param {object} file file to upload;
+	 * @param {string} localUrl local URL of file to upload;
+	 * @returns {object} temporary message
+	 */
+	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl }) {
+		const messageToBeReplied = context.getters.getMessageToBeReplied(token)
+		const date = new Date()
+		let tempId = 'temp-' + date.getTime()
+		const messageParameters = {}
+		if (file) {
+			tempId += '-' + uploadId + '-' + Math.random()
+			messageParameters.file = {
+				type: 'file',
+				file,
+				mimetype: file.type,
+				id: tempId,
+				name: file.newName || file.name,
+				// index, will be the id from now on
+				uploadId,
+				localUrl,
+				index,
+			}
+		}
+		const message = Object.assign({}, {
+			id: tempId,
+			actorId: context.getters.getActorId(),
+			actorType: context.getters.getActorType(),
+			actorDisplayName: context.getters.getDisplayName(),
+			timestamp: 0,
+			systemMessage: '',
+			messageType: '',
+			message: text,
+			messageParameters,
+			token,
+			isReplyable: false,
+			sendingFailure: '',
+			referenceId: Hex.stringify(SHA1(tempId)),
+		})
+
+		/**
+		 * If the current message is a quote-reply message, add the parent key to the
+		 * temporary message object.
+		 */
+		if (messageToBeReplied) {
+			message.parent = messageToBeReplied.id
+		}
+		return message
 	},
 
 	/**

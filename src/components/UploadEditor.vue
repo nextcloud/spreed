@@ -70,7 +70,6 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import Plus from 'vue-material-design-icons/Plus'
-import { processFiles } from '../utils/fileUpload'
 
 export default {
 	name: 'UploadEditor',
@@ -136,9 +135,9 @@ export default {
 			this.$refs.fileUploadInput.click()
 		},
 
-		handleFileInput(event) {
+		async handleFileInput(event) {
 			const files = Object.values(event.target.files)
-			processFiles(files, this.token, this.currentUploadId)
+			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
 		},
 
 		handleRemoveFileFromSelection(id) {

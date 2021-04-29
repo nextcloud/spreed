@@ -20,9 +20,6 @@
  *
  */
 
-import store from '../store/index'
-import moment from '@nextcloud/moment'
-
 /**
  * Returns the file extension for the given path
  *
@@ -71,27 +68,7 @@ const findUniquePath = async function(client, userRoot, path) {
 	}
 }
 
-/**
- * Uploads and shares files to a conversation
- * @param {object} files the files to be processed
- * @param {string} token the conversation's token where to share the files
- * @param {number} uploadId a unique id for the upload operation indexing
- * @param {bool} rename whether to rename the files (usually after pasting)
- */
-const processFiles = async function(files, token, uploadId, rename) {
-	if (rename) {
-		files.forEach(file => {
-			// note: can't overwrite the original read-only name attribute
-			file.newName = moment(file.lastModified || file.lastModifiedDate).format('YYYYMMDD_HHmmss')
-				+ getFileExtension(file.name)
-		})
-	}
-
-	// Process these files in the store
-	await store.dispatch('initialiseUpload', { uploadId, token, files })
-}
-
 export {
 	findUniquePath,
-	processFiles,
+	getFileExtension,
 }

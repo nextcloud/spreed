@@ -59,7 +59,6 @@
 <script>
 import MessagesList from './MessagesList/MessagesList'
 import NewMessageForm from './NewMessageForm/NewMessageForm'
-import { processFiles } from '../utils/fileUpload'
 import { CONVERSATION } from '../constants'
 
 export default {
@@ -140,7 +139,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			processFiles(files, this.token, uploadId)
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId })
 		},
 
 		setScrollStatus(payload) {

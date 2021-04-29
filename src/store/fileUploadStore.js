@@ -24,8 +24,8 @@ import Vue from 'vue'
 import client from '../services/DavClient'
 import { showError } from '@nextcloud/dialogs'
 import fromStateOr from './helper'
-import { findUniquePath } from '../utils/fileUpload'
-import createTemporaryMessage from '../utils/temporaryMessage'
+import { findUniquePath, getFileExtension } from '../utils/fileUpload'
+import moment from '@nextcloud/moment'
 import { EventBus } from '../services/EventBus'
 import { shareFile } from '../services/filesSharingServices'
 import { setAttachmentFolder } from '../services/settingsService'
@@ -186,11 +186,27 @@ const mutations = {
 
 const actions = {
 
-	initialiseUpload({ commit, dispatch }, { uploadId, token, files }) {
+	/**
+	 * Initialises uploads and shares files to a conversation
+	 *
+	 * @param {object} files the files to be processed
+	 * @param {string} token the conversation's token where to share the files
+	 * @param {number} uploadId a unique id for the upload operation indexing
+	 * @param {bool} rename whether to rename the files (usually after pasting)
+	 */
+	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false }) {
 		// Set last upload id
 		commit('setCurrentUploadId', uploadId)
 
-		files.forEach(file => {
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i]
+
+			if (rename) {
+				// note: can't overwrite the original read-only name attribute
+				file.newName = moment(file.lastModified || file.lastModifiedDate).format('YYYYMMDD_HHmmss')
+					+ getFileExtension(file.name)
+			}
+
 			// Get localurl for some image previews
 			let localUrl = ''
 			if (file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpeg') {
@@ -202,10 +218,12 @@ const actions = {
 			const date = new Date()
 			const index = 'temp_' + date.getTime() + Math.random()
 			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = createTemporaryMessage('{file}', token, uploadId, index, file, localUrl)
+			const temporaryMessage = await dispatch('createTemporaryMessage', {
+				text: '{file}', token, uploadId, index, file, localUrl,
+			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
 			commit('addFileToBeUploaded', { file, temporaryMessage })
-		})
+		}
 	},
 
 	/**
