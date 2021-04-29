@@ -95,14 +95,15 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {string} param0.message The message object
  * @param {string} param0.referenceId A reference id to identify the message later again
  * @param {Number} param0.parent The id of the message to be replied to
+ * @param {object} options request options
  */
-const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }) {
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo: parent,
-	})
+	}, options)
 
 	if ('x-chat-last-common-read' in response.headers) {
 		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)

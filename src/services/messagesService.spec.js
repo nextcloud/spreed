@@ -90,6 +90,8 @@ describe('messagesService', () => {
 			actorDisplayName: 'actor-display-name',
 			referenceId: 'reference-id',
 			parent: 111,
+		}, {
+			dummyOption: true,
 		})
 
 		expect(mockAxios.post).toHaveBeenCalledWith(
@@ -99,6 +101,9 @@ describe('messagesService', () => {
 				actorDisplayName: 'actor-display-name',
 				referenceId: 'reference-id',
 				replyTo: 111,
+			},
+			{
+				dummyOption: true,
 			}
 		)
 	})
