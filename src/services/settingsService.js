@@ -23,7 +23,6 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import BrowserStorage from './BrowserStorage'
-import store from '../store/index'
 
 /**
  * Sets the attachment folder setting for the user
@@ -67,9 +66,9 @@ const setSIPSettings = async function(sipGroups, sharedSecret, dialInInfo) {
 	})
 }
 
-const setPlaySounds = async function(enabled) {
+const setPlaySounds = async function(isGuest, enabled) {
 	const savableValue = enabled ? 'yes' : 'no'
-	if (store.getters.getUserId()) {
+	if (!isGuest) {
 		return axios.post(generateOcsUrl('apps/spreed/api/v1/settings', 2) + 'user', {
 			key: 'play_sounds',
 			value: savableValue,
