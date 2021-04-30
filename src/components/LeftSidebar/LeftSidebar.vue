@@ -344,9 +344,6 @@ export default {
 
 		async fetchSearchResults() {
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
-
-			// If none already focused, focus the first rendered result
-			this.focusInitialise()
 		},
 
 		/**
