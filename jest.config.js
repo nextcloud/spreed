@@ -28,7 +28,7 @@ module.exports = {
 	setupFiles: ['jest-localstorage-mock'],
 	setupFilesAfterEnv: [
 		'<rootDir>/src/test-setup.js',
-	    'jest-mock-console/dist/setupTestFramework.js',
+		'jest-mock-console/dist/setupTestFramework.js',
 	],
 	transform: {
 		// process `*.js` files with `babel-jest`
