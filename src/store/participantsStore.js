@@ -393,7 +393,7 @@ const actions = {
 					console.debug('Force joining automatically because the old session didn\'t ping for 40 seconds')
 					await context.dispatch('forceJoinConversation', { token })
 				} else {
-					await context.dipatch('confirmForceJoinConversation', { token })
+					await context.dispatch('confirmForceJoinConversation', { token })
 				}
 			} else {
 				console.debug(error)
