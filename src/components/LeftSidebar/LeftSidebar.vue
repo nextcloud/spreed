@@ -27,7 +27,7 @@
 				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
-				@keypress.enter.prevent.stop="onInputEnter"
+				@submit="onInputEnter"
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
