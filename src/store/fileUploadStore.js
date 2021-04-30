@@ -170,16 +170,16 @@ const mutations = {
 		state.currentUploadId = currentUploadId
 	},
 
-	removeFileFromSelection(state, fileId) {
+	removeFileFromSelection(state, temporaryMessageId) {
 		const uploadId = state.currentUploadId
 		for (const key in state.uploads[uploadId].files) {
-			if (state.uploads[uploadId].files[key].temporaryMessage.id === fileId) {
+			if (state.uploads[uploadId].files[key].temporaryMessage.id === temporaryMessageId) {
 				Vue.delete(state.uploads[uploadId].files, key)
 			}
 		}
 	},
 
-	discardUpload(state, uploadId) {
+	discardUpload(state, { uploadId }) {
 		Vue.delete(state.uploads, uploadId)
 	},
 }
@@ -332,7 +332,7 @@ const actions = {
 						message: temporaryMessage,
 						reason: 'failed-share',
 					})
-					console.debug('An error happened when trying to share your file: ', error)
+					console.error('An error happened when trying to share your file: ', error)
 				}
 			}
 		}
@@ -371,8 +371,13 @@ const actions = {
 		context.commit('markFileAsShared', { uploadId, index })
 	},
 
-	removeFileFromSelection({ commit }, fileId) {
-		commit('removeFileFromSelection', fileId)
+	/**
+	 * Mark a file as shared
+	 * @param {object} context default store context;
+	 * @param {string} temporaryMessageId message id of the temporary message associated to the file to remove
+	 */
+	removeFileFromSelection({ commit }, temporaryMessageId) {
+		commit('removeFileFromSelection', temporaryMessageId)
 	},
 
 }
