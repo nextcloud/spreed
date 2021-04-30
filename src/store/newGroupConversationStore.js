@@ -53,8 +53,8 @@ const mutations = {
 	 */
 	addSelectedParticipant(state, participant) {
 		state.selectedParticipants = [...state.selectedParticipants, participant]
-
 	},
+
 	/**
 	 * Adds a the selected participants to the store.
 	 * @param {object} state current store state;
@@ -65,6 +65,7 @@ const mutations = {
 			return selectedParticipant.id !== participant.id
 		})
 	},
+
 	/**
 	 * Purges the store
 	 * @param {object} state current store state;

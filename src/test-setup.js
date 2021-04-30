@@ -36,4 +36,4 @@ global.OC = {
 		return 'en_GB'
 	},
 }
-global.t = (app, text) => text
+global.t = jest.fn().mockImplementation((app, text) => text)
