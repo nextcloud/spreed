@@ -77,6 +77,7 @@
 				class="app-navigation-entry-utils-menu-button"
 				:boundaries-element="boundaryElement"
 				container="#content-vue"
+				:open="screenSharingMenuOpen"
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
