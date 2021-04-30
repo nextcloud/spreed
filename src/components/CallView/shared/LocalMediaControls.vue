@@ -108,28 +108,6 @@
 					{{ screenSharingButtonTooltip }}
 				</ActionButton>
 				<ActionButton
-					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
-					@click="shareScreen">
-					<Monitor
-						slot="icon"
-						:size="24"
-						title=""
-						fill-color="#ffffff"
-						decorative />
-					{{ t('spreed', 'Share whole screen') }}
-				</ActionButton>
-				<ActionButton
-					v-if="!model.attributes.localScreen && splitScreenSharingMenu"
-					@click="shareWindow">
-					<MonitorScreenshot
-						slot="icon"
-						:size="24"
-						title=""
-						fill-color="#ffffff"
-						decorative />
-					{{ t('spreed', 'Share a single window') }}
-				</ActionButton>
-				<ActionButton
 					v-if="model.attributes.localScreen"
 					@click="showScreen">
 					<Monitor
@@ -238,7 +216,6 @@ import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
 import MonitorOff from 'vue-material-design-icons/MonitorOff'
-import MonitorScreenshot from 'vue-material-design-icons/MonitorScreenshot'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
@@ -266,7 +243,6 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
-		MonitorScreenshot,
 		'VideoIcon': Video,
 		VideoOff,
 		Monitor,
@@ -297,7 +273,6 @@ export default {
 			mounted: false,
 			speakingWhileMutedNotification: null,
 			screenSharingMenuOpen: false,
-			splitScreenSharingMenu: false,
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
 			callAnalyzer: callAnalyzer,
@@ -426,7 +401,7 @@ export default {
 				return null
 			}
 
-			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+			return this.model.attributes.localScreen ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
 		},
 
 		screenSharingButtonAriaLabel() {
@@ -434,7 +409,7 @@ export default {
 				return ''
 			}
 
-			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+			return this.model.attributes.localScreen ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
 		},
 
 		isQualityWarningTooltipDismissed() {
@@ -558,16 +533,6 @@ export default {
 		},
 	},
 
-	created() {
-		// The standard "getDisplayMedia" does not support pre-filtering the
-		// type of display sources, so the unified menu is used in that case
-		// too.
-		if (window.navigator.userAgent.match('Firefox') && !window.navigator.mediaDevices.getDisplayMedia) {
-			const firefoxVersion = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10)
-			this.splitScreenSharingMenu = (firefoxVersion >= 52)
-		}
-	},
-
 	mounted() {
 		this.mounted = true
 		this.updateVolumeMeter()
@@ -659,11 +624,9 @@ export default {
 				return
 			}
 
-			if (this.model.attributes.localScreen || this.splitScreenSharingMenu) {
+			if (this.model.attributes.localScreen) {
 				this.screenSharingMenuOpen = !this.screenSharingMenuOpen
-			}
-
-			if (!this.model.attributes.localScreen && !this.splitScreenSharingMenu) {
+			} else {
 				this.startShareScreen()
 			}
 		},
@@ -678,22 +641,6 @@ export default {
 					raisedHand: this.model.attributes.raisedHand,
 				}
 			)
-		},
-
-		shareScreen() {
-			if (!this.model.attributes.localScreen) {
-				this.startShareScreen('screen')
-			}
-
-			this.screenSharingMenuOpen = false
-		},
-
-		shareWindow() {
-			if (!this.model.attributes.localScreen) {
-				this.startShareScreen('window')
-			}
-
-			this.screenSharingMenuOpen = false
 		},
 
 		showScreen() {
