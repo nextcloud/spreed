@@ -221,7 +221,9 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 
 			// Update last_message
-			$chat->setLastMessage($comment);
+			if ($comment->getActorType() !== 'bots' || $comment->getActorId() === 'changelog') {
+				$chat->setLastMessage($comment);
+			}
 
 			$alreadyNotifiedUsers = [];
 			if ($replyTo instanceof IComment) {
