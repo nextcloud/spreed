@@ -3,6 +3,7 @@ Feature: set-description
     Given user "owner" exists
     Given user "moderator" exists
     Given user "invited user" exists
+    Given user "not invited user" exists
     Given user "not invited but joined user" exists
     Given user "not joined user" exists
 
