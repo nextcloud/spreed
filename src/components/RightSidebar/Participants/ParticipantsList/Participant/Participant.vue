@@ -59,6 +59,7 @@
 					v-tooltip.auto="userTooltipText"
 					class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+				<span v-if="isBridgeBotUser" class="participant-row__moderator-indicator">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
 			<div
@@ -227,6 +228,9 @@ export default {
 			if (this.showModeratorLabel) {
 				text += ' (' + t('spreed', 'moderator') + ')'
 			}
+			if (this.isBridgeBotUser) {
+				text += ' (' + t('spreed', 'bot') + ')'
+			}
 			if (this.isGuest) {
 				text += ' (' + t('spreed', 'guest') + ')'
 			}
@@ -368,6 +372,11 @@ export default {
 			}
 		},
 
+		isBridgeBotUser() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				&& this.participant.actorId === ATTENDEE.BRIDGE_BOT_ID
+		},
+
 		isSelf() {
 			// User
 			if (this.userId) {
@@ -403,7 +412,10 @@ export default {
 				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
 		canBeModerated() {
-			return this.participantType !== PARTICIPANT.TYPE.OWNER && !this.isSelf && this.selfIsModerator
+			return this.participantType !== PARTICIPANT.TYPE.OWNER
+				&& !this.isSelf
+				&& this.selfIsModerator
+				&& !this.isBridgeBotUser
 		},
 		canBeDemoted() {
 			return this.canBeModerated

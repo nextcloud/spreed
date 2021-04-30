@@ -45,6 +45,8 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Chat\ChatManager;
 
 class MatterbridgeManager {
+	public const BRIDGE_BOT_USERID = 'bridge-bot';
+
 	/** @var IDBConnection */
 	private $db;
 	/** @var IConfig */
@@ -284,23 +286,22 @@ class MatterbridgeManager {
 	 * @return array Bot user information (username and app token). token is an empty string if creation was not asked.
 	 */
 	private function checkBotUser(Room $room, bool $isBridgeEnabled): array {
-		$botUserId = 'bridge-bot';
 		// check if user exists and create it if necessary
-		if (!$this->userManager->userExists($botUserId)) {
+		if (!$this->userManager->userExists(self::BRIDGE_BOT_USERID)) {
 			$pass = $this->generatePassword();
 			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
-			$botUser = $this->userManager->createUser($botUserId, $pass);
+			$botUser = $this->userManager->createUser(self::BRIDGE_BOT_USERID, $pass);
 			// set avatar
-			$avatar = $this->avatarManager->getAvatar($botUserId);
+			$avatar = $this->avatarManager->getAvatar(self::BRIDGE_BOT_USERID);
 			$imageData = file_get_contents(\OC::$SERVERROOT . '/apps/spreed/img/bridge-bot.png');
 			$avatar->set($imageData);
 		} else {
-			$botUser = $this->userManager->get($botUserId);
+			$botUser = $this->userManager->get(self::BRIDGE_BOT_USERID);
 		}
 
 		// check if the bot user is member of the room and add or remove it
 		try {
-			$room->getParticipant($botUserId, false);
+			$room->getParticipant(self::BRIDGE_BOT_USERID, false);
 			if (!$isBridgeEnabled) {
 				$this->participantService->removeUser($room, $botUser, Room::PARTICIPANT_REMOVED);
 			}
@@ -308,7 +309,7 @@ class MatterbridgeManager {
 			if ($isBridgeEnabled) {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $botUserId,
+					'actorId' => self::BRIDGE_BOT_USERID,
 					'displayName' => $botUser->getDisplayName(),
 					'participantType' => Participant::USER,
 				]]);
@@ -317,10 +318,10 @@ class MatterbridgeManager {
 
 		// delete old bot app tokens for this room
 		$tokenName = 'spreed_' . $room->getToken();
-		$tokens = $this->tokenProvider->getTokenByUser($botUserId);
+		$tokens = $this->tokenProvider->getTokenByUser(self::BRIDGE_BOT_USERID);
 		foreach ($tokens as $t) {
 			if ($t->getName() === $tokenName) {
-				$this->tokenProvider->invalidateTokenById($botUserId, $t->getId());
+				$this->tokenProvider->invalidateTokenById(self::BRIDGE_BOT_USERID, $t->getId());
 			}
 		}
 
@@ -330,8 +331,8 @@ class MatterbridgeManager {
 			$botPassword = $this->config->getAppValue('spreed', 'bridge_bot_password', '');
 			$generatedToken = $this->tokenProvider->generateToken(
 				$appToken,
-				$botUserId,
-				$botUserId,
+				self::BRIDGE_BOT_USERID,
+				self::BRIDGE_BOT_USERID,
 				$botPassword,
 				$tokenName,
 				IToken::PERMANENT_TOKEN,
@@ -342,7 +343,7 @@ class MatterbridgeManager {
 		}
 
 		return [
-			'id' => $botUserId,
+			'id' => self::BRIDGE_BOT_USERID,
 			'password' => $appToken,
 		];
 	}
