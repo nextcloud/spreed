@@ -40,6 +40,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -620,6 +621,10 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($targetUserId === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$targetUser = $this->userManager->get($targetUserId);
 		if (!$targetUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -1020,6 +1025,10 @@ class RoomController extends AEnvironmentAwareController {
 		$participantsToAdd = [];
 
 		if ($source === 'users') {
+			if ($newParticipant === MatterbridgeManager::BRIDGE_BOT_USERID) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
 			$newUser = $this->userManager->get($newParticipant);
 			if (!$newUser instanceof IUser) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -1160,6 +1169,11 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+			&& $targetParticipant->getAttendee()->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -1424,6 +1438,11 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$attendee = $targetParticipant->getAttendee();
+
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS
+			&& $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 
 		// Prevent users/moderators modifying themselves
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {

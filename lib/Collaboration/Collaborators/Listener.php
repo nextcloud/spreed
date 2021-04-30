@@ -27,6 +27,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -70,6 +71,7 @@ class Listener {
 
 			$event->setResults($listener->filterUsersAndGroupsWithoutTalk($event->getResults()));
 
+			$event->setResults($listener->filterBridgeBot($event->getResults()));
 			if ($event->getItemId() !== 'new') {
 				$event->setResults($listener->filterExistingParticipants($event->getItemId(), $event->getResults()));
 			}
@@ -108,6 +110,17 @@ class Listener {
 		return \in_array($result['value']['shareWith'], $this->allowedGroupIds, true);
 	}
 
+	protected function filterBridgeBot(array $results): array {
+		if (!empty($results['users'])) {
+			$results['users'] = array_filter($results['users'], [$this, 'filterBridgeBotUserResult']);
+		}
+		if (!empty($results['exact']['users'])) {
+			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterBridgeBotUserResult']);
+		}
+
+		return $results;
+	}
+
 	protected function filterExistingParticipants(string $token, array $results): array {
 		try {
 			$this->room = $this->manager->getRoomByToken($token);
@@ -130,6 +143,10 @@ class Listener {
 		}
 
 		return $results;
+	}
+
+	protected function filterBridgeBotUserResult(array $result): bool {
+		return $result['value']['shareWith'] !== MatterbridgeManager::BRIDGE_BOT_USERID;
 	}
 
 	protected function filterParticipantUserResult(array $result): bool {

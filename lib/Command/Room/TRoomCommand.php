@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -200,6 +201,10 @@ trait TRoomCommand {
 			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 		}
 
+		if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			throw new InvalidArgumentException('Can not promote the bridge-bot user.');
+		}
+
 		$this->unsetRoomOwner($room);
 
 		$this->participantService->updateParticipantType($room, $participant, Participant::OWNER);
@@ -253,6 +258,10 @@ trait TRoomCommand {
 
 		$participants = [];
 		foreach ($userIds as $userId) {
+			if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
+				throw new InvalidArgumentException('Can not add the bridge-bot user.');
+			}
+
 			$user = $this->userManager->get($userId);
 			if ($user === null) {
 				throw new InvalidArgumentException(sprintf("User '%s' not found.", $userId));
@@ -314,6 +323,10 @@ trait TRoomCommand {
 	protected function addRoomModerators(Room $room, array $userIds): void {
 		$participants = [];
 		foreach ($userIds as $userId) {
+			if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
+				throw new InvalidArgumentException('Can not promote the bridge-bot user.');
+			}
+
 			try {
 				$participant = $room->getParticipant($userId, false);
 			} catch (ParticipantNotFoundException $e) {
@@ -363,6 +376,9 @@ trait TRoomCommand {
 
 	protected function completeUserValues(CompletionContext $context): array {
 		return array_map(function (IUser $user) {
+			if ($user->getUID() === MatterbridgeManager::BRIDGE_BOT_USERID) {
+				return '';
+			}
 			return $user->getUID();
 		}, $this->userManager->search($context->getCurrentWord()));
 	}
