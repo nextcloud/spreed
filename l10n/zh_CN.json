@@ -884,6 +884,7 @@
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "描述长度必须小于或等于  {maxLength} 个字符。你当前的文本长度是 {charactersCount} 个字符",
     "Disable lobby" : "禁用休息室",
     "moderator" : "主持人",
+    "bot" : "机器人",
     "guest" : "访客",
     "Dial-in PIN" : "拨号 PIN 码",
     "Demote from moderator" : "取消主持人",
