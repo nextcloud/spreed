@@ -884,6 +884,7 @@
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Die Beschreibung muss weniger als oder gleich {maxLength} Zeichen lang sein. Ihr aktueller Text ist {charactersCount} Zeichen lang.",
     "Disable lobby" : "Lobby deaktivieren",
     "moderator" : "Moderator",
+    "bot" : "Bot",
     "guest" : "Gast",
     "Dial-in PIN" : "Einwahl-PIN",
     "Demote from moderator" : "Als Moderator abberufen",
