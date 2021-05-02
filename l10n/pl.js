@@ -886,6 +886,7 @@ OC.L10N.register(
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Opis musi mieć długość mniejszą lub równą {maxLength} znaków. Twój obecny tekst ma długość {charactersCount} znaków.",
     "Disable lobby" : "Wyłącz poczekalnie",
     "moderator" : "moderator",
+    "bot" : "bot",
     "guest" : "gość",
     "Dial-in PIN" : "Kod PIN połączenia telefonicznego",
     "Demote from moderator" : "Degraduj z moderatora",
