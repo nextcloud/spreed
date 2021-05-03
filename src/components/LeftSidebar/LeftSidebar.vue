@@ -29,7 +29,7 @@
 				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
-				@keypress.enter.prevent.stop="onInputEnter"
+				@submit="onInputEnter"
 				@abort-search="abortSearch" />
 			<NewGroupConversation
 				v-if="canStartConversations" />
@@ -344,9 +344,6 @@ export default {
 
 		async fetchSearchResults() {
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
-
-			// If none already focused, focus the first rendered result
-			this.focusInitialise()
 		},
 
 		/**
