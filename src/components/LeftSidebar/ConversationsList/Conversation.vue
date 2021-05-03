@@ -257,7 +257,17 @@ export default {
 				const messagesKeys = Object.keys(this.messages)
 				const lastMessageId = messagesKeys[messagesKeys.length - 1]
 
-				if (this.messages[lastMessageId].timestamp > lastMessageTimestamp) {
+				/**
+				 * Only use the last message as lastmessage when:
+				 * 1. It's newer than the conversations last message
+				 * 2. It's not a command reply
+				 * 3. It's not a temporary message starting with "/" which is a user posting a command
+				 */
+				if (this.messages[lastMessageId].timestamp > lastMessageTimestamp
+					&& (this.messages[lastMessageId].actorType !== 'bots'
+						|| this.messages[lastMessageId].actorId === 'changelog')
+					&& (!lastMessageId.startsWith('temp-')
+						|| !this.messages[lastMessageId].message.startsWith('/'))) {
 					return this.messages[lastMessageId]
 				}
 			}
