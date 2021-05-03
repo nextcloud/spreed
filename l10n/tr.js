@@ -886,6 +886,7 @@ OC.L10N.register(
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Açıklama {maxLength} ya da daha az karakter uzunluğunda olmalıdır. Şu andaki metin uzunluğu {charactersCount} karakter.",
     "Disable lobby" : "Lobi kullanılmasın",
     "moderator" : "sorumlu",
+    "bot" : "bot",
     "guest" : "konuk",
     "Dial-in PIN" : "Arama PIN kodu",
     "Demote from moderator" : "Sorumluluktan çıkar",
