@@ -22,7 +22,6 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import store from '../store/index'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 
@@ -33,29 +32,17 @@ import Hex from 'crypto-js/enc-hex'
  * @param {string} token the conversation token;
  * @param {object} options options;
  * @param {string} lastKnownMessageId last known message id;
- * @param {int} includeLastKnown whether to include the last known message in the response;
+ * @param {bool} includeLastKnown whether to include the last known message in the response;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 0,
 			lastKnownMessageId,
-			// FIXME: change the function arg to boolean then convert to int for the API
-			includeLastKnown: includeLastKnown || 0,
+			includeLastKnown: includeLastKnown ? 1 : 0,
 		},
 	}))
-
-	// TODO: move to action instead
-	if ('x-chat-last-common-read' in response.headers) {
-		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
-		store.dispatch('updateLastCommonReadMessage', {
-			token,
-			lastCommonReadMessage,
-		})
-	}
-
-	return response
 }
 
 /**
@@ -67,7 +54,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {int} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 1,
@@ -75,16 +62,6 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
 			includeLastKnown: 0,
 		},
 	}))
-
-	if ('x-chat-last-common-read' in response.headers) {
-		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
-		store.dispatch('updateLastCommonReadMessage', {
-			token,
-			lastCommonReadMessage,
-		})
-	}
-
-	return response
 }
 
 /**
@@ -98,22 +75,12 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {object} options request options
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo: parent,
 	}, options)
-
-	if ('x-chat-last-common-read' in response.headers) {
-		const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
-		store.dispatch('updateLastCommonReadMessage', {
-			token,
-			lastCommonReadMessage,
-		})
-	}
-
-	return response
 }
 
 /**

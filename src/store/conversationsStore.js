@@ -29,6 +29,7 @@ import {
 	changeListable,
 	addToFavorites,
 	removeFromFavorites,
+	fetchConversations,
 	fetchConversation,
 	setConversationName,
 	setConversationDescription } from '../services/conversationsService'
@@ -349,8 +350,37 @@ const actions = {
 	},
 
 	async fetchConversation({ dispatch }, { token }) {
-		const response = await fetchConversation(token)
-		dispatch('addConversation', response.data.ocs.data)
+		try {
+			dispatch('clearMaintenanceMode')
+			const response = await fetchConversation(token)
+			dispatch('updateTalkVersionHash', response)
+			dispatch('addConversation', response.data.ocs.data)
+			return response
+		} catch (error) {
+			if (error?.response) {
+				dispatch('checkMaintenanceMode', error.response)
+			}
+			throw error
+		}
+	},
+
+	async fetchConversations({ dispatch }) {
+		try {
+			dispatch('clearMaintenanceMode')
+
+			const response = await fetchConversations()
+			dispatch('updateTalkVersionHash', response)
+			dispatch('purgeConversationsStore')
+			response.data.ocs.data.forEach(conversation => {
+				dispatch('addConversation', conversation)
+			})
+			return response
+		} catch (error) {
+			if (error?.response) {
+				dispatch('checkMaintenanceMode', error.response)
+			}
+			throw error
+		}
 	},
 
 	changeNotificationLevel({ commit }, { token, notificationLevel }) {
