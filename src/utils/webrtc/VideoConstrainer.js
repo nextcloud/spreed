@@ -45,9 +45,9 @@ const QUALITY = {
 function VideoConstrainer(localMediaModel) {
 	this._localMediaModel = localMediaModel
 
-	// By default the constraints used when getting the video try to get the
-	// highest quality
-	this._currentQuality = QUALITY.HIGH
+	// The current quality is undefined until the constraints are applied at
+	// least once.
+	this._currentQuality = undefined
 
 	this._knownValidConstraintsForQuality = {}
 }
