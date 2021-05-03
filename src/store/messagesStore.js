@@ -32,6 +32,9 @@ import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../utils/cancelableRequest'
 import { showError } from '@nextcloud/dialogs'
+import {
+	ATTENDEE,
+} from '../constants'
 
 const state = {
 	/**
@@ -444,7 +447,7 @@ const actions = {
 	},
 
 	/**
-	 * Deletes the messages of a conversation
+	 * Deletes all messages of a conversation from the store only.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} token the token of the conversation to be deleted;
@@ -491,7 +494,7 @@ const actions = {
 		}
 
 		// optimistic early commit to avoid indicator flickering
-		context.commit('updateConversationLastReadMessage', { token, lastReadMessage: id })
+		context.dispatch('updateConversationLastReadMessage', { token, lastReadMessage: id })
 		if (updateVisually) {
 			context.commit('setVisualLastReadMessageId', { token, id })
 		}
@@ -538,7 +541,8 @@ const actions = {
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
-			if (message.actorType === 'guests') {
+			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				// update guest display names cache
 				context.dispatch('setGuestNameIfEmpty', message)
 			}
 			context.dispatch('processMessage', message)
@@ -558,7 +562,7 @@ const actions = {
 		if (includeLastKnown && newestKnownMessageId
 			&& !context.getters.getLastKnownMessageId(token)) {
 			context.dispatch('setLastKnownMessageId', {
-				token: token,
+				token,
 				id: newestKnownMessageId,
 			})
 		}
@@ -611,7 +615,10 @@ const actions = {
 		let lastMessage = null
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
-			if (message.actorType === 'guests') {
+			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				// update guest display names cache,
+				// force in case the display name has changed since
+				// the last fetch
 				context.dispatch('forceGuestName', message)
 			}
 			context.dispatch('processMessage', message)
@@ -621,7 +628,7 @@ const actions = {
 		})
 
 		context.dispatch('setLastKnownMessageId', {
-			token: token,
+			token,
 			id: parseInt(response.headers['x-chat-last-given'], 10),
 		})
 
@@ -651,6 +658,12 @@ const actions = {
 		return false
 	},
 
+	/**
+	 * Sends the given temporary message to the server.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} temporaryMessage temporary message, must already have been added to messages list.
+	 */
 	async postNewMessage(context, temporaryMessage) {
 		const { request, cancel } = CancelableRequest(postNewMessage)
 		context.commit('setCancelPostNewMessage', cancel)
@@ -694,6 +707,7 @@ const actions = {
 				})
 			}
 			if (conversation && message.id > conversation.lastReadMessage) {
+				// no await to make it async
 				context.dispatch('updateLastReadMessage', {
 					token: conversation.token,
 					id: message.id,
@@ -708,7 +722,7 @@ const actions = {
 			}
 
 			let statusCode = null
-			console.debug(`error while submitting message ${error}`, error)
+			console.error(`error while submitting message ${error}`, error)
 			if (error.isAxiosError) {
 				statusCode = error?.response?.status
 			}
