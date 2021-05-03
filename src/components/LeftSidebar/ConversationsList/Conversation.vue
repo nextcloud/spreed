@@ -23,7 +23,7 @@
 	<AppContentListItem
 		:title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
-		:to="!isSearchResult ? { name: 'conversation', params: { token: item.token }} : ''"
+		:to="item.token ? { name: 'conversation', params: { token: item.token }} : ''"
 		:class="{ 'has-unread-messages': item.unreadMessages }"
 		@click="onClick">
 		<template v-slot:icon>
