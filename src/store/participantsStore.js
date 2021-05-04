@@ -220,6 +220,7 @@ const actions = {
 		})
 
 		const participant = getters.getParticipant(token, index)
+		// FIXME: don't promote already promoted or read resulting type from server response
 		const updatedData = {
 			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST ? PARTICIPANT.TYPE.GUEST_MODERATOR : PARTICIPANT.TYPE.MODERATOR,
 		}
@@ -236,6 +237,7 @@ const actions = {
 		})
 
 		const participant = getters.getParticipant(token, index)
+		// FIXME: don't demote already demoted, use server response instead
 		const updatedData = {
 			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
 		}
