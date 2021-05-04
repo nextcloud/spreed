@@ -20,6 +20,7 @@ import {
 	setConversationDescription,
 	setSIPEnabled,
 	fetchConversation,
+	fetchConversations,
 } from '../services/conversationsService'
 
 jest.mock('../services/conversationsService', () => ({
@@ -34,6 +35,7 @@ jest.mock('../services/conversationsService', () => ({
 	setConversationDescription: jest.fn(),
 	setSIPEnabled: jest.fn(),
 	fetchConversation: jest.fn(),
+	fetchConversations: jest.fn(),
 }))
 
 describe('conversationsStore', () => {
@@ -71,10 +73,20 @@ describe('conversationsStore', () => {
 
 	describe('conversation list', () => {
 		let deleteMessagesAction = null
+		let checkMaintenanceModeAction = null
+		let clearMaintenanceModeAction = null
+		let updateTalkVersionHashAction = null
 
 		beforeEach(() => {
 			deleteMessagesAction = jest.fn()
 			testStoreConfig.modules.messagesStore.actions.deleteMessages = deleteMessagesAction
+
+			checkMaintenanceModeAction = jest.fn()
+			clearMaintenanceModeAction = jest.fn()
+			updateTalkVersionHashAction = jest.fn()
+			testStoreConfig.modules.talkHashStore.actions.checkMaintenanceMode = checkMaintenanceModeAction
+			testStoreConfig.modules.talkHashStore.actions.clearMaintenanceMode = clearMaintenanceModeAction
+			testStoreConfig.modules.talkHashStore.actions.updateTalkVersionHash = updateTalkVersionHashAction
 
 			store = new Vuex.Store(testStoreConfig)
 		})
@@ -163,16 +175,19 @@ describe('conversationsStore', () => {
 
 			expect(store.getters.conversation(testToken)).toBeUndefined()
 			expect(store.getters.conversation('XXANOTHERXX')).toBeUndefined()
+			expect(store.getters.conversationsList).toStrictEqual([])
 		})
 
 		test('fetches a single conversation', async() => {
-			fetchConversation.mockResolvedValue({
+			const response = {
 				data: {
 					ocs: {
 						data: testConversation,
 					},
 				},
-			})
+			}
+
+			fetchConversation.mockResolvedValue(response)
 
 			await store.dispatch('fetchConversation', { token: testToken })
 
@@ -180,7 +195,63 @@ describe('conversationsStore', () => {
 
 			const fetchedConversation = store.getters.conversation(testToken)
 			expect(fetchedConversation).toBe(testConversation)
+
+			expect(clearMaintenanceModeAction).toHaveBeenCalled()
+			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
+
+		test('fetches all conversations and adds them after purging', async() => {
+			const testConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+				},
+			]
+
+			// add conversation that should be purged
+			store.dispatch('addConversation', testConversation)
+
+			const response = {
+				data: {
+					ocs: {
+						data: testConversations,
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations')
+
+			expect(fetchConversations).toHaveBeenCalledWith()
+			expect(store.getters.conversationsList).toStrictEqual(testConversations)
+
+			expect(clearMaintenanceModeAction).toHaveBeenCalled()
+			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+		})
+
+		test('fetch conversation failure checks for maintenance mode', async() => {
+			const response = { status: 503 }
+			fetchConversation.mockRejectedValue({ response })
+
+			await expect(store.dispatch('fetchConversation', { token: testToken })).rejects.toMatchObject({ response })
+
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
+		})
+
+		test('fetch conversations failure checks for maintenance mode', async() => {
+			const response = { status: 503 }
+			fetchConversations.mockRejectedValue({ response })
+
+			await expect(store.dispatch('fetchConversations')).rejects.toMatchObject({ response })
+
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
+		})
+
 	})
 
 	describe('conversation settings', () => {
