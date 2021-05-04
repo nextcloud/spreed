@@ -251,7 +251,7 @@ class Config {
 	}
 
 	/**
-	 * Generates a username and password for the TURN server
+	 * Prepares a list of TURN servers with username and password
 	 *
 	 * @return array
 	 */
@@ -259,20 +259,7 @@ class Config {
 		$servers = $this->getTurnServers();
 
 		if (empty($servers)) {
-			return [
-				'schemes' => '',
-				'server' => '',
-				'username' => '',
-				'password' => '',
-				'protocols' => '',
-			];
-		}
-
-		// For now we use a random server from the list
-		try {
-			$server = $servers[random_int(0, count($servers) - 1)];
-		} catch (\Exception $e) {
-			$server = $servers[0];
+			return [];
 		}
 
 		// Credentials are valid for 24h
@@ -280,15 +267,20 @@ class Config {
 		$timestamp = $this->timeFactory->getTime() + 86400;
 		$rnd = $this->secureRandom->generate(16);
 		$username = $timestamp . ':' . $rnd;
-		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
-		return [
-			'schemes' => $server['schemes'],
-			'server' => $server['server'],
-			'username' => $username,
-			'password' => $password,
-			'protocols' => $server['protocols'],
-		];
+		foreach ($servers as $server) {
+			$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
+
+			$turnSettings[] = [
+				'schemes' => $server['schemes'],
+				'server' => $server['server'],
+				'username' => $username,
+				'password' => $password,
+				'protocols' => $server['protocols'],
+			];
+		}
+
+		return $turnSettings;
 	}
 
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
