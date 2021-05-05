@@ -882,6 +882,7 @@
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "說明的長度必須小於或等於{maxLength}個字符。 您當前的文本長度為{charactersCount}個字符。",
     "Disable lobby" : "等候室停用",
     "moderator" : "主持人",
+    "bot" : "機器人",
     "guest" : "訪客",
     "Dial-in PIN" : "撥入 PIN",
     "Demote from moderator" : "從主持人降級",
