@@ -22,6 +22,7 @@
 
 // eslint-disable-next-line node/no-unpublished-import
 import 'regenerator-runtime/runtime'
+import Vue from 'vue'
 
 global.OC = {
 	requestToken: '123',
@@ -36,4 +37,12 @@ global.OC = {
 		return 'en_GB'
 	},
 }
+global.OCA = {
+	Talk: {
+	},
+}
 global.t = jest.fn().mockImplementation((app, text) => text)
+
+Vue.prototype.t = global.t
+Vue.prototype.OC = OC
+Vue.prototype.OCA = OCA
