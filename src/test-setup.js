@@ -42,7 +42,9 @@ global.OCA = {
 	},
 }
 global.t = jest.fn().mockImplementation((app, text) => text)
+global.n = jest.fn().mockImplementation((app, text) => text)
 
 Vue.prototype.t = global.t
+Vue.prototype.n = global.n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
