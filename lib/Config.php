@@ -213,24 +213,6 @@ class Config {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getStunServer(): string {
-		$servers = $this->getStunServers();
-
-		if (empty($servers)) {
-			return '';
-		}
-
-		// For now we use a random server from the list
-		try {
-			return $servers[random_int(0, count($servers) - 1)];
-		} catch (\Exception $e) {
-			return $servers[0];
-		}
-	}
-
-	/**
 	 * Generates a username and password for the TURN server
 	 *
 	 * @return array
