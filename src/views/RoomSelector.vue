@@ -125,6 +125,7 @@ export default {
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
 		close() {
+			// FIXME: should not emit on $root but on itself
 			this.$root.$emit('close')
 		},
 		select() {
