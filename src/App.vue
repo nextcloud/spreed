@@ -457,9 +457,10 @@ export default {
 .content {
 	height: 100%;
 
+	//FIXME: remove this v-deep once nextcloud vue v4 is adopted
 	::v-deep .app-navigation-toggle {
-		top: 10px;
-		right: -10px;
+		top: 8px;
+		right: -8px;
 		border-radius: var(--border-radius-pill);
 	}
 

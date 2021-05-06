@@ -6,7 +6,7 @@
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
-  - it under the terms of the GNU Affero General Public License as
+  - it under the terms of the GNU Affero General Public auoLicense as
   - published by the Free Software Foundation, either version 3 of the
   - License, or (at your option) any later version.
   -
@@ -21,88 +21,105 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
-		<CallButton class="top-bar__button" />
-		<!-- Call layout switcher -->
-		<Actions
-			slot="trigger"
-			class="forced-background"
-			container="#content-vue">
-			<ActionButton v-if="isInCall"
-				:icon="changeViewIconClass"
-				@click="changeView">
-				{{ changeViewText }}
-			</actionbutton>
-		</Actions>
-		<!-- sidebar toggle -->
-		<Actions
-			v-shortkey.once="['f']"
-			class="top-bar__button forced-background"
-			menu-align="right"
-			:aria-label="t('spreed', 'Conversation actions')"
-			container="#content-vue"
-			@shortkey.native="toggleFullscreen">
-			<ActionButton
-				:icon="iconFullscreen"
-				:aria-label="t('spreed', 'Toggle fullscreen')"
-				:close-after-click="true"
-				@click="toggleFullscreen">
-				{{ labelFullscreen }}
-			</ActionButton>
-			<ActionSeparator
-				v-if="showModerationOptions" />
-			<ActionLink
-				v-if="isFileConversation"
-				icon="icon-text"
-				:href="linkToFile">
-				{{ t('spreed', 'Go to file') }}
-			</ActionLink>
-			<template
-				v-if="showModerationOptions">
+		<!-- conversation header -->
+		<div class="conversation-header">
+			<ConversationIcon
+				:item="conversation"
+				:hide-favorite="false"
+				:hide-call="false" />
+			<div class="conversation-header__text">
+				<p class="title">
+					{{ conversation.displayName }}
+				</p>
+				<p v-if="conversation.description" class="description">
+					{{ conversation.description }}
+				</p>
+			</div>
+		</div>
+		<div class="top-bar__buttons">
+			<CallButton class="top-bar__button" />
+			<!-- Call layout switcher -->
+			<Actions
+				slot="trigger"
+				class="forced-background"
+				container="#content-vue">
+				<ActionButton v-if="isInCall"
+					:icon="changeViewIconClass"
+					@click="changeView">
+					{{ changeViewText }}
+				</actionbutton>
+			</Actions>
+			<!-- sidebar toggle -->
+			<Actions
+				v-shortkey.once="['f']"
+				class="top-bar__button forced-background"
+				menu-align="right"
+				:aria-label="t('spreed', 'Conversation actions')"
+				container="#content-vue"
+				@shortkey.native="toggleFullscreen">
 				<ActionButton
+					:icon="iconFullscreen"
+					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
-					icon="icon-rename"
-					@click="handleRenameConversation">
-					{{ t('spreed', 'Rename conversation') }}
+					@click="toggleFullscreen">
+					{{ labelFullscreen }}
 				</ActionButton>
-			</template>
-			<ActionButton
-				v-if="!isOneToOneConversation"
-				icon="icon-clippy"
-				:close-after-click="true"
-				@click="handleCopyLink">
-				{{ t('spreed', 'Copy link') }}
-			</ActionButton>
-			<template
-				v-if="showModerationOptions && canFullModerate && isInCall">
-				<ActionSeparator />
+				<ActionSeparator
+					v-if="showModerationOptions" />
+				<ActionLink
+					v-if="isFileConversation"
+					icon="icon-text"
+					:href="linkToFile">
+					{{ t('spreed', 'Go to file') }}
+				</ActionLink>
+				<template
+					v-if="showModerationOptions">
+					<ActionButton
+						:close-after-click="true"
+						icon="icon-rename"
+						@click="handleRenameConversation">
+						{{ t('spreed', 'Rename conversation') }}
+					</ActionButton>
+				</template>
 				<ActionButton
+					v-if="!isOneToOneConversation"
+					icon="icon-clippy"
 					:close-after-click="true"
-					@click="forceMuteOthers">
-					<MicrophoneOff
-						slot="icon"
-						:size="16"
-						decorative
-						title="" />
-					{{ t('spreed', 'Mute others') }}
+					@click="handleCopyLink">
+					{{ t('spreed', 'Copy link') }}
 				</ActionButton>
-			</template>
-			<ActionSeparator
-				v-if="showModerationOptions" />
-			<ActionButton
-				icon="icon-settings"
-				:close-after-click="true"
-				@click="showConversationSettings">
-				{{ t('spreed', 'Conversation settings') }}
-			</ActionButton>
-		</Actions>
-		<Actions v-if="showOpenSidebarButton"
-			class="top-bar__button forced-background"
-			close-after-click="true"
-			container="#content-vue">
-			<ActionButton
-				:icon="iconMenuPeople"
-				@click="openSidebar" />
-		</Actions>
+				<template
+					v-if="showModerationOptions && canFullModerate && isInCall">
+					<ActionSeparator />
+					<ActionButton
+						:close-after-click="true"
+						@click="forceMuteOthers">
+						<MicrophoneOff
+							slot="icon"
+							:size="16"
+							decorative
+							title="" />
+						{{ t('spreed', 'Mute others') }}
+					</ActionButton>
+				</template>
+				<ActionSeparator
+					v-if="showModerationOptions" />
+				<ActionButton
+					icon="icon-settings"
+					:close-after-click="true"
+					@click="showConversationSettings">
+					{{ t('spreed', 'Conversation settings') }}
+				</ActionButton>
+			</Actions>
+			<Actions v-if="showOpenSidebarButton"
+				class="top-bar__button forced-background"
+				close-after-click="true"
+				container="#content-vue">
+				<ActionButton
+					:icon="iconMenuPeople"
+					@click="openSidebar" />
+			</Actions>
+		</div>
 	</div>
 </template>
 
@@ -119,6 +136,7 @@ import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
 import { callParticipantCollection } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
+import ConversationIcon from '../ConversationIcon'
 
 export default {
 	name: 'TopBar',
@@ -130,6 +148,7 @@ export default {
 		CallButton,
 		ActionSeparator,
 		MicrophoneOff,
+		ConversationIcon,
 	},
 
 	props: {
@@ -334,13 +353,15 @@ export default {
 
 .top-bar {
 	height: $top-bar-height;
-	position: absolute;
 	top: 0;
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 8px;
+	width: 100%;
+	background-color: var(--color-main-background);
+	border-bottom: 1px solid var(--color-border);
 
 	&.in-call {
 		right: 0;
@@ -350,17 +371,51 @@ export default {
 		}
 	}
 
+	&__buttons {
+		display: flex;
+		margin-left: 8px;
+	}
+
 	&__button {
 		margin: 0 2px;
 		align-self: center;
 		display: flex;
 		align-items: center;
+		white-space: nowrap;
 		svg {
 			margin-right: 4px !important;
 		}
 		.icon {
 			margin-right: 4px !important;
 		}
+	}
+}
+
+.conversation-header {
+	display: flex;
+	overflow-x: hidden;
+	overflow-y: clip;
+	margin-left: 48px;
+	white-space: nowrap;
+	width: 100%;
+	&__text {
+		display: flex;
+		flex-direction:column;
+		flex-grow: 1;
+		margin-left: 8px;
+		justify-content: center;
+		width: 100%;
+		overflow: hidden;
+	}
+	.title {
+		font-weight: bold;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.description {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var(--color-text-lighter)
 	}
 }
 </style>
