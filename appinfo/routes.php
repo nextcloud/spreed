@@ -62,7 +62,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/settings',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(1|2|3)',
 			],
 		],
 		[

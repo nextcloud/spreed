@@ -137,16 +137,24 @@ class SignalingController extends OCSController {
 		}
 
 		$stun = [];
+		$stunV3 = [];
+		$stunUrls = [];
 		$stunServers = $this->talkConfig->getStunServers();
 		foreach ($stunServers as $stunServer) {
 			$stun[] = [
 				'url' => 'stun:' . $stunServer,
 			];
+			$stunUrls[] = 'stun:' . $stunServer;
 		}
+		$stunV3[] = [
+			'urls' => $stunUrls
+		];
 
 		$turn = [];
+		$turnV3 = [];
 		$turnSettings = $this->talkConfig->getTurnSettings();
 		foreach ($turnSettings as $turnServer) {
+			$turnUrls = [];
 			$schemes = explode(',', $turnServer['schemes']);
 			$protocols = explode(',', $turnServer['protocols']);
 			foreach ($schemes as $scheme) {
@@ -157,8 +165,15 @@ class SignalingController extends OCSController {
 						'username' => $turnServer['username'],
 						'credential' => $turnServer['password'],
 					];
+					$turnUrls[] = $scheme . ':' . $turnServer['server'] . '?transport=' . $proto;
 				}
 			}
+
+			$turnV3[] = [
+				'urls' => $turnUrls,
+				'username' => $turnServer['username'],
+				'credential' => $turnServer['password'],
+			];
 		}
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
@@ -176,6 +191,11 @@ class SignalingController extends OCSController {
 
 		if ($apiV >= 2) {
 			$data['sipDialinInfo'] = $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '';
+		}
+
+		if ($apiV >= 3) {
+			$data['stunservers'] = $stunV3;
+			$data['turnservers'] = $turnV3;
 		}
 
 		return new DataResponse($data);
