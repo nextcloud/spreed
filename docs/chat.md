@@ -219,6 +219,8 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 * `conversation_created` - {actor} created the conversation
 * `conversation_renamed` - {actor} renamed the conversation from "foo" to "bar"
+* `description_set` - {actor} set the description to "Hello world"
+* `description_removed` - {actor} removed the description
 * `call_started` - {actor} started a call
 * `call_joined` - {actor} joined the call
 * `call_left` - {actor} left the call
@@ -242,3 +244,10 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
 * `message_deleted` - Message deleted by {actor} (Should not be shown to the user)
+* `file_shared` - {file}
+* `object_shared` - {object}
+* `matterbridge_config_added` - {actor} set up Matterbridge to synchronize this conversation with other chats
+* `matterbridge_config_edited` - {actor} updated the Matterbridge configuration
+* `matterbridge_config_removed` - {actor} removed the Matterbridge configuration
+* `matterbridge_config_enabled` - {actor} started Matterbridge
+* `matterbridge_config_disabled` - {actor} stopped Matterbridge

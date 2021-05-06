@@ -336,29 +336,29 @@ class SystemMessage {
 			$parsedMessage = '{object}';
 			$chatMessage->setMessageType('comment');
 		} elseif ($message === 'matterbridge_config_added') {
-			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats.');
+			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You set up Matterbridge to synchronize this conversation with other chats.');
+				$parsedMessage = $this->l->t('You set up Matterbridge to synchronize this conversation with other chats');
 			}
 		} elseif ($message === 'matterbridge_config_edited') {
-			$parsedMessage = $this->l->t('{actor} updated the Matterbridge configuration.');
+			$parsedMessage = $this->l->t('{actor} updated the Matterbridge configuration');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You updated the Matterbridge configuration.');
+				$parsedMessage = $this->l->t('You updated the Matterbridge configuration');
 			}
 		} elseif ($message === 'matterbridge_config_removed') {
-			$parsedMessage = $this->l->t('{actor} removed the Matterbridge configuration.');
+			$parsedMessage = $this->l->t('{actor} removed the Matterbridge configuration');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You removed the Matterbridge configuration.');
+				$parsedMessage = $this->l->t('You removed the Matterbridge configuration');
 			}
 		} elseif ($message === 'matterbridge_config_enabled') {
-			$parsedMessage = $this->l->t('{actor} started Matterbridge.');
+			$parsedMessage = $this->l->t('{actor} started Matterbridge');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You started Matterbridge.');
+				$parsedMessage = $this->l->t('You started Matterbridge');
 			}
 		} elseif ($message === 'matterbridge_config_disabled') {
-			$parsedMessage = $this->l->t('{actor} stopped Matterbridge.');
+			$parsedMessage = $this->l->t('{actor} stopped Matterbridge');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You stopped Matterbridge.');
+				$parsedMessage = $this->l->t('You stopped Matterbridge');
 			}
 		} elseif ($message === 'message_deleted') {
 			$parsedMessage = $this->l->t('{actor} deleted a message');
