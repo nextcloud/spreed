@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.2.1 – 2021-05-06
+### Fixed
+- Fix redirect when deleting the current conversation
+  [#5315](https://github.com/nextcloud/spreed/pull/5315)
+- Reset the page title when the conversation is not found
+  [#5493](https://github.com/nextcloud/spreed/pull/5493)
+- Fix quality warning appearing again in certain conditions
+  [#5552](https://github.com/nextcloud/spreed/pull/5552)
+- Fix camera quality starting bad in some cases
+  [#5556](https://github.com/nextcloud/spreed/pull/5556)
+- Allow to copy the link of open conversations which the user didn't join
+  [#5562](https://github.com/nextcloud/spreed/pull/5562)
+- Fix search focus when typing in the conversation search
+  [#5566](https://github.com/nextcloud/spreed/pull/5566)
+- Fix sorting of users which set their user status to offline
+  [#5569](https://github.com/nextcloud/spreed/pull/5569)
+
 ## 11.2.0 – 2021-04-12
 ### Added
 - Added a temporary OCS Api for clients to upload avatars
