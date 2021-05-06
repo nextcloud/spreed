@@ -46,6 +46,7 @@ class CSPListener implements IEventListener {
 		}
 
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 		foreach ($this->config->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}

@@ -48,6 +48,12 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'
+import 'leaflet/dist/leaflet.css'
+
+// Leaflet icon patch
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
+// eslint-disable-next-line
+import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line

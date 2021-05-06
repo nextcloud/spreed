@@ -21,14 +21,34 @@
 
 <template>
 	<div class="location">
-		{{ name }}
-		<p>{{ id }}</p>
+		<LMap
+			style="height: 200px"
+			:zoom="zoom"
+			:center="center"
+			:options="{
+				scrollWheelZoom: false,
+				zoomControl: false,
+				dragging: false,
+				attributionControl: false,
+			}"
+			@scroll.prevent="">
+			<LTileLayer :url="url" />
+			<LMarker :lat-lng="center" s />
+		</LMap>
 	</div>
 </template>
 
 <script>
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+
 export default {
 	name: 'Location',
+
+	components: {
+		LMap,
+		LTileLayer,
+		LMarker,
+	},
 
 	props: {
 		/**
@@ -63,12 +83,29 @@ export default {
 			required: true,
 		},
 	},
+
+	data() {
+		return {
+			url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			zoom: 13,
+		}
+	},
+
+	computed: {
+		center() {
+			return [this.latitude, this.longitude]
+		},
+	},
 }
 </script>
 
 <style lang="scss" scoped>
 .location {
-	width: 400px;
-	background-color: lightgray;
+	overflow: hidden;
+	border-radius: var(--border-radius-large);
+	position: relative;
+	z-index: 1;
+	height: 200px;
+	width: 350px;
 }
 </style>
