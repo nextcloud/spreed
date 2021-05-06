@@ -214,6 +214,7 @@ import {
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import Location from './MessagePart/Location'
 
 export default {
 	name: 'Message',
@@ -490,6 +491,11 @@ export default {
 				} else if (type === 'deck-card') {
 					richParameters[p] = {
 						component: DeckCard,
+						props: this.messageParameters[p],
+					}
+				} else if (type === 'geo-location') {
+					richParameters[p] = {
+						component: Location,
 						props: this.messageParameters[p],
 					}
 				} else {
