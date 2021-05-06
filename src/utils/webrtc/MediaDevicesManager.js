@@ -383,7 +383,7 @@ MediaDevicesManager.prototype = {
 				if (!(constraints.audio instanceof Object)) {
 					constraints.audio = {}
 				}
-				constraints.audio.deviceId = this.attributes.audioInputId
+				constraints.audio.deviceId = { exact: this.attributes.audioInputId }
 			} else if (this.attributes.audioInputId === null) {
 				constraints.audio = false
 			}
@@ -394,7 +394,7 @@ MediaDevicesManager.prototype = {
 				if (!(constraints.video instanceof Object)) {
 					constraints.video = {}
 				}
-				constraints.video.deviceId = this.attributes.videoInputId
+				constraints.video.deviceId = { exact: this.attributes.videoInputId }
 			} else if (this.attributes.videoInputId === null) {
 				constraints.video = false
 			}
@@ -429,15 +429,17 @@ MediaDevicesManager.prototype = {
 	_stopIncompatibleTracks: function(constraints) {
 		this._tracks.forEach(track => {
 			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
+				const constraintsAudioDeviceId = constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId
 				const settings = track.getSettings()
-				if (settings && settings.deviceId !== constraints.audio.deviceId) {
+				if (settings && settings.deviceId !== constraintsAudioDeviceId) {
 					track.stop()
 				}
 			}
 
 			if (constraints.video && constraints.video.deviceId && track.kind === 'video') {
+				const constraintsVideoDeviceId = constraints.video.deviceId.exact || constraints.video.deviceId.ideal || constraints.video.deviceId
 				const settings = track.getSettings()
-				if (settings && settings.deviceId !== constraints.video.deviceId) {
+				if (settings && settings.deviceId !== constraintsVideoDeviceId) {
 					track.stop()
 				}
 			}
