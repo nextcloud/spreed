@@ -100,6 +100,10 @@ export default {
 		mapLink() {
 			return `https://www.openstreetmap.org/?mlat=${this.latitude}&mlon=${this.longitude}#map=${this.linkZoom}/${this.latitude}/${this.longitude}`
 		},
+
+		linkAriaLabel() {
+			return t('spreed', 'Open this location in Openstreetmap')
+		},
 	},
 }
 </script>
