@@ -21,7 +21,7 @@ Group and public conversations can be used to host webinars. Those online meetin
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `state` | int | New state for the conversation
     `timer` | int/null | Timestamp when the lobby state is reset to no lobby
 
@@ -43,7 +43,7 @@ Group and public conversations can be used to host webinars. Those online meetin
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `state` | int | New SIP state for the conversation (0 = disabled, 1 = enabled)
 
 * Response:
