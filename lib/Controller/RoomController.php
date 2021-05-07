@@ -368,7 +368,6 @@ class RoomController extends AEnvironmentAwareController {
 			'lobbyTimer' => 0,
 			'lastPing' => 0,
 			'sessionId' => '0',
-			'guestList' => '',
 			'lastMessage' => [],
 			'sipEnabled' => Webinary::SIP_DISABLED,
 			'actorType' => '',

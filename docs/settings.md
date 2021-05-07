@@ -9,7 +9,7 @@
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `key` | string | The user config to set
     `value` | string/int | The value to set
 
@@ -22,7 +22,7 @@
 ## User settings
 
 Key | Capability | Default | Valid values
-----|------------|---------|-------------
+---|---|---|---
 `attachment_folder` | `config => attachments => folder` | `/Talk` | Path owned by the user to store uploads and received shares. It is created if it does not exist.
 `read_status_privacy` | `config => chat => read-privacy` | `0` | One of the read-status constants from the [constants list](constants.md#Participant-read-status-privacy)
 
@@ -36,7 +36,7 @@ Key | Capability | Default | Valid values
     All values must be sent in the same request
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `sipGroups` | array | List of group ids that are allow to enable SIP for a conversation
     `dialInInfo` | string | The dial-in information shown in the sidebar and sent in emails
     `sharedSecret` | string | The shared secret of the SIP component

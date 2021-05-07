@@ -9,7 +9,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `fileId` | int | File id for which the conversation should be given
 
 * Response:
@@ -23,7 +23,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `token` | string | The token of the conversation for this file
 
 ## Get conversation for a public share
@@ -33,7 +33,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `shareToken` | string | Share token for which the conversation should be given
 
 * Response:
@@ -46,7 +46,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `token` | string | The token of the conversation for this file
 
 ## Create a conversation to request the password for a public share
@@ -56,7 +56,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `shareToken` | string | Share token for which the conversation should be given
 
 * Response:
@@ -68,7 +68,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `token` | string | The token of the conversation for this file
         `name` | string | A technical name for the conversation
         `displayName` | string | The visual name of the conversation

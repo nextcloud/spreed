@@ -9,7 +9,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a conversation
     `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
     `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
@@ -28,7 +28,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability and when lastCommonReadId was sent)
 
@@ -36,7 +36,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         Array of messages, each message has at least:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `id` | int | ID of the comment
         `token` | string | Conversation token
         `actorType` | string | `guests` or `users`
@@ -56,7 +56,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * When deleted:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `id` | int | ID of the parent comment
     `deleted` | bool | `true` when the parent is deleted
 
@@ -72,7 +72,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `message` | string | The message the user wants to say
     `actorDisplayName` | string | Guest display name (ignored for logged in users)
     `replyTo` | int | The message ID this message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)
@@ -90,7 +90,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
     - Data:
@@ -106,7 +106,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `objectType` | string | The object type
     `objectId` | string | The object id
     `metaData` | string | JSON encoded array of the rich objects data
@@ -125,7 +125,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
     - Header:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
     - Data:
@@ -151,7 +151,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
     - Header:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
     - Data:
@@ -168,7 +168,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `lastReadMessage` | int | The last read message ID
 
 * Response:
@@ -180,7 +180,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
     - Header:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
 
@@ -191,7 +191,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Data:
 
     field | type | Description
-    ------|------|------------
+    ---|---|---
     `search` | string | Search term for name suggestions (should at least be 1 character)
     `limit` | int | Number of suggestions to receive (20 by default)
     `includeStatus` | bool | Whether the user status information also needs to be loaded
@@ -207,7 +207,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         Array of suggestions, each suggestion has at least:
 
         field | type | Description
-        ------|------|------------
+        ---|---|---
         `id` | string | The user id which should be sent as `@<id>` in the message (user ids that contain spaces as well as guest ids need to be wrapped in double-quotes when sending in a message: `@"space user"` and `@"guest/random-string"`)
         `label` | string | The displayname of the user
         `source` | string | The type of the user, currently only `users`, `guests` or `calls` (for mentioning the whole conversation
