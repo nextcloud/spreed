@@ -20,7 +20,11 @@
 -->
 
 <template>
-	<div class="location">
+	<a :href="mapLink"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="location"
+		:aria-label="linkAriaLabel">
 		<LMap
 			style="height: 200px"
 			:zoom="zoom"
@@ -35,7 +39,7 @@
 			<LTileLayer :url="url" />
 			<LMarker :lat-lng="center" s />
 		</LMap>
-	</div>
+	</a>
 </template>
 
 <script>
@@ -95,6 +99,10 @@ export default {
 		center() {
 			return [this.latitude, this.longitude]
 		},
+
+		mapLink() {
+			return `https://www.openstreetmap.org/?mlat=${this.latitude}&mlon=${this.longitude}#map=15/${this.latitude}/${this.longitude}`
+		},
 	},
 }
 </script>
@@ -104,6 +112,7 @@ export default {
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
 	position: relative;
+	display: block;
 	z-index: 1;
 	height: 200px;
 	width: 350px;
