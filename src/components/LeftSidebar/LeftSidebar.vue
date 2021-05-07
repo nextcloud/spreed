@@ -130,7 +130,6 @@ import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import {
-	createOneToOneConversation,
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService'
@@ -355,16 +354,13 @@ export default {
 		 * @param {string} item.source The source of the target (e.g. users, groups, circle)
 		 */
 		async createAndJoinConversation(item) {
-			let response
 			if (item.source === 'users') {
 				// Create one-to-one conversation directly
-				response = await createOneToOneConversation(item.id)
-				const conversation = response.data.ocs.data
+				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
 				this.abortSearch()
 				EventBus.$once('joinedConversation', ({ token }) => {
 					this.$refs.conversationsList.scrollToConversation(token)
 				})
-				this.$store.dispatch('addConversation', conversation)
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types we start the conversation creation dialog

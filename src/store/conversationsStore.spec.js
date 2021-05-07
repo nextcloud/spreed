@@ -16,6 +16,7 @@ import {
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
+	createOneToOneConversation,
 	setConversationName,
 	setConversationDescription,
 	setSIPEnabled,
@@ -31,6 +32,7 @@ jest.mock('../services/conversationsService', () => ({
 	changeLobbyState: jest.fn(),
 	changeReadOnlyState: jest.fn(),
 	changeListable: jest.fn(),
+	createOneToOneConversation: jest.fn(),
 	setConversationName: jest.fn(),
 	setConversationDescription: jest.fn(),
 	setSIPEnabled: jest.fn(),
@@ -545,6 +547,33 @@ describe('conversationsStore', () => {
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.lastActivity).toBe(mockDate.getTime() / 1000)
+		})
+	})
+
+	describe('creating conversations', () => {
+		test('creates one to one conversation', async() => {
+			const newConversation = {
+				id: 999,
+				token: 'new-token',
+				type: CONVERSATION.TYPE.ONE_TO_ONE,
+			}
+
+			const response = {
+				data: {
+					ocs: {
+						data: newConversation,
+					},
+				},
+			}
+
+			createOneToOneConversation.mockResolvedValueOnce(response)
+
+			await store.dispatch('createOneToOneConversation', 'target-actor-id')
+
+			expect(createOneToOneConversation).toHaveBeenCalledWith('target-actor-id')
+
+			const addedConversation = store.getters.conversation('new-token')
+			expect(addedConversation).toBe(newConversation)
 		})
 	})
 })
