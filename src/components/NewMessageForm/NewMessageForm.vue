@@ -41,6 +41,7 @@
 					v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__button">
 					<Actions
+						container="#content-vue"
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button"
 						:aria-label="t('spreed', 'Share files to the conversation')"

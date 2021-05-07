@@ -33,7 +33,7 @@
 <script>
 import CallView from './components/CallView/CallView'
 import PreventUnload from 'vue-prevent-unload'
-import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import sessionIssueHandler from './mixins/sessionIssueHandler'
 import isInCall from './mixins/isInCall'
 import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
@@ -49,7 +49,7 @@ export default {
 	},
 
 	mixins: [
-		duplicateSessionHandler,
+		sessionIssueHandler,
 		isInCall,
 		participant,
 		talkHashCheck,
@@ -108,7 +108,7 @@ export default {
 		},
 
 		warnLeaving() {
-			return !this.isLeavingAfterSessionConflict && this.showCallView
+			return !this.isLeavingAfterSessionIssue && this.showCallView
 		},
 	},
 

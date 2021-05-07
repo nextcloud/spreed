@@ -65,7 +65,7 @@ const joinConversation = async(token) => {
 		EventBus.$emit('joinedConversation', { token })
 		return response
 	} catch (error) {
-		if (error.response.status === 409) {
+		if (error?.response?.status === 409 && error?.response?.data?.ocs?.data) {
 			const responseData = error.response.data.ocs.data
 			let maxLastPingAge = new Date().getTime() / 1000 - 40
 			if (responseData.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {

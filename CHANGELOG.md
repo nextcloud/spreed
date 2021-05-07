@@ -1,6 +1,49 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.2.1 – 2021-05-06
+### Fixed
+- Fix redirect when deleting the current conversation
+  [#5315](https://github.com/nextcloud/spreed/pull/5315)
+- Reset the page title when the conversation is not found
+  [#5493](https://github.com/nextcloud/spreed/pull/5493)
+- Fix quality warning appearing again in certain conditions
+  [#5552](https://github.com/nextcloud/spreed/pull/5552)
+- Fix camera quality starting bad in some cases
+  [#5556](https://github.com/nextcloud/spreed/pull/5556)
+- Allow to copy the link of open conversations which the user didn't join
+  [#5562](https://github.com/nextcloud/spreed/pull/5562)
+- Fix search focus when typing in the conversation search
+  [#5566](https://github.com/nextcloud/spreed/pull/5566)
+- Fix sorting of users which set their user status to offline
+  [#5569](https://github.com/nextcloud/spreed/pull/5569)
+
+## 11.2.0 – 2021-04-12
+### Added
+- Added a temporary OCS Api for clients to upload avatars
+  [#5401](https://github.com/nextcloud/spreed/pull/5401)
+
+### Changed
+- Direct reply button in message row
+  [#5361](https://github.com/nextcloud/spreed/pull/5361)
+
+### Fixed
+- Show error notification also when hello signaling message fails
+  [#5344](https://github.com/nextcloud/spreed/pull/5344)
+- Fix UI feedback when remote participants lose connection
+  [#5345](https://github.com/nextcloud/spreed/pull/5345)
+- Handle failed server requests more gracefully
+  [#5455](https://github.com/nextcloud/spreed/pull/5455)
+
+- Only use the local file as preview for some types when uploading
+  [#5423](https://github.com/nextcloud/spreed/pull/5423)
+- Fix an issue with the migration to the new attendees table
+  [#5427](https://github.com/nextcloud/spreed/pull/5427)
+- Fix the background job checking the schema
+  [#5374](https://github.com/nextcloud/spreed/pull/5374)
+- Fix a bug with the raised hand of users that disconnect
+  [#5418](https://github.com/nextcloud/spreed/pull/5418)
+
 ## 11.1.2 – 2021-04-12
 ### Fixed
 - Only use the local file as preview for some types when uploading
