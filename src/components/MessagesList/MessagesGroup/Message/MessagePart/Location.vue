@@ -27,7 +27,7 @@
 		:aria-label="linkAriaLabel">
 		<LMap
 			style="height: 200px"
-			:zoom="zoom"
+			:zoom="previewZoom"
 			:center="center"
 			:options="{
 				scrollWheelZoom: false,
@@ -83,7 +83,12 @@ export default {
 	data() {
 		return {
 			url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			zoom: 13,
+			// The zoom level of the map in the messages list
+			previewZoom: 13,
+			// The zoom level of the map in the new openstreetmap tab upon
+			// Opening the link
+			linkZoom: 18,
+
 		}
 	},
 
@@ -93,7 +98,7 @@ export default {
 		},
 
 		mapLink() {
-			return `https://www.openstreetmap.org/?mlat=${this.latitude}&mlon=${this.longitude}#map=15/${this.latitude}/${this.longitude}`
+			return `https://www.openstreetmap.org/?mlat=${this.latitude}&mlon=${this.longitude}#map=${this.linkZoom}/${this.latitude}/${this.longitude}`
 		},
 	},
 }
