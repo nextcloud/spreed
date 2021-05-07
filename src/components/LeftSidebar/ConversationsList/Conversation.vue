@@ -23,7 +23,7 @@
 	<AppContentListItem
 		:title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
-		:to="!isSearchResult ? { name: 'conversation', params: { token: item.token }} : ''"
+		:to="item.token ? { name: 'conversation', params: { token: item.token }} : ''"
 		:class="{ 'has-unread-messages': item.unreadMessages }"
 		@click="onClick">
 		<template v-slot:icon>
@@ -326,7 +326,7 @@ export default {
 					}
 
 					if (this.item.token === this.$store.getters.getToken()) {
-						this.$router.push('/apps/spreed')
+						this.$router.push({ name: 'root', params: { skipLeaveWarning: true } })
 						this.$store.dispatch('updateToken', '')
 					}
 
@@ -350,7 +350,7 @@ export default {
 				// If successful, deletes the conversation from the store
 				this.$store.dispatch('deleteConversation', this.item.token)
 			} catch (error) {
-				if (error.response && error.response.status === 400) {
+				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
 					console.debug(`error while removing yourself from conversation ${error}`)

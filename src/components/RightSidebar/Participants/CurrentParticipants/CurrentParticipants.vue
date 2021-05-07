@@ -130,14 +130,19 @@ export default {
 		 * @returns {number}
 		 */
 		sortParticipants(participant1, participant2) {
-			let session1 = participant1.sessionId
-			let session2 = participant2.sessionId
+			const session1 = participant1.sessionId
+			const session2 = participant2.sessionId
+			/**
+			 * For now the user status is not overwriting the online-offline status anymore
+			 * It felt too weird having users appear as offline but they are in the call or chat actively
 			if (participant1.status === 'offline') {
 				session1 = '0'
 			}
 			if (participant2.status === 'offline') {
 				session2 = '0'
 			}
+			 */
+
 			if (session1 === '0') {
 				if (session2 !== '0') {
 					return 1

@@ -28,13 +28,13 @@
 			:aria-label="t('spreed', 'TURN server schemes')"
 			@input="updateSchemes">
 			<option value="turn,turns">
-				{{ t('spreed', 'turn: and turns:') }}
+				{{ t('spreed', '{option1} and {option2}', { option1: 'turn:', option2: 'turns:' }) }}
 			</option>
 			<option value="turn">
-				{{ t('spreed', 'turn: only') }}
+				{{ t('spreed', '{option} only', { option: 'turn:' }) }}
 			</option>
 			<option value="turns">
-				{{ t('spreed', 'turns: only') }}
+				{{ t('spreed', '{option} only', { option: 'turns:' }) }}
 			</option>
 		</select>
 
@@ -63,13 +63,13 @@
 			:aria-label="t('spreed', 'TURN server protocols')"
 			@input="updateProtocols">
 			<option value="udp,tcp">
-				{{ t('spreed', 'UDP and TCP') }}
+				{{ t('spreed', '{option1} and {option2}', { option1: 'UDP', option2: 'TCP' }) }}
 			</option>
 			<option value="udp">
-				{{ t('spreed', 'UDP only') }}
+				{{ t('spreed', '{option} only', { option: 'UDP' }) }}
 			</option>
 			<option value="tcp">
-				{{ t('spreed', 'TCP only') }}
+				{{ t('spreed', '{option} only', { option: 'TCP' }) }}
 			</option>
 		</select>
 
@@ -141,7 +141,7 @@ export default {
 	computed: {
 		turnServerError() {
 			if (this.schemes.includes('turns') && /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$/.test(this.server.trim())) {
-				return t('spreed', 'turns: scheme must be used with a domain')
+				return t('spreed', '{schema} scheme must be used with a domain', { schema: 'turns:' })
 			}
 
 			return false

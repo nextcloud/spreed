@@ -66,7 +66,7 @@ import Axios from '@nextcloud/axios'
 import UploadEditor from './components/UploadEditor'
 import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
-import duplicateSessionHandler from './mixins/duplicateSessionHandler'
+import sessionIssueHandler from './mixins/sessionIssueHandler'
 import browserCheck from './mixins/browserCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
 
@@ -82,7 +82,7 @@ export default {
 
 	mixins: [
 		browserCheck,
-		duplicateSessionHandler,
+		sessionIssueHandler,
 	],
 
 	data() {
@@ -135,6 +135,8 @@ export default {
 			immediate: true,
 			handler(isChatTheActiveTab) {
 				this.forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab)
+				// recheck the file info in case the sharing info was changed
+				this.setTalkSidebarSupportedForFile(this.fileInfo)
 			},
 		},
 	},
@@ -164,7 +166,7 @@ export default {
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
-				if (!this.isLeavingAfterSessionConflict) {
+				if (!this.isLeavingAfterSessionIssue) {
 					leaveConversationSync(this.token)
 				}
 			}

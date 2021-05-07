@@ -27,12 +27,15 @@
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
 		<transition name="fade">
-			<video
-				v-show="showVideo"
-				ref="video"
-				:disablePictureInPicture="!isBig"
-				:class="videoClass"
-				class="video" />
+			<div v-show="showVideo"
+				:class="videoWrapperClass"
+				class="videoWrapper">
+				<video
+					ref="video"
+					:disablePictureInPicture="!isBig"
+					:class="videoClass"
+					class="video" />
+			</div>
 		</transition>
 		<transition name="fade">
 			<Screen
@@ -169,15 +172,29 @@ export default {
 			}
 		},
 
+		isNotConnected() {
+			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
+		},
+
+		isLoading() {
+			return this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
+		},
+
 		containerClass() {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
-				'not-connected': !this.placeholderForPromoted && this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED,
+				'not-connected': !this.placeholderForPromoted && this.isNotConnected,
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
+			}
+		},
+
+		videoWrapperClass() {
+			return {
+				'icon-loading': this.isLoading,
 			}
 		},
 
@@ -187,7 +204,7 @@ export default {
 
 		avatarClass() {
 			return {
-				'icon-loading': this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
+				'icon-loading': this.isLoading,
 			}
 		},
 
@@ -439,6 +456,13 @@ export default {
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
+.not-connected {
+	video,
+	.avatar-container {
+		opacity: 0.5;
+	}
+}
+
 .video-container-grid {
 	position: relative;
 	height: 100%;
@@ -473,9 +497,16 @@ export default {
 	align-items: center;
 }
 
+.videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
+}
+
+.videoWrapper.icon-loading:after {
+	height: 60px;
+	width: 60px;
+	margin: -32px 0 0 -32px;
 }
 
 .video--fit {

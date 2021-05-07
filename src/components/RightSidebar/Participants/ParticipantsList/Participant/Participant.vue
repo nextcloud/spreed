@@ -94,6 +94,7 @@
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
+			container="#content-vue"
 			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
 			<ActionText
@@ -372,7 +373,12 @@ export default {
 		},
 
 		isOffline() {
-			return /* this.participant.status === 'offline' || */ this.sessionId === '0'
+			/**
+			 * For now the user status is not overwriting the online-offline status anymore
+			 * It felt too weird having users appear as offline but they are in the call or chat actively
+			 return this.participant.status === 'offline' || this.sessionId === '0'
+			 */
+			return this.sessionId === '0'
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1

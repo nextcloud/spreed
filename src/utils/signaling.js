@@ -439,16 +439,16 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				// User navigated away in the meantime. Ignore
 			} else if (axios.isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
-			} else if (error.response && error.response.status === 409) {
+			} else if (error?.response?.status === 409) {
 				// Participant joined a second time and this session was killed
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
 				EventBus.$emit('duplicateSessionDetected')
-			} else if (error.response && (error.response.status === 404 || error.response.status === 403)) {
+			} else if (error?.response?.status === 404 || error?.response?.status === 403) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
-				window.location = generateUrl('/apps/spreed/not-found')
+				EventBus.$emit('deletedSessionDetected')
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
@@ -518,6 +518,7 @@ function Standalone(settings, urls) {
 	this.initialReconnectIntervalMs = 1000
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
+	this.helloResponseErrorCount = 0
 	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
@@ -580,10 +581,6 @@ Signaling.Standalone.prototype.connect = function() {
 		if (this.signalingConnectionWarning !== null) {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
-		}
-		if (this.signalingConnectionError !== null) {
-			this.signalingConnectionError.hideToast()
-			this.signalingConnectionError = null
 		}
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		this.sendHello()
@@ -849,10 +846,35 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			return
 		}
 
+		this.helloResponseErrorCount++
+
+		if (this.signalingConnectionError === null && this.helloResponseErrorCount < 5) {
+			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		} else if (this.helloResponseErrorCount === 5) {
+			// Switch to a different message as several errors in a row in hello
+			// responses indicate that the signaling server might be unable to
+			// connect to Nextcloud.
+			if (this.signalingConnectionError) {
+				this.signalingConnectionError.hideToast()
+			}
+			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Something might be wrong in the signaling server configuration'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		}
+
 		// TODO(fancycode): How should this be handled better?
 		console.error('Could not connect to server', data)
 		this.reconnect()
 		return
+	}
+
+	this.helloResponseErrorCount = 0
+
+	if (this.signalingConnectionError !== null) {
+		this.signalingConnectionError.hideToast()
+		this.signalingConnectionError = null
 	}
 
 	const resumedSession = !!this.resumeId
@@ -1130,7 +1152,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				return
 			}
 			console.error('User or session was removed from the conversation, redirecting')
-			EventBus.$emit('duplicateSessionDetected')
+			EventBus.$emit('deletedSessionDetected')
 			break
 		}
 		// eslint-disable-next-line no-fallthrough
