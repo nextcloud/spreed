@@ -56,14 +56,6 @@ export default {
 
 	props: {
 		/**
-		 * The geolink for the location
-		 */
-		id: {
-			type: String,
-			required: true,
-		},
-
-		/**
 		 * The latitude of the location
 		 */
 		latitude: {
