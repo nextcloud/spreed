@@ -232,11 +232,11 @@ Feature: conversation/lobby
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" sets description for room "room" to "the description" with 200 (v4)
     Then user "participant1" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage                                  |
-      | room | the description | 3    | 1               | You set the description to "the description" |
+      | name | description     | type | participantType | lastMessage             |
+      | room | the description | 3    | 1               | You set the description |
     And user "participant2" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage                                      |
-      | room | the description | 3    | 2               | {actor} set the description to "the description" |
+      | name | description     | type | participantType | lastMessage                 |
+      | room | the description | 3    | 2               | {actor} set the description |
     And user "participant3" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 3               |             |
@@ -244,8 +244,8 @@ Feature: conversation/lobby
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 5               |             |
     And user "guest" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage                                       |
-      | room | the description | 3    | 6               | {actor} set the description to "the description"  |
+      | name | description     | type | participantType | lastMessage                 |
+      | room | the description | 3    | 6               | {actor} set the description |
     And user "guest2" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 4               |             |

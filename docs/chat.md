@@ -219,7 +219,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 * `conversation_created` - {actor} created the conversation
 * `conversation_renamed` - {actor} renamed the conversation from "foo" to "bar"
-* `description_set` - {actor} set the description to "Hello world"
+* `description_set` - {actor} set the description
 * `description_removed` - {actor} removed the description
 * `call_started` - {actor} started a call
 * `call_joined` - {actor} joined the call
