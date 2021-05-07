@@ -26,7 +26,6 @@
 		class="location"
 		:aria-label="linkAriaLabel">
 		<LMap
-			style="height: 200px"
 			:zoom="previewZoom"
 			:center="center"
 			:options="{
@@ -37,13 +36,21 @@
 			}"
 			@scroll.prevent="">
 			<LTileLayer :url="url" />
-			<LMarker :lat-lng="center" s />
+			<LMarker :lat-lng="center">
+				<LTooltip
+					:options="{
+						direction: 'top',
+						permanent: 'true',
+						offset: [-16,-14]}">
+					{{ name }}
+				</LTooltip>
+			</LMarker>
 		</LMap>
 	</a>
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet'
 
 export default {
 	name: 'Location',
@@ -52,6 +59,7 @@ export default {
 		LMap,
 		LTileLayer,
 		LMarker,
+		LTooltip,
 	},
 
 	props: {
@@ -76,7 +84,7 @@ export default {
 		 */
 		name: {
 			type: String,
-			required: true,
+			default: '',
 		},
 	},
 
@@ -110,12 +118,15 @@ export default {
 
 <style lang="scss" scoped>
 .location {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 1;
+	white-space: initial;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
-	position: relative;
-	display: block;
-	z-index: 1;
-	height: 200px;
-	width: 350px;
+	height: 300px;
+	max-height: 30vh;
+	margin: 4px;
 }
 </style>
