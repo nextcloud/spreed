@@ -46,9 +46,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} переименовал(а) обсуждение «%1$s» в «%2$s»",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Вы переименовали обсуждение «%1$s» в «%2$s»",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Администратор переименовал обсуждение «%1$s» в «%2$s»",
-    "{actor} set the description to \"%1$s\"" : "{actor} изменил(а) описание на «%1$s»",
-    "You set the description to \"%1$s\"" : "Вы изменили описание на «%1$s»",
-    "An administrator set the description to \"%1$s\"" : "Администратор изменил описание на «%1$s»",
     "{actor} removed the description" : "{actor} удалил описание",
     "You removed the description" : "Вы удалили описание",
     "An administrator removed the description" : "Администратор удалил описание",
@@ -1062,6 +1059,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Открыть журнал matterbridge",
     "User name or e-mail address" : "Имя пользователя или адрес эл. почты",
     "Add new bridged channel" : "Добавить связанный канал",
+    "{actor} set the description to \"%1$s\"" : "{actor} изменил(а) описание на «%1$s»",
+    "You set the description to \"%1$s\"" : "Вы изменили описание на «%1$s»",
+    "An administrator set the description to \"%1$s\"" : "Администратор изменил описание на «%1$s»",
     "{actor} started Matterbridge." : "{actor} запустил(а) систему обмена сообщениями Matterbridge.",
     "You started Matterbridge." : "Вы запустили систему обмена сообщениями Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} остановил(а) систему обмена сообщениями Matterbridge.",
@@ -1071,10 +1071,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Сервер TURN (Traversal Using Relay NAT) используется для перенаправления данных для участников, расположенных за брандмауэром. Сервер TURN необходим, если участники не могут устанавливать прямое соединение. Сведения по настройке приведены в {linkstart}документации{linkend}.",
     "Lower hand" : "Опустить руку",
     "Raise hand" : "Поднять руку",
-    "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
-    "turn: and turns:" : "turn: и turns:",
-    "turn: only" : "только turn:",
-    "turns: only" : "только turns:",
-    "turns: scheme must be used with a domain" : "turns: схема может быть использована только с указанием домена"
+    "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

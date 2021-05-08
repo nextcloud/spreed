@@ -45,9 +45,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} ha renombrado la conversación de \"%1$s\" a \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Has renombrado la conversación de \"%1$s\" a \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Un administrador ha cambiado el nombre de la conversación «%1$s» a «%2$s»",
-    "{actor} set the description to \"%1$s\"" : "{actor} ha establecido la descripción como «%1$s»",
-    "You set the description to \"%1$s\"" : "Has establecido la descripción como «%1$s»",
-    "An administrator set the description to \"%1$s\"" : "Un administrador ha establecido la descripción como «%1$s»",
     "{actor} removed the description" : "{actor} ha eliminado la descripción",
     "You removed the description" : "Has eliminado la descripción",
     "An administrator removed the description" : "Un administrador ha eliminado la descripción",
@@ -1025,6 +1022,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Mostrar registro de Matterbridge",
     "User name or e-mail address" : "Nombre de usuario o dirección de correo",
     "Add new bridged channel" : "Añadir nuevo canal enlazado",
+    "{actor} set the description to \"%1$s\"" : "{actor} ha establecido la descripción como «%1$s»",
+    "You set the description to \"%1$s\"" : "Has establecido la descripción como «%1$s»",
+    "An administrator set the description to \"%1$s\"" : "Un administrador ha establecido la descripción como «%1$s»",
     "{actor} started Matterbridge." : "{actor} ha iniciado Matterbridge.",
     "You started Matterbridge." : "Has iniciado Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} ha detenido Matterbridge.",
@@ -1034,10 +1034,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Un servidor TURN es usada para redirigirlo el tráfico de los participantes tras un cortafuegos. Si los participantes individuales no pueden conectar con otros, lo más probable es que sea necesario un servidor TURN. Vea {linkstart}esta documentación{linkend} para instrucciones de ajuste.",
     "Lower hand" : "Bajar la mano",
     "Raise hand" : "Levantar la mano",
-    "You can not send messages to this conversation at the moment" : "Por el momento no puede enviar mensajes a esta conversación",
-    "turn: and turns:" : "turn: y turns:",
-    "turn: only" : "turn: sólo",
-    "turns: only" : "turns: sólo",
-    "turns: scheme must be used with a domain" : "turns: debe usarse el esquema con un dominio"
+    "You can not send messages to this conversation at the moment" : "Por el momento no puede enviar mensajes a esta conversación"
 },
 "nplurals=2; plural=(n != 1);");
