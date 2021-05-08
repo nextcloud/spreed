@@ -45,9 +45,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} renomeou a conversa de «%1$s» a «%2$s»",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Vostede renomeou a conversa de «%1$s» a «%2$s»",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Un administrador renomeou a conversa de «%1$s» a «%2$s»",
-    "{actor} set the description to \"%1$s\"" : "{actor} estabeleceu a descrición como «%1$s»",
-    "You set the description to \"%1$s\"" : "Vostede estabeleceu a descrición como «%1$s»",
-    "An administrator set the description to \"%1$s\"" : "Un administrador estabeleceu a descrición como «%1$s»",
     "{actor} removed the description" : "{actor} retirou a descrición",
     "You removed the description" : "Vostede retirou a descrición",
     "An administrator removed the description" : "Un administrador retirou a descrición",
@@ -1034,6 +1031,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Amosar o rexistro do matterbridge",
     "User name or e-mail address" : "Nome de usuario ou enderezo de correo",
     "Add new bridged channel" : "Engadir unha nova ponte entre canles",
+    "{actor} set the description to \"%1$s\"" : "{actor} estabeleceu a descrición como «%1$s»",
+    "You set the description to \"%1$s\"" : "Vostede estabeleceu a descrición como «%1$s»",
+    "An administrator set the description to \"%1$s\"" : "Un administrador estabeleceu a descrición como «%1$s»",
     "{actor} started Matterbridge." : "{actor} iniciou Matterbridge",
     "You started Matterbridge." : "Vostede iniciou Matterbridge",
     "{actor} stopped Matterbridge." : "{actor} detivo Matterbridge",
@@ -1043,10 +1043,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Úsase un servidor TURN para proxy do tráfico de participantes detrás dunha devasa. Se os participantes individuais non poden conectarse a outros, o máis probábel é que sexa necesario un servidor TURN. Consulte {linkstart}esta documentación{linkend} para obter instrucións de configuración.",
     "Lower hand" : "Baixar a man",
     "Raise hand" : "Erguer a man",
-    "You can not send messages to this conversation at the moment" : "Non pode enviar mensaxes a esta conversa neste momento",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "Só turn:",
-    "turns: only" : "Só turns:",
-    "turns: scheme must be used with a domain" : "turns: o esquema debe usarse cun dominio"
+    "You can not send messages to this conversation at the moment" : "Non pode enviar mensaxes a esta conversa neste momento"
 },
 "nplurals=2; plural=(n != 1);");

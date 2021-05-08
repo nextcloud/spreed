@@ -41,9 +41,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} bytte namn på konversationen från \"%1$s\" till \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Du bytte namn på konversationen från \"%1$s\" till \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "En administratör döpte om konversationen från \"%1$s\" till \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} ändrade beskrivningen till \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Du ändrade beskrivningen till \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "En administratör ändrade beskrivningen till \"%1$s\"",
     "{actor} removed the description" : "{actor} tog bort beskrivningen",
     "You removed the description" : "Du tog bort beskrivningen",
     "An administrator removed the description" : "En administratör tog bort beskrivningen",
@@ -683,6 +680,9 @@ OC.L10N.register(
     "New in Talk 10" : "Nytt i Talk 10",
     "{actor} set up Matterbridge to synchronize this conversation with other chats." : "{actor} aktiverade Matterbridge för att synkronisera denna konversation med andra chattar",
     "You set up Matterbridge to synchronize this conversation with other chats." : "Du aktiverade Matterbridge för att synkronisera denna konversation med andra chattar",
-    "Enabled" : "Aktiverad"
+    "Enabled" : "Aktiverad",
+    "{actor} set the description to \"%1$s\"" : "{actor} ändrade beskrivningen till \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Du ändrade beskrivningen till \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "En administratör ändrade beskrivningen till \"%1$s\""
 },
 "nplurals=2; plural=(n != 1);");

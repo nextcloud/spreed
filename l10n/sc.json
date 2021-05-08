@@ -44,9 +44,6 @@
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} at cambiadu su nùmene de sa resonada dae \"%1$s\" a \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Tue as cambiadu su nùmene de sa resonada dae \"%1$s\" a \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "S'amministratzione at cambiadu su nùmene de sa resonada dae \"%1$s\" a \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} at impostadu sa descritzione in \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Tue as impostadu sa descritzione in \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "S'amministratzine at impostadu sa descritzione in \"%1$s\"",
     "{actor} removed the description" : "{actor} nch'at bogadu sa descritzione",
     "You removed the description" : "Tue nch'as bogadu sa descritzione",
     "An administrator removed the description" : "S'amministratzione nch'at bogadu sa descritzione",
@@ -1064,6 +1061,9 @@
     "Show matterbridge log" : "Mustra su registru de matterbridge",
     "User name or e-mail address" : "Nùmene de s'utente o indiritzu email",
     "Add new bridged channel" : "Agiunghe un'àteru canale collegadu",
+    "{actor} set the description to \"%1$s\"" : "{actor} at impostadu sa descritzione in \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Tue as impostadu sa descritzione in \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "S'amministratzine at impostadu sa descritzione in \"%1$s\"",
     "{actor} started Matterbridge." : "{actor} at abertu Matterbridge.",
     "You started Matterbridge." : "As abertu Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} at firmadu Matterbridge.",
@@ -1073,10 +1073,6 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Unu serbidore TURN s'impreat pro imbiare su tràficu dae is partezipantes a secus de unu firewall. Chi is partetzipantes individuales non si podent connètere cun is àteras persones, est probàbile chi serbat unu serbidore TURN. Controlla {linkstart} custa documentatzione{linkend} pro is istrutziones de cunfiguratzione.",
     "Lower hand" : "Bàscia sa manu ",
     "Raise hand" : "Àrtzia sa manu ",
-    "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "turn: isceti",
-    "turns: only" : "turns: isceti",
-    "turns: scheme must be used with a domain" : "turns:  s'ischema si depet impreare cun unu domìniu"
+    "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
