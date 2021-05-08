@@ -43,9 +43,6 @@
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} اعاد تسمية المحادثة من \"%1$s\" إلى \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "قمت بإعادة تسمية المحادثة من \"%1$s\" إلى \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "قام المسؤول بإعادة تسمية المحادثة من \"%1$s\" إلى \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} قام بتعيين الوصف لـ \"%1$s\"",
-    "You set the description to \"%1$s\"" : "قمت بتعيين الوصف لـ \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "قام المسؤول بتعيين الوصف لـ \"%1$s\"",
     "{actor} removed the description" : "{actor} قام بحذف الوصف ",
     "You removed the description" : "قمت بحذف الوصف ",
     "An administrator removed the description" : "قام المسؤول بحذف الوصف",
@@ -1060,6 +1057,9 @@
     "Show matterbridge log" : "إظهار سجل Matterbridge",
     "User name or e-mail address" : "اسم المستخدم او البريد الالكتروني",
     "Add new bridged channel" : "إضافة قناة وصل جديدة ",
+    "{actor} set the description to \"%1$s\"" : "{actor} قام بتعيين الوصف لـ \"%1$s\"",
+    "You set the description to \"%1$s\"" : "قمت بتعيين الوصف لـ \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "قام المسؤول بتعيين الوصف لـ \"%1$s\"",
     "{actor} started Matterbridge." : " {actor} بدأ Matterbridge .",
     "You started Matterbridge." : "لقد بدأت Matterbridge .",
     "{actor} stopped Matterbridge." : "قام {actor} بإيقاف Matterbridge .",
@@ -1069,7 +1069,6 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
     "Lower hand" : "خفض اليد ",
     "Raise hand" : "رفع اليد",
-    "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
-    "turn: only" : "تشغيل: فقط"
+    "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا "
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

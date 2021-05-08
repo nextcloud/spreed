@@ -46,9 +46,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} átnevezte a beszélgetést erről: „%1$s”, erre: „%2$s”",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Átnevezte a beszélgetést erről: „%1$s”, erre: „%2$s”",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Egy rendszergazda átnevezte a beszélgetést erről: „%1$s”, erre: „%2$s”",
-    "{actor} set the description to \"%1$s\"" : "{actor} beállította a leírást a következőre: \"%1$s\"",
-    "You set the description to \"%1$s\"" : "A leírást \"%1$s\" értékre állította",
-    "An administrator set the description to \"%1$s\"" : "Egy rendszergazda a leírást \"%1$s\" értékre állította",
     "{actor} removed the description" : "{actor} eltávolította a leírást",
     "You removed the description" : "Eltávolította a leírást",
     "An administrator removed the description" : "Egy rendszergazda eltávolította a leírást",
@@ -1053,6 +1050,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Matterbridge napló megjelenítése",
     "User name or e-mail address" : "Felhasználónév vagy e-mail cím",
     "Add new bridged channel" : "Új áthidalt csatorna hozzáadása",
+    "{actor} set the description to \"%1$s\"" : "{actor} beállította a leírást a következőre: \"%1$s\"",
+    "You set the description to \"%1$s\"" : "A leírást \"%1$s\" értékre állította",
+    "An administrator set the description to \"%1$s\"" : "Egy rendszergazda a leírást \"%1$s\" értékre állította",
     "{actor} started Matterbridge." : "{actor} elindította a Matterbridge-t.",
     "You started Matterbridge." : "Elindította a Matterbridge-t.",
     "{actor} stopped Matterbridge." : "{actor} leállította a Matterbridge-t.",
@@ -1062,9 +1062,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "A TURN kiszolgáló a tűzfal mögött lévő résztvevők forgalmának proxyzására szolgál. Ha az egyes résztvevők nem tudnak csatlakozni másokhoz, akkor valószínűleg TURN kiszolgálóra van szükség. A telepítési utasításokért lásd {linkstart}ezt a dokumentációt{linkend}.",
     "Lower hand" : "Kéz letétele",
     "Raise hand" : "Kezet felemel",
-    "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "turn: only" : "csak fordulás",
-    "turns: only" : "csak fordulás",
-    "turns: scheme must be used with a domain" : "fordulás: a sémát egy domainen kell használni"
+    "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre"
 },
 "nplurals=2; plural=(n != 1);");

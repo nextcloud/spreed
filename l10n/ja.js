@@ -46,9 +46,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor}が会話を%1$sから%2$sにリネームしました",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "会話を%1$sから%2$sにリネームしました",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "管理者が会話の名前を \"%1$s\" から \"%2$s\" に変更しました",
-    "{actor} set the description to \"%1$s\"" : "{actor} が説明を \"%1$s\" に設定しました",
-    "You set the description to \"%1$s\"" : "説明を \"%1$s\" に設定しました",
-    "An administrator set the description to \"%1$s\"" : "管理者が説明を \"%1$s\" に設定しました",
     "{actor} removed the description" : "{actor} が詳細を削除しました",
     "You removed the description" : "詳細を削除しました",
     "An administrator removed the description" : "管理者が詳細を削除しました",
@@ -1047,6 +1044,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Matterbridgeログを表示する",
     "User name or e-mail address" : "名前またはメールアドレス",
     "Add new bridged channel" : "新しいブリッジチャネルを追加",
+    "{actor} set the description to \"%1$s\"" : "{actor} が説明を \"%1$s\" に設定しました",
+    "You set the description to \"%1$s\"" : "説明を \"%1$s\" に設定しました",
+    "An administrator set the description to \"%1$s\"" : "管理者が説明を \"%1$s\" に設定しました",
     "{actor} started Matterbridge." : "{actor} がMatterbridgeを開始しました。",
     "You started Matterbridge." : "Matterbridgeを開始しました。",
     "{actor} stopped Matterbridge." : "{actor} はMatterbridgeを停止しました。",
@@ -1056,10 +1056,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURNサーバーは、ファイアウォールの背後にある参加者からのトラフィックをプロキシするために使用されます。個々の参加者が他の参加者に接続できない場合は、TURNサーバーが必要になる可能性があります。セットアップ手順については、{linkstart}このドキュメント{linkend}を参照してください。",
     "Lower hand" : "手を下げる (r)",
     "Raise hand" : "挙手 (r)",
-    "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
-    "turn: and turns:" : "turn: と turns:",
-    "turn: only" : "turn: のみ",
-    "turns: only" : "turns: のみ",
-    "turns: scheme must be used with a domain" : "turns: スキームはドメインで使用する必要があります"
+    "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ"
 },
 "nplurals=1; plural=0;");

@@ -43,9 +43,6 @@
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} đã đổi tên cuộc hội thoại từ \"%1$s\" thành \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Bạn đã đổi tên cuộc hội thoại từ \"%1$s\" thành \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Quản trị viên đã đổi tên cuộc trò chuyện từ \"%1$s\" thành \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} đổi miêu tả thành \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Bạn đổi miêu tả thành \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "Quản trị viên đổi miêu tả thành \"%1$s\"",
     "{actor} removed the description" : "{actor} đã xóa miêu tả",
     "You removed the description" : "Bạn đá xóa miêu tả",
     "An administrator removed the description" : "Một quản trị viên đã xóa miêu tả",
@@ -787,6 +784,9 @@
     "Show matterbridge log" : "Hiển thị nhật ký matterbridge",
     "User name or e-mail address" : "Tên người dùng hoặc địa chỉ thư điện tử",
     "Add new bridged channel" : "Thêm kênh bắc cầu mới",
+    "{actor} set the description to \"%1$s\"" : "{actor} đổi miêu tả thành \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Bạn đổi miêu tả thành \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "Quản trị viên đổi miêu tả thành \"%1$s\"",
     "{actor} started Matterbridge." : "{actor} đã khởi động Matterbridge.",
     "You started Matterbridge." : "Bạn đã khởi động Matterbridge",
     "{actor} stopped Matterbridge." : "{actor} đã kết thúc Matterbridge.",
@@ -796,7 +796,6 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia sau tường lửa. Nếu những người tham gia cá nhân không thể kết nối với những người khác, rất có thể cần phải có máy chủ TURN. Xem {linkstart} tài liệu này {linkend} để biết hướng dẫn thiết lập.",
     "Lower hand" : "Đặt tay xuống",
     "Raise hand" : "Giơ tay",
-    "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
-    "turns: scheme must be used with a domain" : "Lượt: lược đồ phải được sử dụng với một tên miền"
+    "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -41,9 +41,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} го преименува разговорот од \"%1$s\" во \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Го преименувавте разговорот од \"%1$s\" to \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Администраторот го преименуваше разговорот од \"%1$s\" во \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} го постави описот во \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Го променивте описот во \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "Администраторот го постави описот во \"%1$s\"",
     "{actor} removed the description" : "{actor} го избриша описот",
     "You removed the description" : "Го избришавте описот",
     "An administrator removed the description" : "Администраторот го избриша описот",
@@ -766,6 +763,9 @@ OC.L10N.register(
     "E-mail of the user" : "Е-пошта на корисник",
     "Bridge with other services" : "Мост со други сервери",
     "Enabled" : "Овозможен",
-    "User name or e-mail address" : "Корисничко име или е-пошта адреса"
+    "User name or e-mail address" : "Корисничко име или е-пошта адреса",
+    "{actor} set the description to \"%1$s\"" : "{actor} го постави описот во \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Го променивте описот во \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "Администраторот го постави описот во \"%1$s\""
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
