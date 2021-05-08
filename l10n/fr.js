@@ -43,9 +43,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} a renommé la conversation de \"%1$s\" à \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Vous avez renommé la conversation de \"%1$s\" à \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Un administrateur a renommé la conversation de \"%1$s\" à \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} a mis la description à \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Vous avez mis la description à \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "Un administrateur a mis la description à \"%1$s\"",
     "{actor} removed the description" : "{actor} a supprimé la description",
     "You removed the description" : "Vous avez supprimé la description",
     "An administrator removed the description" : "Un administrateur a supprimé la description",
@@ -1014,6 +1011,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Afficher le journal de Matterbridge",
     "User name or e-mail address" : "Identifiant ou adresse e-mail",
     "Add new bridged channel" : "Ajouter un nouveau salon lié",
+    "{actor} set the description to \"%1$s\"" : "{actor} a mis la description à \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Vous avez mis la description à \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "Un administrateur a mis la description à \"%1$s\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment"
 },
 "nplurals=2; plural=(n > 1);");

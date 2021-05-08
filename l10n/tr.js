@@ -46,9 +46,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor}, görüşmenin \"%1$s\" olan adını \"%2$s\" olarak değiştirdi",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "\"%1$s\" görüşmesinin adını \"%2$s\" olarak değiştirdiniz",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Bir yönetici, görüşmenin \"%1$s\" olan adını \"%2$s\" olarak değiştirdi",
-    "{actor} set the description to \"%1$s\"" : "{actor}, açıklamayı \"%1$s\" değiştirdi",
-    "You set the description to \"%1$s\"" : "Açıklamayı \"%1$s\" olarak değiştirdiniz",
-    "An administrator set the description to \"%1$s\"" : "Bir yönetici açıklamayı \"%1$s\" olarak değiştirdi",
     "{actor} removed the description" : "{actor} açıklamayı kaldırdı",
     "You removed the description" : "Açıklamayı kaldırdınız",
     "An administrator removed the description" : "Bir yönetici açıklamayı kaldırdı",
@@ -1067,6 +1064,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Matterbridge günlüğünü görüntüle",
     "User name or e-mail address" : "Kullanıcı adı ya da e-posta adresi",
     "Add new bridged channel" : "Yeni köprülenmiş kanal",
+    "{actor} set the description to \"%1$s\"" : "{actor}, açıklamayı \"%1$s\" değiştirdi",
+    "You set the description to \"%1$s\"" : "Açıklamayı \"%1$s\" olarak değiştirdiniz",
+    "An administrator set the description to \"%1$s\"" : "Bir yönetici açıklamayı \"%1$s\" olarak değiştirdi",
     "{actor} started Matterbridge." : "{actor} Matterbridge uygulamasını başlattı.",
     "You started Matterbridge." : "Matterbride uygulamasını başlattınız.",
     "{actor} stopped Matterbridge." : "{actor} Matterbridge uygulamasını durdurdu.",
@@ -1076,10 +1076,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcıların bağlanabilmesi için kullanılan bir vekil sunucudur. Bazı kullanıcılar diğerlerine bağlanamıyorsa genellikle bir TURN sunucusunun kullanılması gerekir. Kurulum bilgileri için {linkstart}bu belgeye{linkend} bakabilirsiniz.",
     "Lower hand" : "Eli indir",
     "Raise hand" : "El kaldır",
-    "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "turn: and turns:" : "turn: ve turns:",
-    "turn: only" : "yalnız turn:",
-    "turns: only" : "yalnız turns:",
-    "turns: scheme must be used with a domain" : "turns: şeması bir etki alanı ile birlikte kullanılmalıdır"
+    "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz"
 },
 "nplurals=2; plural=(n > 1);");

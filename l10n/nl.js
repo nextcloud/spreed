@@ -46,9 +46,6 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} hernoemde gesprek van  \"%1$s\" naar \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Je hernoemde gesprek van \"%1$s\" naar \"%2$s\"",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Een beheerder hernoemde het gesprek van  \"%1$s\" naar \"%2$s\"",
-    "{actor} set the description to \"%1$s\"" : "{actor} stelde de beschrijving in op \"%1$s\"",
-    "You set the description to \"%1$s\"" : "Je stelde de beschrijving in op  \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "Een beheerder stelde de beschrijving in op  \"%1$s\"",
     "{actor} removed the description" : "{actor} verwijderde de beschrijving",
     "You removed the description" : "Jij verwijderde de beschrijving",
     "An administrator removed the description" : "Een beheerder verwijderde de beschrijving",
@@ -1067,6 +1064,9 @@ OC.L10N.register(
     "Show matterbridge log" : "Toon matterbridge logbestand",
     "User name or e-mail address" : "Gebruikersnaam of e-mailadres",
     "Add new bridged channel" : "Toevoegen overbruggingskanaal",
+    "{actor} set the description to \"%1$s\"" : "{actor} stelde de beschrijving in op \"%1$s\"",
+    "You set the description to \"%1$s\"" : "Je stelde de beschrijving in op  \"%1$s\"",
+    "An administrator set the description to \"%1$s\"" : "Een beheerder stelde de beschrijving in op  \"%1$s\"",
     "{actor} started Matterbridge." : "{actor} heeft Matterbridge gestart.",
     "You started Matterbridge." : "Je hebt Matterbridge gestart.",
     "{actor} stopped Matterbridge." : "{actor} heeft Matterbridge gestopt.",
@@ -1076,10 +1076,6 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Een TURN server wordt gebruikt om verkeer van deelnemers achter een firewall te proxyen. Als individuele deelnemers niet rechtstreeks met anderen kunnen verbinden, is TURN server vermoedelijk vereist. Zie {linkstart}deze documentatie{linkend} voor instructies.",
     "Lower hand" : "Hand omlaag",
     "Raise hand" : "Hand opsteken",
-    "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "turn: and turns:" : "turn: en turns:",
-    "turn: only" : "turn: alleen",
-    "turns: only" : "turns: alleen",
-    "turns: scheme must be used with a domain" : "turns: schema moet binnen een domein worden gebruikt"
+    "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek"
 },
 "nplurals=2; plural=(n != 1);");
