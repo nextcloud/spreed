@@ -43,9 +43,6 @@
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} je preimenovao razgovor iz „%1$s” u „%2$s”",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Preimenovali ste razgovor iz „%1$s” u „%2$s”",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Administrator je preimenovao razgovor iz „%1$s” u „%2$s”",
-    "{actor} set the description to \"%1$s\"" : "{actor} je postavio opis kao „%1$s”",
-    "You set the description to \"%1$s\"" : "Vi ste postavili opis kao „%1$s”",
-    "An administrator set the description to \"%1$s\"" : "Administrator je postavio opis kao „%1$s”",
     "{actor} removed the description" : "{actor} je uklonio opis",
     "You removed the description" : "Vi ste uklonili opis",
     "An administrator removed the description" : "Administrator je uklonio opis",
@@ -1032,6 +1029,9 @@
     "Show matterbridge log" : "Prikaži zapisnik Matterbridgea",
     "User name or e-mail address" : "Korisničko ime ili adresa e-pošte",
     "Add new bridged channel" : "Dodaj novi povezani kanal",
+    "{actor} set the description to \"%1$s\"" : "{actor} je postavio opis kao „%1$s”",
+    "You set the description to \"%1$s\"" : "Vi ste postavili opis kao „%1$s”",
+    "An administrator set the description to \"%1$s\"" : "Administrator je postavio opis kao „%1$s”",
     "{actor} started Matterbridge." : "{actor} je pokrenuo Matterbridge.",
     "You started Matterbridge." : "Vi ste pokrenuli Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} je zaustavio Matterbridge.",
@@ -1041,10 +1041,6 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
     "Lower hand" : "Spusti ruku",
     "Raise hand" : "Podigni ruku",
-    "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
-    "turn: and turns:" : "turn: i turns:",
-    "turn: only" : "turn: samo",
-    "turns: only" : "turns: samo",
-    "turns: scheme must be used with a domain" : "turns: shema se mora upotrebljavati s domenom"
+    "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }
