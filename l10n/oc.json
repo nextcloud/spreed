@@ -27,9 +27,6 @@
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} a renomenat la conversacion de « %1$s » a « %2$s »",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Avètz renomenat la conversacion de « %1$s » a « %2$s »",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Un administrator a renomenat la conversacion de « %1$s » a « %2$s »",
-    "{actor} set the description to \"%1$s\"" : "{actor} a definit la descripcion « %1$s »",
-    "You set the description to \"%1$s\"" : "Avètz definit la descripcion « %1$s »",
-    "An administrator set the description to \"%1$s\"" : "Un administrator a definit la descripcion « %1$s »",
     "{actor} removed the description" : "{actor} a tirat la descripcion",
     "You removed the description" : "Avètz tirat la descripcion",
     "An administrator removed the description" : "Un administrator a tirat la descripcion",
@@ -845,12 +842,12 @@
     "More info on Matterbridge." : "Mai d‘informacions sus Matterbridge.",
     "Enabled" : "Activada",
     "User name or e-mail address" : "Nom d’utilizaire o adreça electronica",
+    "{actor} set the description to \"%1$s\"" : "{actor} a definit la descripcion « %1$s »",
+    "You set the description to \"%1$s\"" : "Avètz definit la descripcion « %1$s »",
+    "An administrator set the description to \"%1$s\"" : "Un administrator a definit la descripcion « %1$s »",
     "You stopped Matterbridge." : "Avètz arrestat Matterbridge.",
     "Lower hand" : "Baissar la man",
     "Raise hand" : "Levar la man",
-    "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "turn: and turns:" : "turn: e turns:",
-    "turn: only" : "turn: sonque",
-    "turns: only" : "turns: sonque"
+    "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
