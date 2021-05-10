@@ -24,6 +24,9 @@ module.exports = {
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
+	transformIgnorePatterns: [
+		'node_modules/(?!(vue-material-design-icons|@juliushaertl)/)',
+	],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],
 	setupFilesAfterEnv: [
