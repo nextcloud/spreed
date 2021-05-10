@@ -22,7 +22,9 @@
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<!-- conversation header -->
-		<div class="conversation-header">
+		<a
+			class="conversation-header"
+			@click="openConversationSettings">
 			<ConversationIcon
 				:item="conversation"
 				:hide-favorite="false"
@@ -35,7 +37,7 @@
 					{{ conversation.description }}
 				</p>
 			</div>
-		</div>
+		</a>
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 			<!-- Call layout switcher -->
@@ -343,6 +345,10 @@ export default {
 				callParticipantModel.forceMute()
 			})
 		},
+
+		openConversationSettings() {
+			emit('show-conversation-settings')
+		},
 	},
 }
 </script>
@@ -392,12 +398,14 @@ export default {
 }
 
 .conversation-header {
+	position: relative;
 	display: flex;
 	overflow-x: hidden;
 	overflow-y: clip;
 	margin-left: 48px;
 	white-space: nowrap;
 	width: 100%;
+	cursor: pointer;
 	&__text {
 		display: flex;
 		flex-direction:column;

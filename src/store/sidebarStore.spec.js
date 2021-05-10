@@ -20,7 +20,7 @@ describe('sidebarStore', () => {
 	})
 
 	test('defaults are off', () => {
-		expect(store.getters.getSidebarStatus).toBe(false)
+		expect(store.getters.getSidebarStatus).toBe(true)
 		expect(store.getters.isRenamingConversation).toBe(false)
 	})
 
