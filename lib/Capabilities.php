@@ -90,6 +90,7 @@ class Capabilities implements IPublicCapability {
 				'room-description',
 				'rich-object-sharing',
 				'temp-user-avatar-api',
+				'geo-location-sharing',
 			],
 			'config' => [
 				'attachments' => [

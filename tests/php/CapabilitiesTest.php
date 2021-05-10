@@ -87,6 +87,7 @@ class CapabilitiesTest extends TestCase {
 			'room-description',
 			'rich-object-sharing',
 			'temp-user-avatar-api',
+			'geo-location-sharing',
 		];
 	}
 
