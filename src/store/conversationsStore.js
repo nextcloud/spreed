@@ -27,6 +27,7 @@ import {
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
+	createOneToOneConversation,
 	addToFavorites,
 	removeFromFavorites,
 	fetchConversations,
@@ -385,6 +386,21 @@ const actions = {
 
 	changeNotificationLevel({ commit }, { token, notificationLevel }) {
 		commit('changeNotificationLevel', { token, notificationLevel })
+	},
+
+	/**
+	 * Creates a new one to one conversation in the backend
+	 * with the given actor then adds it to the store.
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} actorId actor id;
+	 */
+	async createOneToOneConversation(context, actorId) {
+		const response = await createOneToOneConversation(actorId)
+		const conversation = response.data.ocs.data
+		context.dispatch('addConversation', conversation)
+
+		return conversation
 	},
 }
 

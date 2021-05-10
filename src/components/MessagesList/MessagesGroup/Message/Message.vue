@@ -213,7 +213,6 @@ import {
 	showWarning,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
-import { createOneToOneConversation } from '../../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 
 export default {
@@ -699,9 +698,7 @@ export default {
 		},
 		async handlePrivateReply() {
 			// open the 1:1 conversation
-			const response = await createOneToOneConversation(this.actorId)
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
+			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
