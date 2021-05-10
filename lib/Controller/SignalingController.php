@@ -137,8 +137,8 @@ class SignalingController extends OCSController {
 		}
 
 		$stun = [];
-		$stunServer = $this->talkConfig->getStunServer();
-		if ($stunServer) {
+		$stunServers = $this->talkConfig->getStunServers();
+		foreach ($stunServers as $stunServer) {
 			$stun[] = [
 				'url' => 'stun:' . $stunServer,
 			];

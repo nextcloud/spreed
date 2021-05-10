@@ -29,7 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConfigTest extends TestCase {
-	public function testGetStunServer() {
+	public function testGetStunServers() {
 		$servers = [
 			'stun1.example.com:443',
 			'stun2.example.com:129',
@@ -55,7 +55,7 @@ class ConfigTest extends TestCase {
 			->willReturn(true);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
-		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
+		$this->assertSame($helper->getStunServers(), $servers);
 	}
 
 	public function testGetDefaultStunServer() {
@@ -79,7 +79,7 @@ class ConfigTest extends TestCase {
 			->willReturn(true);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
-		$this->assertSame('stun.nextcloud.com:443', $helper->getStunServer());
+		$this->assertSame(['stun.nextcloud.com:443'], $helper->getStunServers());
 	}
 
 	public function testGetDefaultStunServerNoInternet() {
@@ -103,7 +103,7 @@ class ConfigTest extends TestCase {
 			->willReturn(false);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
-		$this->assertSame('', $helper->getStunServer());
+		$this->assertSame([], $helper->getStunServers());
 	}
 
 	public function testGenerateTurnSettings() {
