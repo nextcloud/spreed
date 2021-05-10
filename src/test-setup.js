@@ -44,6 +44,8 @@ global.OCA = {
 	Talk: {
 	},
 }
+
+// TODO: use nextcloud-l10n lib once https://github.com/nextcloud/nextcloud-l10n/issues/271 is solved
 global.t = jest.fn().mockImplementation((app, text) => text)
 global.n = jest.fn().mockImplementation((app, text) => text)
 

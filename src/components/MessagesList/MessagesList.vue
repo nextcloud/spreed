@@ -74,6 +74,7 @@ import MessagesGroup from './MessagesGroup/MessagesGroup'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
+import { ATTENDEE } from '../../constants'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
@@ -172,6 +173,7 @@ export default {
 		 * @returns {object}
 		 */
 		messages() {
+			// FIXME: remove if unused ?
 			return this.$store.getters.messages(this.token)
 		},
 		/**
@@ -311,8 +313,8 @@ export default {
 				return false // No previous message
 			}
 
-			if (message1.actorType === 'bots' // Don't group messages of commands and bots
-				&& message1.actorId !== 'changelog') { // Apart from the changelog bot
+			if (message1.actorType === ATTENDEE.ACTOR_TYPE_BOTS // Don't group messages of commands and bots
+				&& message1.actorId !== ATTENDEE.CHANGELOG_BOT_ID) { // Apart from the changelog bot
 				return false
 			}
 
@@ -573,6 +575,7 @@ export default {
 		 * @param {object} event The deleteMessage event emitted by the Message component.
 		 */
 		handleDeleteMessage(event) {
+			// FIXME: unused ?
 			this.$store.dispatch('deleteMessage', event.message)
 		},
 
