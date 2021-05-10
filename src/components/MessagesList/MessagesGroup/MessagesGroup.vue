@@ -57,6 +57,7 @@
 <script>
 import AuthorAvatar from './AuthorAvatar'
 import Message from './Message/Message'
+import { ATTENDEE } from '../../../constants'
 
 export default {
 	name: 'MessagesGroup',
@@ -71,6 +72,7 @@ export default {
 		/**
 		 * The message id.
 		 */
+		// FIXME: looks unused
 		id: {
 			type: [String, Number],
 			required: true,
@@ -100,6 +102,7 @@ export default {
 			default: 0,
 		},
 
+		// FIXME: read from messagesStore as this is the same value for all
 		lastReadMessageId: {
 			type: [String, Number],
 			default: 0,
@@ -135,7 +138,7 @@ export default {
 		actorDisplayName() {
 			const displayName = this.messages[0].actorDisplayName.trim()
 
-			if (this.actorType === 'guests') {
+			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return this.$store.getters.getGuestName(this.token, this.actorId)
 			}
 
