@@ -30,6 +30,9 @@ module.exports = {
 		'<rootDir>/src/test-setup.js',
 		'jest-mock-console/dist/setupTestFramework.js',
 	],
+	collectCoverageFrom: [
+		'<rootDir>/src/**/*.{js,vue}',
+	],
 	transform: {
 		// process `*.js` files with `babel-jest`
 		'.*\\.(js)$': 'babel-jest',
