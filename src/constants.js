@@ -52,8 +52,10 @@ export const ATTENDEE = {
 		GUESTS: 'guests',
 		EMAILS: 'emails',
 		GROUPS: 'groups',
+		BOTS: 'bots',
 	},
 	BRIDGE_BOT_ID: 'bridge-bot',
+	CHANGELOG_BOT_ID: 'changelog',
 }
 export const PARTICIPANT = {
 	CALL_FLAG: {
