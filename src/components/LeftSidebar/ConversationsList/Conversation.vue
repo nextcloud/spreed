@@ -114,7 +114,7 @@ import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import ConversationIcon from './../../ConversationIcon'
 import { generateUrl } from '@nextcloud/router'
-import { CONVERSATION, PARTICIPANT } from '../../../constants'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
 
 export default {
 	name: 'Conversation',
@@ -249,6 +249,8 @@ export default {
 			const lastMessageTimestamp = this.item.lastMessage ? this.item.lastMessage.timestamp : 0
 
 			if (Object.keys(this.messages).length > 0) {
+				// FIXME: risky way to get last message that assumes that keys are always sorted
+				// should use this.$store.getters.messagesList instead ?
 				const messagesKeys = Object.keys(this.messages)
 				const lastMessageId = messagesKeys[messagesKeys.length - 1]
 
@@ -259,8 +261,8 @@ export default {
 				 * 3. It's not a temporary message starting with "/" which is a user posting a command
 				 */
 				if (this.messages[lastMessageId].timestamp > lastMessageTimestamp
-					&& (this.messages[lastMessageId].actorType !== 'bots'
-						|| this.messages[lastMessageId].actorId === 'changelog')
+					&& (this.messages[lastMessageId].actorType !== ATTENDEE.ACTOR_TYPE.BOTS
+						|| this.messages[lastMessageId].actorId === ATTENDEE.CHANGELOG_BOT_ID)
 					&& (!lastMessageId.startsWith('temp-')
 						|| !this.messages[lastMessageId].message.startsWith('/'))) {
 					return this.messages[lastMessageId]
@@ -306,7 +308,7 @@ export default {
 				author = author.substring(0, spacePosition)
 			}
 
-			if (author.length === 0 && this.lastChatMessage.actorType === 'guests') {
+			if (author.length === 0 && this.lastChatMessage.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return t('spreed', 'Guest')
 			}
 
@@ -319,6 +321,7 @@ export default {
 				await this.$copyText(this.linkToConversation)
 				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
+				console.error('Error copying link: ', error)
 				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},
@@ -339,6 +342,8 @@ export default {
 						return
 					}
 
+					// TODO: verify if this is already happening automatically after deletion,
+					// just like when leaving a conversation
 					if (this.item.token === this.$store.getters.getToken()) {
 						this.$router.push({ name: 'root', params: { skipLeaveWarning: true } })
 						this.$store.dispatch('updateToken', '')

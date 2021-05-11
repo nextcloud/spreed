@@ -30,6 +30,8 @@ global.OC = {
 	config: {
 		modRewriteWorking: true,
 	},
+	dialogs: {
+	},
 	isUserAdmin() {
 		return true
 	},
