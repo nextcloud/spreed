@@ -329,7 +329,7 @@ export default {
 			required: true,
 		},
 		/**
-		 * The conversation token.
+		 * The type of system message
 		 */
 		systemMessage: {
 			type: String,
@@ -442,7 +442,9 @@ export default {
 		},
 
 		isLastCallStartedMessage() {
+			// FIXME: remove dependency to messages list and convert to property
 			const messages = this.messagesList
+			// FIXME: don't reverse the whole array as it would create a copy, just do an actual reverse search
 			const lastCallStartedMessage = messages.reverse().find((message) => message.systemMessage === 'call_started')
 			return lastCallStartedMessage ? (this.id === lastCallStartedMessage.id) : false
 		},
@@ -708,6 +710,7 @@ export default {
 				await this.$copyText(link)
 				showSuccess(t('spreed', 'Message link copied to clipboard.'))
 			} catch (error) {
+				console.error('Error copying link: ', error)
 				showError(t('spreed', 'The link could not be copied.'))
 			}
 		},

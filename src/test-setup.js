@@ -27,6 +27,9 @@ import Vue from 'vue'
 global.OC = {
 	requestToken: '123',
 	webroot: '/nc-webroot',
+	config: {
+		modRewriteWorking: true,
+	},
 	isUserAdmin() {
 		return true
 	},
