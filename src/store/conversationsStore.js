@@ -33,7 +33,10 @@ import {
 	fetchConversations,
 	fetchConversation,
 	setConversationName,
-	setConversationDescription } from '../services/conversationsService'
+	setConversationDescription,
+	deleteConversation,
+	setNotificationLevel,
+} from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
 
@@ -118,7 +121,7 @@ const mutations = {
 		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
 	},
 
-	changeNotificationLevel(state, { token, notificationLevel }) {
+	setNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
 	},
 }
@@ -167,8 +170,21 @@ const actions = {
 	 * @param {object} token the token of the conversation to be deleted;
 	 */
 	deleteConversation(context, token) {
+		// FIXME: rename to deleteConversationsFromStore or a better name
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
+	},
+
+	/**
+	 * Delete a conversation from the server.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} token the token of the conversation to be deleted;
+	 */
+	async deleteConversationFromServer(context, { token }) {
+		await deleteConversation(token)
+		// upon success, also delete from store
+		await context.dispatch('deleteConversation', token)
 	},
 
 	/**
@@ -384,8 +400,10 @@ const actions = {
 		}
 	},
 
-	changeNotificationLevel({ commit }, { token, notificationLevel }) {
-		commit('changeNotificationLevel', { token, notificationLevel })
+	async setNotificationLevel({ commit }, { token, notificationLevel }) {
+		await setNotificationLevel(token, notificationLevel)
+
+		commit('setNotificationLevel', { token, notificationLevel })
 	},
 
 	/**

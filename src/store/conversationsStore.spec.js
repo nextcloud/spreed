@@ -19,9 +19,11 @@ import {
 	createOneToOneConversation,
 	setConversationName,
 	setConversationDescription,
+	setNotificationLevel,
 	setSIPEnabled,
 	fetchConversation,
 	fetchConversations,
+	deleteConversation,
 } from '../services/conversationsService'
 
 jest.mock('../services/conversationsService', () => ({
@@ -35,9 +37,11 @@ jest.mock('../services/conversationsService', () => ({
 	createOneToOneConversation: jest.fn(),
 	setConversationName: jest.fn(),
 	setConversationDescription: jest.fn(),
+	setNotificationLevel: jest.fn(),
 	setSIPEnabled: jest.fn(),
 	fetchConversation: jest.fn(),
 	fetchConversations: jest.fn(),
+	deleteConversation: jest.fn(),
 }))
 
 describe('conversationsStore', () => {
@@ -164,6 +168,9 @@ describe('conversationsStore', () => {
 			expect(deleteMessagesAction).toHaveBeenCalled()
 
 			expect(store.getters.conversation(testToken)).toBeUndefined()
+
+			// not deleted from server...
+			expect(deleteConversation).not.toHaveBeenCalled()
 		})
 
 		test('purges all conversations', () => {
@@ -178,6 +185,16 @@ describe('conversationsStore', () => {
 			expect(store.getters.conversation(testToken)).toBeUndefined()
 			expect(store.getters.conversation('XXANOTHERXX')).toBeUndefined()
 			expect(store.getters.conversationsList).toStrictEqual([])
+		})
+
+		test('deletes conversation from server', async() => {
+			store.dispatch('addConversation', testConversation)
+
+			await store.dispatch('deleteConversationFromServer', { token: testToken })
+			expect(deleteConversation).toHaveBeenCalledWith(testToken)
+			expect(deleteMessagesAction).toHaveBeenCalled()
+
+			expect(store.getters.conversation(testToken)).toBeUndefined()
 		})
 
 		test('fetches a single conversation', async() => {
@@ -494,6 +511,24 @@ describe('conversationsStore', () => {
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.sipEnabled).toBe(true)
+		})
+
+		test('set notification level', async() => {
+			testConversation.notificationLevel = 1
+
+			store.dispatch('addConversation', testConversation)
+
+			setNotificationLevel.mockResolvedValue()
+
+			await store.dispatch('setNotificationLevel', {
+				token: testToken,
+				notificationLevel: 2,
+			})
+
+			expect(setNotificationLevel).toHaveBeenCalledWith(testToken, 2)
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.notificationLevel).toBe(2)
 		})
 	})
 
