@@ -536,6 +536,9 @@ class SystemMessage {
 		try {
 			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId, false);
 			$name = $participant->getAttendee()->getDisplayName();
+			if ($name === '') {
+				return $this->l->t('Guest');
+			}
 			return $this->l->t('%s (guest)', [$name]);
 		} catch (ParticipantNotFoundException $e) {
 			return $this->l->t('Guest');
