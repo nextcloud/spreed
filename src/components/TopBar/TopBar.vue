@@ -6,7 +6,11 @@
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
+<<<<<<< HEAD
   - it under the terms of the GNU Affero General Public auoLicense as
+=======
+  - it under the terms of the GNU Affero General Public /*  */License as
+>>>>>>> 42d78e46e (fixup! fixup! Fix MainView Layout)
   - published by the Free Software Foundation, either version 3 of the
   - License, or (at your option) any later version.
   -
@@ -359,7 +363,6 @@ export default {
 
 .top-bar {
 	height: $top-bar-height;
-	top: 0;
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
@@ -371,6 +374,11 @@ export default {
 
 	&.in-call {
 		right: 0;
+		background-color: transparent;
+		border: none;
+		position: absolute;
+		top: 0;
+		left:0;
 		.forced-background {
 			background-color: rgba(0,0,0,0.1) !important;
 			border-radius: var(--border-radius-pill);
@@ -423,7 +431,7 @@ export default {
 	.description {
 		overflow: hidden;
 		text-overflow: ellipsis;
-		color: var(--color-text-lighter)
+		color: var(--color-text-lighter);
 	}
 }
 </style>

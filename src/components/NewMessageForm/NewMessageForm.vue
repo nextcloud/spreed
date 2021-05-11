@@ -443,8 +443,6 @@ export default {
 @import '../../assets/buttons';
 
 .wrapper {
-	position: sticky;
-	bottom: 0;
 	display: flex;
 	justify-content: center;
 	padding: 12px 0;
