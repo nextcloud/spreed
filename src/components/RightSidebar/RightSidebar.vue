@@ -36,15 +36,6 @@
 		@dismiss-editing="dismissEditing"
 		@close="handleClose">
 		<template slot="description">
-			<Description
-				v-if="showDescription"
-				:editable="canFullModerate"
-				:description="description"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
-				:placeholder="t('spreed', 'Add a description for this conversation')"
-				@submit:description="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<AppSidebarTab
@@ -103,10 +94,8 @@ import ParticipantsTab from './Participants/ParticipantsTab'
 import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
-import Description from './Description/Description'
 import LobbyStatus from './LobbyStatus'
 import { EventBus } from '../../services/EventBus'
-import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'RightSidebar',
@@ -118,7 +107,6 @@ export default {
 		ParticipantsTab,
 		SetGuestUsername,
 		SipSettings,
-		Description,
 		LobbyStatus,
 	},
 
@@ -139,8 +127,6 @@ export default {
 			contactsLoading: false,
 			// The conversation name (while editing)
 			conversationName: '',
-			isEditingDescription: false,
-			isDescriptionLoading: false,
 			// Sidebar status before starting editing operation
 			sidebarOpenBeforeEditingName: '',
 		}
@@ -215,18 +201,6 @@ export default {
 				&& this.conversation.attendeePin
 		},
 
-		description() {
-			return this.conversation.description
-		},
-
-		showDescription() {
-			if (this.canFullModerate) {
-				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-			} else {
-				return this.description !== ''
-			}
-		},
-
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 		},
@@ -292,31 +266,6 @@ export default {
 
 		showSettings() {
 			emit('show-settings')
-		},
-
-		async handleUpdateDescription(description) {
-			this.isDescriptionLoading = true
-			try {
-				await this.$store.dispatch('setConversationDescription', {
-					token: this.token,
-					description,
-				})
-				this.isEditingDescription = false
-			} catch (error) {
-				console.error('Error while setting conversation description', error)
-				showError(t('spreed', 'Error while updating conversation description'))
-			}
-			this.isDescriptionLoading = false
-		},
-
-		handleEditDescription(payload) {
-			this.isEditingDescription = payload
-		},
-
-		handleRouteChange() {
-			// Reset description data on route change
-			this.isEditingDescription = false
-			this.isDescriptionLoading = false
 		},
 	},
 }
