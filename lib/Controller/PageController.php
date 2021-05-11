@@ -261,6 +261,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -312,6 +313,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
