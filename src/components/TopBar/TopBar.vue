@@ -33,7 +33,12 @@
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
-				<p v-if="conversation.description" class="description">
+				<p v-if="conversation.description"
+					v-tooltip.bottom="{
+						content: conversation.description,
+						delay: { show: 500, hide: 100 },
+					}"
+					class="description">
 					{{ conversation.description }}
 				</p>
 			</div>
@@ -139,9 +144,14 @@ import { generateUrl } from '@nextcloud/router'
 import { callParticipantCollection } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 export default {
 	name: 'TopBar',
+
+	directives: {
+		Tooltip,
+	},
 
 	components: {
 		ActionButton,
