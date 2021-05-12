@@ -6,11 +6,7 @@
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
-<<<<<<< HEAD
-  - it under the terms of the GNU Affero General Public auoLicense as
-=======
-  - it under the terms of the GNU Affero General Public /*  */License as
->>>>>>> 42d78e46e (fixup! fixup! Fix MainView Layout)
+  - it under the terms of the GNU Affero General Public License as
   - published by the Free Software Foundation, either version 3 of the
   - License, or (at your option) any later version.
   -
