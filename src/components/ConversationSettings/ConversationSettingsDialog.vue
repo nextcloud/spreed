@@ -26,49 +26,61 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		container="#content-vue">
+		<!-- description -->
+		<AppSettingsSection
+			:title="t('spreed', 'Description')">
+			<Description
+				v-if="showDescription"
+				:editable="canFullModerate"
+				:description="description"
+				:editing="isEditingDescription"
+				:loading="isDescriptionLoading"
+				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				@submit:description="handleUpdateDescription"
+				@update:editing="handleEditDescription" />
+		</AppSettingsSection>
+
 		<!-- Notifications settings -->
 		<AppSettingsSection
-			:title="t('spreed', 'Chat notifications')"
-			class="app-settings-section">
+			:title="t('spreed', 'Chat notifications')">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
+
 		<!-- Guest access -->
 		<AppSettingsSection
 			v-if="canFullModerate"
-			:title="t('spreed', 'Guests access')"
-			class="app-settings-section">
+			:title="t('spreed', 'Guests access')">
 			<LinkShareSettings ref="linkShareSettings" />
 		</AppSettingsSection>
+
 		<!-- TODO sepatate these 2 settings and rename the settings sections
 		all the settings in this component are conversation settings. Proposal:
 		move lock conversation in destructive actions and create a separate
 		section for listablesettings -->
 		<AppSettingsSection
 			v-if="canFullModerate"
-			:title="t('spreed', 'Conversation settings')"
-			class="app-settings-section">
+			:title="t('spreed', 'Conversation settings')">
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
 		</AppSettingsSection>
+
 		<!-- Meeting settings -->
 		<AppSettingsSection
 			v-if="canFullModerate"
-			:title="t('spreed', 'Meeting settings')"
-			class="app-settings-section">
+			:title="t('spreed', 'Meeting settings')">
 			<LobbySettings :token="token" />
 			<SipSettings v-if="canUserEnableSIP" />
 		</AppSettingsSection>
 		<AppSettingsSection
 			v-if="canFullModerate && matterbridgeEnabled"
-			:title="t('spreed', 'Matterbridge')"
-			class="app-settings-section">
+			:title="t('spreed', 'Matterbridge')">
 			<MatterbridgeSettings />
 		</AppSettingsSection>
+
 		<!-- Destructive actions -->
 		<AppSettingsSection
 			v-if="canLeaveConversation || canDeleteConversation"
-			:title="t('spreed', 'Danger zone')"
-			class="app-settings-section">
+			:title="t('spreed', 'Danger zone')">
 			<DangerZone
 				:conversation="conversation"
 				:can-leave-conversation="canLeaveConversation"
@@ -79,7 +91,7 @@
 
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { PARTICIPANT } from '../../constants'
+import { PARTICIPANT, CONVERSATION } from '../../constants'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
 import LinkShareSettings from './LinkShareSettings'
@@ -91,6 +103,8 @@ import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings'
 import { loadState } from '@nextcloud/initial-state'
 import DangerZone from './DangerZone'
 import NotificationsSettings from './NotificationsSettings'
+import { showError } from '@nextcloud/dialogs'
+import Description from '../Description/Description'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -106,12 +120,16 @@ export default {
 		MatterbridgeSettings,
 		DangerZone,
 		NotificationsSettings,
+		Description,
 	},
 
 	data() {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
+			isEditingDescription: false,
+			isDescriptionLoading: false,
+
 		}
 	},
 
@@ -143,6 +161,18 @@ export default {
 		canLeaveConversation() {
 			return this.conversation.canLeaveConversation
 		},
+
+		description() {
+			return this.conversation.description
+		},
+
+		showDescription() {
+			if (this.canFullModerate) {
+				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+			} else {
+				return this.description !== ''
+			}
+		},
 	},
 
 	mounted() {
@@ -165,6 +195,25 @@ export default {
 		beforeDestroy() {
 			unsubscribe('show-conversation-settings', this.handleShowSettings)
 			unsubscribe('hide-conversation-settings', this.handleHideSettings)
+		},
+
+		async handleUpdateDescription(description) {
+			this.isDescriptionLoading = true
+			try {
+				await this.$store.dispatch('setConversationDescription', {
+					token: this.token,
+					description,
+				})
+				this.isEditingDescription = false
+			} catch (error) {
+				console.error('Error while setting conversation description', error)
+				showError(t('spreed', 'Error while updating conversation description'))
+			}
+			this.isDescriptionLoading = false
+		},
+
+		handleEditDescription(payload) {
+			this.isEditingDescription = payload
 		},
 	},
 }
