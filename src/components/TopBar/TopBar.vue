@@ -26,7 +26,7 @@
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<!-- conversation header -->
-		<a
+		<a v-if="!isInCall"
 			class="conversation-header"
 			@click="openConversationSettings">
 			<ConversationIcon
