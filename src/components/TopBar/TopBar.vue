@@ -35,8 +35,10 @@
 				</p>
 				<p v-if="conversation.description"
 					v-tooltip.bottom="{
-						content: conversation.description,
-						delay: { show: 500, hide: 100 },
+						content: renderedDescription,
+						delay: { show: 500, hide: 500 },
+						autoHide: false,
+						html: true,
 					}"
 					class="description">
 					{{ conversation.description }}
@@ -145,6 +147,7 @@ import { callParticipantCollection } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 
 export default {
 	name: 'TopBar',
@@ -162,6 +165,8 @@ export default {
 		MicrophoneOff,
 		ConversationIcon,
 	},
+
+	mixins: [richEditor],
 
 	props: {
 		isInCall: {
@@ -218,9 +223,11 @@ export default {
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
+
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
+
 		linkToFile() {
 			if (this.isFileConversation) {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
@@ -240,15 +247,19 @@ export default {
 		canModerate() {
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
+
 		showModerationOptions() {
 			return !this.isOneToOneConversation && this.canModerate
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
@@ -256,6 +267,7 @@ export default {
 				return ''
 			}
 		},
+
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
@@ -263,6 +275,10 @@ export default {
 
 		isGrid() {
 			return this.$store.getters.isGrid
+		},
+
+		renderedDescription() {
+			return this.renderContent(this.conversation.description)
 		},
 	},
 
@@ -437,6 +453,7 @@ export default {
 	.description {
 		overflow: hidden;
 		text-overflow: ellipsis;
+		max-width: fit-content;
 		color: var(--color-text-lighter);
 	}
 }
