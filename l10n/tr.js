@@ -683,6 +683,7 @@ OC.L10N.register(
     "Favorite" : "Sık Kullanılanlara Ekle",
     "Conversation settings" : "Görüşme ayarları",
     "Description" : "Açıklama",
+    "Enter a description for this conversation" : "Bu görüşme için bir açıklama yazın",
     "Chat notifications" : "Görüşme bildirimleri",
     "Guests access" : "Konuk erişimi",
     "Meeting settings" : "Toplantı ayarları",
@@ -1091,6 +1092,6 @@ OC.L10N.register(
     "Lower hand" : "Eli indir",
     "Raise hand" : "El kaldır",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşmeye bir açıklama ekleyin"
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
 },
 "nplurals=2; plural=(n > 1);");
