@@ -38,7 +38,8 @@
 				class="new-message-form"
 				@submit.prevent>
 				<div
-					v-if="canUploadFiles || canShareFiles">
+					v-if="canUploadFiles || canShareFiles"
+					class="new-message-form__upload-menu">
 					<Actions
 						ref="uploadMenu"
 						container="#content-vue"
@@ -66,14 +67,14 @@
 						</ActionButton>
 					</Actions>
 				</div>
-				<div>
+				<div class="new-message-form__emoji-picker">
 					<EmojiPicker
 						container="#content-vue"
 						@select="addEmoji">
 						<button
 							type="button"
 							:disabled="disabled"
-							class="nc-button nc-button__main"
+							class="nc-button nc-button__main emoji-picker-button"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<EmoticonOutline
@@ -106,7 +107,7 @@
 					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="nc-button nc-button__main"
+					class="nc-button nc-button__main new-message-form__send-button"
 					@click.prevent="handleSubmit">
 					<Send
 						title=""
@@ -459,17 +460,46 @@ export default {
 }
 
 .new-message {
-	max-width: $messages-list-max-width + 145px;
-	flex: 1 1 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 	&-form {
 		display: flex;
-		align-items: flex-end;
+		position:relative;
+		flex: 0 1 650px;
+		margin: 0 48px;
+		&__emoji-picker {
+			position: absolute;
+			left: 6px;
+			bottom: 0;
+			.emoji-picker-button {
+				opacity: .7;
+				&:hover,
+				&:active,
+				&:focus {
+					opacity: 1;
+					background-color: transparent;
+				}
+			}
+		}
+
+		&__upload-menu {
+			position: absolute;
+			left: -44px;
+			bottom: 0;
+		}
+
+		&__send-button {
+			position: absolute;
+			right: -44px;
+			bottom: 0;
+		}
+
 		&__input {
 			flex-grow: 1;
 			max-height: $message-form-max-height;
 			overflow-y: auto;
 			overflow-x: hidden;
-			max-width: 638px;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;
