@@ -683,6 +683,7 @@ OC.L10N.register(
     "Favorite" : "Favorito",
     "Conversation settings" : "Ajustes de la conversación",
     "Description" : "Descripción",
+    "Enter a description for this conversation" : "Introduce una descripción para esta conversación",
     "Chat notifications" : "Notificaciones de chat",
     "Guests access" : "Acceso de invitados",
     "Meeting settings" : "Ajustes de la reunión",
