@@ -683,6 +683,7 @@ OC.L10N.register(
     "Favorite" : "我的最愛",
     "Conversation settings" : "對話設定",
     "Description" : "描述",
+    "Enter a description for this conversation" : "輸入此對話的描述",
     "Chat notifications" : "聊天通告",
     "Guests access" : "訪客存取",
     "Meeting settings" : "會議設定",
