@@ -682,6 +682,7 @@ OC.L10N.register(
     "Favorite" : "收藏",
     "Conversation settings" : "会话设置",
     "Description" : "描述",
+    "Enter a description for this conversation" : "为这个对话输入一个描述 ",
     "Chat notifications" : "聊天通知",
     "Guests access" : "来宾访问",
     "Meeting settings" : "会议设置",
