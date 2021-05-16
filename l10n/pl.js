@@ -841,7 +841,7 @@ OC.L10N.register(
     "Error while accessing microphone" : "Błąd podczas uzyskiwania dostępu do mikrofonu",
     "Access to camera is only possible with HTTPS" : "Dostęp do kamery jest możliwy tylko przy użyciu protokołu HTTPS",
     "Microphone" : "Mikrofon",
-    "Camera" : "Aparat",
+    "Camera" : "Kamera",
     "No microphone available" : "Brak dostępnego mikrofonu",
     "Select microphone" : "Wybierz mikrofon",
     "No camera available" : "Brak dostępnej kamery",
