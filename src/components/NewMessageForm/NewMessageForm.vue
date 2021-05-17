@@ -103,7 +103,14 @@
 						@submit="handleSubmit"
 						@files-pasted="handlePastedFiles" />
 				</div>
+
+				<AudioRecorder
+					v-if="!hasText"
+					@recording="handleRecording"
+					@audioFile="handleAudioFile" />
+
 				<button
+					v-if="hasText"
 					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
@@ -133,6 +140,7 @@ import { CONVERSATION } from '../../constants'
 import Paperclip from 'vue-material-design-icons/Paperclip'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
+import AudioRecorder from './AudioRecorder/AudioRecorder'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -152,6 +160,7 @@ export default {
 		EmojiPicker,
 		EmoticonOutline,
 		Send,
+		AudioRecorder,
 	},
 
 	props: {
@@ -160,13 +169,17 @@ export default {
 			required: true,
 		},
 	},
+
 	data: function() {
 		return {
 			text: '',
 			parsedText: '',
 			conversationIsFirstInList: false,
+			// True when the audiorecorder component is recording
+			isRecordingAudio: false,
 		}
 	},
+
 	computed: {
 		/**
 		 * The current conversation token
@@ -188,7 +201,7 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || !this.currentConversationIsJoined
+			return this.isReadOnly || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
 		placeholderText() {
@@ -227,6 +240,10 @@ export default {
 		currentConversationIsJoined() {
 			return this.$store.getters.currentConversationIsJoined
 		},
+
+		hasText() {
+			return this.text !== ''
+		},
 	},
 
 	watch: {
@@ -255,6 +272,7 @@ export default {
 		EventBus.$on('uploadStart', this.handleUploadStart)
 		EventBus.$on('retryMessage', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
+		// this.startRecording()
 	},
 
 	beforeDestroy() {
@@ -442,6 +460,14 @@ export default {
 
 			range.setStartAfter(emojiTextNode)
 		},
+
+		handleAudioFile(payload) {
+			this.handleFiles([payload])
+		},
+
+		handleRecording(payload) {
+			this.isRecordingAudio = payload
+		},
 	},
 }
 </script>
@@ -454,6 +480,7 @@ export default {
 	justify-content: center;
 	padding: 12px 0;
 	border-top: 1px solid var(--color-border);
+	height: 69px;
 	&--chatScrolledToBottom {
 		border-top: none;
 	}
@@ -467,7 +494,7 @@ export default {
 		display: flex;
 		position:relative;
 		flex: 0 1 650px;
-		margin: 0 48px;
+		margin: 0 4px;
 		&__emoji-picker {
 			position: absolute;
 			left: 6px;
@@ -486,12 +513,6 @@ export default {
 		&__upload-menu {
 			position: absolute;
 			left: -44px;
-			bottom: 0;
-		}
-
-		&__send-button {
-			position: absolute;
-			right: -44px;
 			bottom: 0;
 		}
 

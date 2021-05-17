@@ -216,7 +216,7 @@ export default {
 	watch: {
 		text(text) {
 			this.$nextTick(() => {
-				this.$emit('update:contentEditable', this.$refs.contentEditable.cloneNode(true))
+				this.$('update:contentEditable', this.$refs.contentEditable.cloneNode(true))
 			})
 
 			this.$emit('update:value', text)
@@ -235,6 +235,7 @@ export default {
 			}
 		},
 	},
+
 	mounted() {
 		this.focusInput()
 		/**
@@ -245,10 +246,12 @@ export default {
 
 		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
+
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.focusInput)
 		EventBus.$off('focusChatInput', this.focusInput)
 	},
+
 	methods: {
 		onBlur() {
 			// requires a short delay to avoid blocking click event handlers
