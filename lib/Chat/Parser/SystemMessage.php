@@ -31,6 +31,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
@@ -39,6 +40,7 @@ use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Share\Exceptions\ShareNotFound;
 
 class SystemMessage {
 
@@ -324,7 +326,12 @@ class SystemMessage {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($participant, $parameters['share']);
 				$parsedMessage = '{file}';
-				$chatMessage->setMessageType('comment');
+				$metaData = $parameters['metaData'] ?? [];
+				if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
+					$chatMessage->setMessageType('voice-message');
+				} else {
+					$chatMessage->setMessageType('comment');
+				}
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
@@ -423,9 +430,9 @@ class SystemMessage {
 	 * @param Participant $participant
 	 * @param string $shareId
 	 * @return array
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws \OCP\Files\NotFoundException
-	 * @throws \OCP\Share\Exceptions\ShareNotFound
+	 * @throws InvalidPathException
+	 * @throws NotFoundException
+	 * @throws ShareNotFound
 	 */
 	protected function getFileFromShare(Participant $participant, string $shareId): array {
 		$share = $this->shareProvider->getShareById($shareId);

@@ -308,7 +308,10 @@ class Listener {
 			$manager = \OC::$server->query(Manager::class);
 
 			$room = $manager->getRoomByToken($share->getSharedWith());
-			$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId()]);
+			$metaData = \OC::$server->getRequest()->getParam('talkMetaData') ?? '';
+			$metaData = json_decode($metaData, true);
+			$metaData = is_array($metaData) ? $metaData : [];
+			$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
 		};
 		/**
 		 * @psalm-suppress UndefinedClass
