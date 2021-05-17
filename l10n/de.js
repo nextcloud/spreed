@@ -46,6 +46,7 @@ OC.L10N.register(
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} hat die Unterhaltung von \"%1$s\" nach \"%2$s\" umbenannt",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Du hast die Unterhaltung von \"%1$s\" in \"%2$s\" umbenannt",
     "An administrator renamed the conversation from \"%1$s\" to \"%2$s\"" : "Ein Administrator hat die Unterhaltung von \"%1$s\" nach \"%2$s\" umbenannt",
+    "{actor} set the description" : "{actor} hat die Beschreibung gesetzt",
     "{actor} removed the description" : "{actor} hat die Beschreibung entfernt",
     "You removed the description" : "Du hast die Beschreibung entfernt",
     "An administrator removed the description" : "Ein Administrator hat die Beschreibung entfernt",
