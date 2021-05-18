@@ -754,12 +754,12 @@ class Room {
 	 * @param int $newType Currently it is only allowed to change between `self::GROUP_CALL` and `self::PUBLIC_CALL`
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setType(int $newType): bool {
+	public function setType(int $newType, bool $allowSwitchingOneToOne = false): bool {
 		if ($newType === $this->getType()) {
 			return true;
 		}
 
-		if ($this->getType() === self::ONE_TO_ONE_CALL) {
+		if (!$allowSwitchingOneToOne && $this->getType() === self::ONE_TO_ONE_CALL) {
 			return false;
 		}
 

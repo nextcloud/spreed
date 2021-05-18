@@ -150,6 +150,10 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 
+			if ($event->getOldValue() === Room::ONE_TO_ONE_CALL) {
+				return;
+			}
+
 			if ($event->getNewValue() === Room::PUBLIC_CALL) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
