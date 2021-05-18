@@ -608,7 +608,7 @@ Feature: create
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" shares "welcome.txt" with room "group room"
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets all shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -643,7 +643,7 @@ Feature: create
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" shares "Talk/welcome.txt" with room "group room"
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets all shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
