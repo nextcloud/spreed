@@ -95,7 +95,6 @@ import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
-import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'RightSidebar',
@@ -213,14 +212,6 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 		},
-	},
-
-	mounted() {
-		EventBus.$on('routeChange', this.handleRouteChange)
-	},
-
-	beforeDestroy() {
-		EventBus.$off('routeChange', this.handleRouteChange)
 	},
 
 	methods: {
