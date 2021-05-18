@@ -516,7 +516,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -549,7 +549,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -584,7 +584,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -620,7 +620,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -707,7 +707,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -757,7 +757,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -807,7 +807,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -903,7 +903,7 @@ Feature: update
       | permissions            | 1 |
       | expireDate             | +3 days |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -994,7 +994,7 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 19 |
     Then the OCS status code should be "403"
-    And the HTTP status code should be "401"
+    And the HTTP status code should be "200"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
