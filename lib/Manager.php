@@ -359,6 +359,34 @@ class Manager {
 
 	/**
 	 * @param string $userId
+	 * @return Room[]
+	 */
+	public function getLeftOneToOneRoomsForUser(string $userId): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL)))
+			->andWhere($query->expr()->like('r.name', $query->createNamedParameter('%' . $this->db->escapeLikeParameter(json_encode($userId)) . '%')));
+
+		$result = $query->execute();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
+			$room = $this->createRoomObject($row);
+			$rooms[] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
+	 * @param string $userId
 	 * @return string[]
 	 */
 	public function getRoomTokensForUser(string $userId): array {
