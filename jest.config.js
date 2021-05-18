@@ -25,7 +25,7 @@ module.exports = {
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
 	transformIgnorePatterns: [
-		'node_modules/(?!(vue-material-design-icons|@juliushaertl)/)',
+		'node_modules/(?!(vue-material-design-icons|@juliushaertl|tributejs)/)',
 	],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],

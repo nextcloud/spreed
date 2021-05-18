@@ -174,8 +174,9 @@ export default {
 			initialisedConversations: false,
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
-			// Keeps track of wheteher the conversation list is scrolled to the top or not
+			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
+			refreshTimer: null,
 		}
 	},
 
@@ -188,6 +189,8 @@ export default {
 				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
 			}
 
+			// FIXME: this modifies the original array,
+			// maybe should act on a copy or sort already within the store ?
 			return conversations.sort(this.sortConversations)
 		},
 
@@ -250,7 +253,7 @@ export default {
 
 	mounted() {
 		/** Refreshes the conversations every 30 seconds */
-		window.setInterval(() => {
+		this.refreshTimer = window.setInterval(() => {
 			if (!this.isFetchingConversations) {
 				this.fetchConversations()
 			}
@@ -269,6 +272,11 @@ export default {
 
 		this.cancelSearchListedConversations()
 		this.cancelSearchListedConversations = null
+
+		if (this.refreshTimer) {
+			clearInterval(this.refreshTimer)
+			this.refreshTimer = null
+		}
 	},
 
 	methods: {
@@ -292,6 +300,7 @@ export default {
 			this.contactsLoading = true
 
 			try {
+				// FIXME: move to conversationsStore
 				this.cancelSearchPossibleConversations('canceled')
 				const { request, cancel } = CancelableRequest(searchPossibleConversations)
 				this.cancelSearchPossibleConversations = cancel
@@ -324,6 +333,7 @@ export default {
 			try {
 				this.listedConversationsLoading = true
 
+				// FIXME: move to conversationsStore
 				this.cancelSearchListedConversations('canceled')
 				const { request, cancel } = CancelableRequest(searchListedConversations)
 				this.cancelSearchListedConversations = cancel
@@ -394,6 +404,7 @@ export default {
 		},
 
 		showSettings() {
+			// FIXME: use local EventBus service instead of the global one
 			emit('show-settings')
 		},
 
