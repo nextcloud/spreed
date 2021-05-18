@@ -362,7 +362,7 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 }
 
 Signaling.Internal.prototype._sendMessages = function(messages) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/signaling/{token}', { token: this.currentRoomToken }), {
+	return axios.post(generateOcsUrl('apps/spreed/api/v3/signaling/{token}', { token: this.currentRoomToken }), {
 		messages: JSON.stringify(messages),
 	})
 }
@@ -818,7 +818,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 	} else {
 		// Already reconnected with a new session.
 		this._forceReconnect = false
-		const url = generateOcsUrl('apps/spreed/api/v1/signaling/backend')
+		const url = generateOcsUrl('apps/spreed/api/v3/signaling/backend')
 		msg = {
 			'type': 'hello',
 			'hello': {

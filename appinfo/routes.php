@@ -62,7 +62,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/settings',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2|3)',
+				'apiVersion' => 'v(3)',
 			],
 		],
 		[
@@ -70,7 +70,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/welcome/{serverId}',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(3)',
 				'serverId' => '^\d+$',
 			],
 		],
@@ -79,7 +79,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/backend',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(3)',
 			],
 		],
 		[
@@ -87,7 +87,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/{token}',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
@@ -96,7 +96,7 @@ return [
 			'url' => '/api/{apiVersion}/signaling/{token}',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(1|2)',
+				'apiVersion' => 'v(3)',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
