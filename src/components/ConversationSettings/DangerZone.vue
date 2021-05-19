@@ -37,9 +37,7 @@
 </template>
 
 <script>
-import { removeCurrentUserFromConversation } from '../../services/participantsService'
 import { showError } from '@nextcloud/dialogs'
-import { deleteConversation } from '../../services/conversationsService'
 import { emit } from '@nextcloud/event-bus'
 
 export default {
@@ -78,9 +76,7 @@ export default {
 		 */
 		async leaveConversation() {
 			try {
-				await removeCurrentUserFromConversation(this.token)
-				// If successful, deletes the conversation from the store
-				this.$store.dispatch('deleteConversation', this.conversation)
+				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.token })
 				this.hideConversationSettings()
 			} catch (error) {
 				if (error?.response?.status === 400) {
@@ -109,9 +105,7 @@ export default {
 					}
 
 					try {
-						await deleteConversation(this.token)
-						// If successful, deletes the conversation from the store
-						this.$store.dispatch('deleteConversation', this.conversation)
+						await this.$store.dispatch('deleteConversationFromServer', { token: this.token })
 						// Close the settings
 						this.hideConversationSettings()
 					} catch (error) {

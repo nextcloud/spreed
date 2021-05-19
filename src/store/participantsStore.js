@@ -27,6 +27,7 @@ import {
 	resendInvitations,
 	joinConversation,
 	leaveConversation,
+	removeCurrentUserFromConversation,
 } from '../services/participantsService'
 import {
 	generateUrl,
@@ -365,6 +366,12 @@ const actions = {
 		await resendInvitations(token, { attendeeId })
 	},
 
+	/**
+	 * Makes the current user active in the given conversation.
+	 *
+	 * @param {Object} context unused
+	 * @param {string} token conversation token
+	 */
 	async joinConversation(context, { token }) {
 		const forceJoin = SessionStorage.getItem('joined_conversation') === token
 
@@ -447,8 +454,27 @@ const actions = {
 		await context.dispatch('joinConversation', { token })
 	},
 
+	/**
+	 * Makes the current user inactive in the given conversation.
+	 *
+	 * @param {Object} context unused
+	 * @param {string} token conversation token
+	 */
 	async leaveConversation(context, { token }) {
 		await leaveConversation(token)
+	},
+
+	/**
+	 * Removes the current user from the conversation, which
+	 * means the user is not a participant any more.
+	 *
+	 * @param {Object} context unused
+	 * @param {string} token conversation token
+	 */
+	async removeCurrentUserFromConversation(context, { token }) {
+		await removeCurrentUserFromConversation(token)
+		// If successful, deletes the conversation from the store
+		await context.dispatch('deleteConversation', token)
 	},
 }
 

@@ -90,7 +90,6 @@
 
 <script>
 import { PARTICIPANT } from '../../constants'
-import { setNotificationLevel } from '../../services/conversationsService'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh'
 import Account from 'vue-material-design-icons/Account'
 import VolumeOff from 'vue-material-design-icons/VolumeOff'
@@ -137,9 +136,7 @@ export default {
 		 * @param {int} notificationLevel The notification level to set.
 		 */
 		async setNotificationLevel(notificationLevel) {
-			const token = this.token
-			await setNotificationLevel(token, notificationLevel)
-			this.$store.dispatch('changeNotificationLevel', { token, notificationLevel })
+			await this.$store.dispatch('setNotificationLevel', { token: this.token, notificationLevel })
 		},
 	},
 }

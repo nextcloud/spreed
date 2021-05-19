@@ -113,11 +113,6 @@ import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import ConversationIcon from './../../ConversationIcon'
-import { removeCurrentUserFromConversation } from '../../../services/participantsService'
-import {
-	deleteConversation,
-	setNotificationLevel,
-} from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
@@ -350,9 +345,7 @@ export default {
 					}
 
 					try {
-						await deleteConversation(this.item.token)
-						// If successful, deletes the conversation from the store
-						this.$store.dispatch('deleteConversation', this.item.token)
+						await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
 					} catch (error) {
 						console.debug(`error while deleting conversation ${error}`)
 						showError(t('spreed', 'Error while deleting conversation'))
@@ -366,9 +359,7 @@ export default {
 		 */
 		async leaveConversation() {
 			try {
-				await removeCurrentUserFromConversation(this.item.token)
-				// If successful, deletes the conversation from the store
-				this.$store.dispatch('deleteConversation', this.item.token)
+				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.item.token })
 			} catch (error) {
 				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
@@ -386,8 +377,7 @@ export default {
 		 * @param {int} level The notification level to set.
 		 */
 		async setNotificationLevel(level) {
-			await setNotificationLevel(this.item.token, level)
-			this.item.notificationLevel = level
+			await this.$store.dispatch('setNotificationLevel', { token: this.item.token, notificationLevel: level })
 		},
 
 		// forward click event

@@ -10,6 +10,7 @@ import {
 	resendInvitations,
 	joinConversation,
 	leaveConversation,
+	removeCurrentUserFromConversation,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -26,6 +27,7 @@ jest.mock('../services/participantsService', () => ({
 	resendInvitations: jest.fn(),
 	joinConversation: jest.fn(),
 	leaveConversation: jest.fn(),
+	removeCurrentUserFromConversation: jest.fn(),
 }))
 jest.mock('../services/callsService', () => ({
 	joinCall: jest.fn(),
@@ -635,5 +637,18 @@ describe('participantsStore', () => {
 		await store.dispatch('leaveConversation', { token: TOKEN })
 
 		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
+	})
+
+	test('removes current user from conversation', async() => {
+		removeCurrentUserFromConversation.mockResolvedValue()
+
+		testStoreConfig = cloneDeep(participantsStore)
+		testStoreConfig.actions.deleteConversation = jest.fn()
+		store = new Vuex.Store(testStoreConfig)
+
+		await store.dispatch('removeCurrentUserFromConversation', { token: TOKEN })
+
+		expect(removeCurrentUserFromConversation).toHaveBeenCalledWith(TOKEN)
+		expect(testStoreConfig.actions.deleteConversation).toHaveBeenCalledWith(expect.anything(), TOKEN)
 	})
 })
