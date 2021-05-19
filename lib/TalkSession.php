@@ -132,4 +132,8 @@ class TalkSession {
 
 		$this->session->set($key, json_encode($values));
 	}
+
+	public function renewSessionId() {
+		$this->session->regenerateId();
+	}
 }
