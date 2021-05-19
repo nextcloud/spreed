@@ -223,6 +223,7 @@ class PageController extends Controller {
 					$passwordVerification = $room->verifyPassword($password);
 
 					if ($passwordVerification['result']) {
+						$this->talkSession->renewSessionId();
 						$this->talkSession->setPasswordForRoom($token, $password);
 					} else {
 						$this->talkSession->removePasswordForRoom($token);
@@ -286,6 +287,7 @@ class PageController extends Controller {
 
 			$passwordVerification = $room->verifyPassword($password);
 			if ($passwordVerification['result']) {
+				$this->talkSession->renewSessionId();
 				$this->talkSession->setPasswordForRoom($token, $password);
 			} else {
 				$this->talkSession->removePasswordForRoom($token);
