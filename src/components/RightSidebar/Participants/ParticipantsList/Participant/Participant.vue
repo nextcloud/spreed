@@ -378,12 +378,6 @@ export default {
 		},
 
 		isSelf() {
-			// User
-			if (this.userId) {
-				return this.$store.getters.getUserId() === this.userId
-			}
-
-			// Guest
 			return this.sessionIds.length && this.sessionIds.indexOf(this.currentParticipant.sessionId) >= 0
 		},
 		selfIsModerator() {
