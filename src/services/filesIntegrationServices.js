@@ -31,7 +31,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @returns {String} the conversation token
  */
 const getFileConversation = async function({ fileId }, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `file/${fileId}`)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/file/{fileId}', { fileId }))
 	return response
 }
 
@@ -43,7 +43,7 @@ const getFileConversation = async function({ fileId }, options) {
  * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareConversationData = async function(shareToken) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `publicshare/${shareToken}`)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/publicshare/{shareToken}', { shareToken }))
 	return response.data.ocs.data
 }
 

@@ -25,7 +25,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX'),
 			{
 				dummyOption: true,
 				params: {
@@ -48,7 +48,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX'),
 			{
 				dummyOption: true,
 				params: {
@@ -70,7 +70,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX'),
 			{
 				dummyOption: true,
 				params: {
@@ -95,7 +95,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.post).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX'),
 			{
 				message: 'hello world!',
 				actorDisplayName: 'actor-display-name',
@@ -115,7 +115,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.delete).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX/1234'
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234'),
 		)
 	})
 
@@ -128,7 +128,7 @@ describe('messagesService', () => {
 		})
 
 		expect(mockAxios.post).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX/share',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/share'),
 			{
 				objectType: 'deck',
 				objectId: 999,
@@ -147,7 +147,7 @@ describe('messagesService', () => {
 
 		const lastReq = mockAxios.lastReqGet()
 		expect(lastReq.url)
-			.toBe(generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX/share')
+			.toBe(generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/share'))
 		expect(lastReq.data.objectType).toBe('deck')
 		expect(lastReq.data.objectId).toBe(999)
 		expect(lastReq.data.metaData).toBe('{"x":1}')
@@ -158,7 +158,7 @@ describe('messagesService', () => {
 		updateLastReadMessage('XXTOKENXX', 1234)
 
 		expect(mockAxios.post).toHaveBeenCalledWith(
-			generateOcsUrl('apps/spreed/api/v1/chat', 2) + 'XXTOKENXX/read',
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/read'),
 			{
 				lastReadMessage: 1234,
 			}
