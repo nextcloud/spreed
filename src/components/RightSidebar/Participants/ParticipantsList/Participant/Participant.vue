@@ -190,6 +190,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		/**
+		 * Whether to show the user status on the avatar.
+		 * This does not affect the status message row.
+		 */
 		showUserStatus: {
 			type: Boolean,
 			default: true,
