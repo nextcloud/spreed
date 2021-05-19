@@ -21,7 +21,7 @@ describe('conversationsService', () => {
 			}
 		)
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('core/autocomplete', 2) + 'get',
+			generateOcsUrl('core/autocomplete/get'),
 			{
 				dummyOption: true,
 				params: {

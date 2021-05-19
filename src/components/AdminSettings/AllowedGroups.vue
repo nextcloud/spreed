@@ -165,7 +165,7 @@ export default {
 		searchGroup: debounce(async function(query) {
 			this.loadingGroups = true
 			try {
-				const response = await axios.get(generateOcsUrl('cloud', 2) + 'groups/details', {
+				const response = await axios.get(generateOcsUrl('cloud/groups/details'), {
 					search: query,
 					limit: 20,
 					offset: 0,

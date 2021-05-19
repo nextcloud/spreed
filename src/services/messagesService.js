@@ -35,7 +35,7 @@ import Hex from 'crypto-js/enc-hex'
  * @param {bool} includeLastKnown whether to include the last known message in the response;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 0,
@@ -54,7 +54,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {int} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 1,
@@ -75,7 +75,7 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {object} options request options
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,
@@ -91,7 +91,7 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
  * @param {string} id The id of the message to be deleted
  */
 const deleteMessage = async function({ token, id }) {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '/' + id)
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }))
 }
 
 /**
@@ -108,7 +108,7 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
 		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
 		referenceId = Hex.stringify(SHA1(tempId))
 	}
-	return axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/share`, {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share', { token }), {
 		objectType,
 		objectId,
 		metaData,
@@ -123,7 +123,7 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
  * @param {int} lastReadMessage id of the last read message to set
  */
 const updateLastReadMessage = async function(token, lastReadMessage) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `chat/${token}/read`, {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }), {
 		lastReadMessage,
 	})
 }

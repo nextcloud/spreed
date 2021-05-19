@@ -12,7 +12,7 @@ describe('filesSharingServices', () => {
 		shareFile('path/to/file', 'XXTOKENXX', 'the-reference-id')
 
 		expect(mockAxios.post).toHaveBeenCalledWith(
-			generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
+			generateOcsUrl('apps/files_sharing/api/v1/shares'),
 			{
 				shareType: 10,
 				shareWith: 'XXTOKENXX',

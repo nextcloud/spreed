@@ -70,7 +70,7 @@ describe('RoomSelector.vue', () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4', 2) + 'room'
+			generateOcsUrl('/apps/spreed/api/v4/room')
 		)
 
 		mockAxios.mockResponse({
@@ -98,7 +98,7 @@ describe('RoomSelector.vue', () => {
 		})
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4', 2) + 'room'
+			generateOcsUrl('/apps/spreed/api/v4/room')
 		)
 
 		mockAxios.mockResponse({
@@ -121,7 +121,7 @@ describe('RoomSelector.vue', () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4', 2) + 'room'
+			generateOcsUrl('/apps/spreed/api/v4/room')
 		)
 
 		mockAxios.mockResponse({

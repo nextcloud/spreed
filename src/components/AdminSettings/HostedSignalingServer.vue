@@ -218,7 +218,7 @@ export default {
 			this.requestError = ''
 			this.loading = true
 			try {
-				const res = await axios.post(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver', 2) + 'requesttrial', {
+				const res = await axios.post(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver/requesttrial'), {
 					url: this.hostedHPBNextcloudUrl,
 					name: this.hostedHPBFullName,
 					email: this.hostedHPBEmail,
@@ -239,7 +239,7 @@ export default {
 			this.loading = true
 
 			try {
-				await axios.delete(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver', 2) + 'delete')
+				await axios.delete(generateOcsUrl('apps/spreed/api/v1/hostedsignalingserver/delete'))
 
 				this.trialAccount = []
 			} catch (err) {
