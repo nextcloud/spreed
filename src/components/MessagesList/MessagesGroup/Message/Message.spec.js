@@ -11,6 +11,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Mention from './MessagePart/Mention'
 import FilePreview from './MessagePart/FilePreview'
 import DeckCard from './MessagePart/DeckCard'
+import Location from './MessagePart/Location'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import { findActionButton } from '../../../../test-helpers'
 
@@ -370,6 +371,24 @@ describe('Message.vue', () => {
 						'deck-card': {
 							component: DeckCard,
 							props: params['deck-card'],
+						},
+					}
+				)
+			})
+
+			test('renders geo locations', () => {
+				const params = {
+					'geo-location': {
+						metadata: '{id:123}',
+						type: 'geo-location',
+					},
+				}
+				renderRichObject(
+					'{geo-location}',
+					params, {
+						'geo-location': {
+							component: Location,
+							props: params['geo-location'],
 						},
 					}
 				)
