@@ -124,6 +124,11 @@ password = ''
 // clustering is enabled.
 token = ''
 
+// Number of streams to send
+publishersCount = 5
+// Number of streams to receive
+subscribersPerPublisherCount = 40
+
 joinRoomUrl = talkOcsApiUrl + 'v3/room/' + token + '/participants/active'
 
 async function getSignalingSettings(user, password, token) {
@@ -451,7 +456,6 @@ stream = await navigator.mediaDevices.getUserMedia({
 	video: false,
 })
 
-publishersCount = 5
 publishers = []
 
 function listenToPublisherConnectionChanges() {
@@ -502,7 +506,6 @@ async function initPublishers() {
 
 await initPublishers()
 
-subscribersPerPublisherCount = 40
 subscribers = []
 
 function listenToSubscriberConnectionChanges() {
