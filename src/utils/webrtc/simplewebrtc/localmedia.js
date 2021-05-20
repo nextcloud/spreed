@@ -191,8 +191,8 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		}
 	}).catch(function(err) {
 		// Fallback for users without a camera or with a camera that can not be
-		// accessed.
-		if (self.config.audioFallback && constraints.video !== false) {
+		// accessed, but only if audio is meant to be used.
+		if (constraints.audio !== false && self.config.audioFallback && constraints.video !== false) {
 			self.emit('localStreamRequestFailedRetryNoVideo', constraints, err)
 			constraints.video = false
 			self.start(constraints, cb, 'retry-no-video')
