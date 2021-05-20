@@ -36,6 +36,9 @@
 			}"
 			@scroll.prevent="">
 			<LTileLayer :url="url" />
+			<LControlAttribution
+				position="bottomright"
+				:prefix="attribution" />
 			<LMarker :lat-lng="center">
 				<LTooltip
 					:options="{
@@ -50,14 +53,21 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet'
+import {
+	LControlAttribution,
+	LTooltip,
+	LMap,
+	LMarker,
+	LTileLayer,
+} from 'vue2-leaflet'
 
 export default {
 	name: 'Location',
 
 	components: {
-		LMap,
+		LControlAttribution,
 		LTileLayer,
+		LMap,
 		LMarker,
 		LTooltip,
 	},
@@ -97,6 +107,7 @@ export default {
 			// Opening the link
 			linkZoom: 18,
 
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 		}
 	},
 
