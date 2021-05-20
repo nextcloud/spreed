@@ -947,6 +947,12 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
+		if (error.name === 'TypeError') {
+			// Both audio and video were explicitly disabled, no need to show an
+			// error.
+			return
+		}
+
 		let message
 		let timeout = -1
 		if ((error.name === 'NotSupportedError'
