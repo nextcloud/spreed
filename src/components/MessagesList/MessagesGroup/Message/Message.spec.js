@@ -12,6 +12,7 @@ import Mention from './MessagePart/Mention'
 import FilePreview from './MessagePart/FilePreview'
 import DeckCard from './MessagePart/DeckCard'
 import DefaultParameter from './MessagePart/DefaultParameter'
+import { findActionButton } from '../../../../test-helpers'
 
 import Message from './Message'
 
@@ -472,17 +473,6 @@ describe('Message.vue', () => {
 		beforeEach(() => {
 			store = new Vuex.Store(testStoreConfig)
 		})
-
-		function findActionButton(wrapper, text) {
-			const actionButtons = wrapper.findAllComponents({ name: 'ActionButton' })
-			const items = actionButtons.filter(actionButton => {
-				return actionButton.text() === text
-			})
-			if (!items.exists()) {
-				return items
-			}
-			return items.at(0)
-		}
 
 		test('does not render actions for system messages are available', async() => {
 			messageProps.systemMessage = 'this is a system message'
