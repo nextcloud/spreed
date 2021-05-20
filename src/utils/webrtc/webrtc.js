@@ -48,6 +48,7 @@ let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
+let startedWithMedia
 
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -524,6 +525,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 	})
 
 	webrtc.startMedia = function(token) {
+		startedWithMedia = undefined
+
 		webrtc.joinCall(token)
 	}
 
@@ -844,6 +847,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		// reconnection is forced to start sending it.
 		signaling.setSendVideoIfAvailable(true)
 
+		startedWithMedia = true
+
 		let flags = signaling.getCurrentCallFlags()
 		flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
@@ -909,8 +914,37 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	webrtc.on('localTrackReplaced', function(newTrack /*, oldTrack, stream */) {
+		// Device disabled, nothing to do here.
+		if (!newTrack) {
+			return
+		}
+
+		// If the call was started with media the connections will be already
+		// established. If it has not started yet the connections will be
+		// established once started.
+		if (startedWithMedia || startedWithMedia === undefined) {
+			return
+		}
+
+		// If the call was originally started without media the participant
+		// needs to reconnect to establish the sender connections.
+		startedWithMedia = true
+
+		let flags = signaling.getCurrentCallFlags()
+		if (newTrack.kind === 'audio') {
+			flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		} else if (newTrack.kind === 'video') {
+			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		}
+
+		forceReconnect(signaling, flags)
+	})
+
 	webrtc.on('localMediaStarted', function(/* configuration */) {
 		console.info('localMediaStarted')
+
+		startedWithMedia = true
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
@@ -921,6 +955,8 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	webrtc.on('localMediaError', function(error) {
 		console.warn('Access to microphone & camera failed', error)
+
+		startedWithMedia = false
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
