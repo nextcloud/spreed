@@ -225,7 +225,7 @@ class Signaling extends EventTarget {
 	async getSessionId() {
 		return this.sessionId
 	}
-	
+
 	send(message) {
 		this.socket.send(JSON.stringify(message))
 	}
@@ -559,8 +559,6 @@ async function initSubscribers() {
 	listenToSubscriberConnectionChanges()
 }
 
-await initSubscribers()
-
 const closeConnections = function() {
 	subscribers.forEach(subscriber => {
 		subscriber.peerConnection.close()
@@ -574,3 +572,7 @@ const closeConnections = function() {
 		track.stop()
 	})
 }
+
+console.info('Preparing to siege')
+
+await initSubscribers()
