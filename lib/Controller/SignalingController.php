@@ -118,13 +118,10 @@ class SignalingController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
-	 * @param string $apiVersion
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getSettings(string $apiVersion, string $token = ''): DataResponse {
-		$apiV = (int) substr($apiVersion, 1);
-
+	public function getSettings(string $token = ''): DataResponse {
 		try {
 			if ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
@@ -137,28 +134,32 @@ class SignalingController extends OCSController {
 		}
 
 		$stun = [];
+		$stunUrls = [];
 		$stunServers = $this->talkConfig->getStunServers();
 		foreach ($stunServers as $stunServer) {
-			$stun[] = [
-				'url' => 'stun:' . $stunServer,
-			];
+			$stunUrls[] = 'stun:' . $stunServer;
 		}
+		$stun[] = [
+			'urls' => $stunUrls
+		];
 
 		$turn = [];
 		$turnSettings = $this->talkConfig->getTurnSettings();
 		foreach ($turnSettings as $turnServer) {
+			$turnUrls = [];
 			$schemes = explode(',', $turnServer['schemes']);
 			$protocols = explode(',', $turnServer['protocols']);
 			foreach ($schemes as $scheme) {
 				foreach ($protocols as $proto) {
-					$turn[] = [
-						'url' => [$scheme . ':' . $turnServer['server'] . '?transport=' . $proto],
-						'urls' => [$scheme . ':' . $turnServer['server'] . '?transport=' . $proto],
-						'username' => $turnServer['username'],
-						'credential' => $turnServer['password'],
-					];
+					$turnUrls[] = $scheme . ':' . $turnServer['server'] . '?transport=' . $proto;
 				}
 			}
+
+			$turn[] = [
+				'urls' => $turnUrls,
+				'username' => $turnServer['username'],
+				'credential' => $turnServer['password'],
+			];
 		}
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
@@ -172,11 +173,8 @@ class SignalingController extends OCSController {
 			'ticket' => $this->talkConfig->getSignalingTicket($this->userId),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
+			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
 		];
-
-		if ($apiV >= 2) {
-			$data['sipDialinInfo'] = $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '';
-		}
 
 		return new DataResponse($data);
 	}

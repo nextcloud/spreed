@@ -27,7 +27,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {object} options options
  */
 const fetchSignalingSettings = async({ token }, options) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v2/signaling/settings'), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v3/signaling/settings'), Object.assign(options, {
 		params: {
 			token,
 		},
@@ -35,11 +35,11 @@ const fetchSignalingSettings = async({ token }, options) => {
 }
 
 const pullSignalingMessages = async(token, options) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v2/signaling/{token}', { token }), options)
+	return axios.get(generateOcsUrl('apps/spreed/api/v3/signaling/{token}', { token }), options)
 }
 
 const getWelcomeMessage = async(serverId) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v2/signaling/welcome/{serverId}', { serverId }))
+	return axios.get(generateOcsUrl('apps/spreed/api/v3/signaling/welcome/{serverId}', { serverId }))
 }
 
 export {
