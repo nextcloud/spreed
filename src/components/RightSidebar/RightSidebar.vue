@@ -277,6 +277,7 @@ export default {
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
+	height: 100%;
 }
 
 </style>

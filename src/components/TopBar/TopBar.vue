@@ -21,88 +21,114 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
-		<CallButton class="top-bar__button" />
-		<!-- Call layout switcher -->
-		<Actions
-			slot="trigger"
-			class="forced-background"
-			container="#content-vue">
-			<ActionButton v-if="isInCall"
-				:icon="changeViewIconClass"
-				@click="changeView">
-				{{ changeViewText }}
-			</actionbutton>
-		</Actions>
-		<!-- sidebar toggle -->
-		<Actions
-			v-shortkey.once="['f']"
-			class="top-bar__button forced-background"
-			menu-align="right"
-			:aria-label="t('spreed', 'Conversation actions')"
-			container="#content-vue"
-			@shortkey.native="toggleFullscreen">
-			<ActionButton
-				:icon="iconFullscreen"
-				:aria-label="t('spreed', 'Toggle fullscreen')"
-				:close-after-click="true"
-				@click="toggleFullscreen">
-				{{ labelFullscreen }}
-			</ActionButton>
-			<ActionSeparator
-				v-if="showModerationOptions" />
-			<ActionLink
-				v-if="isFileConversation"
-				icon="icon-text"
-				:href="linkToFile">
-				{{ t('spreed', 'Go to file') }}
-			</ActionLink>
-			<template
-				v-if="showModerationOptions">
+		<!-- conversation header -->
+		<a v-if="!isInCall"
+			class="conversation-header"
+			@click="openConversationSettings">
+			<ConversationIcon
+				:item="conversation"
+				:hide-favorite="false"
+				:hide-call="false" />
+			<div class="conversation-header__text">
+				<p class="title">
+					{{ conversation.displayName }}
+				</p>
+				<p v-if="conversation.description"
+					v-tooltip.bottom="{
+						content: renderedDescription,
+						delay: { show: 500, hide: 500 },
+						autoHide: false,
+						html: true,
+					}"
+					class="description">
+					{{ conversation.description }}
+				</p>
+			</div>
+		</a>
+		<div class="top-bar__buttons">
+			<CallButton class="top-bar__button" />
+			<!-- Call layout switcher -->
+			<Actions
+				slot="trigger"
+				class="forced-background"
+				container="#content-vue">
+				<ActionButton v-if="isInCall"
+					:icon="changeViewIconClass"
+					@click="changeView">
+					{{ changeViewText }}
+				</actionbutton>
+			</Actions>
+			<!-- sidebar toggle -->
+			<Actions
+				v-shortkey.once="['f']"
+				class="top-bar__button forced-background"
+				menu-align="right"
+				:aria-label="t('spreed', 'Conversation actions')"
+				container="#content-vue"
+				@shortkey.native="toggleFullscreen">
 				<ActionButton
+					:icon="iconFullscreen"
+					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
-					icon="icon-rename"
-					@click="handleRenameConversation">
-					{{ t('spreed', 'Rename conversation') }}
+					@click="toggleFullscreen">
+					{{ labelFullscreen }}
 				</ActionButton>
-			</template>
-			<ActionButton
-				v-if="!isOneToOneConversation"
-				icon="icon-clippy"
-				:close-after-click="true"
-				@click="handleCopyLink">
-				{{ t('spreed', 'Copy link') }}
-			</ActionButton>
-			<template
-				v-if="showModerationOptions && canFullModerate && isInCall">
-				<ActionSeparator />
+				<ActionSeparator
+					v-if="showModerationOptions" />
+				<ActionLink
+					v-if="isFileConversation"
+					icon="icon-text"
+					:href="linkToFile">
+					{{ t('spreed', 'Go to file') }}
+				</ActionLink>
+				<template
+					v-if="showModerationOptions">
+					<ActionButton
+						:close-after-click="true"
+						icon="icon-rename"
+						@click="handleRenameConversation">
+						{{ t('spreed', 'Rename conversation') }}
+					</ActionButton>
+				</template>
 				<ActionButton
+					v-if="!isOneToOneConversation"
+					icon="icon-clippy"
 					:close-after-click="true"
-					@click="forceMuteOthers">
-					<MicrophoneOff
-						slot="icon"
-						:size="16"
-						decorative
-						title="" />
-					{{ t('spreed', 'Mute others') }}
+					@click="handleCopyLink">
+					{{ t('spreed', 'Copy link') }}
 				</ActionButton>
-			</template>
-			<ActionSeparator
-				v-if="showModerationOptions" />
-			<ActionButton
-				icon="icon-settings"
-				:close-after-click="true"
-				@click="showConversationSettings">
-				{{ t('spreed', 'Conversation settings') }}
-			</ActionButton>
-		</Actions>
-		<Actions v-if="showOpenSidebarButton"
-			class="top-bar__button forced-background"
-			close-after-click="true"
-			container="#content-vue">
-			<ActionButton
-				:icon="iconMenuPeople"
-				@click="openSidebar" />
-		</Actions>
+				<template
+					v-if="showModerationOptions && canFullModerate && isInCall">
+					<ActionSeparator />
+					<ActionButton
+						:close-after-click="true"
+						@click="forceMuteOthers">
+						<MicrophoneOff
+							slot="icon"
+							:size="16"
+							decorative
+							title="" />
+						{{ t('spreed', 'Mute others') }}
+					</ActionButton>
+				</template>
+				<ActionSeparator
+					v-if="showModerationOptions" />
+				<ActionButton
+					icon="icon-settings"
+					:close-after-click="true"
+					@click="showConversationSettings">
+					{{ t('spreed', 'Conversation settings') }}
+				</ActionButton>
+			</Actions>
+			<Actions v-if="showOpenSidebarButton"
+				class="top-bar__button forced-background"
+				close-after-click="true"
+				container="#content-vue">
+				<ActionButton
+					:icon="iconMenuPeople"
+					@click="openSidebar" />
+			</Actions>
+		</div>
 	</div>
 </template>
 
@@ -119,9 +145,16 @@ import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
 import { callParticipantCollection } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
+import ConversationIcon from '../ConversationIcon'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 
 export default {
 	name: 'TopBar',
+
+	directives: {
+		Tooltip,
+	},
 
 	components: {
 		ActionButton,
@@ -130,7 +163,10 @@ export default {
 		CallButton,
 		ActionSeparator,
 		MicrophoneOff,
+		ConversationIcon,
 	},
+
+	mixins: [richEditor],
 
 	props: {
 		isInCall: {
@@ -187,9 +223,11 @@ export default {
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
+
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
+
 		linkToFile() {
 			if (this.isFileConversation) {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
@@ -209,15 +247,19 @@ export default {
 		canModerate() {
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
+
 		showModerationOptions() {
 			return !this.isOneToOneConversation && this.canModerate
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
@@ -225,6 +267,7 @@ export default {
 				return ''
 			}
 		},
+
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
@@ -232,6 +275,10 @@ export default {
 
 		isGrid() {
 			return this.$store.getters.isGrid
+		},
+
+		renderedDescription() {
+			return this.renderContent(this.conversation.description)
 		},
 	},
 
@@ -324,6 +371,10 @@ export default {
 				callParticipantModel.forceMute()
 			})
 		},
+
+		openConversationSettings() {
+			emit('show-conversation-settings')
+		},
 	},
 }
 </script>
@@ -334,20 +385,31 @@ export default {
 
 .top-bar {
 	height: $top-bar-height;
-	position: absolute;
-	top: 0;
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 8px;
+	width: 100%;
+	background-color: var(--color-main-background);
+	border-bottom: 1px solid var(--color-border);
 
 	&.in-call {
 		right: 0;
+		background-color: transparent;
+		border: none;
+		position: absolute;
+		top: 0;
+		left:0;
 		.forced-background {
 			background-color: rgba(0,0,0,0.1) !important;
 			border-radius: var(--border-radius-pill);
 		}
+	}
+
+	&__buttons {
+		display: flex;
+		margin-left: 8px;
 	}
 
 	&__button {
@@ -355,12 +417,44 @@ export default {
 		align-self: center;
 		display: flex;
 		align-items: center;
+		white-space: nowrap;
 		svg {
 			margin-right: 4px !important;
 		}
 		.icon {
 			margin-right: 4px !important;
 		}
+	}
+}
+
+.conversation-header {
+	position: relative;
+	display: flex;
+	overflow-x: hidden;
+	overflow-y: clip;
+	margin-left: 48px;
+	white-space: nowrap;
+	width: 100%;
+	cursor: pointer;
+	&__text {
+		display: flex;
+		flex-direction:column;
+		flex-grow: 1;
+		margin-left: 8px;
+		justify-content: center;
+		width: 100%;
+		overflow: hidden;
+	}
+	.title {
+		font-weight: bold;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.description {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: fit-content;
+		color: var(--color-text-lighter);
 	}
 }
 </style>
