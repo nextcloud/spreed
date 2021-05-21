@@ -104,6 +104,7 @@ function SimpleWebRTC(opts) {
 					sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
 					broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionId() : null,
 					sendVideoIfAvailable: self.connection.getSendVideoIfAvailable(),
+					receiverOnly: self.connection.hasFeature('mcu'),
 				})
 				self.emit('createdPeer', peer)
 			}
