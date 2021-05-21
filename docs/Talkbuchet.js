@@ -457,6 +457,7 @@ stream = await navigator.mediaDevices.getUserMedia({
 })
 
 publishers = []
+subscribers = []
 
 function listenToPublisherConnectionChanges() {
 	Object.values(publishers).forEach(publisher => {
@@ -503,10 +504,6 @@ async function initPublishers() {
 
 	listenToPublisherConnectionChanges()
 }
-
-await initPublishers()
-
-subscribers = []
 
 function listenToSubscriberConnectionChanges() {
 	subscribers.forEach(subscriber => {
@@ -578,4 +575,5 @@ const closeConnections = function() {
 
 console.info('Preparing to siege')
 
+await initPublishers()
 await initSubscribers()
