@@ -41,7 +41,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
-use OCA\Talk\Flow\Operation;
+use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
@@ -77,6 +77,7 @@ use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCP\User\Events\UserDeletedEvent;
+use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'spreed';
@@ -98,6 +99,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
+		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
@@ -132,7 +134,6 @@ class Application extends App implements IBootstrap {
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
 		ShareListener::register($dispatcher);
-		Operation::register($dispatcher);
 
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
