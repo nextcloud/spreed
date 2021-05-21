@@ -32,19 +32,16 @@ use OCA\Talk\Manager as TalkManager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Util;
 use OCP\WorkflowEngine\EntityContext\IDisplayText;
 use OCP\WorkflowEngine\EntityContext\IUrl;
 use OCP\WorkflowEngine\IEntity;
 use OCP\WorkflowEngine\IManager as FlowManager;
 use OCP\WorkflowEngine\IOperation;
 use OCP\WorkflowEngine\IRuleMatcher;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use UnexpectedValueException;
 
 class Operation implements IOperation {
@@ -79,14 +76,6 @@ class Operation implements IOperation {
 		$this->talkManager = $talkManager;
 		$this->session = $session;
 		$this->chatManager = $chatManager;
-	}
-
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(FlowManager::EVENT_NAME_REG_OPERATION, function (GenericEvent $event) {
-			$operation = \OC::$server->query(Operation::class);
-			$event->getSubject()->registerOperation($operation);
-			Util::addScript('spreed', 'flow');
-		});
 	}
 
 	public function getDisplayName(): string {
