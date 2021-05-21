@@ -22,11 +22,11 @@
 /**
  * HOW TO SETUP:
  * -----------------------------------------------------------------------------
- * - Set the right values in "talkOcsApiUrl", "user" and "password" (a user must
- *   be used; guests do not work).
+ * - Set the right values in "user" and "password" (a user must be used; guests
+ *   do not work).
  * - If HPB clustering is enabled, set the token of a conversation in "token"
  *   (otherwise leave empty).
- * - Set whether to use audio, video or both in the "getUserMedia" call.
+ * - Set whether to use audio, video or both in "mediaConstraints".
  * - Set the desired numbers in "publishersCount" and
  *   "subscribersPerPublisherCount" (in a regular call with N participants you
  *   would have N publishers and N-1 subscribers).
@@ -108,28 +108,47 @@
  * at the same time.
  */
 
-talkOcsApiUrl = 'https://cloud.example.tld/ocs/v2.php/apps/spreed/api/'
-signalingSettingsUrl = talkOcsApiUrl + 'v2/signaling/settings'
-signalingBackendUrl = talkOcsApiUrl + 'v2/signaling/backend'
-
 // Guest users do not currently work, as they must join the conversation to not
 // be kicked out from the signaling server. However, joining the conversation
 // a second time causes the first guest to be unregistered.
 // Regular users do not need to join the conversation, so the same user can be
 // connected several times to the HPB.
-user = ''
-password = ''
+const user = ''
+const password = ''
+
+const signalingApiVersion = 2 // FIXME get from capabilities endpoint
+const conversationApiVersion = 3 // FIXME get from capabilities endpoint
 
 // The conversation token is only strictly needed for guests or if HPB
 // clustering is enabled.
-token = ''
+const token = ''
 
 // Number of streams to send
-publishersCount = 5
+const publishersCount = 5
 // Number of streams to receive
-subscribersPerPublisherCount = 40
+const subscribersPerPublisherCount = 40
 
-joinRoomUrl = talkOcsApiUrl + 'v3/room/' + token + '/participants/active'
+const mediaConstraints = {
+	audio: true,
+	video: false,
+}
+
+const connectionWarningTimeout = 5000
+
+/*
+ * End of configuration section
+ */
+
+// To run the script the current page in the browser must be a page of the
+// target Nextcloud instance, as cross-doman requests are not allowed, so the
+// host is directly got from the current location.
+const talkOcsApiUrl = 'https://' + window.location.host + '/ocs/v2.php/apps/spreed/api/'
+const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
+const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
+const joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+
+const publishers = []
+const subscribers = []
 
 async function getSignalingSettings(user, password, token) {
 	const fetchOptions = {
@@ -449,16 +468,6 @@ class Subscriber extends Peer {
 	}
 }
 
-const connectionWarningTimeout = 5000
-
-stream = await navigator.mediaDevices.getUserMedia({
-	audio: true,
-	video: false,
-})
-
-publishers = []
-subscribers = []
-
 function listenToPublisherConnectionChanges() {
 	Object.values(publishers).forEach(publisher => {
 		publisher.peerConnection.addEventListener('iceconnectionstatechange', event => {
@@ -574,6 +583,8 @@ const closeConnections = function() {
 }
 
 console.info('Preparing to siege')
+
+const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
 
 await initPublishers()
 await initSubscribers()
