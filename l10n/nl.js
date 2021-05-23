@@ -683,6 +683,7 @@ OC.L10N.register(
     "Favorite" : "Favoriet",
     "Conversation settings" : "Gespreksinstellingen",
     "Description" : "Beschrijving",
+    "Enter a description for this conversation" : "Voer een beschrijving in voor dit gesprek",
     "Chat notifications" : "Chatmeldingen",
     "Guests access" : "Gastentoegang",
     "Meeting settings" : "Meeting instellingen",
