@@ -25,6 +25,7 @@ import Vue from 'vue'
 const state = {
 	isGrid: false,
 	selectedVideoPeerId: null,
+	qualityWarningTooltipDismissed: false,
 	backgroundImageAverageColorCache: {},
 }
 
@@ -35,6 +36,7 @@ const getters = {
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
+	isQualityWarningTooltipDismissed: (state) => state.qualityWarningTooltipDismissed,
 	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
 		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
@@ -47,6 +49,9 @@ const mutations = {
 	},
 	selectedVideoPeerId(state, value) {
 		state.selectedVideoPeerId = value
+	},
+	setQualityWarningTooltipDismissed(state, { qualityWarningTooltipDismissed }) {
+		state.qualityWarningTooltipDismissed = qualityWarningTooltipDismissed
 	},
 	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
 		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
@@ -64,12 +69,20 @@ const actions = {
 		context.commit('selectedVideoPeerId', value)
 	},
 
+	joinCall(context, { token }) {
+		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: false })
+	},
+
 	leaveCall(context) {
 		context.commit('clearBackgroundImageAverageColorCache')
 	},
 
 	setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
 		context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
+	},
+
+	dismissQualityWarningTooltip(context) {
+		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
 	},
 }
 

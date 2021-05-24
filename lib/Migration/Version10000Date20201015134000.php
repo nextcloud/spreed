@@ -224,7 +224,8 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			try {
 				$insert->execute();
 			} catch (\Exception $e) {
-				if (get_class($e) === UniqueConstraintViolationException::class) {
+				if (class_exists(UniqueConstraintViolationException::class)
+					&& $e instanceof UniqueConstraintViolationException) {
 					// UniqueConstraintViolationException before 21
 					continue;
 				}
