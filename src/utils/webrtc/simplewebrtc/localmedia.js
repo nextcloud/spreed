@@ -637,6 +637,10 @@ LocalMedia.prototype._setAudioEnabled = function(bool) {
 	this.localStreams.forEach(stream => {
 		stream.getAudioTracks().forEach(track => {
 			track.enabled = !!bool
+
+			// MediaStreamTrack does not emit an event when the enabled property
+			// changes, so it needs to be explicitly notified.
+			this.emit('localTrackEnabledChanged', track, stream)
 		})
 	})
 }
@@ -646,6 +650,10 @@ LocalMedia.prototype._setVideoEnabled = function(bool) {
 	this.localStreams.forEach(stream => {
 		stream.getVideoTracks().forEach(track => {
 			track.enabled = !!bool
+
+			// MediaStreamTrack does not emit an event when the enabled property
+			// changes, so it needs to be explicitly notified.
+			this.emit('localTrackEnabledChanged', track, stream)
 		})
 	})
 }

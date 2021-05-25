@@ -88,6 +88,9 @@ function Peer(options) {
 			// TODO What would happen if the track is replaced while the peer is
 			// still negotiating the offer and answer?
 			this.parent.on('localTrackReplaced', this.handleLocalTrackReplacedBound)
+
+			this.handleLocalTrackEnabledChangedBound = this.handleLocalTrackEnabledChanged.bind(this)
+			this.parent.on('localTrackEnabledChanged', this.handleLocalTrackEnabledChangedBound)
 		}
 	}
 
@@ -378,6 +381,7 @@ Peer.prototype.end = function() {
 	this.pc.close()
 	this.handleStreamRemoved()
 	this.parent.off('localTrackReplaced', this.handleLocalTrackReplacedBound)
+	this.parent.off('localTrackEnabledChanged', this.handleLocalTrackEnabledChangedBound)
 }
 
 Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
@@ -445,6 +449,12 @@ Peer.prototype._processPendingReplaceTracksAsync = async function() {
 /**
  * Replaces the old track with the new track in the appropriate sender.
  *
+ * If the new track is disabled the old track will be replaced by a null track
+ * instead, which stops the sent data. The old and new tracks can be the same
+ * track, which can be used to start or stop sending the track data depending on
+ * whether the track is enabled or disabled (at the time of being passed to this
+ * method).
+ *
  * If a new track is provided but no sender was found the new track is added
  * instead of replaced (which will require a renegotiation).
  *
@@ -465,16 +475,29 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	const replaceTrackPromises = []
 
 	this.pc.getSenders().forEach(sender => {
-		if (sender.track !== oldTrack) {
+		if (sender.track !== oldTrack && sender.trackDisabled !== oldTrack) {
+			return
+		}
+
+		if ((sender.track || sender.trackDisabled) && !oldTrack) {
 			return
 		}
 
 		if (!sender.track && !newTrack) {
+			// The old track was disabled and thus already stopped, so it does
+			// not need to be replaced, but the null track needs to be set as
+			// the disabled track.
+			if (sender.trackDisabled === oldTrack) {
+				sender.trackDisabled = newTrack
+			}
+
 			return
 		}
 
 		if (!sender.kind && sender.track) {
 			sender.kind = sender.track.kind
+		} else if (!sender.kind && sender.trackDisabled) {
+			sender.kind = sender.trackDisabled.kind
 		} else if (!sender.kind) {
 			this.pc.getTransceivers().forEach(transceiver => {
 				if (transceiver.sender === sender) {
@@ -496,9 +519,32 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 
 		senderFound = true
 
+		// Save reference to trackDisabled to be able to restore it if the track
+		// can not be replaced.
+		const oldTrackDisabled = sender.trackDisabled
+
+		if (newTrack && !newTrack.enabled) {
+			sender.trackDisabled = newTrack
+		} else {
+			sender.trackDisabled = null
+		}
+
+		if (!sender.track && !newTrack.enabled) {
+			// Nothing to replace now, it will be done once the track is
+			// enabled.
+			return
+		}
+
+		if (sender.track && newTrack && !newTrack.enabled) {
+			// Replace with a null track to stop the sender.
+			newTrack = null
+		}
+
 		const replaceTrackPromise = sender.replaceTrack(newTrack)
 
 		replaceTrackPromise.catch(error => {
+			sender.trackDisabled = oldTrackDisabled
+
 			if (error.name === 'InvalidModificationError') {
 				console.debug('Track could not be replaced, negotiation needed')
 			} else {
@@ -519,6 +565,17 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	}
 
 	return Promise.allSettled(replaceTrackPromises)
+}
+
+Peer.prototype.handleLocalTrackEnabledChanged = function(track, stream) {
+	const sender = this.pc.getSenders().find(sender => sender.track === track)
+	const stoppedSender = this.pc.getSenders().find(sender => sender.trackDisabled === track)
+
+	if (track.enabled && stoppedSender) {
+		this.handleLocalTrackReplacedBound(track, track, stream)
+	} else if (!track.enabled && sender) {
+		this.handleLocalTrackReplacedBound(track, track, stream)
+	}
 }
 
 Peer.prototype.handleRemoteStreamAdded = function(event) {
