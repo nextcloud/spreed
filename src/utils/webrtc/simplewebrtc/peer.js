@@ -33,6 +33,7 @@ function Peer(options) {
 	this.pendingDCMessages = [] // key (datachannel label) -> value (array[pending messages])
 	this._pendingReplaceTracksQueue = []
 	this._processPendingReplaceTracksPromise = null
+	this._initialStreamSetup = false
 	this.sid = options.sid || Date.now().toString()
 	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig)
 	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this))
@@ -50,7 +51,25 @@ function Peer(options) {
 	this.pc.addEventListener('iceconnectionstatechange', this.emit.bind(this, 'iceConnectionStateChange'))
 	this.pc.addEventListener('iceconnectionstatechange', function() {
 		if (self.pc.iceConnectionState !== 'new') {
-			self._processPendingReplaceTracks()
+			self._processPendingReplaceTracks().then(finished => {
+				if (finished === false || self._initialStreamSetup) {
+					return
+				}
+
+				// Ensure that initially disabled tracks are stopped after
+				// establishing a connection.
+				self.pc.getSenders().forEach(sender => {
+					if (sender.track) {
+						// The stream is not known, but it is only used when the
+						// track is added, so it can be ignored here.
+						self.handleLocalTrackEnabledChanged(sender.track, null)
+					}
+				})
+
+				self._initialStreamSetup = true
+			})
+		} else {
+			self._initialStreamSetup = false
 		}
 
 		switch (self.pc.iceConnectionState) {
