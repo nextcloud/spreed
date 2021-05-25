@@ -634,8 +634,8 @@ LocalMedia.prototype.resume = function() {
 LocalMedia.prototype._setAudioEnabled = function(bool) {
 	this._audioEnabled = bool
 
-	this.localStreams.forEach(function(stream) {
-		stream.getAudioTracks().forEach(function(track) {
+	this.localStreams.forEach(stream => {
+		stream.getAudioTracks().forEach(track => {
 			track.enabled = !!bool
 		})
 	})
@@ -643,8 +643,8 @@ LocalMedia.prototype._setAudioEnabled = function(bool) {
 LocalMedia.prototype._setVideoEnabled = function(bool) {
 	this._videoEnabled = bool
 
-	this.localStreams.forEach(function(stream) {
-		stream.getVideoTracks().forEach(function(track) {
+	this.localStreams.forEach(stream => {
+		stream.getVideoTracks().forEach(track => {
 			track.enabled = !!bool
 		})
 	})
