@@ -99,34 +99,54 @@ export default {
 	},
 
 	props: {
-		type: {
-			type: String,
-			required: true,
-		},
+		/**
+		 * File id
+		 */
 		id: {
 			type: String,
 			required: true,
 		},
+		/**
+		 * File name
+		 */
 		name: {
 			type: String,
 			required: true,
 		},
+		/**
+		 * File path relative to the user's home storage,
+		 * or link share root, includes the file name.
+		 */
 		path: {
 			type: String,
 			default: '',
 		},
+		/**
+		 * File size in bytes
+		 */
 		size: {
 			type: Number,
 			default: -1,
 		},
+		/**
+		 * Download link
+		 */
 		link: {
 			type: String,
 			default: '',
 		},
+		/**
+		 * Mime type
+		 */
 		mimetype: {
 			type: String,
 			default: '',
 		},
+		/**
+		 * Whether a preview is available, string "yes" for yes
+		 * otherwise the string "no"
+		 */
+		// FIXME: use booleans here
 		previewAvailable: {
 			type: String,
 			default: 'no',
@@ -138,25 +158,38 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		// In case this component is used to display a file that is being uploaded
-		// this parameter is used to access the file upload status in the store
+		/**
+		 * Upload id from the file upload store.
+		 *
+		 * In case this component is used to display a file that is being uploaded
+		 * this parameter is used to access the file upload status in the store
+		 */
 		uploadId: {
 			type: Number,
 			default: null,
 		},
-		// In case this component is used to display a file that is being uploaded
-		// this parameter is used to access the file upload status in the store
+		/**
+		 * File upload index from the file upload store.
+		 *
+		 * In case this component is used to display a file that is being uploaded
+		 * this parameter is used to access the file upload status in the store
+		 */
 		index: {
 			type: String,
 			default: '',
 		},
-		// True if this component is used in the upload editor
+		/**
+		 * Whether the container is the upload editor.
+		 * True if this component is used in the upload editor.
+		 */
 		// FIXME: file-preview should be encapsulated and not be aware of its surroundings
 		isUploadEditor: {
 			type: Boolean,
 			default: false,
 		},
-		// The link to the file for displaying it in the preview
+		/**
+		 * The link to the file for displaying it in the preview
+		 */
 		localUrl: {
 			type: String,
 			default: '',
@@ -323,6 +356,7 @@ export default {
 					return this.$store.getters.uploadProgress(this.uploadId, this.index)
 				}
 			}
+			// likely never reached
 			return 0
 		},
 		hasTemporaryImageUrl() {
@@ -334,7 +368,7 @@ export default {
 		},
 
 		removeAriaLabel() {
-			return t('spreed', 'Remove' + this.name)
+			return t('spreed', 'Remove {fileName}', { fileName: this.name })
 		},
 	},
 	mounted() {

@@ -27,6 +27,9 @@ import Vue from 'vue'
 global.OC = {
 	requestToken: '123',
 	webroot: '/nc-webroot',
+	coreApps: [
+		'core',
+	],
 	config: {
 		modRewriteWorking: true,
 	},
@@ -40,6 +43,10 @@ global.OC = {
 	},
 	getLocale() {
 		return 'en_GB'
+	},
+
+	MimeType: {
+		getIconUrl: jest.fn(),
 	},
 }
 global.OCA = {
