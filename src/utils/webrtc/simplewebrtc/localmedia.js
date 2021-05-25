@@ -144,6 +144,10 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		webrtcIndex.mediaDevicesManager.disableDeviceEvents()
 	}
 
+	// The handlers for "change:audioInputId" and "change:videoInputId" events
+	// expect the initial "getUserMedia" call to have been completed before
+	// being used, so they must be set when the promise is resolved or rejected.
+
 	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
@@ -187,8 +191,8 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		}
 	}).catch(function(err) {
 		// Fallback for users without a camera or with a camera that can not be
-		// accessed.
-		if (self.config.audioFallback && constraints.video !== false) {
+		// accessed, but only if audio is meant to be used.
+		if (constraints.audio !== false && self.config.audioFallback && constraints.video !== false) {
 			self.emit('localStreamRequestFailedRetryNoVideo', constraints, err)
 			constraints.video = false
 			self.start(constraints, cb, 'retry-no-video')
@@ -196,6 +200,9 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		}
 
 		self.emit('localStreamRequestFailed', constraints)
+
+		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
+		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
 
 		if (cb) {
 			return cb(err, null)
@@ -484,10 +491,8 @@ LocalMedia.prototype.stop = function(stream) {
 	this.stopStream(stream)
 	this.stopScreenShare(stream)
 
-	if (!this.localStreams.length) {
-		webrtcIndex.mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
-		webrtcIndex.mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
-	}
+	webrtcIndex.mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
+	webrtcIndex.mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
 }
 
 LocalMedia.prototype.stopStream = function(stream) {
