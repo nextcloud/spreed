@@ -37,6 +37,7 @@ title: Capabilities
 * `chat-read-marker` - The chat can be optionally marked read by clients manually, independent from the loading of the chat messages.
 * `webinary-lobby` - See [Webinary management](webinar.md) for technical details.
 * `start-call-flag` - Only moderators or users might be able to start calls.
+* `config => chat => max-length` - Maximum length of chat messages
 
 
 ## 8.0
@@ -69,7 +70,9 @@ title: Capabilities
 * `delete-messages` - Allows to delete chat messages up to 6 hours for your own messages or when being a moderator. On deleting the message text will be replaced and a follow up system message will make sure clients and users update it in their cache and storage.
 * `rich-object-sharing` - Rich objects can be shared to chats. See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob/master/lib/public/RichObjectStrings/Definitions.php) for more details on supported rich objects and required data.
 * `conversation-call-flags` - Whether the room api provides the `callFlag` to tell apart video and audio calls
+* `temp-user-avatar-api` - Whether a temporary api is available to allow users to upload an avatar to their profile via an OCS endpoint.
 
 ## 12.0
 * `conversation-v4` - Whether conversations API v4 is available. This also means that v1, v2 and v3 are **not** available anymore. The changes on API v4 allow a user to have multiple sessions in the same conversation on different devices which is incompatible with the data structure that was used by the previous APIs.
-* `geo-location-sharing` - Whether the `geo-location` rich object is defined and can be shared to the rich-object sharing endpoint
+* `signaling-v3` - Whether signaling API v3 is available. This also means that v1 and v2 are **not** available anymore. The TURN and STUN server data is now returning all defined servers instead of a random one. Multiple entries for the same server are combined and using the urls array correctly now.
+* `geo-location-sharing` - Whether the `geo-location` rich object is defined and can be shared to the rich-object sharing endpoint.
