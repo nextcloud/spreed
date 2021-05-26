@@ -277,7 +277,6 @@ OC.L10N.register(
     "Close" : "Închide",
     "Camera" : "Cameră",
     "Reply" : "Răspunde",
-    "Remove" : "Șterge",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
     "guest" : "invitat",
@@ -293,6 +292,7 @@ OC.L10N.register(
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
     "Share link" : "Partajează link-ul",
+    "Remove" : "Șterge",
     "Enabled" : "Activat"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

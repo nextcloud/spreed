@@ -300,7 +300,6 @@ OC.L10N.register(
     "Conversation name" : "對話名稱",
     "Camera" : "相機",
     "Reply" : "回覆",
-    "Remove" : "移除",
     "Today" : "今天",
     "Yesterday" : "昨天",
     "Send message" : "傳送訊息",
@@ -335,6 +334,7 @@ OC.L10N.register(
     "Share link" : "分享連結",
     "Exit fullscreen (f)" : "離開全螢幕 (f)",
     "Fullscreen (f)" : "全螢幕 (f)",
+    "Remove" : "移除",
     "Enabled" : "已啟用"
 },
 "nplurals=1; plural=0;");

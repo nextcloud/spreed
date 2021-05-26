@@ -165,7 +165,6 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Conversation name" : "Nombre de la conversación",
     "Reply" : "Responder",
-    "Remove" : "Eliminar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -211,6 +210,7 @@ OC.L10N.register(
     "Share link" : "Compartir liga",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
     "Fullscreen (f)" : "Pantalla completa (f)",
+    "Remove" : "Eliminar",
     "Enabled" : "Habilitado"
 },
 "nplurals=2; plural=(n != 1);");

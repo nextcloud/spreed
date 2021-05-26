@@ -80,7 +80,6 @@ OC.L10N.register(
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
     "Reply" : "Responder",
-    "Remove" : "Eliminar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "moderator" : "moderador",
@@ -112,6 +111,7 @@ OC.L10N.register(
     "UDP only" : "UDP únicamente",
     "TCP only" : "TCP únicamente",
     "Share link" : "Compartir liga",
+    "Remove" : "Eliminar",
     "Enabled" : "Habilitado"
 },
 "nplurals=2; plural=(n != 1);");
