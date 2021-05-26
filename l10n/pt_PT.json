@@ -116,7 +116,6 @@
     "Conversation name" : "Nome da conversação",
     "Camera" : "Câmera",
     "Reply" : "Resposta",
-    "Remove" : "Remover",
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -151,6 +150,7 @@
     "UDP only" : "Só UDP",
     "TCP only" : "Só TCP",
     "Share link" : "Partilhar hiperligação",
+    "Remove" : "Remover",
     "Enabled" : "Habilidado"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -119,7 +119,6 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Чекаємо на схвалення доступу",
     "Camera" : "Камера",
     "Reply" : "Відповісти",
-    "Remove" : "Вилучити",
     "Today" : "Сьогодні",
     "Yesterday" : "Вчора",
     "Share files to the conversation" : "Поділитися файлами під час розмови",
@@ -169,6 +168,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Вийти з повного екрану (f)",
     "Fullscreen (f)" : "На весь екран (f)",
     "Select a conversation to add to the project" : "Виберіть розмову, яку потрібно додати до проєкту",
+    "Remove" : "Вилучити",
     "Enabled" : "Увімкнено"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

@@ -356,7 +356,6 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du venter nu i lobbyen. Dette møde er planlagt til {startTime}",
     "Camera" : "Kamera",
     "Reply" : "Besvar",
-    "Remove" : "Fjern",
     "[Unknown username]" : "[Ukendt brugernavn]",
     "Today" : "I dag",
     "Yesterday" : "I går",
@@ -452,6 +451,7 @@ OC.L10N.register(
     "Fullscreen (f)" : "Vis i fuldskærm (f)",
     "Select a conversation to add to the project" : "Vælg en samtale for at tilføje den til projektet",
     "Error while uploading file" : "Fejl ved upload af fil",
+    "Remove" : "Fjern",
     "Enabled" : "Aktiveret"
 },
 "nplurals=2; plural=(n != 1);");

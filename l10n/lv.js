@@ -176,7 +176,6 @@ OC.L10N.register(
     "Close" : "Aizvērt",
     "Conversation name" : "Sarunas nosaukums",
     "Reply" : "Atbildēt",
-    "Remove" : "Noņemt",
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -238,6 +237,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Iziet no pilnekrāna (f)",
     "Fullscreen (f)" : "Pilnekrāns (f)",
     "Select a conversation to add to the project" : "Atlasiet sarunu, ko pievienot projektam",
+    "Remove" : "Noņemt",
     "Enabled" : "Iespējots"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
