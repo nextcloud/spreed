@@ -285,7 +285,6 @@ OC.L10N.register(
     "Close" : "Malfermi",
     "Camera" : "Fotilo",
     "Reply" : "Respondi",
-    "Remove" : "Forigi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",
@@ -301,6 +300,7 @@ OC.L10N.register(
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "Share link" : "Kunhavigi ligilon",
+    "Remove" : "Forigi",
     "Enabled" : "Ŝaltita"
 },
 "nplurals=2; plural=(n != 1);");

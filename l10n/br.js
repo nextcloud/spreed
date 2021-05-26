@@ -641,7 +641,6 @@ OC.L10N.register(
     "No camera available" : "Kamera ebet kavet",
     "Select camera" : "Choaz ur c'hamera",
     "Reply" : "Respont",
-    "Remove" : "Lemel",
     "[Unknown username]" : "[Anv implijer dianv]",
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
@@ -776,6 +775,7 @@ OC.L10N.register(
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "N'eo ket douget pen-da-benn ho furcher gant Nextcloud Talk. Implijit kentec'h stum divezhañ Mozilla Firefox, Microsoft Edge, Google Chrome pe Apple Safari.",
     "Error while uploading file" : "Ur fazi a zo bet en ur pellkas ar restr",
     "E-mail of the user" : "Postel an implijer",
+    "Remove" : "Lemel",
     "Enabled" : "Aotreet"
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");

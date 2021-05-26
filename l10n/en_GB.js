@@ -121,7 +121,6 @@ OC.L10N.register(
     "Conversation name" : "Conversation name",
     "Camera" : "Camera",
     "Reply" : "Reply",
-    "Remove" : "Remove",
     "Today" : "Today",
     "Yesterday" : "Yesterday",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -173,6 +172,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Exit fullscreen (f)",
     "Fullscreen (f)" : "Fullscreen (f)",
     "New in Talk 10" : "New in Talk 10",
+    "Remove" : "Remove",
     "Enabled" : "Enabled"
 },
 "nplurals=2; plural=(n != 1);");
