@@ -424,7 +424,6 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "בנך בהמתנה בלובי. פגישה זו זומנה ל־{startTime}",
     "Camera" : "מצלמה",
     "Reply" : "תגובה",
-    "Remove" : "הסרה",
     "[Unknown username]" : "[שם משתמש לא ידוע]",
     "Today" : "היום",
     "Yesterday" : "מחר",
@@ -500,6 +499,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "יציאה ממסך מלא (f)",
     "Fullscreen (f)" : "מסך מלא (f)",
     "Select a conversation to add to the project" : "בחירת דיון להוספה למיזם",
+    "Remove" : "הסרה",
     "Enabled" : "מופעל"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
