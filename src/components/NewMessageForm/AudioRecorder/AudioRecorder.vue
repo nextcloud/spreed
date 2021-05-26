@@ -77,6 +77,7 @@ import Close from 'vue-material-design-icons/Close'
 import Check from 'vue-material-design-icons/Check'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'AudioRecorder',
@@ -160,36 +161,65 @@ export default {
 		 * Initialize the media stream and start capturing the audio
 		 */
 		async start() {
+			// Create new audio stream
 			try {
-				// Create new audio stream
 				this.audioStream = await mediaDevicesManager.getUserMedia({
 					audio: true,
 				})
-				// Create a mediarecorder to capture the stream
-				this.mediaRecorder = new MediaRecorder(this.audioStream)
-				// Add event handler to ondataAvailable
-				this.mediaRecorder.ondataavailable = (e) => {
-					this.chunks.push(e.data)
-				}
-				// Add event handler to onstop
-				this.mediaRecorder.onstop = this.generateFile
-				// Start the recording
-				this.mediaRecorder.start()
-				// Start the timer
-				this.recordTimer = setInterval(() => {
-					if (this.recordTime.seconds === 59) {
-						this.recordTime.minutes++
-						this.recordTime.seconds = 0
-					}
-					this.recordTime.seconds++
-				}, 1000)
-				// Forward an event to let the parent NewMessageForm component
-				// that there's an undergoing recording operation
-				this.$emit('recording', true)
-				console.debug(this.mediaRecorder.state)
 			} catch (exception) {
 				console.debug(exception)
+				if (exception.name === 'NotAllowedError') {
+					showError(t('spreed', 'Access to the microphone was denied'))
+				} else {
+					showError(t('spreed', 'Microphone either not available or disabled in settings'))
+				}
+				return
 			}
+
+			// Create a mediarecorder to capture the stream
+			try {
+				this.mediaRecorder = new MediaRecorder(this.audioStream)
+			} catch (exception) {
+				console.debug(exception)
+				this.audioStream.getTracks().forEach(track => track.stop())
+				this.audioStream = null
+				showError(t('spreed', 'Error while recording audio'))
+				return
+			}
+
+			// Add event handler to onstop
+			this.mediaRecorder.onstop = this.generateFile
+
+			// Add event handler to ondataAvailable
+			this.mediaRecorder.ondataavailable = (e) => {
+				this.chunks.push(e.data)
+			}
+
+			try {
+				// Start the recording
+				this.mediaRecorder.start()
+			} catch (exception) {
+				console.debug(exception)
+				this.aborted = true
+				this.stop()
+				this.resetComponentData()
+				showError(t('spreed', 'Error while recording audio'))
+				return
+			}
+
+			console.debug(this.mediaRecorder.state)
+
+			// Start the timer
+			this.recordTimer = setInterval(() => {
+				if (this.recordTime.seconds === 59) {
+					this.recordTime.minutes++
+					this.recordTime.seconds = 0
+				}
+				this.recordTime.seconds++
+			}, 1000)
+			// Forward an event to let the parent NewMessageForm component
+			// that there's an undergoing recording operation
+			this.$emit('recording', true)
 		},
 
 		/**
