@@ -118,7 +118,6 @@ OC.L10N.register(
     "Conversation name" : "Nome da conversação",
     "Camera" : "Câmera",
     "Reply" : "Resposta",
-    "Remove" : "Remover",
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -153,6 +152,7 @@ OC.L10N.register(
     "UDP only" : "Só UDP",
     "TCP only" : "Só TCP",
     "Share link" : "Partilhar hiperligação",
+    "Remove" : "Remover",
     "Enabled" : "Habilidado"
 },
 "nplurals=2; plural=(n != 1);");

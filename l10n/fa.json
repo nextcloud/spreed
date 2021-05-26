@@ -290,7 +290,6 @@
     "Conversation name" : "نام مکالمه",
     "Camera" : "دوربین",
     "Reply" : "پاسخ",
-    "Remove" : "حذف",
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Send message" : "پیام فرستادن",
@@ -323,6 +322,7 @@
     "Projects" : "پروژه ها",
     "Share link" : "Share link",
     "Fullscreen (f)" : "تمام صفحه (f)",
+    "Remove" : "حذف",
     "Enabled" : "فعال شده"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

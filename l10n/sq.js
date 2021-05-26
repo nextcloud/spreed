@@ -201,7 +201,6 @@ OC.L10N.register(
     "Conversation name" : "Emri i bisedës",
     "Camera" : "Kamera",
     "Reply" : "Përgjigju",
-    "Remove" : "Hiq",
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "Send message" : "Dërgo mesazh",
@@ -229,6 +228,7 @@ OC.L10N.register(
     "UDP only" : "Vetëm UDP",
     "TCP only" : "Vetëm TCP",
     "Share link" : "Shpërndaj ndërlidhjen",
+    "Remove" : "Hiq",
     "Enabled" : "I aktivizuar"
 },
 "nplurals=2; plural=(n != 1);");
