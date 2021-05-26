@@ -24,6 +24,10 @@
 		class="audio-recorder">
 		<button
 			v-if="!isRecording"
+			v-tooltip.auto="{
+				content: startRecordingTooltip,
+				delay: tooltipDelay,
+			}"
 			class="audio-recorder__trigger nc-button nc-button__main"
 			@click="start">
 			<Microphone
@@ -33,6 +37,10 @@
 		</button>
 		<div v-else class="wrapper">
 			<button
+				v-tooltip.auto="{
+					content: abortRecordingTooltip,
+					delay: tooltipDelay,
+				}"
 				class="audio-recorder__stop nc-button nc-button__main"
 				@click="abortRecording">
 				<Close
@@ -47,6 +55,10 @@
 					{{ parsedRecordTime }}</span>
 			</div>
 			<button
+				v-tooltip.auto="{
+					content: stopRecordingTooltip,
+					delay: tooltipDelay,
+				}"
 				class="audio-recorder__trigger nc-button nc-button__main"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
@@ -63,7 +75,7 @@
 import Microphone from 'vue-material-design-icons/Microphone'
 import Close from 'vue-material-design-icons/Close'
 import Check from 'vue-material-design-icons/Check'
-
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index'
 
 export default {
@@ -73,6 +85,10 @@ export default {
 		Microphone,
 		Close,
 		Check,
+	},
+
+	directives: {
+		tooltip: Tooltip,
 	},
 
 	data() {
@@ -113,6 +129,22 @@ export default {
 			const seconds = this.recordTime.seconds.toString().length === 2 ? this.recordTime.seconds : `0${this.recordTime.seconds}`
 			const minutes = this.recordTime.minutes.toString().length === 2 ? this.recordTime.minutes : `0${this.recordTime.minutes}`
 			return `${minutes}:${seconds}`
+		},
+
+		tooltipDelay() {
+			return { show: 500, hide: 200 }
+		},
+
+		startRecordingTooltip() {
+			return t('spreed', 'Record voice message')
+		},
+
+		stopRecordingTooltip() {
+			return t('spreed', 'End recording and send')
+		},
+
+		abortRecordingTooltip() {
+			return t('spreed', 'Dismiss recording')
 		},
 	},
 
