@@ -473,7 +473,6 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
     "Camera" : "Камера",
     "Reply" : "Одговори",
-    "Remove" : "Уклони",
     "Today" : "Данас",
     "Yesterday" : "Јуче",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -547,6 +546,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Напусти цео екран (f)",
     "Fullscreen (f)" : "Цео екран (f)",
     "Select a conversation to add to the project" : "Одаберите разговор за додавање у пројекат",
+    "Remove" : "Уклони",
     "Enabled" : "Укључено"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

@@ -292,7 +292,6 @@ OC.L10N.register(
     "Conversation name" : "نام مکالمه",
     "Camera" : "دوربین",
     "Reply" : "پاسخ",
-    "Remove" : "حذف",
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Send message" : "پیام فرستادن",
@@ -325,6 +324,7 @@ OC.L10N.register(
     "Projects" : "پروژه ها",
     "Share link" : "Share link",
     "Fullscreen (f)" : "تمام صفحه (f)",
+    "Remove" : "حذف",
     "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");

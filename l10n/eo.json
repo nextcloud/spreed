@@ -283,7 +283,6 @@
     "Close" : "Malfermi",
     "Camera" : "Fotilo",
     "Reply" : "Respondi",
-    "Remove" : "Forigi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "guest" : "gasto",
@@ -299,6 +298,7 @@
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "Share link" : "Kunhavigi ligilon",
+    "Remove" : "Forigi",
     "Enabled" : "Ŝaltita"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

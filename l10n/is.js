@@ -436,7 +436,6 @@ OC.L10N.register(
     "Conversation name" : "Heiti samtals",
     "Camera" : "Myndavél",
     "Reply" : "Svara",
-    "Remove" : "Fjarlægja",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
@@ -502,6 +501,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Hætta í skjáfylli (f)",
     "Fullscreen (f)" : "Fylla skjáinn (f)",
     "Select a conversation to add to the project" : "Veldu samtal sem á að bæta við verkefnið",
+    "Remove" : "Fjarlægja",
     "Enabled" : "Virkt"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

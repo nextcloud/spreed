@@ -39,7 +39,6 @@ OC.L10N.register(
     "Password protect" : "Lindungi dengan kata sandi",
     "Close" : "Tutup",
     "Reply" : "Balas",
-    "Remove" : "Buang",
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "Invalid path selected" : "Jalur terpilih invalid",
@@ -56,6 +55,7 @@ OC.L10N.register(
     "iOS app" : "Aplikasi iOS",
     "Projects" : "Proyek",
     "Share link" : "Bagikan tautan",
+    "Remove" : "Buang",
     "Enabled" : "Diaktifkan"
 },
 "nplurals=1; plural=0;");
