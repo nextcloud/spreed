@@ -235,6 +235,7 @@ export default {
 		 * Generate the file
 		 */
 		generateFile() {
+			this.audioStream.getTracks().forEach(track => track.stop())
 			if (!this.aborted) {
 				this.blob = new Blob(this.chunks, { 'type': 'audio/mpeg-3' })
 				// Convert blob to file
