@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat;
 
 use OCA\Talk\Events\ChatMessageEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -73,12 +74,14 @@ class MessageParser {
 	protected function setActor(Message $message): void {
 		$comment = $message->getComment();
 
+		$actorId = $comment->getActorId();
 		$displayName = '';
 		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
 			$user = $this->userManager->get($comment->getActorId());
 			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
 		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
 			$displayName = $comment->getActorId();
+			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
 		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			if (isset($guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
@@ -96,7 +99,7 @@ class MessageParser {
 
 		$message->setActor(
 			$comment->getActorType(),
-			$comment->getActorId(),
+			$actorId,
 			$displayName
 		);
 	}

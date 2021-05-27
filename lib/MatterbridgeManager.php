@@ -395,7 +395,7 @@ class MatterbridgeManager {
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
-				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}>"' . "\n\n";
+				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'mattermost') {
 				// remove protocol from server URL
 				if (preg_match('/^https?:/', $part['server'])) {

@@ -47,6 +47,7 @@
 
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import { ATTENDEE } from '../../../constants'
 
 export default {
 	name: 'AuthorAvatar',
@@ -73,7 +74,7 @@ export default {
 			return this.authorType === 'bots' && this.authorId === 'changelog'
 		},
 		isUser() {
-			return this.authorType === 'users'
+			return this.authorType === 'users' || this.authorType === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
 		isDeletedUser() {
 			return this.authorType === 'deleted_users'
