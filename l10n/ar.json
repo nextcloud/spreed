@@ -1084,8 +1084,6 @@
     "You started Matterbridge." : "لقد بدأت Matterbridge .",
     "{actor} stopped Matterbridge." : "قام {actor} بإيقاف Matterbridge .",
     "You stopped Matterbridge." : "قمت بإيقاف Matterbridge .",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "خطأ: لم يتم إرجاع أي من مرشحي ICE العاملين لـ UDP بواسطة خادم TURN",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "خطأ: لم يتم إرجاع أي من مرشحي ICE العاملين لـ TCP بواسطة خادم TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
     "Lower hand" : "خفض اليد ",
     "Raise hand" : "رفع اليد",
