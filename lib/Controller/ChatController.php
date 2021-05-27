@@ -556,6 +556,9 @@ class ChatController extends AEnvironmentAwareController {
 		$attendee = $this->participant->getAttendee();
 		$isOwnMessage = $message->getActorType() === $attendee->getActorType()
 			&& $message->getActorId() === $attendee->getActorId();
+
+		// Special case for if the message is a bridged message, then the message is the bridge bot's message.
+		$isOwnMessage = $isOwnMessage || ($message->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
 		if (!$isOwnMessage
 			&& (!$this->participant->hasModeratorPermissions(false)
 				|| $this->room->getType() === Room::ONE_TO_ONE_CALL)) {
