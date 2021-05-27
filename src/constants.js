@@ -54,6 +54,7 @@ export const ATTENDEE = {
 		GROUPS: 'groups',
 		CIRCLES: 'circles',
 		BOTS: 'bots',
+		BRIDGED: 'bridged',
 	},
 	BRIDGE_BOT_ID: 'bridge-bot',
 	CHANGELOG_BOT_ID: 'changelog',

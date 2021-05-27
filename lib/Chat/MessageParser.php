@@ -77,6 +77,8 @@ class MessageParser {
 		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
 			$user = $this->userManager->get($comment->getActorId());
 			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
+		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
+			$displayName = $comment->getActorId();
 		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			if (isset($guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
