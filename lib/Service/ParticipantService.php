@@ -433,7 +433,7 @@ class ParticipantService {
 	 * @param Participant[] $existingParticipants
 	 */
 	public function addCircle(Room $room, Circle $circle, array $existingParticipants = []): void {
-		$membersInCircle = $circle->getMembers();
+		$membersInCircle = $circle->getMembers(); // FIXME getInheritatedMembers()
 
 		if (empty($existingParticipants)) {
 			$existingParticipants = $this->getParticipantsForRoom($room);
@@ -481,22 +481,21 @@ class ParticipantService {
 			];
 		}
 
-		// No tracking of circles for now
-//		try {
-//			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_CIRCLES, $circle->getSingleId());
-//		} catch (DoesNotExistException $e) {
-//			$attendee = new Attendee();
-//			$attendee->setRoomId($room->getId());
-//			$attendee->setActorType(Attendee::ACTOR_CIRCLES);
-//			$attendee->setActorId($circle->getSingleId());
-//			$attendee->setDisplayName($circle->getDisplayName());
-//			$attendee->setParticipantType(Participant::USER);
-//			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
-//			$this->attendeeMapper->insert($attendee);
-//
-//			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
-//			$this->dispatcher->dispatchTyped($attendeeEvent);
-//		}
+		try {
+			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_CIRCLES, $circle->getSingleId());
+		} catch (DoesNotExistException $e) {
+			$attendee = new Attendee();
+			$attendee->setRoomId($room->getId());
+			$attendee->setActorType(Attendee::ACTOR_CIRCLES);
+			$attendee->setActorId($circle->getSingleId());
+			$attendee->setDisplayName($circle->getDisplayName());
+			$attendee->setParticipantType(Participant::USER);
+			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$this->attendeeMapper->insert($attendee);
+
+			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
+			$this->dispatcher->dispatchTyped($attendeeEvent);
+		}
 
 		$this->addUsers($room, $newParticipants);
 	}
