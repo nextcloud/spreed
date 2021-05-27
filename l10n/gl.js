@@ -1037,8 +1037,6 @@ OC.L10N.register(
     "You started Matterbridge." : "Vostede iniciou Matterbridge",
     "{actor} stopped Matterbridge." : "{actor} detivo Matterbridge",
     "You stopped Matterbridge." : "Vostede detivo Matterbridge",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a UDP para UDP traballando",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Erro: o servidor TURN non devolveu ningún candidato ICE a TCP para TCP traballando",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Úsase un servidor TURN para proxy do tráfico de participantes detrás dunha devasa. Se os participantes individuais non poden conectarse a outros, o máis probábel é que sexa necesario un servidor TURN. Consulte {linkstart}esta documentación{linkend} para obter instrucións de configuración.",
     "Lower hand" : "Baixar a man",
     "Raise hand" : "Erguer a man",
