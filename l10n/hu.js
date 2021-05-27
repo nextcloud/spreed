@@ -1056,8 +1056,6 @@ OC.L10N.register(
     "You started Matterbridge." : "Elindította a Matterbridge-t.",
     "{actor} stopped Matterbridge." : "{actor} leállította a Matterbridge-t.",
     "You stopped Matterbridge." : "Megállította Matterbridge-t.",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Hiba: A TURN szerver nem adott vissza működő ICE-jelölteket UDP-re",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Hiba: A TURN szerver nem adott vissza működő ICE jelölteket TCP-re",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "A TURN kiszolgáló a tűzfal mögött lévő résztvevők forgalmának proxyzására szolgál. Ha az egyes résztvevők nem tudnak csatlakozni másokhoz, akkor valószínűleg TURN kiszolgálóra van szükség. A telepítési utasításokért lásd {linkstart}ezt a dokumentációt{linkend}.",
     "Lower hand" : "Kéz letétele",
     "Raise hand" : "Kezet felemel",

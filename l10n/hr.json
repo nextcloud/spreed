@@ -1035,8 +1035,6 @@
     "You started Matterbridge." : "Vi ste pokrenuli Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} je zaustavio Matterbridge.",
     "You stopped Matterbridge." : "Vi ste zaustavili Matterbridge.",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Pogreška: poslužitelj TURN nije vratio ispravne ICE kandidate za UDP",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Pogreška: poslužitelj TURN nije vratio ispravne ICE kandidate za TCP",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
     "Lower hand" : "Spusti ruku",
     "Raise hand" : "Podigni ruku",
