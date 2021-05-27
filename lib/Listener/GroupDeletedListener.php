@@ -23,6 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\GroupDeletedEvent;
@@ -32,9 +36,17 @@ class GroupDeletedListener implements IEventListener {
 
 	/** @var IConfig */
 	private $config;
+	/** @var Manager */
+	private $manager;
+	/** @var ParticipantService */
+	private $participantService;
 
-	public function __construct(IConfig $config) {
+	public function __construct(IConfig $config,
+								Manager $manager,
+								ParticipantService $participantService) {
 		$this->config = $config;
+		$this->manager = $manager;
+		$this->participantService = $participantService;
 	}
 
 	public function handle(Event $event): void {
@@ -48,6 +60,13 @@ class GroupDeletedListener implements IEventListener {
 		$this->removeGroupFromConfig('sip_bridge_groups', $gid);
 		$this->removeGroupFromConfig('start_conversations', $gid);
 		$this->removeGroupFromConfig('allowed_groups', $gid);
+
+		// Remove the group itself from being a participant
+		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $gid);
+		foreach ($rooms as $room) {
+			$participant = $room->getParticipantByActor(Attendee::ACTOR_GROUPS, $gid);
+			$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
+		}
 	}
 
 	protected function removeGroupFromConfig(string $configKey, string $removeGroupId): void {
