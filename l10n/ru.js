@@ -1065,8 +1065,6 @@ OC.L10N.register(
     "You started Matterbridge." : "Вы запустили систему обмена сообщениями Matterbridge.",
     "{actor} stopped Matterbridge." : "{actor} остановил(а) систему обмена сообщениями Matterbridge.",
     "You stopped Matterbridge." : "Вы остановили систему обмена сообщениями Matterbridge.",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Ошибка: с сервера TURN не получено не одного рабочего кандидата ICE для протокола UDP",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Ошибка: с сервера TURN не получено не одного рабочего кандидата ICE для протокола TCP",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Сервер TURN (Traversal Using Relay NAT) используется для перенаправления данных для участников, расположенных за брандмауэром. Сервер TURN необходим, если участники не могут устанавливать прямое соединение. Сведения по настройке приведены в {linkstart}документации{linkend}.",
     "Lower hand" : "Опустить руку",
     "Raise hand" : "Поднять руку",

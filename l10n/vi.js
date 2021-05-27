@@ -792,8 +792,6 @@ OC.L10N.register(
     "You started Matterbridge." : "Bạn đã khởi động Matterbridge",
     "{actor} stopped Matterbridge." : "{actor} đã kết thúc Matterbridge.",
     "You stopped Matterbridge." : "Bạn đã kết thúc Matterbridge",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho UDP",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "Lỗi: Không có ứng cử viên ICE nào đang hoạt động được máy chủ TURN trả về cho TCP",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia sau tường lửa. Nếu những người tham gia cá nhân không thể kết nối với những người khác, rất có thể cần phải có máy chủ TURN. Xem {linkstart} tài liệu này {linkend} để biết hướng dẫn thiết lập.",
     "Lower hand" : "Đặt tay xuống",
     "Raise hand" : "Giơ tay",
