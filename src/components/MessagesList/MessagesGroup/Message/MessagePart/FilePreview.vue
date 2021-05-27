@@ -70,6 +70,7 @@ import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Close from 'vue-material-design-icons/Close'
 import { getCapabilities } from '@nextcloud/capabilities'
+import { encodePath } from '@nextcloud/paths'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -248,10 +249,10 @@ export default {
 				// return direct image
 				if (userId === null) {
 					// guest mode, use public link download URL
-					return this.link + '/download/' + this.name
+					return this.link + '/download/' + encodePath(this.name)
 				} else {
 					// use direct DAV URL
-					return generateRemoteUrl(`dav/files/${userId}`) + this.internalAbsolutePath
+					return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
 				}
 			}
 
