@@ -221,8 +221,8 @@ describe('FilePreview.vue', () => {
 		describe('gif rendering', () => {
 			beforeEach(() => {
 				propsData.mimetype = 'image/gif'
-				propsData.name = 'test.gif'
-				propsData.path = 'path/to/test.gif'
+				propsData.name = 'test %20.gif'
+				propsData.path = 'path/to/test %20.gif'
 
 				loadState.mockImplementation((app, key) => {
 					if (app === 'core' && key === 'capabilities') {
@@ -252,12 +252,12 @@ describe('FilePreview.vue', () => {
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(generateRemoteUrl('dav/files/current-user-id/path/to/test.gif'))
+					.toBe(generateRemoteUrl('dav/files/current-user-id') + '/path/to/test%20%2520.gif')
 			})
 
 			test('directly renders small GIF files (absolute path)', async() => {
 				propsData.size = 128
-				propsData.path = '/path/to/test.gif'
+				propsData.path = '/path/to/test %20.gif'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -269,7 +269,7 @@ describe('FilePreview.vue', () => {
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(generateRemoteUrl('dav/files/current-user-id/path/to/test.gif'))
+					.toBe(generateRemoteUrl('dav/files/current-user-id') + '/path/to/test%20%2520.gif')
 			})
 
 			test('directly renders small GIF files for guests', async() => {
@@ -287,7 +287,7 @@ describe('FilePreview.vue', () => {
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(propsData.link + '/download/test.gif')
+					.toBe(propsData.link + '/download/test%20%2520.gif')
 			})
 
 			test('renders static preview for big GIF files', async() => {
