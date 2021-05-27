@@ -1048,8 +1048,6 @@
     "You started Matterbridge." : "Matterbridgeを開始しました。",
     "{actor} stopped Matterbridge." : "{actor} はMatterbridgeを停止しました。",
     "You stopped Matterbridge." : "Matterbridgeを停止しました。",
-    "Error: No working ICE candidates returned for UDP by the TURN server" : "エラー: TURNサーバーからUDP用に機能するICE候補が返されませんでした",
-    "Error: No working ICE candidates returned for TCP by the TURN server" : "エラー: TURNサーバーからTCPに対して有効なICE候補が返されませんでした",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURNサーバーは、ファイアウォールの背後にある参加者からのトラフィックをプロキシするために使用されます。個々の参加者が他の参加者に接続できない場合は、TURNサーバーが必要になる可能性があります。セットアップ手順については、{linkstart}このドキュメント{linkend}を参照してください。",
     "Lower hand" : "手を下げる (r)",
     "Raise hand" : "挙手 (r)",
