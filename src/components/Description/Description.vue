@@ -22,7 +22,6 @@
 <template>
 	<div ref="description"
 		:key="forceReRenderKey"
-		v-mousedown-outside="handleMouseDownOutside"
 		class="description"
 		:class="{'description--editing': editing}">
 		<RichContentEditable
@@ -234,11 +233,6 @@ export default {
 			this.$emit('update:editing', false)
 			// Deselect all the text that's been selected in `handleEditDescription`
 			window.getSelection().removeAllRanges()
-		},
-
-		// Collapse the description or dismiss editing
-		handleMouseDownOutside(event) {
-			this.$emit('update:editing', false)
 		},
 
 		checkOverflow() {
