@@ -97,6 +97,7 @@ CallParticipantModel.prototype = {
 		this._webRtc.off('mute', this._handleMuteBound)
 		this._webRtc.off('unmute', this._handleUnmuteBound)
 		this._webRtc.off('channelMessage', this._handleChannelMessageBound)
+		this._webRtc.off('raisedHand', this._handleRaisedHandBound)
 	},
 
 	get: function(key) {
