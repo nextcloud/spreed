@@ -3,7 +3,7 @@ name: int-sqlite-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -38,7 +38,7 @@ name: int-sqlite-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -73,7 +73,7 @@ name: int-sqlite-command
 
 steps:
   - name: integration-command
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -108,7 +108,7 @@ name: int-sqlite-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -145,7 +145,7 @@ name: int-sqlite-conversation-2
 
 steps:
   - name: integration-conversation-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -182,7 +182,7 @@ name: int-sqlite-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -217,7 +217,7 @@ name: int-sqlite-sharing-2
 
 steps:
   - name: integration-sharing-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -252,7 +252,7 @@ name: int-mysql-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -297,7 +297,7 @@ name: int-mysql-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -342,7 +342,7 @@ name: int-mysql-command
 
 steps:
   - name: integration-command
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -387,7 +387,7 @@ name: int-mysql-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -434,7 +434,7 @@ name: int-mysql-conversation-2
 
 steps:
   - name: integration-conversation-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -481,7 +481,7 @@ name: int-mysql-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -526,7 +526,7 @@ name: int-mysql-sharing-2
 
 steps:
   - name: integration-sharing-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -571,7 +571,7 @@ name: int-pgsql-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -615,7 +615,7 @@ name: int-pgsql-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -659,7 +659,7 @@ name: int-pgsql-command
 
 steps:
   - name: integration-command
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -703,7 +703,7 @@ name: int-pgsql-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -749,7 +749,7 @@ name: int-pgsql-conversation-2
 
 steps:
   - name: integration-conversation-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -795,7 +795,7 @@ name: int-pgsql-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -839,7 +839,7 @@ name: int-pgsql-sharing-2
 
 steps:
   - name: integration-sharing-2
-    image: nextcloudci/php7.3:php7.3-5
+    image: ghcr.io/nextcloud/continuous-integration-php7.3:php7.3-6
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
