@@ -242,6 +242,7 @@ export default {
 					is: AudioPlayer,
 					name: this.name,
 					path: this.path,
+					link: this.link,
 				}
 			}
 			return {

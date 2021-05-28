@@ -23,7 +23,7 @@
 	<div class="wrapper">
 		<audio
 			controls
-			:src="davURL">
+			:src="fileURL">
 			Your browser does not support the
 			<code>audio</code> element.
 		</audio>
@@ -32,7 +32,7 @@
 
 <script>
 import { generateRemoteUrl } from '@nextcloud/router'
-import { getCurrentUser } from '@nextcloud/auth'
+import { encodePath } from '@nextcloud/paths'
 
 export default {
 	name: 'AudioPlayer',
@@ -42,6 +42,10 @@ export default {
 		 * File name
 		 */
 		name: {
+			type: String,
+			required: true,
+		},
+		link: {
 			type: String,
 			required: true,
 		},
@@ -56,8 +60,22 @@ export default {
 	},
 
 	computed: {
-		davURL() {
-			return generateRemoteUrl(`dav/files/${getCurrentUser().uid}/`) + this.path
+		internalAbsolutePath() {
+			if (this.path.startsWith('/')) {
+				return this.path
+			}
+			return '/' + this.path
+		},
+
+		fileURL() {
+			const userId = this.$store.getters.getUserId()
+			if (userId === null) {
+				// guest mode, use public link download URL
+				return this.link + '/download/' + encodePath(this.name)
+			} else {
+				// use direct DAV URL
+				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
+			}
 		},
 	},
 
