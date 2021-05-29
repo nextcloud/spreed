@@ -22,7 +22,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -57,7 +57,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -92,7 +92,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -129,7 +129,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -166,7 +166,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -201,7 +201,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -236,7 +236,7 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 
 trigger:
   branch:
@@ -271,9 +271,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -316,9 +316,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -361,9 +361,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -408,9 +408,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -455,9 +455,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -500,9 +500,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -545,9 +545,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: mysql
-    image: mysql:5.7.22
+    image: ghcr.io/nextcloud/continuous-integration-mysql-5.7:mysql-5.7.22
     environment:
       MYSQL_ROOT_PASSWORD: owncloud
       MYSQL_USER: oc_autotest
@@ -590,9 +590,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -634,9 +634,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -678,9 +678,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -724,9 +724,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -770,9 +770,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -814,9 +814,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -858,9 +858,9 @@ steps:
 
 services:
   - name: cache
-    image: redis
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
   - name: pgsql
-    image: postgres:10
+    image: ghcr.io/nextcloud/continuous-integration-postgres-10:postgres-10
     environment:
       POSTGRES_USER: oc_autotest
       POSTGRES_DB: oc_autotest_dummy
@@ -943,7 +943,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
@@ -985,7 +985,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
@@ -1027,7 +1027,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
@@ -1109,7 +1109,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
@@ -1151,7 +1151,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
@@ -1193,7 +1193,7 @@ trigger:
 #
 #services:
 #  - name: cache
-#    image: redis
+#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
 #  - name: selenium
 #    image: selenium/standalone-firefox:2.53.1-beryllium
 #    environment:
