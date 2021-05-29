@@ -865,6 +865,7 @@
     "Message link copied to clipboard." : "Link da mensagem copiado para a área de transferência.",
     "{stack} in {board}" : "{stack} de {board}",
     "Deck Card" : "Cartão Deck",
+    "Remove {fileName}" : "Remover {fileName} ",
     "Open this location in Openstreetmap" : "Abra este local no Openstreetmap ",
     "[Unknown username]" : "[Nome de usuário desconhecido]",
     "Scroll to bottom" : "Rolar para baixo",
