@@ -50,6 +50,7 @@ class SelectHelper {
 			->addSelect($alias . 'object_id')
 			->addSelect($alias . 'listable')
 			->addSelect($alias . 'server_url')
+			->addSelect($alias . 'publishing_allowed')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 

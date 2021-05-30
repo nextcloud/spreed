@@ -403,6 +403,7 @@ class RoomController extends AEnvironmentAwareController {
 			'lastCommonReadMessage' => 0,
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
+			'publishingAllowed' => Room::PUBLISHING_ALLOWED_EVERYONE,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -435,6 +436,7 @@ class RoomController extends AEnvironmentAwareController {
 				'lobbyTimer' => $lobbyTimer,
 				'sipEnabled' => $room->getSIPEnabled(),
 				'listable' => $room->getListable(),
+				'publishingAllowed' => $room->getPublishingAllowed(),
 			]);
 		}
 
@@ -465,6 +467,7 @@ class RoomController extends AEnvironmentAwareController {
 			'publishingPermissions' => $attendee->getPublishingPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
+			'publishingAllowed' => $room->getPublishingAllowed(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

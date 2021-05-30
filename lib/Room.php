@@ -94,6 +94,9 @@ class Room {
 	public const START_CALL_USERS = 1;
 	public const START_CALL_MODERATORS = 2;
 
+	public const PUBLISHING_ALLOWED_EVERYONE = 0;
+	public const PUBLISHING_ALLOWED_MODERATORS = 1;
+
 	public const PARTICIPANT_REMOVED = 'remove';
 	public const PARTICIPANT_LEFT = 'leave';
 
@@ -198,6 +201,8 @@ class Room {
 	private $objectType;
 	/** @var string */
 	private $objectId;
+	/** @var int */
+	private $publishingAllowed;
 
 	/** @var string */
 	protected $currentUser;
@@ -229,7 +234,8 @@ class Room {
 								?IComment $lastMessage,
 								?\DateTime $lobbyTimer,
 								string $objectType,
-								string $objectId) {
+								string $objectId,
+								int $publishingAllowed) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
@@ -256,6 +262,7 @@ class Room {
 		$this->lobbyTimer = $lobbyTimer;
 		$this->objectType = $objectType;
 		$this->objectId = $objectId;
+		$this->publishingAllowed = $publishingAllowed;
 	}
 
 	public function getId(): int {
@@ -371,6 +378,10 @@ class Room {
 
 	public function getObjectId(): string {
 		return $this->objectId;
+	}
+
+	public function getPublishingAllowed(): int {
+		return $this->publishingAllowed;
 	}
 
 	public function hasPassword(): bool {
