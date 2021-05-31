@@ -349,6 +349,15 @@ class Peer {
 			}
 		}
 
+		this.signaling.addEventListener('message', event => {
+			const message = event.detail
+
+			if (message.data.type === 'candidate' && message.data.from === this.sessionId) {
+				const candidate = message.data.payload
+				this.peerConnection.addIceCandidate(candidate.candidate)
+			}
+		})
+
 		this.connectedPromiseResolve = undefined
 		this.connectedPromiseReject = undefined
 		this.connectedPromise = new Promise((resolve, reject) => {
