@@ -57,6 +57,12 @@ title: Constants
 * `guests` - Guest without a login
 * `emails` - A guest invited by email address
 
+### Attendee publishing permissions
+* `0` None
+* `1` Audio
+* `2` Video
+* `4` Screensharing
+
 ### Actor types of chat messages
 * `users` - Logged-in users
 * `guests` - Guest users (attendee type `guests` and `emails`)
