@@ -29,7 +29,6 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Circles\Api\v1\Circles;
-use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -710,38 +709,7 @@ class RoomController extends AEnvironmentAwareController {
 		// Create the room
 		$name = $this->roomService->prepareConversationName($circle->getName());
 		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
-
-		$participants = [];
-		foreach ($circle->getMembers() as $member) {
-			/** @var Member $member */
-			if ($member->getType() !== Member::TYPE_USER || $member->getUserId() === '') {
-				// Not a user?
-				continue;
-			}
-
-			if ($currentUser->getUID() === $member->getUserId()) {
-				// Current user is already added
-				continue;
-			}
-
-			if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
-				// Only allow invited and regular members
-				continue;
-			}
-
-			$user = $this->userManager->get($this->userId);
-			if (!$user instanceof IUser) {
-				continue;
-			}
-
-			$participants[] = [
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $member->getUserId(),
-				'displayName' => $user->getDisplayName(),
-			];
-		}
-
-		$this->participantService->addUsers($room, $participants);
+		$this->participantService->addCircle($room, $circle);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
@@ -1057,29 +1025,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			foreach ($circle->getMembers() as $member) {
-				/** @var Member $member */
-				if ($member->getType() !== Member::TYPE_USER || $member->getUserId() === '') {
-					// Not a user?
-					continue;
-				}
-
-				if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
-					// Only allow invited and regular members
-					continue;
-				}
-
-				$user = $this->userManager->get($this->userId);
-				if (!$user instanceof IUser) {
-					continue;
-				}
-
-				$participantsToAdd[] = [
-					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $member->getUserId(),
-					'displayName' => $user->getDisplayName(),
-				];
-			}
+			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			$data = [];
 			if ($this->room->setType(Room::PUBLIC_CALL)) {
