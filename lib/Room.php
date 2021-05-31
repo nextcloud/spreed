@@ -119,6 +119,8 @@ class Room {
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
 	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
+	public const EVENT_BEFORE_PUBLISHING_ALLOWED_SET = self::class . '::preSetPublishingAllowed';
+	public const EVENT_AFTER_PUBLISHING_ALLOWED_SET = self::class . '::postSetPublishingAllowed';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
 	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
@@ -1041,6 +1043,54 @@ class Room {
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
 
+
+		return true;
+	}
+
+	/**
+	 * @param int $newState New publishing allowed value from
+	 *						self::PUBLISHING_ALLOWED_*
+	 * 						Also it can be set only on rooms of type
+	 * 						`self::GROUP_CALL` and `self::PUBLIC_CALL` if there
+	 *						is no on-going call.
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setPublishingAllowed(int $newState): bool {
+		$oldState = $this->getPublishingAllowed();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($this->getType(), [
+			self::GROUP_CALL,
+			self::PUBLIC_CALL
+		], true)) {
+			return false;
+		}
+
+		if ($this->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+			return false;
+		}
+
+		if (!in_array($newState, [
+			Room::PUBLISHING_ALLOWED_EVERYONE,
+			Room::PUBLISHING_ALLOWED_MODERATORS,
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($this, 'publishing_allowed', $newState, $oldState);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_PUBLISHING_ALLOWED_SET, $event);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('publishing_allowed', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->publishingAllowed = $newState;
+
+		$this->dispatcher->dispatch(self::EVENT_AFTER_PUBLISHING_ALLOWED_SET, $event);
 
 		return true;
 	}
