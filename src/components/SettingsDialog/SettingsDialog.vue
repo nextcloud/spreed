@@ -96,7 +96,7 @@
 				</div>
 			</dl>
 
-			<em>{{ t('spreed', 'Shortcuts while in a call.') }}</em>
+			<h3>{{ t('spreed', 'Shortcuts while in a call') }}<h3>
 			<dl>
 				<div>
 					<dt><kbd>V</kbd></dt>
@@ -163,7 +163,7 @@ export default {
 		},
 
 		locationHint() {
-			return t('spreed', 'Choose folder in which attachments should be saved.')
+			return t('spreed', 'Choose the folder in which attachments should be saved.')
 		},
 
 		isGuest() {
