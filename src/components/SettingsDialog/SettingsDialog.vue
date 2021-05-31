@@ -96,7 +96,7 @@
 				</div>
 			</dl>
 
-			</em>{{ t('spreed', 'Shortcuts while in a call.') }}</em>
+			<em>{{ t('spreed', 'Shortcuts while in a call.') }}</em>
 			<dl>
 				<div>
 					<dt><kbd>V</kbd></dt>
