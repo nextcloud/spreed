@@ -256,8 +256,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode $formData
 	 */
 	private function assertRooms($rooms, TableNode $formData) {
-		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
+		$expected = array_map(function ($room) {
+			if (isset($room['publishingAllowed'])) {
+				$room['publishingAllowed'] = (string)$this->mapPublishingAllowedTestInput($room['publishingAllowed']);
+			}
+			return $room;
+		}, $formData->getHash());
+
+		Assert::assertCount(count($expected), $rooms, 'Room count does not match');
+		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {
 			if (!isset(self::$identifierToToken[$room['name']])) {
 				self::$identifierToToken[$room['name']] = $room['token'];
 			}
@@ -293,6 +300,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['sipEnabled'])) {
 				$data['sipEnabled'] = (string) $room['sipEnabled'];
 			}
+			if (isset($expectedRoom['publishingAllowed'])) {
+				$data['publishingAllowed'] = (string) $room['publishingAllowed'];
+			}
 			if (isset($expectedRoom['callFlag'])) {
 				$data['callFlag'] = (int) $room['callFlag'];
 			}
@@ -307,7 +317,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 
 			return $data;
-		}, $rooms, $formData->getHash()));
+		}, $rooms, $expected));
 	}
 
 	/**
@@ -455,6 +465,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $a1['actorType'] <=> $a2['actorType'];
 		}
 		return $a1['actorId'] <=> $a2['actorId'];
+	}
+
+	private function mapPublishingAllowedTestInput($publishingAllowed) {
+		if (is_numeric($publishingAllowed)) {
+			return $publishingAllowed;
+		}
+
+		switch ($publishingAllowed) {
+			case 'EVERYONE': return 0;
+			case 'MODERATORS': return 1;
+		}
+
+		Assert::fail('Invalid test input value for publishing allowed');
 	}
 
 	private function mapParticipantTypeTestInput($participantType) {
@@ -954,6 +977,32 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/sip',
 			new TableNode([['state', $SIPState]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sets publishing allowed for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $publishingAllowedString
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsPublishingAllowedForRoomTo(string $user, string $identifier, string $publishingAllowedString, int $statusCode, string $apiVersion): void {
+		if ($publishingAllowedString === 'EVERYONE') {
+			$publishingAllowed = 0;
+		} elseif ($publishingAllowedString === 'MODERATORS') {
+			$publishingAllowed = 1;
+		} else {
+			Assert::fail('Invalid publishing allowed');
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/publishing-allowed',
+			new TableNode([['state', $publishingAllowed]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
