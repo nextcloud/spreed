@@ -67,7 +67,7 @@
 			<em>{{ t('spreed', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
-			<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
+			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
 			<dl>
 				<div>
@@ -96,7 +96,7 @@
 				</div>
 			</dl>
 
-			<h3>{{ t('spreed', 'Shortcuts while in a call.') }}</h3>
+			</em>{{ t('spreed', 'Shortcuts while in a call.') }}</em>
 			<dl>
 				<div>
 					<dt><kbd>V</kbd></dt>
