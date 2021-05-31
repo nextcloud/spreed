@@ -23,6 +23,10 @@ title: Constants
 * `0` No lobby
 * `1` Lobby for non moderators
 
+### Publishing allowed
+* `0` Everyone
+* `1` Moderators
+
 ## Participants
 
 ### Participant types
