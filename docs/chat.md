@@ -131,6 +131,28 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
 
+## Share a file to the chat
+
+* Method: `POST`
+* Endpoint: `ocs/v2.php/apps/files_sharing/api/v1/shares`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `shareType` | int | `10` means share to a conversation
+    `shareWith` | string | The token of the conversation to share the file to
+    `path` | string | The file path inside the user's root to share
+    `referenceId` | string | A reference string to be able to identify the generated chat message again in a "get messages" request, should be a random sha256 (only available with `chat-reference-id` capability)
+    `talkMetaData` | string | JSON encoded array of the meta data
+
+* `talkMetaData` array:
+
+    field | type | Description
+    ---|---|---
+    `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment`
+
+* Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
+
 ## Deleting a chat message
 
 * Required capability: `delete-messages`

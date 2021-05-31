@@ -29,7 +29,7 @@
       <code>$this-&gt;rootFolder</code>
       <code>IRootFolder</code>
       <code>IRootFolder</code>
-      <code>\OCP\Share\Exceptions\ShareNotFound</code>
+      <code>ShareNotFound</code>
     </MissingDependency>
     <UndefinedClass occurrences="1">
       <code>\OC_Util</code>
@@ -203,9 +203,6 @@
       <code>IRootFolder</code>
       <code>IRootFolder</code>
     </MissingDependency>
-    <UndefinedClass occurrences="1">
-      <code>SharedStorage</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Controller/SignalingController.php">
     <UndefinedClass occurrences="1">
@@ -237,9 +234,6 @@
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
     </MissingDependency>
-    <UndefinedClass occurrences="1">
-      <code>GroupFolderStorage</code>
-    </UndefinedClass>
   </file>
   <file src="lib/Flow/Operation.php">
     <InvalidArgument occurrences="1"/>
