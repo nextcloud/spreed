@@ -235,10 +235,10 @@ describe('participantsStore', () => {
 			}
 
 			test('promotes given user to moderator', async() => {
-				testPromoteModerator(PARTICIPANT.TYPE.USER, PARTICIPANT.TYPE.MODERATOR)
+				await testPromoteModerator(PARTICIPANT.TYPE.USER, PARTICIPANT.TYPE.MODERATOR)
 			})
 			test('promotes given guest to guest moderator', async() => {
-				testPromoteModerator(PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR)
+				await testPromoteModerator(PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR)
 			})
 		})
 
@@ -278,10 +278,10 @@ describe('participantsStore', () => {
 			}
 
 			test('demotes given moderator to user', async() => {
-				testDemoteModerator(PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.USER)
+				await testDemoteModerator(PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.USER)
 			})
 			test('promotes given guest to guest moderator', async() => {
-				testDemoteModerator(PARTICIPANT.TYPE.GUEST_MODERATOR, PARTICIPANT.TYPE.GUEST)
+				await testDemoteModerator(PARTICIPANT.TYPE.GUEST_MODERATOR, PARTICIPANT.TYPE.GUEST)
 			})
 		})
 	})
