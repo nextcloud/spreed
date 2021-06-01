@@ -25,7 +25,6 @@ function Peer(options) {
 	this.type = options.type || 'video'
 	this.oneway = options.oneway || false
 	this.sharemyscreen = options.sharemyscreen || false
-	this.browserPrefix = options.prefix
 	this.stream = options.stream
 	this.sendVideoIfAvailable = options.sendVideoIfAvailable === undefined ? true : options.sendVideoIfAvailable
 	this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels
@@ -226,10 +225,6 @@ Peer.prototype.handleMessage = function(message) {
 
 	this.logger.log('getting', message.type, message)
 
-	if (message.prefix) {
-		this.browserPrefix = message.prefix
-	}
-
 	if (message.type === 'offer') {
 		if (!this.nick) {
 			this.nick = message.payload.nick
@@ -269,7 +264,6 @@ Peer.prototype.send = function(messageType, payload) {
 		roomType: this.type,
 		type: messageType,
 		payload: payload,
-		prefix: webrtcSupport.prefix,
 	}
 	this.logger.log('sending', messageType, message)
 	this.parent.emit('message', message)
@@ -338,23 +332,16 @@ Peer.prototype.onIceCandidate = function(event) {
 		return
 	}
 	if (candidate) {
-		const pcConfig = this.parent.config.peerConnectionConfig
-		if (webrtcSupport.prefix === 'moz' && pcConfig && pcConfig.iceTransports
-				&& candidate.candidate && candidate.candidate.candidate
-				&& candidate.candidate.candidate.indexOf(pcConfig.iceTransports) < 0) {
-			this.logger.log('Ignoring ice candidate not matching pcConfig iceTransports type: ', pcConfig.iceTransports)
-		} else {
-			// Retain legacy data structure for compatibility with
-			// mobile clients.
-			const expandedCandidate = {
-				candidate: {
-					candidate: candidate.candidate,
-					sdpMid: candidate.sdpMid,
-					sdpMLineIndex: candidate.sdpMLineIndex,
-				},
-			}
-			this.send('candidate', expandedCandidate)
+		// Retain legacy data structure for compatibility with
+		// mobile clients.
+		const expandedCandidate = {
+			candidate: {
+				candidate: candidate.candidate,
+				sdpMid: candidate.sdpMid,
+				sdpMLineIndex: candidate.sdpMLineIndex,
+			},
 		}
+		this.send('candidate', expandedCandidate)
 	} else {
 		this.logger.log('End of candidates.')
 	}
