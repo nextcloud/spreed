@@ -102,7 +102,7 @@
 			:force-menu="true"
 			class="participant-row__actions">
 			<ActionText
-				v-if="attendeePin"
+				v-if="canSeeAttendeePin"
 				:title="t('spreed', 'Dial-in PIN')"
 				icon="icon-password">
 				{{ attendeePin }}
@@ -119,15 +119,16 @@
 				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
-			<ActionButton v-if="isEmailActor"
+			<ActionButton v-if="canResendInvitation"
 				icon="icon-mail"
 				:close-after-click="true"
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
 			<ActionSeparator
-				v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
+				v-if="(canSeeAttendeePin || canBePromoted || canBeDemoted || canResendInvitation) && canBeModerated" />
 			<ActionButton
+				v-if="canBeModerated"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
@@ -421,6 +422,10 @@ export default {
 				&& this.selfIsModerator
 				&& !this.isBridgeBotUser
 		},
+		canSeeAttendeePin() {
+			return this.canBeModerated
+				&& this.attendeePin
+		},
 		canBeDemoted() {
 			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
@@ -430,6 +435,10 @@ export default {
 			return this.canBeModerated
 				&& !this.isModerator
 				&& !this.isGroup
+		},
+		canResendInvitation() {
+			return this.canBeModerated
+				&& this.isEmailActor
 		},
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
