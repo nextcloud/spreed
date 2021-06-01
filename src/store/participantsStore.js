@@ -23,6 +23,7 @@ import Vue from 'vue'
 import {
 	promoteToModerator,
 	demoteFromModerator,
+	setPublishingPermissions,
 	removeAttendeeFromConversation,
 	resendInvitations,
 	joinConversation,
@@ -250,6 +251,22 @@ const actions = {
 		// FIXME: don't demote already demoted, use server response instead
 		const updatedData = {
 			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
+		}
+		commit('updateParticipant', { token, index, updatedData })
+	},
+	async setPublishingPermissions({ commit, getters }, { token, attendeeId, state }) {
+		const index = getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+
+		await setPublishingPermissions(token, {
+			attendeeId,
+			state,
+		})
+
+		const updatedData = {
+			publishingPermissions: state,
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},

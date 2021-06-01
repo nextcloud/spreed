@@ -6,6 +6,7 @@ import { PARTICIPANT } from '../constants'
 import {
 	promoteToModerator,
 	demoteFromModerator,
+	setPublishingPermissions,
 	removeAttendeeFromConversation,
 	resendInvitations,
 	joinConversation,
@@ -23,6 +24,7 @@ import participantsStore from './participantsStore'
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),
 	demoteFromModerator: jest.fn(),
+	setPublishingPermissions: jest.fn(),
 	removeAttendeeFromConversation: jest.fn(),
 	resendInvitations: jest.fn(),
 	joinConversation: jest.fn(),
@@ -290,6 +292,54 @@ describe('participantsStore', () => {
 			})
 			test('promotes given guest to guest moderator', async () => {
 				await testDemoteModerator(PARTICIPANT.TYPE.GUEST_MODERATOR, PARTICIPANT.TYPE.GUEST)
+			})
+		})
+
+		describe('set publishing permissions', () => {
+			test('does nothing when setting publishing permissions for not found attendee', () => {
+				store.dispatch('setPublishingPermissions', {
+					token: TOKEN,
+					attendeeId: 1,
+					state: PARTICIPANT.PUBLISHING_PERMISSIONS.ALL,
+				})
+
+				expect(setPublishingPermissions).not.toHaveBeenCalled()
+			})
+
+			async function testSetPublishingPermissions(publishingPermissions, expectedPublishingPermissions) {
+				setPublishingPermissions.mockResolvedValue()
+
+				store.dispatch('addParticipant', {
+					token: TOKEN,
+					participant: {
+						attendeeId: 1,
+						publishingPermissions,
+					},
+				})
+				await store.dispatch('setPublishingPermissions', {
+					token: TOKEN,
+					attendeeId: 1,
+					state: expectedPublishingPermissions,
+				})
+				expect(setPublishingPermissions)
+					.toHaveBeenCalledWith(TOKEN, {
+						attendeeId: 1,
+						state: expectedPublishingPermissions,
+					})
+
+				expect(store.getters.participantsList(TOKEN)).toStrictEqual([
+					{
+						attendeeId: 1,
+						publishingPermissions: expectedPublishingPermissions,
+					},
+				])
+			}
+
+			test('grants all publishing permissions', async () => {
+				await testSetPublishingPermissions(PARTICIPANT.PUBLISHING_PERMISSIONS.NONE, PARTICIPANT.PUBLISHING_PERMISSIONS.ALL)
+			})
+			test('revokes all publishing permissions', async () => {
+				await testSetPublishingPermissions(PARTICIPANT.PUBLISHING_PERMISSIONS.ALL, PARTICIPANT.PUBLISHING_PERMISSIONS.NONE)
 			})
 		})
 	})

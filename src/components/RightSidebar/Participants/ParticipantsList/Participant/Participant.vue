@@ -96,7 +96,7 @@
 				decorative />
 		</div>
 		<Actions
-			v-if="canBeModerated && !isSearched"
+			v-if="(canBeModerated || canBeGrantedPublishingPermissions || canBeRevokedPublishingPermissions) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
@@ -119,6 +119,18 @@
 				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
+			<ActionButton v-if="canBeGrantedPublishingPermissions"
+				icon="icon-audio"
+				:close-after-click="true"
+				@click="grantPublishingPermissions">
+				{{ t('spreed', 'Grant publishing permissions') }}
+			</ActionButton>
+			<ActionButton v-if="canBeRevokedPublishingPermissions"
+				icon="icon-audio-off"
+				:close-after-click="true"
+				@click="revokePublishingPermissions">
+				{{ t('spreed', 'Revoke publishing permissions') }}
+			</ActionButton>
 			<ActionButton v-if="canResendInvitation"
 				icon="icon-mail"
 				:close-after-click="true"
@@ -126,7 +138,7 @@
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
 			<ActionSeparator
-				v-if="(canSeeAttendeePin || canBePromoted || canBeDemoted || canResendInvitation) && canBeModerated" />
+				v-if="(canSeeAttendeePin || canBePromoted || canBeDemoted || canBeGrantedPublishingPermissions || canBeRevokedPublishingPermissions || canResendInvitation) && canBeModerated" />
 			<ActionButton
 				v-if="canBeModerated"
 				icon="icon-delete"
@@ -436,6 +448,16 @@ export default {
 				&& !this.isModerator
 				&& !this.isGroup
 		},
+		canBeGrantedPublishingPermissions() {
+			return this.participant.publishingPermissions !== PARTICIPANT.PUBLISHING_PERMISSIONS.ALL
+				&& this.selfIsModerator
+				&& !this.isBridgeBotUser
+		},
+		canBeRevokedPublishingPermissions() {
+			return this.participant.publishingPermissions !== PARTICIPANT.PUBLISHING_PERMISSIONS.NONE
+				&& this.selfIsModerator
+				&& !this.isBridgeBotUser
+		},
 		canResendInvitation() {
 			return this.canBeModerated
 				&& this.isEmailActor
@@ -492,6 +514,20 @@ export default {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
 				attendeeId: this.participant.attendeeId,
+			})
+		},
+		async grantPublishingPermissions() {
+			await this.$store.dispatch('setPublishingPermissions', {
+				token: this.token,
+				attendeeId: this.participant.attendeeId,
+				state: PARTICIPANT.PUBLISHING_PERMISSIONS.ALL,
+			})
+		},
+		async revokePublishingPermissions() {
+			await this.$store.dispatch('setPublishingPermissions', {
+				token: this.token,
+				attendeeId: this.participant.attendeeId,
+				state: PARTICIPANT.PUBLISHING_PERMISSIONS.NONE,
 			})
 		},
 		async resendInvitation() {
