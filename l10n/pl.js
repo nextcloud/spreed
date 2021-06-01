@@ -928,7 +928,7 @@ OC.L10N.register(
     "Privacy" : "Prywatność",
     "Share my read-status and show the read-status of others" : "Udostępnij mój status odczytu i pokaż innym",
     "Sounds" : "Dźwięki",
-    "Play sounds when participants join a call or leave it" : "Odtwarzaj dźwięki, gdy uczestnicy dołączają do połączenia lub je opuszczają",
+    "Play sounds when participants join a call or leave it" : "Odtwarzaj dźwięki, gdy uczestnicy dołączają lub opuszczają połączenie",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Obecnie nie można odtwarzać dźwięków w przeglądarce Safari oraz na urządzeniach iPad i iPhone ze względu na ograniczenia techniczne producenta.",
     "Keyboard shortcuts" : "Skróty klawiaturowe",
     "Speed up your Talk experience with these quick shortcuts." : "Przyspiesz korzystanie z Talka dzięki szybkim skrótom.",
