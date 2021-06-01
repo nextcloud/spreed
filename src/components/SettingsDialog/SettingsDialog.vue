@@ -63,11 +63,11 @@
 				type="checkbox"
 				class="checkbox"
 				@change="togglePlaySounds">
-			<label for="play_sounds">{{ t('settings', 'Play sounds when participants join a call or leave it') }}</label>
-			<em>{{ t('settings', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
+			<label for="play_sounds">{{ t('spreed', 'Play sounds when participants join or leave a call') }}</label>
+			<em>{{ t('spreed', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
-			<p>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</p>
+			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
 			<dl>
 				<div>
@@ -163,7 +163,7 @@ export default {
 		},
 
 		locationHint() {
-			return t('spreed', 'Choose in which folder attachments should be saved.')
+			return t('spreed', 'Choose the folder in which attachments should be saved.')
 		},
 
 		isGuest() {
