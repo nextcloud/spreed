@@ -90,7 +90,8 @@ export default {
 
 		disableMenu() {
 			// disable the menu if accessing the conversation as guest
-			return this.$store.getters.getActorType() === 'guests'
+			// or the message sender is a bridged user
+			return this.$store.getters.getActorType() === 'guests' || this.authorType === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
 	},
 }
