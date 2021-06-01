@@ -25,6 +25,8 @@
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="OC" />
 				<referencedClass name="OCA\Files_Sharing\SharedStorage" />
+				<referencedClass name="OCA\Circles\Model\Circle" />
+				<referencedClass name="OCA\Circles\Model\Member" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -37,6 +39,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
+				<referencedClass name="OCA\Circles\Model\Member" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
