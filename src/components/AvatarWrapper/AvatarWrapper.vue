@@ -34,6 +34,7 @@
 			:disable-menu="disableMenu"
 			:show-user-status="showUserStatus"
 			:show-user-status-compact="showUserStatusCompact"
+			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
 		<div v-else
 			class="guest"
@@ -91,6 +92,10 @@ export default {
 		showUserStatusCompact: {
 			type: Boolean,
 			default: true,
+		},
+		preloadedUserStatus: {
+			type: Object,
+			default: undefined,
 		},
 	},
 	computed: {
