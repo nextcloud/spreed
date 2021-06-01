@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Circles\Model\Circle;
+use OCA\Circles\Model\Member;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
@@ -357,6 +359,77 @@ class ParticipantService {
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
 			$this->attendeeMapper->insert($attendee);
 		}
+
+		$this->addUsers($room, $newParticipants);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param Circle $circle
+	 * @param Participant[] $existingParticipants
+	 */
+	public function addCircle(Room $room, Circle $circle, array $existingParticipants = []): void {
+		$membersInCircle = $circle->getMembers();
+
+		if (empty($existingParticipants)) {
+			$existingParticipants = $this->getParticipantsForRoom($room);
+		}
+
+		$participantsByUserId = [];
+		foreach ($existingParticipants as $participant) {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
+			}
+		}
+
+		$newParticipants = [];
+		foreach ($membersInCircle as $member) {
+			/** @var Member $member */
+			if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
+				// Not a user?
+				continue;
+			}
+
+			if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
+				// Only allow invited and regular members
+				continue;
+			}
+
+			$user = $this->userManager->get($member->getUserId());
+			if (!$user instanceof IUser) {
+				continue;
+			}
+
+			$existingParticipant = $participantsByUserId[$user->getUID()] ?? null;
+			if ($existingParticipant instanceof Participant) {
+				if ($existingParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->updateParticipantType($room, $existingParticipant, Participant::USER);
+				}
+
+				// Participant is already in the conversation, so skip them.
+				continue;
+			}
+
+			$newParticipants[] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			];
+		}
+
+		// No tracking of circles for now
+//		try {
+//			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_CIRCLES, $circle->getSingleId());
+//		} catch (DoesNotExistException $e) {
+//			$attendee = new Attendee();
+//			$attendee->setRoomId($room->getId());
+//			$attendee->setActorType(Attendee::ACTOR_CIRCLES);
+//			$attendee->setActorId($circle->getSingleId());
+//			$attendee->setDisplayName($circle->getDisplayName());
+//			$attendee->setParticipantType(Participant::USER);
+//			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+//			$this->attendeeMapper->insert($attendee);
+//		}
 
 		$this->addUsers($room, $newParticipants);
 	}
