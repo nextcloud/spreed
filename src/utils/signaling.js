@@ -176,6 +176,16 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 	}
 }
 
+Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
+	return new Promise((resolve, reject) => {
+		if (this.currentCallToken) {
+			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch(reason => { reject(reason) })
+		} else {
+			resolve()
+		}
+	})
+}
+
 Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
@@ -264,6 +274,27 @@ Signaling.Base.prototype.joinCall = function(token, flags) {
 
 Signaling.Base.prototype._leaveCallSuccess = function(/* token */) {
 	// Override in subclasses if necessary.
+}
+
+Signaling.Base.prototype.updateCallFlags = function(token, flags) {
+	return new Promise((resolve, reject) => {
+		if (!token) {
+			reject(new Error())
+			return
+		}
+
+		axios.put(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), {
+			flags: flags,
+		})
+			.then(function() {
+				this.currentCallFlags = flags
+				this._trigger('updateCallFlags', [token, flags])
+				resolve()
+			}.bind(this))
+			.catch(function() {
+				reject(new Error())
+			})
+	})
 }
 
 Signaling.Base.prototype.leaveCall = function(token, keepToken) {

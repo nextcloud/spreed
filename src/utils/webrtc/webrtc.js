@@ -968,16 +968,34 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 	})
 
-	webrtc.on('localTrackReplaced', function(newTrack /*, oldTrack, stream */) {
-		// Device disabled, nothing to do here.
+	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
+		// Device disabled, just update the call flags.
 		if (!newTrack) {
+			if (oldTrack && oldTrack.kind === 'audio') {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_AUDIO)
+			} else if (oldTrack && oldTrack.kind === 'video') {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_VIDEO)
+			}
+
 			return
 		}
 
 		// If the call was started with media the connections will be already
-		// established. If it has not started yet the connections will be
-		// established once started.
-		if (startedWithMedia || startedWithMedia === undefined) {
+		// established. The flags need to be updated if a device was enabled
+		// (but not if it was switched to another one).
+		if (startedWithMedia) {
+			if (newTrack.kind === 'audio' && !oldTrack) {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_AUDIO)
+			} else if (newTrack.kind === 'video' && !oldTrack) {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_VIDEO)
+			}
+
+			return
+		}
+
+		// If the call has not started with media yet the connections will be
+		// established once started, as well as the flags.
+		if (startedWithMedia === undefined) {
 			return
 		}
 
