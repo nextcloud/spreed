@@ -45,7 +45,7 @@
 						:disabled="disabled"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
-						<Attachment
+						<Paperclip
 							slot="icon"
 							:size="16"
 							decorative
@@ -129,7 +129,7 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
 import { CONVERSATION } from '../../constants'
-import Attachment from 'vue-material-design-icons/Attachment'
+import Paperclip from 'vue-material-design-icons/Paperclip'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
 
@@ -147,7 +147,7 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
-		Attachment,
+		Paperclip,
 		EmojiPicker,
 		EmoticonOutline,
 		Send,
