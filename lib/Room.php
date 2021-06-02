@@ -124,6 +124,8 @@ class Room {
 	public const EVENT_AFTER_GUESTS_CLEAN = self::class . '::postCleanGuests';
 	public const EVENT_BEFORE_SESSION_JOIN_CALL = self::class . '::preSessionJoinCall';
 	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
+	public const EVENT_BEFORE_SESSION_UPDATE_CALL_FLAGS = self::class . '::preSessionUpdateCallFlags';
+	public const EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS = self::class . '::postSessionUpdateCallFlags';
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';

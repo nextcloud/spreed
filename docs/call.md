@@ -47,6 +47,26 @@
         + `404 Not Found` When the user did not join the conversation before
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
+## Update call flags
+
+* Method: `PUT`
+* Endpoint: `/call/{token}`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `flags` | int | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the user is not in the call
+        + `400 Bad Request` When the flags do not contain "in call"
+        + `403 Forbidden` When the conversation is read-only
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `404 Not Found` When the user did not join the conversation before
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
 ## Leave a call (but staying in the conversation for future calls and chat)
 
 * Method: `DELETE`

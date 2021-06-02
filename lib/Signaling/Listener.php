@@ -65,6 +65,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_GUEST_CONNECT, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, $listener);
 
@@ -241,6 +242,7 @@ class Listener {
 			}
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
 
 		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, static function (RoomEvent $event) {
