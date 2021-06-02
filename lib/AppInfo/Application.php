@@ -23,8 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
+use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleMemberAddedEvent;
+use OCA\Circles\Events\CircleMemberRemovedEvent;
+use OCA\Circles\Events\MembershipsCreatedEvent;
+use OCA\Circles\Events\MembershipsRemovedEvent;
+use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
@@ -120,6 +125,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
+		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
+		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
