@@ -110,7 +110,7 @@ export default {
 		},
 
 		warnLeaving() {
-			return !this.isLeavingAfterSessionIssue && this.isInCall
+			return this.$store.getters.isSendingMessages || (!this.isLeavingAfterSessionIssue && this.isInCall)
 		},
 
 		/**
