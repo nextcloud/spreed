@@ -761,7 +761,6 @@ OC.L10N.register(
     "Microphone on and off" : "Zapnúť a vypnúť mikrofón",
     "Space bar" : "Medzerovník",
     "Push to talk or push to mute" : "Stlačte a hovorte alebo stlačte pre stlmenie",
-    "Choose in which folder attachments should be saved." : "Vyberte, v ktorom priečinku sa majú ukladať prílohy.",
     "Select location for attachments" : "Vyberte umiestnenie príloh",
     "Error while setting attachment folder" : "Pri nastavovaní priečinka pre prílohy sa vyskytla chyba",
     "Start call" : "Začať hovor",
@@ -880,6 +879,7 @@ OC.L10N.register(
     "Enabled" : "Povolené",
     "Show matterbridge log" : "Zobraziť záznam udalostí matterbridge",
     "User name or e-mail address" : "Používateľské meno alebo e-mailová adresa",
-    "Add new bridged channel" : "Pridať nový premostený kanál"
+    "Add new bridged channel" : "Pridať nový premostený kanál",
+    "Choose in which folder attachments should be saved." : "Vyberte, v ktorom priečinku sa majú ukladať prílohy."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
