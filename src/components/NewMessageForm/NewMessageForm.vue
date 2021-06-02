@@ -43,9 +43,13 @@
 						ref="uploadMenu"
 						container="#content-vue"
 						:disabled="disabled"
-						default-icon="icon-clip-add-file"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
+						<Attachment
+							slot="icon"
+							:size="16"
+							decorative
+							title="" />
 						<ActionButton
 							v-if="canUploadFiles"
 							:close-after-click="true"
@@ -125,6 +129,7 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
 import { CONVERSATION } from '../../constants'
+import Attachment from 'vue-material-design-icons/Attachment'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
 
@@ -142,6 +147,7 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
+		Attachment,
 		EmojiPicker,
 		EmoticonOutline,
 		Send,
