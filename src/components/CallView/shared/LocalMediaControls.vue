@@ -115,7 +115,6 @@
 						slot="icon"
 						:size="24"
 						title=""
-						fill-color="#ffffff"
 						decorative />
 					{{ t('spreed', 'Show your screen') }}
 				</ActionButton>
@@ -126,7 +125,6 @@
 						slot="icon"
 						:size="24"
 						title=""
-						fill-color="#ffffff"
 						decorative />
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
