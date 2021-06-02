@@ -433,7 +433,7 @@ class ParticipantService {
 	 * @param Participant[] $existingParticipants
 	 */
 	public function addCircle(Room $room, Circle $circle, array $existingParticipants = []): void {
-		$membersInCircle = $circle->getMembers(); // FIXME getInheritatedMembers()
+		$membersInCircle = $circle->getInheritedMembers();
 
 		if (empty($existingParticipants)) {
 			$existingParticipants = $this->getParticipantsForRoom($room);
