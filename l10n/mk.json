@@ -671,7 +671,6 @@
     "Shortcuts while in a call" : "Кратенки за време на повик",
     "Video on and off" : "Вклучување и исклучување на видеото",
     "Microphone on and off" : "Вклучување и исклучување на микрофонот",
-    "Choose in which folder attachments should be saved." : "Изберете во која папка ќе се зачувуваат примероците.",
     "Select location for attachments" : "Избери локација за прилози",
     "Error while setting attachment folder" : "Грешка при поставување на папка за прилози",
     "Start call" : "Повик",
@@ -762,6 +761,7 @@
     "Bridge with other services" : "Мост со други сервери",
     "Enabled" : "Овозможен",
     "User name or e-mail address" : "Корисничко име или е-пошта адреса",
+    "Choose in which folder attachments should be saved." : "Изберете во која папка ќе се зачувуваат примероците.",
     "{actor} set the description to \"%1$s\"" : "{actor} го постави описот во \"%1$s\"",
     "You set the description to \"%1$s\"" : "Го променивте описот во \"%1$s\"",
     "An administrator set the description to \"%1$s\"" : "Администраторот го постави описот во \"%1$s\""
