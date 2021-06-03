@@ -399,6 +399,7 @@ class SignalingController extends OCSController {
 				'lastPing' => $session->getLastPing(),
 				'sessionId' => $session->getSessionId(),
 				'inCall' => $session->getInCall(),
+				'publishingPermissions' => $participant->getAttendee()->getPublishingPermissions(),
 			];
 		}
 

@@ -83,6 +83,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $listener);
 
 		$listener = static function (RoomEvent $event) {
 			$room = $event->getRoom();

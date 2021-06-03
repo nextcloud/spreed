@@ -264,6 +264,7 @@ class BackendNotifier {
 				'lastPing' => 0,
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
+				'publishingPermissions' => Attendee::PUBLISHING_PERMISSIONS_NONE,
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
@@ -274,6 +275,7 @@ class BackendNotifier {
 				$data['inCall'] = $session->getInCall();
 				$data['lastPing'] = $session->getLastPing();
 				$data['sessionId'] = $session->getSessionId();
+				$data['publishingPermissions'] = $attendee->getPublishingPermissions();
 				$users[] = $data;
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
