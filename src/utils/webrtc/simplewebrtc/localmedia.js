@@ -183,7 +183,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
 
 		if (cb) {
-			return cb(null, stream)
+			return cb(null, stream, constraints)
 		}
 	}).catch(function(err) {
 		// Fallback for users without a camera or with a camera that can not be

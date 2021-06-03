@@ -343,11 +343,11 @@ SimpleWebRTC.prototype.getEl = function(idOrEl) {
 
 SimpleWebRTC.prototype.startLocalVideo = function(mediaConstraints) {
 	const self = this
-	this.webrtc.start(mediaConstraints, function(err, stream) {
+	this.webrtc.start(mediaConstraints, function(err, stream, actualConstraints) {
 		if (err) {
 			self.emit('localMediaError', err)
 		} else {
-			self.emit('localMediaStarted', mediaConstraints)
+			self.emit('localMediaStarted', actualConstraints)
 
 			const localVideoContainer = self.getLocalVideoContainer()
 			if (localVideoContainer) {
