@@ -17,7 +17,6 @@ function SimpleWebRTC(opts) {
 		connection: null,
 		debug: false,
 		localVideoEl: '',
-		remoteVideosEl: '',
 		enableDataChannels: true,
 		enableSimulcast: false,
 		maxBitrates: {
@@ -177,9 +176,6 @@ function SimpleWebRTC(opts) {
 		self.connection.emit('message', payload)
 	})
 
-	this.webrtc.on('peerStreamAdded', this.handlePeerStreamAdded.bind(this))
-	this.webrtc.on('peerStreamRemoved', this.handlePeerStreamRemoved.bind(this))
-
 	// echo cancellation attempts
 	if (this.config.adjustPeerVolume) {
 		this.webrtc.on('speaking', this.setVolumeForAll.bind(this, this.config.peerVolumeWhenSpeaking))
@@ -221,14 +217,10 @@ function SimpleWebRTC(opts) {
 	// screensharing events
 	this.webrtc.on('localScreen', function(stream) {
 		const el = document.createElement('video')
-		const container = self.getRemoteVideoContainer()
 
 		el.oncontextmenu = function() { return false }
 		el.id = 'localScreen'
 		attachMediaStream(stream, el)
-		if (container) {
-			container.appendChild(el)
-		}
 
 		self.emit('localScreenAdded', el)
 		self.connection.emit('shareScreen')
@@ -271,54 +263,6 @@ SimpleWebRTC.prototype.leaveCall = function() {
 
 SimpleWebRTC.prototype.disconnect = function() {
 	this.emit('disconnected')
-}
-
-SimpleWebRTC.prototype.handlePeerStreamAdded = function(peer) {
-	const container = this.getRemoteVideoContainer()
-	if (container) {
-		// If there is a video track Chromium does not play audio in a video element
-		// until the video track starts to play; an audio element is thus needed to
-		// play audio when the remote peer starts with the camera available but
-		// disabled.
-		const audio = attachMediaStream(peer.stream, null, { audio: true })
-		const video = attachMediaStream(peer.stream)
-
-		video.muted = true
-
-		// At least Firefox, Opera and Edge move the video to a wrong position
-		// instead of keeping it unchanged when "transform: scaleX(1)" is used
-		// ("transform: scaleX(-1)" is fine); as it should have no effect the
-		// transform is removed.
-		if (video.style.transform === 'scaleX(1)') {
-			video.style.transform = ''
-		}
-
-		// store video element as part of peer for easy removal
-		peer.audioEl = audio
-		peer.videoEl = video
-		audio.id = this.getDomId(peer) + '-audio'
-		video.id = this.getDomId(peer)
-
-		container.appendChild(audio)
-		container.appendChild(video)
-
-		this.emit('videoAdded', video, audio, peer)
-	}
-}
-
-SimpleWebRTC.prototype.handlePeerStreamRemoved = function(peer) {
-	const container = this.getRemoteVideoContainer()
-	const audioEl = peer.audioEl
-	const videoEl = peer.videoEl
-	if (this.config.autoRemoveVideos && container && audioEl) {
-		container.removeChild(audioEl)
-	}
-	if (this.config.autoRemoveVideos && container && videoEl) {
-		container.removeChild(videoEl)
-	}
-	if (videoEl) {
-		this.emit('videoRemoved', videoEl, peer)
-	}
 }
 
 SimpleWebRTC.prototype.getDomId = function(peer) {
@@ -386,10 +330,6 @@ SimpleWebRTC.prototype.getLocalVideoContainer = function() {
 	}
 }
 
-SimpleWebRTC.prototype.getRemoteVideoContainer = function() {
-	return this.getEl(this.config.remoteVideosEl)
-}
-
 SimpleWebRTC.prototype.shareScreen = function(mode, cb) {
 	this.webrtc.startScreenShare(mode, cb)
 }
@@ -401,11 +341,6 @@ SimpleWebRTC.prototype.getLocalScreen = function() {
 SimpleWebRTC.prototype.stopScreenShare = function() {
 	this.connection.emit('unshareScreen')
 	const videoEl = document.getElementById('localScreen')
-	const container = this.getRemoteVideoContainer()
-
-	if (this.config.autoRemoveVideos && container && videoEl) {
-		container.removeChild(videoEl)
-	}
 
 	// a hack to emit the event the removes the video
 	// element that we want

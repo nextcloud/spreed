@@ -651,7 +651,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	webrtc = new SimpleWebRTC({
-		remoteVideosEl: '',
 		autoRequestMedia: true,
 		debug: false,
 		autoAdjustMic: false,
