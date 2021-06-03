@@ -426,13 +426,4 @@ SimpleWebRTC.prototype.stopScreenShare = function() {
 	})
 }
 
-SimpleWebRTC.prototype.createRoom = function(name, cb) {
-	this.roomName = name
-	if (arguments.length === 2) {
-		this.connection.emit('create', name, cb)
-	} else {
-		this.connection.emit('create', name)
-	}
-}
-
 module.exports = SimpleWebRTC
