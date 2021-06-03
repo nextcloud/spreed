@@ -116,7 +116,7 @@ function startCall(signaling, configuration) {
 	}
 
 	signaling.joinCall(pendingJoinCallToken, flags).then(() => {
-		startedCall()
+		startedCall(flags)
 	}).catch(error => {
 		failedToStartCall(error)
 	})
@@ -159,7 +159,8 @@ async function signalingJoinConversation(token, sessionId) {
  * Join the call of the given conversation
  *
  * @param {string} token Conversation to join the call
- * @returns {Promise<void>}
+ * @returns {Promise<void>} Resolved with the actual flags based on the
+ *          available media
  */
 async function signalingJoinCall(token) {
 	if (tokensInSignaling[token]) {

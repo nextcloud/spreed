@@ -335,12 +335,15 @@ describe('participantsStore', () => {
 				},
 			})
 
-			joinCall.mockResolvedValue()
+			// The requested flags and the actual flags can be different if some
+			// media device is not available.
+			const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
+			joinCall.mockResolvedValue(actualFlags)
 
 			expect(store.getters.isInCall(TOKEN)).toBe(false)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
 
-			const flags = PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			await store.dispatch('joinCall', {
 				token: TOKEN,
 				participantIdentifier: {
@@ -356,7 +359,7 @@ describe('participantsStore', () => {
 				{
 					attendeeId: 1,
 					sessionId: 'session-id-1',
-					inCall: flags,
+					inCall: actualFlags,
 					participantType: PARTICIPANT.TYPE.USER,
 				},
 			])
@@ -381,12 +384,15 @@ describe('participantsStore', () => {
 			},
 		})
 
-		joinCall.mockResolvedValue()
+		// The requested flags and the actual flags can be different if some
+		// media device is not available.
+		const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		joinCall.mockResolvedValue(actualFlags)
 
 		expect(store.getters.isInCall(TOKEN)).toBe(false)
 		expect(store.getters.isConnecting(TOKEN)).toBe(false)
 
-		const flags = PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 		await store.dispatch('joinCall', {
 			token: TOKEN,
 			participantIdentifier: {
@@ -402,7 +408,7 @@ describe('participantsStore', () => {
 			{
 				attendeeId: 1,
 				sessionId: 'session-id-1',
-				inCall: flags,
+				inCall: actualFlags,
 				participantType: PARTICIPANT.TYPE.USER,
 			},
 		])

@@ -31,11 +31,12 @@ import {
  * Join a call as participant
  * @param {string} token The token of the call to be joined.
  * @param {int} flags The available PARTICIPANT.CALL_FLAG for this participants
+ * @returns {int} The actual flags based on the available media
  */
 const joinCall = async function(token, flags) {
 	try {
 		// FIXME flags is ignored?
-		await signalingJoinCall(token)
+		return await signalingJoinCall(token)
 	} catch (error) {
 		console.debug('Error while joining call: ', error)
 	}
