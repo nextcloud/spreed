@@ -174,9 +174,25 @@ async function signalingJoinCall(token, flags) {
 			startedCall = resolve
 			failedToStartCall = reject
 
+			// The previous state might be wiped after the media is started, so
+			// it should be saved now.
+			const enableAudio = !localStorage.getItem('audioDisabled_' + token)
+			const enableVideo = !localStorage.getItem('videoDisabled_' + token)
+
 			const startCallOnceLocalMediaStarted = (configuration) => {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
+
+				if (enableAudio) {
+					localMediaModel.enableAudio()
+				} else {
+					localMediaModel.disableAudio()
+				}
+				if (enableVideo) {
+					localMediaModel.enableVideo()
+				} else {
+					localMediaModel.disableVideo()
+				}
 
 				startCall(_signaling, configuration)
 			}
