@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.5 – 2021-06-04
+### Fixed
+- Regenerate session id after entering conversation password
+  [#5640](https://github.com/nextcloud/spreed/pull/5640)
+- Fix quality warning appearing again in certain conditions
+  [#5553](https://github.com/nextcloud/spreed/pull/5553)
+- Fix camera quality starting bad in some cases
+  [#5557](https://github.com/nextcloud/spreed/pull/5557)
+
+## 10.0.8 – 2021-06-04
+### Fixed
+- Regenerate session id after entering conversation password
+  [#5641](https://github.com/nextcloud/spreed/pull/5641)
+- Fix quality warning appearing again in certain conditions
+  [#5555](https://github.com/nextcloud/spreed/pull/5555)
+- Fix camera quality starting bad in some cases
+  [#5559](https://github.com/nextcloud/spreed/pull/5559)
+
+## 9.0.10 – 2021-06-04
+### Fixed
+- Regenerate session id after entering conversation password
+  [#5642](https://github.com/nextcloud/spreed/pull/5642)
+
 ## 10.1.4 – 2021-04-12
 ### Fixed
 - Only use the local file as preview for some types when uploading
