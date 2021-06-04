@@ -274,6 +274,11 @@ LocalMediaModel.prototype = {
 		}
 
 		this.set('localStream', null)
+
+		this.set('audioEnabled', false)
+		this.set('audioAvailable', false)
+		this.set('videoEnabled', false)
+		this.set('videoAvailable', false)
 	},
 
 	_handleAudioOn: function() {
