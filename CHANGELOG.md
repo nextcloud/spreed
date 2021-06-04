@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0.10 – 2021-06-04
+### Fixed
+- Regenerate session id after entering conversation password
+  [#5642](https://github.com/nextcloud/spreed/pull/5642)
+
 ## 9.0.9 – 2021-02-22
 ### Fixed
 - Fix collaboration resource options not loading
