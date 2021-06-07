@@ -52,6 +52,7 @@ export const ATTENDEE = {
 		GUESTS: 'guests',
 		EMAILS: 'emails',
 		GROUPS: 'groups',
+		CIRCLES: 'circles',
 		BOTS: 'bots',
 	},
 	BRIDGE_BOT_ID: 'bridge-bot',
