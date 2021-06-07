@@ -61,7 +61,6 @@ title: Constants
 * `guests` - guest users
 * `users` - logged-in users
 * `emails` - A guest invited by email
-* `groups` - groups
 * `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `bots` - used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 
