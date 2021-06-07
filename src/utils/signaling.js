@@ -176,6 +176,16 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 	}
 }
 
+Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
+	return new Promise((resolve, reject) => {
+		if (this.currentCallToken) {
+			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch(reason => { reject(reason) })
+		} else {
+			resolve()
+		}
+	})
+}
+
 Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
@@ -266,6 +276,27 @@ Signaling.Base.prototype._leaveCallSuccess = function(/* token */) {
 	// Override in subclasses if necessary.
 }
 
+Signaling.Base.prototype.updateCallFlags = function(token, flags) {
+	return new Promise((resolve, reject) => {
+		if (!token) {
+			reject(new Error())
+			return
+		}
+
+		axios.put(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), {
+			flags: flags,
+		})
+			.then(function() {
+				this.currentCallFlags = flags
+				this._trigger('updateCallFlags', [token, flags])
+				resolve()
+			}.bind(this))
+			.catch(function() {
+				reject(new Error())
+			})
+	})
+}
+
 Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 	return new Promise((resolve, reject) => {
 		if (!token) {
@@ -343,7 +374,7 @@ Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
 	// FIXME Naive reconnection routine; as the same session is kept peers
 	// must be explicitly ended before the reconnection is forced.
 	this.leaveCall(this.currentCallToken, true)
-	this.joinCall(this.currentCallToken)
+	this.joinCall(this.currentCallToken, this.currentCallFlags)
 }
 
 Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {

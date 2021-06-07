@@ -123,6 +123,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Call#updateCallFlags',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Call#leaveCall',
 			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'DELETE',

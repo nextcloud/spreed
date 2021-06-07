@@ -130,6 +130,28 @@ class CallController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 *
+	 * @param int flags
+	 * @return DataResponse
+	 */
+	public function updateCallFlags(int $flags): DataResponse {
+		$session = $this->participant->getSession();
+		if (!$session instanceof Session) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
+		} catch (\Exception $exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 *
 	 * @return DataResponse
 	 */
 	public function leaveCall(): DataResponse {

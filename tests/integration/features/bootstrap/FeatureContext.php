@@ -442,7 +442,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	protected function sortAttendees(array $a1, array $a2): int {
-		if ($a1['participantType'] !== $a2['participantType']) {
+		if (array_key_exists('participantType', $a1) && array_key_exists('participantType', $a2) && $a1['participantType'] !== $a2['participantType']) {
 			return $a1['participantType'] <=> $a2['participantType'];
 		}
 		if ($a1['actorType'] !== $a2['actorType']) {
@@ -1081,6 +1081,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
 			self::$userToSessionId[$user] = $response['sessionId'];
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" updates call flags in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $flags
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userUpdatesCallFlagsInRoomTo(string $user, string $identifier, string $flags, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier],
+			new TableNode([['flags', $flags]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**

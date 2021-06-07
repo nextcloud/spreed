@@ -678,6 +678,29 @@ class ParticipantService {
 		}
 	}
 
+	public function updateCallFlags(Room $room, Participant $participant, int $flags): void {
+		$session = $participant->getSession();
+		if (!$session instanceof Session) {
+			return;
+		}
+
+		if (!($session->getInCall() & Participant::FLAG_IN_CALL)) {
+			throw new \Exception('Participant not in call');
+		}
+
+		if (!($flags & Participant::FLAG_IN_CALL)) {
+			throw new \InvalidArgumentException('Invalid flags');
+		}
+
+		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_UPDATE_CALL_FLAGS, $event);
+
+		$session->setInCall($flags);
+		$this->sessionMapper->update($session);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $event);
+	}
+
 	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_attendees')

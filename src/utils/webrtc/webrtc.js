@@ -714,7 +714,33 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 			// is established, but forcing a reconnection should be done only
 			// once the connection was established.
 			if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
-				forceReconnect(signaling)
+				// Update the media flags if needed, as the renegotiation could
+				// have been caused by tracks being added or removed.
+				const audioSender = peer.pc.getSenders().find((sender) => sender.track && sender.track.kind === 'audio')
+				const videoSender = peer.pc.getSenders().find((sender) => sender.track && sender.track.kind === 'video')
+
+				let flags = signaling.getCurrentCallFlags()
+				if (audioSender) {
+					flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+				} else {
+					flags &= ~PARTICIPANT.CALL_FLAG.WITH_AUDIO
+				}
+				if (videoSender) {
+					flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+				} else {
+					flags &= ~PARTICIPANT.CALL_FLAG.WITH_VIDEO
+				}
+
+				// Negotiation is expected to be needed only when a new track is
+				// added to or removed from a peer. Therefore if the HPB is used
+				// the negotiation will be needed in the own peer, but if the
+				// HPB is not used it will be needed in all peers. However, in
+				// that case as soon as the forced reconnection is triggered all
+				// the peers will be cleared, so in practice there will be just
+				// one forced reconnection even if there are several peers.
+				// FIXME: despite all of the above this is a dirty and ugly hack
+				// that should be fixed with proper renegotiation.
+				forceReconnect(signaling, flags)
 			}
 		})
 	}
@@ -942,16 +968,34 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 	})
 
-	webrtc.on('localTrackReplaced', function(newTrack /*, oldTrack, stream */) {
-		// Device disabled, nothing to do here.
+	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
+		// Device disabled, just update the call flags.
 		if (!newTrack) {
+			if (oldTrack && oldTrack.kind === 'audio') {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_AUDIO)
+			} else if (oldTrack && oldTrack.kind === 'video') {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_VIDEO)
+			}
+
 			return
 		}
 
 		// If the call was started with media the connections will be already
-		// established. If it has not started yet the connections will be
-		// established once started.
-		if (startedWithMedia || startedWithMedia === undefined) {
+		// established. The flags need to be updated if a device was enabled
+		// (but not if it was switched to another one).
+		if (startedWithMedia) {
+			if (newTrack.kind === 'audio' && !oldTrack) {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_AUDIO)
+			} else if (newTrack.kind === 'video' && !oldTrack) {
+				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_VIDEO)
+			}
+
+			return
+		}
+
+		// If the call has not started with media yet the connections will be
+		// established once started, as well as the flags.
+		if (startedWithMedia === undefined) {
 			return
 		}
 
