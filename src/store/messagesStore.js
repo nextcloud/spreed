@@ -68,9 +68,9 @@ const state = {
 	 */
 	cancelLookForNewMessages: null,
 	/**
-	 * Stores the cancel function for the "postNewMessage" action
+	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
-	cancelPostNewMessage: null,
+	cancelPostNewMessage: {},
 }
 
 const getters = {
@@ -142,6 +142,11 @@ const getters = {
 		}
 		return null
 	},
+
+	isSendingMessages: (state) => {
+		// the cancel handler only exists when a message is being sent
+		return Object.keys(state.cancelPostNewMessage).length !== 0
+	},
 }
 
 const mutations = {
@@ -153,8 +158,12 @@ const mutations = {
 		state.cancelLookForNewMessages = cancelFunction
 	},
 
-	setCancelPostNewMessage(state, cancelFunction) {
-		state.cancelPostNewMessage = cancelFunction
+	setCancelPostNewMessage(state, { messageId, cancelFunction }) {
+		if (cancelFunction) {
+			Vue.set(state.cancelPostNewMessage, messageId, cancelFunction)
+		} else {
+			Vue.delete(state.cancelPostNewMessage, messageId)
+		}
 	},
 
 	/**
@@ -666,10 +675,10 @@ const actions = {
 	 */
 	async postNewMessage(context, temporaryMessage) {
 		const { request, cancel } = CancelableRequest(postNewMessage)
-		context.commit('setCancelPostNewMessage', cancel)
+		context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: cancel })
 
 		const timeout = setTimeout(() => {
-			context.dispatch('cancelPostNewMessage')
+			context.dispatch('cancelPostNewMessage', { messageId: temporaryMessage.id })
 			context.dispatch('markTemporaryMessageAsFailed', {
 				message: temporaryMessage,
 				reason: 'timeout',
@@ -679,6 +688,7 @@ const actions = {
 		try {
 			const response = await request(temporaryMessage)
 			clearTimeout(timeout)
+			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
 			if ('x-chat-last-common-read' in response.headers) {
 				const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
@@ -720,6 +730,7 @@ const actions = {
 			if (timeout) {
 				clearTimeout(timeout)
 			}
+			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
 			let statusCode = null
 			console.error(`error while submitting message ${error}`, error)
@@ -758,12 +769,13 @@ const actions = {
 	 * Cancels a previously running "postNewMessage" action if applicable.
 	 *
 	 * @param {object} context default store context;
+	 * @param {string} messageId the message id for which to cancel;
 	 * @returns {bool} true if a request got cancelled, false otherwise
 	 */
-	cancelPostNewMessage(context) {
-		if (context.state.cancelPostNewMessage) {
-			context.state.cancelPostNewMessage('canceled')
-			context.commit('setCancelPostNewMessage', null)
+	cancelPostNewMessage(context, { messageId }) {
+		if (context.state.cancelPostNewMessage[messageId]) {
+			context.state.cancelPostNewMessage[messageId]('canceled')
+			context.commit('setCancelPostNewMessage', { messageId, cancelFunction: null })
 			return true
 		}
 		return false

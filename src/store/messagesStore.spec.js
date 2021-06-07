@@ -1031,7 +1031,7 @@ describe('messagesStore', () => {
 		let updateLastCommonReadMessageAction
 		let updateLastReadMessageAction
 		let updateConversationLastMessageAction
-		let cancelFunctionMock
+		let cancelFunctionMocks
 		let restoreConsole
 
 		beforeEach(() => {
@@ -1051,8 +1051,10 @@ describe('messagesStore', () => {
 			testStoreConfig.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.actions.updateConversationLastActive = updateConversationLastActiveAction
 
-			cancelFunctionMock = jest.fn()
+			cancelFunctionMocks = []
 			CancelableRequest.mockImplementation((request) => {
+				const cancelFunctionMock = jest.fn()
+				cancelFunctionMocks.push(cancelFunctionMock)
 				return {
 					request,
 					cancel: cancelFunctionMock,
@@ -1098,8 +1100,6 @@ describe('messagesStore', () => {
 				},
 			}
 
-			postNewMessage.mockResolvedValueOnce(response)
-
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
 			conversationMock.mockReturnValue({
@@ -1108,7 +1108,19 @@ describe('messagesStore', () => {
 				lastReadMessage: 50,
 			})
 
-			const receivedResponse = await store.dispatch('postNewMessage', temporaryMessage)
+			let resolvePromise
+			postNewMessage.mockReturnValueOnce(new Promise((resolve, reject) => {
+				resolvePromise = resolve
+			}))
+
+			const returnedPromise = store.dispatch('postNewMessage', temporaryMessage).catch(() => {})
+			expect(store.getters.isSendingMessages).toBe(true)
+
+			resolvePromise(response)
+
+			const receivedResponse = await returnedPromise
+
+			expect(store.getters.isSendingMessages).toBe(false)
 
 			expect(receivedResponse).toBe(response)
 
@@ -1131,25 +1143,40 @@ describe('messagesStore', () => {
 			})
 		})
 
-		test('cancels posting new message', () => {
+		test('cancels posting new messages individually', () => {
 			const temporaryMessage = {
 				id: 'temp-123',
 				message: 'blah',
 				token: TOKEN,
 				sendingFailure: '',
 			}
+			const temporaryMessage2 = {
+				id: 'temp-456',
+				message: 'second',
+				token: TOKEN,
+				sendingFailure: '',
+			}
 
 			store.dispatch('postNewMessage', temporaryMessage).catch(() => {})
+			store.dispatch('postNewMessage', temporaryMessage2).catch(() => {})
 
-			expect(store.state.cancelPostNewMessage).toBe(cancelFunctionMock)
+			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
+			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
 
-			expect(cancelFunctionMock).not.toHaveBeenCalled()
+			expect(store.getters.isSendingMessages).toBe(true)
 
-			store.dispatch('cancelPostNewMessage')
+			store.dispatch('cancelPostNewMessage', { messageId: 'temp-123' })
 
-			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
+			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
 
-			expect(store.state.cancelPostNewMessage).toBe(null)
+			expect(store.getters.isSendingMessages).toBe(true)
+
+			store.dispatch('cancelPostNewMessage', { messageId: 'temp-456' })
+
+			expect(cancelFunctionMocks[1]).toHaveBeenCalledWith('canceled')
+
+			expect(store.getters.isSendingMessages).toBe(false)
 		})
 
 		async function testMarkMessageErrors(statusCode, reasonCode) {
@@ -1170,6 +1197,8 @@ describe('messagesStore', () => {
 			await expect(
 				store.dispatch('postNewMessage', temporaryMessage)
 			).rejects.toMatchObject({ response })
+
+			expect(store.getters.isSendingMessages).toBe(false)
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([
 				message1,
@@ -1210,7 +1239,7 @@ describe('messagesStore', () => {
 
 			jest.advanceTimersByTime(60000)
 
-			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([
 				message1,
@@ -1251,7 +1280,7 @@ describe('messagesStore', () => {
 
 			jest.advanceTimersByTime(60000)
 
-			expect(cancelFunctionMock).not.toHaveBeenCalled()
+			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 		})
 
 	})
