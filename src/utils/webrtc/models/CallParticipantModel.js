@@ -249,7 +249,8 @@ CallParticipantModel.prototype = {
 	},
 
 	_handleRaisedHand: function(data) {
-		if (!this.get('peer') || this.get('peer').id !== data.id) {
+		// The hand could be raised even if there is no Peer object.
+		if (this.get('peerId') !== data.id) {
 			return
 		}
 

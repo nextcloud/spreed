@@ -112,6 +112,8 @@ WebRTC.prototype.sendToAll = function(message, payload) {
 	this.peers.forEach(function(peer) {
 		peer.send(message, payload)
 	})
+
+	this.emit('sendToAll', message, payload)
 }
 
 // sends message to all using a datachannel
