@@ -392,9 +392,9 @@ export default {
 			/**
 			 * For now the user status is not overwriting the online-offline status anymore
 			 * It felt too weird having users appear as offline but they are in the call or chat actively
-			 return this.participant.status === 'offline' ||  !this.sessionIds.length
+			 return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
 			 */
-			return !this.sessionIds.length
+			return !this.sessionIds.length && !this.isSearched
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
