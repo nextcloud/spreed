@@ -674,6 +674,14 @@ class ParticipantService {
 			return;
 		}
 
+		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
+		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+			$flags &= ~Participant::FLAG_WITH_AUDIO;
+		}
+		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+			$flags &= ~Participant::FLAG_WITH_VIDEO;
+		}
+
 		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
@@ -709,6 +717,14 @@ class ParticipantService {
 
 		if (!($flags & Participant::FLAG_IN_CALL)) {
 			throw new \InvalidArgumentException('Invalid flags');
+		}
+
+		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
+		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+			$flags &= ~Participant::FLAG_WITH_AUDIO;
+		}
+		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
 		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
