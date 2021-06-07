@@ -106,6 +106,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:math';
 $icon-size: 44px;
 
 .conversation-icon {
@@ -117,7 +118,7 @@ $icon-size: 44px;
 		width: $icon-size;
 		height: $icon-size;
 		line-height: $icon-size;
-		font-size: $icon-size / 2;
+		font-size: math.div($icon-size, 2);
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
@@ -129,7 +130,7 @@ $icon-size: 44px;
 		&.icon-password,
 		&.icon-file,
 		&.icon-mail {
-			background-size: $icon-size / 2;
+			background-size: math.div($icon-size, 2);
 		}
 	}
 

@@ -19,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+@use 'sass:math';
+
 @import 'variables.scss';
 
 
@@ -29,7 +31,7 @@
 		width: $size;
 		height: $size;
 		line-height: $size;
-		font-size: $size / 2;
+		font-size: math.div($size, 2);
 		border-radius: 50%;
 
 		&.icon {
@@ -48,7 +50,7 @@
 
 		&.guest {
 			line-height: $size;
-			font-size: $size / 2;
+			font-size: math.div($size, 2);
 			color: $color-guests-avatar;
 			background-color: $color-background-guests-avatar;
 			padding: 0;
