@@ -53,14 +53,16 @@ title: Constants
 ### Attendee types
 * `users` - Logged-in users
 * `groups` - Groups
+* `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `guests` - Guest without a login
 * `emails` - A guest invited by email address
 
 ### Actor types of chat messages
 * `guests` - guest users
 * `users` - logged-in users
-* `emails` - users invited by email
+* `emails` - A guest invited by email
 * `groups` - groups
+* `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `bots` - used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 
 ## Signaling modes

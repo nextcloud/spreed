@@ -35,7 +35,7 @@
         `participantType` | int | v1 | | Permissions level of the current user
         `attendeeId` | int | v3 | | Unique attendee id
         `attendeePin` | string | v3 | | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
-        `actorType` | string | v3 | | Currently known `users|guests|emails|groups`
+        `actorType` | string | v3 | | Currently known `users|guests|emails|groups|circles`
         `actorId` | string | v3 | | The unique identifier for the given actor type
         `participantInCall` | bool | v1 | v2 | **Removed:** use `participantFlags` instead
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)

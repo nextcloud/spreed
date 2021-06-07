@@ -28,7 +28,7 @@
         field | type | Added | Removed | Description
         ---|---|---|---|---
         `attendeeId` | int | v3 | | Unique attendee id
-        `actorType` | string | v3 | | Currently known `users|guests|emails|groups`
+        `actorType` | string | v3 | | Currently known `users|guests|emails|groups|circles`
         `actorId` | string | v3 | | The unique identifier for the given actor type
         `displayName` | string | v1 | | Can be empty for guests
         `participantType` | int | v1 | | Permissions level of the participant (see [constants list](constants.md#participant-types))
