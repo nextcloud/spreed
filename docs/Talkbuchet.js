@@ -505,7 +505,13 @@ function listenToPublisherConnectionChanges() {
 async function initPublishers() {
 	for (let i = 0; i < publishersCount; i++) {
 		const signalingSettings = await getSignalingSettings(user, password, token)
-		const signaling = new Signaling(user, signalingSettings)
+		let signaling = null
+		try {
+			signaling = new Signaling(user, signalingSettings)
+		} catch (exception) {
+			console.error('Publisher ' + i + ' init error: ' + exception)
+			continue
+		}
 
 		const [publisherSessionId, publisher] = await newPublisher(signalingSettings, signaling, stream)
 
@@ -553,7 +559,13 @@ async function initSubscribers() {
 		// The same signaling session can be shared between subscribers to
 		// different publishers.
 		const signalingSettings = await getSignalingSettings(user, password, token)
-		const signaling = new Signaling(user, signalingSettings)
+		let signaling = null
+		try {
+			signaling = new Signaling(user, signalingSettings)
+		} catch (exception) {
+			console.error('Subscriber ' + i + ' init error: ' + exception)
+			continue
+		}
 
 		await signaling.getSessionId()
 
