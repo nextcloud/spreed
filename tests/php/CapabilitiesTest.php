@@ -90,6 +90,7 @@ class CapabilitiesTest extends TestCase {
 			'geo-location-sharing',
 			'voice-message-sharing',
 			'signaling-v3',
+			'publishing-permissions',
 		];
 	}
 

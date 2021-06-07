@@ -77,3 +77,4 @@ title: Capabilities
 * `signaling-v3` - Whether signaling API v3 is available. This also means that v1 and v2 are **not** available anymore. The TURN and STUN server data is now returning all defined servers instead of a random one. Multiple entries for the same server are combined and using the urls array correctly now.
 * `geo-location-sharing` - Whether the `geo-location` rich object is defined and can be shared to the rich-object sharing endpoint.
 * `voice-message-sharing` - Shared files can be flagged as voice messages and are then presented differently in the interface
+* `publishing-permissions` - Whether the publishing permissions can be set for the attendees.
