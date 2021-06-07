@@ -61,26 +61,28 @@ function Peer(options) {
 	this.pc.addEventListener('signalingstatechange', this.emit.bind(this, 'signalingStateChange'))
 	this.logger = this.parent.logger
 
-	// handle screensharing/broadcast mode
-	if (options.type === 'screen') {
-		if (this.parent.localScreen && this.sharemyscreen) {
-			this.logger.log('adding local screen stream to peer connection')
-			this.pc.addStream(this.parent.localScreen)
-			this.broadcaster = options.broadcaster
-		}
-	} else {
-		this.parent.localStreams.forEach(function(stream) {
-			stream.getTracks().forEach(function(track) {
-				if (track.kind !== 'video' || self.sendVideoIfAvailable) {
-					self.pc.addTrack(track, stream)
-				}
+	if (!options.receiverOnly) {
+		// handle screensharing/broadcast mode
+		if (options.type === 'screen') {
+			if (this.parent.localScreen && this.sharemyscreen) {
+				this.logger.log('adding local screen stream to peer connection')
+				this.pc.addStream(this.parent.localScreen)
+				this.broadcaster = options.broadcaster
+			}
+		} else {
+			this.parent.localStreams.forEach(function(stream) {
+				stream.getTracks().forEach(function(track) {
+					if (track.kind !== 'video' || self.sendVideoIfAvailable) {
+						self.pc.addTrack(track, stream)
+					}
+				})
 			})
-		})
 
-		this.handleLocalTrackReplacedBound = this.handleLocalTrackReplaced.bind(this)
-		// TODO What would happen if the track is replaced while the peer is
-		// still negotiating the offer and answer?
-		this.parent.on('localTrackReplaced', this.handleLocalTrackReplacedBound)
+			this.handleLocalTrackReplacedBound = this.handleLocalTrackReplaced.bind(this)
+			// TODO What would happen if the track is replaced while the peer is
+			// still negotiating the offer and answer?
+			this.parent.on('localTrackReplaced', this.handleLocalTrackReplacedBound)
+		}
 	}
 
 	// proxy events to parent
