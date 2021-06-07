@@ -420,7 +420,7 @@ function usersInCallChanged(signaling, users) {
 	}
 }
 
-export default function initWebRTC(signaling, _callParticipantCollection, _localCallParticipantModel) {
+export default function initWebRtc(signaling, _callParticipantCollection, _localCallParticipantModel) {
 	callParticipantCollection = _callParticipantCollection
 	localCallParticipantModel = _localCallParticipantModel
 
