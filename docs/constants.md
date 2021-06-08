@@ -5,40 +5,40 @@ title: Constants
 ## Conversation
 
 ### Conversation types
-* `1` "one to one"
-* `2` group
-* `3` public
-* `4` changelog
+* `1` "One to one"
+* `2` Group
+* `3` Public
+* `4` Changelog
 
 ### Read-only states
-* `0` read-write
-* `1` read-only
+* `0` Read-write
+* `1` Read-only
 
 ### Listable scope
-* `0` participants only
-* `1` regular users only, excluding guest app users
-* `2` everyone
+* `0` Participants only
+* `1` Regular users only, excluding guest app users
+* `2` Everyone
 
 ### Webinar lobby states
-* `0` no lobby
-* `1` lobby for non moderators
+* `0` No lobby
+* `1` Lobby for non moderators
 
 ## Participants
 
 ### Participant types
-* `1` owner
-* `2` moderator
-* `3` user
-* `4` guest
-* `5` user following a public link
-* `6` guest with moderator permissions
+* `1` Owner
+* `2` Moderator
+* `3` User
+* `4` Guest
+* `5` User following a public link
+* `6` Guest with moderator permissions
 
 ### Participant in-call flag
-* `0` disconnected
-* `1` in-call
-* `2` provides audio
-* `4` provides video
-* `8` uses SIP dial-in
+* `0` Disconnected
+* `1` In-call
+* `2` Provides audio
+* `4` Provides video
+* `8` Uses SIP dial-in
 
 ### Participant notification levels
 * `0` Default (`1` for one-to-one conversations, `2` for other conversations)
@@ -58,11 +58,9 @@ title: Constants
 * `emails` - A guest invited by email address
 
 ### Actor types of chat messages
-* `guests` - guest users
-* `users` - logged-in users
-* `emails` - A guest invited by email
-* `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
-* `bots` - used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
+* `users` - Logged-in users
+* `guests` - Guest users (attendee type `guests` and `emails`)
+* `bots` - Used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 
 ## Signaling modes
 * `internal` No external signaling server is used
