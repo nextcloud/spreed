@@ -298,6 +298,14 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		isAudioAllowed() {
+			return this.conversation.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.ALL
+		},
+
+		isVideoAllowed() {
+			return this.conversation.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.ALL
+		},
+
 		isScreensharingAllowed() {
 			return this.conversation.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.ALL
 		},
@@ -314,6 +322,10 @@ export default {
 		},
 
 		audioButtonTooltip() {
+			if (!this.isAudioAllowed) {
+				return t('spreed', 'You are not allowed to enable audio')
+			}
+
 			if (!this.model.attributes.audioAvailable) {
 				return {
 					content: t('spreed', 'No audio'),
@@ -371,6 +383,10 @@ export default {
 		},
 
 		videoButtonTooltip() {
+			if (!this.isVideoAllowed) {
+				return t('spreed', 'You are not allowed to enable video')
+			}
+
 			if (!this.model.attributes.videoAvailable) {
 				return t('spreed', 'No camera')
 			}
@@ -410,6 +426,10 @@ export default {
 		},
 
 		screenSharingButtonTooltip() {
+			if (!this.isScreensharingAllowed) {
+				return t('spreed', 'You are not allowed to enable screensharing')
+			}
+
 			if (this.screenSharingMenuOpen) {
 				return null
 			}
