@@ -96,6 +96,7 @@
 		"jest-mock-console": "^1.1.0",
 		"node-sass": "^5.0.0",
 		"regenerator-runtime": "^0.13.7",
+		"sass": "^1.34.1",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^2.0.0",
 		"stylelint": "^13.13.1",
