@@ -253,6 +253,11 @@ class MatterbridgeManager {
 		// TODO adapt that to use appData
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 		$configContent = $this->generateConfig($newBridge);
+
+		// Create the config file and set permissions on it
+		touch($configPath);
+		chmod($configPath, 0600);
+
 		file_put_contents($configPath, $configContent);
 	}
 
@@ -703,6 +708,11 @@ class MatterbridgeManager {
 		$outputPath = sprintf('/tmp/bridge-%s.log', $room->getToken());
 		$matterbridgeCmd = sprintf('%s -conf %s', $binaryPath, $configPath);
 		$cmd = sprintf('nice -n19 %s > %s 2>&1 & echo $!', $matterbridgeCmd, $outputPath);
+
+		// Create the log file and set permissions on it
+		touch($outputPath);
+		chmod($outputPath, 0600);
+
 		$cmdResult = $this->runCommand($cmd);
 		if (!is_null($cmdResult) && $cmdResult['return_code'] === 0 && is_numeric($cmdResult['stdout'] ?? 0)) {
 			return (int) $cmdResult['stdout'];
