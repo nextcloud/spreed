@@ -312,8 +312,8 @@ export default {
 
 		audioButtonClass() {
 			return {
-				'audio-disabled': this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
-				'no-audio-available': !this.model.attributes.audioAvailable,
+				'audio-disabled': this.isAudioAllowed && this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
+				'no-audio-available': !this.isAudioAllowed || !this.model.attributes.audioAvailable,
 			}
 		},
 
@@ -373,8 +373,8 @@ export default {
 
 		videoButtonClass() {
 			return {
-				'video-disabled': this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
-				'no-video-available': !this.model.attributes.videoAvailable,
+				'video-disabled': this.isVideoAllowed && this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
+				'no-video-available': !this.isVideoAllowed || !this.model.attributes.videoAvailable,
 			}
 		},
 
