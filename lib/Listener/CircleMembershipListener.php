@@ -76,8 +76,26 @@ class CircleMembershipListener implements IEventListener {
 
 	protected function addingCircleMemberEvent(AddingCircleMemberEvent $event): void {
 		$roomsForTargetCircle = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $event->getCircle()->getSingleId());
+		$roomsToAdd = [];
+		foreach ($roomsForTargetCircle as $room) {
+			$roomsToAdd[$room->getId()] = $room;
+		}
 
-		if (empty($roomsForTargetCircle)) {
+		// Check nested circles
+		$memberships = $event->getCircle()->getMemberships();
+		foreach ($memberships as $membership) {
+			$parentId = $membership->getCircleId();
+			$parentRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $parentId);
+			foreach ($parentRooms as $room) {
+				if (isset($roomsToAdd[$room->getId()])) {
+					continue;
+				}
+				$roomsToAdd[$room->getId()] = $room;
+			}
+		}
+
+
+		if (empty($roomsToAdd)) {
 			// The circle is not in any room => bye!
 			return;
 		}
@@ -96,7 +114,7 @@ class CircleMembershipListener implements IEventListener {
 			$userMembers = $basedOnCircle->getInheritedMembers();
 
 			foreach ($userMembers as $userMember) {
-				$this->addNewMemberToRooms($roomsForTargetCircle, $userMember);
+				$this->addNewMemberToRooms(array_values($roomsToAdd), $userMember);
 			}
 		}
 	}

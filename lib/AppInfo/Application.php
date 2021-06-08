@@ -25,10 +25,6 @@ namespace OCA\Talk\AppInfo;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
-use OCA\Circles\Events\CircleMemberAddedEvent;
-use OCA\Circles\Events\CircleMemberRemovedEvent;
-use OCA\Circles\Events\MembershipsCreatedEvent;
-use OCA\Circles\Events\MembershipsRemovedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
@@ -53,6 +49,7 @@ use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\CircleDeletedListener;
+use OCA\Talk\Listener\CircleMembershipListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
 use OCA\Talk\Listener\GroupDeletedListener;
