@@ -67,6 +67,7 @@ title: Constants
 * `users` - Logged-in users
 * `guests` - Guest users (attendee type `guests` and `emails`)
 * `bots` - Used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
+* `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
 ## Signaling modes
 * `internal` No external signaling server is used
