@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -43,6 +44,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
+use Sabre\VObject\Reader;
 
 class SystemMessage {
 
@@ -56,6 +58,8 @@ class SystemMessage {
 	protected $previewManager;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
+	/** @var PhotoCache */
+	protected $photoCache;
 	/** @var IRootFolder */
 	protected $rootFolder;
 	/** @var IURLGenerator */
@@ -75,6 +79,7 @@ class SystemMessage {
 								GuestManager $guestManager,
 								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
+								PhotoCache $photoCache,
 								IRootFolder $rootFolder,
 								IURLGenerator $url) {
 		$this->userManager = $userManager;
@@ -82,6 +87,7 @@ class SystemMessage {
 		$this->guestManager = $guestManager;
 		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
+		$this->photoCache = $photoCache;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;
 	}
@@ -507,7 +513,7 @@ class SystemMessage {
 			]);
 		}
 
-		return [
+		$data = [
 			'type' => 'file',
 			'id' => (string) $node->getId(),
 			'name' => $name,
@@ -517,6 +523,23 @@ class SystemMessage {
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
 		];
+
+		if ($node->getMimeType() === 'text/vcard') {
+			$vCard = $node->getContent();
+
+			$vObject = Reader::read($vCard);
+			if (!empty($vObject->FN)) {
+				$data['contact-name'] = (string) $vObject->FN;
+			}
+
+			$photo = $this->photoCache->getPhotoFromVObject($vObject);
+			if ($photo) {
+				$data['contact-photo-mimetype'] = $photo['Content-Type'];
+				$data['contact-photo'] = base64_encode($photo['body']);
+			}
+		}
+
+		return $data;
 	}
 
 	protected function getActorFromComment(Room $room, IComment $comment): array {
