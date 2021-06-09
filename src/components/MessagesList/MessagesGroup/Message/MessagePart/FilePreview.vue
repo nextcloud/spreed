@@ -39,7 +39,13 @@
 					fill-color="#ffffff"
 					title="" />
 			</span>
-			<img v-if="!failed"
+			<img v-if="contactPhotoFromBase64"
+				v-tooltip="previewTooltip"
+				:class="previewImageClass"
+				class="file-preview__image"
+				alt=""
+				:src="contactPhotoFromBase64">
+			<img v-else-if="!failed"
 				v-tooltip="previewTooltip"
 				:class="previewImageClass"
 				class="file-preview__image"
@@ -65,7 +71,7 @@
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div class="name-container">
-			<strong v-if="shouldShowFileName">{{ name }}</strong>
+			<strong v-if="shouldShowFileDetail">{{ fileDetail }}</strong>
 		</div>
 	</file-preview>
 </template>
@@ -85,6 +91,7 @@ const PREVIEW_TYPE = {
 	MIME_ICON: 1,
 	DIRECT: 2,
 	PREVIEW: 3,
+	CONTACT: 4,
 }
 
 export default {
@@ -153,6 +160,18 @@ export default {
 			type: String,
 			default: 'no',
 		},
+		contactName: {
+			type: String,
+			default: '',
+		},
+		contactPhoto: {
+			type: String,
+			default: '',
+		},
+		contactPhotoMimetype: {
+			type: String,
+			default: '',
+		},
 		/**
 		 * Whether to render a small preview to embed in replies
 		 */
@@ -204,8 +223,8 @@ export default {
 		}
 	},
 	computed: {
-		shouldShowFileName() {
-			// display the file name below the preview if the preview
+		shouldShowFileDetail() {
+			// display the file detail below the preview if the preview
 			// is not easily recognizable, when:
 			return (
 				// the file is not an image
@@ -218,8 +237,21 @@ export default {
 				|| this.isUploadEditor
 			)
 		},
+		fileDetail() {
+			// display the file name or contact name when its a vCard
+			if (this.contactName) {
+				return this.contactName
+			}
+			return this.name
+		},
+		contactPhotoFromBase64() {
+			if (!this.contactPhotoMimetype || !this.contactPhoto) {
+				return null
+			}
+			return 'data:' + this.contactPhotoMimetype + ';base64,' + this.contactPhoto
+		},
 		previewTooltip() {
-			if (this.shouldShowFileName) {
+			if (this.shouldShowFileDetail) {
 				// no tooltip as the file name is already visible directly
 				return null
 			}
@@ -257,6 +289,10 @@ export default {
 			return imagePath('core', 'filetypes/file')
 		},
 		previewImageClass() {
+			if (this.previewType === PREVIEW_TYPE.CONTACT) {
+				return 'contact'
+			}
+
 			let classes = ''
 			if (this.smallPreview) {
 				classes += 'preview-small '
@@ -270,6 +306,10 @@ export default {
 			return classes
 		},
 		previewType() {
+			if (this.contactPhotoFromBase64) {
+				return PREVIEW_TYPE.CONTACT
+			}
+
 			if (this.hasTemporaryImageUrl) {
 				return PREVIEW_TYPE.TEMPORARY
 			}
@@ -483,6 +523,12 @@ export default {
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 32px;
+	}
+	.contact {
+		display: inline-block;
+		border-radius: 50%;
+		max-width: 44px;
+		max-height: 44px;
 	}
 
 	.image-container {
