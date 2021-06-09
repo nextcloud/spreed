@@ -238,8 +238,10 @@ export default {
 			this.audioStream.getTracks().forEach(track => track.stop())
 			if (!this.aborted) {
 				this.blob = new Blob(this.chunks, { 'type': 'audio/mpeg-3' })
+				// Generate file name
+				const fileName = this.generateFileName()
 				// Convert blob to file
-				const audioFile = new File([this.blob], `${Date.now()}.mp3`)
+				const audioFile = new File([this.blob], fileName)
 				this.$emit('audioFile', audioFile)
 				this.$emit('recording', false)
 				this.URL = window.URL.createObjectURL(this.blob)
@@ -269,6 +271,15 @@ export default {
 				minutes: 0,
 				seconds: 0,
 			}
+		},
+
+		generateFileName() {
+			const token = this.$store.getters.getToken()
+			const conversation = this.$store.getters.conversation(token).name
+			const today = new Date()
+			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
+			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
+			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.mp3'
 		},
 	},
 }
