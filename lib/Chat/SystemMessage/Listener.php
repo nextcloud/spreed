@@ -315,6 +315,13 @@ class Listener {
 			$metaData = \OC::$server->getRequest()->getParam('talkMetaData') ?? '';
 			$metaData = json_decode($metaData, true);
 			$metaData = is_array($metaData) ? $metaData : [];
+
+			if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
+				if ($share->getNode()->getMimeType() !== 'audio/mpeg') {
+					unset($metaData['messageType']);
+				}
+			}
+
 			$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
 		};
 		/**
