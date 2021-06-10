@@ -41,15 +41,29 @@
  *
  * HOW TO ENABLE AND DISABLE THE MEDIA DURING A TEST:
  * -----------------------------------------------------------------------------
- * You can manually enable and disable the media during a test by copying and
- * pasting in the browser console the following commands:
+ * You can manually enable and disable the media during a test by running the
+ * following commands in the browser console:
  * - For audio:
- * stream.getAudioTracks()[0].enabled = TRUE_OR_FALSE
+ * setAudioEnabled(TRUE_OR_FALSE)
  * - For video:
- * stream.getVideoTracks()[0].enabled = TRUE_OR_FALSE
+ * setVideoEnabled(TRUE_OR_FALSE)
  *
  * Note that you can only enable and disable the original media specified in the
  * "getUserMedia" call.
+ *
+ * Additionally, you can also enable and disable the sent media streams during
+ * a test by running the following commands in the browser console:
+ * - For audio:
+ * setSentAudioStreamEnabled(TRUE_OR_FALSE)
+ * - For video:
+ * setSentVideoStreamEnabled(TRUE_OR_FALSE)
+ *
+ * Currently Firefox behaviour is the same whether the media is disabled or the
+ * sent media stream is disabled, so this makes no difference. Chromium, on the
+ * other hand, sends some media data when the media is disabled, but stops it
+ * when the sent media stream is disabled. In any case, please note that some
+ * data will be always sent as long as there is a connection open, even if no
+ * media is being sent.
  *
  * HOW TO CALIBRATE:
  * -----------------------------------------------------------------------------
@@ -69,12 +83,11 @@
  * the client has probably reached its limit.
  *
  * Besides the messages written by the script itself you can manually check the
- * connection state by copying and pasting in the browser console the following
- * commands:
+ * connection state by running the following commands in the browser console:
  * - For the publishers:
- * Object.values(publishers).forEach(publisher => { console.log(publisher.peerConnection.iceConnectionState) })
+ * checkPublishersConnections()
  * - For the subscribers:
- * subscribers.forEach(subscriber => { console.log(subscriber.peerConnection.iceConnectionState) })
+ * checkSubscribersConnections()
  *
  * DISCLAIMER:
  * -----------------------------------------------------------------------------
@@ -149,6 +162,8 @@ const joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + to
 
 const publishers = []
 const subscribers = []
+
+const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
 
 async function getSignalingSettings(user, password, token) {
 	const fetchOptions = {
@@ -603,9 +618,112 @@ const closeConnections = function() {
 	})
 }
 
-console.info('Preparing to siege')
+const setAudioEnabled = function(enabled) {
+	if (!stream.getAudioTracks().length) {
+		console.error('Audio was not initialized')
 
-const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+		return
+	}
+
+	// There will be at most a single audio track.
+	stream.getAudioTracks()[0].enabled = enabled
+}
+
+const setVideoEnabled = function(enabled) {
+	if (!stream.getVideoTracks().length) {
+		console.error('Video was not initialized')
+
+		return
+	}
+
+	// There will be at most a single video track.
+	stream.getVideoTracks()[0].enabled = enabled
+}
+
+const setSentAudioStreamEnabled = function(enabled) {
+	if (!stream.getAudioTracks().length) {
+		console.error('Audio was not initialized')
+
+		return
+	}
+
+	Object.values(publishers).forEach(publisher => {
+		// For simplicity it is assumed that if audio is enabled the audio
+		// sender will always be the first one.
+		const audioSender = publisher.peerConnection.getSenders()[0]
+		if (enabled) {
+			audioSender.replaceTrack(stream.getAudioTracks()[0])
+		} else {
+			audioSender.replaceTrack(null)
+		}
+	})
+}
+
+const setSentVideoStreamEnabled = function(enabled) {
+	if (!stream.getVideoTracks().length) {
+		console.error('Video was not initialized')
+
+		return
+	}
+
+	Object.values(publishers).forEach(publisher => {
+		// For simplicity it is assumed that if audio is not enabled the video
+		// sender will always be the first one, otherwise the second one.
+		let videoIndex = 0
+		if (stream.getAudioTracks().length) {
+			videoIndex = 1
+		}
+
+		const videoSender = publisher.peerConnection.getSenders()[videoIndex]
+		if (enabled) {
+			videoSender.replaceTrack(stream.getVideoTracks()[0])
+		} else {
+			videoSender.replaceTrack(null)
+		}
+	})
+}
+
+const checkPublishersConnections = function() {
+	const iceConnectionStateCount = {}
+
+	Object.values(publishers).forEach(publisher => {
+		console.info(publisher.peerConnection.iceConnectionState)
+
+		if (iceConnectionStateCount[publisher.peerConnection.iceConnectionState] === undefined) {
+			iceConnectionStateCount[publisher.peerConnection.iceConnectionState] = 1
+		} else {
+			iceConnectionStateCount[publisher.peerConnection.iceConnectionState]++
+		}
+	})
+
+	console.info('Summary:')
+	console.info('  - New: ' + (iceConnectionStateCount['new'] ?? 0))
+	console.info('  - Connected: ' + ((iceConnectionStateCount['connected'] ?? 0) + (iceConnectionStateCount['completed'] ?? 0)))
+	console.info('  - Disconnected: ' + (iceConnectionStateCount['disconnected'] ?? 0))
+	console.info('  - Failed: ' + (iceConnectionStateCount['failed'] ?? 0))
+}
+
+const checkSubscribersConnections = function() {
+	const iceConnectionStateCount = {}
+
+	subscribers.forEach(subscriber => {
+		console.info(subscriber.peerConnection.iceConnectionState)
+
+		if (iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] === undefined) {
+			iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] = 1
+		} else {
+			iceConnectionStateCount[subscriber.peerConnection.iceConnectionState]++
+		}
+	})
+
+	console.info('Summary:')
+	console.info('  - New: ' + (iceConnectionStateCount['new'] ?? 0))
+	console.info('  - Connected: ' + ((iceConnectionStateCount['connected'] ?? 0) + (iceConnectionStateCount['completed'] ?? 0)))
+	console.info('  - Disconnected: ' + (iceConnectionStateCount['disconnected'] ?? 0))
+	console.info('  - Failed: ' + (iceConnectionStateCount['failed'] ?? 0))
+}
+
+console.info('Preparing to siege')
 
 await initPublishers()
 await initSubscribers()
