@@ -24,6 +24,8 @@
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 
+global.appName = 'spreed'
+
 global.OC = {
 	requestToken: '123',
 	webroot: '/nc-webroot',
