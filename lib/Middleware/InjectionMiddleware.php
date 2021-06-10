@@ -153,13 +153,21 @@ class InjectionMiddleware extends Middleware {
 		$sessionId = $this->talkSession->getSessionForRoom($token);
 		$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 		$controller->setRoom($room);
+		$participant = null;
 
 		if ($sessionId !== null) {
-			$participant = $room->getParticipantBySession($sessionId);
-		} else {
-			// FIXME is this still needed? Maybe for users joining public links?
+			try {
+				$participant = $room->getParticipantBySession($sessionId);
+			} catch (ParticipantNotFoundException $e) {
+				// ignore and fall back in case a concurrent request might have
+				// invalidated the session
+			}
+		}
+
+		if ($participant === null) {
 			$participant = $room->getParticipant($this->userId);
 		}
+
 		$controller->setParticipant($participant);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
