@@ -20,12 +20,24 @@
  *
  */
 
+// TODO: find a way to consolidate this in one place, with webpack.common.js
+const ignorePatterns = [
+	'vue-material-design-icons',
+	'@juliushaertl',
+	'tributejs',
+	'splitpanes',
+	'string-length',
+	'strip-ansi',
+	'ansi-regex',
+	'char-regex',
+]
+
 module.exports = {
 	preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
 	transformIgnorePatterns: [
-		'node_modules/(?!(vue-material-design-icons|@juliushaertl|tributejs)/)',
+		'node_modules/(?!(' + ignorePatterns.join('|') + ')/)',
 	],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],
