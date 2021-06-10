@@ -2,6 +2,7 @@ const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const babelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const webpack = require('webpack')
 
 module.exports = {
 	entry: {
@@ -108,6 +109,8 @@ module.exports = {
 		new StyleLintPlugin({
 			files: ['**/*.vue'],
 		}),
+		// Make appName available as a constant
+		new webpack.DefinePlugin({ appName: JSON.stringify('talk') }),
 	],
 	resolve: {
 		extensions: ['*', '.js', '.vue'],
