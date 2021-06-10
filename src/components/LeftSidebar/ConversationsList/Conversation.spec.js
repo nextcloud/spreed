@@ -475,30 +475,6 @@ describe('Conversation.vue', () => {
 				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
-			test('redirects when deleting current conversation', async() => {
-				const actionHandler = jest.fn().mockResolvedValueOnce()
-				const updateTokenAction = jest.fn()
-				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
-				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => TOKEN)
-				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
-
-				OC.dialogs.confirm = jest.fn()
-
-				const action = shallowMountAndGetAction('Delete conversation')
-				expect(action.exists()).toBe(true)
-
-				await action.find('button').trigger('click')
-
-				expect(OC.dialogs.confirm).toHaveBeenCalled()
-
-				// call callback directly
-				OC.dialogs.confirm.mock.calls[0][2](true)
-
-				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
-				expect($router.push).toHaveBeenCalled()
-				expect(updateTokenAction).toHaveBeenCalledWith(expect.anything(), '')
-			})
-
 			test('does not delete conversation when not confirmed', async() => {
 				const actionHandler = jest.fn().mockResolvedValueOnce()
 				const updateTokenAction = jest.fn()

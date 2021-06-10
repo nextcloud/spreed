@@ -342,13 +342,6 @@ export default {
 						return
 					}
 
-					// TODO: verify if this is already happening automatically after deletion,
-					// just like when leaving a conversation
-					if (this.item.token === this.$store.getters.getToken()) {
-						this.$router.push({ name: 'root', params: { skipLeaveWarning: true } })
-						this.$store.dispatch('updateToken', '')
-					}
-
 					try {
 						await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
 					} catch (error) {
