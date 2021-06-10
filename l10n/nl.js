@@ -867,6 +867,7 @@ OC.L10N.register(
     "Message link copied to clipboard." : "Berichtlink gekopieerd naar klembord.",
     "{stack} in {board}" : "{stack} in {board}",
     "Deck Card" : "Deck kaart",
+    "Remove {fileName}" : "Verwijderen {fileName}",
     "Open this location in Openstreetmap" : "Open deze locatie in Openstreetmap",
     "[Unknown username]" : "[Onbekende gebruikersnaam]",
     "Scroll to bottom" : "Scroll naar beneden",
