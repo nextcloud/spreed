@@ -24,8 +24,7 @@
 		<audio
 			controls
 			:src="fileURL">
-			Your browser does not support the
-			<code>audio</code> element.
+			{{ t('spreed', 'Your browser does not support playing audio files') }}
 		</audio>
 	</div>
 </template>
