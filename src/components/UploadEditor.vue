@@ -42,7 +42,9 @@
 					:is-upload-editor="true"
 					@remove-file="handleRemoveFileFromSelection" />
 			</template>
-			<div :key="'addMore'" class="add-more">
+			<div v-if="!isVoiceMessage"
+				:key="'addMore'"
+				class="add-more">
 				<button :aria-label="addMoreAriaLabel"
 					class="add-more__button primary"
 					@click="clickImportInput">
@@ -102,6 +104,16 @@ export default {
 
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
+		},
+
+		// Hide the plus button in case this editor is used while sending a voice
+		// message
+		isVoiceMessage() {
+			const firstFile = this.files[Object.keys(this.files)[0]]
+			if (!firstFile) {
+				return false
+			}
+			return firstFile.temporaryMessage.messageType === 'voice-message'
 		},
 	},
 

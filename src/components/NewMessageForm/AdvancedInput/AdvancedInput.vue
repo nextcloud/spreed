@@ -235,6 +235,7 @@ export default {
 			}
 		},
 	},
+
 	mounted() {
 		this.focusInput()
 		/**
@@ -245,10 +246,12 @@ export default {
 
 		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
+
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.focusInput)
 		EventBus.$off('focusChatInput', this.focusInput)
 	},
+
 	methods: {
 		onBlur() {
 			// requires a short delay to avoid blocking click event handlers
@@ -412,10 +415,10 @@ export default {
 	overflow: visible;
 	width: 100%;
 	border:none;
-	margin: 0 6px !important;
+	margin: 0 4px !important;
 	word-break: break-word;
 	white-space: pre-wrap;
-	padding: 8px 16px;
+	padding: 8px 16px 8px 48px;
 }
 
 // Support for the placeholder text in the div contenteditable

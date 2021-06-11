@@ -29,8 +29,9 @@ import { showError } from '@nextcloud/dialogs'
  * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
  * @param {string} referenceId An optional reference id to recognize the message later
- */
-const shareFile = async function(path, token, referenceId) {
+ * @param {array} metadata the metadata json encoded array
+*/
+const shareFile = async function(path, token, referenceId, metadata) {
 	try {
 		return axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
@@ -39,6 +40,7 @@ const shareFile = async function(path, token, referenceId) {
 				path,
 				shareWith: token,
 				referenceId,
+				talkMetaData: metadata,
 			})
 	} catch (error) {
 		// FIXME: errors should be handled by called instead

@@ -348,7 +348,7 @@ const actions = {
 	 * @param {string} localUrl local URL of file to upload;
 	 * @returns {object} temporary message
 	 */
-	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl }) {
+	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
 		const messageToBeReplied = context.getters.getMessageToBeReplied(token)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()
@@ -374,7 +374,7 @@ const actions = {
 			actorDisplayName: context.getters.getDisplayName(),
 			timestamp: 0,
 			systemMessage: '',
-			messageType: '',
+			messageType: isVoiceMessage ? 'voice-message' : '',
 			message: text,
 			messageParameters,
 			token,

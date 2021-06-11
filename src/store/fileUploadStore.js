@@ -194,7 +194,7 @@ const actions = {
 	 * @param {number} uploadId a unique id for the upload operation indexing
 	 * @param {bool} rename whether to rename the files (usually after pasting)
 	 */
-	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false }) {
+	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false, isVoiceMessage }) {
 		// Set last upload id
 		commit('setCurrentUploadId', uploadId)
 
@@ -219,7 +219,7 @@ const actions = {
 			const index = 'temp_' + date.getTime() + Math.random()
 			// Create temporary message for the file and add it to the message list
 			const temporaryMessage = await dispatch('createTemporaryMessage', {
-				text: '{file}', token, uploadId, index, file, localUrl,
+				text: '{file}', token, uploadId, index, file, localUrl, isVoiceMessage,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
 			commit('addFileToBeUploaded', { file, temporaryMessage })
@@ -317,10 +317,11 @@ const actions = {
 			for (const index in shareableFiles) {
 				const path = shareableFiles[index].sharePath
 				const temporaryMessage = shareableFiles[index].temporaryMessage
+				const metadata = JSON.stringify({ 'messageType': temporaryMessage.messageType })
 				try {
 					const token = temporaryMessage.token
 					dispatch('markFileAsSharing', { uploadId, index })
-					await shareFile(path, token, temporaryMessage.referenceId)
+					await shareFile(path, token, temporaryMessage.referenceId, metadata)
 					dispatch('markFileAsShared', { uploadId, index })
 				} catch (error) {
 					if (error?.response?.status === 403) {

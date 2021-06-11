@@ -38,7 +38,8 @@
 				class="new-message-form"
 				@submit.prevent>
 				<div
-					v-if="canUploadFiles || canShareFiles">
+					v-if="canUploadFiles || canShareFiles"
+					class="new-message-form__upload-menu">
 					<Actions
 						ref="uploadMenu"
 						container="#content-vue"
@@ -66,14 +67,14 @@
 						</ActionButton>
 					</Actions>
 				</div>
-				<div>
+				<div class="new-message-form__emoji-picker">
 					<EmojiPicker
 						container="#content-vue"
 						@select="addEmoji">
 						<button
 							type="button"
 							:disabled="disabled"
-							class="nc-button nc-button__main"
+							class="nc-button nc-button__main emoji-picker-button"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<EmoticonOutline
@@ -102,11 +103,18 @@
 						@submit="handleSubmit"
 						@files-pasted="handlePastedFiles" />
 				</div>
+
+				<AudioRecorder
+					v-if="!hasText"
+					@recording="handleRecording"
+					@audioFile="handleAudioFile" />
+
 				<button
+					v-if="hasText"
 					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="nc-button nc-button__main"
+					class="nc-button nc-button__main new-message-form__send-button"
 					@click.prevent="handleSubmit">
 					<Send
 						title=""
@@ -132,6 +140,7 @@ import { CONVERSATION } from '../../constants'
 import Paperclip from 'vue-material-design-icons/Paperclip'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
+import AudioRecorder from './AudioRecorder/AudioRecorder'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -151,6 +160,7 @@ export default {
 		EmojiPicker,
 		EmoticonOutline,
 		Send,
+		AudioRecorder,
 	},
 
 	props: {
@@ -159,13 +169,17 @@ export default {
 			required: true,
 		},
 	},
+
 	data: function() {
 		return {
 			text: '',
 			parsedText: '',
 			conversationIsFirstInList: false,
+			// True when the audiorecorder component is recording
+			isRecordingAudio: false,
 		}
 	},
+
 	computed: {
 		/**
 		 * The current conversation token
@@ -187,7 +201,7 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || !this.currentConversationIsJoined
+			return this.isReadOnly || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
 		placeholderText() {
@@ -226,6 +240,10 @@ export default {
 		currentConversationIsJoined() {
 			return this.$store.getters.currentConversationIsJoined
 		},
+
+		hasText() {
+			return this.text !== ''
+		},
 	},
 
 	watch: {
@@ -254,6 +272,7 @@ export default {
 		EventBus.$on('uploadStart', this.handleUploadStart)
 		EventBus.$on('retryMessage', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
+		// this.startRecording()
 	},
 
 	beforeDestroy() {
@@ -386,12 +405,14 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {bool} rename whether to rename the files
+		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
+
 		 */
-		async handleFiles(files, rename = false) {
+		async handleFiles(files, rename = false, isVoiceMessage) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename })
+			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
 
 		/**
@@ -441,6 +462,14 @@ export default {
 
 			range.setStartAfter(emojiTextNode)
 		},
+
+		handleAudioFile(payload) {
+			this.handleFiles([payload], false, true)
+		},
+
+		handleRecording(payload) {
+			this.isRecordingAudio = payload
+		},
 	},
 }
 </script>
@@ -453,23 +482,41 @@ export default {
 	justify-content: center;
 	padding: 12px 0;
 	border-top: 1px solid var(--color-border);
+	height: 69px;
 	&--chatScrolledToBottom {
 		border-top: none;
 	}
 }
 
 .new-message {
-	max-width: $messages-list-max-width + 145px;
-	flex: 1 1 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 	&-form {
 		display: flex;
-		align-items: flex-end;
+		position:relative;
+		flex: 0 1 700px;
+		margin: 0 4px;
+		&__emoji-picker {
+			position: absolute;
+			left: 48px;
+			bottom: 1;
+			.emoji-picker-button {
+				opacity: .7;
+				&:hover,
+				&:active,
+				&:focus {
+					opacity: 1;
+					background-color: transparent;
+				}
+			}
+		}
+
 		&__input {
 			flex-grow: 1;
 			max-height: $message-form-max-height;
 			overflow-y: auto;
 			overflow-x: hidden;
-			max-width: 638px;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;
