@@ -38,7 +38,7 @@
 			<template v-if="editing">
 				<button
 					class="nc-button nc-button__main description__action"
-					:aria-label="t('spreed','Cancel editing description')"
+					:aria-label="t('spreed', 'Cancel editing description')"
 					@click="handleCancelEditing">
 					<Close
 						decorative
@@ -47,7 +47,7 @@
 				</button>
 				<button
 					class="nc-button nc-button__main primary description__action"
-					:aria-label="t('spreed','Submit conversation description')"
+					:aria-label="t('spreed', 'Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
 					<Check
@@ -65,7 +65,7 @@
 			</template>
 			<button v-if="!editing && editable"
 				class="nc-button nc-button__main"
-				:aria-label="t('spreed','Edit conversation description')"
+				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
 				<Pencil
 					decorative
