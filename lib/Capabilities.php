@@ -93,6 +93,7 @@ class Capabilities implements IPublicCapability {
 				'geo-location-sharing',
 				'voice-message-sharing',
 				'signaling-v3',
+				'publishing-permissions',
 			],
 			'config' => [
 				'attachments' => [

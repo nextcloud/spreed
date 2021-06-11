@@ -345,6 +345,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setAttendeePublishingPermissions',
+			'url' => '/api/{apiVersion}/room/{token}/attendees/publishing-permissions',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#joinRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'POST',

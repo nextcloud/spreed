@@ -311,10 +311,10 @@ const actions = {
 			flags,
 		})
 
-		await joinCall(token, flags)
+		const actualFlags = await joinCall(token, flags)
 
 		const updatedData = {
-			inCall: flags,
+			inCall: actualFlags,
 		}
 		commit('updateParticipant', { token, index, updatedData })
 
