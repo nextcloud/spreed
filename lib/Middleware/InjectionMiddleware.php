@@ -151,13 +151,22 @@ class InjectionMiddleware extends Middleware {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 		$controller->setRoom($room);
+		$participant = null;
 
 		$sessionId = $this->talkSession->getSessionForRoom($token);
 		if ($sessionId !== null) {
-			$participant = $room->getParticipantBySession($sessionId);
-		} else {
+			try {
+				$participant = $room->getParticipantBySession($sessionId);
+			} catch (ParticipantNotFoundException $e) {
+				// ignore and fall back in case a concurrent request might have
+				// invalidated the session
+			}
+		}
+
+		if ($participant === null) {
 			$participant = $room->getParticipant($this->userId);
 		}
+
 		$controller->setParticipant($participant);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
