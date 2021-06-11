@@ -45,7 +45,7 @@ const fetchConversation = async function(token) {
  * @param {object} options options
  */
 const searchListedConversations = async function({ searchText }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/listed-room'), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/listed-room'), Object.assign(options, {
 		params: {
 			searchTerm: searchText,
 		},
