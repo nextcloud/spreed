@@ -572,7 +572,7 @@ OC.L10N.register(
     "Restrict SIP configuration" : "限制 SIP 配置",
     "Only users of the following groups can enable SIP in conversations they moderate" : "只有以下群组的用户可以在自己主持的会话中开启 SIP",
     "Enable SIP configuration" : "启用 SIP 配置",
-    "Shared secret" : "共享的密钥",
+    "Shared secret" : "共享的 secret",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "这些信息会在邀请邮件中发送，也会在侧边栏中显示给所有参与者。 ",
     "Phone number (Country)" : "电话号码（国家）",
     "High-performance backend URL" : "高性能后端 URL",
