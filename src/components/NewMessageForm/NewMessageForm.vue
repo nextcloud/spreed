@@ -495,12 +495,12 @@ export default {
 	&-form {
 		display: flex;
 		position:relative;
-		flex: 0 1 650px;
+		flex: 0 1 700px;
 		margin: 0 4px;
 		&__emoji-picker {
 			position: absolute;
-			left: 6px;
-			bottom: 0;
+			left: 48px;
+			bottom: 1;
 			.emoji-picker-button {
 				opacity: .7;
 				&:hover,
@@ -510,12 +510,6 @@ export default {
 					background-color: transparent;
 				}
 			}
-		}
-
-		&__upload-menu {
-			position: absolute;
-			left: -44px;
-			bottom: 0;
 		}
 
 		&__input {
