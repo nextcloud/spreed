@@ -27,7 +27,7 @@ use OCP\AppFramework\Db\Entity;
 
 /**
  * @method void setRoomId(int $roomId)
- * @method string getRoomId()
+ * @method int getRoomId()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
  * @method void setActorId(string $actorId)
@@ -51,6 +51,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getReadPrivacy()
  * @method void setPublishingPermissions(int $publishingPermissions)
  * @method int getPublishingPermissions()
+ * @method void setAccessToken(string $accessToken)
+ * @method null|string getAccessToken()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -59,6 +61,7 @@ class Attendee extends Entity {
 	public const ACTOR_EMAILS = 'emails';
 	public const ACTOR_CIRCLES = 'circles';
 	public const ACTOR_BRIDGED = 'bridged';
+	public const ACTOR_FEDERATED_REMOTE_USER = 'federated_remote';
 
 	public const PUBLISHING_PERMISSIONS_NONE = 0;
 	public const PUBLISHING_PERMISSIONS_AUDIO = 1;
@@ -105,6 +108,9 @@ class Attendee extends Entity {
 	/** @var int */
 	protected $publishingPermissions;
 
+	/** @var string */
+	protected $accessToken;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -119,6 +125,7 @@ class Attendee extends Entity {
 		$this->addType('lastMentionMessage', 'int');
 		$this->addType('readPrivacy', 'int');
 		$this->addType('publishingPermissions', 'int');
+		$this->addType('accessToken', 'string');
 	}
 
 	public function getDisplayName(): string {
@@ -144,6 +151,7 @@ class Attendee extends Entity {
 			'last_mention_message' => $this->getLastMentionMessage(),
 			'read_privacy' => $this->getReadPrivacy(),
 			'publishing_permissions' => $this->getPublishingPermissions(),
+			'access_token' => $this->getAccessToken(),
 		];
 	}
 }

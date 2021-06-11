@@ -326,6 +326,9 @@ class ParticipantService {
 			if (isset($participant['displayName'])) {
 				$attendee->setDisplayName($participant['displayName']);
 			}
+			if (isset($participant['accessToken'])) {
+				$attendee->setAccessToken($participant['accessToken']);
+			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);

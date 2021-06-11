@@ -37,6 +37,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\DB\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
@@ -185,6 +186,7 @@ class Manager {
 			(string) $row['name'],
 			(string) $row['description'],
 			(string) $row['password'],
+			(string) $row['server_url'],
 			(int) $row['active_guests'],
 			(int) $row['call_flag'],
 			$activeSince,
@@ -628,7 +630,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null): Room {
+	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null, ?string $server_url = null): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -640,6 +642,12 @@ class Manager {
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		if ($server_url === null) {
+			$query->andWhere($query->expr()->isNull('r.server_url'));
+		} else {
+			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($server_url)));
+		}
 
 		if ($sessionId !== null) {
 			$helper->selectSessionsTable($query);
@@ -676,10 +684,10 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByToken(string $token, ?string $preloadUserId = null): Room {
+	public function getRoomByToken(string $token, ?string $preloadUserId = null, ?string $serverUrl = null): Room {
 		$preloadUserId = $preloadUserId === '' ? null : $preloadUserId;
 		if ($preloadUserId !== null) {
-			return $this->getRoomByActor($token, Attendee::ACTOR_USERS, $preloadUserId);
+			return $this->getRoomByActor($token, Attendee::ACTOR_USERS, $preloadUserId, null, $serverUrl);
 		}
 
 		$query = $this->db->getQueryBuilder();
@@ -687,6 +695,13 @@ class Manager {
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		if ($serverUrl === null) {
+			$query->andWhere($query->expr()->isNull('r.server_url'));
+		} else {
+			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($serverUrl)));
+		}
+
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -906,6 +921,29 @@ class Manager {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
 
 		return $room;
+	}
+
+	/**
+	 * @param int $type
+	 * @param string $name
+	 * @return Room
+	 * @throws DBException
+	 */
+	public function createRemoteRoom(int $type, string $name, string $token, string $serverUrl): Room {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->insert('talk_rooms')
+			->values([
+				'name' => $qb->createNamedParameter($name),
+				'type' => $qb->createNamedParameter($type, IQueryBuilder::PARAM_INT),
+				'token' => $qb->createNamedParameter($token),
+				'server_url' => $qb->createNamedParameter($serverUrl),
+			]);
+
+		$qb->executeStatement();
+		$roomId = $qb->getLastInsertId();
+
+		return $this->getRoomById($roomId);
 	}
 
 	public function resolveRoomDisplayName(Room $room, string $userId): string {

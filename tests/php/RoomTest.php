@@ -70,6 +70,7 @@ class RoomTest extends TestCase {
 			'Test',
 			'description',
 			'passy',
+			'',
 			0,
 			Participant::FLAG_DISCONNECTED,
 			null,

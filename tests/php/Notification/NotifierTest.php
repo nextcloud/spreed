@@ -21,6 +21,7 @@
 
 namespace OCA\Talk\Tests\php\Notifications;
 
+use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -75,6 +76,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $definitions;
 	/** @var Notifier */
 	protected $notifier;
+	/** @var AddressHandler|MockObject */
+	protected $addressHandler;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -91,6 +94,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->definitions = $this->createMock(Definitions::class);
+		$this->addressHandler = $this->createMock(AddressHandler::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
@@ -104,7 +108,8 @@ class NotifierTest extends \Test\TestCase {
 			$this->notificationManager,
 			$this->commentsManager,
 			$this->messageParser,
-			$this->definitions
+			$this->definitions,
+			$this->addressHandler
 		);
 	}
 
