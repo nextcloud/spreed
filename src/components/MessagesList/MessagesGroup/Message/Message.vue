@@ -576,7 +576,7 @@ export default {
 
 		linkToFile() {
 			if (this.isFileShare) {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.messageParameters?.file?.id)
+				return this.messageParameters?.file?.link
 			}
 			return ''
 		},
