@@ -405,12 +405,14 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {bool} rename whether to rename the files
+		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
+
 		 */
-		async handleFiles(files, rename = false) {
-			// Create a unique id for the upload operation
+		async handleFiles(files, rename = false, isVoiceMessage) {
+		// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename })
+			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
 
 		/**
@@ -462,7 +464,7 @@ export default {
 		},
 
 		handleAudioFile(payload) {
-			this.handleFiles([payload])
+			this.handleFiles([payload], false, true)
 		},
 
 		handleRecording(payload) {
