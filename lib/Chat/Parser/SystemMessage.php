@@ -35,6 +35,8 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
@@ -46,6 +48,8 @@ class SystemMessage {
 
 	/** @var IUserManager */
 	protected $userManager;
+	/** @var IGroupManager */
+	protected $groupManager;
 	/** @var GuestManager */
 	protected $guestManager;
 	/** @var IPreviewManager */
@@ -62,15 +66,19 @@ class SystemMessage {
 	/** @var string[] */
 	protected $displayNames = [];
 	/** @var string[] */
+	protected $groupNames = [];
+	/** @var string[] */
 	protected $guestNames = [];
 
 	public function __construct(IUserManager $userManager,
+								IGroupManager $groupManager,
 								GuestManager $guestManager,
 								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
 								IRootFolder $rootFolder,
 								IURLGenerator $url) {
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;
 		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
@@ -269,6 +277,22 @@ class SystemMessage {
 				} elseif ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator removed {user}');
 				}
+			}
+		} elseif ($message === 'group_added') {
+			$parsedParameters['group'] = $this->getGroup($parameters['group']);
+			$parsedMessage = $this->l->t('{actor} added group {group}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You added group {group}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator added group {group}');
+			}
+		} elseif ($message === 'group_removed') {
+			$parsedParameters['group'] = $this->getGroup($parameters['group']);
+			$parsedMessage = $this->l->t('{actor} removed group {group}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed group {group}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator removed group {group}');
 			}
 		} elseif ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
@@ -519,12 +543,32 @@ class SystemMessage {
 		];
 	}
 
+	protected function getGroup(string $gid): array {
+		if (!isset($this->groupNames[$gid])) {
+			$this->groupNames[$gid] = $this->getDisplayNameGroup($gid);
+		}
+
+		return [
+			'type' => 'group',
+			'id' => $gid,
+			'name' => $this->groupNames[$gid],
+		];
+	}
+
 	protected function getDisplayName(string $uid): string {
 		$user = $this->userManager->get($uid);
 		if ($user instanceof IUser) {
 			return $user->getDisplayName();
 		}
 		return $uid;
+	}
+
+	protected function getDisplayNameGroup(string $gid): string {
+		$group = $this->groupManager->get($gid);
+		if ($group instanceof IGroup) {
+			return $group->getDisplayName();
+		}
+		return $gid;
 	}
 
 	protected function getGuest(Room $room, string $actorId): array {

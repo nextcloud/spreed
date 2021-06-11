@@ -261,6 +261,8 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `password_removed` - {actor} removed the password for the conversation
 * `user_added` - {actor} added {user} to the conversation
 * `user_removed` - {actor} removed {user} from the conversation
+* `group_added` - {actor} added group {group} to the conversation
+* `group_removed` - {actor} removed group {group} from the conversation
 * `moderator_promoted` - {actor} promoted {user} to moderator
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
