@@ -244,6 +244,17 @@ PeerConnectionAnalyzer.prototype = {
 			return
 		}
 
+		// When a connection is started the stats must be reset, as a different
+		// peer connection could have been used before and its stats would be
+		// unrelated to the new one.
+		// When a connection is restarted the reported stats continue from the
+		// last values. However, during the reconnection the stats will not be
+		// updated, so the timestamps will suddenly increase once the connection
+		// is ready again. This could cause a wrong analysis, so the stats
+		// should be reset too in that case.
+		this._resetStats('audio')
+		this._resetStats('video')
+
 		this._getStatsInterval = window.setInterval(() => {
 			this._peerConnection.getStats().then(this._processStatsBound)
 		}, 1000)
