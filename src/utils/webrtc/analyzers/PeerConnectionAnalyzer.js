@@ -204,11 +204,7 @@ PeerConnectionAnalyzer.prototype = {
 		if (!analysisEnabledAudio) {
 			this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
 		} else {
-			this._packets['audio'].reset()
-			this._packetsLost['audio'].reset()
-			this._packetsLostRatio['audio'].reset()
-			this._packetsPerSecond['audio'].reset()
-			this._timestamps['audio'].reset()
+			this._resetStats('audio')
 		}
 	},
 
@@ -218,12 +214,16 @@ PeerConnectionAnalyzer.prototype = {
 		if (!analysisEnabledVideo) {
 			this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
 		} else {
-			this._packets['video'].reset()
-			this._packetsLost['video'].reset()
-			this._packetsLostRatio['video'].reset()
-			this._packetsPerSecond['video'].reset()
-			this._timestamps['video'].reset()
+			this._resetStats('video')
 		}
+	},
+
+	_resetStats: function(kind) {
+		this._packets[kind].reset()
+		this._packetsLost[kind].reset()
+		this._packetsLostRatio[kind].reset()
+		this._packetsPerSecond[kind].reset()
+		this._timestamps[kind].reset()
 	},
 
 	_handleIceConnectionStateChanged: function() {
