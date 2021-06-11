@@ -22,10 +22,10 @@
 <template>
 	<div class="wrapper">
 		<button slot="trigger"
-			v-tooltip.bottom="t('spreed','Create a new group conversation')"
+			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			class="toggle"
 			icon=""
-			:aria-label="t('spreed','Create a new group conversation')"
+			:aria-label="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
 			<Plus
 				decorative
