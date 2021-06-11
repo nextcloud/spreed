@@ -91,6 +91,7 @@ class Capabilities implements IPublicCapability {
 				'rich-object-sharing',
 				'temp-user-avatar-api',
 				'geo-location-sharing',
+				'voice-message-sharing',
 				'signaling-v3',
 			],
 			'config' => [
