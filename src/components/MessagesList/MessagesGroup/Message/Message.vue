@@ -151,6 +151,12 @@ the main body of the message as well as a quote.
 								@click.stop="handleMarkAsUnread">
 								{{ t('spreed', 'Mark as unread') }}
 							</ActionButton>
+							<ActionLink
+								v-if="linkToFile"
+								icon="icon-text"
+								:href="linkToFile">
+								{{ t('spreed', 'Go to file') }}
+							</ActionLink>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template
 								v-for="action in messageActions">
@@ -187,6 +193,7 @@ the main body of the message as well as a quote.
 
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
@@ -226,6 +233,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		ActionLink,
 		CallButton,
 		Quote,
 		RichText,
@@ -562,20 +570,29 @@ export default {
 				&& this.actorType === this.$store.getters.getActorType()
 		},
 
+		isFileShare() {
+			return this.message === '{file}' && this.messageParameters?.file
+		},
+
+		linkToFile() {
+			if (this.isFileShare) {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.messageParameters?.file?.id)
+			}
+			return ''
+		},
+
 		isDeleteable() {
 			if (this.isConversationReadOnly) {
 				return false
 			}
 
-			const isFileShare = this.message === '{file}'
-				&& this.messageParameters?.file
 			const isObjectShare = this.message === '{object}'
 				&& this.messageParameters?.object
 
 			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
 				&& this.messageType === 'comment'
 				&& !this.isDeleting
-				&& !isFileShare
+				&& !this.isFileShare
 				&& !isObjectShare
 				&& (this.isMyMsg
 					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
