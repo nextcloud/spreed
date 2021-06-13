@@ -150,7 +150,7 @@
     "{user} in {conversation}" : "{user} dins {conversation}",
     "Messages in other conversations" : "Messatges dins autras conversacions",
     "Something unexpected happened." : "Quicòm d’inesperat s’es produch.",
-    "The URL is invalid." : "L’URL es invalida",
+    "The URL is invalid." : "L’URL es invalida.",
     "An HTTPS URL is required." : "Una URL HTTPS es requerida.",
     "The email address is invalid." : "L’adreça email es invalida.",
     "The language is invalid." : "La lenga es invalida.",
