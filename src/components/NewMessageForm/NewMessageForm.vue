@@ -482,7 +482,7 @@ export default {
 	justify-content: center;
 	padding: 12px 0;
 	border-top: 1px solid var(--color-border);
-	height: 69px;
+	min-height: 69px;
 	&--chatScrolledToBottom {
 		border-top: none;
 	}
@@ -493,6 +493,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	&-form {
+		align-items: flex-end;
 		display: flex;
 		position:relative;
 		flex: 0 1 700px;
@@ -514,9 +515,7 @@ export default {
 
 		&__input {
 			flex-grow: 1;
-			max-height: $message-form-max-height;
-			overflow-y: auto;
-			overflow-x: hidden;
+			overflow: hidden;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;

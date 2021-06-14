@@ -428,6 +428,8 @@ div[contenteditable] {
 	min-height: $clickable-area;
 	border-radius: math.div($clickable-area, 2);
 	border: 1px solid var(--color-border-dark);
+	max-height: 180px;
+	overflow-y: scroll;
 	&:hover,
 	&:focus,
 	&:active {
