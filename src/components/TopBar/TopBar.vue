@@ -125,6 +125,19 @@
 				close-after-click="true"
 				container="#content-vue">
 				<ActionButton
+					v-if="isInCall"
+					key="openSideBarButtonMessageText"
+					@click="openSidebar">
+					<MessageText
+						slot="icon"
+						:size="24"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+				</ActionButton>
+				<ActionButton
+					v-else
+					key="openSideBarButtonMenuPeople"
 					:icon="iconMenuPeople"
 					@click="openSidebar" />
 			</Actions>
@@ -147,6 +160,7 @@ import CallButton from './CallButton'
 import BrowserStorage from '../../services/BrowserStorage'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
@@ -170,6 +184,7 @@ export default {
 		CounterBubble,
 		CallButton,
 		ActionSeparator,
+		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
 	},
@@ -318,11 +333,7 @@ export default {
 				return
 			}
 
-			// in some cases the user already had unread messages and saw the other notification
-			// but then got mentionned
-			// the limit of "> 1" is here to avoid seeing two notifications, one for the first non-mention
-			// unread message and the second for the mention
-			if (newValue && this.unreadMessagesCounter > 1) {
+			if (newValue && this.unreadMessagesCounter > 0) {
 				showMessage(t('spreed', 'You have been mentioned in the chat.'))
 			}
 		},
@@ -476,6 +487,7 @@ export default {
 		position: absolute;
 		top: 40px;
 		right: 10px;
+		pointer-events: none;
 	}
 }
 
