@@ -212,6 +212,9 @@ class RoomController extends AEnvironmentAwareController {
 			try {
 				$return[] = $this->formatRoom($room, $room->getParticipant($this->userId));
 			} catch (RoomNotFoundException $e) {
+			} catch (ParticipantNotFoundException $e) {
+				// for example in case the room was deleted concurrently,
+				// the user is not a participant any more
 			} catch (\RuntimeException $e) {
 			}
 		}
