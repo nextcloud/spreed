@@ -22,8 +22,8 @@
 /**
  * HOW TO SETUP:
  * -----------------------------------------------------------------------------
- * - Set the right values in "user" and "password" (a user must be used; guests
- *   do not work).
+ * - Set the right values in "user" and "appToken" (a user must be used; guests
+ *   do not work; generate an apptoken at index.php/settings/user/security ).
  * - If HPB clustering is enabled, set the token of a conversation in "token"
  *   (otherwise leave empty).
  * - Set whether to use audio, video or both in "mediaConstraints".
@@ -127,7 +127,7 @@
 // Regular users do not need to join the conversation, so the same user can be
 // connected several times to the HPB.
 const user = ''
-const password = ''
+const appToken = ''
 
 const signalingApiVersion = 2 // FIXME get from capabilities endpoint
 const conversationApiVersion = 3 // FIXME get from capabilities endpoint
@@ -165,7 +165,7 @@ const subscribers = []
 
 const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
 
-async function getSignalingSettings(user, password, token) {
+async function getSignalingSettings(user, appToken, token) {
 	const fetchOptions = {
 		headers: {
 			'OCS-ApiRequest': true,
@@ -174,7 +174,7 @@ async function getSignalingSettings(user, password, token) {
 	}
 
 	if (user) {
-		fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + password)
+		fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 	}
 
 	const signalingSettingsResponse = await fetch(signalingSettingsUrl + '?token=' + token, fetchOptions)
@@ -519,7 +519,7 @@ function listenToPublisherConnectionChanges() {
 
 async function initPublishers() {
 	for (let i = 0; i < publishersCount; i++) {
-		const signalingSettings = await getSignalingSettings(user, password, token)
+		const signalingSettings = await getSignalingSettings(user, appToken, token)
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
@@ -573,7 +573,7 @@ async function initSubscribers() {
 	for (let i = 0; i < subscribersPerPublisherCount; i++) {
 		// The same signaling session can be shared between subscribers to
 		// different publishers.
-		const signalingSettings = await getSignalingSettings(user, password, token)
+		const signalingSettings = await getSignalingSettings(user, appToken, token)
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
