@@ -204,11 +204,7 @@ PeerConnectionAnalyzer.prototype = {
 		if (!analysisEnabledAudio) {
 			this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
 		} else {
-			this._packets['audio'].reset()
-			this._packetsLost['audio'].reset()
-			this._packetsLostRatio['audio'].reset()
-			this._packetsPerSecond['audio'].reset()
-			this._timestamps['audio'].reset()
+			this._resetStats('audio')
 		}
 	},
 
@@ -218,12 +214,16 @@ PeerConnectionAnalyzer.prototype = {
 		if (!analysisEnabledVideo) {
 			this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
 		} else {
-			this._packets['video'].reset()
-			this._packetsLost['video'].reset()
-			this._packetsLostRatio['video'].reset()
-			this._packetsPerSecond['video'].reset()
-			this._timestamps['video'].reset()
+			this._resetStats('video')
 		}
+	},
+
+	_resetStats: function(kind) {
+		this._packets[kind].reset()
+		this._packetsLost[kind].reset()
+		this._packetsLostRatio[kind].reset()
+		this._packetsPerSecond[kind].reset()
+		this._timestamps[kind].reset()
 	},
 
 	_handleIceConnectionStateChanged: function() {
@@ -243,6 +243,17 @@ PeerConnectionAnalyzer.prototype = {
 			// Already active, nothing to do.
 			return
 		}
+
+		// When a connection is started the stats must be reset, as a different
+		// peer connection could have been used before and its stats would be
+		// unrelated to the new one.
+		// When a connection is restarted the reported stats continue from the
+		// last values. However, during the reconnection the stats will not be
+		// updated, so the timestamps will suddenly increase once the connection
+		// is ready again. This could cause a wrong analysis, so the stats
+		// should be reset too in that case.
+		this._resetStats('audio')
+		this._resetStats('video')
 
 		this._getStatsInterval = window.setInterval(() => {
 			this._peerConnection.getStats().then(this._processStatsBound)

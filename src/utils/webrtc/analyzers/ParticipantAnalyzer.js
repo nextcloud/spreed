@@ -257,12 +257,18 @@ ParticipantAnalyzer.prototype = {
 			this._senderScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.SENDER)
 
 			this._senderScreenPeerConnectionAnalyzer.on('change:connectionQualityVideo', this._handleConnectionQualityScreenChangeBound)
+
+			this._senderScreenPeerConnectionAnalyzer.setAnalysisEnabledAudio(false)
+			this._senderScreenPeerConnectionAnalyzer.setAnalysisEnabledVideo(true)
 		}
 
 		if (this._callParticipantModel) {
 			this._receiverScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.RECEIVER)
 
 			this._receiverScreenPeerConnectionAnalyzer.on('change:connectionQualityVideo', this._handleConnectionQualityScreenChangeBound)
+
+			this._receiverScreenPeerConnectionAnalyzer.setAnalysisEnabledAudio(false)
+			this._receiverScreenPeerConnectionAnalyzer.setAnalysisEnabledVideo(true)
 		}
 	},
 
