@@ -20,13 +20,12 @@
 -->
 
 <template>
-	<div class="wrapper">
-		<audio
-			controls
-			:src="fileURL">
-			{{ t('spreed', 'Your browser does not support playing audio files') }}
-		</audio>
-	</div>
+	<audio
+		class="audio-player"
+		controls
+		:src="fileURL">
+		{{ t('spreed', 'Your browser does not support playing audio files') }}
+	</audio>
 </template>
 
 <script>
@@ -80,3 +79,11 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+
+.audio-player {
+	margin: 12px 0;
+	width: 100%;
+}
+</style>
