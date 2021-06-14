@@ -26,13 +26,13 @@
 		:to="item.token ? { name: 'conversation', params: { token: item.token }} : ''"
 		:class="{ 'has-unread-messages': item.unreadMessages }"
 		@click="onClick">
-		<template v-slot:icon>
+		<template #icon>
 			<ConversationIcon
 				:item="item"
 				:hide-favorite="false"
 				:hide-call="false" />
 		</template>
-		<template v-slot:subtitle>
+		<template #subtitle>
 			<strong v-if="item.unreadMessages">
 				{{ conversationInformation }}
 			</strong>
@@ -133,7 +133,7 @@ export default {
 		},
 		item: {
 			type: Object,
-			default: function() {
+			default() {
 				return {
 					token: '',
 					participants: [],

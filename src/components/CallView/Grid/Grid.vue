@@ -445,7 +445,8 @@ export default {
 
 			return {
 				gridTemplateColumns: `repeat(${columns}, minmax(${this.minWidth}px, 1fr))`,
-				gridTemplateRows: `repeat(${rows}, minmax(${this.minHeight}px, 1fr))` }
+				gridTemplateRows: `repeat(${rows}, minmax(${this.minHeight}px, 1fr))`,
+			}
 		},
 
 		// Check if there's an overflow of videos (videos that don't fit in the grid)
@@ -475,7 +476,7 @@ export default {
 
 	watch: {
 		// If the video array size changes, rebuild the grid
-		'videos.length': function() {
+		'videos.length'() {
 			this.makeGrid()
 		},
 		// TODO: rebuild the grid to have optimal for last page

@@ -769,7 +769,7 @@ LocalMedia.prototype._setupAudioMonitor = function(stream, harkOptions) {
 		self.emit('volumeChange', volume, threshold)
 	})
 
-	this._audioMonitors.push({ audio: audio, stream: stream })
+	this._audioMonitors.push({ audio, stream })
 }
 
 LocalMedia.prototype._stopAudioMonitor = function(stream) {
@@ -788,7 +788,7 @@ LocalMedia.prototype._stopAudioMonitor = function(stream) {
 
 // fallback for old .localScreen behaviour
 Object.defineProperty(LocalMedia.prototype, 'localScreen', {
-	get: function() {
+	get() {
 		return this.localScreens.length > 0 ? this.localScreens[0] : null
 	},
 })

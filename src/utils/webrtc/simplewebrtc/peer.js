@@ -263,7 +263,7 @@ Peer.prototype.send = function(messageType, payload) {
 		broadcaster: this.broadcaster,
 		roomType: this.type,
 		type: messageType,
-		payload: payload,
+		payload,
 	}
 	this.logger.log('sending', messageType, message)
 	this.parent.emit('message', message)
@@ -274,7 +274,7 @@ Peer.prototype.send = function(messageType, payload) {
 Peer.prototype.sendDirectly = function(channel, messageType, payload) {
 	const message = {
 		type: messageType,
-		payload: payload,
+		payload,
 	}
 	this.logger.log('sending via datachannel', channel, messageType, message)
 	const dc = this.getDataChannel(channel)

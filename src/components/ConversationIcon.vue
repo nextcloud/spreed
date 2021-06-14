@@ -67,7 +67,7 @@ export default {
 		},
 		item: {
 			type: Object,
-			default: function() {
+			default() {
 				return {
 					objectType: '',
 					type: 0,

@@ -31,13 +31,13 @@ const fetchClipboardContent = function(event) {
 		}
 
 		if (files.length > 0) {
-			return { kind: 'file', files: files }
+			return { kind: 'file', files }
 		}
 	}
 
 	const text = clipboardData.getData('text/plain')
 
-	return { kind: 'text', text: text }
+	return { kind: 'text', text }
 }
 
 export {

@@ -121,7 +121,7 @@ export default {
 		MediaDevicesSelector,
 		Microphone,
 		MicrophoneOff,
-		'VideoIcon': Video,
+		VideoIcon: Video,
 		VideoOff,
 	},
 
@@ -135,7 +135,7 @@ export default {
 	data() {
 		return {
 			mounted: false,
-			mediaDevicesManager: mediaDevicesManager,
+			mediaDevicesManager,
 			pendingGetUserMediaAudioCount: 0,
 			pendingGetUserMediaVideoCount: 0,
 			audioStream: null,
@@ -283,7 +283,7 @@ export default {
 
 	watch: {
 		enabled: {
-			handler: function(enabled) {
+			handler(enabled) {
 				if (this.enabled) {
 					this.mediaDevicesManager.enableDeviceEvents()
 					this.updateAudioStream()

@@ -479,7 +479,7 @@ const actions = {
 			return
 		}
 		// set the id to the last message
-		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually: updateVisually })
+		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually })
 		context.dispatch('markConversationRead', token)
 	},
 
@@ -560,7 +560,7 @@ const actions = {
 
 		if (response.headers['x-chat-last-given']) {
 			context.dispatch('setFirstKnownMessageId', {
-				token: token,
+				token,
 				id: parseInt(response.headers['x-chat-last-given'], 10),
 			})
 		}
@@ -644,8 +644,8 @@ const actions = {
 		const conversation = context.getters.conversation(token)
 		if (conversation && conversation.lastMessage && lastMessage.id > conversation.lastMessage.id) {
 			context.dispatch('updateConversationLastMessage', {
-				token: token,
-				lastMessage: lastMessage,
+				token,
+				lastMessage,
 			})
 		}
 

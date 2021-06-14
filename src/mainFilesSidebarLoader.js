@@ -34,7 +34,7 @@ const isEnabled = function(fileInfo) {
 	// left; this must be done here because "setFileInfo" will not get
 	// called with the new file if the tab can not be displayed.
 	if (token) {
-		OCA.Talk.store.dispatch('leaveConversation', { token: token })
+		OCA.Talk.store.dispatch('leaveConversation', { token })
 	}
 
 	OCA.Talk.store.dispatch('updateTokenAndFileIdForToken', {

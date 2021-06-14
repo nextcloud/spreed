@@ -205,8 +205,8 @@ export default {
 		this.trialAccount = loadState('spreed', 'hosted_signaling_server_trial_data')
 
 		const languagesAndCountries = loadState('spreed', 'hosted_signaling_server_language_data')
-		this.languages = languagesAndCountries['languages'] // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
-		this.countries = languagesAndCountries['countries'] // list of {code: "France", name: "France"}
+		this.languages = languagesAndCountries.languages // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
+		this.countries = languagesAndCountries.countries // list of {code: "France", name: "France"}
 
 		const signaling = loadState('spreed', 'signaling_servers')
 		this.showForm = this.trialAccount.length !== 0

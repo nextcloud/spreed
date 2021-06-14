@@ -70,12 +70,12 @@ function AverageStatValue(count, type = STAT_VALUE_TYPE.CUMULATIVE, lastValueWei
 }
 AverageStatValue.prototype = {
 
-	reset: function() {
+	reset() {
 		this._rawValues = []
 		this._relativeValues = []
 	},
 
-	add: function(value) {
+	add(value) {
 		if (this._rawValues.length === this._count) {
 			this._rawValues.shift()
 			this._relativeValues.shift()
@@ -93,7 +93,7 @@ AverageStatValue.prototype = {
 		this._relativeValues.push(relativeValue)
 	},
 
-	getLastRawValue: function() {
+	getLastRawValue() {
 		if (this._rawValues.length < 1) {
 			return NaN
 		}
@@ -101,7 +101,7 @@ AverageStatValue.prototype = {
 		return this._rawValues[this._rawValues.length - 1]
 	},
 
-	getLastRelativeValue: function() {
+	getLastRelativeValue() {
 		if (this._relativeValues.length < 1) {
 			return NaN
 		}
@@ -109,11 +109,11 @@ AverageStatValue.prototype = {
 		return this._relativeValues[this._relativeValues.length - 1]
 	},
 
-	hasEnoughData: function() {
+	hasEnoughData() {
 		return this._rawValues.length === this._count
 	},
 
-	getWeightedAverage: function() {
+	getWeightedAverage() {
 		let weightedValues = 0
 		let weightsSum = 0
 

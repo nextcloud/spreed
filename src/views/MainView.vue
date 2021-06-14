@@ -57,7 +57,7 @@ export default {
 	},
 
 	watch: {
-		isInLobby: function(isInLobby) {
+		isInLobby(isInLobby) {
 			// User is now blocked by the lobby
 			if (isInLobby && this.isInCall) {
 				this.$store.dispatch('leaveCall', {

@@ -63,7 +63,8 @@ module.exports = function(mode, constraints, cb) {
 						error.name = 'PERMISSION_DENIED'
 						callback(error)
 					} else {
-						constraints = (hasConstraints && constraints) || { audio: false,
+						constraints = (hasConstraints && constraints) || {
+							audio: false,
 							video: {
 								mandatory: {
 									chromeMediaSource: 'desktop',
@@ -71,7 +72,8 @@ module.exports = function(mode, constraints, cb) {
 									maxHeight: window.screen.height,
 									maxFrameRate: 3,
 								},
-							} }
+							},
+						}
 						constraints.video.mandatory.chromeMediaSourceId = data.sourceId
 						getUserMedia(constraints, callback)
 					}
@@ -85,7 +87,8 @@ module.exports = function(mode, constraints, cb) {
 					error.name = 'CEF_GETSCREENMEDIA_CANCELED'
 					callback(error)
 				} else {
-					constraints = (hasConstraints && constraints) || { audio: false,
+					constraints = (hasConstraints && constraints) || {
+						audio: false,
 						video: {
 							mandatory: {
 								chromeMediaSource: 'desktop',
@@ -97,7 +100,8 @@ module.exports = function(mode, constraints, cb) {
 								{ googLeakyBucket: true },
 								{ googTemporalLayeredScreencast: true },
 							],
-						} }
+						},
+					}
 					constraints.video.mandatory.chromeMediaSourceId = sourceId
 					getUserMedia(constraints, callback)
 				}
@@ -180,7 +184,8 @@ typeof window !== 'undefined' && window.addEventListener('message', function(eve
 			error.name = 'PERMISSION_DENIED'
 			callback(error)
 		} else {
-			constraints = constraints || { audio: false,
+			constraints = constraints || {
+				audio: false,
 				video: {
 					mandatory: {
 						chromeMediaSource: 'desktop',
@@ -192,7 +197,8 @@ typeof window !== 'undefined' && window.addEventListener('message', function(eve
 						{ googLeakyBucket: true },
 						{ googTemporalLayeredScreencast: true },
 					],
-				} }
+				},
+			}
 			constraints.video.mandatory.chromeMediaSourceId = event.data.sourceId
 			getUserMedia(constraints, callback)
 		}

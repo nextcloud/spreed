@@ -136,7 +136,7 @@ export default {
 		Microphone,
 		MicrophoneOff,
 		Monitor,
-		'VideoIcon': Video,
+		VideoIcon: Video,
 		VideoOff,
 	},
 

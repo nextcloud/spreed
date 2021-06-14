@@ -53,7 +53,7 @@ describe('fileUploadStore', () => {
 								index,
 								token,
 								localUrl,
-								file: file,
+								file,
 							},
 						},
 					}

@@ -130,7 +130,7 @@ const mutations = {
 		if (state.participants[token] && state.participants[token][index]) {
 			Vue.delete(state.participants[token], index)
 		} else {
-			console.error(`The conversation you are trying to purge doesn't exist`)
+			console.error('The conversation you are trying to purge doesn\'t exist')
 		}
 	},
 	setInCall(state, { token, sessionId, flags }) {
@@ -277,7 +277,7 @@ const actions = {
 		}
 
 		const updatedData = {
-			sessionId: sessionId,
+			sessionId,
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
 		commit('updateParticipant', { token, index, updatedData })
@@ -382,7 +382,7 @@ const actions = {
 			context.dispatch('setCurrentParticipant', response.data.ocs.data)
 			context.dispatch('addConversation', response.data.ocs.data)
 			context.dispatch('updateSessionId', {
-				token: token,
+				token,
 				participantIdentifier: context.getters.getParticipantIdentifier(),
 				sessionId: response.data.ocs.data.sessionId,
 			})

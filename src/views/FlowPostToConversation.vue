@@ -25,7 +25,7 @@ export default {
 	components: { Multiselect },
 	props: {
 		value: {
-			default: JSON.stringify({ 'm': '0', 't': '' }),
+			default: JSON.stringify({ m: '0', t: '' }),
 			type: String,
 		},
 	},

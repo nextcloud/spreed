@@ -1150,7 +1150,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 
 		errorNotificationHandle = showError(message, {
-			timeout: timeout,
+			timeout,
 		})
 	})
 
@@ -1170,7 +1170,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				webrtc.emit('mute', { id: peer.id, name: 'video' })
 			} else if (data.type === 'nickChanged') {
 				const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
-				webrtc.emit('nick', { id: peer.id, name: name })
+				webrtc.emit('nick', { id: peer.id, name })
 			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
 				// Valid known messages, but handled elsewhere
 			} else {
@@ -1207,7 +1207,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				to: sessionId,
 				roomType: 'video',
 				type: messageType,
-				payload: payload,
+				payload,
 			}
 			signaling.emit('message', message)
 		}
@@ -1250,14 +1250,14 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			payload = name
 		} else {
 			payload = {
-				'name': name,
-				'userid': signaling.settings.userId,
+				name,
+				userid: signaling.settings.userId,
 			}
 		}
 
 		sendDataChannelToAll('status', 'nickChanged', payload)
 
-		webrtc.sendToAll('nickChanged', { name: name })
+		webrtc.sendToAll('nickChanged', { name })
 	})
 
 	// Local screen added.

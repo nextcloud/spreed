@@ -66,7 +66,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()
@@ -89,7 +89,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()
@@ -111,7 +111,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()
@@ -127,7 +127,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()
@@ -157,7 +157,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -177,7 +177,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			expect(wrapper.element.tagName).toBe('A')
@@ -189,7 +189,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onerror()
@@ -206,7 +206,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()
@@ -245,7 +245,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -262,7 +262,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -280,7 +280,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -297,7 +297,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -356,7 +356,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -388,7 +388,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -403,7 +403,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData: propsData,
+					propsData,
 				})
 
 				await imageMock.onload()
@@ -431,7 +431,7 @@ describe('FilePreview.vue', () => {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
 						store,
-						propsData: propsData,
+						propsData,
 					})
 
 					await imageMock.onload()
@@ -472,7 +472,7 @@ describe('FilePreview.vue', () => {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
 						store,
-						propsData: propsData,
+						propsData,
 					})
 
 					await imageMock.onerror()
@@ -505,7 +505,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData: propsData,
+				propsData,
 			})
 
 			await imageMock.onload()

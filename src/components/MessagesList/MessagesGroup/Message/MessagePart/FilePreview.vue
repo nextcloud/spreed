@@ -327,7 +327,7 @@ export default {
 				// FIXME: use a cleaner way...
 				const token = this.link.substr(this.link.lastIndexOf('/') + 1)
 				return generateUrl('/apps/files_sharing/publicpreview/{token}?x=-1&y={height}&a=1', {
-					token: token,
+					token,
 					height: previewSize,
 				})
 			} else {

@@ -148,7 +148,7 @@ export default {
 		},
 		turnServerClasses() {
 			return {
-				'error': this.turnServerError,
+				error: this.turnServerError,
 			}
 		},
 		testIconClasses() {
@@ -205,9 +205,9 @@ export default {
 			const password = Base64.stringify(hmacSHA1(username, this.secret))
 
 			const iceServer = {
-				username: username,
+				username,
 				credential: password,
-				urls: urls,
+				urls,
 			}
 
 			// Create a PeerConnection with no streams, but force a m=audio line.

@@ -13,8 +13,8 @@ describe('conversationsService', () => {
 		searchPossibleConversations(
 			{
 				searchText: 'search-text',
-				token: token,
-				onlyUsers: onlyUsers,
+				token,
+				onlyUsers,
 			},
 			{
 				dummyOption: true,

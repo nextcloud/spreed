@@ -270,13 +270,13 @@ export default {
 				const hasUserStatuses = !!participants.headers['x-nextcloud-has-user-statuses']
 				participants.data.ocs.data.forEach(participant => {
 					this.$store.dispatch('addParticipant', {
-						token: token,
+						token,
 						participant,
 					})
 					if (participant.participantType === PARTICIPANT.TYPE.GUEST
 						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
 						this.$store.dispatch('forceGuestName', {
-							token: token,
+							token,
 							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 							actorDisplayName: participant.displayName,
 						})

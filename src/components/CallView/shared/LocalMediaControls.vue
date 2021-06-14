@@ -243,7 +243,7 @@ export default {
 		Hand,
 		Microphone,
 		MicrophoneOff,
-		'VideoIcon': Video,
+		VideoIcon: Video,
 		VideoOff,
 		Monitor,
 		MonitorOff,
@@ -279,7 +279,7 @@ export default {
 			screenSharingMenuOpen: false,
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
-			callAnalyzer: callAnalyzer,
+			callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
 			audioEnabledBeforeSpacebarKeydown: undefined,
 			spacebarKeyDown: false,
@@ -548,14 +548,14 @@ export default {
 	},
 
 	watch: {
-		currentVolumeProportion: function() {
+		currentVolumeProportion() {
 			// The volume meter is updated directly in the DOM as it is
 			// more efficient than relying on Vue.js to animate the style property,
 			// because the latter would also process all neighboring components repeatedly.
 			this.updateVolumeMeter()
 		},
 
-		senderConnectionQualityIsBad: function(senderConnectionQualityIsBad) {
+		senderConnectionQualityIsBad(senderConnectionQualityIsBad) {
 			if (!senderConnectionQualityIsBad) {
 				return
 			}

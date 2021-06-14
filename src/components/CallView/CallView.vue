@@ -196,8 +196,8 @@ export default {
 	data() {
 		return {
 			screens: [],
-			localMediaModel: localMediaModel,
-			localCallParticipantModel: localCallParticipantModel,
+			localMediaModel,
+			localCallParticipantModel,
 			sharedDatas: {},
 			raisedHandUnwatchers: {},
 			speakingUnwatchers: {},
@@ -207,7 +207,7 @@ export default {
 			localSharedData: {
 				screenVisible: true,
 			},
-			callParticipantCollection: callParticipantCollection,
+			callParticipantCollection,
 			videoContainerAspectRatio: 0,
 		}
 	},
@@ -334,28 +334,28 @@ export default {
 		},
 	},
 	watch: {
-		localScreen: function(localScreen) {
+		localScreen(localScreen) {
 			this._setScreenAvailable(localCallParticipantModel.attributes.peerId, localScreen)
 		},
 
-		callParticipantModels: function(models) {
+		callParticipantModels(models) {
 			this.updateDataFromCallParticipantModels(models)
 		},
 
-		'speakers': function() {
+		speakers() {
 			this._setPromotedParticipant()
 		},
 
-		'screenSharingActive': function() {
+		screenSharingActive() {
 			this._setPromotedParticipant()
 		},
 
-		'screens': function() {
+		screens() {
 			this._setScreenVisible()
 
 		},
 
-		'callParticipantModelsWithScreen': function(newValue, previousValue) {
+		callParticipantModelsWithScreen(newValue, previousValue) {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
 				this.$store.dispatch('startPresentation')
@@ -364,7 +364,7 @@ export default {
 				this.$store.dispatch('stopPresentation')
 			}
 		},
-		'showLocalScreen': function(showLocalScreen) {
+		showLocalScreen(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('startPresentation')
@@ -372,7 +372,7 @@ export default {
 				this.$store.dispatch('stopPresentation')
 			}
 		},
-		'hasLocalVideo': function(newValue) {
+		hasLocalVideo(newValue) {
 			if (this.$store.getters.selectedVideoPeerId === 'local') {
 				if (!newValue) {
 					this.$store.dispatch('selectedVideoPeerId', null)
@@ -504,7 +504,7 @@ export default {
 			// sometimes the nick name is not available yet...
 			if (nickName) {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', '{nickName} raised their hand.', { nickName: nickName }))
+					showMessage(t('spreed', '{nickName} raised their hand.', { nickName }))
 				}
 			} else {
 				if (raisedHand?.state) {
@@ -515,7 +515,7 @@ export default {
 			// update in callViewStore
 			this.$store.dispatch('setParticipantHandRaised', {
 				sessionId: callParticipantModel.attributes.nextcloudSessionId,
-				raisedHand: raisedHand,
+				raisedHand,
 			})
 		},
 

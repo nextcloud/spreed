@@ -29,7 +29,7 @@
 		:tab-select="true"
 		:allow-spaces="false"
 		@at="handleAtEvent">
-		<template v-slot:item="scope">
+		<template #item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
 				:size="44"
 				:icon-class="'icon-group-forced-white'"
@@ -57,7 +57,7 @@
 				</em>
 			</span>
 		</template>
-		<template v-slot:embeddedItem="scope">
+		<template #embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
 			     into account. -->
 			<span>
@@ -207,7 +207,7 @@ export default {
 			required: true,
 		},
 	},
-	data: function() {
+	data() {
 		return {
 			text: '',
 			autoCompleteMentionCandidates: [],
@@ -376,8 +376,8 @@ export default {
 
 		getGuestAvatarStyle() {
 			return {
-				'width': '44px',
-				'height': '44px',
+				width: '44px',
+				height: '44px',
 				'line-height': '44px',
 				'background-color': '#b9b9b9',
 				'text-align': 'center',

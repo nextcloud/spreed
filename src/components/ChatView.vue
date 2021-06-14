@@ -77,7 +77,7 @@ export default {
 		},
 	},
 
-	data: function() {
+	data() {
 		return {
 			isDraggingOver: false,
 			/**

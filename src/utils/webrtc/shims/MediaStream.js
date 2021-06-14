@@ -33,7 +33,7 @@ if (window.MediaStream) {
 		this.removeEventListener('addtrack', testAddTrackEvent)
 
 		if (!addTrackEventDispatched) {
-			this.dispatchEvent(new MediaStreamTrackEvent('addtrack', { track: track }))
+			this.dispatchEvent(new MediaStreamTrackEvent('addtrack', { track }))
 		}
 	}
 
@@ -50,7 +50,7 @@ if (window.MediaStream) {
 		this.removeEventListener('removetrack', testRemoveTrackEvent)
 
 		if (!removeTrackEventDispatched) {
-			this.dispatchEvent(new MediaStreamTrackEvent('removetrack', { track: track }))
+			this.dispatchEvent(new MediaStreamTrackEvent('removetrack', { track }))
 		}
 	}
 

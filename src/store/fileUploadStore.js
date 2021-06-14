@@ -309,7 +309,7 @@ const actions = {
 				commit('markFileAsFailedUpload', { uploadId, index })
 				dispatch('markTemporaryMessageAsFailed', {
 					message: temporaryMessage,
-					reason: reason,
+					reason,
 				})
 			}
 

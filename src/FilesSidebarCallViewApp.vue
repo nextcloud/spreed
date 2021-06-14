@@ -113,7 +113,7 @@ export default {
 	},
 
 	watch: {
-		showCallView: function(showCallView) {
+		showCallView(showCallView) {
 			if (showCallView) {
 				this.replaceSidebarHeaderContentsWithCallView()
 			} else {
@@ -132,7 +132,7 @@ export default {
 		 *
 		 * @param {Object} fileInfo the watched FileInfo
 		 */
-		fileInfo: function(fileInfo) {
+		fileInfo(fileInfo) {
 			if (!fileInfo) {
 				return
 			}
