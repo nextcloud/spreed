@@ -112,6 +112,7 @@ Feature: chat/reply
     And user "participant1" sees the following system messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | systemMessage        |
       | group room | users     | participant1 | participant1-displayname | user_added           |
+      | group room | users     | participant1 | participant1-displayname | group_added           |
       | group room | users     | participant1 | participant1-displayname | conversation_created |
     When user "participant1" sends reply "Message X-1" on message "conversation_created" to room "group room" with 400
     Then user "participant1" sees the following messages in room "group room" with 200

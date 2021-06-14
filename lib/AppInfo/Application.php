@@ -36,6 +36,8 @@ use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Deck\DeckPluginLoader;
@@ -111,6 +113,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(UserChangedEvent::class, UserDisplayNameListener::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
 		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
+		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);

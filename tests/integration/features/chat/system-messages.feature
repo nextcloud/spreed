@@ -87,6 +87,7 @@ Feature: System messages
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | group_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Creating a one2one room
