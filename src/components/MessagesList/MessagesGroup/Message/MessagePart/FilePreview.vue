@@ -26,7 +26,7 @@
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
-		@click="handleClick"
+		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<div
 			v-if="!isLoading"
