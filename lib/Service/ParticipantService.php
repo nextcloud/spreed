@@ -696,7 +696,6 @@ class ParticipantService {
 		$attendees = [];
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-
 			$attendeeIds[] = (int) $row['a_id'];
 			$attendees[] = $this->attendeeMapper->createAttendeeFromRow($row);
 		}
