@@ -37,7 +37,7 @@ function LocalMedia(opts) {
 
 	let item
 	for (item in opts) {
-		if (opts.hasOwnProperty(item)) {
+		if (Object.prototype.hasOwnProperty.call(opts, item)) {
 			this.config[item] = opts[item]
 		}
 	}

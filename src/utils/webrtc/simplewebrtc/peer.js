@@ -279,7 +279,7 @@ Peer.prototype.sendDirectly = function(channel, messageType, payload) {
 	this.logger.log('sending via datachannel', channel, messageType, message)
 	const dc = this.getDataChannel(channel)
 	if (dc.readyState !== 'open') {
-		if (!this.pendingDCMessages.hasOwnProperty(channel)) {
+		if (!Object.prototype.hasOwnProperty.call(this.pendingDCMessages, channel)) {
 			this.pendingDCMessages[channel] = []
 		}
 		this.pendingDCMessages[channel].push(message)
@@ -300,7 +300,7 @@ Peer.prototype._observeDataChannel = function(channel) {
 	channel.onopen = function() {
 		self.emit('channelOpen', channel)
 		// Check if there are messages that could not be send
-		if (self.pendingDCMessages.hasOwnProperty(channel.label)) {
+		if (Object.prototype.hasOwnProperty.call(self.pendingDCMessages, channel.label)) {
 			const pendingMessages = self.pendingDCMessages[channel.label].slice()
 			self.pendingDCMessages[channel.label] = []
 			for (let i = 0; i < pendingMessages.length; i++) {

@@ -32,7 +32,7 @@ export default function CallParticipantCollection() {
 CallParticipantCollection.prototype = {
 
 	on(event, handler) {
-		if (!this._handlers.hasOwnProperty(event)) {
+		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
 			this._handlers[event] = [handler]
 		} else {
 			this._handlers[event].push(handler)

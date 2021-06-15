@@ -83,9 +83,9 @@ const getters = {
 
 		let index
 
-		if (participantIdentifier.hasOwnProperty('attendeeId')) {
+		if (Object.prototype.hasOwnProperty.call(participantIdentifier, 'attendeeId')) {
 			index = state.participants[token].findIndex(participant => participant.attendeeId === participantIdentifier.attendeeId)
-		} else if (participantIdentifier.hasOwnProperty('actorId') && participantIdentifier.hasOwnProperty('actorType')) {
+		} else if (Object.prototype.hasOwnProperty.call(participantIdentifier, 'actorId') && Object.prototype.hasOwnProperty.call(participantIdentifier, 'actorType')) {
 			index = state.participants[token].findIndex(participant => participant.actorId === participantIdentifier.actorId && participant.actorType === participantIdentifier.actorType)
 		} else {
 			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
@@ -98,7 +98,7 @@ const getters = {
 			return {}
 		}
 
-		if (state.peers[token].hasOwnProperty(sessionId)) {
+		if (Object.prototype.hasOwnProperty.call(state.peers[token], sessionId)) {
 			return state.peers[token][sessionId]
 		}
 
