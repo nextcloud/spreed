@@ -168,6 +168,7 @@ import LocalVideo from './shared/LocalVideo'
 import Screen from './shared/Screen'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {
 	name: 'CallView',
@@ -390,11 +391,15 @@ export default {
 		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
+
+		subscribe('talk:video:toggled', this.handleToggleVideo)
 	},
 	beforeDestroy() {
 		EventBus.$off('refreshPeerList', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
+
+		unsubscribe('talk:video:toggled', this.handleToggleVideo)
 	},
 	methods: {
 		/**
@@ -620,6 +625,11 @@ export default {
 				console.error(exception)
 			}
 		}, 1500),
+
+		// Toggles videos on and off
+		handleToggleVideo({ peerId, value }) {
+			this.sharedDatas[peerId].videoEnabled = value
+		},
 	},
 }
 </script>

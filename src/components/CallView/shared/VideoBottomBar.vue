@@ -126,6 +126,7 @@ import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import { PARTICIPANT } from '../../../constants'
 import Hand from 'vue-material-design-icons/Hand'
+import { emit } from '@nextcloud/event-bus'
 
 export default {
 	name: 'VideoBottomBar',
@@ -261,7 +262,10 @@ export default {
 		},
 
 		toggleVideo() {
-			this.sharedData.videoEnabled = !this.sharedData.videoEnabled
+			emit('talk:video:toggled', {
+				peerId: this.peerId,
+				value: !this.sharedData.videoEnabled,
+			})
 		},
 
 		switchToScreen() {
