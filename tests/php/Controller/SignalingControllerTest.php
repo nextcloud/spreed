@@ -50,6 +50,7 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 class CustomInputSignalingController extends SignalingController {
 	private $inputStream;
@@ -96,6 +97,8 @@ class SignalingControllerTest extends \Test\TestCase {
 	private $secureRandom;
 	/** @var IEventDispatcher */
 	private $dispatcher;
+	/** @var LoggerInterface|MockObject */
+	private $logger;
 
 	/** @var CustomInputSignalingController */
 	private $controller;
@@ -125,6 +128,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
 		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->recreateSignalingController();
 	}
 
@@ -144,6 +148,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->dispatcher,
 			$this->timeFactory,
 			$this->clientService,
+			$this->logger,
 			$this->userId
 		);
 	}
