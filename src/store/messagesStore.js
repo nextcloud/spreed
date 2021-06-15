@@ -621,6 +621,8 @@ const actions = {
 			})
 		}
 
+		const conversation = context.getters.conversation(token)
+		let countNewMessages = 0
 		let lastMessage = null
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
@@ -632,7 +634,18 @@ const actions = {
 			}
 			context.dispatch('processMessage', message)
 			if (!lastMessage || message.id > lastMessage.id) {
+				if (!message.systemMessage) {
+					countNewMessages++
+				}
 				lastMessage = message
+				// TODO: parse mentions data to update "conversation.unreadMention"
+			}
+
+			// in case we encounter an already read message, reset the counter
+			// this is probably unlikely to happen unless one starts browsing from
+			// an earlier page and scrolls down
+			if (conversation.lastReadMessage.id === message.id) {
+				countNewMessages = 0
 			}
 		})
 
@@ -641,13 +654,14 @@ const actions = {
 			id: parseInt(response.headers['x-chat-last-given'], 10),
 		})
 
-		const conversation = context.getters.conversation(token)
 		if (conversation && conversation.lastMessage && lastMessage.id > conversation.lastMessage.id) {
 			context.dispatch('updateConversationLastMessage', {
 				token,
 				lastMessage,
 			})
 		}
+
+		context.commit('updateUnreadMessages', { token, unreadMessages: conversation.unreadMessages + countNewMessages })
 
 		return response
 	},

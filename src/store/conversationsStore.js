@@ -121,6 +121,10 @@ const mutations = {
 		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
 	},
 
+	updateUnreadMessages(state, { token, unreadMessages = 0 }) {
+		Vue.set(state.conversations[token], 'unreadMessages', unreadMessages)
+	},
+
 	setNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
 	},
