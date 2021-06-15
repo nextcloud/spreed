@@ -36,6 +36,43 @@ import {
 	ATTENDEE,
 } from '../constants'
 
+/**
+ * Returns whether the given message contains a mention to self, directly
+ * or indirectly through a global mention.
+ *
+ * @param {Object} context store context
+ * @param {Object} message message object
+ * @returns {bool} true if the message contains a mention to self or all,
+ * false otherwise
+ */
+function hasMentionToSelf(context, message) {
+	if (!message.messageParameters) {
+		return false
+	}
+
+	for (const key in message.messageParameters) {
+		const param = message.messageParameters[key]
+
+		if (param.type === 'call') {
+			return true
+		}
+		if (param.type === 'guest'
+			&& context.getters.getActorType() === ATTENDEE.ACTOR_TYPE.GUESTS
+			&& param.id === ('guest/' + context.getters.getActorId())
+		) {
+			return true
+		}
+		if (param.type === 'user'
+			&& context.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+			&& param.id === context.getters.getUserId()
+		) {
+			return true
+		}
+	}
+
+	return false
+}
+
 const state = {
 	/**
 	 * Map of conversation token to message list
@@ -623,6 +660,7 @@ const actions = {
 
 		const conversation = context.getters.conversation(token)
 		let countNewMessages = 0
+		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
@@ -636,9 +674,14 @@ const actions = {
 			if (!lastMessage || message.id > lastMessage.id) {
 				if (!message.systemMessage) {
 					countNewMessages++
+
+					// parse mentions data to update "conversation.unreadMention",
+					// if needed
+					if (!hasNewMention && hasMentionToSelf(context, message)) {
+						hasNewMention = true
+					}
 				}
 				lastMessage = message
-				// TODO: parse mentions data to update "conversation.unreadMention"
 			}
 
 			// in case we encounter an already read message, reset the counter
@@ -661,7 +704,14 @@ const actions = {
 			})
 		}
 
-		context.commit('updateUnreadMessages', { token, unreadMessages: conversation.unreadMessages + countNewMessages })
+		if (countNewMessages > 0) {
+			context.commit('updateUnreadMessages', {
+				token,
+				unreadMessages: conversation.unreadMessages + countNewMessages,
+				// only update the value if it's true
+				unreadMention: hasNewMention || undefined,
+			})
+		}
 
 		return response
 	},
