@@ -25,12 +25,15 @@
 		@mouseover="showShadow"
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
-		<video v-show="localMediaModel.attributes.videoEnabled"
-			id="localVideo"
-			ref="video"
-			disablePictureInPicture="true"
-			:class="videoClass"
-			class="video" />
+		<div v-show="localMediaModel.attributes.videoEnabled"
+			class="videoWrapper">
+			<video
+				id="localVideo"
+				ref="video"
+				disablePictureInPicture="true"
+				:class="videoClass"
+				class="video" />
+		</div>
 		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground
 				v-if="isGrid || isStripe"
@@ -309,6 +312,7 @@ export default {
 	flex-direction: column;
 }
 
+.videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
