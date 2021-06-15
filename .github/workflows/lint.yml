@@ -80,7 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up node ${{ matrix.node-versions }}
+      - name: Set up node
         uses: actions/setup-node@v2
         with:
           node-version: 14
