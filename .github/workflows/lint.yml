@@ -76,7 +76,7 @@ jobs:
   stylelint:
     runs-on: ubuntu-latest
 
-    name: stylelint node${{ matrix.node-versions }}
+    name: stylelint node
     steps:
       - uses: actions/checkout@v2
 
