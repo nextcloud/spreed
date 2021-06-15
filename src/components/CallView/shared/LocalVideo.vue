@@ -26,6 +26,7 @@
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
 		<div v-show="localMediaModel.attributes.videoEnabled"
+			:class="videoWrapperClass"
 			class="videoWrapper">
 			<video
 				id="localVideo"
@@ -45,7 +46,8 @@
 				:disable-tooltip="true"
 				:show-user-status="false"
 				:user="userId"
-				:display-name="displayName" />
+				:display-name="displayName"
+				:class="avatarClass" />
 			<div v-if="!userId"
 				:class="guestAvatarClass"
 				class="avatar guest">
@@ -87,6 +89,7 @@ import {
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
 import VideoBackground from './VideoBackground'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
 
 export default {
 
@@ -142,8 +145,17 @@ export default {
 			return t('spreed', 'Back')
 		},
 
+		isNotConnected() {
+			// When there is no sender participant (when the MCU is not used, or
+			// if it is used but no peer object has been set yet) the local
+			// video is shown as connected.
+			return this.localCallParticipantModel.attributes.connectionState !== null
+				&& this.localCallParticipantModel.attributes.connectionState !== ConnectionState.CONNECTED && this.localCallParticipantModel.attributes.connectionState !== ConnectionState.COMPLETED
+		},
+
 		videoContainerClass() {
 			return {
+				'not-connected': this.isNotConnected,
 				speaking: this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
@@ -175,12 +187,26 @@ export default {
 			)
 		},
 
+		videoWrapperClass() {
+			return {
+				'icon-loading': this.isNotConnected,
+			}
+		},
+
 		avatarSize() {
 			return this.useConstrainedLayout ? 64 : 128
 		},
 
+		avatarClass() {
+			return {
+				'icon-loading': this.isNotConnected,
+			}
+		},
+
 		guestAvatarClass() {
-			return 'avatar-' + this.avatarSize + 'px']
+			return Object.assign(this.avatarClass, {
+				['avatar-' + this.avatarSize + 'px']: true,
+			})
 		},
 
 		localStreamVideoError() {
@@ -299,6 +325,13 @@ export default {
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
+.not-connected {
+	video,
+	.avatar-container {
+		opacity: 0.5;
+	}
+}
+
 .video-container-grid {
 	position:relative;
 	height: 100%;
@@ -321,6 +354,12 @@ export default {
 .video {
 	height: 100%;
 	width: 100%;
+}
+
+.videoWrapper.icon-loading:after {
+	height: 60px;
+	width: 60px;
+	margin: -32px 0 0 -32px;
 }
 
 .video--fit {
