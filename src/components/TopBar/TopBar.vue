@@ -130,7 +130,7 @@
 					@click="openSidebar">
 					<MessageText
 						slot="icon"
-						:size="24"
+						:size="16"
 						title=""
 						fill-color="#ffffff"
 						decorative />
@@ -320,11 +320,7 @@ export default {
 
 			// new messages arrived
 			if (newValue > 0 && oldValue === 0) {
-				if (this.hasUnreadMentions) {
-					showMessage(t('spreed', 'You have been mentioned in the chat.'))
-				} else {
-					showMessage(t('spreed', 'You have new unread messages in the chat.'))
-				}
+				showMessage(t('spreed', 'You have new unread messages in the chat.'))
 			}
 		},
 
@@ -333,6 +329,7 @@ export default {
 				return
 			}
 
+			// prevent duplicate notification caused by unreadMessagesCounter in case of mention
 			if (newValue && this.unreadMessagesCounter > 0) {
 				showMessage(t('spreed', 'You have been mentioned in the chat.'))
 			}
