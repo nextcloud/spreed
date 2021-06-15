@@ -55,7 +55,7 @@ jobs:
   node:
     runs-on: ubuntu-latest
 
-    name: eslint node${{ matrix.node-versions }}
+    name: eslint node
     steps:
       - uses: actions/checkout@v2
 
