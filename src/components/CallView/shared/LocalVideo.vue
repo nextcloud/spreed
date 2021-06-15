@@ -44,7 +44,7 @@
 				:user="userId"
 				:display-name="displayName" />
 			<div v-if="!userId"
-				:class="avatarSizeClass"
+				:class="guestAvatarClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
 			</div>
@@ -171,8 +171,8 @@ export default {
 			return this.useConstrainedLayout ? 64 : 128
 		},
 
-		avatarSizeClass() {
-			return 'avatar-' + this.avatarSize + 'px'
+		guestAvatarClass() {
+			return 'avatar-' + this.avatarSize + 'px']
 		},
 
 		localStreamVideoError() {
