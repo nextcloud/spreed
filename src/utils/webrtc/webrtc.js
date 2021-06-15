@@ -691,6 +691,43 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	function setHandlerForOwnIceConnectionStateChange(peer) {
+		peer.pc.addEventListener('iceconnectionstatechange', function() {
+			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
+
+			switch (peer.pc.iceConnectionState) {
+			case 'checking':
+				console.debug('Connecting own peer...', peer)
+
+				break
+			case 'connected':
+			case 'completed':
+				console.debug('Connection established (own peer).', peer)
+
+				break
+			case 'disconnected':
+				console.debug('Disconnected (own peer).', peer)
+
+				setTimeout(function() {
+					if (peer.pc.iceConnectionState !== 'disconnected') {
+						return
+					}
+
+					peer.emit('extendedIceConnectionStateChange', 'disconnected-long')
+				}, 5000)
+				break
+			case 'failed':
+				console.debug('Connection failed (own peer).', peer)
+
+				break
+			case 'closed':
+				console.debug('Connection closed (own peer).', peer)
+
+				break
+			}
+		})
+	}
+
 	const forceReconnect = function(signaling, flags) {
 		if (ownPeer) {
 			webrtc.removePeers(ownPeer.id)
@@ -856,7 +893,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		if (peer.type === 'video') {
 			if (peer.id === signaling.getSessionId()) {
-				console.debug('Not adding ICE connection state handler for own peer', peer)
+				setHandlerForOwnIceConnectionStateChange(peer)
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 			}
