@@ -192,6 +192,7 @@ export default {
 				|| !this.$store.getters.getSidebarStatus
 				|| !this.isActive) {
 				this.debounceSlowUpdateParticipants()
+				return
 			}
 
 			this.debounceFastUpdateParticipants()
