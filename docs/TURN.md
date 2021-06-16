@@ -120,6 +120,31 @@ simple-log
 
 - `sudo systemctl restart coturn` or corresponding restart method
 
+##### TURN server and internal networks
+
+If your TURN server has access to an internal network you should prevent access to the local/internal IPs from the TURN server, except those that are actually needed (like the High Performance Backend if you are using it) by setting the [`denied-peer-ip` and `allowed-peer-ip` parameters](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L523-L537). For example:
+```
+allowed-peer-ip={IP_ADDRESS_OF_THE_HIGH_PERFORMANCE_BACKEND}
+denied-peer-ip=0.0.0.0-0.255.255.255
+denied-peer-ip=10.0.0.0-10.255.255.255
+denied-peer-ip=100.64.0.0-100.127.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=169.254.0.0-169.254.255.255
+denied-peer-ip=172.16.0.0-172.31.255.255
+denied-peer-ip=192.0.0.0-192.0.0.255
+denied-peer-ip=192.0.2.0-192.0.2.255
+denied-peer-ip=192.88.99.0-192.88.99.255
+denied-peer-ip=192.168.0.0-192.168.255.255
+denied-peer-ip=198.18.0.0-198.19.255.255
+denied-peer-ip=198.51.100.0-198.51.100.255
+denied-peer-ip=203.0.113.0-203.0.113.255
+denied-peer-ip=240.0.0.0-255.255.255.255
+```
+
+Otherwise [a malicious user could access services in that internal network through your TURN server](https://www.rtcsec.com/2020/04/01-slack-webrtc-turn-compromise/).
+
+Alternatively you could of course prevent access to that internal network from the TURN server by means of a firewall.
+
 #### 4. Configure Nextcloud Talk to use your TURN server
 
 - Go to Nextcloud admin panel > Talk settings. Btw. if you already have your own TURN server, you can and may want to use it as STUN server as well:
