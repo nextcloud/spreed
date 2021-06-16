@@ -186,7 +186,6 @@ export default {
 		if (!getCurrentUser()) {
 			EventBus.$off('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
 		}
-		EventBus.$off('Signaling::participantListChanged', this.debounceRefreshCurrentConversation)
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 
@@ -197,7 +196,6 @@ export default {
 			})
 			EventBus.$on('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
 		}
-		EventBus.$on('Signaling::participantListChanged', this.debounceRefreshCurrentConversation)
 
 		if (this.$route.name === 'conversation') {
 			// Update current token in the token store
