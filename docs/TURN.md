@@ -128,6 +128,18 @@ simple-log
 
 - `sudo systemctl restart coturn` or corresponding restart method
 
+##### Disabling UDP or TCP protocols
+
+Unless you have some special need, you should always enable both UDP and TCP protocols in your TURN server, as that provides the maximum compatibility. However, if you must limit the connections from clients to the TURN server through UDP or TCP protocols you can do that by enabling one the following settings, depending on the case:
+```
+no-udp
+no-tcp
+```
+
+Please note that those settings only limit the protocols from the client to the TURN server. The relayed protocol from the TURN server to the other end (Janus if the High Performance Backend is being used, another client or TURN server if it is not) must be UDP; _coTURN_ provides the setting `no-udp-relay` to disable the UDP protocol for the relayed connection, but enabling it would cause the TURN server to be unusable in a WebRTC context.
+
+Also keep in mind that disabling the UDP protocol from clients to the TURN server with `no-udp` in practice disables STUN on that server, as neither Janus nor the clients currently support STUN over TCP.
+
 ##### TURN server and internal networks
 
 If your TURN server has access to an internal network you should prevent access to the local/internal IPs from the TURN server, except those that are actually needed (like the High Performance Backend if you are using it) by setting the [`denied-peer-ip` and `allowed-peer-ip` parameters](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L523-L537). For example:
