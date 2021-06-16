@@ -9,6 +9,14 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus to be most flexible and guarantee functionality of your Nextcloud Talk instance in all possible connection cases, you would want to setup a TURN server.
 
+#### TURN server and Nextcloud Talk High Performance Backend
+
+A TURN server might be needed even if the Nextcloud Talk High Performance Backend is used and it is publicly accessible.
+
+The High Performance Backend uses a certain range of ports for WebRTC media connections (20000-40000 by default). A client could be behind a restrictive firewall that only allows connections to port 443, so even if the High Performance Backend is publicly accessible the client would need to connect to a TURN server in port 443, and the TURN server will then relay the packets to the 20000-40000 range in the High Performance Backend.
+
+For maximum compatibility the TURN server should be configured to listen on port 443. Therefore, when both a TURN server and the High Performance Backend are used each one should run in its own server, or in the same server but each one with its own IP address, as the High Performance Backend will need to bind to port 443 too.
+
 ## Install and setup _coTURN_ as TURN server
 
 It is recommended to install the latest _coTURN_ version; at the very minimum _coTURN_ 4.5.0.8 should be used. In previous versions there is a bug that causes [the IPv6 UDP sockets created by coTURN not to be freed](https://github.com/coturn/coturn/issues/217). Due to this the _turn_ process ends not being able to open new ports and thus not being able to serve new connections. Moreover, when that happens, even if there are no connections a high CPU load will be caused by the _turn_ process. Therefore, if you can not install _coTURN_ 4.5.0.8 or a later version you should restart the _turn_ process periodically to work around that issue.
