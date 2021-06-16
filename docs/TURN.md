@@ -52,7 +52,7 @@ Depending on the system configuration Linux kernel capabilities could be used to
 setcap cap_net_bind_service=+ep /usr/bin/turnserver
 ```
 
-Alternatively, if the system configuration does not allow to set the capability, you could configure the _coturn_ service to be executed by root instead of the unprivileged user by executing:
+Alternatively, if the system configuration does not allow to set the capability, or if the coturn process needs to access files only readable by root like a SSL certificate for TLS connections, you could configure the _coturn_ service to be executed by root instead of the unprivileged user by executing:
 ```
 systemctl edit coturn
 ```
@@ -87,12 +87,17 @@ no-loopback-peers # Only on coTURN below v4.5.1.0!
 no-multicast-peers
 ```
 
-!!! note
+- Support for TLS connections to the TURN server has been added in Talk 11. In some cases clients can be behind very restrictive firewalls that only allow TLS connections; in those cases the clients would be able to connect with other clients or the High Performance Backend only through a TURN server and a TLS connection. However, please note that TLS connections do not provide any additional security, as media streams are always end-to-end* encrypted in WebRTC; enabling TLS is just a matter of providing the maximum compatibility.
 
-    (D)TLS is currently not supported by Nextcloud Talk and does not have any real security benefit anyway. See the following discussions why (D)TLS for TURN has no real security benefit and why Nextcloud Talk is not supporting it:
-    
-    - [https://github.com/coturn/coturn/issues/33](https://github.com/coturn/coturn/issues/33)
-    - [https://github.com/nextcloud/spreed/issues/257](https://github.com/nextcloud/spreed/issues/257)
+  *When the High Performance Backend is used the High Performance Backend is one of the ends; in that case the media streams are not end-to-end encrypted between the participants but only between participants and the High Performance Backend.
+
+  Also note that even with TURN over TLS a client may not be able to connect with the TURN server if the firewall performs deep packet inspection and drops packets to port 443 that are not really HTTPS packets. This would be a corner case, though, as given that the connection is encrypted in order to inspect the packets that means that the firewall acts as a man-in-the-middle and the connection is not actually encrypted end-to-end. There is nothing that can be done in that case, but it should be rather uncommon.
+
+  In order to use TLS connections to the TURN server the TURN server requires a SSL certificate and, therefore, a domain. The path to the certificate file must be set in the [`cert` parameter](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L442-L446), and the private key file must be set in the [`pkey` file](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L448-L452). Besides that in [Talk settings](#4-configure-nextcloud-talk-to-use-your-turn-server) you must set the TURN server scheme as `turns:` or `turn: and turns:`.
+
+  Note that, even if TLS provides the maximum compatibility, using a domain can cause problems with Firefox on a very specific scenario: [currently Firefox does not perform DNS requests through HTTP tunnels](https://bugzilla.mozilla.org/show_bug.cgi?id=1239006), so even if the WebRTC connection would work through the TURN server the TURN server may not be reachable.
+
+- The recommended listening port is port 443, even if only _turn:_ but not _turns:_ is used. In some cases firewalls restrict connections only to port 443, but they do not actually check whether the connection is a TLS connection or not. Nevertheless, as mentioned above using both _turn:_ and _turns:_ is recommended for maximum compatibility.
 
 - The `total-quota` parameter limits the number of allowed simultaneous connections to the TURN server. Along with [`max-bps` and `bps-capacity`](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L414-L423) it can be used to limit the effects of a [DoS attack against the TURN server](https://tools.ietf.org/html/rfc8656#section-21.3.1). The value of _0_ shown above means _unlimited_; if a connection limit is desired it should be adjusted depending on your specific setup.
 
@@ -124,7 +129,7 @@ simple-log
     * TURN secret: <yourChosen/GeneratedSecret>
     * Protocol: UDP and TCP
 
-- Do not add `http(s)://` or `turn(s)://` protocol prefix here, just enter the bare `domain:port`. Nextcloud Talk adds the required `turn://` protocol internally to the request.
+- Do not add `http(s)://` or `turn(s)://` protocol prefix here, just enter the bare `domain:port`. The protocol (`turn:` and/or `turns:`) needs to be selected in the dropdown.
 
 #### 5. Port opening/forwarding
 
