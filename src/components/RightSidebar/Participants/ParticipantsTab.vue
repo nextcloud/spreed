@@ -86,6 +86,10 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		isActive: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -183,11 +187,27 @@ export default {
 			}
 		}, 250),
 
-		debounceUpdateParticipants: debounce(function() {
+		debounceUpdateParticipants() {
+			if (!this.$store.getters.windowIsVisible()
+				|| !this.$store.getters.getSidebarStatus
+				|| !this.isActive) {
+				this.debounceSlowUpdateParticipants()
+			}
+
+			this.debounceFastUpdateParticipants()
+		},
+
+		debounceSlowUpdateParticipants: debounce(function() {
 			if (!this.fetchingParticipants) {
 				this.cancelableGetParticipants()
 			}
-		}, 2000),
+		}, 15000),
+
+		debounceFastUpdateParticipants: debounce(function() {
+			if (!this.fetchingParticipants) {
+				this.cancelableGetParticipants()
+			}
+		}, 3000),
 
 		async fetchSearchResults() {
 			try {
