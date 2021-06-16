@@ -52,6 +52,7 @@
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
 			<ParticipantsTab
+				:is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</AppSidebarTab>
