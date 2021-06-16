@@ -176,6 +176,14 @@ Alternatively you could of course prevent access to that internal network from t
 
 - Do not add `http(s)://` or `turn(s)://` protocol prefix here, just enter the bare `domain:port`. The protocol (`turn:` and/or `turns:`) needs to be selected in the dropdown.
 
+##### Changes in Talk 12
+
+In Talk 11 and previous versions when several STUN or TURN servers were listed in the settings a random one was provided to the clients. Starting with Talk 12 all the STUN and TURN servers listed in the settings are now returned.
+
+Nevertheless, please note that in most cases you will not need to set up several TURN servers to ensure that the clients can connect to them. In general a single TURN server using both _turn:_ and _turns:_ with UDP and TCP on port 443 should be enough. Also keep in mind that clients will try to connect to all configured STUN and TURN servers when joining a call, even if they are not actually used in the end.
+
+If you need to retain the previous behaviour you should now do it by external means. For example, by using a properly configured load balancer in front of the TURN servers and configuring only that load balancer as the TURN server in Talk settings.
+
 #### 5. Port opening/forwarding
 
 - The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine. Also make sure to set the [`--external-ip` option](https://github.com/coturn/coturn/wiki/turnserver#options) when your TURN server is in a private network.
