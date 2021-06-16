@@ -180,6 +180,9 @@ Alternatively you could of course prevent access to that internal network from t
 
 - The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine. Also make sure to set the [`--external-ip` option](https://github.com/coturn/coturn/wiki/turnserver#options) when your TURN server is in a private network.
 
+- If the High Performance Backend is used the TURN server and the High Performance Backend must be able to reach each other. If set, the `external-ip` option defines the IP address of the TURN server that the High Performance Backend will try to connect to. Therefore if both the TURN server and the High Performance Backend are in the same private network they may be able to reach each other using their local IP addresses, and thus it may not be needed to set the `external-ip` option. Moreover, when both servers are behind a firewall, in some cases (depending on the firewall configuration) setting the external IP can even cause the TURN server and the High Performance Backend to fail to reach each other (for example, if the firewall is not able to "loop" a packet from an internal address to an external one which then should go back to another internal address).
+  - Note that in some cases additional addresses can be found during the negotiation of the connection, the so called peer reflexive candidates. Due to this even if the external IP of the TURN server is not reachable by the High Performance Backend the connection may still work, but this should not be relied on.
+
 #### 6. Testing the TURN server
 
 When the TURN server is set in the Talk settings a basic test against the TURN server is performed. You can perform a deeper test by forcing your browser to send the media of a call only through the TURN server:
