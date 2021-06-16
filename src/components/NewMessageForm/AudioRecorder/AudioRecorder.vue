@@ -102,8 +102,6 @@ export default {
 			chunks: [],
 			// The final audio file blob
 			blob: null,
-			// The blob url
-			URL: '',
 			// Switched to true if the recording is aborted
 			aborted: false,
 			// recordTimer
@@ -237,14 +235,14 @@ export default {
 		generateFile() {
 			this.audioStream.getTracks().forEach(track => track.stop())
 			if (!this.aborted) {
-				this.blob = new Blob(this.chunks, { 'type': 'audio/mpeg-3' })
+				this.blob = new Blob(this.chunks, { type: 'audio/mpeg-3' })
 				// Generate file name
 				const fileName = this.generateFileName()
 				// Convert blob to file
 				const audioFile = new File([this.blob], fileName)
+				audioFile.localURL = window.URL.createObjectURL(this.blob)
 				this.$emit('audioFile', audioFile)
 				this.$emit('recording', false)
-				this.URL = window.URL.createObjectURL(this.blob)
 			}
 			this.resetComponentData()
 		},
