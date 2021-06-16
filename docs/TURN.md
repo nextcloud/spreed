@@ -43,6 +43,26 @@ It is recommended to install the latest _coTURN_ version; at the very minimum _c
 - `-o` starts the server in daemon mode, `-c` defines the path to the config file.
 - There is also an official example available at [https://github.com/coturn/coturn/blob/master/examples/etc/coturn.service](https://github.com/coturn/coturn/blob/master/examples/etc/coturn.service)
 
+##### Running coTURN on privileged ports
+
+On some GNU/Linux distributions (for example, **Ubuntu Focal and later**) when _coTURN_ is installed from the official package the _coturn_ service is executed as an unprivileged user like _turnserver_. Due to this by default _coTURN_ can not use privileged ports, like port 443.
+
+Depending on the system configuration Linux kernel capabilities could be used to overcome this limitation. Capabilities can be associated with executable files using _setcap_, so you could allow the _/usr/bin/turnserver_ executable to bind sockets to privileged ports with:
+```
+setcap cap_net_bind_service=+ep /usr/bin/turnserver
+```
+
+Alternatively, if the system configuration does not allow to set the capability, you could configure the _coturn_ service to be executed by root instead of the unprivileged user by executing:
+```
+systemctl edit coturn
+```
+and then setting the following configuration, which will override the default one:
+```
+[Service]
+User=root
+Group=root
+```
+
 #### 3. Configure `turnserver.conf` for usage with Nextcloud Talk
 
 - Next you need to adjust the coTURN configuration file to work with Nextcloud Talk.
