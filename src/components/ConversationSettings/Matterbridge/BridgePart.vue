@@ -59,6 +59,8 @@
 			v-for="(field, key) in displayedFields"
 			:key="key"
 			class="field">
+			<!-- TODO: do not mutate prop `part` directly -->
+			<!-- eslint-disable -->
 			<div v-if="field.type === 'checkbox'" class="checkbox-container">
 				<input
 					:id="key + '-' + num"
@@ -85,6 +87,7 @@
 					:readonly="readonly || !editing"
 					@focus="readonly = false">
 			</div>
+			<!-- eslint-enable -->
 		</div>
 	</div>
 </template>
