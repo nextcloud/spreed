@@ -84,6 +84,7 @@ export default {
 			roomOptions: [],
 			hasImportantConversations: false,
 			loading: true,
+			windowVisibility: true,
 		}
 	},
 
@@ -145,14 +146,31 @@ export default {
 		},
 	},
 
+	watch: {
+		windowVisibility(newValue) {
+			if (newValue) {
+				this.fetchRooms()
+			}
+		},
+	},
+
+	beforeDestroy() {
+		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
+	},
+
 	beforeMount() {
 		this.fetchRooms()
-		// FIXME: reduce interval if user not active
-		setInterval(() => this.fetchRooms(), ROOM_POLLING_INTERVAL * 1000)
+		setInterval(this.fetchRooms, ROOM_POLLING_INTERVAL * 1000)
+		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 
 	methods: {
 		fetchRooms() {
+			if (!this.windowVisibility) {
+				// Dashboard is not visible, so don't update the room list
+				return
+			}
+
 			axios.get(generateOcsUrl('apps/spreed/api/v4/room')).then((response) => {
 				const rooms = response.data.ocs.data
 				const importantRooms = rooms.filter((conversation) => {
@@ -172,6 +190,10 @@ export default {
 
 				this.loading = false
 			})
+		},
+
+		changeWindowVisibility() {
+			this.windowVisibility = !document.hidden
 		},
 
 		clickStartNew() {
