@@ -21,6 +21,7 @@
 
 namespace OCA\Talk\Tests\php\Chat\Parser;
 
+use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
@@ -63,6 +64,8 @@ class SystemMessageTest extends TestCase {
 	protected $previewManager;
 	/** @var RoomShareProvider|MockObject */
 	protected $shareProvider;
+	/** @var PhotoCache|MockObject */
+	protected $photoCache;
 	/** @var IRootFolder|MockObject */
 	protected $rootFolder;
 	/** @var IURLGenerator|MockObject */
@@ -78,6 +81,7 @@ class SystemMessageTest extends TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->previewManager = $this->createMock(IPreviewManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
+		$this->photoCache = $this->createMock(PhotoCache::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->l = $this->createMock(IL10N::class);
@@ -107,6 +111,7 @@ class SystemMessageTest extends TestCase {
 					$this->guestManager,
 					$this->previewManager,
 					$this->shareProvider,
+					$this->photoCache,
 					$this->rootFolder,
 					$this->url,
 				])
@@ -121,6 +126,7 @@ class SystemMessageTest extends TestCase {
 			$this->guestManager,
 			$this->previewManager,
 			$this->shareProvider,
+			$this->photoCache,
 			$this->rootFolder,
 			$this->url
 		);
@@ -540,7 +546,7 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getName')
 			->willReturn('name');
-		$node->expects($this->once())
+		$node->expects($this->atLeastOnce())
 			->method('getMimeType')
 			->willReturn('text/plain');
 		$node->expects($this->once())
@@ -601,7 +607,7 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getPath')
 			->willReturn('/owner/files/path/to/file/name');
-		$node->expects($this->once())
+		$node->expects($this->atLeastOnce())
 			->method('getMimeType')
 			->willReturn('httpd/unix-directory');
 		$node->expects($this->once())
@@ -666,7 +672,7 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getName')
 			->willReturn('name');
-		$node->expects($this->once())
+		$node->expects($this->atLeastOnce())
 			->method('getMimeType')
 			->willReturn('application/octet-stream');
 		$node->expects($this->once())
