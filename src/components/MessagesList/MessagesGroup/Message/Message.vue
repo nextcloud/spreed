@@ -222,6 +222,7 @@ import {
 } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
+import Contact from './MessagePart/Contact.vue'
 
 export default {
 	name: 'Message',
@@ -488,12 +489,14 @@ export default {
 			const richParameters = {}
 			Object.keys(this.messageParameters).forEach(function(p) {
 				const type = this.messageParameters[p].type
+				console.debug(this.messageParameters[p].mimetype)
+				const mimetype = this.messageParameters[p].mimetype
 				if (type === 'user' || type === 'call' || type === 'guest') {
 					richParameters[p] = {
 						component: Mention,
 						props: this.messageParameters[p],
 					}
-				} else if (type === 'file') {
+				} else if (type === 'file' && mimetype !== 'text/vcard') {
 					richParameters[p] = {
 						component: FilePreview,
 						props: this.messageParameters[p],
@@ -506,6 +509,11 @@ export default {
 				} else if (type === 'geo-location') {
 					richParameters[p] = {
 						component: Location,
+						props: this.messageParameters[p],
+					}
+				} else if (mimetype === 'text/vcard') {
+					richParameters[p] = {
+						component: Contact,
 						props: this.messageParameters[p],
 					}
 				} else {
