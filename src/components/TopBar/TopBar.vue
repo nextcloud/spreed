@@ -198,6 +198,12 @@ export default {
 		},
 	},
 
+	data: () => {
+		return {
+			unreadNotificationHandle: null,
+		}
+	},
+
 	computed: {
 		isFullscreen() {
 			return this.$store.getters.isFullscreen()
@@ -319,8 +325,8 @@ export default {
 			}
 
 			// new messages arrived
-			if (newValue > 0 && oldValue === 0) {
-				showMessage(t('spreed', 'You have new unread messages in the chat.'))
+			if (newValue > 0 && oldValue === 0 && !this.hasUnreadMentions) {
+				this.notifyUnreadMessages(t('spreed', 'You have new unread messages in the chat.'))
 			}
 		},
 
@@ -329,9 +335,15 @@ export default {
 				return
 			}
 
-			// prevent duplicate notification caused by unreadMessagesCounter in case of mention
-			if (newValue && this.unreadMessagesCounter > 0) {
-				showMessage(t('spreed', 'You have been mentioned in the chat.'))
+			if (newValue) {
+				this.notifyUnreadMessages(t('spreed', 'You have been mentioned in the chat.'))
+			}
+		},
+
+		isInCall(newValue) {
+			if (!newValue) {
+				// discard notification if the call ends
+				this.notifyUnreadMessages(null)
 			}
 		},
 	},
@@ -344,6 +356,7 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.notifyUnreadMessages(null)
 		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
@@ -351,6 +364,16 @@ export default {
 	},
 
 	methods: {
+		notifyUnreadMessages(message) {
+			if (this.unreadNotificationHandle) {
+				this.unreadNotificationHandle.hideToast()
+				this.unreadNotificationHandle = null
+			}
+			if (message) {
+				this.unreadNotificationHandle = showMessage(message)
+			}
+		},
+
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'true')
