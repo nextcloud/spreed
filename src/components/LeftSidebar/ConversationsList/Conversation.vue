@@ -64,9 +64,9 @@
 			</ActionButton>
 
 			<ActionSeparator />
-
-			<ActionText
+			<ActionCaption
 				:title="t('spreed', 'Chat notifications')" />
+
 			<ActionButton
 				:class="{'forced-active': isNotifyAlways}"
 				icon="icon-sound"
@@ -109,7 +109,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText'
+import ActionCaption from '@nextcloud/vue/dist/Components/ActionCaption'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import ConversationIcon from './../../ConversationIcon'
@@ -121,7 +121,7 @@ export default {
 	components: {
 		ActionButton,
 		ActionSeparator,
-		ActionText,
+		ActionCaption,
 		AppContentListItem,
 		AppNavigationCounter,
 		ConversationIcon,
