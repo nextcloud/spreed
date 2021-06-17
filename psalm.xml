@@ -24,9 +24,10 @@
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="OC" />
-				<referencedClass name="OCA\Files_Sharing\SharedStorage" />
 				<referencedClass name="OCA\Circles\Model\Circle" />
 				<referencedClass name="OCA\Circles\Model\Member" />
+				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
+				<referencedClass name="OCA\Files_Sharing\SharedStorage" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -40,6 +41,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
 				<referencedClass name="OCA\Circles\Model\Member" />
+				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>

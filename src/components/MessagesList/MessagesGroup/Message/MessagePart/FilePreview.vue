@@ -65,7 +65,7 @@
 		</button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div class="name-container">
-			<strong v-if="shouldShowFileName">{{ name }}</strong>
+			<strong v-if="shouldShowFileDetail">{{ fileDetail }}</strong>
 		</div>
 	</file-preview>
 </template>
@@ -153,6 +153,7 @@ export default {
 			type: String,
 			default: 'no',
 		},
+
 		/**
 		 * Whether to render a small preview to embed in replies
 		 */
@@ -204,8 +205,8 @@ export default {
 		}
 	},
 	computed: {
-		shouldShowFileName() {
-			// display the file name below the preview if the preview
+		shouldShowFileDetail() {
+			// display the file detail below the preview if the preview
 			// is not easily recognizable, when:
 			return (
 				// the file is not an image
@@ -218,8 +219,13 @@ export default {
 				|| this.isUploadEditor
 			)
 		},
+
+		fileDetail() {
+			return this.name
+		},
+
 		previewTooltip() {
-			if (this.shouldShowFileName) {
+			if (this.shouldShowFileDetail) {
 				// no tooltip as the file name is already visible directly
 				return null
 			}
@@ -229,6 +235,7 @@ export default {
 				placement: 'left',
 			}
 		},
+
 		// This is used to decide which outer element type to use
 		// a or div
 		filePreview() {
@@ -253,9 +260,11 @@ export default {
 				rel: 'noopener noreferrer',
 			}
 		},
+
 		defaultIconUrl() {
 			return imagePath('core', 'filetypes/file')
 		},
+
 		previewImageClass() {
 			let classes = ''
 			if (this.smallPreview) {
@@ -269,6 +278,7 @@ export default {
 			}
 			return classes
 		},
+
 		previewType() {
 			if (this.hasTemporaryImageUrl) {
 				return PREVIEW_TYPE.TEMPORARY
@@ -284,6 +294,7 @@ export default {
 
 			return PREVIEW_TYPE.PREVIEW
 		},
+
 		previewUrl() {
 			const userId = this.$store.getters.getUserId()
 
@@ -326,6 +337,7 @@ export default {
 				})
 			}
 		},
+
 		isViewerAvailable() {
 			if (!OCA.Viewer) {
 				return false
@@ -340,6 +352,7 @@ export default {
 
 			return false
 		},
+
 		isPlayable() {
 			// don't show play button for direct renders
 			if (this.failed || !this.isViewerAvailable || this.previewType !== PREVIEW_TYPE.PREVIEW) {
@@ -349,6 +362,7 @@ export default {
 			// videos only display a preview, so always show a button if playable
 			return this.mimetype === 'image/gif' || this.mimetype.startsWith('video/')
 		},
+
 		internalAbsolutePath() {
 			if (this.path.startsWith('/')) {
 				return this.path
@@ -356,9 +370,11 @@ export default {
 
 			return '/' + this.path
 		},
+
 		isTemporaryUpload() {
 			return this.id.startsWith('temp') && this.index && this.uploadId
 		},
+
 		uploadProgress() {
 			if (this.isTemporaryUpload) {
 				if (this.$store.getters.uploadProgress(this.uploadId, this.index)) {
@@ -368,6 +384,7 @@ export default {
 			// likely never reached
 			return 0
 		},
+
 		hasTemporaryImageUrl() {
 			return this.mimetype.startsWith('image/') && this.localUrl
 		},
@@ -380,6 +397,7 @@ export default {
 			return t('spreed', 'Remove {fileName}', { fileName: this.name })
 		},
 	},
+
 	mounted() {
 		const img = new Image()
 		img.onerror = () => {
@@ -391,6 +409,7 @@ export default {
 		}
 		img.src = this.previewUrl
 	},
+
 	methods: {
 		handleClick(event) {
 			if (this.isUploadEditor) {
