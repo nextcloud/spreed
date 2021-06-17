@@ -436,7 +436,7 @@ describe('LeftSidebar.vue', () => {
 				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
 				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
 
-				const captionsEls = appNavEl.findAllComponents({ name: 'Caption' })
+				const captionsEls = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
 				expect(captionsEls.exists()).toBe(true)
 				expect(captionsEls.length).toBeGreaterThan(1)
 				expect(captionsEls.at(0).props('title')).toBe('Conversations')
