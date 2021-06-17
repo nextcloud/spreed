@@ -28,7 +28,7 @@
 			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
-		<Caption v-if="isSearching && canAdd"
+		<AppNavigationCaption v-if="isSearching && canAdd"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
 			:search-text="searchText"
@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
@@ -69,7 +68,6 @@ export default {
 	components: {
 		CurrentParticipants,
 		SearchBox,
-		Caption,
 		ParticipantsSearchResults,
 	},
 
