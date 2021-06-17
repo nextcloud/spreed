@@ -495,9 +495,6 @@ export default {
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
-		svg {
-			margin-right: 4px !important;
-		}
 		.icon {
 			margin-right: 4px !important;
 		}
@@ -506,7 +503,7 @@ export default {
 	.unread-messages-counter {
 		position: absolute;
 		top: 40px;
-		right: 10px;
+		right: 4px;
 		pointer-events: none;
 	}
 }
