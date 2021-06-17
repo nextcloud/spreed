@@ -43,17 +43,25 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		link: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
-		 * File path relative to the user's home storage,
-		 * or link share root, includes the file name.
+		 * Link share root, includes the file name.
 		 */
 		path: {
 			type: String,
-			required: true,
+			default: '',
+		},
+		/**
+		 * File path relative to the user's home storage, used for previewing
+		 * the audio before upload
+		 */
+		localUrl: {
+			type: String,
+			default: '',
 		},
 	},
 
@@ -66,6 +74,9 @@ export default {
 		},
 
 		fileURL() {
+			if (this.localUrl) {
+				return this.localUrl
+			}
 			const userId = this.$store.getters.getUserId()
 			if (userId === null) {
 				// guest mode, use public link download URL

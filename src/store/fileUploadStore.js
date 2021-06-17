@@ -211,6 +211,8 @@ const actions = {
 			let localUrl = ''
 			if (file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpeg') {
 				localUrl = URL.createObjectURL(file)
+			} else if (isVoiceMessage) {
+				localUrl = file.localUrl
 			} else {
 				localUrl = OC.MimeType.getIconUrl(file.type)
 			}
@@ -317,7 +319,7 @@ const actions = {
 			for (const index in shareableFiles) {
 				const path = shareableFiles[index].sharePath
 				const temporaryMessage = shareableFiles[index].temporaryMessage
-				const metadata = JSON.stringify({ 'messageType': temporaryMessage.messageType })
+				const metadata = JSON.stringify({ messageType: temporaryMessage.messageType })
 				try {
 					const token = temporaryMessage.token
 					dispatch('markFileAsSharing', { uploadId, index })
