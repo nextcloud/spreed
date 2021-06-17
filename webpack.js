@@ -5,17 +5,17 @@ const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-m
 
 webpackConfig.entry = {
 	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
-	'collections': path.join(__dirname, 'src', 'collections.js'),
-	'main': path.join(__dirname, 'src', 'main.js'),
+	collections: path.join(__dirname, 'src', 'collections.js'),
+	main: path.join(__dirname, 'src', 'main.js'),
 	'files-sidebar': [
 		path.join(__dirname, 'src', 'mainFilesSidebar.js'),
 		path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
 	],
 	'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 	'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
-	'flow': path.join(__dirname, 'src', 'flow.js'),
-	'dashboard': path.join(__dirname, 'src', 'dashboard.js'),
-	'deck': path.join(__dirname, 'src', 'deck.js'),
+	flow: path.join(__dirname, 'src', 'flow.js'),
+	dashboard: path.join(__dirname, 'src', 'dashboard.js'),
+	deck: path.join(__dirname, 'src', 'deck.js'),
 }
 
 // Edit JS rule
@@ -47,6 +47,17 @@ webpackConfig.module.rules.push({
 	 */
 	test: /node_modules\/webrtc-adapter\/.*\.js$/,
 	loader: 'babel-loader',
+	options: {
+		plugins: ['add-module-exports'],
+		presets: [
+			/**
+			 * From "add-module-exports" documentation:
+			 * "webpack doesn't perform commonjs transformation for
+			 * codesplitting. Need to set commonjs conversion."
+			 */
+			['@babel/env', { modules: 'commonjs' }],
+		],
+	},
 })
 
 module.exports = webpackConfig
