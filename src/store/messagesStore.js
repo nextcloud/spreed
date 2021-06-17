@@ -687,8 +687,10 @@ const actions = {
 			// in case we encounter an already read message, reset the counter
 			// this is probably unlikely to happen unless one starts browsing from
 			// an earlier page and scrolls down
-			if (conversation.lastReadMessage.id === message.id) {
+			if (conversation.lastReadMessage === message.id) {
+				// discard counters
 				countNewMessages = 0
+				hasNewMention = conversation.unreadMention
 			}
 		})
 
@@ -708,8 +710,8 @@ const actions = {
 			context.commit('updateUnreadMessages', {
 				token,
 				unreadMessages: conversation.unreadMessages + countNewMessages,
-				// only update the value if it's true
-				unreadMention: hasNewMention || undefined,
+				// only update the value if it's been changed to true
+				unreadMention: conversation.unreadMention !== hasNewMention ? hasNewMention : undefined,
 			})
 		}
 
