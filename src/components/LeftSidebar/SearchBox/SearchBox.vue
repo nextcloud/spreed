@@ -66,7 +66,7 @@ export default {
 			default: false,
 		},
 	},
-	data: function() {
+	data() {
 		return {
 			localValue: '',
 		}

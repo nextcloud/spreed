@@ -27,7 +27,7 @@
 			:title="item.label"
 			@click="onClick(item)">
 			<template
-				v-slot:icon>
+				#icon>
 				<ConversationIcon
 					:item="iconData(item)" />
 			</template>

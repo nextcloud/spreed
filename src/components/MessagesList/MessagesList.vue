@@ -112,7 +112,7 @@ export default {
 		},
 	},
 
-	data: function() {
+	data() {
 		return {
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous

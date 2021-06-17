@@ -62,7 +62,7 @@ export default {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
 				const startTime = moment.unix(this.conversation.lobbyTimer).format('LLL')
-				message = t('spreed', 'You are currently waiting in the lobby. This meeting is scheduled for {startTime}', { startTime: startTime })
+				message = t('spreed', 'You are currently waiting in the lobby. This meeting is scheduled for {startTime}', { startTime })
 			}
 
 			return message

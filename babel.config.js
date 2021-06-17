@@ -1,11 +1,3 @@
-module.exports = {
-	presets: [
-		[
-			'@babel/preset-env',
-			{
-				corejs: 3,
-				useBuiltIns: 'entry',
-			},
-		],
-	],
-}
+const babelConfig = require('@nextcloud/babel-config')
+
+module.exports = babelConfig

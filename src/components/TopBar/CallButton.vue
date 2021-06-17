@@ -191,7 +191,7 @@ export default {
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				flags: flags,
+				flags,
 			})
 			this.loading = false
 		},

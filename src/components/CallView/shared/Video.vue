@@ -184,8 +184,8 @@ export default {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
 				'not-connected': !this.placeholderForPromoted && this.isNotConnected,
-				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
-				'promoted': !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
+				speaking: !this.placeholderForPromoted && this.model.attributes.speaking,
+				promoted: !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
@@ -395,7 +395,7 @@ export default {
 
 	watch: {
 
-		'model.attributes.stream': function(stream) {
+		'model.attributes.stream'(stream) {
 			this._setStream(stream)
 		},
 

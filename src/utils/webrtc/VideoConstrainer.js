@@ -53,7 +53,7 @@ function VideoConstrainer(localMediaModel) {
 }
 VideoConstrainer.prototype = {
 
-	applyConstraints: async function(quality) {
+	async applyConstraints(quality) {
 		if (quality === this._currentQuality) {
 			return
 		}
@@ -82,7 +82,7 @@ VideoConstrainer.prototype = {
 		this._currentQuality = quality
 	},
 
-	_applyRoughConstraints: async function(localVideoTrack, quality) {
+	async _applyRoughConstraints(localVideoTrack, quality) {
 		let constraints = this._knownValidConstraintsForQuality[quality]
 		if (!constraints) {
 			constraints = this._getConstraintsForQuality(quality)
@@ -125,7 +125,7 @@ VideoConstrainer.prototype = {
 		}
 	},
 
-	_applyRoughResolutionConstraints: async function(localVideoTrack, constraints) {
+	async _applyRoughResolutionConstraints(localVideoTrack, constraints) {
 		try {
 			await localVideoTrack.applyConstraints(constraints)
 
@@ -142,7 +142,7 @@ VideoConstrainer.prototype = {
 		}
 	},
 
-	_applyRoughFrameRateConstraints: async function(localVideoTrack, constraints) {
+	async _applyRoughFrameRateConstraints(localVideoTrack, constraints) {
 		try {
 			await localVideoTrack.applyConstraints(constraints)
 
@@ -159,7 +159,7 @@ VideoConstrainer.prototype = {
 		}
 	},
 
-	_getConstraintsForQuality: function(quality) {
+	_getConstraintsForQuality(quality) {
 		if (quality === QUALITY.HIGH) {
 			return {
 				width: {
@@ -245,7 +245,7 @@ VideoConstrainer.prototype = {
 		}
 	},
 
-	_increaseMaxResolution: function(constraints) {
+	_increaseMaxResolution(constraints) {
 		let changed = false
 
 		if (constraints.width && constraints.width.max) {
@@ -263,7 +263,7 @@ VideoConstrainer.prototype = {
 		return changed
 	},
 
-	_decreaseMinResolution: function(constraints) {
+	_decreaseMinResolution(constraints) {
 		let changed = false
 
 		if (constraints.width && constraints.width.min) {
@@ -281,7 +281,7 @@ VideoConstrainer.prototype = {
 		return changed
 	},
 
-	_increaseMaxFrameRate: function(constraints) {
+	_increaseMaxFrameRate(constraints) {
 		let changed = false
 
 		if (constraints.frameRate && constraints.frameRate.max) {
@@ -293,7 +293,7 @@ VideoConstrainer.prototype = {
 		return changed
 	},
 
-	_decreaseMinFrameRate: function(constraints) {
+	_decreaseMinFrameRate(constraints) {
 		let changed = false
 
 		if (constraints.frameRate && constraints.frameRate.min) {

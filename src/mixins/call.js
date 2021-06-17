@@ -26,8 +26,8 @@ const call = {
 	data() {
 		return {
 			screens: [],
-			localMediaModel: localMediaModel,
-			localCallParticipantModel: localCallParticipantModel,
+			localMediaModel,
+			localCallParticipantModel,
 			sharedDatas: {},
 			speakingUnwatchers: {},
 			screenUnwatchers: {},
@@ -36,7 +36,7 @@ const call = {
 			localSharedData: {
 				screenVisible: true,
 			},
-			callParticipantCollection: callParticipantCollection,
+			callParticipantCollection,
 		}
 	},
 
@@ -196,23 +196,23 @@ const call = {
 
 	watch: {
 
-		localScreen: function(localScreen) {
+		localScreen(localScreen) {
 			this._setScreenAvailable(localCallParticipantModel.attributes.peerId, localScreen)
 		},
 
-		callParticipantModels: function(models) {
+		callParticipantModels(models) {
 			this.updateDataFromCallParticipantModels(models)
 		},
 
-		'speakers': function() {
+		speakers() {
 			this._setPromotedParticipant()
 		},
 
-		'screenSharingActive': function() {
+		screenSharingActive() {
 			this._setPromotedParticipant()
 		},
 
-		'screens': function() {
+		screens() {
 			this._setScreenVisible()
 		},
 

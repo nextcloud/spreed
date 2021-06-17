@@ -55,11 +55,11 @@ export default function SpeakingWhileMutedWarner(model, view) {
 }
 SpeakingWhileMutedWarner.prototype = {
 
-	destroy: function() {
+	destroy() {
 		this._model.off('change:speakingWhileMuted', this._handleSpeakingWhileMutedChangeBound)
 	},
 
-	_handleSpeakingWhileMutedChange: function(model, speakingWhileMuted) {
+	_handleSpeakingWhileMutedChange(model, speakingWhileMuted) {
 		if (speakingWhileMuted) {
 			this._handleSpeakingWhileMuted()
 		} else {
@@ -67,7 +67,7 @@ SpeakingWhileMutedWarner.prototype = {
 		}
 	},
 
-	_handleSpeakingWhileMuted: function() {
+	_handleSpeakingWhileMuted() {
 		this._startedSpeakingTimeout = setTimeout(function() {
 			delete this._startedSpeakingTimeout
 
@@ -75,7 +75,7 @@ SpeakingWhileMutedWarner.prototype = {
 		}.bind(this), 3000)
 	},
 
-	_handleStoppedSpeakingWhileMuted: function() {
+	_handleStoppedSpeakingWhileMuted() {
 		if (this._startedSpeakingTimeout) {
 			clearTimeout(this._startedSpeakingTimeout)
 			delete this._startedSpeakingTimeout
@@ -84,7 +84,7 @@ SpeakingWhileMutedWarner.prototype = {
 		this._hideWarning()
 	},
 
-	_showWarning: function() {
+	_showWarning() {
 		const message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you')
 
 		if (!document.hidden) {
@@ -102,7 +102,7 @@ SpeakingWhileMutedWarner.prototype = {
 		}
 	},
 
-	_showNotification: function(message) {
+	_showNotification(message) {
 		if (this._notification) {
 			return
 		}
@@ -111,7 +111,7 @@ SpeakingWhileMutedWarner.prototype = {
 		this._notification = true
 	},
 
-	_showBrowserNotification: function(message) {
+	_showBrowserNotification(message) {
 		return new Promise(function(resolve, reject) {
 			if (this._browserNotification) {
 				resolve()
@@ -154,7 +154,7 @@ SpeakingWhileMutedWarner.prototype = {
 		}.bind(this))
 	},
 
-	_hideWarning: function() {
+	_hideWarning() {
 		this._pendingBrowserNotification = false
 
 		if (this._notification) {

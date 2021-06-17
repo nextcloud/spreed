@@ -105,11 +105,11 @@ export default function MediaDevicesManager() {
 }
 MediaDevicesManager.prototype = {
 
-	get: function(key) {
+	get(key) {
 		return this.attributes[key]
 	},
 
-	set: function(key, value) {
+	set(key, value) {
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
@@ -117,7 +117,7 @@ MediaDevicesManager.prototype = {
 		this._storeDeviceId(key, value)
 	},
 
-	_storeDeviceId: function(key, value) {
+	_storeDeviceId(key, value) {
 		if (key !== 'audioInputId' && key !== 'videoInputId') {
 			return
 		}
@@ -133,15 +133,15 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	on: function(event, handler) {
-		if (!this._handlers.hasOwnProperty(event)) {
+	on(event, handler) {
+		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
 			this._handlers[event] = [handler]
 		} else {
 			this._handlers[event].push(handler)
 		}
 	},
 
-	off: function(event, handler) {
+	off(event, handler) {
 		const handlers = this._handlers[event]
 		if (!handlers) {
 			return
@@ -153,7 +153,7 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	_trigger: function(event, args) {
+	_trigger(event, args) {
 		let handlers = this._handlers[event]
 		if (!handlers) {
 			return
@@ -179,11 +179,11 @@ MediaDevicesManager.prototype = {
 	 * @returns {boolean} true if MediaDevices interface is supported, false
 	 *          otherwise.
 	 */
-	isSupported: function() {
+	isSupported() {
 		return navigator && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && navigator.mediaDevices.enumerateDevices
 	},
 
-	enableDeviceEvents: function() {
+	enableDeviceEvents() {
 		if (!this.isSupported()) {
 			return
 		}
@@ -195,7 +195,7 @@ MediaDevicesManager.prototype = {
 		navigator.mediaDevices.addEventListener('devicechange', this._updateDevicesBound)
 	},
 
-	disableDeviceEvents: function() {
+	disableDeviceEvents() {
 		if (!this.isSupported()) {
 			return
 		}
@@ -207,7 +207,7 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	_updateDevices: function() {
+	_updateDevices() {
 		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then(devices => {
 			const previousAudioInputId = this.attributes.audioInputId
 			const previousVideoInputId = this.attributes.videoInputId
@@ -243,7 +243,7 @@ MediaDevicesManager.prototype = {
 		})
 	},
 
-	_removeDevice: function(removedDevice) {
+	_removeDevice(removedDevice) {
 		const removedDeviceIndex = this.attributes.devices.findIndex(oldDevice => oldDevice.deviceId === removedDevice.deviceId && oldDevice.kind === removedDevice.kind)
 		if (removedDeviceIndex >= 0) {
 			this.attributes.devices.splice(removedDeviceIndex, 1)
@@ -268,7 +268,7 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	_updateDevice: function(updatedDevice) {
+	_updateDevice(updatedDevice) {
 		const oldDevice = this.attributes.devices.find(oldDevice => oldDevice.deviceId === updatedDevice.deviceId && oldDevice.kind === updatedDevice.kind)
 
 		// Only update the label if it has a value, as it may have been
@@ -282,7 +282,7 @@ MediaDevicesManager.prototype = {
 		oldDevice.kind = updatedDevice.kind
 	},
 
-	_addDevice: function(addedDevice) {
+	_addDevice(addedDevice) {
 		// Copy the device to add, as its properties are read only and
 		// thus they can not be updated later.
 		addedDevice = {
@@ -359,7 +359,7 @@ MediaDevicesManager.prototype = {
 	 * @returns {Promise} resolved with a MediaStream object when successful, or
 	 *          rejected with a DOMException in case of error
 	 */
-	getUserMedia: function(constraints) {
+	getUserMedia(constraints) {
 		if (!this.isSupported()) {
 			return new Promise((resolve, reject) => {
 				reject(new DOMException('MediaDevicesManager is not supported', 'NotSupportedError'))
@@ -377,7 +377,7 @@ MediaDevicesManager.prototype = {
 		})
 	},
 
-	_getUserMediaInternal: function(constraints) {
+	_getUserMediaInternal(constraints) {
 		if (constraints.audio && !constraints.audio.deviceId) {
 			if (this.attributes.audioInputId) {
 				if (!(constraints.audio instanceof Object)) {
@@ -426,7 +426,7 @@ MediaDevicesManager.prototype = {
 		})
 	},
 
-	_stopIncompatibleTracks: function(constraints) {
+	_stopIncompatibleTracks(constraints) {
 		this._tracks.forEach(track => {
 			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
 				const constraintsAudioDeviceId = constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId
@@ -446,13 +446,13 @@ MediaDevicesManager.prototype = {
 		})
 	},
 
-	_registerStream: function(stream) {
+	_registerStream(stream) {
 		stream.getTracks().forEach(track => {
 			this._registerTrack(track)
 		})
 	},
 
-	_registerTrack: function(track) {
+	_registerTrack(track) {
 		this._tracks.push(track)
 
 		track.addEventListener('ended', () => {
@@ -467,7 +467,7 @@ MediaDevicesManager.prototype = {
 		})
 	},
 
-	_updateSelectedDevicesFromGetUserMediaResult: function(stream) {
+	_updateSelectedDevicesFromGetUserMediaResult(stream) {
 		if (this.attributes.audioInputId) {
 			const audioTracks = stream.getAudioTracks()
 			const audioTrackSettings = audioTracks.length > 0 ? audioTracks[0].getSettings() : null

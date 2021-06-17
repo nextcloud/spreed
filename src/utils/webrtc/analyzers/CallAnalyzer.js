@@ -77,25 +77,25 @@ export default function CallAnalyzer(localMediaModel, localCallParticipantModel,
 }
 CallAnalyzer.prototype = {
 
-	get: function(key) {
+	get(key) {
 		return this.attributes[key]
 	},
 
-	set: function(key, value) {
+	set(key, value) {
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
 	},
 
-	on: function(event, handler) {
-		if (!this._handlers.hasOwnProperty(event)) {
+	on(event, handler) {
+		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
 			this._handlers[event] = [handler]
 		} else {
 			this._handlers[event].push(handler)
 		}
 	},
 
-	off: function(event, handler) {
+	off(event, handler) {
 		const handlers = this._handlers[event]
 		if (!handlers) {
 			return
@@ -107,7 +107,7 @@ CallAnalyzer.prototype = {
 		}
 	},
 
-	_trigger: function(event, args) {
+	_trigger(event, args) {
 		let handlers = this._handlers[event]
 		if (!handlers) {
 			return
@@ -122,7 +122,7 @@ CallAnalyzer.prototype = {
 		}
 	},
 
-	destroy: function() {
+	destroy() {
 		if (this._localParticipantAnalyzer) {
 			this._localParticipantAnalyzer.off('change:senderConnectionQualityAudio', this._handleSenderConnectionQualityAudioChangeBound)
 			this._localParticipantAnalyzer.off('change:senderConnectionQualityVideo', this._handleSenderConnectionQualityVideoChangeBound)
@@ -132,15 +132,15 @@ CallAnalyzer.prototype = {
 		}
 	},
 
-	_handleSenderConnectionQualityAudioChange: function(participantAnalyzer, senderConnectionQualityAudio) {
+	_handleSenderConnectionQualityAudioChange(participantAnalyzer, senderConnectionQualityAudio) {
 		this.set('senderConnectionQualityAudio', senderConnectionQualityAudio)
 	},
 
-	_handleSenderConnectionQualityVideoChange: function(participantAnalyzer, senderConnectionQualityVideo) {
+	_handleSenderConnectionQualityVideoChange(participantAnalyzer, senderConnectionQualityVideo) {
 		this.set('senderConnectionQualityVideo', senderConnectionQualityVideo)
 	},
 
-	_handleSenderConnectionQualityScreenChange: function(participantAnalyzer, senderConnectionQualityScreen) {
+	_handleSenderConnectionQualityScreenChange(participantAnalyzer, senderConnectionQualityScreen) {
 		this.set('senderConnectionQualityScreen', senderConnectionQualityScreen)
 	},
 

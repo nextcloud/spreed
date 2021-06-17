@@ -123,7 +123,7 @@ const actions = {
 			// BrowserStorage.getItem returns a string instead of a boolean
 			isGrid = (isGrid === 'true')
 		}
-		context.dispatch('setCallViewMode', { isGrid: isGrid, isStripeOpen: true })
+		context.dispatch('setCallViewMode', { isGrid, isStripeOpen: true })
 
 		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: false })
 	},

@@ -88,7 +88,7 @@ export default {
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
 			if (!this.displayName) {
-				return `var(--color-text-maxcontrast)`
+				return 'var(--color-text-maxcontrast)'
 			} else {
 				const color = usernameToColor(this.displayName)
 				return `rgb(${color.r}, ${color.g}, ${color.b})`

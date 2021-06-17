@@ -426,7 +426,7 @@ export default {
 				&& !this.isGroup
 		},
 		preloadedUserStatus() {
-			if (this.participant.hasOwnProperty('statusMessage')) {
+			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
 				// We preloaded the status when via participants API
 				return {
 					status: this.participant.status || null,
@@ -434,7 +434,7 @@ export default {
 					icon: this.participant.statusIcon || null,
 				}
 			}
-			if (this.participant.hasOwnProperty('status')) {
+			if (Object.prototype.hasOwnProperty.call(this.participant, 'status')) {
 				// We preloaded the status when via search API
 				return {
 					status: this.participant.status.status || null,

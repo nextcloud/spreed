@@ -76,7 +76,7 @@ if (window.MediaStreamTrack) {
 				this._listeners = []
 			}
 
-			if (!this._listeners.hasOwnProperty(type)) {
+			if (!Object.prototype.hasOwnProperty.call(this._listeners, type)) {
 				this._listeners[type] = [listener]
 			} else if (!this._listeners[type].includes(listener)) {
 				this._listeners[type].push(listener)

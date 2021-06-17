@@ -36,7 +36,7 @@ import Vue from 'vue'
  */
 export default {
 
-	data: function() {
+	data() {
 		return {
 			/**
 			 * The selector for the HTML element to reparent the vue-at panel to.

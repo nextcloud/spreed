@@ -164,7 +164,7 @@ class Application extends App implements IBootstrap {
 		$resourceManager = $server->query(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
-			\OCP\Util::addScript(self::APP_ID, 'collections');
+			\OCP\Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}
 

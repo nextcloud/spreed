@@ -244,7 +244,7 @@ export default {
 			try {
 				await this.$store.dispatch('setConversationName', {
 					token: this.token,
-					name: name,
+					name,
 				})
 				this.dismissEditing()
 			} catch (exception) {

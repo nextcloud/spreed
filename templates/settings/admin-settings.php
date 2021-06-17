@@ -1,7 +1,7 @@
 <?php
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
-script('spreed', ['admin-settings']);
+script('spreed', ['talk-admin-settings']);
 style('spreed', ['settings-admin']);
 ?>
 

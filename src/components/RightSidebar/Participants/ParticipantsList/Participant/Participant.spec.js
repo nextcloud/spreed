@@ -93,7 +93,7 @@ describe('Participant.vue', () => {
 			mixins: [{
 				// force tooltip display for testing
 				methods: {
-					forceEnableTooltips: function() {
+					forceEnableTooltips() {
 						this.isUserNameTooltipVisible = true
 						this.isStatusTooltipVisible = true
 					},

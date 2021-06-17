@@ -143,11 +143,11 @@ describe('messagesStore', () => {
 
 		// with messages getter
 		expect(store.getters.messages(TOKEN)).toStrictEqual({
-			'1': message1,
-			'3': message3,
+			1: message1,
+			3: message3,
 		})
 		expect(store.getters.messages('token-2')).toStrictEqual({
-			'2': message2,
+			2: message2,
 		})
 	})
 

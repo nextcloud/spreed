@@ -224,7 +224,7 @@ describe('Conversation.vue', () => {
 				item.lastMessage = lastMessageFromConversation
 
 				messagesMock.mockClear().mockReturnValue({
-					'100': displayedLastStoreMessage,
+					100: displayedLastStoreMessage,
 				})
 			})
 

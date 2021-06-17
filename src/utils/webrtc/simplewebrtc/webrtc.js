@@ -42,7 +42,7 @@ function WebRTC(opts) {
 
 	// set options
 	for (item in options) {
-		if (options.hasOwnProperty(item)) {
+		if (Object.prototype.hasOwnProperty.call(options, item)) {
 			this.config[item] = options[item]
 		}
 	}

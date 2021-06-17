@@ -324,12 +324,12 @@ describe('Message.vue', () => {
 
 			test('renders file previews', () => {
 				const params = {
-					'actor': {
+					actor: {
 						id: 'alice',
 						name: 'Alice',
 						type: 'user',
 					},
-					'file': {
+					file: {
 						path: 'some/path',
 						type: 'file',
 					},
@@ -337,13 +337,13 @@ describe('Message.vue', () => {
 				renderRichObject(
 					'{file}',
 					params, {
-						'actor': {
+						actor: {
 							component: Mention,
-							props: params['actor'],
+							props: params.actor,
 						},
-						'file': {
+						file: {
 							component: FilePreview,
-							props: params['file'],
+							props: params.file,
 						},
 					}
 				)
@@ -351,7 +351,7 @@ describe('Message.vue', () => {
 
 			test('renders deck cards', () => {
 				const params = {
-					'actor': {
+					actor: {
 						id: 'alice',
 						name: 'Alice',
 						type: 'user',
@@ -364,9 +364,9 @@ describe('Message.vue', () => {
 				renderRichObject(
 					'{deck-card}',
 					params, {
-						'actor': {
+						actor: {
 							component: Mention,
-							props: params['actor'],
+							props: params.actor,
 						},
 						'deck-card': {
 							component: DeckCard,
@@ -396,12 +396,12 @@ describe('Message.vue', () => {
 
 			test('renders other rich objects', () => {
 				const params = {
-					'actor': {
+					actor: {
 						id: 'alice',
 						name: 'Alice',
 						type: 'user',
 					},
-					'unknown': {
+					unknown: {
 						path: 'some/path',
 						type: 'unknown',
 					},
@@ -409,13 +409,13 @@ describe('Message.vue', () => {
 				renderRichObject(
 					'{unknown}',
 					params, {
-						'actor': {
+						actor: {
 							component: Mention,
-							props: params['actor'],
+							props: params.actor,
 						},
-						'unknown': {
+						unknown: {
 							component: DefaultParameter,
-							props: params['unknown'],
+							props: params.unknown,
 						},
 					}
 				)

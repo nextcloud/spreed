@@ -85,6 +85,6 @@ class TalkWidget implements IWidget {
 	 */
 	public function load(): void {
 		Util::addStyle('spreed', 'icons');
-		Util::addScript('spreed', 'dashboard');
+		Util::addScript('spreed', 'talk-dashboard');
 	}
 }

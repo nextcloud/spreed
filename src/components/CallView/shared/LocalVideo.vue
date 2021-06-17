@@ -141,7 +141,7 @@ export default {
 
 		videoContainerClass() {
 			return {
-				'speaking': this.localMediaModel.attributes.speaking,
+				speaking: this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
@@ -202,7 +202,7 @@ export default {
 		localCallParticipantModel: {
 			immediate: true,
 
-			handler: function(localCallParticipantModel, oldLocalCallParticipantModel) {
+			handler(localCallParticipantModel, oldLocalCallParticipantModel) {
 				if (oldLocalCallParticipantModel) {
 					oldLocalCallParticipantModel.off('forcedMute', this._handleForcedMute)
 				}
@@ -213,14 +213,14 @@ export default {
 			},
 		},
 
-		'localMediaModel.attributes.localStream': function(localStream) {
+		'localMediaModel.attributes.localStream'(localStream) {
 			this._setLocalStream(localStream)
 		},
 
 		localStreamVideoError: {
 			immediate: true,
 
-			handler: function(error) {
+			handler(error) {
 				if (error) {
 					if (error.name === 'NotAllowedError') {
 						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))

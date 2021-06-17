@@ -126,7 +126,7 @@ export default {
 			try {
 				await this.$store.dispatch('setListable', {
 					token: this.token,
-					listable: listable,
+					listable,
 				})
 
 				if (this.lastNotification) {

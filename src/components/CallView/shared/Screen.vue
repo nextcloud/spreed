@@ -122,11 +122,11 @@ export default {
 
 	watch: {
 
-		'localMediaModel.attributes.localScreen': function(localScreen) {
+		'localMediaModel.attributes.localScreen'(localScreen) {
 			this._setScreen(localScreen)
 		},
 
-		'callParticipantModel.attributes.screen': function(screen) {
+		'callParticipantModel.attributes.screen'(screen) {
 			this._setScreen(screen)
 		},
 

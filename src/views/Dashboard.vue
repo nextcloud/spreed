@@ -27,14 +27,14 @@
 		:loading="loading"
 		:show-items-and-empty-content="!hasImportantConversations"
 		:half-empty-content-message="t('spreed', 'No unread mentions')">
-		<template v-slot:default="{ item }">
+		<template #default="{ item }">
 			<DashboardWidgetItem
 				:target-url="getItemTargetUrl(item)"
 				:main-text="getMainText(item)"
 				:sub-text="getSubText(item)"
 				:item="item"
 				v-on="handlers">
-				<template v-slot:avatar>
+				<template #avatar>
 					<ConversationIcon
 						:item="item"
 						:hide-favorite="true"
@@ -42,7 +42,7 @@
 				</template>
 			</DashboardWidgetItem>
 		</template>
-		<template v-slot:empty-content>
+		<template #empty-content>
 			<EmptyContent icon="icon-talk">
 				<template #desc>
 					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
