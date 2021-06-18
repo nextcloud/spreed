@@ -451,6 +451,13 @@ export default {
 }
 </script>
 
+<style lang="scss">
+/** override toastify position due to top bar */
+body.has-topbar .toastify-top {
+	top: 65px !important;
+}
+</style>
+
 <style lang="scss" scoped>
 .content {
 	height: 100%;

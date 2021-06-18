@@ -349,6 +349,7 @@ export default {
 	},
 
 	mounted() {
+		document.body.classList.add('has-topbar')
 		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
@@ -361,6 +362,7 @@ export default {
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
+		document.body.classList.remove('has-topbar')
 	},
 
 	methods: {
