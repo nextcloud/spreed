@@ -85,7 +85,7 @@ describe('Conversation.vue', () => {
 			},
 		})
 
-		const el = wrapper.findComponent({ name: 'AppContentListItem' })
+		const el = wrapper.findComponent({ name: 'ListItem' })
 		expect(el.exists()).toBe(true)
 		expect(el.props('title')).toBe('conversation one')
 
@@ -109,7 +109,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.vm.$slots.subtitle[0].text.trim()).toBe(expectedText)
 		}
 
@@ -281,7 +281,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			const counter = el.vm.$slots.counter[0]
@@ -318,7 +318,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			expect(el.vm.$slots.counter).not.toBeDefined()
@@ -359,7 +359,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			return findActionButton(el, actionName)
@@ -378,7 +378,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			await el.find('a').trigger('click')
@@ -524,7 +524,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			const action = findActionButton(el, 'Copy link')
@@ -553,7 +553,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			const action = findActionButton(el, 'Add to favorites')
@@ -584,7 +584,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			const action = findActionButton(el, 'Remove from favorites')
@@ -620,7 +620,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'AppContentListItem' })
+			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
 			const actionButtons = wrapper.findAllComponents(ActionButton)
