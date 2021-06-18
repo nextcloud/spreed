@@ -87,7 +87,7 @@ appstore:
 	--exclude=.tx \
 	--exclude=tests \
 	--exclude=vendor \
-	--exclude=webpack.*.js \
+	--exclude=webpack.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
