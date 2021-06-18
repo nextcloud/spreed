@@ -867,6 +867,7 @@ describe('messagesStore', () => {
 	describe('look for new messages', () => {
 		let updateLastCommonReadMessageAction
 		let updateConversationLastMessageAction
+		let updateUnreadMessagesMutation
 		let forceGuestNameAction
 		let cancelFunctionMock
 		let conversationMock
@@ -877,11 +878,13 @@ describe('messagesStore', () => {
 			conversationMock = jest.fn()
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
+			updateUnreadMessagesMutation = jest.fn()
 			forceGuestNameAction = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			testStoreConfig.actions.forceGuestName = forceGuestNameAction
+			testStoreConfig.mutations.updateUnreadMessages = updateUnreadMessagesMutation
 
 			cancelFunctionMock = jest.fn()
 			CancelableRequest.mockImplementation((request) => {
@@ -919,7 +922,9 @@ describe('messagesStore', () => {
 			lookForNewMessages.mockResolvedValueOnce(response)
 
 			// smaller number to make it update
-			conversationMock.mockReturnValue({ lastMessage: { id: 1 } })
+			conversationMock.mockReturnValue({
+				lastMessage: { id: 1 },
+			})
 
 			await store.dispatch('lookForNewMessages', {
 				token: TOKEN,
@@ -1022,6 +1027,264 @@ describe('messagesStore', () => {
 			}).catch(() => {})
 
 			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
+		})
+
+		describe('updates unread counters immediately', () => {
+			let testConversation
+
+			beforeEach(() => {
+				testConversation = {
+					lastMessage: { id: 100 },
+					lastReadMessage: 100,
+					unreadMessages: 144,
+					unreadMention: false,
+				}
+			})
+
+			async function testUpdateMessageCounters(messages, expectedPayload) {
+				const response = {
+					headers: {
+						'x-chat-last-common-read': '123',
+						'x-chat-last-given': '100',
+					},
+					data: {
+						ocs: {
+							data: messages,
+						},
+					},
+				}
+
+				lookForNewMessages.mockResolvedValueOnce(response)
+
+				// smaller number to make it update
+				conversationMock.mockReturnValue(testConversation)
+
+				await store.dispatch('lookForNewMessages', {
+					token: TOKEN,
+					lastKnownMessageId: 100,
+				})
+
+				if (expectedPayload) {
+					expect(updateUnreadMessagesMutation).toHaveBeenCalledWith(expect.anything(), expectedPayload)
+				} else {
+					expect(updateUnreadMessagesMutation).not.toHaveBeenCalled()
+				}
+			}
+
+			describe('updating unread messages counter', () => {
+				test('updates unread message counter for regular messages', async() => {
+					const messages = [{
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						id: 102,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+					}]
+					const expectedPayload = {
+						token: TOKEN,
+						unreadMessages: 146,
+						unreadMention: undefined,
+					}
+					await testUpdateMessageCounters(messages, expectedPayload)
+				})
+
+				test('skips system messages when counting unread messages', async() => {
+					const messages = [{
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						id: 102,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+						systemMessage: 'i_am_the_system',
+					}]
+					const expectedPayload = {
+						token: TOKEN,
+						unreadMessages: 145,
+						unreadMention: undefined,
+					}
+					await testUpdateMessageCounters(messages, expectedPayload)
+				})
+
+				test('only counts unread messages from the last unread message', async() => {
+					const messages = [{
+						id: 99,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						// this is the last unread message
+						id: 100,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						id: 102,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+					}]
+					const expectedPayload = {
+						token: TOKEN,
+						unreadMessages: 146,
+						unreadMention: undefined,
+					}
+					await testUpdateMessageCounters(messages, expectedPayload)
+				})
+
+				test('does not update counter if no new messages were found', async() => {
+					const messages = [{
+						// this one is the last read message so doesn't count
+						id: 100,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}]
+					await testUpdateMessageCounters(messages, null)
+				})
+			})
+
+			describe('updating unread mention flag', () => {
+				let getActorIdMock
+				let getActorTypeMock
+				let getUserIdMock
+
+				beforeEach(() => {
+					getActorIdMock = jest.fn()
+					getActorTypeMock = jest.fn()
+					getUserIdMock = jest.fn()
+					testStoreConfig.getters.getActorId = getActorIdMock
+					testStoreConfig.getters.getActorType = getActorTypeMock
+					testStoreConfig.getters.getUserId = getUserIdMock
+
+					store = new Vuex.Store(testStoreConfig)
+				})
+
+				async function testMentionFlag(messageParameters, expectedValue) {
+					const messages = [{
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+						messageParameters,
+					}]
+					const expectedPayload = {
+						token: TOKEN,
+						unreadMessages: 145,
+						unreadMention: expectedValue,
+					}
+					await testUpdateMessageCounters(messages, expectedPayload)
+				}
+
+				test('updates unread mention flag for global message', async() => {
+					await testMentionFlag({
+						'mention-1': {
+							type: 'call',
+						},
+					}, true)
+				})
+
+				test('updates unread mention flag for guest mention', async() => {
+					getActorIdMock.mockReturnValue(() => 'me_as_guest')
+					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
+					await testMentionFlag({
+						'mention-0': {
+							type: 'user',
+							id: 'some_user',
+						},
+						'mention-1': {
+							type: 'guest',
+							id: 'guest/me_as_guest',
+						},
+					}, true)
+				})
+
+				test('does not update unread mention flag for a different guest mention', async() => {
+					getActorIdMock.mockReturnValue(() => 'me_as_guest')
+					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
+					await testMentionFlag({
+						'mention-1': {
+							type: 'guest',
+							id: 'guest/someone_else_as_guest',
+						},
+					}, undefined)
+				})
+
+				test('updates unread mention flag for user mention', async() => {
+					getUserIdMock.mockReturnValue(() => 'me_as_user')
+					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
+					await testMentionFlag({
+						'mention-0': {
+							type: 'user',
+							id: 'some_user',
+						},
+						'mention-1': {
+							type: 'user',
+							id: 'me_as_user',
+						},
+					}, true)
+				})
+
+				test('does not update unread mention flag for another user mention', async() => {
+					getUserIdMock.mockReturnValue(() => 'me_as_user')
+					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
+					await testMentionFlag({
+						'mention-1': {
+							type: 'user',
+							id: 'another_user',
+						},
+					}, undefined)
+				})
+
+				test('does not update unread mention flag when no params', async() => {
+					await testMentionFlag({}, undefined)
+					await testMentionFlag(null, undefined)
+				})
+
+				test('does not update unread mention flag when already set', async() => {
+					testConversation.unreadMention = true
+					await testMentionFlag({
+						'mention-1': {
+							type: 'call',
+						},
+					}, undefined)
+				})
+
+				test('does not update unread mention flag for non-mention parameter', async() => {
+					testConversation.unreadMention = true
+					await testMentionFlag({
+						'file-1': {
+							type: 'file',
+						},
+					}, undefined)
+				})
+
+				test('does not update unread mention flag for previously read messages', async() => {
+					const messages = [{
+						// this message was already read
+						id: 100,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+						messageParameters: {
+							'mention-1': {
+								type: 'call',
+							},
+						},
+					}, {
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}]
+					const expectedPayload = {
+						token: TOKEN,
+						unreadMessages: 145,
+						unreadMention: undefined,
+					}
+					await testUpdateMessageCounters(messages, expectedPayload)
+				})
+			})
 		})
 	})
 

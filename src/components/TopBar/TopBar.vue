@@ -125,21 +125,42 @@
 				close-after-click="true"
 				container="#content-vue">
 				<ActionButton
+					v-if="isInCall"
+					key="openSideBarButtonMessageText"
+					@click="openSidebar">
+					<MessageText
+						slot="icon"
+						:size="16"
+						title=""
+						fill-color="#ffffff"
+						decorative />
+				</ActionButton>
+				<ActionButton
+					v-else
+					key="openSideBarButtonMenuPeople"
 					:icon="iconMenuPeople"
 					@click="openSidebar" />
 			</Actions>
 		</div>
+		<CounterBubble
+			v-if="showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+			class="unread-messages-counter"
+			:highlighted="hasUnreadMentions">
+			{{ unreadMessagesCounter }}
+		</CounterBubble>
 	</div>
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 import CallButton from './CallButton'
 import BrowserStorage from '../../services/BrowserStorage'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
@@ -160,8 +181,10 @@ export default {
 		ActionButton,
 		Actions,
 		ActionLink,
+		CounterBubble,
 		CallButton,
 		ActionSeparator,
+		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
 	},
@@ -173,6 +196,12 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	data: () => {
+		return {
+			unreadNotificationHandle: null,
+		}
 	},
 
 	computed: {
@@ -260,6 +289,13 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		unreadMessagesCounter() {
+			return this.conversation.unreadMessages
+		},
+		hasUnreadMentions() {
+			return this.conversation.unreadMention
+		},
+
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
@@ -282,6 +318,36 @@ export default {
 		},
 	},
 
+	watch: {
+		unreadMessagesCounter(newValue, oldValue) {
+			if (!this.isInCall || !this.showOpenSidebarButton) {
+				return
+			}
+
+			// new messages arrived
+			if (newValue > 0 && oldValue === 0 && !this.hasUnreadMentions) {
+				this.notifyUnreadMessages(t('spreed', 'You have new unread messages in the chat.'))
+			}
+		},
+
+		hasUnreadMentions(newValue, oldValue) {
+			if (!this.isInCall || !this.showOpenSidebarButton) {
+				return
+			}
+
+			if (newValue) {
+				this.notifyUnreadMessages(t('spreed', 'You have been mentioned in the chat.'))
+			}
+		},
+
+		isInCall(newValue) {
+			if (!newValue) {
+				// discard notification if the call ends
+				this.notifyUnreadMessages(null)
+			}
+		},
+	},
+
 	mounted() {
 		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
@@ -290,6 +356,7 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.notifyUnreadMessages(null)
 		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
@@ -297,6 +364,16 @@ export default {
 	},
 
 	methods: {
+		notifyUnreadMessages(message) {
+			if (this.unreadNotificationHandle) {
+				this.unreadNotificationHandle.hideToast()
+				this.unreadNotificationHandle = null
+			}
+			if (message) {
+				this.unreadNotificationHandle = showMessage(message)
+			}
+		},
+
 		openSidebar() {
 			this.$store.dispatch('showSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'true')
@@ -418,12 +495,16 @@ export default {
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
-		svg {
-			margin-right: 4px !important;
-		}
 		.icon {
 			margin-right: 4px !important;
 		}
+	}
+
+	.unread-messages-counter {
+		position: absolute;
+		top: 40px;
+		right: 4px;
+		pointer-events: none;
 	}
 }
 
