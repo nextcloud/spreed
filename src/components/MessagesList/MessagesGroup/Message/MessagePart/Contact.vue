@@ -26,12 +26,15 @@
 		:aria-label="contactAriaLabel"
 		target="_blank">
 		<img v-if="contactPhotoFromBase64"
-			class="contact__image"
+			:class="{
+				'contact__image': contactHasPhoto,
+				'contact__icon': !contactHasPhoto,
+			}"
 			alt=""
 			:src="contactPhotoFromBase64">
 		<div class="contact__lineone">
 			<div class="title">
-				{{ contactName }}
+				{{ displayName }}
 			</div>
 		</div>
 	</a>
@@ -75,11 +78,17 @@ export default {
 	},
 
 	computed: {
+		contactHasPhoto() {
+			return this.contactPhotoMimetype && this.contactPhoto
+		},
 		contactPhotoFromBase64() {
-			if (!this.contactPhotoMimetype || !this.contactPhoto) {
-				return null
+			if (!this.contactHasPhoto) {
+				return OC.MimeType.getIconUrl('text/vcard')
 			}
 			return 'data:' + this.contactPhotoMimetype + ';base64,' + this.contactPhoto
+		},
+		displayName() {
+			return this.contactName || this.name
 		},
 		contactAriaLabel() {
 			return t('spreed', 'Contact')
@@ -110,6 +119,11 @@ export default {
 			border-radius: 50%;
 			max-width: 44px;
 			max-height: 44px;
+		}
+		&__icon {
+			display: inline-block;
+			width: 44px;
+			height: 44px;
 		}
 		&__lineone {
 			height: 30px;
