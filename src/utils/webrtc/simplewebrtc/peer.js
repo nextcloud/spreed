@@ -31,6 +31,7 @@ function Peer(options) {
 	this.receiveMedia = options.receiveMedia || this.parent.config.receiveMedia
 	this.channels = {}
 	this.pendingDCMessages = [] // key (datachannel label) -> value (array[pending messages])
+	this._pendingReplaceTracksQueue = []
 	this.sid = options.sid || Date.now().toString()
 	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig)
 	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this))
@@ -47,6 +48,10 @@ function Peer(options) {
 	this.pc.addEventListener('negotiationneeded', this.emit.bind(this, 'negotiationNeeded'))
 	this.pc.addEventListener('iceconnectionstatechange', this.emit.bind(this, 'iceConnectionStateChange'))
 	this.pc.addEventListener('iceconnectionstatechange', function() {
+		if (self.pc.iceConnectionState !== 'new') {
+			self._processPendingReplaceTracks()
+		}
+
 		switch (self.pc.iceConnectionState) {
 		case 'failed':
 			// currently, in chrome only the initiator goes to failed
@@ -375,7 +380,66 @@ Peer.prototype.end = function() {
 }
 
 Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
+	this._pendingReplaceTracksQueue.push({ newTrack, oldTrack, stream })
+
+	if (this._pendingReplaceTracksQueue.length === 1) {
+		this._processPendingReplaceTracks()
+	}
+}
+
+/**
+ * Process pending replace track actions.
+ *
+ * All the pending replace track actions are executed from the oldest to the
+ * newest, waiting until the previous action was executed before executing the
+ * next one.
+ *
+ * The process may be stopped if the connection is lost, or if a track needs to
+ * be added rather than replaced, which requires a renegotiation. In both cases
+ * the process will start again once the connection is restablished.
+ */
+Peer.prototype._processPendingReplaceTracks = function() {
+	while (this._pendingReplaceTracksQueue.length > 0) {
+		if (this.pc.iceConnectionState === 'new') {
+			// Do not replace the tracks when the connection has not started
+			// yet, as Firefox can get "stuck" and not replace the tracks even
+			// if tried later again once connected.
+			return
+		}
+
+		const pending = this._pendingReplaceTracksQueue.shift()
+
+		try {
+			await this._replaceTrack(pending.newTrack, pending.oldTrack, pending.stream)
+		} catch (exception) {
+			// If the track is added instead of replaced a renegotiation will be
+			// needed, so stop replacing tracks.
+			return
+		}
+	}
+}
+
+/**
+ * Replaces the old track with the new track in the appropriate sender.
+ *
+ * If a new track is provided but no sender was found the new track is added
+ * instead of replaced (which will require a renegotiation).
+ *
+ * The method returns a promise which is fulfilled once the track was replaced
+ * in the appropriate sender, or immediately if no sender was found and no track
+ * was added. If a track had to be added the promise is rejected instead.
+ *
+ * @param {MediaStreamTrack|null} newTrack the new track to set.
+ * @param {MediaStreamTrack|null} oldTrack the old track to be replaced.
+ * @param {MediaStream} stream the stream that the new track belongs to.
+ * @returns {Promise}
+ */
+Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	let senderFound = false
+
+	// The track should be replaced in just one sender, but an array of promises
+	// is used to be on the safe side.
+	const replaceTrackPromises = []
 
 	this.pc.getSenders().forEach(sender => {
 		if (sender.track !== oldTrack) {
@@ -409,13 +473,17 @@ Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
 
 		senderFound = true
 
-		sender.replaceTrack(newTrack).catch(error => {
+		const replaceTrackPromise = sender.replaceTrack(newTrack)
+
+		replaceTrackPromise.catch(error => {
 			if (error.name === 'InvalidModificationError') {
 				console.debug('Track could not be replaced, negotiation needed')
 			} else {
 				console.error('Track could not be replaced: ', error, oldTrack, newTrack)
 			}
 		})
+
+		replaceTrackPromises.push(replaceTrackPromise)
 	})
 
 	// If the call started when the audio or video device was not active there
@@ -423,7 +491,11 @@ Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
 	// instead of replaced.
 	if (!senderFound && newTrack) {
 		this.pc.addTrack(newTrack, stream)
+
+		return Promise.reject(new Error('Track added instead of replaced'))
 	}
+
+	return Promise.allSettled(replaceTrackPromises)
 }
 
 Peer.prototype.handleRemoteStreamAdded = function(event) {
