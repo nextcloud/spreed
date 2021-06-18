@@ -21,6 +21,8 @@
 
 import store from '../../../store/index.js'
 
+import { ConnectionState } from './CallParticipantModel'
+
 export default function LocalCallParticipantModel() {
 
 	this.attributes = {
@@ -28,11 +30,13 @@ export default function LocalCallParticipantModel() {
 		peer: null,
 		screenPeer: null,
 		guestName: null,
+		connectionState: null,
 	}
 
 	this._handlers = []
 
 	this._handleForcedMuteBound = this._handleForcedMute.bind(this)
+	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
 
 }
 
@@ -107,7 +111,22 @@ LocalCallParticipantModel.prototype = {
 			console.warn('Mismatch between stored peer ID and ID of given peer: ', this.get('peerId'), peer.id)
 		}
 
+		if (this.get('peer')) {
+			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		}
+
 		this.set('peer', peer)
+
+		if (!this.get('peer')) {
+			this.set('connectionState', null)
+
+			return
+		}
+
+		// Reset state that depends on the Peer object.
+		this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
+
+		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 	},
 
 	setScreenPeer(screenPeer) {
@@ -130,6 +149,38 @@ LocalCallParticipantModel.prototype = {
 
 	_handleForcedMute() {
 		this._trigger('forcedMute')
+	},
+
+	_handleExtendedIceConnectionStateChange(extendedIceConnectionState) {
+		switch (extendedIceConnectionState) {
+		case 'new':
+			this.set('connectionState', ConnectionState.NEW)
+			break
+		case 'checking':
+			this.set('connectionState', ConnectionState.CHECKING)
+			break
+		case 'connected':
+			this.set('connectionState', ConnectionState.CONNECTED)
+			break
+		case 'completed':
+			this.set('connectionState', ConnectionState.COMPLETED)
+			break
+		case 'disconnected':
+			this.set('connectionState', ConnectionState.DISCONNECTED)
+			break
+		case 'disconnected-long':
+			this.set('connectionState', ConnectionState.DISCONNECTED_LONG)
+			break
+		case 'failed':
+			this.set('connectionState', ConnectionState.FAILED)
+			break
+		// 'failed-no-restart' is not emitted by own peer
+		case 'closed':
+			this.set('connectionState', ConnectionState.CLOSED)
+			break
+		default:
+			console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
+		}
 	},
 
 }
