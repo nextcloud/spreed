@@ -27,6 +27,7 @@
 		:to="to"
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
+		:counter-highlighted="counterShouldBePrimary"
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon
