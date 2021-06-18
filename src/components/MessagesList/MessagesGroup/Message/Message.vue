@@ -163,6 +163,12 @@ the main body of the message as well as a quote.
 								:href="linkToFile">
 								{{ t('spreed', 'Go to file') }}
 							</ActionLink>
+							<ActionLink
+								icon="icon-share"
+								:close-after-click="true"
+								@click.stop="handleForwardMessage">
+								{{ t('spreed', 'Forward message') }}
+							</ActionLink>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template
 								v-for="action in messageActions">
@@ -194,6 +200,13 @@ the main body of the message as well as a quote.
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
+
+		<Modal
+			v-if="modal"
+			container="#content-vue"
+			@close="modal=false">
+			<div><LeftSidebar /></div>
+		</Modal>
 	</li>
 </template>
 
@@ -230,6 +243,8 @@ import {
 import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
+import LeftSidebar from '../../../LeftSidebar/LeftSidebar'
 
 export default {
 	name: 'Message',
@@ -251,6 +266,8 @@ export default {
 		EyeOffOutline,
 		Reload,
 		ActionSeparator,
+		Modal,
+		LeftSidebar,
 	},
 
 	mixins: [
@@ -397,6 +414,7 @@ export default {
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
+			modal: false,
 		}
 	},
 
@@ -772,6 +790,10 @@ export default {
 
 			// reload conversation to update additional attributes that have computed values
 			await this.$store.dispatch('fetchConversation', { token: this.token })
+		},
+
+		handleForwardMessage() {
+			this.modal = true
 		},
 	},
 }
