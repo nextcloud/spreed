@@ -35,11 +35,14 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
 class CircleMembershipListener implements IEventListener {
 
+	/** @var ISession */
+	private $session;
 	/** @var IUserManager */
 	private $userManager;
 	/** @var IGroupManager */
@@ -49,10 +52,12 @@ class CircleMembershipListener implements IEventListener {
 	/** @var ParticipantService */
 	private $participantService;
 
-	public function __construct(IUserManager $userManager,
+	public function __construct(ISession $session,
+								IUserManager $userManager,
 								IGroupManager $groupManager,
 								Manager $manager,
 								ParticipantService $participantService) {
+		$this->session = $session;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
@@ -102,9 +107,18 @@ class CircleMembershipListener implements IEventListener {
 		// Get all (nested) memberships in the added $newMember as a flat list
 		$userMembers = $basedOnCircle->getInheritedMembers();
 
+		$invitedBy = $newMember->getInvitedBy();
+		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
+			$this->session->set('talk-overwrite-actor', $invitedBy->getUserId());
+		} else if ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getUserId() === 'occ') {
+			$this->session->set('talk-overwrite-actor-cli', 'cli');
+		}
+
 		foreach ($userMembers as $userMember) {
 			$this->addNewMemberToRooms(array_values($roomsToAdd), $userMember);
 		}
+		$this->session->remove('talk-overwrite-actor');
+		$this->session->remove('talk-overwrite-actor-cli');
 	}
 
 	protected function addNewMemberToRooms(array $rooms, Member $member): void {
