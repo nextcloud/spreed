@@ -489,7 +489,6 @@ export default {
 			const richParameters = {}
 			Object.keys(this.messageParameters).forEach(function(p) {
 				const type = this.messageParameters[p].type
-				console.debug(this.messageParameters[p].mimetype)
 				const mimetype = this.messageParameters[p].mimetype
 				if (type === 'user' || type === 'call' || type === 'guest') {
 					richParameters[p] = {
