@@ -24,11 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
-use OCA\Circles\Events\CircleGenericEvent;
-use OCA\Circles\Events\CircleMemberAddedEvent;
-use OCA\Circles\Events\CircleMemberRemovedEvent;
-use OCA\Circles\Events\MembershipsCreatedEvent;
-use OCA\Circles\Events\MembershipsRemovedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
@@ -100,22 +95,15 @@ class CircleMembershipListener implements IEventListener {
 			return;
 		}
 
-		// These members are "memberships" in circles which link to entities such as users, groups or circles
-		if ($event->getType() === CircleGenericEvent::MULTIPLE) {
-			$newMembers = $event->getMembers();
-		} else {
-			$newMembers = [$event->getMember()];
-		}
+		// This member is a "membership" in circles which links to entities such as users, groups or circles
+		$newMember = $event->getMember();
+		// Get the base circle of the membership
+		$basedOnCircle = $newMember->getBasedOn();
+		// Get all (nested) memberships in the added $newMember as a flat list
+		$userMembers = $basedOnCircle->getInheritedMembers();
 
-		foreach ($newMembers as $newMember) {
-			// Get the base circle of the membership
-			$basedOnCircle = $newMember->getBasedOn();
-			// Get all (nested) memberships in the added $newMember as a flat list
-			$userMembers = $basedOnCircle->getInheritedMembers();
-
-			foreach ($userMembers as $userMember) {
-				$this->addNewMemberToRooms(array_values($roomsToAdd), $userMember);
-			}
+		foreach ($userMembers as $userMember) {
+			$this->addNewMemberToRooms(array_values($roomsToAdd), $userMember);
 		}
 	}
 
