@@ -874,6 +874,7 @@
     "An error occurred while deleting the message" : "删除消息时发生错误 ",
     "Message link copied to clipboard." : "消息链接已复制到剪贴板。",
     "Your browser does not support playing audio files" : "你的浏览器不支持播放音频文件",
+    "Contact" : "联系人",
     "{stack} in {board}" : "{stack} 于 {board}",
     "Deck Card" : "Deck 卡片",
     "Remove {fileName}" : "删除 {fileName}",

@@ -877,6 +877,7 @@ OC.L10N.register(
     "An error occurred while deleting the message" : "Wystąpił błąd podczas usuwania wiadomości",
     "Message link copied to clipboard." : "Link wiadomości został skopiowany do schowka.",
     "Your browser does not support playing audio files" : "Twoja przeglądarka nie obsługuje odtwarzania plików audio",
+    "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} na {board}",
     "Deck Card" : "Karta Deck",
     "Remove {fileName}" : "Usuń {fileName}",
