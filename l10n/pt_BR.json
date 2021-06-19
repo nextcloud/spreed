@@ -875,6 +875,7 @@
     "An error occurred while deleting the message" : "Ocorreu um erro ao excluir a mensagem",
     "Message link copied to clipboard." : "Link da mensagem copiado para a área de transferência.",
     "Your browser does not support playing audio files" : "Seu navegador não suporta a reprodução de arquivos de áudio",
+    "Contact" : "Contato",
     "{stack} in {board}" : "{stack} de {board}",
     "Deck Card" : "Cartão Deck",
     "Remove {fileName}" : "Remover {fileName} ",
