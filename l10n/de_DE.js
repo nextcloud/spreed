@@ -877,6 +877,7 @@ OC.L10N.register(
     "An error occurred while deleting the message" : "Beim Löschen der Nachricht ist ein Fehler aufgetreten",
     "Message link copied to clipboard." : "Nachrichtenlink in die Zwischenablage kopiert.",
     "Your browser does not support playing audio files" : "Ihr Browser unterstützt nicht das Abspielen von Audio-Dateien",
+    "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} auf {board}",
     "Deck Card" : "Deck-Karte",
     "Remove {fileName}" : "Entferne {fileName}",

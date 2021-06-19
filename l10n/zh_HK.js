@@ -877,6 +877,7 @@ OC.L10N.register(
     "An error occurred while deleting the message" : "刪除消息時發個錯誤",
     "Message link copied to clipboard." : "訊息連結已複製到剪貼板。",
     "Your browser does not support playing audio files" : "您的瀏覽器不支援播放音頻檔案",
+    "Contact" : "聯絡人",
     "{stack} in {board}" : "{board} 中的 {stack}",
     "Deck Card" : "看板卡片",
     "Remove {fileName}" : "移除 {fileName}",
