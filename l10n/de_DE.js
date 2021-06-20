@@ -981,6 +981,8 @@ OC.L10N.register(
     "Fullscreen (F)" : "Vollbild (F)",
     "Speaker view" : "Sprecheransicht",
     "Grid view" : "Kachelansicht",
+    "You have new unread messages in the chat." : "Sie haben neue ungelesene Nachrichten im Chat.",
+    "You have been mentioned in the chat." : "Sie wurden im Chat erwähnt.",
     "Send" : "Senden",
     "Add more files" : "Weitere Dateien hinzufügen",
     "No unread mentions" : "Keine ungelesenen Erwähnungen",
