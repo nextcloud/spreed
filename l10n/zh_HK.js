@@ -981,6 +981,8 @@ OC.L10N.register(
     "Fullscreen (F)" : "全螢幕（F）",
     "Speaker view" : "演講者視圖",
     "Grid view" : "網格檢視",
+    "You have new unread messages in the chat." : "您在聊天中有新的未讀消息。",
+    "You have been mentioned in the chat." : "您已在聊天中被提及。",
     "Send" : "傳送",
     "Add more files" : "添加更多檔案",
     "No unread mentions" : "沒有未讀的 @提及",

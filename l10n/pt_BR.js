@@ -981,6 +981,8 @@ OC.L10N.register(
     "Fullscreen (F)" : "Tela inteira (F) ",
     "Speaker view" : "Visualização de alto-falante",
     "Grid view" : "Vista em grade",
+    "You have new unread messages in the chat." : "Você tem novas mensagens não lidas no bate-papo.",
+    "You have been mentioned in the chat." : "Você foi mencionado no bate-papo.",
     "Send" : "Enviar",
     "Add more files" : "Adicionar mais arquivos",
     "No unread mentions" : "Não há citações não lidas",
