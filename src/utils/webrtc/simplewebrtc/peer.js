@@ -32,6 +32,7 @@ function Peer(options) {
 	this.channels = {}
 	this.pendingDCMessages = [] // key (datachannel label) -> value (array[pending messages])
 	this._pendingReplaceTracksQueue = []
+	this._processPendingReplaceTracksPromise = null
 	this.sid = options.sid || Date.now().toString()
 	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig)
 	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this))
@@ -382,9 +383,7 @@ Peer.prototype.end = function() {
 Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
 	this._pendingReplaceTracksQueue.push({ newTrack, oldTrack, stream })
 
-	if (this._pendingReplaceTracksQueue.length === 1) {
-		this._processPendingReplaceTracks()
-	}
+	this._processPendingReplaceTracks()
 }
 
 /**
@@ -397,14 +396,36 @@ Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
  * The process may be stopped if the connection is lost, or if a track needs to
  * be added rather than replaced, which requires a renegotiation. In both cases
  * the process will start again once the connection is restablished.
+ *
+ * @returns {Promise} a Promise fulfilled when the processing ends; if it was
+ *          completed the resolved value is true, and if it was stopped before
+ *          finishing the resolved value is false.
  */
 Peer.prototype._processPendingReplaceTracks = function() {
+	if (this._processPendingReplaceTracksPromise) {
+		return this._processPendingReplaceTracksPromise
+	}
+
+	this._processPendingReplaceTracksPromise = this._processPendingReplaceTracksAsync()
+
+	// For compatibility with older browsers "finally" should not be used on
+	// Promises.
+	this._processPendingReplaceTracksPromise.then(() => {
+		this._processPendingReplaceTracksPromise = null
+	}).catch(() => {
+		this._processPendingReplaceTracksPromise = null
+	})
+
+	return this._processPendingReplaceTracksPromise
+}
+
+Peer.prototype._processPendingReplaceTracksAsync = async function() {
 	while (this._pendingReplaceTracksQueue.length > 0) {
 		if (this.pc.iceConnectionState === 'new') {
 			// Do not replace the tracks when the connection has not started
 			// yet, as Firefox can get "stuck" and not replace the tracks even
 			// if tried later again once connected.
-			return
+			return false
 		}
 
 		const pending = this._pendingReplaceTracksQueue.shift()
@@ -414,9 +435,11 @@ Peer.prototype._processPendingReplaceTracks = function() {
 		} catch (exception) {
 			// If the track is added instead of replaced a renegotiation will be
 			// needed, so stop replacing tracks.
-			return
+			return false
 		}
 	}
+
+	return true
 }
 
 /**
