@@ -454,7 +454,7 @@ export default {
 <style lang="scss">
 /** override toastify position due to top bar */
 body.has-topbar .toastify-top {
-	top: 65px !important;
+	margin-top: 105px;
 }
 </style>
 
