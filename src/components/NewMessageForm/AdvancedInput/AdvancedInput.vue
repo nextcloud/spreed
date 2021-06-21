@@ -237,18 +237,15 @@ export default {
 	},
 
 	mounted() {
-		this.focusInput()
 		/**
 		 * Listen to routeChange global events and focus on the
 		 */
-		EventBus.$on('routeChange', this.focusInput)
 		EventBus.$on('focusChatInput', this.focusInput)
 
 		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
 
 	beforeDestroy() {
-		EventBus.$off('routeChange', this.focusInput)
 		EventBus.$off('focusChatInput', this.focusInput)
 	},
 
