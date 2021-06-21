@@ -779,7 +779,7 @@ export default {
 		 *
 		 * @param {string} messageId message id
 		 * @param {boolean} smooth true to smooth scroll, false to jump directly
-		 * @param {boolean} highlightAnimation true to highlight the focussed message
+		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
 		 * @returns {bool} true if element was found, false otherwise
 		 */
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
@@ -801,8 +801,8 @@ export default {
 					// scroll the viewport slightly further to make sure the element is about 1/3 from the top
 					this.scroller.scrollTop += this.scroller.offsetHeight / 4
 				}
-				element.focus()
 				if (highlightAnimation) {
+					element.focus()
 					element.highlightAnimation()
 				}
 			})
