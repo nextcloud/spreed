@@ -391,11 +391,14 @@ export default {
 				}
 			}
 
+			let newTitle = this.defaultPageTitle
 			if (title !== '') {
-				window.document.title = (showAsterix ? '* ' : '') + `${title} - ${this.defaultPageTitle}`
-			} else {
-				window.document.title = (showAsterix ? '* ' : '') + this.defaultPageTitle
+				newTitle = `${title} - ${newTitle}`
 			}
+			if (showAsterix && !newTitle.startsWith('* ')) {
+				newTitle = '* ' + newTitle
+			}
+			window.document.title = newTitle
 		},
 
 		onResize() {
