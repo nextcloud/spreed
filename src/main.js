@@ -160,6 +160,10 @@ Sidebar.prototype.close = function() {
 	store.dispatch('hideSidebar')
 	this.state.file = ''
 }
+Sidebar.prototype.setFullScreenMode = function(isFullScreen) {
+	// Sidebar style is not changed in Talk when the viewer is opened; this is
+	// needed only for compatibility with OCA.Files.Sidebar interface.
+}
 
 Object.assign(window.OCA.Files, {
 	Sidebar: new Sidebar(),
