@@ -85,14 +85,22 @@
 			<button
 				ref="copyLinkButton"
 				@click.prevent="handleCopyLink">
-				<span class="icon icon-clippy" />{{ t('spreed', 'Copy conversation link') }}
+				<ClipboardTextOutline
+					:size="16"
+					decorative
+					title="" />
+				{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
 			<button
 				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				<span class="icon icon-mail" />{{ t('spreed', 'Resend invitations') }}
+				<Email
+					:size="16"
+					decorative
+					title="" />
+				{{ t('spreed', 'Resend invitations') }}
 			</button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
@@ -106,9 +114,16 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
+import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline'
+import Email from 'vue-material-design-icons/Email'
 
 export default {
 	name: 'LinkShareSettings',
+
+	components: {
+		ClipboardTextOutline,
+		Email,
+	},
 
 	data() {
 		return {
@@ -243,8 +258,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.icon {
-	margin-right: 10px;
+button > .material-design-icon {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 7px;
 }
 
 .spinner {
