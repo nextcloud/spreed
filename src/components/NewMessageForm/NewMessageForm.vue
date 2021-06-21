@@ -242,7 +242,7 @@ export default {
 		},
 
 		hasText() {
-			return this.text !== ''
+			return this.parsedText !== ''
 		},
 	},
 
