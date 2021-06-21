@@ -34,6 +34,7 @@
 		@update:title="handleUpdateTitle"
 		@submit-title="handleSubmitTitle"
 		@dismiss-editing="dismissEditing"
+		@closed="handleClosed"
 		@close="handleClose">
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
@@ -258,6 +259,10 @@ export default {
 
 		showSettings() {
 			emit('show-settings')
+		},
+
+		handleClosed() {
+			emit('files:sidebar:closed')
 		},
 	},
 }

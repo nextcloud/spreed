@@ -37,6 +37,7 @@ import router from './router/router'
 // Utils
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
+import { emit } from '@nextcloud/event-bus'
 
 // Directives
 import VueClipboard from 'vue-clipboard2'
@@ -121,6 +122,8 @@ const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
 
 			sidebarElement.removeEventListener('transitionend', resolveOnceSidebarWidthHasChanged)
 
+			emit('files:sidebar:opened')
+
 			resolve()
 		}
 
@@ -133,6 +136,8 @@ const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
 		setTimeout(() => {
 			console.debug('ontransitionend is not supported; the sidebar should have been fully shown by now')
 
+			emit('files:sidebar:opened')
+
 			resolve()
 		}, Number.parseInt(animationQuickValue) + 200)
 	}
@@ -141,6 +146,8 @@ const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
 Sidebar.prototype.open = function(path) {
 	// The sidebar is already open, so this can return immediately.
 	if (this.state.file) {
+		emit('files:sidebar:opened')
+
 		return
 	}
 
