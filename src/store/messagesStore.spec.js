@@ -869,7 +869,7 @@ describe('messagesStore', () => {
 		let updateConversationLastMessageAction
 		let updateUnreadMessagesMutation
 		let forceGuestNameAction
-		let cancelFunctionMock
+		let cancelFunctionMocks
 		let conversationMock
 
 		beforeEach(() => {
@@ -886,8 +886,10 @@ describe('messagesStore', () => {
 			testStoreConfig.actions.forceGuestName = forceGuestNameAction
 			testStoreConfig.mutations.updateUnreadMessages = updateUnreadMessagesMutation
 
-			cancelFunctionMock = jest.fn()
+			cancelFunctionMocks = []
 			CancelableRequest.mockImplementation((request) => {
+				const cancelFunctionMock = jest.fn()
+				cancelFunctionMocks.push(cancelFunctionMock)
 				return {
 					request,
 					cancel: cancelFunctionMock,
@@ -999,34 +1001,52 @@ describe('messagesStore', () => {
 		test('cancels look for new messages', async() => {
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
+				requestId: 'request1',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
 
-			expect(store.state.cancelLookForNewMessages).toBe(cancelFunctionMock)
+			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 
-			expect(cancelFunctionMock).not.toHaveBeenCalled()
+			store.dispatch('cancelLookForNewMessages', { requestId: 'request1' })
 
-			store.dispatch('cancelLookForNewMessages')
-
-			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
-
-			expect(store.state.cancelLookForNewMessages).toBe(null)
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 		})
 
 		test('cancels look for new messages when called again', async() => {
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
+				requestId: 'request1',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
-
-			expect(store.state.cancelLookForNewMessages).toBe(cancelFunctionMock)
 
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
+				requestId: 'request1',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
 
-			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
+		})
+
+		test('cancels look for new messages call individually', async() => {
+			store.dispatch('lookForNewMessages', {
+				token: TOKEN,
+				requestId: 'request1',
+				lastKnownMessageId: 100,
+			}).catch(() => {})
+
+			store.dispatch('lookForNewMessages', {
+				token: TOKEN,
+				requestId: 'request2',
+				lastKnownMessageId: 100,
+			}).catch(() => {})
+
+			store.dispatch('cancelLookForNewMessages', { requestId: 'request1' })
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
+			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
+
+			store.dispatch('cancelLookForNewMessages', { requestId: 'request2' })
+			expect(cancelFunctionMocks[1]).toHaveBeenCalledWith('canceled')
 		})
 
 		describe('updates unread counters immediately', () => {

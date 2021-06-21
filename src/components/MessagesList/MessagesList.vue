@@ -79,6 +79,7 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
+import { uniqueId } from 'lodash'
 
 export default {
 	name: 'MessagesList',
@@ -114,6 +115,8 @@ export default {
 
 	data() {
 		return {
+			viewId: null,
+
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
 			 * messages. This boolean allows us to show/hide the loader.
@@ -236,7 +239,7 @@ export default {
 		},
 
 		chatIdentifier() {
-			return this.token + ':' + this.isParticipant + ':' + this.isInLobby
+			return this.token + ':' + this.isParticipant + ':' + this.isInLobby + ':' + this.viewId
 		},
 
 		scrollToBottomAriaLabel() {
@@ -259,13 +262,17 @@ export default {
 		},
 		chatIdentifier: {
 			immediate: true,
-			handler() {
+			handler(newValue, oldValue) {
+				if (oldValue) {
+					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
+				}
 				this.handleStartGettingMessagesPreconditions()
 			},
 		},
 	},
 
 	mounted() {
+		this.viewId = uniqueId('messagesList')
 		this.scrollToBottom()
 		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
@@ -283,7 +290,7 @@ export default {
 		EventBus.$off('focusMessage', this.focusMessage)
 		EventBus.$off('routeChange', this.onRouteChange)
 
-		this.$store.dispatch('cancelLookForNewMessages')
+		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
@@ -465,7 +472,7 @@ export default {
 					this.scrollToFocussedMessage()
 				})
 			} else {
-				this.$store.dispatch('cancelLookForNewMessages')
+				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
 		},
 
@@ -526,10 +533,12 @@ export default {
 
 			// Make the request
 			try {
+				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
 				await this.$store.dispatch('lookForNewMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					requestId: this.chatIdentifier,
 				})
 
 				// Scroll to the last message if sticky
@@ -827,7 +836,7 @@ export default {
 		handleNetworkOffline() {
 			console.debug('Canceling message request as we are offline')
 			if (this.cancelLookForNewMessages) {
-				this.cancelLookForNewMessages()
+				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
 		},
 

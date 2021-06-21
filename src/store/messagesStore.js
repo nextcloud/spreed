@@ -103,7 +103,7 @@ const state = {
 	 * which allows to cancel the previous long polling request for new
 	 * messages before making another one.
 	 */
-	cancelLookForNewMessages: null,
+	cancelLookForNewMessages: {},
 	/**
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
@@ -191,8 +191,12 @@ const mutations = {
 		state.cancelFetchMessages = cancelFunction
 	},
 
-	setCancelLookForNewMessages(state, cancelFunction) {
-		state.cancelLookForNewMessages = cancelFunction
+	setCancelLookForNewMessages(state, { requestId, cancelFunction }) {
+		if (cancelFunction) {
+			Vue.set(state.cancelLookForNewMessages, requestId, cancelFunction)
+		} else {
+			Vue.delete(state.cancelLookForNewMessages, requestId)
+		}
 	},
 
 	setCancelPostNewMessage(state, { messageId, cancelFunction }) {
@@ -637,18 +641,21 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} token The conversation token;
-	 * @param {object} requestOptions reuquest options;
+	 * @param {string} requestId id to identify request uniquely
+	 * @param {object} requestOptions request options;
 	 * @param {int} lastKnownMessageId The id of the last message in the store.
 	 */
-	async lookForNewMessages(context, { token, lastKnownMessageId, requestOptions }) {
-		context.dispatch('cancelLookForNewMessages')
+	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
+		context.dispatch('cancelLookForNewMessages', { requestId })
 
 		// Get a new cancelable request function and cancel function pair
 		const { request, cancel } = CancelableRequest(lookForNewMessages)
+
 		// Assign the new cancel function to our data value
-		context.commit('setCancelLookForNewMessages', cancel)
+		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
 
 		const response = await request({ token, lastKnownMessageId }, requestOptions)
+		context.commit('setCancelLookForNewMessages', { requestId })
 
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
@@ -722,12 +729,13 @@ const actions = {
 	 * Cancels a previously running "lookForNewMessages" action if applicable.
 	 *
 	 * @param {object} context default store context;
+	 * @param {string} requestId request id
 	 * @returns {bool} true if a request got cancelled, false otherwise
 	 */
-	cancelLookForNewMessages(context) {
-		if (context.state.cancelLookForNewMessages) {
-			context.state.cancelLookForNewMessages('canceled')
-			context.commit('setCancelLookForNewMessages', null)
+	cancelLookForNewMessages(context, { requestId }) {
+		if (context.state.cancelLookForNewMessages[requestId]) {
+			context.state.cancelLookForNewMessages[requestId]('canceled')
+			context.commit('setCancelLookForNewMessages', { requestId })
 			return true
 		}
 		return false
