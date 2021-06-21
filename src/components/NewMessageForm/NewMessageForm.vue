@@ -247,6 +247,10 @@ export default {
 	},
 
 	watch: {
+		currentConversationIsJoined(newValue) {
+			this.$refs.advancedInput.focusInput()
+		},
+
 		disabled(newValue) {
 			// the menu is not always available
 			if (!this.$refs.uploadMenu) {
