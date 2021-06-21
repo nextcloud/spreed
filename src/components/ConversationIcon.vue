@@ -28,6 +28,7 @@
 			:size="44"
 			:user="item.name"
 			:display-name="item.displayName"
+			:preloaded-user-status="preloadedUserStatus"
 			menu-container="#content-vue"
 			menu-position="left"
 			class="conversation-icon__avatar" />
@@ -100,6 +101,17 @@ export default {
 			}
 
 			return ''
+		},
+		preloadedUserStatus() {
+			if (Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
+				// We preloaded the status
+				return {
+					status: this.item.status || null,
+					message: this.item.statusMessage || null,
+					icon: this.item.statusIcon || null,
+				}
+			}
+			return undefined
 		},
 	},
 }

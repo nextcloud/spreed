@@ -175,9 +175,10 @@ class RoomController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 *
 	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
+	 * @param bool $includeStatus
 	 * @return DataResponse
 	 */
-	public function getRooms(int $noStatusUpdate = 0): DataResponse {
+	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false): DataResponse {
 		$event = new UserEvent($this->userId);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
 
@@ -208,10 +209,29 @@ class RoomController extends AEnvironmentAwareController {
 			$this->commonReadMessages = $this->participantService->getLastCommonReadChatMessageForMultipleRooms($roomIds);
 		}
 
+		$statuses = [];
+		if ($this->userId !== null
+			&& $includeStatus
+			&& $this->appManager->isEnabledForUser('user_status')) {
+			$userIds = array_filter(array_map(function (Room $room) {
+				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+					$participants = json_decode($room->getName(), true);
+					foreach ($participants as $participant) {
+						if ($participant !== $this->userId) {
+							return $participant;
+						}
+					}
+				}
+				return null;
+			}, $rooms));
+
+			$statuses = $this->statusManager->getUserStatuses($userIds);
+		}
+
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoom($room, $room->getParticipant($this->userId));
+				$return[] = $this->formatRoom($room, $room->getParticipant($this->userId), $statuses);
 			} catch (RoomNotFoundException $e) {
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
@@ -277,7 +297,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 			}
 
-			return new DataResponse($this->formatRoom($room, $participant, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
+			return new DataResponse($this->formatRoom($room, $participant, [], $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -328,22 +348,24 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @param Room $room
 	 * @param Participant|null $currentParticipant
+	 * @param array $statuses
 	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
-		return $this->formatRoomV4($room, $currentParticipant, $isSIPBridgeRequest);
+	protected function formatRoom(Room $room, ?Participant $currentParticipant, array $statuses = [], bool $isSIPBridgeRequest = false): array {
+		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest);
 	}
 
 	/**
 	 * @param Room $room
 	 * @param Participant|null $currentParticipant
+	 * @param array $statuses
 	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, bool $isSIPBridgeRequest = false): array {
+	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, array $statuses, bool $isSIPBridgeRequest): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -540,6 +562,18 @@ class RoomController extends AEnvironmentAwareController {
 			foreach ($participants as $participant) {
 				if ($participant !== $attendee->getActorId()) {
 					$roomData['name'] = $participant;
+
+					if (isset($statuses[$participant])) {
+						$roomData['status'] = $statuses[$participant]->getStatus();
+						$roomData['statusIcon'] = $statuses[$participant]->getIcon();
+						$roomData['statusMessage'] = $statuses[$participant]->getMessage();
+						$roomData['statusClearAt'] = $statuses[$participant]->getClearAt();
+					} elseif (!empty($statuses)) {
+						$roomData['status'] = IUserStatus::OFFLINE;
+						$roomData['statusIcon'] = null;
+						$roomData['statusMessage'] = null;
+						$roomData['statusClearAt'] = null;
+					}
 				}
 			}
 		}
@@ -950,6 +984,11 @@ class RoomController extends AEnvironmentAwareController {
 					$result['statusIcon'] = $statuses[$userId]->getIcon();
 					$result['statusMessage'] = $statuses[$userId]->getMessage();
 					$result['statusClearAt'] = $statuses[$userId]->getClearAt();
+				} elseif (isset($headers['X-Nextcloud-Has-User-Statuses'])) {
+					$result['status'] = IUserStatus::OFFLINE;
+					$result['statusIcon'] = null;
+					$result['statusMessage'] = null;
+					$result['statusClearAt'] = null;
 				}
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
 				if ($result['lastPing'] <= $maxPingAge) {
