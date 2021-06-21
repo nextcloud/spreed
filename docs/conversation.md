@@ -9,6 +9,12 @@
 
 * Method: `GET`
 * Endpoint: `/room`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `noStatusUpdate` | int | Whether the "online" user status of the current user should be "kept-alive" (`1`) or not (`0`) (defaults to `0`)
+    `includeStatus` | bool | Whether the user status information of all one-to-one conversations should be loaded (default false)
 
 * Response:
     - Status code:
@@ -66,6 +72,9 @@
         `lastMessage` | message | v1 | | Last message in a conversation if available, otherwise empty
         `objectType` | string | v1 | | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
         `objectId` | string | v1 | | Share token if "objectType" is "share:password", otherwise empty
+        `status` | string | v4 | | Optional: Only available for one-to-one conversations and when  `includeStatus=true` is set
+        `statusIcon` | string | v4 | | Optional: Only available for one-to-one conversations and when  `includeStatus=true` is set
+        `statusMessage` | string | v4 | | Optional: Only available for one-to-one conversations and when  `includeStatus=true` is set
         `participants` | array | v1 | v2 | **Removed**
         `guestList` | string | v1 | v2 | **Removed**
 
