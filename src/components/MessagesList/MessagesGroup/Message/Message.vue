@@ -163,12 +163,16 @@ the main body of the message as well as a quote.
 								:href="linkToFile">
 								{{ t('spreed', 'Go to file') }}
 							</ActionLink>
-							<ActionLink
-								icon="icon-share"
+							<ActionButton
 								:close-after-click="true"
 								@click.stop="handleForwardMessage">
+								<Share
+									slot="icon"
+									:size="16"
+									decorative
+									title="" />
 								{{ t('spreed', 'Forward message') }}
-							</ActionLink>
+							</ActionButton>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template
 								v-for="action in messageActions">
@@ -205,7 +209,13 @@ the main body of the message as well as a quote.
 			v-if="modal"
 			container="#content-vue"
 			@close="modal=false">
-			<div><LeftSidebar /></div>
+			<div>
+				<RoomSelector
+					:show-postable-only="true"
+					:dialog-title="setDialogTitle"
+					@select="setSelectedRoom"
+					@close="modal=false" />
+			</div>
 		</Modal>
 	</li>
 </template>
@@ -227,6 +237,7 @@ import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
 import Reload from 'vue-material-design-icons/Reload'
+import Share from 'vue-material-design-icons/Share'
 import Quote from '../../../Quote'
 import isInCall from '../../../../mixins/isInCall'
 import participant from '../../../../mixins/participant'
@@ -244,7 +255,7 @@ import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import LeftSidebar from '../../../LeftSidebar/LeftSidebar'
+import RoomSelector from '../../../../views/RoomSelector.vue'
 
 export default {
 	name: 'Message',
@@ -265,9 +276,10 @@ export default {
 		CheckAll,
 		EyeOffOutline,
 		Reload,
+		Share,
 		ActionSeparator,
 		Modal,
-		LeftSidebar,
+		RoomSelector,
 	},
 
 	mixins: [
@@ -415,6 +427,7 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			modal: false,
+			selectedRoom: null,
 		}
 	},
 
@@ -659,6 +672,10 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
+		setDialogTitle() {
+			return this.selectedRoom
+			// return t('spreed', 'Forward message')
+		},
 	},
 
 	watch: {
@@ -794,6 +811,12 @@ export default {
 
 		handleForwardMessage() {
 			this.modal = true
+		},
+
+		setSelectedRoom(room) {
+			console.log(room)
+			this.selectedRoom = room
+			this.modal = false
 		},
 	},
 }
