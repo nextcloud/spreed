@@ -50,7 +50,7 @@ function Peer(options) {
 	this.pc.addEventListener('negotiationneeded', this.emit.bind(this, 'negotiationNeeded'))
 	this.pc.addEventListener('iceconnectionstatechange', this.emit.bind(this, 'iceConnectionStateChange'))
 	this.pc.addEventListener('iceconnectionstatechange', function() {
-		if (self.pc.iceConnectionState !== 'new') {
+		if (!options.receiverOnly && self.pc.iceConnectionState !== 'new') {
 			self._processPendingReplaceTracks().then(finished => {
 				if (finished === false || self._initialStreamSetup) {
 					return
