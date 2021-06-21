@@ -263,14 +263,14 @@ export default {
 
 		toggleVideo() {
 			emit('talk:video:toggled', {
-				peerId: this.peerId,
+				peerId: this.model.attributes.peerId,
 				value: !this.sharedData.videoEnabled,
 			})
 		},
 
 		switchToScreen() {
 			if (!this.sharedData.screenVisible) {
-				this.$emit('switchScreenToId', this.peerId)
+				this.$emit('switchScreenToId', this.model.attributes.peerId)
 			}
 		},
 
