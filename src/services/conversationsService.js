@@ -26,9 +26,13 @@ import { CONVERSATION, SHARE } from '../constants'
 
 /**
  * Fetches the conversations from the server.
+ * @param {object} options options
  */
-const fetchConversations = async function() {
-	return axios.get(generateOcsUrl('apps/spreed/api/v4/room'))
+const fetchConversations = async function(options) {
+	options = options || {}
+	options.params = options.params || {}
+	options.params.includeStatus = true
+	return await axios.get(generateOcsUrl('apps/spreed/api/v4/room'), options)
 }
 
 /**
