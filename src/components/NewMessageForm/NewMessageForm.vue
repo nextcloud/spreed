@@ -67,24 +67,24 @@
 						</ActionButton>
 					</Actions>
 				</div>
-				<div class="new-message-form__emoji-picker">
-					<EmojiPicker
-						container="#content-vue"
-						@select="addEmoji">
-						<button
-							type="button"
-							:disabled="disabled"
-							class="nc-button nc-button__main emoji-picker-button"
-							:aria-label="t('spreed', 'Add emoji')"
-							:aria-haspopup="true">
-							<EmoticonOutline
-								:size="16"
-								decorative
-								title="" />
-						</button>
-					</EmojiPicker>
-				</div>
 				<div class="new-message-form__input">
+					<div class="new-message-form__emoji-picker">
+						<EmojiPicker
+							container="#content-vue"
+							@select="addEmoji">
+							<button
+								type="button"
+								:disabled="disabled"
+								class="nc-button nc-button__main emoji-picker-button"
+								:aria-label="t('spreed', 'Add emoji')"
+								:aria-haspopup="true">
+								<EmoticonOutline
+									:size="16"
+									decorative
+									title="" />
+							</button>
+						</EmojiPicker>
+					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote
 							:is-new-message-form-quote="true"
@@ -504,7 +504,7 @@ export default {
 		margin: 0 4px;
 		&__emoji-picker {
 			position: absolute;
-			left: 48px;
+			left: 5px;
 			bottom: 1;
 			.emoji-picker-button {
 				opacity: .7;
@@ -520,6 +520,7 @@ export default {
 		&__input {
 			flex-grow: 1;
 			overflow: hidden;
+			position: relative;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;
