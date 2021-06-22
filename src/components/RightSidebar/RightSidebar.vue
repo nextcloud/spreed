@@ -49,6 +49,7 @@
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
 			id="participants"
+			ref="participantsTab"
 			:order="2"
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
@@ -213,6 +214,7 @@ export default {
 			if (!this.isRenamingConversation) {
 				this.conversationName = this.conversation.displayName
 			}
+			this.$refs.participantsTab.$el.scrollTop = 0
 		},
 	},
 
