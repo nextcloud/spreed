@@ -230,7 +230,7 @@ export default {
 			this.playSoundsLoading = true
 			try {
 				try {
-					await this.$store.dispatch('setPlaySounds', status)
+					await this.$store.dispatch('setPlaySounds', !this.playSounds)
 				} catch (e) {
 					showError(t('spreed', 'Failed to save sounds setting'))
 				}
