@@ -485,6 +485,7 @@ export default {
 			if (loadOldMessages) {
 				// Gets the history of the conversation.
 				await this.getOldMessages(true)
+				this.scrollToFocussedMessage()
 			}
 
 			// Once the history is received, starts looking for new messages.
