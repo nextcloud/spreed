@@ -27,6 +27,7 @@
 		<Avatar v-else
 			:size="44"
 			:user="item.name"
+			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
 			menu-container="#content-vue"
@@ -65,6 +66,10 @@ export default {
 		hideCall: {
 			type: Boolean,
 			default: true,
+		},
+		disableMenu: {
+			type: Boolean,
+			default: false,
 		},
 		item: {
 			type: Object,

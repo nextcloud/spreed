@@ -34,7 +34,8 @@
 							<ConversationIcon
 								:item="room"
 								:hide-call="true"
-								:hide-favorite="false" />
+								:hide-favorite="false"
+								:disable-menu="true" />
 							<span>{{ room.displayName }}</span>
 						</li>
 					</ul>
