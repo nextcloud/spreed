@@ -145,13 +145,13 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInvited(Room $room, array $users): void {
-		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
 			if ($user['actorType'] === Attendee::ACTOR_USERS) {
 				$userIds[] = $user['actorId'];
 			}
 		}
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'invite',
 			'invite' => [
@@ -161,6 +161,13 @@ class BackendNotifier {
 				'alluserids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Now invited to {token}: {users} ({duration})', [
+			'token' => $room->getToken(),
+			'users' => print_r($users, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -172,7 +179,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $userIds): void {
-		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true));
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -182,6 +189,13 @@ class BackendNotifier {
 				'alluserids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('No longer invited to {token}: {users} ({duration})', [
+			'token' => $room->getToken(),
+			'users' => print_r($userIds, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -193,7 +207,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
-		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true));
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -204,6 +218,13 @@ class BackendNotifier {
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
 		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Removed from {token}: {users} ({duration})', [
+			'token' => $room->getToken(),
+			'users' => print_r($sessionIds, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
+		]);
 	}
 
 	/**
@@ -213,13 +234,19 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomModified(Room $room): void {
-		$this->logger->info('Room modified: ' . $room->getToken());
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
 				'userids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Room modified: {token} ({duration})', [
+			'token' => $room->getToken(),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -231,12 +258,18 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomDeleted(Room $room, array $userIds): void {
-		$this->logger->info('Room deleted: ' . $room->getToken());
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'delete',
 			'delete' => [
 				'userids' => $userIds,
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Room deleted: {token} ({duration})', [
+			'token' => $room->getToken(),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -248,7 +281,6 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function participantsModified(Room $room, array $sessionIds): void {
-		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($room);
@@ -297,12 +329,20 @@ class BackendNotifier {
 			}
 		}
 
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => $changed,
 				'users' => $users
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Room participants modified: {token} {users} ({duration})', [
+			'token' => $room->getToken(),
+			'users' => print_r($sessionIds, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -315,7 +355,6 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInCallChanged(Room $room, int $flags, array $sessionIds): void {
-		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true));
 		$changed = [];
 		$users = [];
 
@@ -352,6 +391,7 @@ class BackendNotifier {
 			}
 		}
 
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'incall',
 			'incall' => [
@@ -359,6 +399,14 @@ class BackendNotifier {
 				'changed' => $changed,
 				'users' => $users
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Room in-call status changed: {token} {flags} {users} ({duration})', [
+			'token' => $room->getToken(),
+			'flags' => $flags,
+			'users' => print_r($sessionIds, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 
@@ -371,11 +419,19 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function sendRoomMessage(Room $room, array $message): void {
+		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'message',
 			'message' => [
 				'data' => $message,
 			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Send room message: {token} {message} ({duration})', [
+			'token' => $room->getToken(),
+			'message' => $message,
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
 		]);
 	}
 }
