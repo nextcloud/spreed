@@ -105,12 +105,12 @@
 				</div>
 
 				<AudioRecorder
-					v-if="!hasText"
+					v-if="!hasText && canUploadFiles"
 					@recording="handleRecording"
 					@audioFile="handleAudioFile" />
 
 				<button
-					v-if="hasText"
+					v-else
 					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
