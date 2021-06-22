@@ -29,7 +29,8 @@
 			<template
 				#icon>
 				<ConversationIcon
-					:item="iconData(item)" />
+					:item="iconData(item)"
+					:disable-menu="true" />
 			</template>
 		</AppContentListItem>
 	</ul>

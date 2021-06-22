@@ -30,7 +30,8 @@
 			<ConversationIcon
 				:item="item"
 				:hide-favorite="false"
-				:hide-call="false" />
+				:hide-call="false"
+				:disable-menu="true" />
 		</template>
 		<template #subtitle>
 			<strong v-if="item.unreadMessages">

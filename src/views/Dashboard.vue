@@ -38,7 +38,8 @@
 					<ConversationIcon
 						:item="item"
 						:hide-favorite="true"
-						:hide-call="false" />
+						:hide-call="false"
+						:disable-menu="true" />
 				</template>
 			</DashboardWidgetItem>
 		</template>
