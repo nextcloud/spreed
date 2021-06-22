@@ -21,14 +21,15 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
+		<ConversationIcon
+			class="conversation-icon"
+			:item="conversation"
+			:hide-favorite="false"
+			:hide-call="false" />
 		<!-- conversation header -->
 		<a v-if="!isInCall"
 			class="conversation-header"
 			@click="openConversationSettings">
-			<ConversationIcon
-				:item="conversation"
-				:hide-favorite="false"
-				:hide-call="false" />
 			<div class="conversation-header__text">
 				<p class="title">
 					{{ conversation.displayName }}
@@ -510,12 +511,15 @@ export default {
 	}
 }
 
+.conversation-icon {
+	margin-left: 48px;
+}
+
 .conversation-header {
 	position: relative;
 	display: flex;
 	overflow-x: hidden;
 	overflow-y: clip;
-	margin-left: 48px;
 	white-space: nowrap;
 	width: 100%;
 	cursor: pointer;
