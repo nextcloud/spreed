@@ -25,7 +25,7 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item"
-			@click.native="handleConversationClick(item)" />
+			@click="handleConversationClick(item)" />
 		<template
 			v-if="!initialisedConversations">
 			<LoadingPlaceholder
