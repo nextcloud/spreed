@@ -47,8 +47,7 @@ get the messagesList array and loop through the list to generate the messages.
 			:last-read-message-id="visualLastReadMessageId"
 			:messages="item"
 			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
-			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0"
-			@deleteMessage="handleDeleteMessage" />
+			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
 		<template v-if="!messagesGroupedByAuthor.length">
 			<LoadingPlaceholder
 				type="messages"
@@ -578,15 +577,6 @@ export default {
 			setTimeout(() => {
 				this.getNewMessages()
 			}, 500)
-		},
-
-		/**
-		 * Dispatches the deleteMessages action.
-		 * @param {object} event The deleteMessage event emitted by the Message component.
-		 */
-		handleDeleteMessage(event) {
-			// FIXME: unused ?
-			this.$store.dispatch('deleteMessage', event.message)
 		},
 
 		debounceHandleScroll: debounce(function() {
