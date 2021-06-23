@@ -360,7 +360,7 @@ export default {
 				if (temporaryMessage) {
 					this.text = temporaryMessage.message || this.text
 					this.parsedText = temporaryMessage.message || this.parsedText
-					this.$store.dispatch('deleteMessage', temporaryMessage)
+					this.$store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
 				}
 			}
 		},
