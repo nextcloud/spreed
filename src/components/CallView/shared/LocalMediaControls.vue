@@ -81,15 +81,15 @@
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
-				<Monitor
+				<MonitorOff
 					v-if="model.attributes.localScreen"
 					slot="icon"
 					:size="24"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-				<MonitorOff
-					v-if="!model.attributes.localScreen"
+				<Monitor
+					v-else
 					slot="icon"
 					:size="24"
 					title=""
