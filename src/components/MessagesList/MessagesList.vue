@@ -78,7 +78,7 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
-import { uniqueId } from 'lodash'
+import uniqueId from 'lodash/uniqueId'
 
 export default {
 	name: 'MessagesList',
