@@ -31,7 +31,7 @@
 		</AppContent>
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
-		<PreventUnload :when="warnLeaving" />
+		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
@@ -109,8 +109,12 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 
+		isSendingMessages() {
+			return this.$store.getters.isSendingMessages
+		},
+
 		warnLeaving() {
-			return this.$store.getters.isSendingMessages || (!this.isLeavingAfterSessionIssue && this.isInCall)
+			return !this.isLeavingAfterSessionIssue && this.isInCall
 		},
 
 		/**
