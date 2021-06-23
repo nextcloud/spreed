@@ -44,7 +44,7 @@
 					</span>
 				</div>
 				<div class="acli__content__line-two">
-					<span class="acli__content__line-two__subtitle">
+					<span class="acli__content__line-two__subtitle" :title="subtitleText">
 						<slot name="subtitle" />
 					</span>
 					<span class="acli__content__line-two__counter">
@@ -111,6 +111,11 @@ export default {
 		anchorId: {
 			type: String,
 			default: '',
+		},
+
+		subtitleText: {
+			type: String,
+			default: undefined,
 		},
 	},
 	computed: {

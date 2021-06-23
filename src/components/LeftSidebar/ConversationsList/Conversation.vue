@@ -24,6 +24,7 @@
 		:title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
 		:to="item.token ? { name: 'conversation', params: { token: item.token }} : ''"
+		:subtitle-text="conversationInformation"
 		:class="{ 'has-unread-messages': item.unreadMessages }"
 		@click="onClick">
 		<template #icon>
