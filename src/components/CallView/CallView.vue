@@ -361,7 +361,7 @@ export default {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
 				this.$store.dispatch('startPresentation')
-			} else if (newValue.length === 0 && previousValue.length > 0) {
+			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen) {
 				// last screen share stopped, reopening stripe
 				this.$store.dispatch('stopPresentation')
 			}
@@ -370,7 +370,7 @@ export default {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('startPresentation')
-			} else {
+			} else if (this.callParticipantModelsWithScreen.length === 0) {
 				this.$store.dispatch('stopPresentation')
 			}
 		},
