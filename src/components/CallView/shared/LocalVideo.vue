@@ -62,7 +62,7 @@
 				:model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
 				:screen-sharing-button-hidden="isSidebar"
-				@switch-screen-to-id="$emit('switchScreenToId', $event)" />
+				@switch-screen-to-id="switchScreenToId($event)" />
 		</transition>
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
 		<div class="bottom-bar">
@@ -313,6 +313,10 @@ export default {
 		handleStopFollowing() {
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.$store.dispatch('stopPresentation')
+		},
+
+		switchScreenToId(id) {
+			this.$emit('switch-screen-to-id', id)
 		},
 	},
 

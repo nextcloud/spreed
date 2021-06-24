@@ -116,7 +116,7 @@
 							:local-media-model="localMediaModel"
 							:video-container-aspect-ratio="videoContainerAspectRatio"
 							:local-call-participant-model="localCallParticipantModel"
-							@switchScreenToId="1"
+							@switch-screen-to-id="switchScreenToId"
 							@click-video="handleClickLocalVideo" />
 					</div>
 					<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
@@ -140,7 +140,7 @@
 					:local-media-model="localMediaModel"
 					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
-					@switchScreenToId="1"
+					@switch-screen-to-id="switchScreenToId"
 					@click-video="handleClickLocalVideo" />
 				<!-- page indicator (disabled) -->
 				<div
@@ -772,6 +772,10 @@ export default {
 
 		handleClickLocalVideo() {
 			this.$emit('click-local-video')
+		},
+
+		switchScreenToId(id) {
+			this.$emit('switch-screen-to-id', id)
 		},
 
 		isSelected(callParticipantModel) {

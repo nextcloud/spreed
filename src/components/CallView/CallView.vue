@@ -35,7 +35,7 @@
 					:show-actions="!isSidebar"
 					:local-call-participant-model="localCallParticipantModel"
 					:screen-sharing-button-hidden="isSidebar"
-					@switch-screen-to-id="$emit('switchScreenToId', $event)" />
+					@switch-screen-to-id="_switchScreenToId" />
 
 				<!-- Selected override mode -->
 				<div v-if="showSelected"
@@ -53,7 +53,7 @@
 							:is-grid="true"
 							:is-big="true"
 							:fit-video="true"
-							@switchScreenToId="_switchScreenToId" />
+							@switch-screen-to-id="_switchScreenToId" />
 					</template>
 				</div>
 				<!-- Screens -->
@@ -96,7 +96,7 @@
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
 						:is-sidebar="false"
-						@switchScreenToId="1" />
+						@switch-screen-to-id="_switchScreenToId" />
 				</div>
 				<!-- Promoted "autopilot" mode -->
 				<div v-else
@@ -115,7 +115,7 @@
 							:fit-video="true"
 							:is-big="true"
 							:is-sidebar="isSidebar"
-							@switchScreenToId="_switchScreenToId" />
+							@switch-screen-to-id="_switchScreenToId" />
 					</template>
 				</div>
 			</template>
@@ -135,6 +135,7 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo"
+				@switch-screen-to-id="_switchScreenToId"
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if sidebar -->
 			<LocalVideo
@@ -150,7 +151,7 @@
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
-				@switchScreenToId="1"
+				@switch-screen-to-id="_switchScreenToId"
 				@click-video="handleClickLocalVideo" />
 		</div>
 	</div>
@@ -560,6 +561,8 @@ export default {
 				return
 			}
 
+			this.$store.dispatch('startPresentation')
+			this.$store.dispatch('selectedVideoPeerId', null)
 			this.screens.splice(index, 1)
 			this.screens.unshift(id)
 		},
