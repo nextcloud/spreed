@@ -23,26 +23,25 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Service\ParticipantService;
-use OCP\IConfig;
-use OCP\IDBConnection;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IUserManager;
-use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
-use OCP\Security\ISecureRandom;
-use OCP\IAvatarManager;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Psr\Log\LoggerInterface;
-use OCP\AppFramework\Utility\ITimeFactory;
-
-use OCA\Talk\Exceptions\ImpossibleToKillException;
-use OCA\Talk\Exceptions\WrongPermissionsException;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IAvatarManager;
+use OCP\IConfig;
+use OCP\IDBConnection;
+use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 
 class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
@@ -204,7 +203,7 @@ class MatterbridgeManager {
 			->from('talk_bridges')
 			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$bridge = [
 				'enabled' => (bool) $row['enabled'],
@@ -761,7 +760,7 @@ class MatterbridgeManager {
 			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->gt('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$expectedPidList[] = (int) $row['pid'];
 		}
@@ -843,7 +842,7 @@ class MatterbridgeManager {
 	/**
 	 * Stop all bridges
 	 *
-	 * @return bool success
+	 * @return bool If bridges where stopped
 	 */
 	public function stopAllBridges(): bool {
 		$query = $this->db->getQueryBuilder();
@@ -851,11 +850,11 @@ class MatterbridgeManager {
 		$query->update('talk_bridges')
 			->set('enabled', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT));
-		$query->execute();
+		$result = $query->executeStatement();
 
 		// finally kill all potential zombie matterbridge processes
 		$this->killZombieBridges(true);
-		return true;
+		return $result !== 0;
 	}
 
 	/**
@@ -874,7 +873,7 @@ class MatterbridgeManager {
 				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
 			)
 			->setMaxResults(1);
-		$result = $qb->execute();
+		$result = $qb->executeQuery();
 		$enabled = false;
 		$pid = 0;
 		$jsonValues = '[]';
@@ -911,17 +910,23 @@ class MatterbridgeManager {
 					'enabled' => $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT),
 					'pid' => $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT),
 				]);
-			$qb->execute();
-		} catch (UniqueConstraintViolationException $e) {
-			$qb = $this->db->getQueryBuilder();
-			$qb->update('talk_bridges');
-			$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
-			$qb->set('enabled', $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT));
-			$qb->set('pid', $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT));
-			$qb->where(
-				$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
-			);
-			$qb->execute();
+			$qb->executeStatement();
+		} catch (Exception $e) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				$qb = $this->db->getQueryBuilder();
+				$qb->update('talk_bridges');
+				$qb->set('json_values', $qb->createNamedParameter($jsonValues, IQueryBuilder::PARAM_STR));
+				$qb->set('enabled', $qb->createNamedParameter($intEnabled, IQueryBuilder::PARAM_INT));
+				$qb->set('pid', $qb->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT));
+				$qb->where(
+					$qb->expr()->eq('room_id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT))
+				);
+				$qb->executeStatement();
+			} else {
+				$this->logger->error($e->getMessage(), [
+					'exception' => $e,
+				]);
+			}
 		}
 	}
 
