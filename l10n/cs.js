@@ -887,7 +887,7 @@ OC.L10N.register(
     "Today" : "Dnes",
     "Yesterday" : "Včera",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Record voice message" : "Nahrát zvukovou zprávu",
+    "Record voice message" : "Nahrát hlasovou zprávu",
     "End recording and send" : "Ukončit pořizování nahrávky a odeslat",
     "Dismiss recording" : "Zahodit nahrávku",
     "Access to the microphone was denied" : "Přístup k mikrofonu byl odepřen",
