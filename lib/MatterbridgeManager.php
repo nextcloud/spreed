@@ -23,27 +23,25 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Service\ParticipantService;
-use OCP\DB\Exception;
-use OCP\IConfig;
-use OCP\IDBConnection;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IUserManager;
-use OCP\IURLGenerator;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
-use OCP\Security\ISecureRandom;
-use OCP\IAvatarManager;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Psr\Log\LoggerInterface;
-use OCP\AppFramework\Utility\ITimeFactory;
-
-use OCA\Talk\Exceptions\ImpossibleToKillException;
-use OCA\Talk\Exceptions\WrongPermissionsException;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IAvatarManager;
+use OCP\IConfig;
+use OCP\IDBConnection;
+use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 
 class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';

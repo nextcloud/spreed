@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
-use OCA\Talk\MatterbridgeManager;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
