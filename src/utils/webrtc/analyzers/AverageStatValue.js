@@ -55,6 +55,9 @@ const STAT_VALUE_TYPE = {
  * the raw value that was added or the relative one after the conversion (which,
  * for non cumulative values, will be the raw value too).
  *
+ * A string representation of the current relative values can be got by calling
+ * "toString()".
+ *
  * @param {int} count the number of instances to take into account.
  * @param {STAT_VALUE_TYPE} type whether the value is cumulative or relative.
  * @param {int} lastValueWeight the value to calculate the weights of all the
@@ -125,6 +128,22 @@ AverageStatValue.prototype = {
 		}
 
 		return weightedValues / weightsSum
+	},
+
+	toString() {
+		if (!this._relativeValues.length) {
+			return '[]'
+		}
+
+		let relativeValuesAsString = '[' + this._relativeValues[0]
+
+		for (let i = 1; i < this._relativeValues.length; i++) {
+			relativeValuesAsString += ', ' + this._relativeValues[i]
+		}
+
+		relativeValuesAsString += ']'
+
+		return relativeValuesAsString
 	},
 
 }
