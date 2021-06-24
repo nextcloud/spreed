@@ -270,7 +270,7 @@ export default {
 
 		switchToScreen() {
 			if (!this.sharedData.screenVisible) {
-				this.$emit('switchScreenToId', this.model.attributes.peerId)
+				this.$emit('switch-screen-to-id', this.model.attributes.peerId)
 			}
 		},
 
