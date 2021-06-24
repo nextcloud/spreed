@@ -63,9 +63,11 @@ class CheckMatterbridges extends TimedJob {
 		if ($this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1') {
 			$this->bridgeManager->checkAllBridges();
 			$this->bridgeManager->killZombieBridges();
+			$this->logger->info('Checked if Matterbridge instances are running correctly.');
 		} else {
-			$this->bridgeManager->stopAllBridges();
+			if ($this->bridgeManager->stopAllBridges()) {
+				$this->logger->info('Stopped all Matterbridge instances as it is disabled');
+			}
 		}
-		$this->logger->info('Checked if Matterbridge instances are running correctly.');
 	}
 }

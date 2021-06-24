@@ -843,7 +843,7 @@ class MatterbridgeManager {
 	/**
 	 * Stop all bridges
 	 *
-	 * @return bool success
+	 * @return bool If bridges where stopped
 	 */
 	public function stopAllBridges(): bool {
 		$query = $this->db->getQueryBuilder();
@@ -851,11 +851,11 @@ class MatterbridgeManager {
 		$query->update('talk_bridges')
 			->set('enabled', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT));
-		$query->execute();
+		$result = $query->executeStatement();
 
 		// finally kill all potential zombie matterbridge processes
 		$this->killZombieBridges(true);
-		return true;
+		return $result !== 0;
 	}
 
 	/**
