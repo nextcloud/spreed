@@ -35,6 +35,43 @@ describe('AverageStatValue', () => {
 		})
 	})
 
+	describe('to string', () => {
+		test('no values', () => {
+			const stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
+			const stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
+
+			expect(stat.toString()).toBe('[]')
+			expect(stat2.toString()).toBe('[]')
+		})
+
+		test('single value', () => {
+			const stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
+			const stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
+
+			stat.add(42)
+			stat2.add(42)
+
+			// The first cumulative value is treated as 0 as it is the base from
+			// which the rest of the values will be calculated.
+			expect(stat.toString()).toBe('[0]')
+			expect(stat2.toString()).toBe('[42]')
+		})
+
+		test('several values', () => {
+			const testValues = [100, 200, 150, 123, 30, 50, 22, 33]
+			const stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
+			const stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
+
+			testValues.forEach((val, index) => {
+				stat.add(val)
+				stat2.add(val)
+			})
+
+			expect(stat.toString()).toBe('[20, -28, 11]')
+			expect(stat2.toString()).toBe('[50, 22, 33]')
+		})
+	})
+
 	describe('cumulative average', () => {
 		test('returns the last relative value', () => {
 			const testValues = [
