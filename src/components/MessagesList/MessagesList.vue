@@ -459,10 +459,7 @@ export default {
 					})
 
 					// get history + new messages
-					await this.getMessages(true)
-				} else {
-					// get only new messages
-					await this.getMessages(false)
+					await this.getOldMessages(true)
 				}
 
 				// focus on next tick to make sure the DOM elements
@@ -470,6 +467,9 @@ export default {
 				this.$nextTick(() => {
 					this.scrollToFocussedMessage()
 				})
+
+				// get new messages
+				await this.lookForNewMessages()
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
@@ -478,15 +478,8 @@ export default {
 		/**
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
-		 * @param {boolean} loadOldMessages In case it is the first visit of this conversation, we need to load the history
 		 */
-		async getMessages(loadOldMessages) {
-			if (loadOldMessages) {
-				// Gets the history of the conversation.
-				await this.getOldMessages(true)
-				this.scrollToFocussedMessage()
-			}
-
+		async lookForNewMessages() {
 			// Once the history is received, starts looking for new messages.
 			if (this._isBeingDestroyed || this._isDestroyed) {
 				console.debug('Prevent getting new messages on a destroyed MessagesList')
