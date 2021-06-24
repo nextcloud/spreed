@@ -645,7 +645,7 @@ OC.L10N.register(
     "Call in progress" : "Appel en cours",
     "Favorite" : "Favori",
     "Conversation settings" : "Paramètres de la conversation",
-    "Description" : "La description",
+    "Description" : "Description",
     "Chat notifications" : "Notifications de discussion",
     "Guests access" : " Accès invités",
     "Meeting settings" : "Paramètres de réunion",
