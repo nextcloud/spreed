@@ -203,6 +203,10 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	setAnalysisEnabledAudio: function(analysisEnabledAudio) {
+		if (this._analysisEnabled['audio'] === analysisEnabledAudio) {
+			return
+		}
+
 		this._analysisEnabled['audio'] = analysisEnabledAudio
 
 		if (!analysisEnabledAudio) {
@@ -213,6 +217,10 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	setAnalysisEnabledVideo: function(analysisEnabledVideo) {
+		if (this._analysisEnabled['video'] === analysisEnabledVideo) {
+			return
+		}
+
 		this._analysisEnabled['video'] = analysisEnabledVideo
 
 		if (!analysisEnabledVideo) {
