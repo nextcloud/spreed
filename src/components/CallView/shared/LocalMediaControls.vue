@@ -81,15 +81,15 @@
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
-				<Monitor
+				<CancelPresentation
 					v-if="model.attributes.localScreen"
 					slot="icon"
 					:size="24"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-				<MonitorOff
-					v-if="!model.attributes.localScreen"
+				<PresentToAll
+					v-else
 					slot="icon"
 					:size="24"
 					title=""
@@ -100,7 +100,7 @@
 				<ActionButton
 					v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
-					<Monitor
+					<PresentToAll
 						slot="icon"
 						:size="24"
 						title=""
@@ -121,7 +121,7 @@
 				<ActionButton
 					v-if="model.attributes.localScreen"
 					@click="stopScreen">
-					<MonitorOff
+					<CancelPresentation
 						slot="icon"
 						:size="24"
 						title=""
@@ -210,11 +210,12 @@
 import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
+import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation'
 import Hand from 'vue-material-design-icons/Hand'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
-import MonitorOff from 'vue-material-design-icons/MonitorOff'
+import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
@@ -240,13 +241,14 @@ export default {
 		Actions,
 		ActionSeparator,
 		ActionButton,
+		CancelPresentation,
 		Hand,
 		Microphone,
 		MicrophoneOff,
+		PresentToAll,
 		VideoIcon: Video,
 		VideoOff,
 		Monitor,
-		MonitorOff,
 	},
 
 	props: {
