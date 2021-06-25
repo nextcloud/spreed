@@ -42,7 +42,7 @@ const sessionIssueHandler = {
 	},
 
 	methods: {
-		duplicateSessionTriggered() {
+		redirectTo(url) {
 			this.isLeavingAfterSessionIssue = true
 			SessionStorage.removeItem('joined_conversation')
 			// Need to delay until next tick, otherwise the PreventUnload is still being triggered
@@ -51,13 +51,17 @@ const sessionIssueHandler = {
 				// FIXME: can't use router push as it somehow doesn't clean up
 				// fully and leads the other instance where "Join here" was clicked
 				// to redirect to "not found"
-				window.location = generateUrl('/apps/spreed/duplicate-session')
+				window.location = url
 			})
 		},
 
+		duplicateSessionTriggered() {
+			this.redirectTo(generateUrl('/apps/spreed/duplicate-session'))
+		},
+
 		deletedSessionTriggered() {
-			this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-			this.$store.dispatch('updateToken', '')
+			// workaround: force page refresh to kill stray WebRTC connections
+			this.redirectTo(generateUrl('/apps/spreed/not-found'))
 		},
 	},
 }

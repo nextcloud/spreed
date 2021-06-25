@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.0 – 2021-06-04
+### Fixed
+- Inject the preloaded user status into the avatar component
+  [#5694](https://github.com/nextcloud/spreed/pull/5694)
+- Fix switching devices in Firefox
+  [#5580](https://github.com/nextcloud/spreed/pull/5580)
+- Fix switching devices during a call if started without audio nor video
+  [#5662](https://github.com/nextcloud/spreed/pull/5662)
+- Redirect to not-found page while in a call
+  [#5601](https://github.com/nextcloud/spreed/pull/5601)
+- Regenerate session id after entering conversation password
+  [#5638](https://github.com/nextcloud/spreed/pull/5638)
+- Fix a problem when a deleted user is recreated again
+  [#5643](https://github.com/nextcloud/spreed/pull/5643)
+- Encode dav path segments for direct GIF preview
+  [#5674](https://github.com/nextcloud/spreed/pull/5674)
+- Fix raised hand handler not detached when a participant leaves
+  [#5676](https://github.com/nextcloud/spreed/pull/5676)
+- Register flow operation via dedicated instead of legacy event
+  [#5650](https://github.com/nextcloud/spreed/pull/5650)
+
 ## 11.2.2 – 2021-06-04
 ### Fixed
 - Regenerate session id after entering conversation password
