@@ -399,39 +399,7 @@ PeerConnectionAnalyzer.prototype = {
 				packetsLost[kind] = this._packetsLost[kind].getLastRawValue()
 			}
 
-			if (packets[kind] >= 0) {
-				this._packets[kind].add(packets[kind])
-			}
-			if (packetsLost[kind] >= 0) {
-				this._packetsLost[kind].add(packetsLost[kind])
-			}
-			if (packets[kind] >= 0 && packetsLost[kind] >= 0) {
-				// The packet stats are cumulative values, so the isolated
-				// values are got from the helper object.
-				// If there were no transmitted packets in the last stats the
-				// ratio is higher than 1 both to signal that and to force the
-				// quality towards a very bad quality faster, but not
-				// immediately.
-				let packetsLostRatio = 1.5
-				if (this._packets[kind].getLastRelativeValue() > 0) {
-					packetsLostRatio = this._packetsLost[kind].getLastRelativeValue() / this._packets[kind].getLastRelativeValue()
-				}
-				this._packetsLostRatio[kind].add(packetsLostRatio)
-			}
-			if (timestamp[kind] >= 0) {
-				this._timestamps[kind].add(timestamp[kind])
-				this._timestampsForLogs[kind].add(timestamp[kind])
-			}
-			if (packets[kind] >= 0 && timestamp[kind] >= 0) {
-				const elapsedSeconds = this._timestamps[kind].getLastRelativeValue() / 1000
-				// The packet stats are cumulative values, so the isolated
-				// values are got from the helper object.
-				const packetsPerSecond = this._packets[kind].getLastRelativeValue() / elapsedSeconds
-				this._packetsPerSecond[kind].add(packetsPerSecond)
-			}
-			if (roundTripTime[kind] >= 0) {
-				this._roundTripTime[kind].add(roundTripTime[kind])
-			}
+			this._addStats(kind, packets[kind], packetsLost[kind], timestamp[kind], roundTripTime[kind])
 		}
 	},
 
@@ -490,36 +458,42 @@ PeerConnectionAnalyzer.prototype = {
 				packetsLost[kind] = this._packetsLost[kind].getLastRawValue()
 			}
 
-			if (packets[kind] >= 0) {
-				this._packets[kind].add(packets[kind])
+			this._addStats(kind, packets[kind], packetsLost[kind], timestamp[kind])
+		}
+	},
+
+	_addStats: function(kind, packets, packetsLost, timestamp, roundTripTime) {
+		if (packets >= 0) {
+			this._packets[kind].add(packets)
+		}
+		if (packetsLost >= 0) {
+			this._packetsLost[kind].add(packetsLost)
+		}
+		if (packets >= 0 && packetsLost >= 0) {
+			// The packet stats are cumulative values, so the isolated values
+			// are got from the helper object.
+			// If there were no transmitted packets in the last stats the ratio
+			// is higher than 1 both to signal that and to force the quality
+			// towards a very bad quality faster, but not immediately.
+			let packetsLostRatio = 1.5
+			if (this._packets[kind].getLastRelativeValue() > 0) {
+				packetsLostRatio = this._packetsLost[kind].getLastRelativeValue() / this._packets[kind].getLastRelativeValue()
 			}
-			if (packetsLost[kind] >= 0) {
-				this._packetsLost[kind].add(packetsLost[kind])
-			}
-			if (packets[kind] >= 0 && packetsLost[kind] >= 0) {
-				// The packet stats are cumulative values, so the isolated
-				// values are got from the helper object.
-				// If there were no transmitted packets in the last stats the
-				// ratio is higher than 1 both to signal that and to force the
-				// quality towards a very bad quality faster, but not
-				// immediately.
-				let packetsLostRatio = 1.5
-				if (this._packets[kind].getLastRelativeValue() > 0) {
-					packetsLostRatio = this._packetsLost[kind].getLastRelativeValue() / this._packets[kind].getLastRelativeValue()
-				}
-				this._packetsLostRatio[kind].add(packetsLostRatio)
-			}
-			if (timestamp[kind] >= 0) {
-				this._timestamps[kind].add(timestamp[kind])
-				this._timestampsForLogs[kind].add(timestamp[kind])
-			}
-			if (packets[kind] >= 0 && timestamp[kind] >= 0) {
-				const elapsedSeconds = this._timestamps[kind].getLastRelativeValue() / 1000
-				// The packet stats are cumulative values, so the isolated
-				// values are got from the helper object.
-				const packetsPerSecond = this._packets[kind].getLastRelativeValue() / elapsedSeconds
-				this._packetsPerSecond[kind].add(packetsPerSecond)
-			}
+			this._packetsLostRatio[kind].add(packetsLostRatio)
+		}
+		if (timestamp >= 0) {
+			this._timestamps[kind].add(timestamp)
+			this._timestampsForLogs[kind].add(timestamp)
+		}
+		if (packets >= 0 && timestamp >= 0) {
+			const elapsedSeconds = this._timestamps[kind].getLastRelativeValue() / 1000
+			// The packet stats are cumulative values, so the isolated
+			// values are got from the helper object.
+			const packetsPerSecond = this._packets[kind].getLastRelativeValue() / elapsedSeconds
+			this._packetsPerSecond[kind].add(packetsPerSecond)
+		}
+		if (roundTripTime !== undefined && roundTripTime >= 0) {
+			this._roundTripTime[kind].add(roundTripTime)
 		}
 	},
 
