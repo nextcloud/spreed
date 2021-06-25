@@ -524,14 +524,18 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQualityAudio: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['audio'], this._packetsPerSecond['audio'], this._roundTripTime['audio'], 'audio')
+		return this._calculateConnectionQuality('audio')
 	},
 
 	_calculateConnectionQualityVideo: function() {
-		return this._calculateConnectionQuality(this._packetsLostRatio['video'], this._packetsPerSecond['video'], this._roundTripTime['video'], 'video')
+		return this._calculateConnectionQuality('video')
 	},
 
-	_calculateConnectionQuality: function(packetsLostRatio, packetsPerSecond, roundTripTime, kind) {
+	_calculateConnectionQuality: function(kind) {
+		const packetsLostRatio = this._packetsLostRatio[kind]
+		const packetsPerSecond = this._packetsPerSecond[kind]
+		const roundTripTime = this._roundTripTime[kind]
+
 		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
