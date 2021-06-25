@@ -121,8 +121,10 @@ function PeerConnectionAnalyzer() {
 	this._handleIceConnectionStateChangedBound = this._handleIceConnectionStateChanged.bind(this)
 	this._processStatsBound = this._processStats.bind(this)
 
-	this._connectionQualityAudio = CONNECTION_QUALITY.UNKNOWN
-	this._connectionQualityVideo = CONNECTION_QUALITY.UNKNOWN
+	this._connectionQuality = {
+		'audio': CONNECTION_QUALITY.UNKNOWN,
+		'video': CONNECTION_QUALITY.UNKNOWN,
+	}
 }
 PeerConnectionAnalyzer.prototype = {
 
@@ -162,28 +164,28 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	getConnectionQualityAudio: function() {
-		return this._connectionQualityAudio
+		return this._connectionQuality['audio']
 	},
 
 	getConnectionQualityVideo: function() {
-		return this._connectionQualityVideo
+		return this._connectionQuality['video']
 	},
 
 	_setConnectionQualityAudio: function(connectionQualityAudio) {
-		if (this._connectionQualityAudio === connectionQualityAudio) {
+		if (this._connectionQuality['audio'] === connectionQualityAudio) {
 			return
 		}
 
-		this._connectionQualityAudio = connectionQualityAudio
+		this._connectionQuality['audio'] = connectionQualityAudio
 		this._trigger('change:connectionQualityAudio', [connectionQualityAudio])
 	},
 
 	_setConnectionQualityVideo: function(connectionQualityVideo) {
-		if (this._connectionQualityVideo === connectionQualityVideo) {
+		if (this._connectionQuality['video'] === connectionQualityVideo) {
 			return
 		}
 
-		this._connectionQualityVideo = connectionQualityVideo
+		this._connectionQuality['video'] = connectionQualityVideo
 		this._trigger('change:connectionQualityVideo', [connectionQualityVideo])
 	},
 
