@@ -447,6 +447,7 @@ export default {
 					token: this.token,
 					id: this.conversation.lastReadMessage,
 				})
+
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					// first time load, initialize important properties
 					this.$store.dispatch('setFirstKnownMessageId', {
@@ -458,18 +459,31 @@ export default {
 						id: this.conversation.lastReadMessage,
 					})
 
-					// get history + new messages
+					// get history before last read message
 					await this.getOldMessages(true)
+					// at this stage, the read marker will appear at the bottom of the view port since
+					// we haven't fetched the messages that come after it yet
+					// TODO: should we still show a spinner at this stage ?
 				}
 
-				// focus on next tick to make sure the DOM elements
-				// for known messages are already rendered
-				this.$nextTick(() => {
-					this.scrollToFocussedMessage()
-				})
+				let hasScrolled = false
+				// if lookForNewMessages will long poll instead of returning existing messages,
+				// scroll right away to avoid delays
+				if (this.$store.getters.getLastKnownMessageId(this.token) === this.conversation.lastMessage.id) {
+					hasScrolled = true
+					await this.$nextTick(() => {
+						this.scrollToFocussedMessage()
+					})
+				}
 
 				// get new messages
 				await this.lookForNewMessages()
+
+				// don't scroll if lookForNewMessages was polling as we don't want
+				// to scroll back to the read marker after receiving new messages later
+				if (!hasScrolled) {
+					this.scrollToFocussedMessage()
+				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
@@ -644,6 +658,7 @@ export default {
 		 * Also see updateReadMarkerPosition() for the backend update.
 		 */
 		refreshReadMarkerPosition() {
+			console.debug('setVisualLastReadMessageId token=' + this.token + ' id=' + this.conversation.lastReadMessage)
 			this.$store.dispatch('setVisualLastReadMessageId', {
 				token: this.token,
 				id: this.conversation.lastReadMessage,
@@ -669,6 +684,7 @@ export default {
 
 			// to fix issues, this scenario should not happen
 			if (this.conversation.lastReadMessage === 0) {
+				console.debug('clearLastReadMessage because lastReadMessage was 0 token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token, updateVisually: true })
 				return
 			}
@@ -685,6 +701,7 @@ export default {
 
 			// if we're at bottom of the chat, then simply clear the marker
 			if (this.isSticky) {
+				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
 			}
@@ -708,6 +725,7 @@ export default {
 
 			// we don't update visually here, it will update the next time the
 			// user focusses back on the conversation. See refreshReadMarkerPosition().
+			console.debug('updateLastReadMessage token=' + this.token + ' messageId=' + messageId)
 			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId, updateVisually: false })
 		},
 
