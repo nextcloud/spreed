@@ -163,6 +163,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Chat#clearHistory',
+			'url' => '/api/{apiVersion}/chat/{token}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Chat#deleteMessage',
 			'url' => '/api/{apiVersion}/chat/{token}/{messageId}',
 			'verb' => 'DELETE',

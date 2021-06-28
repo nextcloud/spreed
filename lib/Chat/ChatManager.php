@@ -279,6 +279,21 @@ class ChatManager {
 		);
 	}
 
+	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
+		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+
+		// TODO reset read markers so they don't error when being used as offset
+
+		return $this->addSystemMessage(
+			$chat,
+			$actorType,
+			$actorId,
+			json_encode(['message' => 'cleared_history', 'parameters' => []]),
+			$this->timeFactory->getDateTime(),
+			false
+		);
+	}
+
 	/**
 	 * @param Room $chat
 	 * @param string $parentId
