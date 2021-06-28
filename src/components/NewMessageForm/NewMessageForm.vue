@@ -340,6 +340,15 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
+			if (OC.debug && this.parsedText.startsWith('/spam ')) {
+				const pattern = /^\/spam (\d+) messages$/i
+				const match = pattern.exec(this.parsedText)
+				if (match) {
+					await this.handleSubmitSpam(match[1])
+					return
+				}
+			}
+
 			if (this.parsedText !== '') {
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
@@ -352,6 +361,23 @@ export default {
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
 				await this.$store.dispatch('postNewMessage', temporaryMessage)
 			}
+		},
+
+		async handleSubmitSpam(numberOfMessages) {
+			console.debug('Sending ' + numberOfMessages + ' lorem ipsum messages')
+			for (let i = 0; i < numberOfMessages; i++) {
+				const randomNumber = parseInt(Math.random() * 500, 10)
+				console.debug('[' + i + '/' + numberOfMessages + '] Sleeping ' + randomNumber + 'ms')
+				await this.sleep(randomNumber)
+
+				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
+				this.parsedText = loremIpsum.substr(0, 25 + randomNumber)
+				await this.handleSubmit()
+			}
+		},
+
+		sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms))
 		},
 
 		handleRetryMessage(temporaryMessageId) {
