@@ -235,7 +235,7 @@ export default {
 		generateFile() {
 			this.audioStream.getTracks().forEach(track => track.stop())
 			if (!this.aborted) {
-				this.blob = new Blob(this.chunks, { type: 'audio/mpeg-3' })
+				this.blob = new Blob(this.chunks, { type: 'audio/aac; codecs=mp4a.40.2' })
 				// Generate file name
 				const fileName = this.generateFileName()
 				// Convert blob to file
@@ -277,7 +277,7 @@ export default {
 			const today = new Date()
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
-			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.mp3'
+			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.m4a'
 		},
 	},
 }
