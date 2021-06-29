@@ -153,6 +153,30 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
 
+## Clear chat history
+
+* Required capability: `clear-history`
+* Method: `DELETE`
+* Endpoint: `/chat/{token}`
+
+* Response:
+    - Status code:
+        + `200 OK` - When deleting was successful
+        + `202 Accepted` - When deleting was successful but Matterbridge is enabled so the message was leaked to other services
+        + `403 Forbidden` When the user is not a moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Header:
+
+        field | type | Description
+        ---|---|---
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+
+    - Data:
+        The full message array of the new system message "You cleared the history of the conversation", as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+        When rendering this message the client should also remove all messages from any cache/storage of the device.
+
+
 ## Deleting a chat message
 
 * Required capability: `delete-messages`
@@ -179,7 +203,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
     - Data:
         The full message array of the new system message "You deleted a message", as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
         The parent message is the object of the deleted message with the replaced text "Message deleted by you".
-        This message should not be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
+        This message should **NOT** be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
 
 
 ## Mark chat as read
@@ -268,7 +292,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
 * `message_deleted` - Message deleted by {actor} (Should not be shown to the user)
-* `cleared_history` - {actor} removed the history of the conversation
+* `cleared_history` - {actor} cleared the history of the conversation
 * `file_shared` - {file}
 * `object_shared` - {object}
 * `matterbridge_config_added` - {actor} set up Matterbridge to synchronize this conversation with other chats
