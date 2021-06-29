@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
@@ -90,7 +90,7 @@ class SessionService {
 	 * @param Attendee $attendee
 	 * @param string $forceSessionId
 	 * @return Session
-	 * @throws UniqueConstraintViolationException
+	 * @throws Exception
 	 */
 	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
 		$session = new Session();
@@ -98,12 +98,7 @@ class SessionService {
 
 		if ($forceSessionId !== '') {
 			$session->setSessionId($forceSessionId);
-			try {
-				$this->sessionMapper->insert($session);
-			} catch (UniqueConstraintViolationException $e) {
-				// The HPB told us to use a session which exists already…
-				throw $e;
-			}
+			$this->sessionMapper->insert($session);
 		} else {
 			while (true) {
 				$sessionId = $this->secureRandom->generate(255);
@@ -111,8 +106,11 @@ class SessionService {
 				try {
 					$this->sessionMapper->insert($session);
 					break;
-				} catch (UniqueConstraintViolationException $e) {
+				} catch (Exception $e) {
 					// 255 chars are not unique? Try again...
+					if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+						throw $e;
+					}
 				}
 			}
 		}
