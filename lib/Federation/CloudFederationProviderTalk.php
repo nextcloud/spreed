@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use Exception;
-use OC\AppFramework\Http;
 use OC\HintException;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
@@ -35,6 +34,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Http;
 use OCP\DB\Exception as DBException;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
 use OCP\Federation\Exceptions\AuthenticationFailedException;
@@ -172,6 +172,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			case 'RESHARE_CHANGE_PERMISSION':
 				return []; // TODO: Implement
 		}
+		return [];
 		// TODO: Implement notificationReceived() method.
 	}
 
