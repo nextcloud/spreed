@@ -402,6 +402,11 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a message');
 			}
+		} elseif ($message === 'cleared_history') {
+			$parsedMessage = $this->l->t('{actor} cleared the history of the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You cleared the history of the conversation');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
