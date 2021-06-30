@@ -37,6 +37,9 @@
 		"debounce": "^1.2.1",
 		"emoji-regex": "^9.2.2",
 		"escape-html": "^1.0.3",
+		"extendable-media-recorder": "^6.3.4",
+		"extendable-media-recorder-wav-encoder": "^7.0.56",
+		"extendable-media-recorder-wav-encoder-worker": "^8.0.48",
 		"hark": "^1.2.3",
 		"leaflet": "^1.7.1",
 		"leaflet-defaulticon-compatibility": "^0.1.1",
@@ -63,7 +66,8 @@
 		"webdav": "^4.6.0",
 		"webrtc-adapter": "^8.0.0",
 		"webrtcsupport": "^2.2.0",
-		"wildemitter": "^1.2.1"
+		"wildemitter": "^1.2.1",
+		"workbox-webpack-plugin": "^6.1.5"
 	},
 	"devDependencies": {
 		"@nextcloud/babel-config": "^1.0.0-beta.1",
@@ -80,6 +84,7 @@
 		"jest-mock-axios": "^4.4.0",
 		"jest-mock-console": "^1.1.0",
 		"regenerator-runtime": "^0.13.7",
+		"terser-webpack-plugin": "^1.4.5",
 		"webpack-node-externals": "^3.0.0"
 	},
 	"browserslist": [
