@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -43,6 +42,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
@@ -647,7 +647,7 @@ class SignalingController extends OCSController {
 			if ($sessionId && !$participant->getSession() instanceof Session) {
 				try {
 					$session = $this->sessionService->createSessionForAttendee($participant->getAttendee(), $sessionId);
-				} catch (UniqueConstraintViolationException $e) {
+				} catch (Exception $e) {
 					return new DataResponse([
 						'type' => 'error',
 						'error' => [
