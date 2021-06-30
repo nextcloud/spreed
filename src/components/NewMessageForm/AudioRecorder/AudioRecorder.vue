@@ -159,10 +159,13 @@ export default {
 		 * Initialize the media stream and start capturing the audio
 		 */
 		async start() {
+			const useSafariFallback = MediaRecorder.isTypeSupported('video/mp4; codecs="mp4a.40.2"')
+
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
 					audio: true,
+					video: false,
 				})
 			} catch (exception) {
 				console.debug(exception)
@@ -176,7 +179,15 @@ export default {
 
 			// Create a mediarecorder to capture the stream
 			try {
-				this.mediaRecorder = new MediaRecorder(this.audioStream)
+				if (useSafariFallback) {
+					this.mediaRecorder = new MediaRecorder(this.audioStream, {
+						audioBitsPerSecond: 128000,
+						videoBitsPerSecond: 0,
+						mimeType: 'video/mp4; codecs="mp4a.40.2"',
+					})
+				} else {
+					this.mediaRecorder = new MediaRecorder(this.audioStream)
+				}
 			} catch (exception) {
 				console.debug(exception)
 				this.audioStream.getTracks().forEach(track => track.stop())
@@ -188,7 +199,7 @@ export default {
 			// Add event handler to onstop
 			this.mediaRecorder.onstop = this.generateFile
 
-			// Add event handler to ondataAvailable
+			// Add event handler to ondataavailable
 			this.mediaRecorder.ondataavailable = (e) => {
 				this.chunks.push(e.data)
 			}
