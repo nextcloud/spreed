@@ -61,6 +61,12 @@
 			<ActionButton
 				:close-after-click="true"
 				@click.prevent.exact="markConversationAsRead">
+				<template #icon>
+					<EyeOutline
+						decorative
+						title=""
+						:size="16" />
+				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
 
@@ -113,6 +119,7 @@ import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import ActionCaption from '@nextcloud/vue/dist/Components/ActionCaption'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
+import EyeOutline from 'vue-material-design-icons/EyeOutline'
 import ConversationIcon from './../../ConversationIcon'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
@@ -126,6 +133,7 @@ export default {
 		AppContentListItem,
 		AppNavigationCounter,
 		ConversationIcon,
+		EyeOutline,
 	},
 	props: {
 		isSearchResult: {
