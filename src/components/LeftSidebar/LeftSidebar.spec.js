@@ -330,6 +330,17 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+
+				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+
+				expect(captionListEl.exists()).toBe(true)
+				expect(captionListEl.length).toBe(5)
+				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
+				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
+				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
+				expect(captionListEl.at(3).props('title')).toStrictEqual('Groups')
+				expect(captionListEl.at(4).props('title')).toStrictEqual('Circles')
+
 				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
 
 				expect(listEl.exists()).toBe(true)
@@ -365,6 +376,15 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+
+				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+
+				expect(captionListEl.exists()).toBe(true)
+				expect(captionListEl.length).toBe(3)
+				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
+				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
+				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
+
 				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
 
 				expect(listEl.exists()).toBe(true)
@@ -398,6 +418,16 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+
+				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+
+				expect(captionListEl.exists()).toBe(true)
+				expect(captionListEl.length).toBe(4)
+				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
+				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
+				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
+				expect(captionListEl.at(3).props('title')).toStrictEqual('Groups')
+
 				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
 
 				expect(listEl.exists()).toBe(true)
@@ -431,15 +461,21 @@ describe('LeftSidebar.vue', () => {
 				expect(listEl.exists()).toBe(true)
 				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
 				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(2)
+				expect(listedEls.length).toBe(2 + listedResults.length)
 				// only filters the existing conversations in the list
 				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
 				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
 
 				const captionsEls = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
 				expect(captionsEls.exists()).toBe(true)
-				expect(captionsEls.length).toBeGreaterThan(1)
-				expect(captionsEls.at(0).props('title')).toBe('Conversations')
+				if (listedResults.length > 0) {
+					expect(captionsEls.length).toBeGreaterThan(2)
+					expect(captionsEls.at(0).props('title')).toBe('Conversations')
+					expect(captionsEls.at(1).props('title')).toBe('Open conversations')
+				} else {
+					expect(captionsEls.length).toBeGreaterThan(1)
+					expect(captionsEls.at(0).props('title')).toBe('Conversations')
+				}
 				// last dynamic caption for "No search results"
 				expect(captionsEls.at(captionsEls.length - 1).props('title')).toBe(expectedCaption)
 
@@ -451,6 +487,19 @@ describe('LeftSidebar.vue', () => {
 					'search',
 					[],
 					[],
+					{
+						circles_enabled: true,
+						start_conversations: true,
+					},
+					'Users, groups and circles'
+				)
+			})
+
+			test('displays all types in caption when only listed conversations were found', async() => {
+				await testSearchNotFound(
+					'search',
+					[],
+					listedResults,
 					{
 						circles_enabled: true,
 						start_conversations: true,
