@@ -939,7 +939,7 @@ OC.L10N.register(
     "An error occurred while adding the participants" : "添加參與者時發生了錯誤",
     "An error occurred while fetching the participants" : "擷取參與者時發生錯誤",
     "Chat" : "聊天",
-    "Details" : "詳情",
+    "Details" : "細節",
     "Meeting ID: {meetingId}" : "會議 ID：{meetingId}",
     "Your PIN: {attendeePin}" : "您的PIN：{attendeePin}",
     "Display name: " : "顯示名稱：",
