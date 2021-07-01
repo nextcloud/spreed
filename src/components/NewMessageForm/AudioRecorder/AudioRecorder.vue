@@ -78,6 +78,8 @@ import Check from 'vue-material-design-icons/Check'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index'
 import { showError } from '@nextcloud/dialogs'
+import { MediaRecorder, register } from 'extendable-media-recorder'
+import { connect } from 'extendable-media-recorder-wav-encoder'
 
 export default {
 	name: 'AudioRecorder',
@@ -154,13 +156,19 @@ export default {
 		},
 	},
 
+	async mounted() {
+		await register(await connect())
+	},
+
+	beforeDestroy() {
+		this.killStreams()
+	},
+
 	methods: {
 		/**
 		 * Initialize the media stream and start capturing the audio
 		 */
 		async start() {
-			const useSafariFallback = MediaRecorder.isTypeSupported('video/mp4; codecs="mp4a.40.2"')
-
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
@@ -169,6 +177,7 @@ export default {
 				})
 			} catch (exception) {
 				console.debug(exception)
+				this.killStreams()
 				if (exception.name === 'NotAllowedError') {
 					showError(t('spreed', 'Access to the microphone was denied'))
 				} else {
@@ -179,18 +188,12 @@ export default {
 
 			// Create a mediarecorder to capture the stream
 			try {
-				if (useSafariFallback) {
-					this.mediaRecorder = new MediaRecorder(this.audioStream, {
-						audioBitsPerSecond: 128000,
-						videoBitsPerSecond: 0,
-						mimeType: 'video/mp4; codecs="mp4a.40.2"',
-					})
-				} else {
-					this.mediaRecorder = new MediaRecorder(this.audioStream)
-				}
+				this.mediaRecorder = new MediaRecorder(this.audioStream, {
+					mimeType: 'audio/wav',
+				})
 			} catch (exception) {
 				console.debug(exception)
-				this.audioStream.getTracks().forEach(track => track.stop())
+				this.killStreams()
 				this.audioStream = null
 				showError(t('spreed', 'Error while recording audio'))
 				return
@@ -211,6 +214,7 @@ export default {
 				console.debug(exception)
 				this.aborted = true
 				this.stop()
+				this.killStreams()
 				this.resetComponentData()
 				showError(t('spreed', 'Error while recording audio'))
 				return
@@ -244,9 +248,9 @@ export default {
 		 * Generate the file
 		 */
 		generateFile() {
-			this.audioStream.getTracks().forEach(track => track.stop())
+			this.killStreams()
 			if (!this.aborted) {
-				this.blob = new Blob(this.chunks, { type: 'audio/mpeg-3' })
+				this.blob = new Blob(this.chunks, { type: 'audio/wav' })
 				// Generate file name
 				const fileName = this.generateFileName()
 				// Convert blob to file
@@ -288,9 +292,17 @@ export default {
 			const today = new Date()
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
-			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.mp3'
+			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.wav'
+		},
+
+		/**
+		 * Stop the audio streams
+		 */
+		killStreams() {
+			this.audioStream?.getTracks().forEach(track => track.stop())
 		},
 	},
+
 }
 </script>
 
