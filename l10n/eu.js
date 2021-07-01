@@ -815,6 +815,7 @@ OC.L10N.register(
     "Today" : "Gaur",
     "Yesterday" : "Atzo",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Record voice message" : "Grabatu ahots mezua",
     "Share files to the conversation" : "Partekatu fitxategiak elkarrizketan",
     "Upload new files" : "Kargatu fitxategi berriak",
     "Share from Files" : "Partekatu Fitxategiak-etik",
