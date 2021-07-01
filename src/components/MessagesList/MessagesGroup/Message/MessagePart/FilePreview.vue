@@ -197,6 +197,11 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		isVoiceMessage: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
@@ -244,7 +249,7 @@ export default {
 					is: 'div',
 					tag: 'div',
 				}
-			} else if (this.mimetype.startsWith('audio')) {
+			} else if (this.isVoiceMessage) {
 				return {
 					is: AudioPlayer,
 					name: this.name,
