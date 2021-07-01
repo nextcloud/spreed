@@ -392,7 +392,7 @@ function mungeSdpForSimulcasting(sdp) {
 /* eslint-enable */
 
 Peer.prototype.offer = function(options) {
-	const sendVideo = this.sendVideoIfAvailable || this.type === 'screen'
+	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
 		console.debug('Enabling Simulcasting for Firefox (RID)')
 		const sender = this.pc.getSenders().find(function(s) {
