@@ -656,13 +656,10 @@ export default {
 		adjustSimulcastQualityForParticipant(callParticipantModel) {
 			if (this.isGrid) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM)
-				callParticipantModel.setSimulcastScreenQuality(SIMULCAST.MEDIUM)
 			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH)
-				callParticipantModel.setSimulcastScreenQuality(SIMULCAST.HIGH)
 			} else {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW)
-				callParticipantModel.setSimulcastScreenQuality(SIMULCAST.LOW)
 			}
 		},
 	},
