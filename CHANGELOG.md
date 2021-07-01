@@ -1,6 +1,48 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.0.0-rc.1 – 2021-07-01
+### Added
+- Add support for simulcast streams when the high-performance backend is used
+  [#5535](https://github.com/nextcloud/spreed/pull/5535)
+- Allow users to have multiple session in the same conversation
+  [#5194](https://github.com/nextcloud/spreed/pull/5194)
+- Voice messages, location sharing and contacts sharing
+  [#5610](https://github.com/nextcloud/spreed/pull/5610)
+  [#5573](https://github.com/nextcloud/spreed/pull/5573)
+  [#5731](https://github.com/nextcloud/spreed/pull/5731)
+- Play a sound when a participant joins or leaves the call
+  [#5410](https://github.com/nextcloud/spreed/pull/5410)
+- Add unread message marker in the chat view
+  [#3825](https://github.com/nextcloud/spreed/pull/3825)
+- Show a "new message" indicator while being in the call
+  [#5534](https://github.com/nextcloud/spreed/pull/5534)
+- Sync group members with conversation participants
+  [#4810](https://github.com/nextcloud/spreed/pull/4810)
+- Add an option to reply privately
+  [#4855](https://github.com/nextcloud/spreed/pull/4855)
+- Conversation TopBar with icon, name and description
+  [#5596](https://github.com/nextcloud/spreed/pull/5596)
+
+### Changed
+- Use all defined STUN and TURN servers instead of a random one
+  [#5503](https://github.com/nextcloud/spreed/pull/5503)
+  [#5491](https://github.com/nextcloud/spreed/pull/5491)
+- Compatibility with Nextcloud 22
+
+### Fixed
+- Allow to mention groupfolder users in file chats
+  [#4246](https://github.com/nextcloud/spreed/pull/4246)
+- Fix not sending signaling messages to participants without a Peer object
+  [#4686](https://github.com/nextcloud/spreed/pull/4686)
+- Fix several issues with video, stream and screenshare selections
+
+### Removed
+- 🏁 Conversations API v1, v2 and v3
+- 🏁 Call API v1, v2 and v3
+- 🏁 Signaling API v1 and v2
+- 🏁 Support for Internet Explorer
+
 ## 11.3.0 – 2021-06-04
 ### Fixed
 - Inject the preloaded user status into the avatar component
