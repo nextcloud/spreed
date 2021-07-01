@@ -214,7 +214,12 @@ export default {
 			if (!this.isRenamingConversation) {
 				this.conversationName = this.conversation.displayName
 			}
-			this.$refs.participantsTab.$el.scrollTop = 0
+		},
+
+		token() {
+			if (this.$refs.participantsTab) {
+				this.$refs.participantsTab.$el.scrollTop = 0
+			}
 		},
 	},
 
