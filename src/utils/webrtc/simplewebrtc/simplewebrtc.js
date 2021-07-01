@@ -16,6 +16,12 @@ function SimpleWebRTC(opts) {
 		localVideoEl: '',
 		remoteVideosEl: '',
 		enableDataChannels: true,
+		enableSimulcast: false,
+		maxBitrates: {
+			high: 900000,
+			medium: 300000,
+			low: 100000,
+		},
 		autoRequestMedia: false,
 		autoRemoveVideos: true,
 		adjustPeerVolume: false,
