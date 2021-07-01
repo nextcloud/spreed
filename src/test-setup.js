@@ -24,6 +24,15 @@
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 
+jest.mock('extendable-media-recorder', () => ({
+	MediaRecorder: jest.fn(),
+	register: jest.fn(),
+}))
+
+jest.mock('extendable-media-recorder-wav-encoder', () => ({
+	connect: jest.fn(),
+}))
+
 global.appName = 'spreed'
 
 global.OC = {
