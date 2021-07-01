@@ -101,6 +101,10 @@ function PeerConnectionAnalyzer() {
 		audio: new AverageStatValue(2, STAT_VALUE_TYPE.CUMULATIVE),
 		video: new AverageStatValue(2, STAT_VALUE_TYPE.CUMULATIVE),
 	}
+	this._timestampsForLogs = {
+		audio: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
+		video: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
+	}
 
 	this._analysisEnabled = {
 		audio: true,
@@ -224,6 +228,7 @@ PeerConnectionAnalyzer.prototype = {
 		this._packetsLostRatio[kind].reset()
 		this._packetsPerSecond[kind].reset()
 		this._timestamps[kind].reset()
+		this._timestampsForLogs[kind].reset()
 	},
 
 	_handleIceConnectionStateChanged() {
@@ -405,6 +410,7 @@ PeerConnectionAnalyzer.prototype = {
 			}
 			if (timestamp[kind] >= 0) {
 				this._timestamps[kind].add(timestamp[kind])
+				this._timestampsForLogs[kind].add(timestamp[kind])
 			}
 			if (packets[kind] >= 0 && timestamp[kind] >= 0) {
 				const elapsedSeconds = this._timestamps[kind].getLastRelativeValue() / 1000
@@ -495,6 +501,7 @@ PeerConnectionAnalyzer.prototype = {
 			}
 			if (timestamp[kind] >= 0) {
 				this._timestamps[kind].add(timestamp[kind])
+				this._timestampsForLogs[kind].add(timestamp[kind])
 			}
 			if (packets[kind] >= 0 && timestamp[kind] >= 0) {
 				const elapsedSeconds = this._timestamps[kind].getLastRelativeValue() / 1000
@@ -507,20 +514,22 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQualityAudio() {
-		return this._calculateConnectionQuality(this._packetsLostRatio.audio, this._packetsPerSecond.audio, this._roundTripTime.audio)
+		return this._calculateConnectionQuality(this._packetsLostRatio.audio, this._packetsPerSecond.audio, this._roundTripTime.audio, 'audio')
 	},
 
 	_calculateConnectionQualityVideo() {
-		return this._calculateConnectionQuality(this._packetsLostRatio.video, this._packetsPerSecond.video, this._roundTripTime.video)
+		return this._calculateConnectionQuality(this._packetsLostRatio.video, this._packetsPerSecond.video, this._roundTripTime.video, 'video')
 	},
 
-	_calculateConnectionQuality(packetsLostRatio, packetsPerSecond, roundTripTime) {
+	_calculateConnectionQuality(packetsLostRatio, packetsPerSecond, roundTripTime, kind) {
 		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
 
 		const packetsLostRatioWeightedAverage = packetsLostRatio.getWeightedAverage()
 		if (packetsLostRatioWeightedAverage >= 1) {
+			this._logStats(kind, 'No transmitted data, packet lost ratio: ' + packetsLostRatioWeightedAverage)
+
 			return CONNECTION_QUALITY.NO_TRANSMITTED_DATA
 		}
 
@@ -529,6 +538,8 @@ PeerConnectionAnalyzer.prototype = {
 		// discarded to try to keep the playing rate in real time.
 		// Round trip time is measured in seconds.
 		if (roundTripTime.hasEnoughData() && roundTripTime.getWeightedAverage() > 1.5) {
+			this._logStats(kind, 'High round trip time: ' + roundTripTime.getWeightedAverage())
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
@@ -544,10 +555,14 @@ PeerConnectionAnalyzer.prototype = {
 		// with a threshold of 10 packets issues can be detected too for videos,
 		// although only once they can not be further downscaled.
 		if (packetsPerSecond.getWeightedAverage() < 10) {
+			this._logStats(kind, 'Low packets per second: ' + packetsPerSecond.getWeightedAverage())
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
 		if (packetsLostRatioWeightedAverage > 0.3) {
+			this._logStats(kind, 'High packet lost ratio: ' + packetsLostRatioWeightedAverage)
+
 			return CONNECTION_QUALITY.VERY_BAD
 		}
 
@@ -560,6 +575,21 @@ PeerConnectionAnalyzer.prototype = {
 		}
 
 		return CONNECTION_QUALITY.GOOD
+	},
+
+	_logStats(kind, message) {
+		const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+
+		if (message) {
+			console.debug(tag + message)
+		}
+
+		console.debug(tag + 'Packets: ' + this._packets[kind].toString())
+		console.debug(tag + 'Packets lost: ' + this._packetsLost[kind].toString())
+		console.debug(tag + 'Packets lost ratio: ' + this._packetsLostRatio[kind].toString())
+		console.debug(tag + 'Packets per second: ' + this._packetsPerSecond[kind].toString())
+		console.debug(tag + 'Round trip time: ' + this._roundTripTime[kind].toString())
+		console.debug(tag + 'Timestamps: ' + this._timestampsForLogs[kind].toString())
 	},
 
 }
