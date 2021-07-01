@@ -160,6 +160,10 @@ export default {
 		await register(await connect())
 	},
 
+	beforeDestroy() {
+		this.killStreams()
+	},
+
 	methods: {
 		/**
 		 * Initialize the media stream and start capturing the audio
@@ -173,6 +177,7 @@ export default {
 				})
 			} catch (exception) {
 				console.debug(exception)
+				this.killStreams()
 				if (exception.name === 'NotAllowedError') {
 					showError(t('spreed', 'Access to the microphone was denied'))
 				} else {
@@ -188,7 +193,7 @@ export default {
 				})
 			} catch (exception) {
 				console.debug(exception)
-				this.audioStream.getTracks().forEach(track => track.stop())
+				this.killStreams()
 				this.audioStream = null
 				showError(t('spreed', 'Error while recording audio'))
 				return
@@ -209,6 +214,7 @@ export default {
 				console.debug(exception)
 				this.aborted = true
 				this.stop()
+				this.killStreams()
 				this.resetComponentData()
 				showError(t('spreed', 'Error while recording audio'))
 				return
@@ -242,7 +248,7 @@ export default {
 		 * Generate the file
 		 */
 		generateFile() {
-			this.audioStream.getTracks().forEach(track => track.stop())
+			this.killStreams()
 			if (!this.aborted) {
 				this.blob = new Blob(this.chunks, { type: 'audio/wav' })
 				// Generate file name
@@ -288,7 +294,15 @@ export default {
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
 			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.wav'
 		},
+
+		/**
+		 * Stop the audio streams
+		 */
+		killStreams() {
+			this.audioStream?.getTracks().forEach(track => track.stop())
+		},
 	},
+
 }
 </script>
 
