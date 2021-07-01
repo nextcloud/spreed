@@ -504,9 +504,11 @@ export default {
 						props: this.messageParameters[p],
 					}
 				} else if (type === 'file' && mimetype !== 'text/vcard') {
+					const parameters = this.messageParameters[p]
+					parameters['is-voice-message'] = this.messageType === 'voice-message'
 					richParameters[p] = {
 						component: FilePreview,
-						props: this.messageParameters[p],
+						props: parameters,
 					}
 				} else if (type === 'deck-card') {
 					richParameters[p] = {

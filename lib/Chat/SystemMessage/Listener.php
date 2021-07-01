@@ -321,7 +321,8 @@ class Listener implements IEventListener {
 			$metaData = is_array($metaData) ? $metaData : [];
 
 			if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
-				if ($share->getNode()->getMimeType() !== 'audio/mpeg') {
+				if ($share->getNode()->getMimeType() !== 'audio/mpeg'
+					&& $share->getNode()->getMimeType() !== 'audio/wav') {
 					unset($metaData['messageType']);
 				}
 			}
