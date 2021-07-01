@@ -20,6 +20,12 @@ function WebRTC(opts) {
 			offerToReceiveVideo: 1,
 		},
 		enableDataChannels: true,
+		enableSimulcast: false,
+		maxBitrates: {
+			high: 900000,
+			medium: 300000,
+			low: 100000,
+		},
 	}
 	let item
 

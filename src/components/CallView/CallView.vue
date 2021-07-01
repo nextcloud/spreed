@@ -159,6 +159,7 @@
 
 <script>
 import Grid from './Grid/Grid'
+import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 import { fetchPeers } from '../../services/callsService'
 import { showMessage } from '@nextcloud/dialogs'
@@ -344,6 +345,14 @@ export default {
 			this.updateDataFromCallParticipantModels(models)
 		},
 
+		isGrid() {
+			this.adjustSimulcastQuality()
+		},
+
+		selectedVideoPeerId() {
+			this.adjustSimulcastQuality()
+		},
+
 		speakers() {
 			this._setPromotedParticipant()
 		},
@@ -472,6 +481,8 @@ export default {
 				}, function(raisedHand) {
 					this._handleParticipantRaisedHand(addedModel, raisedHand)
 				})
+
+				this.adjustSimulcastQualityForParticipant(addedModel)
 			})
 		},
 
@@ -553,6 +564,8 @@ export default {
 			if (!this.screenSharingActive && this.speakers.length) {
 				this.sharedDatas[this.speakers[0].id].promoted = true
 			}
+
+			this.adjustSimulcastQuality()
 		},
 
 		_switchScreenToId(id) {
@@ -632,6 +645,22 @@ export default {
 		// Toggles videos on and off
 		handleToggleVideo({ peerId, value }) {
 			this.sharedDatas[peerId].videoEnabled = value
+		},
+
+		adjustSimulcastQuality() {
+			this.callParticipantModels.forEach(callParticipantModel => {
+				this.adjustSimulcastQualityForParticipant(callParticipantModel)
+			})
+		},
+
+		adjustSimulcastQualityForParticipant(callParticipantModel) {
+			if (this.isGrid) {
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM)
+			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH)
+			} else {
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW)
+			}
 		},
 	},
 }

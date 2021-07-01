@@ -355,4 +355,22 @@ CallParticipantModel.prototype = {
 		this.set('nextcloudSessionId', nextcloudSessionId)
 	},
 
+	setSimulcastVideoQuality(simulcastVideoQuality) {
+		if (!this.get('peer') || !this.get('peer').enableSimulcast) {
+			return
+		}
+
+		// Use same quality for simulcast and temporal layer.
+		this.get('peer').selectSimulcastStream(simulcastVideoQuality, simulcastVideoQuality)
+	},
+
+	setSimulcastScreenQuality(simulcastScreenQuality) {
+		if (!this.get('screenPeer') || !this.get('screenPeer').enableSimulcast) {
+			return
+		}
+
+		// Use same quality for simulcast and temporal layer.
+		this.get('screenPeer').selectSimulcastStream(simulcastScreenQuality, simulcastScreenQuality)
+	},
+
 }

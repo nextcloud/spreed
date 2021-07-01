@@ -124,3 +124,8 @@ export const PRIVACY = {
 	PUBLIC: 0,
 	PRIVATE: 1,
 }
+export const SIMULCAST = {
+	LOW: 0,
+	MEDIUM: 1,
+	HIGH: 2,
+}
