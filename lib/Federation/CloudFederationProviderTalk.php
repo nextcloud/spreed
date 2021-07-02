@@ -26,13 +26,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use Exception;
-use OC\HintException;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception as DBException;
@@ -42,6 +42,7 @@ use OCP\Federation\Exceptions\BadRequestException;
 use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
+use OCP\HintException;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -110,8 +111,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if (!$this->federationManager->isEnabled()) {
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
-		if ($share->getShareType() !== 'user') {
-			throw new ProviderCouldNotAddShareException('support for sharing with non-users not implemented yet', '', Http::STATUS_NOT_IMPLEMENTED);
+		if (!in_array($share->getShareType(), $this->getSupportedShareTypes(), true)) {
+			throw new ProviderCouldNotAddShareException('Support for sharing with non-users not implemented yet', '', Http::STATUS_NOT_IMPLEMENTED);
 			// TODO: Implement group shares
 		}
 
@@ -199,7 +200,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$room = $this->manager->getRoomById($attendee->getRoomId());
 		$participant = new Participant($room, $attendee, null);
-		$this->participantService->removeAttendee($room, $participant, 'Left Room');
+		$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
 		return [];
 	}
 
@@ -218,7 +219,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		} catch (Exception $ex) {
 			throw new ShareNotFound();
 		}
-		if ($attendee->getActorType() !== Attendee::ACTOR_FEDERATED_REMOTE_USER) {
+		if ($attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 			throw new ShareNotFound();
 		}
 		if ($attendee->getAccessToken() !== $sharedSecret) {

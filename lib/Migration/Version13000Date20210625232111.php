@@ -44,44 +44,45 @@ class Version13000Date20210625232111 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('talk_attendees')) {
-			$table = $schema->getTable('talk_attendees');
-			if (!$table->hasColumn('access_token')) {
-				$table->addColumn('access_token', Types::STRING, [
-					'notnull' => false,
-					'default' => null,
-				]);
-			}
+		$table = $schema->getTable('talk_attendees');
+		if (!$table->hasColumn('access_token')) {
+			$table->addColumn('access_token', Types::STRING, [
+				'notnull' => false,
+				'default' => null,
+			]);
 		}
 
-		if ($schema->hasTable('talk_rooms')) {
-			$table = $schema->getTable('talk_rooms');
-			if (!$table->hasColumn('server_url')) {
-				$table->addColumn('server_url', Types::STRING, [
-					'notnull' => false,
-					'default' => null,
-				]);
-			}
+		$table = $schema->getTable('talk_rooms');
+		if (!$table->hasColumn('server_url')) {
+			$table->addColumn('server_url', Types::STRING, [
+				'notnull' => false,
+				'default' => null,
+			]);
 		}
 
-		$table = $schema->createTable('talk_invitations');
-		$table->addColumn('id', Types::BIGINT, [
-			'autoincrement' => true,
-			'notnull' => true,
-		]);
-		$table->addColumn('room_id', Types::BIGINT, [
-			'notnull' => true,
-			'unsigned' => true,
-		]);
-		$table->addColumn('user_id', Types::STRING, [
-			'notnull' => true,
-			'length' => 255,
-		]);
-		$table->addColumn('access_token', Types::STRING, [
-			'notnull' => true,
-		]);
+		if (!$schema->hasTable('talk_invitations')) {
+			$table = $schema->createTable('talk_invitations');
+			$table->addColumn('id', Types::BIGINT, [
+				'autoincrement' => true,
+				'notnull' => true,
+			]);
+			$table->addColumn('room_id', Types::BIGINT, [
+				'notnull' => true,
+				'unsigned' => true,
+			]);
+			$table->addColumn('user_id', Types::STRING, [
+				'notnull' => true,
+				'length' => 255,
+			]);
+			$table->addColumn('access_token', Types::STRING, [
+				'notnull' => true,
+			]);
 
-		$table->setPrimaryKey(['id']);
+			$table->setPrimaryKey(['id']);
+
+			$table->addIndex(['room_id']);
+		}
+
 
 		return $schema;
 	}

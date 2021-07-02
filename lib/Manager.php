@@ -630,7 +630,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null, ?string $server_url = null): Room {
+	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null, ?string $serverUrl = null): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -643,10 +643,10 @@ class Manager {
 			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
-		if ($server_url === null) {
+		if ($serverUrl === null) {
 			$query->andWhere($query->expr()->isNull('r.server_url'));
 		} else {
-			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($server_url)));
+			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($serverUrl)));
 		}
 
 		if ($sessionId !== null) {

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
@@ -76,7 +77,7 @@ class FederationManager {
 	 */
 	public function isEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getSystemValueBool('talk_federation_enabled', false);
+		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', "false") === "true";
 	}
 
 	/**

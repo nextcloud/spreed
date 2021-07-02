@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
-use OC\HintException;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
@@ -38,6 +37,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -289,14 +289,8 @@ class Notifier implements INotifier {
 		[$sharedById, $sharedByServer] = $this->addressHandler->splitUserRemote($subjectParameters['sharedByFederatedId']);
 
 		$message = $l->t('{user1} shared room {roomName} on {remoteServer} with you');
-		$parsedMessage = $l->t('{user1} shared room {roomName} on {remoteServer} with you', [
-			'user1' => $subjectParameters['sharedByFederatedId'],
-			'roomName' => $subjectParameters['roomName'],
-			'remoteServer' => $subjectParameters['serverUrl'],
-		]);
 
-		$notification->setParsedMessage($parsedMessage);
-		$notification->setRichMessage($message, [
+		$rosParameters = [
 			'user1' => [
 				'type' => 'user',
 				'id' => $sharedById,
@@ -313,7 +307,16 @@ class Notifier implements INotifier {
 				'id' => $subjectParameters['serverUrl'],
 				'name' => $subjectParameters['serverUrl'],
 			]
-		]);
+		];
+
+		$placeholders = $replacements = [];
+		foreach ($rosParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder .'}';
+			$replacements[] = $parameter['name'];
+		}
+
+		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message));
+		$notification->setRichMessage($message, $rosParameters);
 
 		return $notification;
 	}
