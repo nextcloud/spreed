@@ -181,6 +181,8 @@ class Room {
 	private $lastMessageId;
 	/** @var IComment|null */
 	private $lastMessage;
+	/** @var int */
+	private $lastCommentId;
 	/** @var string */
 	private $objectType;
 	/** @var string */
@@ -213,6 +215,7 @@ class Room {
 								?\DateTime $lastActivity,
 								int $lastMessageId,
 								?IComment $lastMessage,
+								int $lastCommentId,
 								?\DateTime $lobbyTimer,
 								string $objectType,
 								string $objectId) {
@@ -238,6 +241,7 @@ class Room {
 		$this->lastActivity = $lastActivity;
 		$this->lastMessageId = $lastMessageId;
 		$this->lastMessage = $lastMessage;
+		$this->lastCommentId = $lastCommentId;
 		$this->lobbyTimer = $lobbyTimer;
 		$this->objectType = $objectType;
 		$this->objectId = $objectId;
@@ -348,6 +352,16 @@ class Room {
 		}
 
 		return $this->lastMessage;
+	}
+
+	/**
+	 * The message id of the last message with `verb` = 'comment' which means it marks
+	 * the chat unread
+	 *
+	 * @return int
+	 */
+	public function getLastCommentId(): int {
+		return $this->lastCommentId;
 	}
 
 	public function getObjectType(): string {
@@ -779,10 +793,19 @@ class Room {
 		$query->update('talk_rooms')
 			->set('last_message', $query->createNamedParameter((int) $message->getId()))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($message->getVerb() === 'comment') {
+			// Only update for messages which are setting the unread marker/counter
+			$query->set('last_comment', $query->createNamedParameter((int) $message->getId()));
+		}
+
 		$query->execute();
 
 		$this->lastMessage = $message;
 		$this->lastMessageId = (int) $message->getId();
+		if ($message->getVerb() === 'comment') {
+			$this->lastCommentId = (int) $message->getId();
+		}
 	}
 
 	public function resetActiveSince(): bool {

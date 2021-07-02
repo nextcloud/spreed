@@ -191,6 +191,7 @@ class Manager {
 			$lastActivity,
 			(int) $row['last_message'],
 			$lastMessage,
+			(int) $row['last_comment'],
 			$lobbyTimer,
 			(string) $row['object_type'],
 			(string) $row['object_id']

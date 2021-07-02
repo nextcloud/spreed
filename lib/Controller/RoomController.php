@@ -532,8 +532,8 @@ class RoomController extends AEnvironmentAwareController {
 					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
 					$this->participantService->updateLastReadMessage($currentParticipant, $lastReadMessage);
 				}
-				if ($room->getLastMessage() && $lastReadMessage === (int) $room->getLastMessage()->getId()) {
-					// When the last message is the last read message, there are no unread messages,
+				if ($lastReadMessage >= $room->getLastCommentId()) {
+					// When the last "comment" message is the last read message, there are no unread messages,
 					// so we can save the query.
 					$roomData['unreadMessages'] = 0;
 				} else {
