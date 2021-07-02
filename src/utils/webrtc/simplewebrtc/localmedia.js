@@ -201,6 +201,9 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 			track.addEventListener('ended', function() {
 				if (isAllTracksEnded(stream) && !self._pendingAudioInputIdChangedCount && !self._pendingVideoInputIdChangedCount) {
+					// received by VideoEffects
+					this.streamEvent = new Event('mainStreamEnded', { bubbles: false, cancelable: false })
+					stream.dispatchEvent(this.streamEvent)
 					self._removeStream(stream)
 				}
 			})
