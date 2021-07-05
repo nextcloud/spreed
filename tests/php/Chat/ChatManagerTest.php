@@ -321,7 +321,7 @@ class ChatManagerTest extends TestCase {
 	public function testGetUnreadCount() {
 		/** @var Room|MockObject $chat */
 		$chat = $this->createMock(Room::class);
-		$chat->expects($this->once())
+		$chat->expects($this->atLeastOnce())
 			->method('getId')
 			->willReturn(23);
 
