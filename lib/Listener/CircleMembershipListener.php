@@ -25,43 +25,39 @@ namespace OCA\Talk\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
-use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
-class CircleMembershipListener implements IEventListener {
-
+class CircleMembershipListener extends AMembershipListener {
 	/** @var ISession */
 	private $session;
 	/** @var IUserManager */
 	private $userManager;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var Manager */
-	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
 
-	public function __construct(ISession $session,
-								IUserManager $userManager,
+	public function __construct(Manager $manager,
+								IAppManager $appManager,
 								IGroupManager $groupManager,
-								Manager $manager,
-								ParticipantService $participantService) {
-		$this->session = $session;
+								ParticipantService $participantService,
+								IUserManager $userManager,
+								ISession $session) {
+		parent::__construct(
+			$manager,
+			$appManager,
+			$groupManager,
+			$participantService
+		);
 		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
+		$this->session = $session;
 	}
 
 	public function handle(Event $event): void {
@@ -70,7 +66,7 @@ class CircleMembershipListener implements IEventListener {
 		}
 
 		if ($event instanceof RemovingCircleMemberEvent) {
-			$this->removeFormerMemberFromRooms($event->getCircle(), $event->getMember());
+			$this->removeFormerMemberFromRooms($event);
 		}
 	}
 
@@ -148,10 +144,26 @@ class CircleMembershipListener implements IEventListener {
 		}
 	}
 
-	protected function removeFormerMemberFromRooms(Circle $circle, Member $member): void {
-		if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
+	protected function removeFormerMemberFromRooms(RemovingCircleMemberEvent $event): void {
+		$circle = $event->getCircle();
+		$removedMember = $event->getMember();
+
+		if ($removedMember->getUserType() !== Member::TYPE_USER || $removedMember->getUserId() === '') {
 			// Not a user?
 			return;
+		}
+
+		$user = $this->userManager->get($removedMember->getUserId());
+		if (!$user instanceof IUser) {
+			// User doesn't exist anymore?
+			return;
+		}
+
+		$removedBy = $removedMember->getInvitedBy();
+		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->getUserId() !== '') {
+			$this->session->set('talk-overwrite-actor', $removedBy->getUserId());
+		} else if ($removedBy->getUserType() === Member::TYPE_APP && $removedBy->getUserId() === 'occ') {
+			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
 
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circle->getSingleId());
@@ -159,6 +171,9 @@ class CircleMembershipListener implements IEventListener {
 			return;
 		}
 
-		// FIXME we now need to check user groups and circles?
+		$this->removeFromRoomsUnlessStillLinked($rooms, $user);
+
+		$this->session->remove('talk-overwrite-actor');
+		$this->session->remove('talk-overwrite-actor-cli');
 	}
 }
