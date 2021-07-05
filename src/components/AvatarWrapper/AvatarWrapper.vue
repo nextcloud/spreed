@@ -26,7 +26,7 @@
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${sizeToString}px`, iconClass]" />
-		<Avatar v-else-if="id"
+		<Avatar v-else-if="!isGuest"
 			:user="id"
 			:display-name="name"
 			menu-container="#content-vue"
@@ -102,7 +102,7 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.source === 'users') {
+			if (!this.source || this.source === 'users' || this.isGuest) {
 				return ''
 			}
 			if (this.source === 'emails') {
@@ -110,6 +110,9 @@ export default {
 			}
 			// source: groups, circles
 			return 'icon-contacts'
+		},
+		isGuest() {
+			return this.source === 'guests'
 		},
 		firstLetterOfGuestName() {
 			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
