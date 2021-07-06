@@ -893,7 +893,7 @@ OC.L10N.register(
     "Access to the microphone was denied" : "Odmowa dostępu do mikrofonu",
     "Microphone either not available or disabled in settings" : "Mikrofon jest niedostępny lub wyłączony w ustawieniach",
     "Error while recording audio" : "Błąd podczas nagrywania dźwięku",
-    "Talk recording from {time} ({conversation})" : "Nagranie rozmowy od {time} ({conversation})",
+    "Talk recording from {time} ({conversation})" : "Nagranie rozmowy z {time} ({conversation})",
     "Share files to the conversation" : "Udostępnij pliki dla rozmowy",
     "Upload new files" : "Wyślij nowe pliki",
     "Share from Files" : "Udostępnij z Plików",
