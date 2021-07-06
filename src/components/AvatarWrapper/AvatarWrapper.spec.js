@@ -44,7 +44,8 @@ describe('AvatarWrapper.vue', () => {
 	it('Renders guests icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
 			propsData: {
-				id: '',
+				id: 'random-sha1',
+				source: 'guests',
 				name: '',
 				size: 24,
 			},
