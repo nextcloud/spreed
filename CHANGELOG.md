@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 12.0.0-rc.1 – 2021-07-01
+## 12.0.0 – 2021-07-06
 ### Added
 - Add support for simulcast streams when the high-performance backend is used
   [#5535](https://github.com/nextcloud/spreed/pull/5535)
