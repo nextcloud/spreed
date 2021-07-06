@@ -284,25 +284,24 @@ describe('Conversation.vue', () => {
 			const el = wrapper.findComponent({ name: 'ListItem' })
 			expect(el.exists()).toBe(true)
 
-			const counter = el.vm.$slots.counter[0]
-			expect(counter.componentInstance.$el.textContent).toBe(expectedCounterText)
-			expect(counter.componentInstance.highlighted).toBe(expectedHighlighted)
+			expect(el.props('counterNumber')).toBe(expectedCounterText)
+			expect(el.props('counterHighlighted')).toBe(expectedHighlighted)
 		}
 
 		test('renders unread messages counter', () => {
 			item.unreadMessages = 5
-			testCounter(item, '5', false)
+			testCounter(item, 5, false)
 		})
 		test('renders unread mentions highlighted for non one-to-one conversations', () => {
 			item.unreadMessages = 5
 			item.unreadMention = true
-			testCounter(item, '5', true)
+			testCounter(item, 5, true)
 		})
 		test('renders unread mentions always highlighted for one-to-one conversations', () => {
 			item.unreadMessages = 5
 			item.unreadMention = false
 			item.type = CONVERSATION.TYPE.ONE_TO_ONE
-			testCounter(item, '5', true)
+			testCounter(item, 5, true)
 		})
 
 		test('does not render counter when no unread messages', () => {
