@@ -326,7 +326,11 @@ export default {
 		},
 
 		isActive() {
-			return this.$store.getters.getToken() === this.to.params.token
+			if (!this.isSearchResult) {
+				return this.$store.getters.getToken() === this.to.params.token
+			} else {
+				return false
+			}
 		},
 	},
 	methods: {
