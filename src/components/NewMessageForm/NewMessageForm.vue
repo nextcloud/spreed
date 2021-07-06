@@ -518,6 +518,7 @@ export default {
 			position: absolute;
 			left: 5px;
 			bottom: 1px;
+			z-index: 1;
 			.emoji-picker-button {
 				opacity: .7;
 				&:hover,
