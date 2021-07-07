@@ -47,6 +47,8 @@ import {
 import { signalingKill } from './utils/webrtc/index'
 import sessionIssueHandler from './mixins/sessionIssueHandler'
 import talkHashCheck from './mixins/talkHashCheck'
+import { register } from 'extendable-media-recorder'
+import { connect } from 'extendable-media-recorder-wav-encoder'
 
 export default {
 
@@ -95,6 +97,11 @@ export default {
 				window.setTimeout(() => { this.isWaitingToClose = false }, 5000)
 			}
 		},
+	},
+
+	async mounted() {
+		// Initialise audiorecorder encoder
+		register(await connect())
 	},
 
 	beforeMount() {

@@ -78,8 +78,7 @@ import Check from 'vue-material-design-icons/Check'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index'
 import { showError } from '@nextcloud/dialogs'
-import { MediaRecorder, register } from 'extendable-media-recorder'
-import { connect } from 'extendable-media-recorder-wav-encoder'
+import { MediaRecorder } from 'extendable-media-recorder'
 
 export default {
 	name: 'AudioRecorder',
@@ -154,10 +153,6 @@ export default {
 		isRecording(newValue) {
 			console.debug('isRecording', newValue)
 		},
-	},
-
-	async mounted() {
-		await register(await connect())
 	},
 
 	beforeDestroy() {
