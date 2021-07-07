@@ -782,8 +782,6 @@ OC.L10N.register(
     "Submit conversation description" : "Сохранить описание обсуждения",
     "Edit conversation description" : "Изменить описание обсуждения",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Описание должно быть не длиннее {maxLength} символов. Длинна введённого текста: {charactersCount} cимв.",
-    "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
-    "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "Mark as read" : "Пометить, как прочитанное",
     "Remove from favorites" : "Удалить из избранного",
     "Add to favorites" : "Добавить в избранное",
@@ -1067,6 +1065,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Сервер TURN (Traversal Using Relay NAT) используется для перенаправления данных для участников, расположенных за брандмауэром. Сервер TURN необходим, если участники не могут устанавливать прямое соединение. Сведения по настройке приведены в {linkstart}документации{linkend}.",
     "Lower hand" : "Опустить руку",
     "Raise hand" : "Поднять руку",
+    "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
+    "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
     "Add a description for this conversation" : "Добавьте описание этого обсуждения"
 },

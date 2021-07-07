@@ -735,8 +735,6 @@ OC.L10N.register(
     "Submit conversation description" : "Υποβολή περιγραφής συνομιλίας",
     "Edit conversation description" : "Επεξεργασία περιγραφής συνομιλίας",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Η περιγραφή πρέπει να έχει μήκος μικρότερο ή ίσο με {maxLength} χαρακτήρες. Το τρέχον κείμενό σας έχει {charactersCount} χαρακτήρες.",
-    "Conversation \"{conversationName}\"" : "Συνομιλία \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Ρυθμίσεις για συνομιλία \"{conversationName}\"",
     "Remove from favorites" : "Αφαίρεση από τα αγαπημένα",
     "Add to favorites" : "Προσθήκη στα αγαπημένα ",
     "Joining conversation …" : "Συμμετοχή σε συνομιλία…",
@@ -993,6 +991,8 @@ OC.L10N.register(
     "You stopped Matterbridge." : "Σταματήσατε το Matterbridge.",
     "Lower hand" : "Κατεβάστε το χέρι",
     "Raise hand" : "Σηκώστε το χέρι",
+    "Conversation \"{conversationName}\"" : "Συνομιλία \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Ρυθμίσεις για συνομιλία \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Δεν μπορείτε να στείλετε μηνύματα σε αυτή τη συνομιλία προς το παρόν",
     "Add a description for this conversation" : "Προσθέστε μια περιγραφή για αυτήν τη συνομιλία"
 },
