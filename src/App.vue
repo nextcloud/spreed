@@ -66,6 +66,8 @@ import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog'
 import '@nextcloud/dialogs/styles/toast.scss'
+import { register } from 'extendable-media-recorder'
+import { connect } from 'extendable-media-recorder-wav-encoder'
 
 export default {
 	name: 'App',
@@ -325,7 +327,7 @@ export default {
 		}
 	},
 
-	mounted() {
+	async mounted() {
 		// see browserCheck mixin
 		this.checkBrowser()
 		// Check sidebar status in previous sessions
@@ -334,6 +336,8 @@ export default {
 		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 			this.$store.dispatch('showSidebar')
 		}
+
+		register(await connect())
 	},
 
 	methods: {
