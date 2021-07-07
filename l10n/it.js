@@ -786,8 +786,6 @@ OC.L10N.register(
     "Submit conversation description" : "Invia la descrizione della conversazione",
     "Edit conversation description" : "Modifica la descrizione della conversazione",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "La descrizione deve essere inferiore o uguale a {maxLength} caratteri. Il tuo testo attuale è lungo {charactersCount} caratteri.",
-    "Conversation \"{conversationName}\"" : "Conversazione \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Impostazioni per la conversazione \"{conversationName}\"",
     "Mark as read" : "Marca come letto",
     "Remove from favorites" : "Rimuovi dai preferiti",
     "Add to favorites" : "Aggiungi ai preferiti",
@@ -1072,6 +1070,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Un server TURN viene utilizzato per per inoltrare il traffico dai partecipanti dietro un firewall. Se i singoli partecipanti non possono connettersi ad altri, è molto probabile che sia richiesto un server TURN. Vedi {linkstart}questa documentazione{linkend} per le istruzioni di configurazione.",
     "Lower hand" : "Abbassa la mano",
     "Raise hand" : "Alza la mano",
+    "Conversation \"{conversationName}\"" : "Conversazione \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Impostazioni per la conversazione \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Al momento, non puoi inviare messaggi a questa conversazione",
     "Add a description for this conversation" : "Aggiungi una descrizione per questa conversazione"
 },

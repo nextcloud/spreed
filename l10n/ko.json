@@ -721,8 +721,6 @@
     "Submit conversation description" : "대화 설명 제출",
     "Edit conversation description" : "대화 설명 편집",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "설명은 {maxLength} 자 미만이어야 합니다. 현재 텍스트 길이는 {chartersCount} 자입니다.",
-    "Conversation \"{conversationName}\"" : "대화 \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "대화 설정 \"{conversationName}\"",
     "Remove from favorites" : "즐겨찾기에서 제거",
     "Add to favorites" : "즐겨찾기에 추가",
     "Joining conversation …" : "대화에 참여하는 중 ...",
@@ -965,6 +963,8 @@
     "You stopped Matterbridge." : "당신이 Matterbridge 를 정지했습니다.",
     "Lower hand" : "낮은 손",
     "Raise hand" : "손을 들다",
+    "Conversation \"{conversationName}\"" : "대화 \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "대화 설정 \"{conversationName}\"",
     "Add a description for this conversation" : "이 대화에 대한 설명 추가"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

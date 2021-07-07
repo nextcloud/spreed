@@ -807,8 +807,6 @@ OC.L10N.register(
     "Submit conversation description" : "Verwerken gespreksbeschrijving",
     "Edit conversation description" : "Bewerken gespreksbeschrijving",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "De beschrijving moet kleiner zijn dan of gelijk zijn aan {maxLength} tekens. Je tekst is nu {charactersCount} tekens lang.",
-    "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "Mark as read" : "Markeren als gelezen",
     "Remove from favorites" : "Verwijderen uit favorieten",
     "Add to favorites" : "Toevoegen aan favorieten",
@@ -1112,6 +1110,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Een TURN server wordt gebruikt om verkeer van deelnemers achter een firewall te proxyen. Als individuele deelnemers niet rechtstreeks met anderen kunnen verbinden, is TURN server vermoedelijk vereist. Zie {linkstart}deze documentatie{linkend} voor instructies.",
     "Lower hand" : "Hand omlaag",
     "Raise hand" : "Hand opsteken",
+    "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
     "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
 },

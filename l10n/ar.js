@@ -797,8 +797,6 @@ OC.L10N.register(
     "Submit conversation description" : "إرسال وصف المحادثة ",
     "Edit conversation description" : "تحرير وصف المحادثة",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "يجب أن يكون الوصف أقل من أو يساوي {maxLength} حرفًا. يبلغ طول النص الحالي {characterCount} حرفاً.",
-    "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
-    "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "Mark as read" : "تحديد كمقروء ",
     "Remove from favorites" : "إزالتها مِن المفضلة",
     "Add to favorites" : "أضفه إلى المفضلة",
@@ -1088,6 +1086,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
     "Lower hand" : "خفض اليد ",
     "Raise hand" : "رفع اليد",
+    "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
+    "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
     "Add a description for this conversation" : "إضافة وصف لهذه المحادثة "
 },

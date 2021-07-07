@@ -807,8 +807,6 @@ OC.L10N.register(
     "Submit conversation description" : "Imbia sa descritzione de sa resonada",
     "Edit conversation description" : "Modìfica sa descritzione de sa resonada",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Sa descritzione depet èssere prus curtza o paris a {maxLength} caràteres. Su testu immoe est longu {charactersCount} caràteres",
-    "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "Mark as read" : "Marca comente lèghidu",
     "Remove from favorites" : "Boga dae preferidos",
     "Add to favorites" : "Agiunghe a preferidos",
@@ -1112,6 +1110,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Unu serbidore TURN s'impreat pro imbiare su tràficu dae is partezipantes a secus de unu firewall. Chi is partetzipantes individuales non si podent connètere cun is àteras persones, est probàbile chi serbat unu serbidore TURN. Controlla {linkstart} custa documentatzione{linkend} pro is istrutziones de cunfiguratzione.",
     "Lower hand" : "Bàscia sa manu ",
     "Raise hand" : "Àrtzia sa manu ",
+    "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
     "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
 },

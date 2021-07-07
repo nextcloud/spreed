@@ -779,8 +779,6 @@
     "Submit conversation description" : "Soumettre la description de la conversation",
     "Edit conversation description" : "Modifier la description de la conversation",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "La description doit être inférieure ou égale à {maxLength} caractères. Votre texte actuel comporte {caractèresCount} caractères.",
-    "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "Mark as read" : "Marquer comme lu",
     "Remove from favorites" : "Retirer des favoris",
     "Add to favorites" : "Ajouter aux favoris",
@@ -1052,6 +1050,8 @@
     "An administrator set the description to \"%1$s\"" : "Un administrateur a mis la description à \"%1$s\"",
     "Lower hand" : "Baisser la main",
     "Raise hand" : "Lever la main",
+    "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
     "Add a description for this conversation" : "Ajouter une description pour cette conversation"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
