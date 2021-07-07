@@ -112,6 +112,24 @@ const state = {
 
 const getters = {
 	/**
+	 * Returns whether more messages can be loaded, which means that the current
+	 * message list doesn't yet contain all future messages.
+	 * If false, the next call to "lookForNewMessages" will be blocking/long-polling.
+
+	 * @param {object} state the state object.
+	 * @param {object} getters the getters object.
+	 * @returns {bool} true if more messages exist that needs loading, false otherwise
+	 */
+	hasMoreMessagesToLoad: (state, getters) => (token) => {
+		const conversation = getters.conversation(token)
+		if (!conversation) {
+			return false
+		}
+
+		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
+	},
+
+	/**
 	 * Gets the messages array
 	 * @param {object} state the state object.
 	 * @returns {array} the messages array (if there are messages in the store)
@@ -639,6 +657,8 @@ const actions = {
 	 * Fetches newly created messages that belong to a particular conversation
 	 * specified with its token.
 	 *
+	 * This call will long-poll when hasMoreMessagesToLoad() returns false.
+	 *
 	 * @param {object} context default store context;
 	 * @param {string} token The conversation token;
 	 * @param {string} requestId id to identify request uniquely
@@ -711,15 +731,16 @@ const actions = {
 				token,
 				lastMessage,
 			})
-		}
 
-		if (countNewMessages > 0) {
-			context.commit('updateUnreadMessages', {
-				token,
-				unreadMessages: conversation.unreadMessages + countNewMessages,
-				// only update the value if it's been changed to true
-				unreadMention: conversation.unreadMention !== hasNewMention ? hasNewMention : undefined,
-			})
+			// only increase the counter if the conversation store was out of sync with the message list
+			if (countNewMessages > 0) {
+				context.commit('updateUnreadMessages', {
+					token,
+					unreadMessages: conversation.unreadMessages + countNewMessages,
+					// only update the value if it's been changed to true
+					unreadMention: conversation.unreadMention !== hasNewMention ? hasNewMention : undefined,
+				})
+			}
 		}
 
 		return response
