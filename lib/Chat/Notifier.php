@@ -207,7 +207,7 @@ class Notifier {
 		$notification->setObject('chat', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
 
-		if ($chatOnly) {
+		if (!$chatOnly) {
 			$notification->setObject('room', $chat->getToken());
 			$this->notificationManager->markProcessed($notification);
 

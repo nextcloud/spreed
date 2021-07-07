@@ -30,6 +30,7 @@ use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -51,6 +52,8 @@ class ChatManagerTest extends TestCase {
 	protected $dispatcher;
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
+	/** @var RoomShareProvider|MockObject */
+	protected $shareProvider;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var Notifier|MockObject */
@@ -66,6 +69,7 @@ class ChatManagerTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -76,6 +80,44 @@ class ChatManagerTest extends TestCase {
 			$this->dispatcher,
 			\OC::$server->getDatabaseConnection(),
 			$this->notificationManager,
+			$this->shareProvider,
+			$this->participantService,
+			$this->notifier,
+			$cacheFactory,
+			$this->timeFactory
+		);
+	}
+
+	/**
+	 * @param string[] $methods
+	 * @return ChatManager|MockObject
+	 */
+	protected function getManager(array $methods = []): ChatManager {
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+
+		if (!empty($methods)) {
+			return $this->getMockBuilder(ChatManager::class)
+				->setConstructorArgs([
+					$this->commentsManager,
+					$this->dispatcher,
+					\OC::$server->getDatabaseConnection(),
+					$this->notificationManager,
+					$this->shareProvider,
+					$this->participantService,
+					$this->notifier,
+					$cacheFactory,
+					$this->timeFactory,
+				])
+				->setMethods($methods)
+				->getMock();
+		}
+
+		return new ChatManager(
+			$this->commentsManager,
+			$this->dispatcher,
+			\OC::$server->getDatabaseConnection(),
+			$this->notificationManager,
+			$this->shareProvider,
 			$this->participantService,
 			$this->notifier,
 			$cacheFactory,
@@ -221,7 +263,7 @@ class ChatManagerTest extends TestCase {
 		$this->assertCommentEquals($commentExpected, $return);
 	}
 
-	public function testGetHistory() {
+	public function testGetHistory(): void {
 		$offset = 1;
 		$limit = 42;
 		$expected = [
@@ -245,7 +287,7 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testWaitForNewMessages() {
+	public function testWaitForNewMessages(): void {
 		$offset = 1;
 		$limit = 42;
 		$timeout = 23;
@@ -269,7 +311,7 @@ class ChatManagerTest extends TestCase {
 			->method('markMentionNotificationsRead')
 			->with($chat, 'userId');
 
-		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
+		/** @var IUser|MockObject $user */
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
@@ -280,7 +322,7 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testWaitForNewMessagesWithWaiting() {
+	public function testWaitForNewMessagesWithWaiting(): void {
 		$offset = 1;
 		$limit = 42;
 		$timeout = 23;
@@ -307,7 +349,7 @@ class ChatManagerTest extends TestCase {
 			->method('markMentionNotificationsRead')
 			->with($chat, 'userId');
 
-		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
+		/** @var IUser|MockObject $user */
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
@@ -318,7 +360,7 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testGetUnreadCount() {
+	public function testGetUnreadCount(): void {
 		/** @var Room|MockObject $chat */
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->atLeastOnce())
@@ -332,7 +374,7 @@ class ChatManagerTest extends TestCase {
 		$this->chatManager->getUnreadCount($chat, 42);
 	}
 
-	public function testDeleteMessages() {
+	public function testDeleteMessages(): void {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
@@ -347,5 +389,48 @@ class ChatManagerTest extends TestCase {
 			->with($chat);
 
 		$this->chatManager->deleteMessages($chat);
+	}
+
+	public function testClearHistory(): void {
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn(1234);
+		$chat->expects($this->any())
+			->method('getToken')
+			->willReturn('t0k3n');
+
+		$this->commentsManager->expects($this->once())
+			->method('deleteCommentsAtObject')
+			->with('chat', 1234);
+
+		$this->shareProvider->expects($this->once())
+			->method('deleteInRoom')
+			->with('t0k3n');
+
+		$this->notifier->expects($this->once())
+			->method('removePendingNotificationsForRoom')
+			->with($chat, true);
+
+		$this->participantService->expects($this->once())
+			->method('resetChatDetails')
+			->with($chat);
+
+		$date = new \DateTime();
+		$this->timeFactory->method('getDateTime')
+			->willReturn($date);
+
+		$manager = $this->getManager(['addSystemMessage']);
+		$manager->expects($this->once())
+			->method('addSystemMessage')
+			->with(
+				$chat,
+				'users',
+				'admin',
+				json_encode(['message' => 'cleared_history', 'parameters' => []]),
+				$date,
+				false
+			);
+		$manager->clearHistory($chat, 'users', 'admin');
 	}
 }
