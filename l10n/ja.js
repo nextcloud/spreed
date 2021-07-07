@@ -771,8 +771,6 @@ OC.L10N.register(
     "Submit conversation description" : "会話の詳細を送信する",
     "Edit conversation description" : "会話の詳細を編集する",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "詳細は {maxLength} 文字以下である必要があります。現在のテキストの長さは {charactersCount} 文字です。",
-    "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "Mark as read" : "既読にする",
     "Remove from favorites" : "お気に入りから削除",
     "Add to favorites" : "お気に入りに追加",
@@ -1052,6 +1050,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURNサーバーは、ファイアウォールの背後にある参加者からのトラフィックをプロキシするために使用されます。個々の参加者が他の参加者に接続できない場合は、TURNサーバーが必要になる可能性があります。セットアップ手順については、{linkstart}このドキュメント{linkend}を参照してください。",
     "Lower hand" : "手を下げる (r)",
     "Raise hand" : "挙手 (r)",
+    "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
     "Add a description for this conversation" : "この会話の詳細を追加する"
 },

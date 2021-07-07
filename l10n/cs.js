@@ -807,8 +807,6 @@ OC.L10N.register(
     "Submit conversation description" : "Odeslat popis konverzace",
     "Edit conversation description" : "Upravit popis konverzace",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Je třeba, aby popis nebyl delší než {maxLength} znaků. Momentálně má text {charactersCount} znaků.",
-    "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
-    "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "Mark as read" : "Označit jako přečtené",
     "Remove from favorites" : "Odebrat z oblíbených",
     "Add to favorites" : "Přidat do oblíbených",
@@ -1112,6 +1110,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN server slouží jako proxy pro provoz od účastníků, kteří se nacházejí za bránou firewall. Pokud se jednotliví účastníci nemohou spojit s ostatními, nejspíš je zapotřebí TURN server. Pokyny k nastavení viz {linkstart}tato dokumentace{linkend}.",
     "Lower hand" : "Přestat se hlásit",
     "Raise hand" : "Hlásit se",
+    "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
+    "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "Nyní není možné do této konverzace posílat zprávy",
     "Add a description for this conversation" : "Přidat popis k této konverzaci"
 },
