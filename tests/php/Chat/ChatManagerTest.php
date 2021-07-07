@@ -427,7 +427,7 @@ class ChatManagerTest extends TestCase {
 				$chat,
 				'users',
 				'admin',
-				json_encode(['message' => 'cleared_history', 'parameters' => []]),
+				json_encode(['message' => 'history_cleared', 'parameters' => []]),
 				$date,
 				false
 			);

@@ -203,7 +203,7 @@ Feature: chat/reply
       | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage   |
-      | room1 | users     | participant1 | participant1-displayname | cleared_history |
+      | room1 | users     | participant1 | participant1-displayname | history_cleared |
     Then user "participant2" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage   |
-      | room1 | users     | participant1 | participant1-displayname | cleared_history |
+      | room1 | users     | participant1 | participant1-displayname | history_cleared |
