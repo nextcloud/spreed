@@ -61,6 +61,8 @@ import isInCall from './mixins/isInCall'
 import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
+import { register } from 'extendable-media-recorder'
+import { connect } from 'extendable-media-recorder-wav-encoder'
 
 export default {
 
@@ -129,6 +131,11 @@ export default {
 				}
 			}
 		})
+	},
+
+	async mounted() {
+		// Initialise audiorecorder encoder
+		await register(await connect())
 	},
 
 	methods: {
