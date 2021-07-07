@@ -805,8 +805,6 @@
     "Submit conversation description" : "遞交對話描述",
     "Edit conversation description" : "編輯對話描述",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "說明的長度必須小於或等於{maxLength}個字符。您當前的文本長度為{charactersCount}個字符。",
-    "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "Mark as read" : "標為已讀",
     "Remove from favorites" : "取消我的最愛",
     "Add to favorites" : "加到我的最愛",
@@ -1110,6 +1108,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN 伺服器用於代理（proxy）來自防火牆後參與者的流量。如果個別參與者無法連接到其他參與者，則很可能需要 TURN 伺服器。有關設置說明，請參見{linkstart}此說明書{linkend}。",
     "Lower hand" : "放下手",
     "Raise hand" : "舉手",
+    "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "You can not send messages to this conversation at the moment" : "您目前無法向此對話發送消息",
     "Add a description for this conversation" : "添加此對話的描述"
 },"pluralForm" :"nplurals=1; plural=0;"

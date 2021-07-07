@@ -775,8 +775,6 @@ OC.L10N.register(
     "Submit conversation description" : "Küldje el a beszélgetés leírását",
     "Edit conversation description" : "A beszélgetés leírásának szerkesztése",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "A leírásnak legfeljebb {maxLength} karakteres lehet. Jelenlegi szövege {charactersCount} karakter hosszú.",
-    "Conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés",
-    "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés beállításai",
     "Mark as read" : "Megjelölés olvasottként",
     "Remove from favorites" : "Eltávolítás a kedvencekből",
     "Add to favorites" : "Hozzáadás a kedvencekhez ",
@@ -1058,6 +1056,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "A TURN kiszolgáló a tűzfal mögött lévő résztvevők forgalmának proxyzására szolgál. Ha az egyes résztvevők nem tudnak csatlakozni másokhoz, akkor valószínűleg TURN kiszolgálóra van szükség. A telepítési utasításokért lásd {linkstart}ezt a dokumentációt{linkend}.",
     "Lower hand" : "Kéz letétele",
     "Raise hand" : "Kezet felemel",
+    "Conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés",
+    "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
     "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
 },
