@@ -424,6 +424,7 @@ describe('Message.vue', () => {
 
 		test('displays unread message marker that marks the message seen when visible', () => {
 			messageProps.lastReadMessageId = 123
+			messageProps.nextMessageId = 333
 			const observeVisibility = jest.fn()
 
 			const wrapper = shallowMount(Message, {
@@ -452,6 +453,24 @@ describe('Message.vue', () => {
 			// stays true if it was visible once
 			directiveValue.value(false)
 			expect(wrapper.vm.seen).toEqual(true)
+		})
+
+		test('does not display read marker on the very last message', () => {
+			messageProps.lastReadMessageId = 123
+			messageProps.nextMessageId = null // last message
+			const observeVisibility = jest.fn()
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				directives: {
+					observeVisibility,
+				},
+				propsData: messageProps,
+			})
+
+			const marker = wrapper.find('.new-message-marker')
+			expect(marker.exists()).toBe(false)
 		})
 	})
 
