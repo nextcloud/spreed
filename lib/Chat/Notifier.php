@@ -197,7 +197,7 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 */
-	public function removePendingNotificationsForRoom(Room $chat): void {
+	public function removePendingNotificationsForRoom(Room $chat, bool $chatOnly = false): void {
 		$notification = $this->notificationManager->createNotification();
 		$shouldFlush = $this->notificationManager->defer();
 
@@ -207,11 +207,13 @@ class Notifier {
 		$notification->setObject('chat', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
 
-		$notification->setObject('room', $chat->getToken());
-		$this->notificationManager->markProcessed($notification);
+		if (!$chatOnly) {
+			$notification->setObject('room', $chat->getToken());
+			$this->notificationManager->markProcessed($notification);
 
-		$notification->setObject('call', $chat->getToken());
-		$this->notificationManager->markProcessed($notification);
+			$notification->setObject('call', $chat->getToken());
+			$this->notificationManager->markProcessed($notification);
+		}
 
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
