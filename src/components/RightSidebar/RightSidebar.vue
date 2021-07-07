@@ -47,7 +47,7 @@
 			icon="icon-comment">
 			<ChatView :is-visible="opened" />
 		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId"
+		<AppSidebarTab v-if="getUserId && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
@@ -179,7 +179,7 @@ export default {
 		},
 
 		canModerate() {
-			return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
 		/**
@@ -205,6 +205,10 @@ export default {
 
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 	},
