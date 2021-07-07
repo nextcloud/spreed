@@ -292,7 +292,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
 * `message_deleted` - Message deleted by {actor} (Should not be shown to the user)
-* `cleared_history` - {actor} cleared the history of the conversation
+* `history_cleared` - {actor} cleared the history of the conversation
 * `file_shared` - {file}
 * `object_shared` - {object}
 * `matterbridge_config_added` - {actor} set up Matterbridge to synchronize this conversation with other chats
