@@ -780,8 +780,6 @@
     "Submit conversation description" : "Сохранить описание обсуждения",
     "Edit conversation description" : "Изменить описание обсуждения",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Описание должно быть не длиннее {maxLength} символов. Длинна введённого текста: {charactersCount} cимв.",
-    "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
-    "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "Mark as read" : "Пометить, как прочитанное",
     "Remove from favorites" : "Удалить из избранного",
     "Add to favorites" : "Добавить в избранное",
@@ -1065,6 +1063,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Сервер TURN (Traversal Using Relay NAT) используется для перенаправления данных для участников, расположенных за брандмауэром. Сервер TURN необходим, если участники не могут устанавливать прямое соединение. Сведения по настройке приведены в {linkstart}документации{linkend}.",
     "Lower hand" : "Опустить руку",
     "Raise hand" : "Поднять руку",
+    "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
+    "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
     "Add a description for this conversation" : "Добавьте описание этого обсуждения"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"

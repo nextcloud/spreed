@@ -762,8 +762,6 @@ OC.L10N.register(
     "Submit conversation description" : "Opis podnošenja razgovora",
     "Edit conversation description" : "Opis uređivanja razgovora",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Opis mora sadržavati najviše {maxLength} znakova. Vaš trenutačni tekst sadrži {charactersCount} znakova.",
-    "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
-    "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "Mark as read" : "Označi kao pročitano",
     "Remove from favorites" : "Ukloni iz favorita",
     "Add to favorites" : "Dodaj u favorite",
@@ -1040,6 +1038,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
     "Lower hand" : "Spusti ruku",
     "Raise hand" : "Podigni ruku",
+    "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
+    "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
     "Add a description for this conversation" : "Dodaj opis ovog razgovora"
 },

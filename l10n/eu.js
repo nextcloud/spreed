@@ -804,8 +804,6 @@ OC.L10N.register(
     "Submit conversation description" : "Argitaratu elkarrizketaren deskribapena",
     "Edit conversation description" : "Editatu elkarrizketaren deskribapena",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Deskribapenak {maxLength} karaktere edo gutxiagokoa izan behar du. Jarrita duzun deskribapenak {charactersCount} dauzka.",
-    "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
-    "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "Mark as read" : "Markatu irakurri gisa",
     "Remove from favorites" : "Kendu gogokoetatik",
     "Add to favorites" : "Gehitu gogokoetara",
@@ -1106,6 +1104,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN zerbitzariak suhesi baten atzeko partaideen trafikoa bideratzeko erabiltzen dira. Partaideek ezin badute beraien artean konektatu, TURN zerbitzari bat beharrezkoa da seguru aski. Ikusi {linkstart}dokumentazio hau{linkend} konfigurazio jarraibideak jasotzeko.",
     "Lower hand" : "Jaitsi eskua",
     "Raise hand" : "Jaso eskua",
+    "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
+    "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
 },
 "nplurals=2; plural=(n != 1);");

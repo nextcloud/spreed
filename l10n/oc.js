@@ -648,8 +648,6 @@ OC.L10N.register(
     "Cancel editing description" : "Anullar la modificacion de la descripcion",
     "Submit conversation description" : "Enviar la descripcion de la conversacion",
     "Edit conversation description" : "Editar la descripcion de la conversacion",
-    "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
-    "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "Mark as read" : "Marcar coma legit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
@@ -668,6 +666,7 @@ OC.L10N.register(
     "Other sources" : "Autras fonts",
     "An error occurred while performing the search" : "Una error s'es producha en realizant la recèrca",
     "Creating your conversation" : "Creacion de vòstra conversacion",
+    "All set" : "Tot es prèst",
     "Error while creating the conversation" : "Error pendent la creacion de la conversacion",
     "Link copied to the clipboard!" : "Ligam copiat al quichapapièrs !",
     "Create a new group conversation" : "Crear una conversacion de grop novèla",
@@ -893,7 +892,9 @@ OC.L10N.register(
     "You stopped Matterbridge." : "Avètz arrestat Matterbridge.",
     "Lower hand" : "Baissar la man",
     "Raise hand" : "Levar la man",
+    "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
+    "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondre una descripcion per aquesta conversacion"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
 },
 "nplurals=2; plural=(n > 1);");

@@ -515,8 +515,6 @@ OC.L10N.register(
     "Submit conversation description" : "Gửi mô tả cuộc trò chuyện",
     "Edit conversation description" : "Chỉnh sửa mô tả cuộc trò chuyện",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Mô tả phải dài ít hơn hoặc bằng {maxLength} ký tự. Văn bản hiện tại của bạn dài {characterCount} ký tự.",
-    "Conversation \"{conversationName}\"" : "Cuộc trò chuyện \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Cài đặt cho cuộc trò chuyện \"{conversationName}\"",
     "Mark as read" : "Đánh dấu đã đọc",
     "Remove from favorites" : "Xóa khỏi ưa thích",
     "Add to favorites" : "Thêm vào ưa thích",
@@ -794,6 +792,8 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia sau tường lửa. Nếu những người tham gia cá nhân không thể kết nối với những người khác, rất có thể cần phải có máy chủ TURN. Xem {linkstart} tài liệu này {linkend} để biết hướng dẫn thiết lập.",
     "Lower hand" : "Đặt tay xuống",
     "Raise hand" : "Giơ tay",
+    "Conversation \"{conversationName}\"" : "Cuộc trò chuyện \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Cài đặt cho cuộc trò chuyện \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
     "Add a description for this conversation" : "Thêm mô tả cho cuộc trò chuyện này"
 },
