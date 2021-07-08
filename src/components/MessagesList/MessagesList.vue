@@ -703,7 +703,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
-			if (this.isSticky && !this.$store.getters.hasMoreMessagesToLoad()) {
+			if (this.isSticky && !this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return

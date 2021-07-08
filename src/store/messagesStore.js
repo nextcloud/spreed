@@ -115,7 +115,7 @@ const getters = {
 	 * Returns whether more messages can be loaded, which means that the current
 	 * message list doesn't yet contain all future messages.
 	 * If false, the next call to "lookForNewMessages" will be blocking/long-polling.
-
+	 *
 	 * @param {object} state the state object.
 	 * @param {object} getters the getters object.
 	 * @returns {bool} true if more messages exist that needs loading, false otherwise
