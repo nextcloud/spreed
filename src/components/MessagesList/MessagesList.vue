@@ -145,12 +145,12 @@ export default {
 		},
 
 		/**
-		 * Finds the first unread message element
+		 * Finds the first visual unread message element
 		 *
 		 * @returns {object} DOM element of the first unread message
 		 */
 		unreadMessageElement() {
-			let el = document.getElementById('message_' + this.conversation.lastReadMessage)
+			let el = document.getElementById('message_' + this.visualLastReadMessageId)
 			if (el) {
 				el = el.closest('.message')
 			}
