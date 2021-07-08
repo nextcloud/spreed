@@ -790,7 +790,7 @@ export default {
 		},
 
 		async handleMarkAsUnread() {
-			// update in backend + visually
+			// update in backend showError(t('spreed', 'No permission to post messages in this conversation'))+ visually
 			await this.$store.dispatch('updateLastReadMessage', {
 				token: this.token,
 				id: this.previousMessageId,
@@ -806,11 +806,15 @@ export default {
 		},
 
 		setSelectedRoom(room) {
-			console.log(room)
 			this.selectedRoom = room
 			this.modal = false
+			this.$store.dispatch('forwardMessage', {
+				token: room,
+				message: this.messageObject,
+			})
 
-			this.$router.push({ name: 'conversation', params: { token: room } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			// Display a third dialog and push the new route only if the user requires it
+			// this.$router.push({ name: 'conversation', params: { token: room } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
