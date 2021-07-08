@@ -469,7 +469,7 @@ describe('participantsStore', () => {
 			},
 		})
 
-		expect(leaveCall).toHaveBeenCalledWith(TOKEN)
+		expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
 		expect(store.getters.isInCall(TOKEN)).toBe(false)
 		expect(store.getters.isConnecting(TOKEN)).toBe(false)
 		expect(store.getters.participantsList(TOKEN)).toStrictEqual([

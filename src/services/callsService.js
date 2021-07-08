@@ -54,10 +54,11 @@ const joinCall = async function(token, flags) {
  * Leave a call as participant
  *
  * @param {string} token The token of the call to be left
+ * @param {boolean} all Whether to end the meeting for all
  */
-const leaveCall = async function(token) {
+const leaveCall = async function(token, all = false) {
 	try {
-		await signalingLeaveCall(token)
+		await signalingLeaveCall(token, all)
 	} catch (error) {
 		console.debug('Error while leaving call: ', error)
 	}
