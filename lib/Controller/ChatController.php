@@ -592,7 +592,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
 
-		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED: Http::STATUS_OK);
+		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK);
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
 		}
