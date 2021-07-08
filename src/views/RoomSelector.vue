@@ -131,6 +131,7 @@ export default {
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
+			this.$emit('select', this.selectedRoom)
 		},
 	},
 }
