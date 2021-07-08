@@ -32,6 +32,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -69,6 +70,8 @@ class ChatManager {
 	private $connection;
 	/** @var INotificationManager */
 	private $notificationManager;
+	/** @var RoomShareProvider */
+	private $shareProvider;
 	/** @var ParticipantService */
 	private $participantService;
 	/** @var Notifier */
@@ -84,6 +87,7 @@ class ChatManager {
 								IEventDispatcher $dispatcher,
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
+								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
@@ -92,6 +96,7 @@ class ChatManager {
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
+		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
@@ -276,6 +281,25 @@ class ChatManager {
 			false,
 			null,
 			$messageId
+		);
+	}
+
+	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
+		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+
+		$this->shareProvider->deleteInRoom($chat->getToken());
+
+		$this->notifier->removePendingNotificationsForRoom($chat, true);
+
+		$this->participantService->resetChatDetails($chat);
+
+		return $this->addSystemMessage(
+			$chat,
+			$actorType,
+			$actorId,
+			json_encode(['message' => 'history_cleared', 'parameters' => []]),
+			$this->timeFactory->getDateTime(),
+			false
 		);
 	}
 
@@ -482,6 +506,8 @@ class ChatManager {
 	 */
 	public function deleteMessages(Room $chat): void {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+
+		$this->shareProvider->deleteInRoom($chat->getToken());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
