@@ -148,7 +148,7 @@ Feature: chat/reply
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
   Scenario: Can only delete own messages in one-to-one
-    Given user "participant1" creates room "room1"
+    Given user "participant1" creates room "room1" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" sends message "Message 1" to room "room1" with 201

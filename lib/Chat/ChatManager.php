@@ -32,6 +32,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -71,6 +72,8 @@ class ChatManager {
 	private $notificationManager;
 	/** @var ParticipantService */
 	private $participantService;
+	/** @var RoomShareProvider */
+	private $shareProvider;
 	/** @var Notifier */
 	private $notifier;
 	/** @var ITimeFactory */
@@ -85,6 +88,7 @@ class ChatManager {
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
 								ParticipantService $participantService,
+								RoomShareProvider $shareProvider,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory) {
@@ -92,6 +96,7 @@ class ChatManager {
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
+		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
@@ -482,6 +487,8 @@ class ChatManager {
 	 */
 	public function deleteMessages(Room $chat): void {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+
+		$this->shareProvider->deleteInRoom($chat->getToken());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
