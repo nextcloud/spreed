@@ -722,8 +722,10 @@
     "This conversation will be shown in search results" : "Elkarrizketa hau bilaketa emaitzetan erakutsiko dira",
     "Also open to guest app users" : "Ireki baita ere aplikazio gonbidatuentzat",
     "Error occurred when opening or limiting the conversation" : "Errorea gertatu da elkarrizketa mugatu edo irekitzean",
+    "Enabling the lobby only allows moderators to post messages." : "Itxarongela gaitzeak moderatzaileak mezuak bidali ahal izatea baimentzen du soilik.",
     "This will also remove non-moderators from the ongoing call." : "Honek moderatzaile ez direnak ere kanporatuko ditu hasita dagoen deitik.",
     "Enable lobby" : "Gaitu atondoa",
+    "After the time limit the lobby will be automatically disabled." : "Denbora mugaren ostean itxarongela automatikoki desgaituko dira.",
     "Meeting start time" : "Bileraren hasiera-ordua",
     "Start time (optional)" : "Hasiera-ordua (hautazkoa)",
     "Error occurred when restricting the conversation to moderator" : "Errorea gertatu da elkarrizketari moderatzaile muga jartzean",
@@ -1104,6 +1106,7 @@
     "Raise hand" : "Jaso eskua",
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
+    "You can not send messages to this conversation at the moment" : "Ezin dituzu mezuak bidali elkarrizketa honetara une honetan",
     "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
