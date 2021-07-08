@@ -809,6 +809,8 @@ export default {
 			console.log(room)
 			this.selectedRoom = room
 			this.modal = false
+
+			this.$router.push({ name: 'conversation', params: { token: room } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
