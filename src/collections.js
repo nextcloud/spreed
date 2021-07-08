@@ -21,7 +21,6 @@
  */
 
 import Vue from 'vue'
-import RoomSelector from './views/RoomSelector'
 
 // eslint-disable-next-line no-unexpected-multiline
 (function(OCP, OC) {
@@ -42,6 +41,7 @@ import RoomSelector from './views/RoomSelector'
 				container.id = 'spreed-room-select'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
+				const RoomSelector = () => import('./views/RoomSelector')
 				const ComponentVM = new Vue({
 					render: h => h(RoomSelector),
 				})
