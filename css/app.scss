@@ -3,3 +3,8 @@
 body {
 	overflow: hidden;
 }
+
+/* FIXME: remove after https://github.com/nextcloud/nextcloud-vue/issues/2097 is solved */
+.mx-datepicker-main.mx-datepicker-popup {
+	z-index: 10001 !important;
+}
