@@ -134,6 +134,8 @@ OC.L10N.register(
     "You stopped Matterbridge" : "Sie haben Matterbridge angehalten",
     "{actor} deleted a message" : "{actor} hat eine Nachricht gelöscht",
     "You deleted a message" : "Sie haben eine Nachricht gelöscht",
+    "{actor} cleared the history of the conversation" : "{actor} hat den Gesprächsverlauf gelöscht",
+    "You cleared the history of the conversation" : "Sie haben den Gesprächsverlauf gelöscht",
     "Message deleted by author" : "Nachricht vom Autor gelöscht",
     "Message deleted by {actor}" : "Nachricht von {actor} gelöscht",
     "Message deleted by you" : "Nachricht von Ihnen gelöscht",
