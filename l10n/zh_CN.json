@@ -132,6 +132,8 @@
     "You stopped Matterbridge" : "你停止了 Matterbridge",
     "{actor} deleted a message" : "{actor} 删除了一条信息",
     "You deleted a message" : "你删除了一条信息",
+    "{actor} cleared the history of the conversation" : "{actor} 清除了会话历史",
+    "You cleared the history of the conversation" : "你清除了会话历史",
     "Message deleted by author" : "消息被作者删除了",
     "Message deleted by {actor}" : "消息被 {actor} 删除了",
     "Message deleted by you" : "消息被你删除了",
