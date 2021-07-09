@@ -134,6 +134,8 @@ OC.L10N.register(
     "You stopped Matterbridge" : "Zastavili jste Matterbridge",
     "{actor} deleted a message" : "{actor} smazal(a) zprávu",
     "You deleted a message" : "Smazali jste zprávu",
+    "{actor} cleared the history of the conversation" : "{actor} vyčistil(a) historii konverzace",
+    "You cleared the history of the conversation" : "Vyčistili jste historii konverzace",
     "Message deleted by author" : "Autor zprávu smazal",
     "Message deleted by {actor}" : "Zpráva byla smazána uživatelem {actor}",
     "Message deleted by you" : "Zpráva smazána vámi",
