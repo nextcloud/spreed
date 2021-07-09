@@ -122,10 +122,14 @@ class Listener {
 		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
 		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
 
+		$message = 'call_ended';
 		if ((\count($userIds) + $numGuests) === 1) {
-			// Single user pinged or guests only => no summary/activity
-			$room->resetActiveSince();
-			return false;
+			if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+				// Single user pinged or guests only => no summary/activity
+				$room->resetActiveSince();
+				return false;
+			}
+			$message = 'call_missed';
 		}
 
 		if (!$room->resetActiveSince()) {
@@ -136,7 +140,7 @@ class Listener {
 		$actorId = $userIds[0] ?? 'guests-only';
 		$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
 		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
-			'message' => 'call_ended',
+			'message' => $message,
 			'parameters' => [
 				'users' => $userIds,
 				'guests' => $numGuests,
