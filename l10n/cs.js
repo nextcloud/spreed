@@ -141,6 +141,7 @@ OC.L10N.register(
     "Message deleted by you" : "Zpráva smazána vámi",
     "%s (guest)" : "%s (host)",
     "You missed a call from {user}" : "Zmeškali jste hovor od {user}",
+    "You tried to call {user}" : "Pokoušeli jste se zavolat {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Hovor s %n hostem (délka {duration})","Hovor s %n hosty (délka {duration})","Hovor s %n hosty (délka {duration})","Hovor s %n hosty (délka {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Hovor s {user1} a {user2} (trval {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Hovor s {user1}, {user2} a {user3} (trvání {duration})",
