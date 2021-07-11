@@ -141,6 +141,7 @@ OC.L10N.register(
     "Message deleted by you" : "Nachricht von Ihnen gelöscht",
     "%s (guest)" : "%s (Gast)",
     "You missed a call from {user}" : "Sie haben einen Anruf von {user} verpasst",
+    "You tried to call {user}" : "Sie haben versucht {user} anzurufen",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Anruf mit %n Gast (Dauer {duration})","Anruf mit %n Gästen (Dauer {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Anruf mit {user1} und {user2} (Dauer {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Anruf mit {user1}, {user2} und {user3} (Dauer {duration})",
