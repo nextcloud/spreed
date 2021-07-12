@@ -1,5 +1,6 @@
 import * as bodyPix from '@tensorflow-models/body-pix'
-import * as tf from '@tensorflow/tfjs'
+// import * as tf from '@tensorflow/tfjs'
+import '@tensorflow/tfjs'
 
 export default function VideoEffects() {
 	this._videoSource = document.createElement('video')
@@ -10,7 +11,7 @@ export default function VideoEffects() {
 }
 
 VideoEffects.prototype = {
-	getBlurredVideoStream: function(stream) {
+	getBlurredVideoStream(stream) {
 		this._stream = stream
 		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
 		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
@@ -28,13 +29,12 @@ VideoEffects.prototype = {
 			this._canvasBlurredStream.addTrack(extractedAudio)
 		}
 		this._stopStreamBound = this._stopStream.bind(this)
-		// mainStreamEnded is sent in 
+		// mainStreamEnded is sent in
 		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
 		return this._canvasBlurredStream
 	},
 
-	_stopStream: function() {
-		console.log('VideoEffects _stop called!')
+	_stopStream() {
 		this._playing = false
 		this._videoSource.removeEventListener('loadeddata', this._videoSourceListener)
 		const tracks = this._stream.getTracks()
@@ -44,29 +44,31 @@ VideoEffects.prototype = {
 		this._stream = null
 	},
 
-	_loadBodyPix: function() {
-	
+	_loadBodyPix() {
+
 		const options = {
 			architecture: 'MobileNetV1',
 			multiplier: 0.5,
-			outputStride: 32,
+			outputStride: 16,
 			// stride: 32,
 			quantBytes: 2,
 			internalResolution: 'low',
-		  }
+		}
 		bodyPix.load(options)
-		  .then(net => this._perform(net))
-		  .catch(err => { throw err })
-	  },
+			.then(net => this._perform(net))
+			.catch(err => {
+				throw err
+			})
+	},
 
-	  _perform: async function(net) {
+	async _perform(net) {
 
 		while (this._playing === true) {
 			const segmentation = await net.segmentPerson(this._videoSource, {
 				flipHorizontal: false,
 				internalResolution: 'low',
 				segmentationThreshold: 0.7,
-			  })
+			})
 			const backgroundBlurAmount = 15
 			const edgeBlurAmount = 2
 			const flipHorizontal = false
@@ -76,7 +78,7 @@ VideoEffects.prototype = {
 		}
 	},
 
-	_videoSourceListener: function(e) {
+	_videoSourceListener(e) {
 		this._loadBodyPix()
 	},
 
