@@ -123,6 +123,7 @@
     "Message deleted by {actor}" : "Message supprimé par {actor}",
     "Message deleted by you" : "Message supprimé par vous",
     "%s (guest)" : "%s (invité)",
+    "You missed a call from {user}" : "Vous avez manqué l'appel de {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Appel avec %n invité (Durée {duration})","Appel avec %n invités (Durée {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Appel avec {user1} et {user2} (Durée {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Appel avec {user1}, {user2} et {user3} (Durée {duration})",
@@ -178,7 +179,6 @@
     "Answer call" : "Répondre à l'appel",
     "{user} would like to talk with you" : "{user} souhaite vous parler",
     "Call back" : "Rappeler",
-    "You missed a call from {user}" : "Vous avez manqué l'appel de {user}",
     "A group call has started in {call}" : "Un appel de groupe a démarré dans {call}",
     "You missed a group call in {call}" : "Vous avez manqué l'appel de groupe {call}",
     "{email} is requesting the password to access {file}" : "{email} demande le mot de passe pour accéder au fichier {file}",
@@ -779,8 +779,6 @@
     "Submit conversation description" : "Soumettre la description de la conversation",
     "Edit conversation description" : "Modifier la description de la conversation",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "La description doit être inférieure ou égale à {maxLength} caractères. Votre texte actuel comporte {caractèresCount} caractères.",
-    "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "Mark as read" : "Marquer comme lu",
     "Remove from favorites" : "Retirer des favoris",
     "Add to favorites" : "Ajouter aux favoris",
@@ -1052,6 +1050,8 @@
     "An administrator set the description to \"%1$s\"" : "Un administrateur a mis la description à \"%1$s\"",
     "Lower hand" : "Baisser la main",
     "Raise hand" : "Lever la main",
+    "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
     "Add a description for this conversation" : "Ajouter une description pour cette conversation"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

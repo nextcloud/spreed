@@ -100,6 +100,7 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} 가 더 이상 사용할 수 없는 파일을 공유했습니다.",
     "You shared a file which is no longer available" : "당신이 더 이상 사용할 수 없는 파일을 공유했습니다.",
     "%s (guest)" : "%s (손님)",
+    "You missed a call from {user}" : "당신이 {user} 와 통화를 하지 못했습니다.",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["통화를 %n 손님과 (지속시간 {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "통화를  {user1} 과 {user2} (지속시간 {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "통화를 {user1}, {user2} 그리고 {user3} (지속시간 {duration})",
@@ -149,7 +150,6 @@ OC.L10N.register(
     "Answer call" : "답변 전화",
     "{user} would like to talk with you" : "{user} 가 당신과 대화를 원하고 있습니다.",
     "Call back" : "다시 전화",
-    "You missed a call from {user}" : "당신이 {user} 와 통화를 하지 못했습니다.",
     "A group call has started in {call}" : "그룹 통화가 {call}에 시작됨",
     "You missed a group call in {call}" : "당신이 그룹 대화 {call} 를 하지 못했습니다.",
     "{email} is requesting the password to access {file}" : "{email} 은 {file} 에 접근하기 위한 비밀번호를 요구합니다.",
@@ -723,8 +723,6 @@ OC.L10N.register(
     "Submit conversation description" : "대화 설명 제출",
     "Edit conversation description" : "대화 설명 편집",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "설명은 {maxLength} 자 미만이어야 합니다. 현재 텍스트 길이는 {chartersCount} 자입니다.",
-    "Conversation \"{conversationName}\"" : "대화 \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "대화 설정 \"{conversationName}\"",
     "Remove from favorites" : "즐겨찾기에서 제거",
     "Add to favorites" : "즐겨찾기에 추가",
     "Joining conversation …" : "대화에 참여하는 중 ...",
@@ -967,6 +965,8 @@ OC.L10N.register(
     "You stopped Matterbridge." : "당신이 Matterbridge 를 정지했습니다.",
     "Lower hand" : "낮은 손",
     "Raise hand" : "손을 들다",
+    "Conversation \"{conversationName}\"" : "대화 \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "대화 설정 \"{conversationName}\"",
     "Add a description for this conversation" : "이 대화에 대한 설명 추가"
 },
 "nplurals=1; plural=0;");

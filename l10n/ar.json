@@ -130,6 +130,7 @@
     "Message deleted by {actor}" : "مُسحت الرسالة بواسطة {actor}",
     "Message deleted by you" : "مُسحت الرسالة بواسطتك",
     "%s (guest)" : "%s (ضيف)",
+    "You missed a call from {user}" : "مكالمة لم ترد عليها من {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "مكالمة مع {user1} و {user2} (المدة الزمنية {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "مكالمة مع {user1} و {user2} و {user3} (المدة الزمنية {duration})",
@@ -185,7 +186,6 @@
     "Answer call" : "الرد على المكالمة",
     "{user} would like to talk with you" : "{user} يريد التحدث إليك",
     "Call back" : "معاودة الاتصال",
-    "You missed a call from {user}" : "مكالمة لم ترد عليها من {user}",
     "A group call has started in {call}" : "اتصال جماعي بدأ في {call}",
     "You missed a group call in {call}" : "اتصال جماعي لم ترد عليه في {call}",
     "{email} is requesting the password to access {file}" : "{email} انشأ طلب كلمة المرور للوصول إلى الملف {file}",
@@ -795,8 +795,6 @@
     "Submit conversation description" : "إرسال وصف المحادثة ",
     "Edit conversation description" : "تحرير وصف المحادثة",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "يجب أن يكون الوصف أقل من أو يساوي {maxLength} حرفًا. يبلغ طول النص الحالي {characterCount} حرفاً.",
-    "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
-    "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "Mark as read" : "تحديد كمقروء ",
     "Remove from favorites" : "إزالتها مِن المفضلة",
     "Add to favorites" : "أضفه إلى المفضلة",
@@ -1086,6 +1084,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
     "Lower hand" : "خفض اليد ",
     "Raise hand" : "رفع اليد",
+    "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
+    "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
     "Add a description for this conversation" : "إضافة وصف لهذه المحادثة "
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"

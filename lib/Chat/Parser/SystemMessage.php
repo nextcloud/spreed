@@ -167,6 +167,8 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You left the call');
 			}
+		} elseif ($message === 'call_missed') {
+			[$parsedMessage, $parsedParameters, $message] = $this->parseMissedCall($room, $parameters, $currentActorId);
 		} elseif ($message === 'call_ended') {
 			[$parsedMessage, $parsedParameters] = $this->parseCall($parameters);
 		} elseif ($message === 'read_only_off') {
@@ -402,6 +404,11 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a message');
 			}
+		} elseif ($message === 'history_cleared') {
+			$parsedMessage = $this->l->t('{actor} cleared the history of the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You cleared the history of the conversation');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
@@ -618,6 +625,34 @@ class SystemMessage {
 			return $this->l->t('Guest');
 		}
 	}
+
+	protected function parseMissedCall(Room $room, array $parameters, string $currentActorId): array {
+		if ($parameters['users'][0] !== $currentActorId) {
+			return [
+				$this->l->t('You missed a call from {user}'),
+				[
+					'user' => $this->getUser($parameters['users'][0]),
+				],
+				'call_missed',
+			];
+		}
+
+		$participants = json_decode($room->getName(), true);
+		$other = '';
+		foreach ($participants as $participant) {
+			if ($participant !== $currentActorId) {
+				$other = $participant;
+			}
+		}
+		return [
+			$this->l->t('You tried to call {user}'),
+			[
+				'user' => $this->getUser($other),
+			],
+			'call_tried',
+		];
+	}
+
 
 	protected function parseCall(array $parameters): array {
 		sort($parameters['users']);

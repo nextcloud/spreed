@@ -105,6 +105,7 @@ OC.L10N.register(
     "Message deleted by {actor}" : "Messatge suprimit per {actor}",
     "Message deleted by you" : "Messatge suprimit per vos",
     "%s (guest)" : "%s (convidat)",
+    "You missed a call from {user}" : "Avètz mancat una sonada de {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Sonada amb %n convidat (Durada {duration})","Sonada amb %n convidats (Durada {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Sonada amb {user1} e {user2} (Durada {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Sonada amb {user1}, {user2} e {user3} (Durada {duration})",
@@ -149,7 +150,6 @@ OC.L10N.register(
     "Answer call" : "Respondre a l’apèl",
     "{user} would like to talk with you" : "{user} volriá vos parlar",
     "Call back" : "Tornar",
-    "You missed a call from {user}" : "Avètz mancat una sonada de {user}",
     "You missed a group call in {call}" : "Avètz mancat una sonada de grop dins {call}",
     "Someone is requesting the password to access {file}" : "Qualqu’un demanda lo senhal per accedir a {file}",
     "Open settings" : "Dobrir los paramètres",
@@ -648,8 +648,6 @@ OC.L10N.register(
     "Cancel editing description" : "Anullar la modificacion de la descripcion",
     "Submit conversation description" : "Enviar la descripcion de la conversacion",
     "Edit conversation description" : "Editar la descripcion de la conversacion",
-    "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
-    "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "Mark as read" : "Marcar coma legit",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
@@ -668,6 +666,7 @@ OC.L10N.register(
     "Other sources" : "Autras fonts",
     "An error occurred while performing the search" : "Una error s'es producha en realizant la recèrca",
     "Creating your conversation" : "Creacion de vòstra conversacion",
+    "All set" : "Tot es prèst",
     "Error while creating the conversation" : "Error pendent la creacion de la conversacion",
     "Link copied to the clipboard!" : "Ligam copiat al quichapapièrs !",
     "Create a new group conversation" : "Crear una conversacion de grop novèla",
@@ -893,7 +892,9 @@ OC.L10N.register(
     "You stopped Matterbridge." : "Avètz arrestat Matterbridge.",
     "Lower hand" : "Baissar la man",
     "Raise hand" : "Levar la man",
+    "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
+    "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondre una descripcion per aquesta conversacion"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
 },
 "nplurals=2; plural=(n > 1);");

@@ -61,11 +61,13 @@ import CancelableRequest from '../../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		AppNavigationCaption,
 		CurrentParticipants,
 		SearchBox,
 		ParticipantsSearchResults,

@@ -117,6 +117,7 @@
     "Message deleted by {actor}" : "{actor} によって削除されたメッセージ",
     "Message deleted by you" : "あなたが削除したメッセージ",
     "%s (guest)" : "%s(ゲスト)",
+    "You missed a call from {user}" : "{user}からの着信に応答できませんでした。",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["%n のゲストとの通話 (通話時間 {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "{user1}と{user2}にとの通話(通話時間 {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "{user1}と{user2}と{user3}にとの通話(通話時間 {duration})",
@@ -172,7 +173,6 @@
     "Answer call" : "応答",
     "{user} would like to talk with you" : "{user} からの通話要請があります",
     "Call back" : "折り返し電話",
-    "You missed a call from {user}" : "{user}からの着信に応答できませんでした。",
     "A group call has started in {call}" : "{call} のグループ通話が開始されました",
     "You missed a group call in {call}" : "{user}からのグループ着信に応答できませんでした。",
     "{email} is requesting the password to access {file}" : "{email}は{file}にアクセスするためのパスワードをリクエストしています",
@@ -769,8 +769,6 @@
     "Submit conversation description" : "会話の詳細を送信する",
     "Edit conversation description" : "会話の詳細を編集する",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "詳細は {maxLength} 文字以下である必要があります。現在のテキストの長さは {charactersCount} 文字です。",
-    "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "Mark as read" : "既読にする",
     "Remove from favorites" : "お気に入りから削除",
     "Add to favorites" : "お気に入りに追加",
@@ -1050,6 +1048,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURNサーバーは、ファイアウォールの背後にある参加者からのトラフィックをプロキシするために使用されます。個々の参加者が他の参加者に接続できない場合は、TURNサーバーが必要になる可能性があります。セットアップ手順については、{linkstart}このドキュメント{linkend}を参照してください。",
     "Lower hand" : "手を下げる (r)",
     "Raise hand" : "挙手 (r)",
+    "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
     "Add a description for this conversation" : "この会話の詳細を追加する"
 },"pluralForm" :"nplurals=1; plural=0;"

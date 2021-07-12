@@ -321,6 +321,12 @@ export default {
 				return
 			}
 
+			// If the user is stil composing by an input method,
+			// we should not submit the message
+			if (event.isComposing) {
+				return
+			}
+
 			// TODO: add support for CTRL+ENTER new line
 			if (!(event.shiftKey)) {
 				event.preventDefault()

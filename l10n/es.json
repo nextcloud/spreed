@@ -130,6 +130,7 @@
     "Message deleted by {actor}" : "Mensaje eliminado por {actor}",
     "Message deleted by you" : "Has eliminado este mensaje",
     "%s (guest)" : "%s (invitado)",
+    "You missed a call from {user}" : "Tienes una llamada perdida de {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Llamada con %n invitado (Duración {duration})","Llamada con %n invitados (Duración {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Llamada con {user1} y {user2} (Duración {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Llamada con {user1}, {user2} y {user3} (Duración {duration})",
@@ -185,7 +186,6 @@
     "Answer call" : "Contestar llamada",
     "{user} would like to talk with you" : "{user} quiere hablar contigo",
     "Call back" : "Devolver llamada",
-    "You missed a call from {user}" : "Tienes una llamada perdida de {user}",
     "A group call has started in {call}" : "Una llamada de grupo ha comenzado en {call}",
     "You missed a group call in {call}" : "Tienes una llamada de grupo perdida en {call}",
     "{email} is requesting the password to access {file}" : "{email} está solicitando la contraseña para acceder a {file}",
@@ -795,8 +795,6 @@
     "Submit conversation description" : "Enviar descripción de la conversación",
     "Edit conversation description" : "Editar descripción de la conversación",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "La descripción no debe tener más de {maxLength} caracteres. El texto actual tiene {charactersCount} caracteres.",
-    "Conversation \"{conversationName}\"" : "Conversación «{conversationName}»",
-    "Settings for conversation \"{conversationName}\"" : "Ajustes de la conversación «{conversationName}»",
     "Mark as read" : "Marcar como leído",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Añadir a favoritos",
@@ -1087,6 +1085,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Un servidor TURN es usada para redirigirlo el tráfico de los participantes tras un cortafuegos. Si los participantes individuales no pueden conectar con otros, lo más probable es que sea necesario un servidor TURN. Vea {linkstart}esta documentación{linkend} para instrucciones de ajuste.",
     "Lower hand" : "Bajar la mano",
     "Raise hand" : "Levantar la mano",
+    "Conversation \"{conversationName}\"" : "Conversación «{conversationName}»",
+    "Settings for conversation \"{conversationName}\"" : "Ajustes de la conversación «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Por el momento no puede enviar mensajes a esta conversación",
     "Add a description for this conversation" : "Añadir una descripción de esta conversación"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

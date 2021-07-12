@@ -402,6 +402,10 @@ export default {
 
 	computed: {
 		isLastReadMessage() {
+			if (!this.nextMessageId) {
+				// never display indicator on the very last message
+				return false
+			}
 			// note: not reading lastReadMessage from the conversation as we want to define it externally
 			// to have closer control on marker's visibility behavior
 			return this.id === this.lastReadMessageId

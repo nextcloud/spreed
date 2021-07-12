@@ -136,6 +136,7 @@
     "Message deleted by {actor}" : "Bericht verwijderd door {actor}",
     "Message deleted by you" : "Bericht verwijderd door jou",
     "%s (guest)" : "%s (gast)",
+    "You missed a call from {user}" : "Je hebt een gesprek gemist van {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Gesprek met %n gast  (Duur {duration})","Oproep met%n gasten (Duur {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Telefoongesprek met {user1} en {user2} (Duur {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Telefoongesprek met {user1}, {user2} en {user3} (Duur {duration})",
@@ -191,7 +192,6 @@
     "Answer call" : "Oproep beantwoorden",
     "{user} would like to talk with you" : "{user} wil met je spreken",
     "Call back" : "Terugbellen",
-    "You missed a call from {user}" : "Je hebt een gesprek gemist van {user}",
     "A group call has started in {call}" : "Groepsgesprek is begonnen in {call}",
     "You missed a group call in {call}" : "Je hebt een groepsgesprek gemist in {call}",
     "{email} is requesting the password to access {file}" : "{email} verzoekt het wachtwoord voor toegang tot {file}",
@@ -805,8 +805,6 @@
     "Submit conversation description" : "Verwerken gespreksbeschrijving",
     "Edit conversation description" : "Bewerken gespreksbeschrijving",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "De beschrijving moet kleiner zijn dan of gelijk zijn aan {maxLength} tekens. Je tekst is nu {charactersCount} tekens lang.",
-    "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
-    "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "Mark as read" : "Markeren als gelezen",
     "Remove from favorites" : "Verwijderen uit favorieten",
     "Add to favorites" : "Toevoegen aan favorieten",
@@ -1110,6 +1108,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Een TURN server wordt gebruikt om verkeer van deelnemers achter een firewall te proxyen. Als individuele deelnemers niet rechtstreeks met anderen kunnen verbinden, is TURN server vermoedelijk vereist. Zie {linkstart}deze documentatie{linkend} voor instructies.",
     "Lower hand" : "Hand omlaag",
     "Raise hand" : "Hand opsteken",
+    "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
+    "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
     "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

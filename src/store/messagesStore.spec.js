@@ -1165,6 +1165,21 @@ describe('messagesStore', () => {
 					}]
 					await testUpdateMessageCounters(messages, null)
 				})
+
+				test('does not update counter if the conversation store is already in sync', async() => {
+					// same as the retrieved message, conversation is in sync
+					testConversation.lastMessage.id = 102
+					const messages = [{
+						id: 101,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+					}, {
+						id: 102,
+						token: TOKEN,
+						actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+					}]
+					await testUpdateMessageCounters(messages, false)
+				})
 			})
 
 			describe('updating unread mention flag', () => {
@@ -1566,5 +1581,29 @@ describe('messagesStore', () => {
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 		})
 
+	})
+
+	describe('hasMoreMessagesToLoad', () => {
+		function setupWithValues(lastKnownMessageId, lastConversationMessageId) {
+			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 123 })
+			const conversationMock = jest.fn().mockReturnValue({
+				lastMessage: { id: lastConversationMessageId },
+			})
+			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			store = new Vuex.Store(testStoreConfig)
+			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: lastKnownMessageId })
+		}
+		test('returns true if more messages are available on the server', () => {
+			setupWithValues(100, 123)
+			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(true)
+		})
+		test('returns false if no more messages are available on the server', () => {
+			setupWithValues(123, 123)
+			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(false)
+		})
+		test('returns false if known last message id is past the one from known conversation', () => {
+			setupWithValues(200, 123)
+			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(false)
+		})
 	})
 })

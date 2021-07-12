@@ -66,6 +66,9 @@ import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog'
 import '@nextcloud/dialogs/styles/toast.scss'
+import { register } from 'extendable-media-recorder'
+import { connect } from 'extendable-media-recorder-wav-encoder'
+import { CONVERSATION } from './constants'
 
 export default {
 	name: 'App',
@@ -174,6 +177,22 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
+		/**
+		 * The current conversation
+		 * @returns {object} The conversation object.
+		 */
+		currentConversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		/**
+		 * Computes whether the current conversation is one to one
+		 * @returns {boolean} The result
+		 */
+		isOneToOne() {
+			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
 	},
 
 	watch: {
@@ -183,6 +202,15 @@ export default {
 			}
 
 			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
+		},
+
+		token() {
+			// Collapse the sidebar if it's a 1to1 conversation
+			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false') {
+				this.$store.dispatch('hideSidebar')
+			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
+				this.$store.dispatch('showSidebar')
+			}
 		},
 	},
 
@@ -315,6 +343,7 @@ export default {
 			} else {
 				beforeRouteChangeListener(to, from, next)
 			}
+
 		})
 
 		if (getCurrentUser()) {
@@ -325,7 +354,7 @@ export default {
 		}
 	},
 
-	mounted() {
+	async mounted() {
 		// see browserCheck mixin
 		this.checkBrowser()
 		// Check sidebar status in previous sessions
@@ -334,6 +363,8 @@ export default {
 		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 			this.$store.dispatch('showSidebar')
 		}
+
+		register(await connect())
 	},
 
 	methods: {

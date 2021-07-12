@@ -55,11 +55,22 @@ class Room {
 	 */
 	public const SIP_INCOMPATIBLE_REGEX = '/((\d)(?=\2+)|^0|\D)/';
 
-	public const UNKNOWN_CALL = -1;
-	public const ONE_TO_ONE_CALL = 1;
-	public const GROUP_CALL = 2;
-	public const PUBLIC_CALL = 3;
-	public const CHANGELOG_CONVERSATION = 4;
+	public const TYPE_UNKNOWN = -1;
+	public const TYPE_ONE_TO_ONE = 1;
+	public const TYPE_GROUP = 2;
+	public const TYPE_PUBLIC = 3;
+	public const TYPE_CHANGELOG = 4;
+
+	/** @deprecated Use self::TYPE_UNKNOWN */
+	public const UNKNOWN_CALL = self::TYPE_UNKNOWN;
+	/** @deprecated Use self::TYPE_ONE_TO_ONE */
+	public const ONE_TO_ONE_CALL = self::TYPE_ONE_TO_ONE;
+	/** @deprecated Use self::TYPE_GROUP */
+	public const GROUP_CALL = self::TYPE_GROUP;
+	/** @deprecated Use self::TYPE_PUBLIC */
+	public const PUBLIC_CALL = self::TYPE_PUBLIC;
+	/** @deprecated Use self::TYPE_CHANGELOG */
+	public const CHANGELOG_CONVERSATION = self::TYPE_CHANGELOG;
 
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;

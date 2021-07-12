@@ -116,6 +116,7 @@
     "Message deleted by {actor}" : "Poruku je izbrisao {actor}",
     "Message deleted by you" : "Poruku ste vi izbrisali",
     "%s (guest)" : "%s (gost)",
+    "You missed a call from {user}" : "Propustili ste poziv od {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Poziv s %n gostom (trajanje {duration})","Poziv s %n gostiju (trajanje {duration})","Poziv s %n gostiju (trajanje {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Poziv u kojem sudjeluju {user1} i {user2} (trajanje {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Poziv u kojem sudjeluju {user1}, {user2} i {user3} (trajanje {duration})",
@@ -165,7 +166,6 @@
     "Answer call" : "Odgovori na poziv",
     "{user} would like to talk with you" : "{user} želi razgovarati s vama",
     "Call back" : "Nazovi natrag",
-    "You missed a call from {user}" : "Propustili ste poziv od {user}",
     "A group call has started in {call}" : "Grupni poziv je pokrenut u {call}",
     "You missed a group call in {call}" : "Propustili ste grupni poziv u {call}",
     "{email} is requesting the password to access {file}" : "{email} traži zaporku za pristup {file}",
@@ -760,8 +760,6 @@
     "Submit conversation description" : "Opis podnošenja razgovora",
     "Edit conversation description" : "Opis uređivanja razgovora",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Opis mora sadržavati najviše {maxLength} znakova. Vaš trenutačni tekst sadrži {charactersCount} znakova.",
-    "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
-    "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "Mark as read" : "Označi kao pročitano",
     "Remove from favorites" : "Ukloni iz favorita",
     "Add to favorites" : "Dodaj u favorite",
@@ -1038,6 +1036,8 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
     "Lower hand" : "Spusti ruku",
     "Raise hand" : "Podigni ruku",
+    "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
+    "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
     "Add a description for this conversation" : "Dodaj opis ovog razgovora"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
