@@ -250,6 +250,10 @@ export default {
 							placeholder: t('spreed', 'Rocket.Chat channel'),
 							icon: 'icon-group',
 						},
+						skiptls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Skip TLS verification'),
+						},
 					},
 					mainField: 'server',
 				},
@@ -480,6 +484,10 @@ export default {
 							type: 'text',
 							placeholder: t('spreed', 'Channel'),
 							icon: 'icon-group',
+						},
+						skiptls: {
+							type: 'checkbox',
+							labelText: t('spreed', 'Skip TLS verification'),
 						},
 					},
 					mainField: 'channel',
