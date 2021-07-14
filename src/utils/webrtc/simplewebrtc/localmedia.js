@@ -149,7 +149,12 @@ LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) 
 	const parser = new UAParser()
 	const browserName = parser.getBrowser().name
 
-	if (browserName !== 'Chrome' && browserName !== 'Chromium') {
+	if (browserName !== 'Chrome'
+		&& browserName !== 'Chromium'
+		&& browserName !== 'Opera'
+		&& browserName !== 'Safari'
+		&& browserName !== 'Mobile Safari'
+		&& browserName !== 'Edge') {
 		return
 	}
 
