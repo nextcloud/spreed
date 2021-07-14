@@ -211,6 +211,20 @@ the main body of the message as well as a quote.
 			:dialog-title="setDialogTitle"
 			@select="setSelectedRoom"
 			@close="modal=false" />
+
+		<Modal v-if="forwared">
+			<EmptyContent icon="icon-checkmark" class="forwardModal">
+				{{ t('spreed', '"{msg}" was forwarded to "{user}"', { msg: message, user: selectedRoom }, undefined, { sanitize: false, escape: false }) }}
+				<template #desc>
+					<button class="primary" @click="openConversation(room)">
+						{{ t('spreed', 'Go to conversation') }}
+					</button>
+					<button @click="forwared=false">
+						{{ t('spreed', 'Close') }}
+					</button>
+				</template>
+			</EmptyContent>
+		</Modal>
 	</li>
 </template>
 
@@ -249,6 +263,8 @@ import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
 import RoomSelector from '../../../../views/RoomSelector.vue'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
 
 export default {
 	name: 'Message',
@@ -272,6 +288,8 @@ export default {
 		Share,
 		ActionSeparator,
 		RoomSelector,
+		EmptyContent,
+		Modal,
 	},
 
 	mixins: [
@@ -420,6 +438,7 @@ export default {
 			seen: false,
 			modal: false,
 			selectedRoom: null,
+			forwared: false,
 		}
 	},
 
@@ -805,16 +824,19 @@ export default {
 			this.modal = true
 		},
 
-		setSelectedRoom(room) {
+		async setSelectedRoom(room) {
 			this.selectedRoom = room
 			this.modal = false
-			this.$store.dispatch('forwardMessage', {
+			await this.$store.dispatch('forwardMessage', {
 				token: room,
 				message: this.messageObject,
 			})
+			this.forwared = true
 
-			// Display a third dialog and push the new route only if the user requires it
-			// this.$router.push({ name: 'conversation', params: { token: room } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+		openConversation() {
+			this.$router.push({ name: 'conversation', params: { token: this.selectedRoom } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.forwared = false
 		},
 	},
 }
