@@ -28,9 +28,9 @@
 		container="#content-vue">
 		<!-- description -->
 		<AppSettingsSection
+			v-if="showDescription"
 			:title="t('spreed', 'Description')">
 			<Description
-				v-if="showDescription"
 				:editable="canFullModerate"
 				:description="description"
 				:editing="isEditingDescription"
@@ -151,7 +151,9 @@ export default {
 		},
 
 		canFullModerate() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+			return (this.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.participantType === PARTICIPANT.TYPE.MODERATOR)
+				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 		canDeleteConversation() {
