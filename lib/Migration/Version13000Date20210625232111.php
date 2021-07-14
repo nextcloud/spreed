@@ -49,6 +49,14 @@ class Version13000Date20210625232111 extends SimpleMigrationStep {
 			$table->addColumn('access_token', Types::STRING, [
 				'notnull' => false,
 				'default' => null,
+				'length' => 64
+			]);
+		}
+		if (!$table->hasColumn('remote_id')) {
+			$table->addColumn('remote_id', Types::STRING, [
+				'notnull' => false,
+				'default' => null,
+				'length' => 255,
 			]);
 		}
 
@@ -76,6 +84,11 @@ class Version13000Date20210625232111 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('access_token', Types::STRING, [
 				'notnull' => true,
+				'length' => 64,
+			]);
+			$table->addColumn('remote_id', Types::STRING, [
+				'notnull' => true,
+				'length' => 255,
 			]);
 
 			$table->setPrimaryKey(['id']);

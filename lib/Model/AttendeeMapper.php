@@ -175,6 +175,7 @@ class AttendeeMapper extends QBMapper {
 			'read_privacy' => (int) $row['read_privacy'],
 			'publishing_permissions' => (int) $row['publishing_permissions'],
 			'access_token' => (string) $row['access_token'],
+			'remote_id' => (string) $row['remote_id'],
 		]);
 	}
 }

@@ -117,13 +117,14 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		if (!is_numeric($share->getShareType())) {
-			throw new ProviderCouldNotAddShareException('RoomType is not a number', '', Http::STATUS_BAD_REQUEST);
+			throw new ProviderCouldNotAddShareException('shareType is not a number', '', Http::STATUS_BAD_REQUEST);
 		}
 
 		$shareSecret = $share->getShareSecret();
 		$shareWith = $share->getShareWith();
-		$roomToken = $share->getProviderId();
-		$roomName = $share->getResourceName();
+		$remoteId = $share->getProviderId();
+		$roomToken = $share->getResourceName();
+		$roomName = $share->getProtocol()['roomName'];
 		$roomType = (int) $share->getShareType();
 		$sharedBy = $share->getSharedByDisplayName();
 		$sharedByFederatedId = $share->getSharedBy();
@@ -138,13 +139,13 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$sharedByFederatedId = $ownerFederatedId;
 		}
 
-		if ($remote && $shareSecret && $shareWith && $roomToken && $roomName && $owner) {
+		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $owner) {
 			$shareWith = $this->userManager->get($shareWith);
 			if ($shareWith === null) {
 				throw new ProviderCouldNotAddShareException('User does not exist', '',Http::STATUS_BAD_REQUEST);
 			}
 
-			$shareId = (string) $this->federationManager->addRemoteRoom($shareWith, $roomType, $roomName, $roomToken, $remote, $shareSecret);
+			$shareId = (string) $this->federationManager->addRemoteRoom($shareWith, $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret);
 
 			$this->notifyAboutNewShare($shareWith, $shareId, $sharedByFederatedId, $sharedBy, $roomName, $roomToken, $remote);
 			return $shareId;

@@ -53,6 +53,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getPublishingPermissions()
  * @method void setAccessToken(string $accessToken)
  * @method null|string getAccessToken()
+ * @method void setRemoteId(string $remoteId)
+ * @method string getRemoteId()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -111,6 +113,9 @@ class Attendee extends Entity {
 	/** @var string */
 	protected $accessToken;
 
+	/** @var string */
+	protected $remoteId;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -126,6 +131,7 @@ class Attendee extends Entity {
 		$this->addType('readPrivacy', 'int');
 		$this->addType('publishingPermissions', 'int');
 		$this->addType('accessToken', 'string');
+		$this->addType('remote_id', 'string');
 	}
 
 	public function getDisplayName(): string {
@@ -152,6 +158,7 @@ class Attendee extends Entity {
 			'read_privacy' => $this->getReadPrivacy(),
 			'publishing_permissions' => $this->getPublishingPermissions(),
 			'access_token' => $this->getAccessToken(),
+			'remote_id' => $this->getRemoteId(),
 		];
 	}
 }

@@ -97,9 +97,10 @@ class InvitationMapper extends QBMapper {
 	public function createInvitationFromRow(array $row): Invitation {
 		return $this->mapRowToEntity([
 			'id' => $row['id'],
-			'room_id' => $row['room_id'],
-			'user_id' => $row['user_id'],
-			'access_token' => $row['access_token'],
+			'room_id' => (int) $row['room_id'],
+			'user_id' => (string) $row['user_id'],
+			'access_token' => (string) $row['access_token'],
+			'remote_id' => (string) $row['remote_id'],
 		]);
 	}
 }

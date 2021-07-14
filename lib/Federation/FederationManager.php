@@ -90,7 +90,7 @@ class FederationManager {
 	 * @return int share id for this specific remote room share
 	 * @throws DBException
 	 */
-	public function addRemoteRoom(IUser $user, int $roomType, string $roomName, string $roomToken, string $remoteUrl, string $sharedSecret): int {
+	public function addRemoteRoom(IUser $user, string $remoteId, int $roomType, string $roomName, string $roomToken, string $remoteUrl, string $sharedSecret): int {
 		try {
 			$room = $this->manager->getRoomByToken($roomToken, null, $remoteUrl);
 		} catch (RoomNotFoundException $ex) {
@@ -100,6 +100,7 @@ class FederationManager {
 		$invitation->setUserId($user->getUID());
 		$invitation->setRoomId($room->getId());
 		$invitation->setAccessToken($sharedSecret);
+		$invitation->setRemoteId($remoteId);
 		$invitation = $this->invitationMapper->insert($invitation);
 
 		return $invitation->getId();
@@ -124,6 +125,7 @@ class FederationManager {
 				'actorId' => $user->getUID(),
 				'displayName' => $user->getDisplayName(),
 				'accessToken' => $invitation->getAccessToken(),
+				'remoteId' => $invitation->getRemoteId(),
 			]
 		];
 		$this->participantService->addUsers($room, $participant);

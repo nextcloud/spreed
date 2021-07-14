@@ -38,6 +38,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getUserId()
  * @method void setAccessToken(string $accessToken)
  * @method string getAccessToken()
+ * @method void setRemoteId(string $remoteId)
+ * @method string getRemoteId()
  */
 class Invitation extends Entity {
 	/** @var int */
@@ -49,10 +51,14 @@ class Invitation extends Entity {
 	/** @var string */
 	protected $accessToken;
 
+	/** @var string */
+	protected $remoteId;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('userId', 'string');
 		$this->addType('accessToken', 'string');
+		$this->addType('remoteId', 'string');
 	}
 
 	public function asArray(): array {
@@ -61,6 +67,7 @@ class Invitation extends Entity {
 			'room_id' => $this->getRoomId(),
 			'user_id' => $this->getUserId(),
 			'access_token' => $this->getAccessToken(),
+			'remote_id' => $this->getRemoteId(),
 		];
 	}
 }
