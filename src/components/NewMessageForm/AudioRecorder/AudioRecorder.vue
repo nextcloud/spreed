@@ -28,6 +28,7 @@
 				content: startRecordingTooltip,
 				delay: tooltipDelay,
 			}"
+			:disabled="!encoderReady"
 			class="audio-recorder__trigger nc-button nc-button__main"
 			@click="start">
 			<Microphone
@@ -146,6 +147,10 @@ export default {
 		abortRecordingTooltip() {
 			return t('spreed', 'Dismiss recording')
 		},
+
+		encoderReady() {
+			return this.$store.getters.encoderReady
+		},
 	},
 
 	watch: {
@@ -153,6 +158,10 @@ export default {
 		isRecording(newValue) {
 			console.debug('isRecording', newValue)
 		},
+	},
+
+	mounted() {
+		this.$store.dispatch('initializeAudioEncoder')
 	},
 
 	beforeDestroy() {

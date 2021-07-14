@@ -21,6 +21,7 @@
  */
 
 import actorStore from './actorStore'
+import audioRecorderStore from './audioRecorderStore'
 import callViewStore from './callViewStore'
 import conversationsStore from './conversationsStore'
 import fileUploadStore from './fileUploadStore'
@@ -40,6 +41,7 @@ import messageActionsStore from './messageActionsStore'
 export default {
 	modules: {
 		actorStore,
+		audioRecorderStore,
 		callViewStore,
 		conversationsStore,
 		fileUploadStore,
