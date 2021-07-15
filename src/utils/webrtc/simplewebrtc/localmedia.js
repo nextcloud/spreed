@@ -5,6 +5,7 @@ const hark = require('hark')
 const getScreenMedia = require('./getscreenmedia')
 const WildEmitter = require('wildemitter')
 const mockconsole = require('mockconsole')
+const UAParser = require('ua-parser-js')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
 const webrtcIndex = require('../index.js')
@@ -132,6 +133,43 @@ LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive
 }
 
+/**
+ * Adjusts video constraints to work around bug in Chromium.
+ *
+ * In Chromium it is not possible to increase the resolution of a track once it
+ * has been cloned, so the track needs to be initialized with a high resolution
+ * (otherwise real devices are initialized with a resolution around 640x480).
+ * Therefore, the video is requested with a loose constraint for a high
+ * resolution, so if the camera does not have such resolution it will still
+ * return the highest resolution available without failing.
+ *
+ * @param {Object} constraints the constraints to be adjusted
+ */
+LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) {
+	const parser = new UAParser()
+	const browserName = parser.getBrowser().name
+
+	if (browserName !== 'Chrome'
+		&& browserName !== 'Chromium'
+		&& browserName !== 'Opera'
+		&& browserName !== 'Safari'
+		&& browserName !== 'Mobile Safari'
+		&& browserName !== 'Edge') {
+		return
+	}
+
+	if (!constraints.video) {
+		return
+	}
+
+	if (!(constraints.video instanceof Object)) {
+		constraints.video = {}
+	}
+
+	constraints.video.width = 1920
+	constraints.video.height = 1200
+}
+
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
@@ -168,6 +206,8 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		webrtcIndex.mediaDevicesManager.enableDeviceEvents()
 		webrtcIndex.mediaDevicesManager.disableDeviceEvents()
 	}
+
+	this._adjustVideoConstraintsForChromium(constraints)
 
 	// The handlers for "change:audioInputId" and "change:videoInputId" events
 	// expect the initial "getUserMedia" call to have been completed before
@@ -462,7 +502,10 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		return
 	}
 
-	webrtcIndex.mediaDevicesManager.getUserMedia({ video: true }).then(stream => {
+	const constraints = { video: true }
+	this._adjustVideoConstraintsForChromium(constraints)
+
+	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(stream => {
 		// According to the specification "getUserMedia({ video: true })" will
 		// return a single video track.
 		const track = stream.getTracks()[0]
