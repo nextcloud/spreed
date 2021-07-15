@@ -227,8 +227,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP dhe TCP",
     "UDP only" : "Vetëm UDP",
     "TCP only" : "Vetëm TCP",
-    "Share link" : "Shpërndaj ndërlidhjen",
     "Remove" : "Hiq",
-    "Enabled" : "I aktivizuar"
+    "Enabled" : "I aktivizuar",
+    "Share link" : "Shpërndaj ndërlidhjen"
 },
 "nplurals=2; plural=(n != 1);");
