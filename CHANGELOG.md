@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.1 – 2021-07-15
+### Fixed
+- Add UI feedback when local participant is not connected
+  [#5797](https://github.com/nextcloud/spreed/pull/5797)
+- Allow to open files with ctrl click
+  [#5761](https://github.com/nextcloud/spreed/pull/5761)
+- Prevent submitting the message when the user is composing a character
+  [#5941](https://github.com/nextcloud/spreed/pull/5941)
+- Fix connection quality warning shown due to stalled stats
+  [#5924](https://github.com/nextcloud/spreed/pull/5924)
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5768](https://github.com/nextcloud/spreed/pull/5768)
+- Ignore current participant when listing rooms if removed concurrently
+  [#5758](https://github.com/nextcloud/spreed/pull/5758)
+  [#5740](https://github.com/nextcloud/spreed/pull/5740)
+- Fix links to documentation
+  [#5947](https://github.com/nextcloud/spreed/pull/5947)
+
+## 10.1.5 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5770](https://github.com/nextcloud/spreed/pull/5770)
+
+## 10.0.9 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5769](https://github.com/nextcloud/spreed/pull/5769)
+
 ## 11.3.0 – 2021-06-04
 ### Fixed
 - Inject the preloaded user status into the avatar component
