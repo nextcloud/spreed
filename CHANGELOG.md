@@ -1,6 +1,50 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.0.1 – 2021-07-15
+### Fixed
+- Unshare all items directly when deleting a room
+  [#5975](https://github.com/nextcloud/spreed/pull/5975)
+- Fix date picker for lobby not being visible
+  [#5984](https://github.com/nextcloud/spreed/pull/5984)
+- Fix initial camera quality with Chromium and Chromebased browsers
+  [#6000](https://github.com/nextcloud/spreed/pull/6000)
+- Wait for the wav encoder to be initialized before allowing recordings
+  [#6012](https://github.com/nextcloud/spreed/pull/6012)
+  [#6014](https://github.com/nextcloud/spreed/pull/6014)
+- Fix displaying moderation options in one-to-ones
+  [#6008](https://github.com/nextcloud/spreed/pull/6008)
+- Never show read marker on the very last message
+  [#5969](https://github.com/nextcloud/spreed/pull/5969)
+
+## 11.3.1 – 2021-07-15
+### Fixed
+- Add UI feedback when local participant is not connected
+  [#5797](https://github.com/nextcloud/spreed/pull/5797)
+- Allow to open files with ctrl click
+  [#5761](https://github.com/nextcloud/spreed/pull/5761)
+- Prevent submitting the message when the user is composing a character
+  [#5941](https://github.com/nextcloud/spreed/pull/5941)
+- Fix connection quality warning shown due to stalled stats
+  [#5924](https://github.com/nextcloud/spreed/pull/5924)
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5768](https://github.com/nextcloud/spreed/pull/5768)
+- Ignore current participant when listing rooms if removed concurrently
+  [#5758](https://github.com/nextcloud/spreed/pull/5758)
+  [#5740](https://github.com/nextcloud/spreed/pull/5740)
+- Fix links to documentation
+  [#5947](https://github.com/nextcloud/spreed/pull/5947)
+
+## 10.1.5 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5770](https://github.com/nextcloud/spreed/pull/5770)
+
+## 10.0.9 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5769](https://github.com/nextcloud/spreed/pull/5769)
+
 ## 12.0.0 – 2021-07-06
 ### Added
 - Add support for simulcast streams when the high-performance backend is used
