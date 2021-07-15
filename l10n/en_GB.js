@@ -161,7 +161,6 @@ OC.L10N.register(
     "New in Talk 7" : "New in Talk 7",
     "New in Talk 8" : "New in Talk 8",
     "New in Talk 9" : "New in Talk 9",
-    "New in Talk 10" : "New in Talk 10",
     "{user} wants to talk with you" : "{user} wants to talk with you",
     "UDP and TCP" : "UDP and TCP",
     "UDP only" : "UDP only",
@@ -170,10 +169,11 @@ OC.L10N.register(
     "Unmute audio (m)" : "Unmute audio (m)",
     "Disable video (v)" : "Disable video (v)",
     "Enable video (v)" : "Enable video (v)",
-    "Remove" : "Remove",
-    "Enabled" : "Enabled",
     "Share link" : "Share link",
     "Exit fullscreen (f)" : "Exit fullscreen (f)",
-    "Fullscreen (f)" : "Fullscreen (f)"
+    "Fullscreen (f)" : "Fullscreen (f)",
+    "New in Talk 10" : "New in Talk 10",
+    "Remove" : "Remove",
+    "Enabled" : "Enabled"
 },
 "nplurals=2; plural=(n != 1);");
