@@ -404,7 +404,6 @@ class ParticipantService {
 	 * @throws ParticipantNotFoundException
 	 */
 	public function getCircle(string $circleId, string $userId): Circle {
-		/** @var Circles $circlesApi */
 		try {
 			$circle = Circles::detailsCircle($circleId);
 		} catch (\Exception $e) {
