@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OCA\Circles\Api\v1\Circles;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -738,9 +737,8 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		/** @var Circles $circlesApi */
 		try {
-			$circle = Circles::detailsCircle($targetCircleId);
+			$circle = $this->participantService->getCircle($targetCircleId, $this->userId);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1063,9 +1061,8 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 
-			/** @var Circles $circlesApi */
 			try {
-				$circle = Circles::detailsCircle($newParticipant);
+				$circle = $this->participantService->getCircle($newParticipant, $this->userId);
 			} catch (\Exception $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
