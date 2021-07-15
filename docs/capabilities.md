@@ -78,3 +78,6 @@ title: Capabilities
 * `geo-location-sharing` - Whether the `geo-location` rich object is defined and can be shared to the rich-object sharing endpoint.
 * `voice-message-sharing` - Shared files can be flagged as voice messages and are then presented differently in the interface
 * `publishing-permissions` - Whether the publishing permissions can be set for the attendees.
+
+## 12.1
+* `clear-history` - Whether chat API has the endpoint so moderators can clear the complete history of a chat
