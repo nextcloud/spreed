@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Config;
@@ -394,6 +395,30 @@ class ParticipantService {
 		}
 
 		$this->addUsers($room, $newParticipants);
+	}
+
+	/**
+	 * @param string $circleId
+	 * @param string $userId
+	 * @return Circle
+	 * @throws ParticipantNotFoundException
+	 */
+	public function getCircle(string $circleId, string $userId): Circle {
+		try {
+			$circle = Circles::detailsCircle($circleId);
+		} catch (\Exception $e) {
+			throw new ParticipantNotFoundException('Circle not found');
+		}
+
+		// FIXME use \OCA\Circles\Manager::getLink() in the future
+		$membersInCircle = $circle->getInheritedMembers();
+		foreach ($membersInCircle as $member) {
+			if ($member->isLocal() && $member->getUserType() === Member::TYPE_USER && $member->getUserId() === $userId) {
+				return $circle;
+			}
+		}
+
+		throw new ParticipantNotFoundException('Circle found but not a member');
 	}
 
 	/**
