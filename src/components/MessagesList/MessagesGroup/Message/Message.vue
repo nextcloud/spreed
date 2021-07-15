@@ -204,15 +204,16 @@ the main body of the message as well as a quote.
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
+
+		<!-- Message forwarding -->
 		<RoomSelector
-			v-if="modal"
+			v-if="showRoomSelector"
 			container="#content-vue"
 			:show-postable-only="true"
 			:dialog-title="setDialogTitle"
-			@select="setSelectedRoom"
-			@close="modal=false" />
-
-		<Modal v-if="forwared">
+			@select="setSelectedConversation"
+			@close="showRoomSelector=false" />
+		<Modal v-if="showForwardedConfirmation">
 			<EmptyContent icon="icon-checkmark" class="forwardModal">
 				{{ t('spreed', '"{msg}" was forwarded to "{user}"', { msg: message, user: selectedRoom }, undefined, { sanitize: false, escape: false }) }}
 				<template #desc>
@@ -436,9 +437,9 @@ export default {
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
-			modal: false,
-			selectedRoom: null,
-			forwared: false,
+			showRoomSelector: false,
+			selectedConversation: null,
+			showForwardedConfirmation: false,
 		}
 	},
 
@@ -821,22 +822,22 @@ export default {
 		},
 
 		handleForwardMessage() {
-			this.modal = true
+			this.showRoomSelector = true
 		},
 
-		async setSelectedRoom(room) {
-			this.selectedRoom = room
-			this.modal = false
+		async setSelectedConversation(room) {
+			this.selectedConversation = room
+			this.showRoomSelector = false
 			await this.$store.dispatch('forwardMessage', {
 				token: room,
 				message: this.messageObject,
 			})
-			this.forwared = true
+			this.showForwardedConfirmation = true
 
 		},
 		openConversation() {
-			this.$router.push({ name: 'conversation', params: { token: this.selectedRoom } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			this.forwared = false
+			this.$router.push({ name: 'conversation', params: { token: this.selectedConversation } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.showForwardedConfirmation = false
 		},
 	},
 }
