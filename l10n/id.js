@@ -53,8 +53,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "Share link" : "Bagikan tautan",
     "Remove" : "Buang",
-    "Enabled" : "Diaktifkan",
-    "Share link" : "Bagikan tautan"
+    "Enabled" : "Diaktifkan"
 },
 "nplurals=1; plural=0;");
