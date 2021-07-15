@@ -211,17 +211,18 @@ the main body of the message as well as a quote.
 			container="#content-vue"
 			:show-postable-only="true"
 			:dialog-title="dialogTitle"
+			:dialog-subtitle="dialogSubtitle"
 			@select="setSelectedConversation"
 			@close="showRoomSelector=false" />
 		<Modal v-if="showForwardedConfirmation">
 			<EmptyContent icon="icon-checkmark" class="forwardModal">
-				{{ t('spreed', '"{msg}" was forwarded to "{user}"', { msg: message, user: selectedRoom }, undefined, { sanitize: false, escape: false }) }}
+				{{ t('spreed', 'The message has been forwarded to {selectedConversation}', { selectedConversation }) }}
 				<template #desc>
+					<button @click="showForwardedConfirmation=false">
+						{{ t('spreed', 'Dismiss') }}
+					</button>
 					<button class="primary" @click="openConversation(room)">
 						{{ t('spreed', 'Go to conversation') }}
-					</button>
-					<button @click="forwared=false">
-						{{ t('spreed', 'Close') }}
 					</button>
 				</template>
 			</EmptyContent>
@@ -687,6 +688,10 @@ export default {
 
 		dialogTitle() {
 			return t('spreed', 'Forward message')
+		},
+
+		dialogSubtitle() {
+			return t('spreed', 'Choose a conversation to which forward the selected message.')
 		},
 	},
 
