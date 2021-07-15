@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.6 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5770](https://github.com/nextcloud/spreed/pull/5770)
+
+## 10.0.9 – 2021-07-15
+### Fixed
+- Fix connection quality stats not reset when setting a new peer connection
+  [#5769](https://github.com/nextcloud/spreed/pull/5769)
+
 ## 10.1.5 – 2021-06-04
 ### Fixed
 - Regenerate session id after entering conversation password
