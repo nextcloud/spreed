@@ -64,8 +64,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP ja TCP",
     "UDP only" : "Ainult UDP",
     "TCP only" : "Ainult TCP",
-    "Share link" : "Jaga link",
     "Remove" : "Eemalda",
-    "Enabled" : "Lubatud"
+    "Enabled" : "Lubatud",
+    "Share link" : "Jaga link"
 },
 "nplurals=2; plural=(n != 1);");

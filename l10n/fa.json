@@ -318,11 +318,10 @@
     "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- مکالمات یک به یک هم اکنون برقرار است و دیگر نمی توان به طور تصادفی به مکالمه های گروهی تبدیل کرد. همچنین وقتی یکی از شرکت کنندگان مکالمه را ترک می کند ، مکالمه دیگر به طور خودکار حذف نمی شود. فقط در صورت ترک هر دو شرکت کننده ، مکالمه از سرور حذف می شود",
     "New in Talk 7" : "جدید در Talk 7",
     "Allow guests to join via link " : "مجاز بودن عضویت مهمان‌ها با پیوند",
-    "Add participants to the conversation" : "افزودن عضو به گفتگو",
-    "Projects" : "پروژه ها",
-    "Share link" : "Share link",
-    "Fullscreen (f)" : "تمام صفحه (f)",
     "Remove" : "حذف",
-    "Enabled" : "فعال شده"
+    "Enabled" : "فعال شده",
+    "Add participants to the conversation" : "افزودن عضو به گفتگو",
+    "Share link" : "Share link",
+    "Fullscreen (f)" : "تمام صفحه (f)"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

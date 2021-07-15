@@ -18,6 +18,7 @@
     "An administrator allowed guests" : "Адміністратор дозволив гостей",
     "You set a password" : "Ви встановили пароль",
     "You joined the conversation" : "Ви приєдналися до розмови",
+    "You missed a call from {user}" : "Ви пропустили виклик від {user}",
     "Talk to %s" : "Спілкуватися з %s",
     "Write to conversation" : "Написати у розмові",
     "Click the button below to join." : "Натисніть на кнопку, щоб приєднатися",
@@ -25,7 +26,6 @@
     "View chat" : "Перегляд чату",
     "Join call" : "Приєднатися",
     "Answer call" : "Відповісти на виклик",
-    "You missed a call from {user}" : "Ви пропустили виклик від {user}",
     "Conversation not found" : "Розмову не знайдено",
     "Leave call" : "Вийти",
     "Stay in call" : "Залишатися",
@@ -157,16 +157,12 @@
     "Unmute audio (m)" : "Увімкнути мікрофон (m)",
     "Disable video (v)" : "Вимкнути відео (v)",
     "Enable video (v)" : "Увімкнути відео (v)",
-    "Default location for attachments" : "Типове розташування для вкладень",
-    "Select default location for attachments" : "Виберіть типове розташування для вкладень",
     "Allow guests to join via link " : "Дозволити гостям приєднуватися через посилання",
+    "Remove" : "Вилучити",
+    "Enabled" : "Увімкнено",
     "Add participants to the conversation" : "Додати учасників до розмови",
-    "Projects" : "Проєкти",
     "Share link" : "Поширити посилання",
     "Exit fullscreen (f)" : "Вийти з повного екрану (f)",
-    "Fullscreen (f)" : "На весь екран (f)",
-    "Select a conversation to add to the project" : "Виберіть розмову, яку потрібно додати до проєкту",
-    "Remove" : "Вилучити",
-    "Enabled" : "Увімкнено"
+    "Fullscreen (f)" : "На весь екран (f)"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

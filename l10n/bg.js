@@ -319,8 +319,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "само UDP",
     "TCP only" : "само TCP",
-    "Share link" : "Сподели връзка",
     "Remove" : "Премахни",
-    "Enabled" : "Включено"
+    "Enabled" : "Включено",
+    "Share link" : "Сподели връзка"
 },
 "nplurals=2; plural=(n != 1);");
