@@ -317,8 +317,8 @@
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "само UDP",
     "TCP only" : "само TCP",
-    "Share link" : "Сподели връзка",
     "Remove" : "Премахни",
-    "Enabled" : "Включено"
+    "Enabled" : "Включено",
+    "Share link" : "Сподели връзка"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
