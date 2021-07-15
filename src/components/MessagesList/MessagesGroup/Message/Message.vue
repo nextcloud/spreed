@@ -204,7 +204,7 @@ the main body of the message as well as a quote.
 			v-if="showRoomSelector"
 			container="#content-vue"
 			:show-postable-only="true"
-			:dialog-title="setDialogTitle"
+			:dialog-title="dialogTitle"
 			@select="setSelectedConversation"
 			@close="showRoomSelector=false" />
 		<Modal v-if="showForwardedConfirmation">
@@ -670,9 +670,9 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
-		setDialogTitle() {
-			return this.selectedRoom
-			// return t('spreed', 'Forward message')
+
+		dialogTitle() {
+			return t('spreed', 'Forward message')
 		},
 	},
 
