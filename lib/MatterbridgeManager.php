@@ -432,6 +432,9 @@ class MatterbridgeManager {
 				$content .= sprintf('	Server = "%s"', $part['server']) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
+				if ($part['skiptls']) {
+					$content .= sprintf('	SkipTLSVerify = true') . "\n";
+				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
@@ -504,6 +507,9 @@ class MatterbridgeManager {
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				$content .= sprintf('	Muc = "%s"', $part['muc']) . "\n";
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
+				if ($part['skiptls']) {
+					$content .= sprintf('	SkipTLSVerify = true') . "\n";
+				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			}
