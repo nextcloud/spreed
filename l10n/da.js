@@ -441,12 +441,12 @@ OC.L10N.register(
     "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Aktiver video (v) - Forbindelsen forsvinder et øjeblik første gang du slår video til",
     "This conversation is read only" : "Denne samtale er skrivebeskyttet",
     "Allow guests to join via link " : "Tillad gæster at deltage via link",
+    "Remove" : "Fjern",
+    "Enabled" : "Aktiveret",
     "Add participants to the conversation" : "Tilføj deltagere til samtalen",
     "Share link" : "Del link",
     "Exit fullscreen (f)" : "Forlad fuldskærmsvisning (f)",
     "Fullscreen (f)" : "Vis i fuldskærm (f)",
-    "Error while uploading file" : "Fejl ved upload af fil",
-    "Remove" : "Fjern",
-    "Enabled" : "Aktiveret"
+    "Error while uploading file" : "Fejl ved upload af fil"
 },
 "nplurals=2; plural=(n != 1);");
