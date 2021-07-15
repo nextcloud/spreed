@@ -321,7 +321,6 @@ OC.L10N.register(
     "New in Talk 7" : "جدید در Talk 7",
     "Allow guests to join via link " : "مجاز بودن عضویت مهمان‌ها با پیوند",
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
-    "Projects" : "پروژه ها",
     "Share link" : "Share link",
     "Fullscreen (f)" : "تمام صفحه (f)",
     "Remove" : "حذف",

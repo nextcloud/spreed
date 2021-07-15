@@ -53,7 +53,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
-    "Projects" : "Proyek",
     "Share link" : "Bagikan tautan",
     "Remove" : "Buang",
     "Enabled" : "Diaktifkan"

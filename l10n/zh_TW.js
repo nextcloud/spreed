@@ -330,7 +330,6 @@ OC.L10N.register(
     "TCP only" : "僅TCP",
     "Mute audio (m)" : "靜音 (m)",
     "Allow guests to join via link " : "允許訪客透過連結加入",
-    "Projects" : "專案項目",
     "Share link" : "分享連結",
     "Exit fullscreen (f)" : "離開全螢幕 (f)",
     "Fullscreen (f)" : "全螢幕 (f)",

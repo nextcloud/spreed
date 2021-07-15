@@ -1028,7 +1028,6 @@
     "{user} wants to talk with you" : "{user} يريد التحدث اليك",
     "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC * 💬 ** تكامل الدردشة! ** يأتي Nextcloud Talk مع دردشة نصية بسيطة. حيث يسمح لك بمشاركة الملفات من نكست كلاود الخاص بك ومنشن للمشاركين الآخرين. * 👥 ** مكالمات خاصة، جماعية، عامة ومكالمات محمية بكلمة مرور! ** فقط قم بدعوة شخص ما، أو  مجموعة كاملة أو أرسل رابطًا عامًا للدعوة إلى المكالمة. 💻 ** مشاركة الشاشة! ** شارك شاشتك مع المشاركين في مكالمتك. ما عليك سوى استخدام Firefox الإصدار 52 (أو أحدث) ، أو Edge أو Chrome 49 (أو أحدث) مع [امتداد Chrome] هذا (https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol ) . * 🚀 ** التكامل مع تطبيقات نكست كلاود الأخرى ** مثل الملفات وجهات الاتصال و Deck، والمزيد مستقبلًا. وفي أعمال [الإصدارات القادمة] (https://github.com/nextcloud/spreed/milestones/): * ✋ [المكالمات الموحدة](https://github.com/nextcloud/spreed/issues/21)، لمكالمة الناس على نكست كلاود الأخرى",
     "Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept." : "المستخدمين لا يمكنهم استخدام التحدث بعد الآن سيتم ظهورهم كـ مشاركين في قائمة المحادثات السابقة وايضا سيتم حفظ رسائل محادثاتهم.",
-    "Signaling server URL" : "عنوان URL لخادم التشوير ",
     "Error: Can not connect to server" : "خطأ: لا يمكن الاتصال بالخادم السحابي",
     "UDP and TCP" : "UDP و TCP",
     "UDP only" : "UDP فقط ",
@@ -1043,19 +1042,14 @@
     "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "تفعيل الفيديو (v) - سيتم قطع اتصالك للحظات عند تشغيل الفيديو للمره الاولى",
     "This conversation is read only" : "هذه المحادثة للقراءة فقط",
     "Conversation, " : "محادثة،",
-    "Default location for attachments" : "مكان المرفقات الافتراضي",
-    "Select default location for attachments" : "اختر مكان المرفقات الافتراضي",
     "Allow guests to join via link " : "السماح بالضيوف بالانضمام عن طريق الرابط",
     "Participant settings" : "اعدادات المشاركين",
     "Add participants to the conversation" : "اضافة مشاركين لهذه المحادثة",
-    "Projects" : "المشاريع",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call" : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
     "Use speaker view" : "استخدام عرض المتحدث",
     "Share link" : "مشاركة الرابط",
     "Exit fullscreen (f)" : "الخروج من ملء الشاشة (f)",
     "Fullscreen (f)" : "ملء الشاشة (f)",
     "Too many videos to fit in the window. Maximize the window or switch to \"speaker view\" for a better experience." : "الكثير من مقاطع الفيديو في النافذة. تكبير النافذة أو التبديل إلى \"عرض المتحدث\" للحصول على تجربة أفضل.",
-    "Select a conversation to add to the project" : "اختر محادثة لاضافتها إلى المشروع.",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome or Apple Safari." : "تستخدم متصفح غير مدعوم بالكامل من قبل نكست كلاود التحدث. استخدم اخر اصدار من فايرفوكس، مايكروسوفت ادج، قوقل كروم او ابل سفاري.",
     "Error while uploading file" : "خطأ اثناء رفع ملف",
     "New in Talk 10" : "جديد في التحدث 10 ",
