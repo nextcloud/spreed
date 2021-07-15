@@ -151,8 +151,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP e TCP",
     "UDP only" : "Só UDP",
     "TCP only" : "Só TCP",
-    "Share link" : "Partilhar hiperligação",
     "Remove" : "Remover",
-    "Enabled" : "Habilidado"
+    "Enabled" : "Habilidado",
+    "Share link" : "Partilhar hiperligação"
 },
 "nplurals=2; plural=(n != 1);");
