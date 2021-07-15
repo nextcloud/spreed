@@ -72,6 +72,7 @@ class SelectHelper {
 			->addSelect($alias . 'read_privacy')
 			->addSelect($alias . 'publishing_permissions')
 			->addSelect($alias . 'access_token')
+			->addSelect($alias . 'remote_id')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 
