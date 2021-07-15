@@ -413,7 +413,7 @@ class ParticipantService {
 		// FIXME use \OCA\Circles\Manager::getLink() in the future
 		$membersInCircle = $circle->getInheritedMembers();
 		foreach ($membersInCircle as $member) {
-			if ($member->getUserType() === Member::TYPE_USER && $member->getUserId() === $userId) {
+			if ($member->isLocal() && $member->getUserType() === Member::TYPE_USER && $member->getUserId() === $userId) {
 				return $circle;
 			}
 		}
