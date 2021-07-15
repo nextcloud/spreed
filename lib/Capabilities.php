@@ -94,6 +94,7 @@ class Capabilities implements IPublicCapability {
 				'voice-message-sharing',
 				'signaling-v3',
 				'publishing-permissions',
+				'clear-history',
 			],
 			'config' => [
 				'attachments' => [

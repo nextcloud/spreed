@@ -91,6 +91,7 @@ class CapabilitiesTest extends TestCase {
 			'voice-message-sharing',
 			'signaling-v3',
 			'publishing-permissions',
+			'clear-history',
 		];
 	}
 
