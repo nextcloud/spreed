@@ -304,12 +304,14 @@ export default {
 		 * @param {string} message1.id The ID of the new message
 		 * @param {string} message1.actorType Actor type of the new message
 		 * @param {string} message1.actorId Actor id of the new message
+		 * @param {string} message1.actorDisplayName Actor displayname of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
 		 * @param {int} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
 		 * @param {string} message2.id The ID of the second message
 		 * @param {string} message2.actorType Actor type of the previous message
 		 * @param {string} message2.actorId Actor id of the previous message
+		 * @param {string} message2.actorDisplayName Actor display name of previous message
 		 * @param {string} message2.systemMessage System message content of the previous message
 		 * @param {int} message2.timestamp Timestamp of the second message
 		 * @returns {boolean} Boolean if the messages should be grouped or not
@@ -333,8 +335,10 @@ export default {
 			}
 
 			if (!message1IsSystem // System messages are grouped independent from author
-				&& (message1.actorType !== message2.actorType // Otherwise the type and id need to match
-					|| message1.actorId !== message2.actorId)) {
+				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
+					|| message1.actorId !== message2.actorId)
+				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
+					&& message1.actorDisplayName !== message2.actorDisplayName))) {
 				return false
 			}
 

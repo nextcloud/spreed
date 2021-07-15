@@ -160,6 +160,9 @@ class ChatController extends AEnvironmentAwareController {
 			if ($actorDisplayName) {
 				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
+		} elseif ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {
+			$actorType = Attendee::ACTOR_BRIDGED;
+			$actorId = str_replace(["/", "\""], "", $actorDisplayName);
 		} else {
 			$actorType = Attendee::ACTOR_USERS;
 			$actorId = $this->userId;
@@ -553,6 +556,9 @@ class ChatController extends AEnvironmentAwareController {
 		$attendee = $this->participant->getAttendee();
 		$isOwnMessage = $message->getActorType() === $attendee->getActorType()
 			&& $message->getActorId() === $attendee->getActorId();
+
+		// Special case for if the message is a bridged message, then the message is the bridge bot's message.
+		$isOwnMessage = $isOwnMessage || ($message->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
 		if (!$isOwnMessage
 			&& (!$this->participant->hasModeratorPermissions(false)
 				|| $this->room->getType() === Room::ONE_TO_ONE_CALL)) {
