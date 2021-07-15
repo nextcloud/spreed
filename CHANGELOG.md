@@ -35,7 +35,7 @@ All notable changes to this project will be documented in this file.
 - Fix links to documentation
   [#5947](https://github.com/nextcloud/spreed/pull/5947)
 
-## 10.1.5 – 2021-07-15
+## 10.1.6 – 2021-07-15
 ### Fixed
 - Fix connection quality stats not reset when setting a new peer connection
   [#5770](https://github.com/nextcloud/spreed/pull/5770)
