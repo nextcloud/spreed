@@ -163,6 +163,16 @@ the main body of the message as well as a quote.
 								:href="linkToFile">
 								{{ t('spreed', 'Go to file') }}
 							</ActionLink>
+							<ActionButton
+								:close-after-click="true"
+								@click.stop="handleForwardMessage">
+								<Share
+									slot="icon"
+									:size="16"
+									decorative
+									title="" />
+								{{ t('spreed', 'Forward message') }}
+							</ActionButton>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template
 								v-for="action in messageActions">
@@ -194,6 +204,32 @@ the main body of the message as well as a quote.
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
+
+		<!-- Message forwarding -->
+		<RoomSelector
+			v-if="showRoomSelector"
+			container="#content-vue"
+			:show-postable-only="true"
+			:dialog-title="dialogTitle"
+			:dialog-subtitle="dialogSubtitle"
+			@select="setSelectedConversation"
+			@close="showRoomSelector=false" />
+		<Modal v-if="showForwardedConfirmation"
+			@close="showForwardedConfirmation = false">
+			<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
+				<template #desc>
+					{{ t('spreed', 'The message has been forwarded to {selectedConversation}', { selectedConversation }) }}
+				</template>
+			</EmptyContent>
+			<div class="forwarded-confirmation__navigation">
+				<button @click="showForwardedConfirmation=false">
+					{{ t('spreed', 'Dismiss') }}
+				</button>
+				<button class="primary" @click="openConversation(room)">
+					{{ t('spreed', 'Go to conversation') }}
+				</button>
+			</div>
+		</Modal>
 	</li>
 </template>
 
@@ -214,6 +250,7 @@ import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
 import Reload from 'vue-material-design-icons/Reload'
+import Share from 'vue-material-design-icons/Share'
 import Quote from '../../../Quote'
 import isInCall from '../../../../mixins/isInCall'
 import participant from '../../../../mixins/participant'
@@ -230,6 +267,9 @@ import {
 import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
+import RoomSelector from '../../../../views/RoomSelector.vue'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
 
 export default {
 	name: 'Message',
@@ -250,7 +290,11 @@ export default {
 		CheckAll,
 		EyeOffOutline,
 		Reload,
+		Share,
 		ActionSeparator,
+		RoomSelector,
+		EmptyContent,
+		Modal,
 	},
 
 	mixins: [
@@ -397,6 +441,9 @@ export default {
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
+			showRoomSelector: false,
+			selectedConversation: null,
+			showForwardedConfirmation: false,
 		}
 	},
 
@@ -641,6 +688,14 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
+
+		dialogTitle() {
+			return t('spreed', 'Forward message')
+		},
+
+		dialogSubtitle() {
+			return t('spreed', 'Choose a conversation to which forward the selected message.')
+		},
 	},
 
 	watch: {
@@ -763,7 +818,7 @@ export default {
 		},
 
 		async handleMarkAsUnread() {
-			// update in backend + visually
+			// update in backend showError(t('spreed', 'No permission to post messages in this conversation'))+ visually
 			await this.$store.dispatch('updateLastReadMessage', {
 				token: this.token,
 				id: this.previousMessageId,
@@ -772,6 +827,25 @@ export default {
 
 			// reload conversation to update additional attributes that have computed values
 			await this.$store.dispatch('fetchConversation', { token: this.token })
+		},
+
+		handleForwardMessage() {
+			this.showRoomSelector = true
+		},
+
+		async setSelectedConversation(room) {
+			this.selectedConversation = room
+			this.showRoomSelector = false
+			await this.$store.dispatch('forwardMessage', {
+				token: room,
+				message: this.messageObject,
+			})
+			this.showForwardedConfirmation = true
+
+		},
+		openConversation() {
+			this.$router.push({ name: 'conversation', params: { token: this.selectedConversation } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.showForwardedConfirmation = false
 		},
 	},
 }
@@ -920,6 +994,22 @@ export default {
 
 	&.retry-option {
 		cursor: pointer;
+	}
+}
+
+.forwarded-confirmation {
+	&__emptycontent {
+		width: 280px;
+		text-align: center;
+		margin: 20px !important;
+	}
+	&__navigation {
+		display: flex;
+		justify-content: space-between;
+		padding: 12px;
+		button {
+			height: 44px;
+		}
 	}
 }
 </style>
