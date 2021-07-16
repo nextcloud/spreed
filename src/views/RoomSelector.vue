@@ -202,8 +202,11 @@ li {
 
 #modal-buttons {
 	overflow: hidden;
-	height: 44px;
 	flex-shrink: 0;
+	button {
+		height: 44px;
+		margin: 0;
+	}
 
 	.primary {
 		float: right;
