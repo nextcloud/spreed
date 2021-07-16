@@ -138,6 +138,7 @@ export default {
 		close() {
 			// FIXME: should not emit on $root but on itself
 			this.$root.$emit('close')
+			this.$emit('close')
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
