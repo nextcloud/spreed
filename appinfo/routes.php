@@ -524,6 +524,27 @@ return [
 		],
 
 		/**
+		 * Federation
+		 */
+
+		[
+			'name' => 'Federation#acceptShare',
+			'url' => 'api/{apiVersion}/federation/invitation/{id}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Federation#rejectShare',
+			'url' => 'api/{apiVersion}/federation/invitation/{id}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+
+		/**
 		 * PublicShareAuth
 		 */
 		[

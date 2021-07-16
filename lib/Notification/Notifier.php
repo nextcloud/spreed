@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -36,6 +37,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -77,6 +79,8 @@ class Notifier implements INotifier {
 	protected $messageParser;
 	/** @var Definitions */
 	protected $definitions;
+	/** @var AddressHandler */
+	protected $addressHandler;
 
 	/** @var Room[] */
 	protected $rooms = [];
@@ -94,7 +98,8 @@ class Notifier implements INotifier {
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
-								Definitions $definitions) {
+								Definitions $definitions,
+								AddressHandler $addressHandler) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->config = $config;
@@ -107,6 +112,7 @@ class Notifier implements INotifier {
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
 		$this->definitions = $definitions;
+		$this->addressHandler = $addressHandler;
 	}
 
 	/**
@@ -258,6 +264,10 @@ class Notifier implements INotifier {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
+		if ($subject === 'remote_talk_share') {
+			return $this->parseRemoteInvitationMessage($notification, $l);
+		}
+
 		$this->notificationManager->markProcessed($notification);
 		throw new \InvalidArgumentException('Unknown subject');
 	}
@@ -268,6 +278,47 @@ class Notifier implements INotifier {
 			$temp = mb_substr($temp, 0, -5);
 		}
 		return $temp;
+	}
+
+	/**
+	 * @throws HintException
+	 */
+	protected function parseRemoteInvitationMessage(INotification $notification, IL10N $l): INotification {
+		$subjectParameters = $notification->getSubjectParameters();
+
+		[$sharedById, $sharedByServer] = $this->addressHandler->splitUserRemote($subjectParameters['sharedByFederatedId']);
+
+		$message = $l->t('{user1} shared room {roomName} on {remoteServer} with you');
+
+		$rosParameters = [
+			'user1' => [
+				'type' => 'user',
+				'id' => $sharedById,
+				'name' => $subjectParameters['sharedByDisplayName'],
+				'server' => $sharedByServer,
+			],
+			'roomName' => [
+				'type' => 'highlight',
+				'id' => $subjectParameters['serverUrl'] . '::' . $subjectParameters['roomToken'],
+				'name' => $subjectParameters['roomName'],
+			],
+			'remoteServer' => [
+				'type' => 'highlight',
+				'id' => $subjectParameters['serverUrl'],
+				'name' => $subjectParameters['serverUrl'],
+			]
+		];
+
+		$placeholders = $replacements = [];
+		foreach ($rosParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder .'}';
+			$replacements[] = $parameter['name'];
+		}
+
+		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message));
+		$notification->setRichMessage($message, $rosParameters);
+
+		return $notification;
 	}
 
 	/**

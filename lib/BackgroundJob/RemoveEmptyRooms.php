@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
@@ -45,6 +46,9 @@ class RemoveEmptyRooms extends TimedJob {
 
 	/** @var LoggerInterface */
 	protected $logger;
+
+	/** @var FederationManager */
+	protected $federationManager;
 
 	protected $numDeletedRooms = 0;
 
@@ -77,7 +81,7 @@ class RemoveEmptyRooms extends TimedJob {
 			return;
 		}
 
-		if ($this->participantService->getNumberOfActors($room) === 0 && $room->getObjectType() !== 'file') {
+		if ($this->participantService->getNumberOfActors($room) === 0 && $room->getObjectType() !== 'file' && $this->federationManager->getNumberOfInvitations($room) === 0) {
 			$room->deleteRoom();
 			$this->numDeletedRooms++;
 		}

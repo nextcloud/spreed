@@ -28,6 +28,7 @@
 				<referencedClass name="OCA\Circles\Model\Circle" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
+				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
 				<referencedClass name="OCA\Files_Sharing\SharedStorage" />
 			</errorLevel>
 		</UndefinedClass>
@@ -43,6 +44,7 @@
 				<referencedClass name="OC\DB\ConnectionAdapter" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
+				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>

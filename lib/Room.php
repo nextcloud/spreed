@@ -180,6 +180,8 @@ class Room {
 	private $description;
 	/** @var string */
 	private $password;
+	/** @var string */
+	private $serverUrl;
 	/** @var int */
 	private $activeGuests;
 	/** @var int */
@@ -218,6 +220,7 @@ class Room {
 								string $name,
 								string $description,
 								string $password,
+								string $serverUrl,
 								int $activeGuests,
 								int $callFlag,
 								?\DateTime $activeSince,
@@ -243,6 +246,7 @@ class Room {
 		$this->name = $name;
 		$this->description = $description;
 		$this->password = $password;
+		$this->serverUrl = $serverUrl;
 		$this->activeGuests = $activeGuests;
 		$this->callFlag = $callFlag;
 		$this->activeSince = $activeSince;
@@ -375,6 +379,14 @@ class Room {
 
 	public function getPassword(): string {
 		return $this->password;
+	}
+
+	public function getServerUrl(): string {
+		return $this->serverUrl;
+	}
+
+	public function isFederatedRemoteRoom(): bool {
+		return $this->serverUrl !== '';
 	}
 
 	public function setParticipant(?string $userId, Participant $participant): void {
