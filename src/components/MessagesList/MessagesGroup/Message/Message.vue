@@ -214,18 +214,21 @@ the main body of the message as well as a quote.
 			:dialog-subtitle="dialogSubtitle"
 			@select="setSelectedConversation"
 			@close="showRoomSelector=false" />
-		<Modal v-if="showForwardedConfirmation">
-			<EmptyContent icon="icon-checkmark" class="forwardModal">
-				{{ t('spreed', 'The message has been forwarded to {selectedConversation}', { selectedConversation }) }}
+		<Modal v-if="showForwardedConfirmation"
+			@close="showForwardedConfirmation = false">
+			<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
 				<template #desc>
-					<button @click="showForwardedConfirmation=false">
-						{{ t('spreed', 'Dismiss') }}
-					</button>
-					<button class="primary" @click="openConversation(room)">
-						{{ t('spreed', 'Go to conversation') }}
-					</button>
+					{{ t('spreed', 'The message has been forwarded to {selectedConversation}', { selectedConversation }) }}
 				</template>
 			</EmptyContent>
+			<div class="forwarded-confirmation__navigation">
+				<button @click="showForwardedConfirmation=false">
+					{{ t('spreed', 'Dismiss') }}
+				</button>
+				<button class="primary" @click="openConversation(room)">
+					{{ t('spreed', 'Go to conversation') }}
+				</button>
+			</div>
 		</Modal>
 	</li>
 </template>
@@ -991,6 +994,22 @@ export default {
 
 	&.retry-option {
 		cursor: pointer;
+	}
+}
+
+.forwarded-confirmation {
+	&__emptycontent {
+		width: 280px;
+		text-align: center;
+		margin: 20px !important;
+	}
+	&__navigation {
+		display: flex;
+		justify-content: space-between;
+		padding: 12px;
+		button {
+			height: 44px;
+		}
 	}
 }
 </style>
