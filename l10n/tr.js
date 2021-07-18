@@ -171,6 +171,7 @@ OC.L10N.register(
     "Password request: %s" : "Parola isteği: %s",
     "Private conversation" : "Özel görüşme",
     "Deleted user (%s)" : "Silinmiş kullanıcı (%s)",
+    "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} kullanıcısı {remoteServer} sunucusundaki {roomName} odasını sizinle paylaştı",
     "{user} in {call}" : "{call} içinde {user}",
     "Deleted user in {call}" : "{call} içinden kullanıcı silindi",
     "{guest} (guest) in {call}" : "{call} içinde {guest} (konuk)",
