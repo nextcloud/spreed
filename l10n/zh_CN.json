@@ -169,6 +169,7 @@
     "Password request: %s" : "密码请求: %s",
     "Private conversation" : "私有会话",
     "Deleted user (%s)" : "已删除用户（%s）",
+    "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} 与你共享了 {remoteServer} 的房间 {roomName}",
     "{user} in {call}" : "{call} 中的 {user}",
     "Deleted user in {call}" : "删除了 {call} 中的用户",
     "{guest} (guest) in {call}" : "{guest} (guest) 位于 {call}",
