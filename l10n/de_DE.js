@@ -171,6 +171,7 @@ OC.L10N.register(
     "Password request: %s" : "Passwortanforderung: %s",
     "Private conversation" : "Private Unterhaltung",
     "Deleted user (%s)" : "Gelöschter Benutzer (%s)",
+    "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} hat den Raum {roomName} auf {remoteServer} mit Ihnen geteilt",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Gelöschter Benutzer in {call}",
     "{guest} (guest) in {call}" : "{guest} (Gast) in {call}",
