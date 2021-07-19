@@ -169,6 +169,7 @@
     "Password request: %s" : "Pasahitz eskaera: %s",
     "Private conversation" : "Elkarrizketa pribatua",
     "Deleted user (%s)" : "Ezabatutako erabiltzailea (%s)",
+    "{user1} shared room {roomName} on {remoteServer} with you" : "{user1}-(e)k {roomName} gela partekatu du zurekin {remoteServer} zerbitzuan",
     "{user} in {call}" : "{user} erabiltzailea {call} deian",
     "Deleted user in {call}" : "Erabiltzailea ezabatu da {call} deian",
     "{guest} (guest) in {call}" : "{guest} (guest) gonbidatua(k) {call} deian",
