@@ -783,7 +783,7 @@ export default {
 		},
 
 		async handleMarkAsUnread() {
-			// update in backend showError(t('spreed', 'No permission to post messages in this conversation'))+ visually
+			// update in backend + visually
 			await this.$store.dispatch('updateLastReadMessage', {
 				token: this.token,
 				id: this.previousMessageId,
