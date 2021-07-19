@@ -91,7 +91,7 @@ export default {
 		},
 
 		dialogSubtitle() {
-			return t('spreed', 'Choose a conversation to which forward the selected message.')
+			return t('spreed', 'Choose a conversation to forward the selected message.')
 		},
 	},
 
