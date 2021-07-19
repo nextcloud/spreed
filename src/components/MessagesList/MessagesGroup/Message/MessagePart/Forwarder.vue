@@ -46,7 +46,7 @@
 				<button @click="handleClose">
 					{{ t('spreed', 'Dismiss') }}
 				</button>
-				<button class="primary" @click="openConversation(room)">
+				<button class="primary" @click="openConversation">
 					{{ t('spreed', 'Go to conversation') }}
 				</button>
 			</div>
