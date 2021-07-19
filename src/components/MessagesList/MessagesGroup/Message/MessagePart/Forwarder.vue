@@ -29,7 +29,7 @@
 			:show-postable-only="true"
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
-			@select="setSelectedConversation"
+			@select="setselectedConversationToken"
 			@close="handleClose" />
 
 		<!-- Second step of the flow: confirmation modal that gives the user
@@ -39,7 +39,7 @@
 			@close="handleClose">
 			<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
 				<template #desc>
-					{{ t('spreed', 'The message has been forwarded to {selectedConversation}', { selectedConversation }) }}
+					{{ t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName }) }}
 				</template>
 			</EmptyContent>
 			<div class="forwarded-confirmation__navigation">
@@ -80,7 +80,7 @@ export default {
 
 	data() {
 		return {
-			selectedConversation: null,
+			selectedConversationToken: null,
 			showForwardedConfirmation: false,
 		}
 	},
@@ -93,20 +93,24 @@ export default {
 		dialogSubtitle() {
 			return t('spreed', 'Choose a conversation to forward the selected message.')
 		},
+
+		selectedConversationName() {
+			return this.$store.getters?.conversation(this.selectedConversationToken).name
+		},
 	},
 
 	methods: {
-		async setSelectedConversation(room) {
-			this.selectedConversation = room
+		async setselectedConversationToken(token) {
+			this.selectedConversationToken = token
 			await this.$store.dispatch('forwardMessage', {
-				token: room,
+				token,
 				message: this.messageObject,
 			})
 			this.showForwardedConfirmation = true
 		},
 
 		openConversation() {
-			this.$router.push({ name: 'conversation', params: { token: this.selectedConversation } })
+			this.$router.push({ name: 'conversation', params: { token: this.selectedConversationToken } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
 		},
