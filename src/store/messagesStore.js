@@ -886,11 +886,8 @@ const actions = {
 	 */
 	async forwardMessage(context, { token, message }) {
 		const messageToBeForwarded = cloneDeep(message)
-		console.debug(message, messageToBeForwarded)
-		messageToBeForwarded.token = token
 		try {
-			console.debug(messageToBeForwarded)
-			postNewMessage(messageToBeForwarded)
+			await postNewMessage(messageToBeForwarded)
 		} catch (error) {
 			console.error('Error while forwarding message')
 			showError(t('spreed', 'Error while forwarding message'))
