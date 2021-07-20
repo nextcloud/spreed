@@ -12,6 +12,7 @@ const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').defau
 const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
 const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
 const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
+const VirtualBackground = require('../../media/pipeline/VirtualBackground.js').default
 
 /**
  * @param {object} opts the options object.
@@ -51,6 +52,8 @@ function LocalMedia(opts) {
 
 	this._videoTrackConstrainer = new TrackConstrainer()
 
+	this._virtualBackground = new VirtualBackground()
+
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
 		this.emit('speaking')
@@ -84,7 +87,9 @@ function LocalMedia(opts) {
 
 	this._videoTrackEnabler.connectTrackSink('default', this._videoTrackConstrainer)
 
-	this._videoTrackConstrainer.connectTrackSink('default', this._trackToStream, 'video')
+	this._videoTrackConstrainer.connectTrackSink('default', this._virtualBackground)
+
+	this._virtualBackground.connectTrackSink('default', this._trackToStream, 'video')
 }
 
 util.inherits(LocalMedia, WildEmitter)
