@@ -82,6 +82,7 @@ export default {
 		return {
 			selectedConversationToken: null,
 			showForwardedConfirmation: false,
+			forwardedMessageID: '',
 		}
 	},
 
@@ -102,17 +103,26 @@ export default {
 	methods: {
 		async setselectedConversationToken(token) {
 			this.selectedConversationToken = token
-			await this.$store.dispatch('forwardMessage', {
+			const response = await this.$store.dispatch('forwardMessage', {
 				token,
 				message: this.messageObject,
 			})
 			this.showForwardedConfirmation = true
+			this.forwardedMessageID = response.data.ocs.data.id
 		},
 
 		openConversation() {
-			this.$router.push({ name: 'conversation', params: { token: this.selectedConversationToken } })
+
+			this.$router.push({
+				name: 'conversation',
+				hash: `#message_${this.forwardedMessageID}`,
+				params: {
+					token: `${this.selectedConversationToken}`,
+			 },
+			})
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
+			this.forwardedMessageID = ''
 		},
 
 		handleClose() {
