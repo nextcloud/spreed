@@ -165,6 +165,8 @@ class Application extends App implements IBootstrap {
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
 			\OCP\Util::addScript(self::APP_ID, 'talk-collections');
+			\OCP\Util::addScript(self::APP_ID, 'tflite');
+			\OCP\Util::addScript(self::APP_ID, 'tflite-simd');
 		});
 	}
 
