@@ -180,6 +180,15 @@ const deleteConversation = async function(token) {
 }
 
 /**
+ * Clears the conversation history
+ * @param {string} token The token of the conversation to be deleted.
+ */
+const clearConversationHistory = async function(token) {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }))
+	return response
+}
+
+/**
  * Add a conversation to the favorites
  * @param {string} token The token of the conversation to be favorites
  */
@@ -331,4 +340,5 @@ export {
 	setConversationPassword,
 	setConversationName,
 	setConversationDescription,
+	clearConversationHistory,
 }
