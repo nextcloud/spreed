@@ -24,15 +24,43 @@
 		<div class="app-settings-section__hint">
 			{{ t('spreed', 'Be careful, these actions cannot be undone.') }}
 		</div>
-		<button v-if="canLeaveConversation"
-			@click.prevent.exact="leaveConversation">
-			{{ t('spreed', 'Leave conversation') }}
-		</button>
-		<button v-if="canDeleteConversation"
-			class="critical error"
-			@click.prevent.exact="deleteConversation">
-			{{ t('spreed', 'Delete conversation') }}
-		</button>
+		<div class="danger-zone">
+			<template v-if="canLeaveConversation">
+				<h4>{{ t('spreed', 'Leave conversation') }}</h4>
+				<p class="danger-zone__hint">
+					{{ t('spreed', 'Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time.') }}
+				</p>
+				<button
+					@click.prevent.exact="leaveConversation">
+					{{ t('spreed', 'Leave conversation') }}
+				</button>
+			</template>
+			<template v-if="canDeleteConversation">
+				<br>
+				<h4>{{ t('spreed', 'Delete conversation') }}</h4>
+				<p class="danger-zone__hint">
+					{{ t('spreed', 'Permanently delete this conversation.') }}
+				</p>
+				<button
+					class="critical error"
+					@click.prevent.exact="deleteConversation">
+					{{ t('spreed', 'Delete conversation') }}
+				</button>
+			</template>
+			<template v-if="canDeleteConversation">
+				<br>
+				<h4>{{ t('spreed', 'Delete chat messages') }}</h4>
+				<p class="danger-zone__hint">
+					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
+				</p>
+				<button
+					class="critical error"
+					@click.prevent.exact="clearChatHistory">
+					{{ t('spreed', 'Delete chat messages') }}
+				</button>
+			</template>
+			<div />
+		</div>
 	</div>
 </template>
 
@@ -115,6 +143,30 @@ export default {
 				}.bind(this)
 			)
 		},
+
+		/**
+		 * Clears the chat history
+		 */
+		async clearChatHistory() {
+			OC.dialogs.confirm(
+				t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation),
+				t('spreed', 'Delete all chat messages'),
+				async function(decision) {
+					if (!decision) {
+						return
+					}
+
+					try {
+						await this.$store.dispatch('clearConversationHistory', { token: this.token })
+						// Close the settings
+						this.hideConversationSettings()
+					} catch (error) {
+						console.debug(`error while clearing chat history ${error}`)
+						showError(t('spreed', 'Error while clearing chat history'))
+					}
+				}.bind(this)
+			)
+		},
 	},
 }
 </script>
@@ -123,6 +175,18 @@ export default {
 button {
 	height: 44px;
 	border: none;
+	display: block;
+	margin: 8px 0;
+}
+
+h4 {
+	font-weight: bold;
+}
+
+.danger-zone {
+	&__hint {
+		color: var(--color-text-maxcontrast);
+	}
 }
 
 </style>
