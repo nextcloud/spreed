@@ -19,6 +19,8 @@ webpackConfig.entry = {
 	deck: path.join(__dirname, 'src', 'deck.js'),
 }
 
+webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'
+
 // Edit JS rule
 webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
 	'@juliushaertl/vue-richtext',
@@ -59,6 +61,21 @@ webpackConfig.module.rules.push({
 			['@babel/env', { modules: 'commonjs' }],
 		],
 	},
+})
+
+webpackConfig.module.rules.push({
+	test: /\.wasm$/i,
+	type: 'asset/resource',
+})
+
+webpackConfig.module.rules.push({
+	test: /\.tflite$/i,
+	type: 'asset/resource',
+})
+
+webpackConfig.module.rules.push({
+	test: /\.worker\.js$/,
+	use: { loader: 'worker-loader' },
 })
 
 webpackConfig.optimization.minimizer = [
