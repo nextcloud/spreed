@@ -20,7 +20,7 @@
  */
 
 import BrowserStorage from '../../services/BrowserStorage'
-import VideoEffects from './VideoEffects'
+// import VideoEffects from './VideoEffects'
 /**
  * Special string to set null device ids in local storage (as only strings are
  * allowed).
@@ -403,9 +403,10 @@ MediaDevicesManager.prototype = {
 		this._stopIncompatibleTracks(constraints)
 
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-			const videoEffect = new VideoEffects()
-			const registeredStream = videoEffect.getBlurredVideoStream(stream)
-			this._registerStream(registeredStream)
+			// const videoEffect = new VideoEffects()
+			// const registeredStream = videoEffect.getBlurredVideoStream(stream)
+			//this._registerStream(registeredStream)
+			this._registerStream(stream)
 			// In Firefox the dialog to grant media permissions allows the user
 			// to change the device to use, overriding the device that was
 			// originally requested.
@@ -416,7 +417,8 @@ MediaDevicesManager.prototype = {
 			// guaranteed to be available.
 			this._updateDevices()
 
-			return registeredStream
+			// return registeredStream
+			return stream
 		}).catch(error => {
 			// The list of devices is also updated in case of failure, as even
 			// if getting the stream failed the permissions may have been
