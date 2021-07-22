@@ -61,6 +61,16 @@ webpackConfig.module.rules.push({
 	},
 })
 
+webpackConfig.module.rules.push({
+	test: /\.wasm$/i,
+	type: 'asset/resource',
+})
+
+webpackConfig.module.rules.push({
+	test: /\.tflite$/i,
+	type: 'asset/resource',
+})
+
 webpackConfig.optimization.minimizer = [
 	new TerserPlugin({
 		terserOptions: {
