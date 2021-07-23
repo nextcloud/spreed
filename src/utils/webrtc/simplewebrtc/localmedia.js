@@ -210,13 +210,13 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this._adjustVideoConstraintsForChromium(constraints)
 
-	const videoEffect = new VideoEffects()
-	stream = videoEffect.getBlurredVideoStream(stream)
 	// The handlers for "change:audioInputId" and "change:videoInputId" events
 	// expect the initial "getUserMedia" call to have been completed before
 	// being used, so they must be set when the promise is resolved or rejected.
 
 	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
+		const videoEffect = new VideoEffects()
+		stream = videoEffect.getBlurredVideoStream(stream)
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
 		// only audio is available.
