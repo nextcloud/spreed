@@ -106,6 +106,7 @@
 
 				<AudioRecorder
 					v-if="!hasText && canUploadFiles"
+					:disabled="isReadOnly"
 					@recording="handleRecording"
 					@audioFile="handleAudioFile" />
 

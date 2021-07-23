@@ -28,8 +28,9 @@
 				content: startRecordingTooltip,
 				delay: tooltipDelay,
 			}"
-			:disabled="!encoderReady"
+			:disabled="!canStartRecording"
 			class="audio-recorder__trigger nc-button nc-button__main"
+			:class="{'audio-recorder__trigger--disabled': !canStartRecording}"
 			@click="start">
 			<Microphone
 				:size="16"
@@ -94,6 +95,13 @@ export default {
 		tooltip: Tooltip,
 	},
 
+	props: {
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
 	data() {
 		return {
 			// The audio stream object
@@ -151,6 +159,14 @@ export default {
 		encoderReady() {
 			return this.$store.getters.encoderReady
 		},
+
+		canStartRecording() {
+			if (this.disabled) {
+				return false
+			} else {
+				return this.encoderReady
+			}
+		},
 	},
 
 	watch: {
@@ -173,6 +189,9 @@ export default {
 		 * Initialize the media stream and start capturing the audio
 		 */
 		async start() {
+			if (!this.canStartRecording) {
+				return
+			}
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
@@ -326,6 +345,18 @@ export default {
 			&:focus {
 				opacity: 1;
 			}
+		}
+		&--disabled {
+			opacity: .5;
+			cursor: default;
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
+		&--disabled * {
+			cursor: default;
 		}
 	}
 
