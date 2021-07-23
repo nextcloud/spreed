@@ -58,6 +58,7 @@
 import RoomSelector from '../../../../../views/RoomSelector.vue'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'Forwarder',
@@ -103,12 +104,18 @@ export default {
 	methods: {
 		async setSelectedConversationToken(token) {
 			this.selectedConversationToken = token
-			const response = await this.$store.dispatch('forwardMessage', {
-				token,
-				message: this.messageObject,
-			})
-			this.showForwardedConfirmation = true
-			this.forwardedMessageID = response.data.ocs.data.id
+			try {
+				const response = await this.$store.dispatch('forwardMessage', {
+					token,
+					message: this.messageObject,
+				})
+				this.showForwardedConfirmation = true
+				this.forwardedMessageID = response.data.ocs.data.id
+			} catch (error) {
+				console.error('Error while forwarding message', error)
+				showError(t('spreed', 'Error while forwarding message'))
+			}
+
 		},
 
 		openConversation() {
