@@ -35,7 +35,7 @@ import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
 } from '../constants'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -887,13 +887,8 @@ const actions = {
 	async forwardMessage(context, { token, message }) {
 		const messageToBeForwarded = cloneDeep(message)
 		messageToBeForwarded.token = token
-		try {
-			const response = await postNewMessage(messageToBeForwarded)
-			return response
-		} catch (error) {
-			console.error('Error while forwarding message')
-			showError(t('spreed', 'Error while forwarding message'))
-		}
+		const response = await postNewMessage(messageToBeForwarded)
+		return response
 	},
 }
 
