@@ -29,7 +29,7 @@
 			:show-postable-only="true"
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
-			@select="setselectedConversationToken"
+			@select="setSelectedConversationToken"
 			@close="handleClose" />
 
 		<!-- Second step of the flow: confirmation modal that gives the user
@@ -101,7 +101,7 @@ export default {
 	},
 
 	methods: {
-		async setselectedConversationToken(token) {
+		async setSelectedConversationToken(token) {
 			this.selectedConversationToken = token
 			const response = await this.$store.dispatch('forwardMessage', {
 				token,
