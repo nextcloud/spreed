@@ -35,7 +35,7 @@ import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
 } from '../constants'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 /**
  * Returns whether the given message contains a mention to self, directly
