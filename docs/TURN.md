@@ -193,6 +193,42 @@ If you need to retain the previous behaviour you should now do it by external me
 
 #### 6. Testing the TURN server
 
+##### Test if the TURN server is accessible from outside
+
+Install _coTURN_ on your client. Please [refer above for details](#1-download-and-install). Note that in the case of the client you only need to install it, you do not need to perform any configuration after that.
+
+Run `turnutils_uclient -p <port> -W <static-auth-secret> -v -y turn.example.com` where
+- `<port>` is the port where your TURN server is listening
+- `<static-auth-secret>` is the _static-auth-secret_ value configured in your TURN server
+- `-v` enables the verbose mode to be able to check all the details
+- `-y` enables _client-to-client_ connections, so _turnutils_uclient_ acts as both the client and the peer that the TURN server relays to; otherwise you would need to also run _turnutils_peer_ to act as the peer to relay to and specify its address and port when running _turnutils_uclient_ with `-e` and `-r`
+
+By default the connection between the TURN client and the TURN server will be done using UDP. To instead test TCP connections you need to add `-t` to the options.
+
+No matter if you are using UDP or TCP the output should look similar to:
+
+    0: IPv4. Connected from: 192.168.0.2:50988
+    0: IPv4. Connected to: 1.2.3.4:3478
+    0: allocate sent
+    0: allocate response received:
+    0: allocate sent
+    0: allocate response received:
+    0: success
+    0: IPv4. Received relay addr: 1.2.3.4:56365
+    ....
+    4: Total transmit time is 4
+    4: Total lost packets 0 (0.000000%), total send dropped 0 (0.000000%)
+    4: Average round trip delay 32.500000 ms; min = 15 ms, max = 56 ms
+    4: Average jitter 12.600000 ms; min = 0 ms, max = 41 ms
+
+If the output hangs at some point this could mean that the TURN server is not accessible (for example, because a firewall blocks its ports). Pay special attention too to the _Total lost packets_ and _total send dropped_ values, as there would be no error message if the data was successfully sent to the TURN server but then it was not properly relayed.
+
+Further you should see in the TURN server log the successful connection.
+
+This test only verifies that your TURN server is accessible from the outside, but it does not check if your TURN server can be actually used within Talk. For that please keep reading.
+
+##### Test the TURN server connection from within Talk
+
 When the TURN server is set in the Talk settings a basic test against the TURN server is performed. You can perform a deeper test by forcing your browser to send the media of a call only through the TURN server:
 
 - Join a call
