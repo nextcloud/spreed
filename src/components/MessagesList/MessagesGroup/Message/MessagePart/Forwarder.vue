@@ -29,7 +29,7 @@
 			:show-postable-only="true"
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
-			@select="setselectedConversationToken"
+			@select="setSelectedConversationToken"
 			@close="handleClose" />
 
 		<!-- Second step of the flow: confirmation modal that gives the user
@@ -58,6 +58,7 @@
 import RoomSelector from '../../../../../views/RoomSelector.vue'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'Forwarder',
@@ -101,14 +102,20 @@ export default {
 	},
 
 	methods: {
-		async setselectedConversationToken(token) {
+		async setSelectedConversationToken(token) {
 			this.selectedConversationToken = token
-			const response = await this.$store.dispatch('forwardMessage', {
-				token,
-				message: this.messageObject,
-			})
-			this.showForwardedConfirmation = true
-			this.forwardedMessageID = response.data.ocs.data.id
+			try {
+				const response = await this.$store.dispatch('forwardMessage', {
+					token,
+					message: this.messageObject,
+				})
+				this.showForwardedConfirmation = true
+				this.forwardedMessageID = response.data.ocs.data.id
+			} catch (error) {
+				console.error('Error while forwarding message', error)
+				showError(t('spreed', 'Error while forwarding message'))
+			}
+
 		},
 
 		openConversation() {
@@ -118,7 +125,7 @@ export default {
 				hash: `#message_${this.forwardedMessageID}`,
 				params: {
 					token: `${this.selectedConversationToken}`,
-			 },
+				},
 			})
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
