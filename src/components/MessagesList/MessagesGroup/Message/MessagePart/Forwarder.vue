@@ -118,7 +118,7 @@ export default {
 				hash: `#message_${this.forwardedMessageID}`,
 				params: {
 					token: `${this.selectedConversationToken}`,
-			 },
+				},
 			})
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
