@@ -207,7 +207,7 @@ export default {
 		},
 
 		placeholderText() {
-			if (this.isReadonly) {
+			if (this.isReadOnly) {
 				return t('spreed', 'This conversation has been locked')
 			} else if (!this.currentConversationIsJoined) {
 				return t('spreed', 'Joining conversation …')
