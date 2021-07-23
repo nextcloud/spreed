@@ -405,7 +405,7 @@ MediaDevicesManager.prototype = {
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
 			// const videoEffect = new VideoEffects()
 			// const registeredStream = videoEffect.getBlurredVideoStream(stream)
-			//this._registerStream(registeredStream)
+			// this._registerStream(registeredStream)
 			this._registerStream(stream)
 			// In Firefox the dialog to grant media permissions allows the user
 			// to change the device to use, overriding the device that was
