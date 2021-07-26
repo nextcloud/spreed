@@ -64,7 +64,8 @@ function pipeline(video, canvasOutput, backgroundConfig, segmentationConfig, tfl
                         beginFrame();
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
+                        _a.trys.push([1, 5, , 6]);
+                        if (!!window.stopBlur) return [3 /*break*/, 3];
                         return [4 /*yield*/, webglPipeline.render()];
                     case 2:
                         _a.sent();
@@ -72,12 +73,16 @@ function pipeline(video, canvasOutput, backgroundConfig, segmentationConfig, tfl
                         renderRequestId = requestAnimationFrame(render);
                         return [3 /*break*/, 4];
                     case 3:
+                        console.log('Animation stopped');
+                        _a.label = 4;
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
                         error_1 = _a.sent();
                         if (renderRequestId)
                             cancelAnimationFrame(renderRequestId);
                         webglPipeline.cleanUp();
                         throw error_1;
-                    case 4: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         });

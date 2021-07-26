@@ -41,9 +41,13 @@ function pipeline(
   async function render() {
     beginFrame()
     try {
-      await webglPipeline.render()
-      endFrame()
-      renderRequestId = requestAnimationFrame(render)
+      if(!window.stopBlur) {
+        await webglPipeline.render()
+        endFrame()
+        renderRequestId = requestAnimationFrame(render)
+      } else {
+        console.log('Animation stopped')
+      }
     } catch (error) {
       if (renderRequestId) cancelAnimationFrame(renderRequestId)
       webglPipeline.cleanUp()
