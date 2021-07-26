@@ -773,7 +773,7 @@ OC.L10N.register(
     "Team name" : "Název týmu",
     "Channel name" : "Název kanálu",
     "Rocket.Chat server URL" : "URL adresa Rocket.Chat serveru",
-    "User name or email address" : "Uživatel. jméno nebo e-mail",
+    "User name or email address" : "Uživ. jméno nebo e-mail",
     "Password" : "Heslo",
     "Rocket.Chat channel" : "Rocket.Chat kanál",
     "Skip TLS verification" : "Přeskočit ověřování TLS",
