@@ -28,7 +28,7 @@
 			<template v-if="canLeaveConversation">
 				<h4>{{ t('spreed', 'Leave conversation') }}</h4>
 				<p class="danger-zone__hint">
-					{{ t('spreed', 'Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time.') }}
+					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be re-joined at any time.') }}
 				</p>
 				<button
 					@click.prevent.exact="leaveConversation">
