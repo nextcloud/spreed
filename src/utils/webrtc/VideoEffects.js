@@ -2,11 +2,13 @@ import * as bodyPix from '@tensorflow-models/body-pix'
 // import * as tf from '@tensorflow/tfjs'
 import '@tensorflow/tfjs'
 import { blur } from '../videofx/src/core/vanilla/blur'
-import '../videofx/public/models/segm_full_v679.tflite'
-import '../videofx/public/models/segm_lite_v681.tflite'
-import '../videofx/public/models/selfiesegmentation_mlkit-256x256-2021_01_19-v1215.f16.tflite'
-import '../videofx/public/tflite/tflite.wasm'
-import '../videofx/public/tflite/tflite-simd.wasm'
+import segmFull from '../videofx/public/models/segm_full_v679.tflite'
+import segmLite from '../videofx/public/models/segm_lite_v681.tflite'
+import mlKit from '../videofx/public/models/selfiesegmentation_mlkit-256x256-2021_01_19-v1215.f16.tflite'
+import tfLiteWasm from '../videofx/public/tflite/tflite.wasm'
+import tfLiteSimdWasm from '../videofx/public/tflite/tflite-simd.wasm'
+import '../videofx/public/tflite/tflite-nosimd.js'
+import '../videofx/public/tflite/tflite-simd.js'
 
 export default function VideoEffects() {
 	this._videoSource = document.createElement('video')
@@ -131,6 +133,11 @@ VideoEffects.prototype = {
 	},
 
 	_useTfLite(stream) {
+		window.segmFull = segmFull.split('/').pop()
+		window.segmLite = segmLite.split('/').pop()
+		window.mlKit = mlKit.split('/').pop()
+		window.tfLiteWasm = tfLiteWasm.split('/').pop()
+		window.tfLiteSimdWasm = tfLiteSimdWasm.split('/').pop()
 		this._stream = stream
 		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
 		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
