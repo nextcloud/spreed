@@ -12,25 +12,42 @@ import '../videofx/public/tflite/tflite-simd.js'
 
 export default function VideoEffects() {
 	this._videoSource = document.createElement('video')
+	this._streamSwitch = document.createElement('video')
 	this._videoSource.muted = 'muted'
 	this._temporaryCanvas = document.createElement('canvas')
 	this._playing = false
+	this._stopStreamBound = this._stopStream.bind(this)
 }
 
 VideoEffects.prototype = {
 	getBlurredVideoStream(stream, model = 1) {
 		this._model = model
+		this._configureStreams(stream)
 		switch (model) {
 		case 0:
-			return this._useBodyPix(stream)
-			// break
+			this._useBodyPix(stream)
+			break
 		case 1:
-			return this._useTfLite(stream)
-			// break
+			this._useTfLite(stream)
+			break
 		default:
-			return this._useBodyPix(stream)
-			// break
+			this._useBodyPix(stream)
+			break
 		}
+		this._attachAudio()
+		// mainStreamEnded is sent in localmedia
+		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
+		return this._canvasBlurredStream
+	},
+
+	_configureStreams(stream) {
+		this._stream = stream
+		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
+		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
+		this._streamSwitch.height = this._stream.getVideoTracks()[0].getSettings().height
+		this._streamSwitch.width = this._stream.getVideoTracks()[0].getSettings().width
+		this._videoSource.srcObject = this._stream
+		this._videoSource.play()
 	},
 
 	_stopStream() {
@@ -109,17 +126,7 @@ VideoEffects.prototype = {
 		this._loadBodyPix()
 	},
 
-	_useBodyPix(stream) {
-		this._stream = stream
-		this._videoSource.addEventListener('loadeddata', (this._videoSourceListener.bind(this)))
-		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
-		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
-		this._temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
-		this._temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
-		this._videoSource.srcObject = this._stream
-		this._videoSource.play()
-		this._playing = true
-		this._canvasBlurredStream = this._temporaryCanvas.captureStream()
+	_attachAudio() {
 		let extractedAudio = false
 		extractedAudio = this._stream.getTracks().filter(function(track) {
 			return track.kind === 'audio'
@@ -127,50 +134,48 @@ VideoEffects.prototype = {
 		if (extractedAudio) {
 			this._canvasBlurredStream.addTrack(extractedAudio)
 		}
-		this._stopStreamBound = this._stopStream.bind(this)
-		// mainStreamEnded is sent in localmedia
-		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
-		return this._canvasBlurredStream
 	},
 
-	_useTfLite(stream) {
+	_switchVideoSrc(videoSrc) {
+		this._streamSwitch.srcObject = videoSrc
+		this._streamSwitch.play()
+		return this._streamSwitch.captureStream()
+	},
+
+	_useBodyPix() {
+
+		const temporaryCanvas = document.createElement('canvas')
+		temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
+		temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
+		const videoSource = document.createElement('video')
+		videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
+		videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
+		videoSource.addEventListener('loadeddata', (this._videoSourceListener.bind(this)))
+		videoSource.srcObject = this._stream
+		videoSource.play()
+		this._playing = true
+		this._canvasBlurredStream = (this._switchVideoSrc(temporaryCanvas.captureStream()))
+
+	},
+
+	_useTfLite() {
 		window.stopBlur = false
 		window.segmFull = segmFull.split('/').pop()
 		window.segmLite = segmLite.split('/').pop()
 		window.mlKit = mlKit.split('/').pop()
 		window.tfLiteWasm = tfLiteWasm.split('/').pop()
 		window.tfLiteSimdWasm = tfLiteSimdWasm.split('/').pop()
-		this._stream = stream
-		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
-		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
-		this._temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
-		this._temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
-		this._videoSource.srcObject = this._stream
-		this._videoSource.play()
-		this._playing = true
-		// this._attachment = document.body.appendChild(this._temporaryCanvas)
-		// this._attachment.style.position = 'absolute'
-		// this._attachment.style.top = '30vh'
-		// this._attachment.style.left = '30vh'
-		// this._attachment.style.zIndex = '99999'
+		const temporaryCanvas = document.createElement('canvas')
+		temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
+		temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
+		const videoSource = document.createElement('video')
+		videoSource.srcObject = this._stream
+		videoSource.play()
 
-		// setupVideo(this._videoSource, this._temporaryCanvas)
-		blur(this._videoSource, this._temporaryCanvas)
+		blur(videoSource, temporaryCanvas)
 
-		this._canvasBlurredStream = this._temporaryCanvas.captureStream()
-		let extractedAudio = false
-		extractedAudio = this._stream.getTracks().filter(function(track) {
-			return track.kind === 'audio'
-		})[0]
-		if (extractedAudio) {
-			this._canvasBlurredStream.addTrack(extractedAudio)
-		}
-		this._stopStreamBound = this._stopStream.bind(this)
-		// mainStreamEnded is sent in
-		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
-		// console.log(this._canvasBlurredStream)
-		return this._canvasBlurredStream
-
+		// this._canvasBlurredStream = this._switchVideoSrc(temporaryCanvas.captureStream())
+		this._canvasBlurredStream = (this._switchVideoSrc(temporaryCanvas.captureStream()))
 	},
 
 	_stream: null,
