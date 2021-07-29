@@ -571,13 +571,15 @@ export default {
 }
 
 // Override actions styles TODO: upstream this change
-::v-deep .action-item__menutoggle {
-	opacity: .8 !important;
+// Targeting two classess for specificity
+::v-deep .action-item__menutoggle.action-item__menutoggle--with-icon-slot {
+	opacity: 1 !important;
 	&:hover,
 	&:focus {
 		background-color: var(--color-background-hover) !important;
-		opacity: .8 !important;
+	}
+	&:disabled {
+		opacity: .5 !important;
 	}
 }
-
 </style>
