@@ -354,7 +354,7 @@ export default {
 			cursor: default;
 			&:hover,
 			&:focus {
-				background-color: transparent;
+				background-color: transparent !important;
 			}
 		}
 
