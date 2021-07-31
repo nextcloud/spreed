@@ -709,6 +709,7 @@ OC.L10N.register(
     "Error while updating conversation description" : "Errorea elkarrizketa deskribapena eguneratzen",
     "Be careful, these actions cannot be undone." : "Kontuz ibili, ekintza hauek ezin dira desegin.",
     "Leave conversation" : "Atera elkarrizketatik",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Elkarrizketa bat uzten denean, itxitako elkarrizketa batera sartzeko gonbidapen bat beharrezkoa da. Irekitako elkarrizketa batera edozein momentutan batu zaitezke.",
     "Delete conversation" : "Ezabatu elkarrizketa",
     "Permanently delete this conversation." : "Betirako ezabatu elkarrizketa hau.",
     "Delete chat messages" : "Ezabatu txateko mezuak",
