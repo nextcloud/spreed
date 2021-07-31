@@ -79,6 +79,24 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
+	 * @param int $id
+	 * @param string $token
+	 * @return Attendee
+	 * @throws DBException
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException
+	 */
+	public function getByRemoteIdAndToken(int $id, string $token): Attendee {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('access_token', $query->createNamedParameter($token)));
+
+		return $this->findEntity($query);
+	}
+
+	/**
 	 * @param int $roomId
 	 * @param string $actorType
 	 * @param int|null $lastJoinedCall

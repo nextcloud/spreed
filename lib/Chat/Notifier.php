@@ -35,9 +35,9 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\IConfig;
+use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
-use OCP\IUserManager;
 
 /**
  * Helper class for notifications related to user mentions in chat messages.

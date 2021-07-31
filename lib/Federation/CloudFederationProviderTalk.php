@@ -116,8 +116,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			// TODO: Implement group shares
 		}
 
-		if (!is_numeric($share->getShareType())) {
-			throw new ProviderCouldNotAddShareException('shareType is not a number', '', Http::STATUS_BAD_REQUEST);
+		$roomType = $share->getProtocol()['roomType'];
+		if (!is_numeric($roomType) || !in_array((int) $roomType, $this->validSharedRoomTypes(), true)) {
+			throw new ProviderCouldNotAddShareException('roomType is not a valid number', '', Http::STATUS_BAD_REQUEST);
 		}
 
 		$shareSecret = $share->getShareSecret();
@@ -125,7 +126,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$remoteId = $share->getProviderId();
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
-		$roomType = (int) $share->getShareType();
+		$roomType = (int) $roomType;
 		$sharedBy = $share->getSharedByDisplayName();
 		$sharedByFederatedId = $share->getSharedBy();
 		$owner = $share->getOwnerDisplayName();
@@ -166,7 +167,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			case 'SHARE_DECLINED':
 				return $this->shareDeclined((int) $providerId, $notification);
 			case 'SHARE_UNSHARED':
-				return []; // TODO: Implement
+				return $this->shareUnshared((int) $providerId, $notification);
 			case 'REQUEST_RESHARE':
 				return []; // TODO: Implement
 			case 'RESHARE_UNDO':
@@ -206,6 +207,26 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	}
 
 	/**
+	 * @throws ActionNotSupportedException
+	 * @throws ShareNotFound
+	 * @throws AuthenticationFailedException
+	 */
+	private function shareUnshared(int $id, array $notification): array {
+		$attendee = $this->getRemoteAttendeeAndValidate($id, $notification['sharedSecret']);
+
+		$room = $this->manager->getRoomById($attendee->getRoomId());
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedRemoteRoom()) {
+			throw new ShareNotFound();
+		}
+
+		$participant = new Participant($room, $attendee, null);
+		$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
+		return [];
+	}
+
+	/**
 	 * @throws AuthenticationFailedException
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
@@ -225,6 +246,31 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 		if ($attendee->getAccessToken() !== $sharedSecret) {
 			throw new AuthenticationFailedException();
+		}
+		return $attendee;
+	}
+
+	/**
+	 * @param int $id
+	 * @param string $sharedSecret
+	 * @return Attendee
+	 * @throws ActionNotSupportedException
+	 * @throws ShareNotFound
+	 * @throws AuthenticationFailedException
+	 */
+	private function getRemoteAttendeeAndValidate(int $id, string $sharedSecret): Attendee {
+		if (!$this->federationManager->isEnabled()) {
+			throw new ActionNotSupportedException('Server does not support Talk federation');
+		}
+
+		if (!$sharedSecret) {
+			throw new AuthenticationFailedException();
+		}
+
+		try {
+			$attendee = $this->attendeeMapper->getByRemoteIdAndToken($id, $sharedSecret);
+		} catch (Exception $ex) {
+			throw new ShareNotFound();
 		}
 		return $attendee;
 	}
@@ -256,10 +302,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$this->notificationManager->notify($notification);
 	}
 
+	private function validSharedRoomTypes(): array {
+		return [
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_GROUP,
+			Room::TYPE_PUBLIC,
+		];
+	}
+
 	/**
 	 * @inheritDoc
 	 */
-	public function getSupportedShareTypes() {
+	public function getSupportedShareTypes(): array {
 		return ['user'];
 	}
 }

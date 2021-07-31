@@ -77,7 +77,7 @@ class RoomService {
 					'displayName' => $targetUser->getDisplayName(),
 					'participantType' => Participant::OWNER,
 				],
-			]);
+			], $actor);
 		}
 
 		return $room;
@@ -130,7 +130,7 @@ class RoomService {
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $owner->getUID(),
 				'participantType' => Participant::OWNER,
-			]]);
+			]], null);
 		}
 
 		return $room;
