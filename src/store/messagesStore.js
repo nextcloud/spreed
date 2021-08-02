@@ -35,7 +35,6 @@ import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
 } from '../constants'
-import cloneDeep from 'lodash/cloneDeep'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -880,13 +879,10 @@ const actions = {
 	/**
 	 * Posts a simple text message to a room
 	 * @param {object} context default store context;
-	 * @param {strinf} token the token of the conversation to wich the message
 	 * will be forwarded;
 	 * @param {object} message the message object;
 	 */
-	async forwardMessage(context, { token, message }) {
-		const messageToBeForwarded = cloneDeep(message)
-		messageToBeForwarded.token = token
+	async forwardMessage(context, { messageToBeForwarded }) {
 		const response = await postNewMessage(messageToBeForwarded)
 		return response
 	},
