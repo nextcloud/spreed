@@ -59,6 +59,7 @@ import RoomSelector from '../../../../../views/RoomSelector.vue'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import { showError } from '@nextcloud/dialogs'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
 	name: 'Forwarder',
@@ -99,16 +100,37 @@ export default {
 		selectedConversationName() {
 			return this.$store.getters?.conversation(this.selectedConversationToken).name
 		},
+
+		/**
+		 * Object containing all the mentions in the message that will be forwarded
+		 * @returns {Object} mentions.
+		 */
+		mentions() {
+			const mentions = {}
+			for (const key in this.messageObject.messageParameters) {
+				if (key.startsWith('mention')) {
+					mentions[key] = this.messageObject.messageParameters[key]
+				}
+			}
+			return mentions
+		},
 	},
 
 	methods: {
 		async setSelectedConversationToken(token) {
 			this.selectedConversationToken = token
+			const messageToBeForwarded = cloneDeep(this.messageObject)
+			// Overwrite the selected conversation token
+			messageToBeForwarded.token = token
+			// If there are mentions in the message to be forwarded, replace them in the message
+			// text.
+			if (this.mentions !== {}) {
+				for (const mention in this.mentions) {
+					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, '@' + this.mentions[mention].name)
+				}
+			}
 			try {
-				const response = await this.$store.dispatch('forwardMessage', {
-					token,
-					message: this.messageObject,
-				})
+				const response = await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
 				this.showForwardedConfirmation = true
 				this.forwardedMessageID = response.data.ocs.data.id
 			} catch (error) {
