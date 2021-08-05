@@ -126,25 +126,48 @@ function checkStartPublishOwnPeer(signaling) {
 	}
 
 	if (ownPeer) {
-		webrtc.removePeers(ownPeer.id)
+		if (delayedConnectionToPeer[ownPeer.id]) {
+			clearInterval(delayedConnectionToPeer[ownPeer.id])
+			delete delayedConnectionToPeer[ownPeer.id]
+		}
 		ownPeer.end()
+
+		// The peer does not need to be nullified in the
+		// localCallParticipantModel as a new peer will be immediately set by
+		// createPeer() below.
 	}
 
-	// Create own publishing stream.
-	ownPeer = webrtc.webrtc.createPeer({
-		id: currentSessionId,
-		type: 'video',
-		enableDataChannels: true,
-		receiveMedia: {
-			offerToReceiveAudio: 0,
-			offerToReceiveVideo: 0,
-		},
-		sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
-	})
-	webrtc.emit('createdPeer', ownPeer)
-	ownPeer.start()
+	const createPeer = function() {
+		// Create own publishing stream.
+		ownPeer = webrtc.webrtc.createPeer({
+			id: currentSessionId,
+			type: 'video',
+			enableDataChannels: true,
+			receiveMedia: {
+				offerToReceiveAudio: 0,
+				offerToReceiveVideo: 0,
+			},
+			sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
+		})
+		webrtc.emit('createdPeer', ownPeer)
+		ownPeer.start()
 
-	localCallParticipantModel.setPeer(ownPeer)
+		localCallParticipantModel.setPeer(ownPeer)
+	}
+
+	createPeer()
+
+	delayedConnectionToPeer[ownPeer.id] = setInterval(function() {
+		// New offers are periodically sent until a connection is established.
+		// As an offer can not be sent again from an existing peer it must be
+		// removed and a new one must be created from scratch.
+		if (ownPeer) {
+			ownPeer.end()
+		}
+
+		console.debug('No answer received for own peer, sending offer again')
+		createPeer()
+	}, 10000)
 }
 
 function sendCurrentMediaState() {
@@ -441,6 +464,18 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		}
 
 		clearErrorNotification()
+
+		// The delayed connection for the own peer needs to be explicitly
+		// stopped, as the current own session is not passed along with the
+		// sessions of the other participants as "disconnected" to
+		// "usersChanged" when a call is left.
+		// The peer, on the other hand, is automatically ended by "leaveCall"
+		// below.
+		if (ownPeer && delayedConnectionToPeer[ownPeer.id]) {
+			clearInterval(delayedConnectionToPeer[ownPeer.id])
+			delete delayedConnectionToPeer[ownPeer.id]
+		}
+
 		webrtc.leaveCall()
 	})
 
@@ -699,7 +734,10 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	const forceReconnect = function(signaling, flags) {
 		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
+			if (delayedConnectionToPeer[ownPeer.id]) {
+				clearInterval(delayedConnectionToPeer[ownPeer.id])
+				delete delayedConnectionToPeer[ownPeer.id]
+			}
 			ownPeer.end()
 			ownPeer = null
 
@@ -1163,7 +1201,11 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 
 	webrtc.on('disconnected', function() {
 		if (ownPeer) {
-			webrtc.removePeers(ownPeer.id)
+			if (delayedConnectionToPeer[ownPeer.id]) {
+				clearInterval(delayedConnectionToPeer[ownPeer.id])
+				delete delayedConnectionToPeer[ownPeer.id]
+			}
+
 			ownPeer.end()
 			ownPeer = null
 
