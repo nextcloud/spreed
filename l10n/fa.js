@@ -323,7 +323,7 @@ OC.L10N.register(
     "Remove" : "حذف",
     "Enabled" : "فعال شده",
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
-    "Share link" : "Share link",
+    "Share link" : "لینک را به اشتراک بگذارید",
     "Fullscreen (f)" : "تمام صفحه (f)"
 },
 "nplurals=2; plural=(n > 1);");
