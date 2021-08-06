@@ -319,6 +319,8 @@ export default {
 		 */
 		rawToParsed(text) {
 			text = text.replace(/<br>/g, '\n')
+			text = text.replace(/<div>/g, '\n')
+			text = text.replace(/<\/div>/g, '')
 			text = text.replace(/&nbsp;/g, ' ')
 
 			// Since we used innerHTML to get the content of the div.contenteditable
@@ -344,6 +346,7 @@ export default {
 			if (OC.debug && this.parsedText.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
 				const match = pattern.exec(this.parsedText)
+				// Escape HTML
 				if (match) {
 					await this.handleSubmitSpam(match[1])
 					return
