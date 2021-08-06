@@ -318,6 +318,8 @@ export default {
 		 */
 		rawToParsed(text) {
 			text = text.replace(/<br>/g, '\n')
+			text = text.replace(/<div>/g, '\n')
+			text = text.replace(/<\/div>/g, '')
 			text = text.replace(/&nbsp;/g, ' ')
 
 			// Since we used innerHTML to get the content of the div.contenteditable
