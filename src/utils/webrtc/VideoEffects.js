@@ -12,7 +12,6 @@ import '../videofx/public/tflite/tflite-simd.js'
 
 export default function VideoEffects() {
 	this._videoSource = document.createElement('video')
-	this._streamSwitch = document.createElement('video')
 	this._videoSource.muted = 'muted'
 	this._temporaryCanvas = document.createElement('canvas')
 	this._playing = false
@@ -20,7 +19,8 @@ export default function VideoEffects() {
 }
 
 VideoEffects.prototype = {
-	getBlurredVideoStream(stream, model = 1) {
+	getBlurredVideoStream(stream, model = 0) {
+		window.switchStream = false
 		this._model = model
 		this._configureStreams(stream)
 		switch (model) {
@@ -34,6 +34,7 @@ VideoEffects.prototype = {
 			this._useBodyPix(stream)
 			break
 		}
+		this._canvasBlurredStream = this._temporaryCanvas.captureStream()
 		this._attachAudio()
 		// mainStreamEnded is sent in localmedia
 		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
@@ -44,8 +45,8 @@ VideoEffects.prototype = {
 		this._stream = stream
 		this._videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
 		this._videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
-		this._streamSwitch.height = this._stream.getVideoTracks()[0].getSettings().height
-		this._streamSwitch.width = this._stream.getVideoTracks()[0].getSettings().width
+		this._temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
+		this._temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
 		this._videoSource.srcObject = this._stream
 		this._videoSource.play()
 	},
@@ -119,6 +120,11 @@ VideoEffects.prototype = {
 			bodyPix.drawBokehEffect(
 				this._temporaryCanvas, this._videoSource, segmentation, backgroundBlurAmount,
 				edgeBlurAmount, flipHorizontal)
+			if (window.switchStream === true) {
+				window.switchStream = false
+				this._playing = false
+				this._switchModel(1)
+			}
 		}
 	},
 
@@ -136,26 +142,9 @@ VideoEffects.prototype = {
 		}
 	},
 
-	_switchVideoSrc(videoSrc) {
-		this._streamSwitch.srcObject = videoSrc
-		this._streamSwitch.play()
-		return this._streamSwitch.captureStream()
-	},
-
 	_useBodyPix() {
-
-		const temporaryCanvas = document.createElement('canvas')
-		temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
-		temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
-		const videoSource = document.createElement('video')
-		videoSource.height = this._stream.getVideoTracks()[0].getSettings().height
-		videoSource.width = this._stream.getVideoTracks()[0].getSettings().width
-		videoSource.addEventListener('loadeddata', (this._videoSourceListener.bind(this)))
-		videoSource.srcObject = this._stream
-		videoSource.play()
+		this._videoSource.addEventListener('loadeddata', (this._videoSourceListener.bind(this)))
 		this._playing = true
-		this._canvasBlurredStream = (this._switchVideoSrc(temporaryCanvas.captureStream()))
-
 	},
 
 	_useTfLite() {
@@ -165,17 +154,16 @@ VideoEffects.prototype = {
 		window.mlKit = mlKit.split('/').pop()
 		window.tfLiteWasm = tfLiteWasm.split('/').pop()
 		window.tfLiteSimdWasm = tfLiteSimdWasm.split('/').pop()
-		const temporaryCanvas = document.createElement('canvas')
-		temporaryCanvas.height = this._stream.getVideoTracks()[0].getSettings().height
-		temporaryCanvas.width = this._stream.getVideoTracks()[0].getSettings().width
-		const videoSource = document.createElement('video')
-		videoSource.srcObject = this._stream
-		videoSource.play()
+		blur(this._videoSource, this._temporaryCanvas)
 
-		blur(videoSource, temporaryCanvas)
+	},
 
-		// this._canvasBlurredStream = this._switchVideoSrc(temporaryCanvas.captureStream())
-		this._canvasBlurredStream = (this._switchVideoSrc(temporaryCanvas.captureStream()))
+	_switchModel(model) {
+		if (model === 0) {
+			this._useBodyPix()
+		} else {
+			this._useTfLite()
+		}
 	},
 
 	_stream: null,
