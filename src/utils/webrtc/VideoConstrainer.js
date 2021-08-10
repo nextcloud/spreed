@@ -297,7 +297,7 @@ VideoConstrainer.prototype = {
 		let changed = false
 
 		if (constraints.frameRate && constraints.frameRate.min) {
-			const previousFrameRateMin = constraints.frameRate.max
+			const previousFrameRateMin = constraints.frameRate.min
 			constraints.frameRate.min = Math.min(Math.round(constraints.frameRate.min / 1.5), 1)
 			changed = previousFrameRateMin !== constraints.frameRate.min
 		}
