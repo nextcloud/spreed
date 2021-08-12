@@ -22,7 +22,7 @@
 <template>
 	<Modal v-if="showModal"
 		class="upload-editor"
-		container="#content-vue"
+		:container="container"
 		@close="handleDismiss">
 		<template v-if="!isVoiceMessage">
 			<!--native file picker, hidden -->
@@ -109,6 +109,10 @@ export default {
 
 		showModal() {
 			return !!this.currentUploadId
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		addMoreAriaLabel() {

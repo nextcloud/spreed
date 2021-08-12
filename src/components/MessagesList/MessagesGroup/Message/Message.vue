@@ -132,7 +132,7 @@ the main body of the message as well as a quote.
 						</Actions>
 						<Actions
 							:force-menu="true"
-							container="#content-vue">
+							:container="container">
 							<ActionButton
 								v-if="isPrivateReplyable"
 								icon="icon-user"
@@ -571,6 +571,10 @@ export default {
 
 		hasActions() {
 			return !this.isSystemMessage && !this.isTemporary
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		isTemporaryUpload() {
