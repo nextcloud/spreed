@@ -709,7 +709,6 @@ OC.L10N.register(
     "Error while updating conversation description" : "Errore in s'agiornamentu de sa descritzione de sa resonada",
     "Be careful, these actions cannot be undone." : "Atentzione, custas atziones non si podent annullare",
     "Leave conversation" : "Lassa sa resonada",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Lassada una resonada, pro torrare a intrare in una resonada serrada, tocat de tènnere un'invitu. Si podet semper torrare a intrare in una resonada aberta.",
     "Delete conversation" : "Cantzella sa resonada",
     "Permanently delete this conversation." : "Cantzella in manera definitiva custa resonada.",
     "Delete chat messages" : "Cantzella is messàgios de is tzarradas",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
+    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Lassada una resonada, pro torrare a intrare in una resonada serrada, tocat de tènnere un'invitu. Si podet semper torrare a intrare in una resonada aberta."
 },
 "nplurals=2; plural=(n != 1);");
