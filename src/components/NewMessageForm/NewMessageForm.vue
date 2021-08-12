@@ -42,7 +42,7 @@
 					class="new-message-form__upload-menu">
 					<Actions
 						ref="uploadMenu"
-						container="#content-vue"
+						:container="container"
 						:disabled="disabled"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
@@ -70,7 +70,7 @@
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
 						<EmojiPicker
-							container="#content-vue"
+							:container="container"
 							@select="addEmoji">
 							<button
 								type="button"
@@ -243,6 +243,10 @@ export default {
 
 		hasText() {
 			return this.parsedText !== ''
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 

@@ -76,7 +76,7 @@
 				:class="screenSharingButtonClass"
 				class="app-navigation-entry-utils-menu-button"
 				:boundaries-element="boundaryElement"
-				container="#content-vue"
+				:container="container"
 				:open="screenSharingMenuOpen"
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
@@ -147,7 +147,7 @@
 			<Actions
 				v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
-				container="#content-vue"
+				:container="container"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
 					:close-after-click="true"
@@ -449,6 +449,10 @@ export default {
 			}
 
 			return this.model.attributes.localScreen ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		isQualityWarningTooltipDismissed() {

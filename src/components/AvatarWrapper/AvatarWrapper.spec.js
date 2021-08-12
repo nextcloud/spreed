@@ -1,9 +1,21 @@
+import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
+import { cloneDeep } from 'lodash'
+import storeConfig from '../../store/storeConfig'
 import AvatarWrapper from './AvatarWrapper'
 
 describe('AvatarWrapper.vue', () => {
+	let testStoreConfig
+	let store
+
+	beforeEach(() => {
+		testStoreConfig = cloneDeep(storeConfig)
+		store = new Vuex.Store(testStoreConfig)
+	})
+
 	it('Renders user avatars properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: 'test-id',
 				source: 'users',
@@ -17,6 +29,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders group icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: '',
 				source: 'groups',
@@ -29,6 +42,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders email icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: '',
 				source: 'emails',
@@ -43,6 +57,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders guests icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: 'random-sha1',
 				source: 'guests',
