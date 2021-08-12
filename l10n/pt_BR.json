@@ -707,7 +707,6 @@
     "Error while updating conversation description" : "Ocorreu um erro ao editar a descrição da conversa",
     "Be careful, these actions cannot be undone." : "Cuidado, estas ações não podem ser desfeitas.",
     "Leave conversation" : "Encerrar conversa",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Depois que uma conversa é encerrada, para retornar a uma conversa fechada, é necessário um convite. Uma conversa aberta pode ser reconectada a qualquer momento. ",
     "Delete conversation" : "Excluir conversa",
     "Permanently delete this conversation." : "Exclua esta conversa permanentemente. ",
     "Delete chat messages" : "Excluir mensagens de bate-papo ",
@@ -1125,6 +1124,7 @@
     "Conversation \"{conversationName}\"" : "Conversa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Configurações para conversa \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Você não pode enviar mensagens para esta conversa no momento",
-    "Add a description for this conversation" : "Adicionar uma descrição para esta conversa"
+    "Add a description for this conversation" : "Adicionar uma descrição para esta conversa",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Depois que uma conversa é encerrada, para retornar a uma conversa fechada, é necessário um convite. Uma conversa aberta pode ser reconectada a qualquer momento. "
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
