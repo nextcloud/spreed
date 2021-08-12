@@ -709,7 +709,6 @@ OC.L10N.register(
     "Error while updating conversation description" : "Pogreška pri ažuriranju opisa razgovora",
     "Be careful, these actions cannot be undone." : "Pažljivo nastavite jer ove radnje nije moguće poništiti.",
     "Leave conversation" : "Napusti razgovor",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Nakon izlaska iz razgovora za ponovni pristup zatvorenom razgovoru potreban je poziv. Otvorenom razgovoru možete se ponovno pridružiti u bilo kojem trenutku.",
     "Delete conversation" : "Izbriši razgovor",
     "Permanently delete this conversation." : "Trajno izbrišite ovaj razgovor.",
     "Delete chat messages" : "Izbriši razmijenjene poruke",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
     "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
-    "Add a description for this conversation" : "Dodaj opis ovog razgovora"
+    "Add a description for this conversation" : "Dodaj opis ovog razgovora",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Nakon izlaska iz razgovora za ponovni pristup zatvorenom razgovoru potreban je poziv. Otvorenom razgovoru možete se ponovno pridružiti u bilo kojem trenutku."
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
