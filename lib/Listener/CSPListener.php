@@ -47,6 +47,7 @@ class CSPListener implements IEventListener {
 
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
 		$csp->addAllowedChildSrcDomain('blob:');
