@@ -25,7 +25,7 @@
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="false"
-		container="#content-vue">
+		:container="container">
 		<AppSettingsSection
 			:title="t('spreed', 'Guests access')"
 			class="app-settings-section">
@@ -89,6 +89,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		canUserEnableSIP() {
 			return this.conversation.canEnableSIP
 		},

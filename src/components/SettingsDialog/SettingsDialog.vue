@@ -24,7 +24,7 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
-		container="#content-vue">
+		:container="container">
 		<AppSettingsSection :title="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
@@ -142,6 +142,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		attachmentFolder() {
 			return this.$store.getters.getAttachmentFolder()
 		},

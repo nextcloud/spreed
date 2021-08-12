@@ -25,7 +25,7 @@
 		<!-- Call layout switcher -->
 		<Actions
 			slot="trigger"
-			container="#content-vue">
+			:container="container">
 			<ActionButton v-if="isInCall"
 				:icon="changeViewIconClass"
 				@click="changeView">
@@ -38,7 +38,7 @@
 			class="top-bar__button"
 			menu-align="right"
 			:aria-label="t('spreed', 'Conversation actions')"
-			container="#content-vue"
+			:container="container"
 			@shortkey.native="toggleFullscreen">
 			<ActionButton
 				:icon="iconFullscreen"
@@ -94,7 +94,7 @@
 		<Actions v-if="showOpenSidebarButton"
 			class="top-bar__button"
 			close-after-click="true"
-			container="#content-vue">
+			:container="container">
 			<ActionButton
 				:icon="iconMenuPeople"
 				@click="openSidebar" />
@@ -134,6 +134,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		isFullscreen() {
 			return this.$store.getters.isFullscreen()
 		},

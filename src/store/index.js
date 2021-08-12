@@ -35,6 +35,7 @@ import settingsStore from './settingsStore'
 import sidebarStore from './sidebarStore'
 import talkHashStore from './talkHashStore'
 import tokenStore from './tokenStore'
+import uiModeStore from './uiModeStore'
 import windowVisibilityStore from './windowVisibilityStore'
 import messageActionsStore from './messageActionsStore'
 
@@ -57,6 +58,7 @@ export default new Store({
 		sidebarStore,
 		talkHashStore,
 		tokenStore,
+		uiModeStore,
 		windowVisibilityStore,
 		messageActionsStore,
 	},

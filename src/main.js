@@ -73,6 +73,7 @@ Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 
 Tooltip.options.defaultContainer = '#content-vue'
+store.dispatch('setMainContainerSelector', '#content-vue')
 
 const instance = new Vue({
 	el: '#content',

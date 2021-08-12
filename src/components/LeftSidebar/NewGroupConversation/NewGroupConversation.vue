@@ -35,7 +35,7 @@
 		<!-- New group form -->
 		<Modal
 			v-if="modal"
-			container="#content-vue"
+			:container="container"
 			@close="closeModal">
 			<!-- Wrapper for content & navigation -->
 			<div
@@ -185,6 +185,9 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
 		// Trims whitespaces from the input string
 		conversationName() {
 			return this.conversationNameInput.trim()

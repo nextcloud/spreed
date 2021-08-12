@@ -43,7 +43,14 @@ import RoomSelector from './views/RoomSelector'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
 				const ComponentVM = new Vue({
-					render: h => h(RoomSelector),
+					render: h => h(RoomSelector, {
+						props: {
+							// Even if it is used from Talk the Collections menu is
+							// independently loaded, so the properties that depend
+							// on the store need to be explicitly injected.
+							container: window.store ? window.store.getters.getMainContainerSelector() : undefined,
+						},
+					})
 				})
 				ComponentVM.$mount(container)
 				ComponentVM.$root.$on('close', () => {

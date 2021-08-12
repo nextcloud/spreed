@@ -98,7 +98,7 @@
 			<Actions
 				v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
-				container="#content-vue"
+				:container="container"
 				:aria-label="t('spreed', 'More actions')">
 				<ActionButton
 					:close-after-click="true"
@@ -347,6 +347,10 @@ export default {
 			}
 
 			return (this.model.attributes.localScreen || this.splitScreenSharingMenu) ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		isQualityWarningTooltipDismissed() {

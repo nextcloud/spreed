@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<Modal @close="close">
+	<Modal @close="close" :container="container">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
 				<h2>{{ dialogTitle }}</h2>
@@ -70,6 +70,11 @@ export default {
 		Modal,
 	},
 	props: {
+		container: {
+			type: String,
+			default: undefined,
+		},
+
 		dialogTitle: {
 			type: String,
 			default: t('spreed', 'Link to a conversation'),

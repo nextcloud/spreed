@@ -22,7 +22,7 @@
 <template>
 	<Modal v-if="showModal"
 		class="upload-editor"
-		container="#content-vue"
+		:container="container"
 		@close="handleDismiss">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
@@ -99,6 +99,10 @@ export default {
 
 		showModal() {
 			return !!this.currentUploadId
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		addMoreAriaLabel() {

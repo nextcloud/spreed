@@ -72,7 +72,7 @@
 						class="icon icon-edit"
 						@click="showLogContent" />
 					<Modal v-if="logModal"
-						container="#content-vue"
+						:container="container"
 						@close="closeLogModal">
 						<div class="modal__content">
 							<textarea v-model="processLog" class="log-content" />
@@ -521,6 +521,9 @@ export default {
 					: this.enabled
 						? t('spreed', 'not running, check Matterbridge log')
 						: t('spreed', 'not running')
+		},
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 
