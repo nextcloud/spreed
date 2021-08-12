@@ -709,7 +709,6 @@ OC.L10N.register(
     "Error while updating conversation description" : "Görüşme açıklaması güncellenirken sorun çıktı",
     "Be careful, these actions cannot be undone." : "Dikkatli olun, bu işlemler geri alınamaz.",
     "Leave conversation" : "Görüşmeden ayrıl",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Bir görüşmeden çıktıktan sonra, kapalı bir sohbete yeniden katılmak için çağrı gerekir. Açık bir sohbete herhangi bir zamanda yeniden katılabilirsiniz.",
     "Delete conversation" : "Görüşmeyi sil",
     "Permanently delete this conversation." : "Bu görüşmeyi kalıcı olarak sil.",
     "Delete chat messages" : "Sohbet iletilerini sil",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesi",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesinin ayarları",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Bir görüşmeden çıktıktan sonra, kapalı bir sohbete yeniden katılmak için çağrı gerekir. Açık bir sohbete herhangi bir zamanda yeniden katılabilirsiniz."
 },
 "nplurals=2; plural=(n > 1);");

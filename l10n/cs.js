@@ -709,7 +709,6 @@ OC.L10N.register(
     "Error while updating conversation description" : "Při úpravě popisu konverzace se vyskytla chyba",
     "Be careful, these actions cannot be undone." : "Opatrně, tyto kroky nelze vrátit zpět.",
     "Leave conversation" : "Opustit konverzaci",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Jakmile opustíte konverzaci, budete v případě těch uzavřených potřebovat k opětovnému připojení pozvánku. K otevřené konverzaci se můžete znovu připojit kdykoli.",
     "Delete conversation" : "Smazat konverzaci",
     "Permanently delete this conversation." : "Nadobro smazat tuto konverzaci.",
     "Delete chat messages" : "Smazat zprávy chatu",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
     "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "Nyní není možné do této konverzace posílat zprávy",
-    "Add a description for this conversation" : "Přidat popis k této konverzaci"
+    "Add a description for this conversation" : "Přidat popis k této konverzaci",
+    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Jakmile opustíte konverzaci, budete v případě těch uzavřených potřebovat k opětovnému připojení pozvánku. K otevřené konverzaci se můžete znovu připojit kdykoli."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
