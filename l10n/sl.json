@@ -164,7 +164,7 @@
     "Deleted user in {call}" : "Iz klica {call} je izbrisan uporabnik",
     "{guest} (guest) in {call}" : "{guest} (gost) v klicu {call}",
     "Guest in {call}" : "Gost v klicu {call}",
-    "{user} sent you a private message" : "{actor} vam pošlje zasebno sporočilo",
+    "{user} sent you a private message" : "{user} vam pošlje zasebno sporočilo",
     "{user} sent a message in conversation {call}" : "{actor} vam pošlje sporočilo v pogovor {call} ",
     "A deleted user sent a message in conversation {call}" : "Izbrisan uporabnik pošlje sporočilo v pogovor {call}",
     "{guest} (guest) sent a message in conversation {call}" : "{guest} (gost) pošlje sporočilo v pogovor {call}",

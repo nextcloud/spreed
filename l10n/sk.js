@@ -709,6 +709,7 @@ OC.L10N.register(
     "Error while updating conversation description" : "Chyba pri úprave popisu konverzácie",
     "Be careful, these actions cannot be undone." : "Buďte obozretný, táto akcia sa nedá vrátiť späť.",
     "Leave conversation" : "Odísť z rozhovoru",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Keď je konverzácia opustená, na opätovné zapojenie do uzavretej konverzácie je potrebné pozvánka. K otvorenej konverzácii sa môžete pripojiť kedykoľvek.",
     "Delete conversation" : "Zmazať rozhovor",
     "Permanently delete this conversation." : "Natrvalo odstrániť túto konverzáciu.",
     "Delete chat messages" : "Vymazať správy z rozhovoru",
