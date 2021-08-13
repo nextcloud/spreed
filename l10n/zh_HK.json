@@ -707,6 +707,7 @@
     "Error while updating conversation description" : "更新對話描述時發生錯誤",
     "Be careful, these actions cannot be undone." : "請注意，這些操作無法還原。",
     "Leave conversation" : "離開對話",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "離開封閉式對話後，您需要收到邀請才能重新加入。 您可以隨時重新加入公開對話。",
     "Delete conversation" : "刪除對話",
     "Permanently delete this conversation." : "永久刪除此對話。",
     "Delete chat messages" : "刪除聊天訊息",
