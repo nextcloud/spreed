@@ -706,6 +706,7 @@
     "Error while updating conversation description" : "更新会话描述时出错 ",
     "Be careful, these actions cannot be undone." : "小心，这些操作无法被撤销。",
     "Leave conversation" : "离开会话",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "一旦离开对话，要重新加入已关闭的谈话，需要一个邀请。公开对话可以在任何时候重新加入。",
     "Delete conversation" : "删除会话",
     "Permanently delete this conversation." : "永久删除此会话。",
     "Delete chat messages" : "删除聊天信息",
