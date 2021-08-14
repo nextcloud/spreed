@@ -215,6 +215,9 @@ PeerConnectionAnalyzer.prototype = {
 		this._peerConnection = peerConnection
 		this._peerDirection = peerDirection
 
+		this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
+		this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
+
 		if (this._peerConnection) {
 			this._peerConnection.addEventListener('iceconnectionstatechange', this._handleIceConnectionStateChangedBound)
 			this._handleIceConnectionStateChangedBound()
