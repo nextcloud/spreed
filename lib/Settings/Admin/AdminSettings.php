@@ -457,17 +457,17 @@ class AdminSettings implements ISettings {
 			json_decode($this->serverConfig->getAppValue('spreed', 'hosted-signaling-server-account', "[]"), true) ?? []
 		);
 		$languages = $this->l10nFactory->getLanguages();
-		foreach ($languages['commonlanguages'] as $key => $value) {
+		foreach ($languages['commonLanguages'] as $key => $value) {
 			// remove "Deutsch (Formal)"
 			if ($value['code'] === 'de_DE') {
-				unset($languages['commonlanguages'][$key]);
+				unset($languages['commonLanguages'][$key]);
 			}
 			// rename "Deutsch (Persönlich)" to "Deutsch"
 			if ($value['code'] === 'de') {
-				$languages['commonlanguages'][$key]['name'] = 'Deutsch';
+				$languages['commonLanguages'][$key]['name'] = 'Deutsch';
 			}
 		}
-		$languages['commonlanguages'] = array_values($languages['commonlanguages']);
+		$languages['commonLanguages'] = array_values($languages['commonLanguages']);
 		// TODO maybe filter out languages with an _
 		usort($countries, function ($a, $b) {
 			return strcmp($a['name'], $b['name']);
