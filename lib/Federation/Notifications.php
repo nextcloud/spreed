@@ -28,10 +28,18 @@ namespace OCA\Talk\Federation;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\RetryJob;
+use OCA\Talk\Exceptions\RoomHasNoModeratorException;
+use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\BackgroundJob\IJobList;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
+use OCP\IUser;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class Notifications {
@@ -50,41 +58,84 @@ class Notifications {
 	/** @var IJobList */
 	private $jobList;
 
+	/** @var IUserManager */
+	private $userManager;
+
+	/** @var AttendeeMapper */
+	private $attendeeMapper;
+
+	/** @var MatterbridgeManager */
+	private $matterbridgeManager;
+
 	public function __construct(
 		ICloudFederationFactory $cloudFederationFactory,
 		AddressHandler $addressHandler,
 		LoggerInterface $logger,
 		ICloudFederationProviderManager $federationProviderManager,
-		IJobList $jobList
+		IJobList $jobList,
+		IUserManager $userManager,
+		AttendeeMapper $attendeeMapper,
+		MatterbridgeManager $matterbridgeManager
 	) {
 		$this->cloudFederationFactory = $cloudFederationFactory;
 		$this->addressHandler = $addressHandler;
 		$this->logger = $logger;
 		$this->federationProviderManager = $federationProviderManager;
 		$this->jobList = $jobList;
+		$this->userManager = $userManager;
+		$this->attendeeMapper = $attendeeMapper;
+		$this->matterbridgeManager = $matterbridgeManager;
 	}
 
-	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $name, string $owner, string $ownerFederatedId,
-									string $sharedBy, string $sharedByFederatedId, string $shareType, string $roomName, string $roomType): bool {
+	/**
+	 * @throws \OCP\HintException
+	 * @throws RoomHasNoModeratorException
+	 * @throws \OCP\DB\Exception
+	 */
+	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $sharedBy,
+									string $sharedByFederatedId, string $shareType, Room $room): bool {
 		[$user, $remote] = $this->addressHandler->splitUserRemote($shareWith);
+
+		$roomName = $room->getName();
+		$roomType = $room->getType();
+		$roomToken = $room->getToken();
 
 		if (!($user && $remote)) {
 			$this->logger->info(
-				"could not share $name, invalid contact $shareWith",
+				"could not share $roomToken, invalid contact $shareWith",
 				['app' => Application::APP_ID]
 			);
 			return false;
+		}
+
+		/** @var IUser|null $roomOwner */
+		$roomOwner = null;
+		try {
+			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
+			if (!empty($roomOwners) && $roomOwners[0]->getActorType() === Attendee::ACTOR_USERS) {
+				$roomOwner = $this->userManager->get($roomOwners[0]->getActorId());
+			}
+		} catch (\Exception $e) {
+			// Get a local moderator instead
+			try {
+				$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
+				if (!empty($roomOwners) && $roomOwners[0]->getActorType() === Attendee::ACTOR_USERS) {
+					$roomOwner = $this->userManager->get($roomOwners[0]->getActorId());
+				}
+			} catch (\Exception $e) {
+				throw new RoomHasNoModeratorException();
+			}
 		}
 
 		$remote = $this->prepareRemoteUrl($remote);
 
 		$share = $this->cloudFederationFactory->getCloudFederationShare(
 			$user . '@' . $remote,
-			$name,
+			$roomToken,
 			'',
 			$providerId,
-			$ownerFederatedId,
-			$owner,
+			$roomOwner->getCloudId(),
+			$roomOwner->getDisplayName(),
 			$sharedByFederatedId,
 			$sharedBy,
 			$token,
@@ -104,7 +155,7 @@ class Notifications {
 			return true;
 		}
 		$this->logger->info(
-			"failed sharing $name with $shareWith",
+			"failed sharing $roomToken with $shareWith",
 			['app' => Application::APP_ID]
 		);
 

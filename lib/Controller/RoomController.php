@@ -1101,7 +1101,7 @@ class RoomController extends AEnvironmentAwareController {
 
 			$participantsToAdd[] = [
 				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
-				'actorId' => $newUser->getId() . '@' . $newUser->getRemote(),
+				'actorId' => $newUser->getId(),
 				'displayName' => $newUser->getDisplayId(),
 			];
 		} else {

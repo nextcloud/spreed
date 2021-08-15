@@ -28,7 +28,10 @@ use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Manager;
+use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\BackgroundJob\IJobList;
@@ -69,22 +72,30 @@ class FederationTest extends TestCase {
 	/** @var INotificationManager */
 	protected $notificationManager;
 
+	/** @var AttendeeMapper */
+	protected $attendeeMapper;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->cloudFederationProviderManager = $this->createMock(ICloudFederationProviderManager::class);
 		$this->cloudFederationFactory = $this->createMock(ICloudFederationFactory::class);
 		$this->addressHandler = $this->createMock(AddressHandler::class);
+		$this->userManager = $this->createMock(IUserManager::class);
+		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 
 		$this->notifications = new Notifications(
 			$this->cloudFederationFactory,
 			$this->addressHandler,
 			$this->createMock(LoggerInterface::class),
 			$this->cloudFederationProviderManager,
-			$this->createMock(IJobList::class)
+			$this->createMock(IJobList::class),
+			$this->userManager,
+			$this->attendeeMapper,
+			$this->createMock(MatterbridgeManager::class),
 		);
+
 		$this->federationManager = $this->createMock(FederationManager::class);
-		$this->userManager = $this->createMock(IUserManager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 
 		$this->cloudFederationProvider = new CloudFederationProviderTalk(
@@ -94,25 +105,81 @@ class FederationTest extends TestCase {
 			$this->notificationManager,
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ParticipantService::class),
-			$this->createMock(AttendeeMapper::class),
+			$this->attendeeMapper,
 			$this->createMock(Manager::class)
 		);
 	}
 
-	public function testSendRemoteShare() {
+	public function testSendRemoteShareWithOwner() {
 		$cloudShare = $this->createMock(ICloudFederationShare::class);
 
 		$providerId = '3';
+		$roomId = 5;
 		$token = 'abcdefghijklmno';
 		$shareWith = 'test@remote.test.local';
 		$name = 'abcdefgh';
 		$owner = 'Owner\'s name';
-		$ownerFederatedId = 'owner@test.local';
+		$ownerId = 'owner';
+		$ownerFederatedId = $ownerId . '@test.local';
 		$sharedBy = 'Owner\'s name';
 		$sharedByFederatedId = 'owner@test.local';
 		$shareType = 'user';
 		$roomType = Room::TYPE_GROUP;
 		$roomName = 'Room name';
+
+		$room = $this->createMock(Room::class);
+		$attendee = $this->createMock(Attendee::class);
+		$ownerUser = $this->createMock(IUser::class);
+
+		$room->expects($this->once())
+			->method('getName')
+			->with()
+			->willReturn($roomName);
+
+		$room->expects($this->once())
+			->method('getType')
+			->with()
+			->willReturn($roomType);
+
+		$room->expects($this->once())
+			->method('getToken')
+			->with()
+			->willReturn($name);
+
+		$room->expects($this->once())
+			->method('getId')
+			->with()
+			->willReturn($roomId);
+
+		$attendee->expects($this->once())
+			->method('getActorType')
+			->with()
+			->willReturn(Attendee::ACTOR_USERS);
+
+		$attendee->expects($this->once())
+			->method('getActorId')
+			->with()
+			->willReturn($ownerId);
+
+		$this->attendeeMapper->expects($this->once())
+			->method('getActorsByParticipantTypes')
+			->with($roomId, [Participant::OWNER])
+			->willReturn([$attendee]);
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with($ownerId)
+			->willReturn($ownerUser);
+
+		$ownerUser->expects($this->once())
+			->method('getCloudId')
+			->with()
+			->willReturn($ownerFederatedId);
+
+		$ownerUser->expects($this->once())
+			->method('getDisplayName')
+			->with()
+			->willReturn($owner);
 
 		$this->cloudFederationFactory->expects($this->once())
 			->method('getCloudFederationShare')
@@ -140,7 +207,7 @@ class FederationTest extends TestCase {
 			->with($shareWith)
 			->willReturn(['test', 'remote.test.local']);
 
-		$this->notifications->sendRemoteShare($providerId, $token, $shareWith, $name, $owner, $ownerFederatedId, $sharedBy, $sharedByFederatedId, $shareType, $roomName, (string) $roomType);
+		$this->notifications->sendRemoteShare($providerId, $token, $shareWith, $sharedBy, $sharedByFederatedId, $shareType, $room);
 	}
 
 	public function testReceiveRemoteShare() {

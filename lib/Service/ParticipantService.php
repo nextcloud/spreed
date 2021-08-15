@@ -310,7 +310,7 @@ class ParticipantService {
 	/**
 	 * @param Room $room
 	 * @param array $participants
-	 * @param IUser|null $addedBy
+	 * @param IUser|null $addedBy User that is attempting to add these users (must be set for federated users to be added)
 	 */
 	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
 		if (empty($participants)) {
@@ -378,7 +378,7 @@ class ParticipantService {
 	}
 
 	private function sendRemoteShare(Room $room, IUser $addedBy, string $addingUserId, string $token, int $attendeeId) {
-		$this->notifications->sendRemoteShare((string) $attendeeId, $token, $addingUserId, $room->getToken(), $addedBy->getDisplayName(), $addedBy->getCloudId(), $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room->getName(), (string) $room->getType());
+		$this->notifications->sendRemoteShare((string) $attendeeId, $token, $addingUserId, $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room);
 	}
 
 	/**

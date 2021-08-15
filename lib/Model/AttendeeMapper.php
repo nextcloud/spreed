@@ -73,7 +73,7 @@ class AttendeeMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
 	}
@@ -90,8 +90,8 @@ class AttendeeMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('access_token', $query->createNamedParameter($token)));
+			->where($query->expr()->eq('remote_id', $query->createNamedParameter($id, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('access_token', $query->createNamedParameter($token, IQueryBuilder::PARAM_STR)));
 
 		return $this->findEntity($query);
 	}
@@ -111,6 +111,25 @@ class AttendeeMapper extends QBMapper {
 
 		if ($lastJoinedCall !== null) {
 			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_INT)));
+		}
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @param int $roomId
+	 * @param array $participantType
+	 * @return Attendee[]
+	 * @throws DBException
+	 */
+	public function getActorsByParticipantTypes(int $roomId, array $participantType): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		if (!empty($participantType)) {
+			$query->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
 		return $this->findEntities($query);
