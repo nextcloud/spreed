@@ -707,6 +707,7 @@
     "Error while updating conversation description" : "Görüşme açıklaması güncellenirken sorun çıktı",
     "Be careful, these actions cannot be undone." : "Dikkatli olun, bu işlemler geri alınamaz.",
     "Leave conversation" : "Görüşmeden ayrıl",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Bir görüşmeden çıktıktan sonra, kapalı bir sohbete yeniden katılmak için çağrı gerekir. Açık bir sohbete herhangi bir zamanda yeniden katılabilirsiniz.",
     "Delete conversation" : "Görüşmeyi sil",
     "Permanently delete this conversation." : "Bu görüşmeyi kalıcı olarak sil.",
     "Delete chat messages" : "Sohbet iletilerini sil",
