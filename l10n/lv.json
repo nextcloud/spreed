@@ -179,6 +179,7 @@
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Kopīgojamā datne",
+    "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
     "moderator" : "moderators",
     "Demote from moderator" : "Pazemināt no regulētāja",
     "Promote to moderator" : "Paaugstināt par regulētāju",
