@@ -268,13 +268,13 @@ VideoConstrainer.prototype = {
 
 		if (constraints.width && constraints.width.min) {
 			const previousWidthMin = constraints.width.min
-			constraints.width.min = Math.min(Math.round(constraints.width.min / 1.5), 64)
+			constraints.width.min = Math.max(Math.round(constraints.width.min / 1.5), 64)
 			changed = previousWidthMin !== constraints.width.min
 		}
 
 		if (constraints.height && constraints.height.min) {
 			const previousHeightMin = constraints.height.min
-			constraints.height.min = Math.min(Math.round(constraints.height.min / 1.5), 64)
+			constraints.height.min = Math.max(Math.round(constraints.height.min / 1.5), 64)
 			changed = previousHeightMin !== constraints.height.min
 		}
 
@@ -297,8 +297,8 @@ VideoConstrainer.prototype = {
 		let changed = false
 
 		if (constraints.frameRate && constraints.frameRate.min) {
-			const previousFrameRateMin = constraints.frameRate.max
-			constraints.frameRate.min = Math.min(Math.round(constraints.frameRate.min / 1.5), 1)
+			const previousFrameRateMin = constraints.frameRate.min
+			constraints.frameRate.min = Math.max(Math.round(constraints.frameRate.min / 1.5), 1)
 			changed = previousFrameRateMin !== constraints.frameRate.min
 		}
 
