@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.1.0 – 2021-08-10
+### Added
+- Allow to forward messages to another chat
+  [#6053](https://github.com/nextcloud/spreed/pull/6053)
+  [#6057](https://github.com/nextcloud/spreed/pull/6057)
+  [#6076](https://github.com/nextcloud/spreed/pull/6076)
+- Allow to clear chat history
+  [#6052](https://github.com/nextcloud/spreed/pull/6052)
+  [#5971](https://github.com/nextcloud/spreed/pull/5971)
+
+### Changed
+- Add "missed call" chat system message for one-to-one calls
+  [#6031](https://github.com/nextcloud/spreed/pull/6031)
+
+### Fixed
+- Remove div tags when pasting or writing multiline messages in Safari
+  [#6086](https://github.com/nextcloud/spreed/pull/6086)
+- Add list of "What's new in Talk 12"
+  [#6050](https://github.com/nextcloud/spreed/pull/6050)
+
 ## 12.0.1 – 2021-07-15
 ### Fixed
 - Unshare all items directly when deleting a room
