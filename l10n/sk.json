@@ -1125,7 +1125,6 @@
     "Conversation \"{conversationName}\"" : "Konverzácia \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Nastavenia konverzácie \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Teraz nemôžete poslať správu do tejto konverzácie",
-    "Add a description for this conversation" : "Pridať popis tejto konverzácie",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Keď je konverzácia opustená, na opätovné pripojenie k uzavretej konverzácii je potrebné pozvanie. K otvorenej konverzácii sa môžete kedykoľvek znova pripojiť."
+    "Add a description for this conversation" : "Pridať popis tejto konverzácie"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
