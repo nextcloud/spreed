@@ -1126,7 +1126,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会话 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会话 \"{conversationName}\" 的设置",
     "You can not send messages to this conversation at the moment" : "你目前不能向此会话发送消息",
-    "Add a description for this conversation" : "为这个对话添加一个描述 ",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "一旦谈话结束，要重新加入一个封闭对话，就需要一个邀请。一个公开的对话可以在任何时候重新加入。"
+    "Add a description for this conversation" : "为这个对话添加一个描述 "
 },
 "nplurals=1; plural=0;");

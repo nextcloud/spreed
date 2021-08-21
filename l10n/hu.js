@@ -1127,7 +1127,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Ha elhagyott egy beszélgetést, akkor a zárt beszélgetésekhez visszacsatlakozáshoz meghívóra lesz szüksége. A nyílt beszélgetésekhez bármikor visszacsatlakozhat."
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
 },
 "nplurals=2; plural=(n != 1);");

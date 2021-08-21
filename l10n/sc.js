@@ -1126,7 +1126,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Lassada una resonada, pro torrare a intrare in una resonada serrada, tocat de tènnere un'invitu. Si podet semper torrare a intrare in una resonada aberta."
+    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
 },
 "nplurals=2; plural=(n != 1);");
