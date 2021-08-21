@@ -1127,7 +1127,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Rozmowa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Ustawienia rozmowy \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "W tej chwili nie możesz wysyłać wiadomości dla tej rozmowy",
-    "Add a description for this conversation" : "Dodaj opis rozmowy",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Po opuszczeniu rozmowy, aby ponownie dołączyć do zamkniętej rozmowy, potrzebne będzie zaproszenie. Do otwartej rozmowy można dołączyć w dowolnym momencie."
+    "Add a description for this conversation" : "Dodaj opis rozmowy"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

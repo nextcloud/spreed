@@ -1127,7 +1127,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Unterhaltung \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Einstellungen für die Unterhaltung \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Sie können derzeit keine Nachrichten an diese Unterhaltung senden",
-    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Nachdem Sie eine Unterhaltung verlassen haben, ist eine Einladung erforderlich, um einer bereits geschlossenen Unterhaltung wieder beizutreten. Einer noch geöffneter Unterhaltung können Sie jederzeit wieder beitreten."
+    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen"
 },
 "nplurals=2; plural=(n != 1);");
