@@ -1094,12 +1094,15 @@ OC.L10N.register(
     "{actor} set the description to \"%1$s\"" : "{actor} a mis la description à \"%1$s\"",
     "You set the description to \"%1$s\"" : "Vous avez mis la description à \"%1$s\"",
     "An administrator set the description to \"%1$s\"" : "Un administrateur a mis la description à \"%1$s\"",
+    "{actor} started Matterbridge." : "{actor} a démarré Matterbridge.",
+    "You started Matterbridge." : "Vous avez démarré Matterbridge.",
+    "{actor} stopped Matterbridge." : "{actor} a arrêté Matterbridge.",
+    "You stopped Matterbridge." : "Vous avez arrêté Matterbridge.",
     "Lower hand" : "Baisser la main",
     "Raise hand" : "Lever la main",
     "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
-    "Add a description for this conversation" : "Ajouter une description pour cette conversation",
-    "Once a conversation is left, to re-join a closed conversation, an invite is needed. An open conversation can be re-joined at any time." : "Après avoir quitté la conversation, une invitation est nécessaire pour rejoindre une conversation privée. Une conversation ouverte peut être rejointe à tout moment."
+    "Add a description for this conversation" : "Ajouter une description pour cette conversation"
 },
 "nplurals=2; plural=(n > 1);");
