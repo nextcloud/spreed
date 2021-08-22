@@ -66,8 +66,6 @@ import ChatView from './components/ChatView'
 import sessionIssueHandler from './mixins/sessionIssueHandler'
 import browserCheck from './mixins/browserCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
-import { register } from 'extendable-media-recorder'
-import { connect } from 'extendable-media-recorder-wav-encoder'
 
 export default {
 
@@ -138,11 +136,6 @@ export default {
 				this.setTalkSidebarSupportedForFile(this.fileInfo)
 			},
 		},
-	},
-
-	async mounted() {
-		// Initialise audiorecorder encoder
-		register(await connect())
 	},
 
 	created() {
