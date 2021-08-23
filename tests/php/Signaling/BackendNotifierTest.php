@@ -209,7 +209,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$bodies = array_map([$this, 'sortParticipantUsers'], $bodies);
 		$message = $this->sortParticipantUsers($message);
-		$this->assertContains($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
+		$this->assertContainsEquals($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
 	}
 
 	private function sortParticipantUsers(array $message): array {
