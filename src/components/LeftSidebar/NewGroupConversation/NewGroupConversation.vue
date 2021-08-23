@@ -48,7 +48,7 @@
 						v-if="page === 0">
 						<SetConversationName
 							v-model="conversationNameInput"
-							@clickEnter="handleEnter" />
+							@click-enter="handleEnter" />
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
@@ -205,11 +205,11 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('NewGroupConversationDialog', this.showModalForItem)
+		EventBus.$on('new-group-conversation-dialog', this.showModalForItem)
 	},
 
 	destroyed() {
-		EventBus.$off('NewGroupConversationDialog', this.showModalForItem)
+		EventBus.$off('new-group-conversation-dialog', this.showModalForItem)
 	},
 
 	methods: {

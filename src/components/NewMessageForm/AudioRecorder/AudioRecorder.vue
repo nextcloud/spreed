@@ -279,7 +279,7 @@ export default {
 				// Convert blob to file
 				const audioFile = new File([this.blob], fileName)
 				audioFile.localURL = window.URL.createObjectURL(this.blob)
-				this.$emit('audioFile', audioFile)
+				this.$emit('audio-file', audioFile)
 				this.$emit('recording', false)
 			}
 			this.resetComponentData()

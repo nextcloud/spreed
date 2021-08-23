@@ -240,13 +240,13 @@ export default {
 		/**
 		 * Listen to routeChange global events and focus on the
 		 */
-		EventBus.$on('focusChatInput', this.focusInput)
+		EventBus.$on('focus-chat-input', this.focusInput)
 
 		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
 
 	beforeDestroy() {
-		EventBus.$off('focusChatInput', this.focusInput)
+		EventBus.$off('focus-chat-input', this.focusInput)
 	},
 
 	methods: {

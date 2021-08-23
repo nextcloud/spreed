@@ -226,7 +226,7 @@ export default {
 		},
 
 		handleQuoteClick() {
-			EventBus.$emit('focusMessage', this.parentId)
+			EventBus.$emit('focus-message', this.parentId)
 		},
 	},
 }

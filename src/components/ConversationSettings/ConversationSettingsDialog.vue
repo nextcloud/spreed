@@ -36,7 +36,7 @@
 				:editing="isEditingDescription"
 				:loading="isDescriptionLoading"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				@submit:description="handleUpdateDescription"
+				@submit-description="handleUpdateDescription"
 				@update:editing="handleEditDescription" />
 		</AppSettingsSection>
 

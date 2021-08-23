@@ -32,13 +32,13 @@ const sessionIssueHandler = {
 	},
 
 	beforeDestroy() {
-		EventBus.$off('duplicateSessionDetected', this.duplicateSessionTriggered)
-		EventBus.$off('deletedSessionDetected', this.deletedSessionTriggered)
+		EventBus.$off('duplicate-session-detected', this.duplicateSessionTriggered)
+		EventBus.$off('deleted-session-detected', this.deletedSessionTriggered)
 	},
 
 	beforeMount() {
-		EventBus.$on('duplicateSessionDetected', this.duplicateSessionTriggered)
-		EventBus.$on('deletedSessionDetected', this.deletedSessionTriggered)
+		EventBus.$on('duplicate-session-detected', this.duplicateSessionTriggered)
+		EventBus.$on('deleted-session-detected', this.deletedSessionTriggered)
 	},
 
 	methods: {

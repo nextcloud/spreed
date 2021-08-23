@@ -108,7 +108,7 @@
 					v-if="!hasText && canUploadFiles"
 					:disabled="disabled"
 					@recording="handleRecording"
-					@audioFile="handleAudioFile" />
+					@audio-file="handleAudioFile" />
 
 				<button
 					v-else
@@ -274,15 +274,15 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('uploadStart', this.handleUploadStart)
-		EventBus.$on('retryMessage', this.handleRetryMessage)
+		EventBus.$on('upload-start', this.handleUploadStart)
+		EventBus.$on('retry-message', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
 		// this.startRecording()
 	},
 
 	beforeDestroy() {
-		EventBus.$off('uploadStart', this.handleUploadStart)
-		EventBus.$off('retryMessage', this.handleRetryMessage)
+		EventBus.$off('upload-start', this.handleUploadStart)
+		EventBus.$off('retry-message', this.handleRetryMessage)
 	},
 
 	methods: {
@@ -360,7 +360,7 @@ export default {
 				this.text = ''
 				this.parsedText = ''
 				// Scrolls the message list to the last added message
-				EventBus.$emit('smoothScrollChatToBottom')
+				EventBus.$emit('smooth-scroll-chat-to-bottom')
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
 				await this.$store.dispatch('postNewMessage', temporaryMessage)

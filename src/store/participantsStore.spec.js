@@ -374,7 +374,7 @@ describe('participantsStore', () => {
 
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 
-			EventBus.$emit('Signaling::usersInRoom')
+			EventBus.$emit('signaling-users-in-room')
 
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
@@ -423,7 +423,7 @@ describe('participantsStore', () => {
 
 		expect(store.getters.isConnecting(TOKEN)).toBe(true)
 
-		EventBus.$emit('Signaling::usersInRoom')
+		EventBus.$emit('signaling-users-in-room')
 
 		expect(store.getters.isInCall(TOKEN)).toBe(true)
 		expect(store.getters.isConnecting(TOKEN)).toBe(false)
@@ -469,7 +469,7 @@ describe('participantsStore', () => {
 
 		beforeEach(() => {
 			joinedConversationEventMock = jest.fn()
-			EventBus.$once('joinedConversation', joinedConversationEventMock)
+			EventBus.$once('joined-conversation', joinedConversationEventMock)
 
 			getParticipantIdentifierMock = jest.fn().mockReturnValue({
 				attendeeId: 1,

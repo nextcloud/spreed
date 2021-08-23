@@ -41,11 +41,11 @@ export default {
 	},
 
 	beforeDestroy() {
-		EventBus.$off('joinedConversation', this.readSessionStorageJoinedConversation)
+		EventBus.$off('joined-conversation', this.readSessionStorageJoinedConversation)
 	},
 
 	beforeMount() {
-		EventBus.$on('joinedConversation', this.readSessionStorageJoinedConversation)
+		EventBus.$on('joined-conversation', this.readSessionStorageJoinedConversation)
 		this.sessionStorageJoinedConversation = SessionStorage.getItem('joined_conversation')
 	},
 

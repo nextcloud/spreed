@@ -56,7 +56,7 @@ export default {
 		},
 		// Forward the keydown event to the parent
 		handleKeydown() {
-			this.$emit('clickEnter')
+			this.$emit('click-enter')
 		},
 	},
 

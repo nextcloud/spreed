@@ -49,7 +49,7 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 	store.dispatch('addMessageAction', messageAction)
 }
 
-EventBus.$on('Signaling::joinRoom', (payload) => {
+EventBus.$on('signaling-join-room', (payload) => {
 	const token = payload[0]
 	store.dispatch('updateLastJoinedConversationToken', token)
 })

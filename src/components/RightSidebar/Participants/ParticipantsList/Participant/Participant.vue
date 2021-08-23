@@ -462,7 +462,7 @@ export default {
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
-				this.$emit('clickParticipant', this.participant)
+				this.$emit('click-participant', this.participant)
 			}
 		},
 		participantTypeIsModerator(participantType) {

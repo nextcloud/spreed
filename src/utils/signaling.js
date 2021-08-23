@@ -132,7 +132,12 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 		}
 	}
 
-	EventBus.$emit('Signaling::' + ev, args)
+	// Convert webrtc event names to kebab-case for "vue/custom-event-name-casing"
+	const kebabCase = string => string
+		.replace(/([a-z])([A-Z])/g, '$1-$2')
+		.replace(/[\s_]+/g, '-')
+		.toLowerCase()
+	EventBus.$emit('signaling-' + kebabCase(ev), args)
 }
 
 Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
@@ -487,11 +492,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
-				EventBus.$emit('duplicateSessionDetected')
+				EventBus.$emit('duplicate-session-detected')
 			} else if (error?.response?.status === 404 || error?.response?.status === 403) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
-				EventBus.$emit('deletedSessionDetected')
+				EventBus.$emit('deleted-session-detected')
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
@@ -699,7 +704,7 @@ Signaling.Standalone.prototype.connect = function() {
 				this.nextcloudSessionId = null
 			} else {
 				// TODO(fancycode): Only fetch properties of room that was modified.
-				EventBus.$emit('shouldRefreshConversations')
+				EventBus.$emit('should-refresh-conversations')
 			}
 			break
 		case 'event':
@@ -1180,7 +1185,7 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 	switch (data.type) {
 	case 'chat':
 		// FIXME this is not listened to
-		EventBus.$emit('shouldRefreshChatMessages')
+		EventBus.$emit('should-refresh-chat-messages')
 		break
 	default:
 		console.error('Unknown room message event', data)
@@ -1196,13 +1201,13 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				return
 			}
 			console.error('User or session was removed from the conversation, redirecting')
-			EventBus.$emit('deletedSessionDetected')
+			EventBus.$emit('deleted-session-detected')
 			break
 		}
 		// eslint-disable-next-line no-fallthrough
 	default:
 		console.debug('Room list event', data)
-		EventBus.$emit('shouldRefreshConversations')
+		EventBus.$emit('should-refresh-conversations')
 		break
 	}
 }

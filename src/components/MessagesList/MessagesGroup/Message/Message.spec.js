@@ -1011,7 +1011,7 @@ describe('Message.vue', () => {
 			expect(reloadButtonIcon.exists()).toBe(true)
 
 			const retryEvent = jest.fn()
-			EventBus.$on('retryMessage', retryEvent)
+			EventBus.$on('retry-message', retryEvent)
 
 			await reloadButtonIcon.trigger('click')
 

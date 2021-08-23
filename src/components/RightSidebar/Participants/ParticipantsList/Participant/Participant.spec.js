@@ -757,7 +757,7 @@ describe('Participant.vue', () => {
 		test('triggers event when clicking', async () => {
 			const eventHandler = jest.fn()
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('clickParticipant', eventHandler)
+			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 
@@ -769,7 +769,7 @@ describe('Participant.vue', () => {
 			delete participant.label
 			delete participant.source
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('clickParticipant', eventHandler)
+			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 

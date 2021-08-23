@@ -218,17 +218,17 @@ export default {
 
 	beforeDestroy() {
 		if (!getCurrentUser()) {
-			EventBus.$off('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
+			EventBus.$off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
 
 	beforeMount() {
 		if (!getCurrentUser()) {
-			EventBus.$once('joinedConversation', () => {
+			EventBus.$once('joined-conversation', () => {
 				this.fixmeDelayedSetupOfGuestUsers()
 			})
-			EventBus.$on('shouldRefreshConversations', this.debounceRefreshCurrentConversation)
+			EventBus.$on('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
 
 		if (this.$route.name === 'conversation') {
@@ -255,7 +255,7 @@ export default {
 			}
 		})
 
-		EventBus.$on('conversationsReceived', (params) => {
+		EventBus.$on('conversations-received', (params) => {
 			if (this.$route.name === 'conversation'
 				&& !this.$store.getters.conversation(this.token)) {
 				if (!params.singleConversation) {
@@ -274,7 +274,7 @@ export default {
 		 * component each time a new batch of conversations is received and processed in
 		 * the store.
 		 */
-		EventBus.$once('conversationsReceived', () => {
+		EventBus.$once('conversations-received', () => {
 			if (this.$route.name === 'conversation') {
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
@@ -313,7 +313,7 @@ export default {
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
 			 */
-			EventBus.$emit('routeChange', { from, to })
+			EventBus.$emit('route-change', { from, to })
 
 			next()
 		}
@@ -468,7 +468,7 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversationsReceived', {
+				EventBus.$emit('conversations-received', {
 					singleConversation: true,
 				})
 			} catch (exception) {

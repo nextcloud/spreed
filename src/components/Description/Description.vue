@@ -219,7 +219,7 @@ export default {
 			// Remove leading/trailing whitespaces.
 			this.descriptionText = this.descriptionText.replace(/\r\n|\n|\r/gm, '\n').trim()
 			// Submit description
-			this.$emit('submit:description', this.descriptionText)
+			this.$emit('submit-description', this.descriptionText)
 			/**
 			 * Change the richcontenteditable key in order to trigger a re-render
 			 * without this all the trimmed new lines and whitespaces would

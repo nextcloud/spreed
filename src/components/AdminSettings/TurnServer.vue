@@ -300,7 +300,7 @@ export default {
 		},
 
 		removeServer() {
-			this.$emit('removeServer', this.index)
+			this.$emit('remove-server', this.index)
 		},
 		updateSchemes(event) {
 			this.$emit('update:schemes', event.target.value)

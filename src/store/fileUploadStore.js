@@ -262,7 +262,7 @@ const actions = {
 			commit('setCurrentUploadId', undefined)
 		}
 
-		EventBus.$emit('uploadStart')
+		EventBus.$emit('upload-start')
 
 		// Tag the previously indexed files and add the temporary messages to the
 		// messages list
@@ -274,7 +274,7 @@ const actions = {
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// Scroll the message list
-			EventBus.$emit('scrollChatToBottom')
+			EventBus.$emit('scroll-chat-to-bottom')
 		}
 		// Iterate again and perform the uploads
 		for (const index in state.uploads[uploadId].files) {
@@ -350,7 +350,7 @@ const actions = {
 				}
 			}
 		}
-		EventBus.$emit('uploadFinished')
+		EventBus.$emit('upload-finished')
 	},
 	/**
 	 * Set the folder to store new attachments in

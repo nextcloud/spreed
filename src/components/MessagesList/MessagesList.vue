@@ -275,10 +275,10 @@ export default {
 	mounted() {
 		this.viewId = uniqueId('messagesList')
 		this.scrollToBottom()
-		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
-		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
-		EventBus.$on('focusMessage', this.focusMessage)
-		EventBus.$on('routeChange', this.onRouteChange)
+		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
+		EventBus.$on('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$on('focus-message', this.focusMessage)
+		EventBus.$on('route-change', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -286,10 +286,10 @@ export default {
 
 	beforeDestroy() {
 		window.removeEventListener('focus', this.onWindowFocus)
-		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
-		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
-		EventBus.$off('focusMessage', this.focusMessage)
-		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
+		EventBus.$off('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$off('focus-message', this.focusMessage)
+		EventBus.$off('route-change', this.onRouteChange)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -880,7 +880,7 @@ export default {
 		},
 
 		setChatScrolledToBottom(boolean) {
-			this.$emit('setChatScrolledToBottom', boolean)
+			this.$emit('set-chat-scrolled-to-bottom', boolean)
 			if (boolean) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocussing the window will remove the stickiness

@@ -65,7 +65,7 @@
 					:verify.sync="servers[index].verify"
 					:index="index"
 					:loading="loading"
-					@removeServer="removeServer"
+					@remove-server="removeServer"
 					@update:server="debounceUpdateServers"
 					@update:verify="debounceUpdateServers" />
 			</transition-group>

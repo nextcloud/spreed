@@ -328,7 +328,7 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 
-		EventBus.$once('Signaling::usersInRoom', () => {
+		EventBus.$once('signaling-users-in-room', () => {
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
 
@@ -398,7 +398,7 @@ const actions = {
 			})
 
 			SessionStorage.setItem('joined_conversation', token)
-			EventBus.$emit('joinedConversation', { token })
+			EventBus.$emit('joined-conversation', { token })
 			return response
 		} catch (error) {
 			if (error?.response?.status === 409 && error?.response?.data?.ocs?.data) {
@@ -431,7 +431,7 @@ const actions = {
 			// eslint-disable-next-line no-undef
 			if ($('.oc-dialog-dim').length === 0) {
 				clearInterval(interval)
-				EventBus.$emit('duplicateSessionDetected')
+				EventBus.$emit('duplicate-session-detected')
 				window.location = generateUrl('/apps/spreed')
 			}
 		}, 3000)
@@ -449,7 +449,7 @@ const actions = {
 				clearInterval(interval)
 				if (!decision) {
 					// Cancel
-					EventBus.$emit('duplicateSessionDetected')
+					EventBus.$emit('duplicate-session-detected')
 					window.location = generateUrl('/apps/spreed')
 				} else {
 					// Confirm

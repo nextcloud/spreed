@@ -49,7 +49,7 @@
 			:scrollable="true"
 			:display-search-hint="displaySearchHint"
 			:selectable="true"
-			@clickSearchHint="focusInput" />
+			@click-search-hint="focusInput" />
 	</div>
 </template>
 

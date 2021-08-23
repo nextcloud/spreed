@@ -233,7 +233,7 @@ export default {
 
 		},
 		handleClickHint() {
-			this.$emit('clickSearchHint')
+			this.$emit('click-search-hint')
 		},
 	},
 }

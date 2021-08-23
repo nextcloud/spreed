@@ -122,7 +122,7 @@ describe('LeftSidebar.vue', () => {
 
 		test('fetches and renders conversation list initially', async () => {
 			const conversationsReceivedEvent = jest.fn()
-			EventBus.$once('conversationsReceived', conversationsReceivedEvent)
+			EventBus.$once('conversations-received', conversationsReceivedEvent)
 			fetchConversationsAction.mockResolvedValueOnce()
 
 			const wrapper = mountComponent()
@@ -190,7 +190,7 @@ describe('LeftSidebar.vue', () => {
 
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
-			EventBus.$emit('shouldRefreshConversations')
+			EventBus.$emit('should-refresh-conversations')
 
 			// note: debounce was short-circuited so no delay needed
 			expect(fetchConversationsAction).toHaveBeenCalled()
@@ -632,7 +632,7 @@ describe('LeftSidebar.vue', () => {
 			})
 			test('shows group conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
-				EventBus.$once('NewGroupConversationDialog', eventHandler)
+				EventBus.$once('new-group-conversation-dialog', eventHandler)
 
 				const wrapper = await testSearch('search', [...groupsResults], [])
 
@@ -649,7 +649,7 @@ describe('LeftSidebar.vue', () => {
 			})
 			test('shows circles conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
-				EventBus.$once('NewGroupConversationDialog', eventHandler)
+				EventBus.$once('new-group-conversation-dialog', eventHandler)
 
 				const wrapper = await testSearch('search', [...circlesResults], [])
 
