@@ -106,7 +106,7 @@ class CircleMembershipListener extends AMembershipListener {
 		$invitedBy = $newMember->getInvitedBy();
 		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor', $invitedBy->getUserId());
-		} else if ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getUserId() === 'occ') {
+		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getUserId() === 'occ') {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
 
@@ -162,7 +162,7 @@ class CircleMembershipListener extends AMembershipListener {
 		$removedBy = $removedMember->getInvitedBy();
 		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor', $removedBy->getUserId());
-		} else if ($removedBy->getUserType() === Member::TYPE_APP && $removedBy->getUserId() === 'occ') {
+		} elseif ($removedBy->getUserType() === Member::TYPE_APP && $removedBy->getUserId() === 'occ') {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
 
