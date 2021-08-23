@@ -2,7 +2,9 @@
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
+ *
  * @author Joas Schilling <coding@schilljs.com>
+ *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
  * @license GNU AGPL version 3 or any later version

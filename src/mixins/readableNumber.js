@@ -29,7 +29,7 @@ const readableNumber = {
 		 * 9432670284 => 943 267 0284
 		 *
 		 * @param {string} number The number to make readable
-		 * @returns {string}
+		 * @return {string}
 		 */
 		readableNumber(number) {
 			const chunks = this.stringChop(number, 3)
@@ -42,9 +42,10 @@ const readableNumber = {
 
 		/**
 		 * Copied from https://www.w3resource.com/javascript-exercises/javascript-string-exercise-17.php
+		 *
 		 * @param {string} str The string to chop
 		 * @param {number} size Size of the chunks
-		 * @returns {string[]}
+		 * @return {string[]}
 		 */
 		stringChop(str, size) {
 			str = String(str)

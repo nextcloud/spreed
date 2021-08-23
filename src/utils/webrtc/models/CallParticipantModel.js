@@ -33,6 +33,9 @@ export const ConnectionState = {
 	CLOSED: 'closed',
 }
 
+/**
+ * @param options
+ */
 export default function CallParticipantModel(options) {
 
 	this.attributes = {

@@ -133,6 +133,7 @@ export default {
 	methods: {
 		/**
 		 * Set the notification level for the conversation
+		 *
 		 * @param {int} notificationLevel The notification level to set.
 		 */
 		async setNotificationLevel(notificationLevel) {

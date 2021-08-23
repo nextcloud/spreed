@@ -29,7 +29,7 @@ const state = {
 	 * might have a  window of time in which we might be in
 	 * conversation B in talk's UI while still leaving conversation
 	 * A in the signaling server.
-	 **/
+	 */
 	lastJoinedConversationToken: '',
 }
 

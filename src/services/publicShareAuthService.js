@@ -25,8 +25,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Gets the public share auth conversation token for a given share token.
  *
- * @param {String} shareToken the token of the share
- * @returns {String} the conversation token
+ * @param {string} shareToken the token of the share
+ * @return {string} the conversation token
  * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareAuthConversationToken = async function(shareToken) {

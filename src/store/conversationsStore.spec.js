@@ -187,7 +187,7 @@ describe('conversationsStore', () => {
 			expect(store.getters.conversationsList).toStrictEqual([])
 		})
 
-		test('deletes conversation from server', async() => {
+		test('deletes conversation from server', async () => {
 			store.dispatch('addConversation', testConversation)
 
 			await store.dispatch('deleteConversationFromServer', { token: testToken })
@@ -197,7 +197,7 @@ describe('conversationsStore', () => {
 			expect(store.getters.conversation(testToken)).toBeUndefined()
 		})
 
-		test('fetches a single conversation', async() => {
+		test('fetches a single conversation', async () => {
 			const response = {
 				data: {
 					ocs: {
@@ -219,7 +219,7 @@ describe('conversationsStore', () => {
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
 
-		test('fetches all conversations and adds them after purging', async() => {
+		test('fetches all conversations and adds them after purging', async () => {
 			const testConversations = [
 				{
 					token: 'one_token',
@@ -253,7 +253,7 @@ describe('conversationsStore', () => {
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
 
-		test('fetch conversation failure checks for maintenance mode', async() => {
+		test('fetch conversation failure checks for maintenance mode', async () => {
 			const response = { status: 503 }
 			fetchConversation.mockRejectedValue({ response })
 
@@ -262,7 +262,7 @@ describe('conversationsStore', () => {
 			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
 
-		test('fetch conversations failure checks for maintenance mode', async() => {
+		test('fetch conversations failure checks for maintenance mode', async () => {
 			const response = { status: 503 }
 			fetchConversations.mockRejectedValue({ response })
 
@@ -278,7 +278,7 @@ describe('conversationsStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('make public', async() => {
+		test('make public', async () => {
 			testConversation.type = CONVERSATION.TYPE.GROUP
 
 			store.dispatch('addConversation', testConversation)
@@ -296,7 +296,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.type).toEqual(CONVERSATION.TYPE.PUBLIC)
 		})
 
-		test('make non-public', async() => {
+		test('make non-public', async () => {
 			testConversation.type = CONVERSATION.TYPE.PUBLIC
 
 			store.dispatch('addConversation', testConversation)
@@ -314,7 +314,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.type).toEqual(CONVERSATION.TYPE.GROUP)
 		})
 
-		test('set favorite', async() => {
+		test('set favorite', async () => {
 			testConversation.isFavorite = false
 
 			store.dispatch('addConversation', testConversation)
@@ -332,7 +332,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.isFavorite).toBe(true)
 		})
 
-		test('unset favorite', async() => {
+		test('unset favorite', async () => {
 			testConversation.isFavorite = true
 
 			store.dispatch('addConversation', testConversation)
@@ -350,7 +350,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.isFavorite).toBe(false)
 		})
 
-		test('enable lobby', async() => {
+		test('enable lobby', async () => {
 			testConversation.lobbyState = WEBINAR.LOBBY.NONE
 
 			store.dispatch('addConversation', testConversation)
@@ -368,7 +368,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.lobbyState).toBe(WEBINAR.LOBBY.NON_MODERATORS)
 		})
 
-		test('disable lobby', async() => {
+		test('disable lobby', async () => {
 			testConversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
 
 			store.dispatch('addConversation', testConversation)
@@ -386,7 +386,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.lobbyState).toBe(WEBINAR.LOBBY.NONE)
 		})
 
-		test('set conversation name', async() => {
+		test('set conversation name', async () => {
 			testConversation.displayName = 'initial name'
 
 			store.dispatch('addConversation', testConversation)
@@ -404,7 +404,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.displayName).toBe('new name')
 		})
 
-		test('set conversation description', async() => {
+		test('set conversation description', async () => {
 			testConversation.description = 'initial description'
 
 			store.dispatch('addConversation', testConversation)
@@ -422,7 +422,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.description).toBe('new description')
 		})
 
-		test('enable read-only', async() => {
+		test('enable read-only', async () => {
 			testConversation.readOnly = CONVERSATION.STATE.READ_WRITE
 
 			store.dispatch('addConversation', testConversation)
@@ -440,7 +440,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.readOnly).toBe(CONVERSATION.STATE.READ_ONLY)
 		})
 
-		test('disable read-only', async() => {
+		test('disable read-only', async () => {
 			testConversation.readOnly = CONVERSATION.STATE.READ_ONLY
 
 			store.dispatch('addConversation', testConversation)
@@ -458,7 +458,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.readOnly).toBe(CONVERSATION.STATE.READ_WRITE)
 		})
 
-		test('set listable flag', async() => {
+		test('set listable flag', async () => {
 			testConversation.readOnly = CONVERSATION.LISTABLE.NONE
 
 			store.dispatch('addConversation', testConversation)
@@ -476,7 +476,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.listable).toBe(CONVERSATION.LISTABLE.ALL)
 		})
 
-		test('set lobby timer', async() => {
+		test('set lobby timer', async () => {
 			testConversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
 			testConversation.lobbyTimer = 1200300
 
@@ -495,7 +495,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.lobbyTimer).toBe(2300400)
 		})
 
-		test('set SIP enabled', async() => {
+		test('set SIP enabled', async () => {
 			testConversation.sipEnabled = false
 
 			store.dispatch('addConversation', testConversation)
@@ -513,7 +513,7 @@ describe('conversationsStore', () => {
 			expect(changedConversation.sipEnabled).toBe(true)
 		})
 
-		test('set notification level', async() => {
+		test('set notification level', async () => {
 			testConversation.notificationLevel = 1
 
 			store.dispatch('addConversation', testConversation)
@@ -586,7 +586,7 @@ describe('conversationsStore', () => {
 	})
 
 	describe('creating conversations', () => {
-		test('creates one to one conversation', async() => {
+		test('creates one to one conversation', async () => {
 			const newConversation = {
 				id: 999,
 				token: 'new-token',

@@ -93,6 +93,9 @@ function wrapBody() {
 	bodyElement.appendChild(bodyWrapperElement)
 }
 
+/**
+ *
+ */
 function adjustLayout() {
 	const contentElement = document.createElement('div')
 	contentElement.setAttribute('id', 'content')
@@ -116,6 +119,9 @@ function adjustLayout() {
 
 adjustLayout()
 
+/**
+ *
+ */
 function getShareToken() {
 	const shareTokenElement = document.getElementById('sharingToken')
 	return shareTokenElement.value

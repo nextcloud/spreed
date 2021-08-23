@@ -189,6 +189,8 @@ const actions = {
 	/**
 	 * Initialises uploads and shares files to a conversation
 	 *
+	 * @param files.commit
+	 * @param files.dispatch
 	 * @param {object} files the files to be processed
 	 * @param {string} token the conversation's token where to share the files
 	 * @param {number} uploadId a unique id for the upload operation indexing
@@ -230,8 +232,12 @@ const actions = {
 
 	/**
 	 * Discards an upload
+	 *
 	 * @param {object} param0 Commit and state
+	 * @param param0.commit
+	 * @param param0.state
 	 * @param {object} uploadId The unique uploadId
+	 * @param param0.getters
 	 */
 	discardUpload({ commit, state, getters }, uploadId) {
 		if (state.currentUploadId === uploadId) {
@@ -243,8 +249,13 @@ const actions = {
 
 	/**
 	 * Uploads the files to the root directory of the user
+	 *
 	 * @param {object} param0 Commit, state and getters
+	 * @param param0.commit
+	 * @param param0.dispatch
 	 * @param {object} uploadId The unique uploadId
+	 * @param param0.state
+	 * @param param0.getters
 	 */
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
 		if (state.currentUploadId === uploadId) {
@@ -354,8 +365,13 @@ const actions = {
 
 	/**
 	 * Mark a file as shared
+	 *
 	 * @param {object} context default store context;
 	 * @param {object} param1 The unique upload id original file index
+	 * @param context.commit
+	 * @param context.state
+	 * @param param1.uploadId
+	 * @param param1.index
 	 * @throws {Error} when the item is already being shared by another async call
 	 */
 	markFileAsSharing({ commit, state }, { uploadId, index }) {
@@ -367,8 +383,11 @@ const actions = {
 
 	/**
 	 * Mark a file as shared
+	 *
 	 * @param {object} context default store context;
 	 * @param {object} param1 The unique upload id original file index
+	 * @param param1.uploadId
+	 * @param param1.index
 	 */
 	markFileAsShared(context, { uploadId, index }) {
 		context.commit('markFileAsShared', { uploadId, index })
@@ -376,7 +395,9 @@ const actions = {
 
 	/**
 	 * Mark a file as shared
+	 *
 	 * @param {object} context default store context;
+	 * @param context.commit
 	 * @param {string} temporaryMessageId message id of the temporary message associated to the file to remove
 	 */
 	removeFileFromSelection({ commit }, temporaryMessageId) {

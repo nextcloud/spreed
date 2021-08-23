@@ -1,12 +1,18 @@
 /**
  * @copyright Copyright (c) 2019 Daniel Calviño Sánchez <danxuliu@gmail.com>
+ *
  * @copyright Copyright (c) 2019 Ivan Sein <ivan@nextcloud.com>
+ *
  * @copyright Copyright (c) 2019 Joachim Bauch <bauch@struktur.de>
+ *
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
+ *
  * @author Ivan Sein <ivan@nextcloud.com>
+ *
  * @author Joachim Bauch <bauch@struktur.de>
+ *
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -49,8 +55,8 @@ const Signaling = {
 	/**
 	 * Creates a connection to the signaling server
 	 *
-	 * @param {Object} settings The signaling settings
-	 * @returns {Standalone|Internal}
+	 * @param {object} settings The signaling settings
+	 * @return {Standalone|Internal}
 	 */
 	createConnection(settings) {
 		if (!settings) {
@@ -65,6 +71,9 @@ const Signaling = {
 	},
 }
 
+/**
+ * @param settings
+ */
 function Base(settings) {
 	this.settings = settings
 	this.sessionId = ''
@@ -322,6 +331,9 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 }
 
 // Connection to the internal signaling server provided by the app.
+/**
+ * @param settings
+ */
 function Internal(settings) {
 	Signaling.Base.prototype.constructor.apply(this, arguments)
 	this.hideWarning = settings.hideWarning
@@ -420,8 +432,8 @@ Signaling.Internal.prototype.sendCallMessage = function(data) {
 }
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 Signaling.Internal.prototype._startPullingMessages = function() {
 	const token = this.currentRoomToken
 	if (!token) {
@@ -508,8 +520,8 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 }
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 Signaling.Internal.prototype.sendPendingMessages = function() {
 	if (!this.spreedArrayConnection.length || this.isSendingMessages) {
 		return
@@ -527,6 +539,10 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 	}.bind(this))
 }
 
+/**
+ * @param settings
+ * @param urls
+ */
 function Standalone(settings, urls) {
 	Signaling.Base.prototype.constructor.apply(this, arguments)
 	if (typeof (urls) === 'string') {

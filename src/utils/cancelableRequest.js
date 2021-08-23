@@ -2,6 +2,7 @@
  * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
+ *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -26,8 +27,8 @@ import axios from '@nextcloud/axios'
 /**
  * Creates an axios 'cancelable request object'.
  *
- * @param {function} request the axios promise request
- * @returns {Object} The cancelable requests
+ * @param {Function} request the axios promise request
+ * @return {object} The cancelable requests
  * `object.request`: the api request funtion with the cancel token associated to it.
  * `object.cancel`: the cancel function, when call it's going to delete the request.
  */
@@ -43,7 +44,7 @@ const CancelableRequest = function(request) {
 	 *
 	 * @param {string} data the data to send the request to
 	 * @param {object} [options] optional config for the request
-	 * @returns { object }
+	 * @return { object }
 	 */
 	const fetch = async function(data, options) {
 		return request(

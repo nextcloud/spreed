@@ -7,6 +7,9 @@ const util = require('util')
 const webrtcSupport = require('webrtcsupport')
 const WildEmitter = require('wildemitter')
 
+/**
+ * @param stream
+ */
 function isAllTracksEnded(stream) {
 	let isAllTracksEnded = true
 	stream.getTracks().forEach(function(t) {
@@ -15,6 +18,9 @@ function isAllTracksEnded(stream) {
 	return isAllTracksEnded
 }
 
+/**
+ * @param options
+ */
 function Peer(options) {
 	const self = this
 
@@ -124,6 +130,9 @@ function Peer(options) {
 
 util.inherits(Peer, WildEmitter)
 
+/**
+ *
+ */
 function shouldPreferH264() {
 	try {
 		return initialState.loadState('spreed', 'prefer_h264')
@@ -134,6 +143,9 @@ function shouldPreferH264() {
 	}
 }
 
+/**
+ * @param sessionDescription
+ */
 function preferH264VideoCodecIfAvailable(sessionDescription) {
 	const sdpInfo = sdpTransform.parse(sessionDescription.sdp)
 
@@ -686,7 +698,7 @@ Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
  * be added rather than replaced, which requires a renegotiation. In both cases
  * the process will start again once the connection is restablished.
  *
- * @returns {Promise} a Promise fulfilled when the processing ends; if it was
+ * @return {Promise} a Promise fulfilled when the processing ends; if it was
  *          completed the resolved value is true, and if it was stopped before
  *          finishing the resolved value is false.
  */
@@ -750,7 +762,7 @@ Peer.prototype._processPendingReplaceTracksAsync = async function() {
  * @param {MediaStreamTrack|null} newTrack the new track to set.
  * @param {MediaStreamTrack|null} oldTrack the old track to be replaced.
  * @param {MediaStream} stream the stream that the new track belongs to.
- * @returns {Promise}
+ * @return {Promise}
  */
 Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	let senderFound = false

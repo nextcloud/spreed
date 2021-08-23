@@ -35,6 +35,9 @@ describe('LeftSidebar.vue', () => {
 	let addConversationAction
 	let createOneToOneConversationAction
 
+	/**
+	 *
+	 */
 	function mountComponent() {
 		return mount(LeftSidebar, {
 			localVue,
@@ -117,7 +120,7 @@ describe('LeftSidebar.vue', () => {
 			conversationsListMock.mockImplementation(() => cloneDeep(conversationsList))
 		})
 
-		test('fetches and renders conversation list initially', async() => {
+		test('fetches and renders conversation list initially', async () => {
 			const conversationsReceivedEvent = jest.fn()
 			EventBus.$once('conversationsReceived', conversationsReceivedEvent)
 			fetchConversationsAction.mockResolvedValueOnce()
@@ -152,7 +155,7 @@ describe('LeftSidebar.vue', () => {
 			})
 		})
 
-		test('re-fetches conversations every 30 seconds', async() => {
+		test('re-fetches conversations every 30 seconds', async () => {
 			const wrapper = mountComponent()
 
 			expect(fetchConversationsAction).toHaveBeenCalled()
@@ -174,7 +177,7 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalled()
 		})
 
-		test('re-fetches conversations when receiving bus event', async() => {
+		test('re-fetches conversations when receiving bus event', async () => {
 			const wrapper = mountComponent()
 
 			expect(fetchConversationsAction).toHaveBeenCalled()
@@ -275,6 +278,12 @@ describe('LeftSidebar.vue', () => {
 			fetchConversationsAction.mockResolvedValue()
 		})
 
+		/**
+		 * @param searchTerm
+		 * @param possibleResults
+		 * @param listedResults
+		 * @param loadStateSettingsOverride
+		 */
 		async function testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride) {
 			searchPossibleConversations.mockResolvedValueOnce({
 				data: {
@@ -318,7 +327,7 @@ describe('LeftSidebar.vue', () => {
 		}
 
 		describe('displaying search results', () => {
-			test('displays search results when search is active', async() => {
+			test('displays search results when search is active', async () => {
 				const wrapper = await testSearch(
 					'search',
 					[...usersResults, ...groupsResults, ...circlesResults],
@@ -364,7 +373,7 @@ describe('LeftSidebar.vue', () => {
 				expect(optionsEls.at(1).props('items')).toStrictEqual([groupsResults[0], groupsResults[1]])
 				expect(optionsEls.at(2).props('items')).toStrictEqual([circlesResults[0], circlesResults[1]])
 			})
-			test('only shows user search results when cannot create conversations', async() => {
+			test('only shows user search results when cannot create conversations', async () => {
 				const wrapper = await testSearch(
 					'search',
 					[...usersResults, ...groupsResults, ...circlesResults],
@@ -406,7 +415,7 @@ describe('LeftSidebar.vue', () => {
 				expect(optionsEls.at(0).props('items')).toStrictEqual([usersResults[1], usersResults[2]])
 				expect(optionsEls.length).toBe(1)
 			})
-			test('does not show circles results when circles are disabled', async() => {
+			test('does not show circles results when circles are disabled', async () => {
 				const wrapper = await testSearch(
 					'search',
 					[...usersResults, ...groupsResults],
@@ -453,6 +462,13 @@ describe('LeftSidebar.vue', () => {
 		})
 
 		describe('not found caption', () => {
+			/**
+			 * @param searchTerm
+			 * @param possibleResults
+			 * @param listedResults
+			 * @param loadStateSettingsOverride
+			 * @param expectedCaption
+			 */
 			async function testSearchNotFound(searchTerm, possibleResults, listedResults, loadStateSettingsOverride, expectedCaption) {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
@@ -482,7 +498,7 @@ describe('LeftSidebar.vue', () => {
 				return wrapper
 			}
 
-			test('displays all types in caption when nothing was found', async() => {
+			test('displays all types in caption when nothing was found', async () => {
 				await testSearchNotFound(
 					'search',
 					[],
@@ -495,7 +511,7 @@ describe('LeftSidebar.vue', () => {
 				)
 			})
 
-			test('displays all types in caption when only listed conversations were found', async() => {
+			test('displays all types in caption when only listed conversations were found', async () => {
 				await testSearchNotFound(
 					'search',
 					[],
@@ -508,7 +524,7 @@ describe('LeftSidebar.vue', () => {
 				)
 			})
 
-			test('displays all types minus circles when nothing was found but circles is disabled', async() => {
+			test('displays all types minus circles when nothing was found but circles is disabled', async () => {
 				await testSearchNotFound(
 					'search',
 					[],
@@ -521,7 +537,7 @@ describe('LeftSidebar.vue', () => {
 				)
 			})
 
-			test('displays caption for users and groups not found', async() => {
+			test('displays caption for users and groups not found', async () => {
 				await testSearchNotFound(
 					'search',
 					[...circlesResults],
@@ -533,7 +549,7 @@ describe('LeftSidebar.vue', () => {
 					'Users and groups'
 				)
 			})
-			test('displays caption for users not found', async() => {
+			test('displays caption for users not found', async () => {
 				await testSearchNotFound(
 					'search',
 					[...circlesResults, ...groupsResults],
@@ -545,7 +561,7 @@ describe('LeftSidebar.vue', () => {
 					'Users'
 				)
 			})
-			test('displays caption for groups not found', async() => {
+			test('displays caption for groups not found', async () => {
 				await testSearchNotFound(
 					'search',
 					[...usersResults, ...circlesResults],
@@ -557,7 +573,7 @@ describe('LeftSidebar.vue', () => {
 					'Groups'
 				)
 			})
-			test('displays caption for groups and circles not found', async() => {
+			test('displays caption for groups and circles not found', async () => {
 				await testSearchNotFound(
 					'search',
 					[...usersResults],
@@ -569,7 +585,7 @@ describe('LeftSidebar.vue', () => {
 					'Groups and circles'
 				)
 			})
-			test('displays caption for users and circles not found', async() => {
+			test('displays caption for users and circles not found', async () => {
 				await testSearchNotFound(
 					'search',
 					[...groupsResults],
@@ -584,7 +600,7 @@ describe('LeftSidebar.vue', () => {
 		})
 
 		describe('clicking search results', () => {
-			test('joins listed conversation from search result', async() => {
+			test('joins listed conversation from search result', async () => {
 				const wrapper = await testSearch('search', [], listedResults)
 
 				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
@@ -597,7 +613,7 @@ describe('LeftSidebar.vue', () => {
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'listed-token-2' })
 			})
-			test('creates one to one conversation from user search result', async() => {
+			test('creates one to one conversation from user search result', async () => {
 				createOneToOneConversationAction.mockResolvedValue({
 					id: 9999,
 					token: 'new-conversation',
@@ -614,7 +630,7 @@ describe('LeftSidebar.vue', () => {
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'new-conversation' })
 			})
-			test('shows group conversation dialog when clicking search result', async() => {
+			test('shows group conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
 				EventBus.$once('NewGroupConversationDialog', eventHandler)
 
@@ -631,7 +647,7 @@ describe('LeftSidebar.vue', () => {
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
 				expect(addConversationAction).not.toHaveBeenCalled()
 			})
-			test('shows circles conversation dialog when clicking search result', async() => {
+			test('shows circles conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
 				EventBus.$once('NewGroupConversationDialog', eventHandler)
 
@@ -647,7 +663,7 @@ describe('LeftSidebar.vue', () => {
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
 			})
-			test('clears search results when joining user chat', async() => {
+			test('clears search results when joining user chat', async () => {
 				createOneToOneConversationAction.mockResolvedValue({
 					id: 9999,
 					token: 'new-conversation',
@@ -669,7 +685,7 @@ describe('LeftSidebar.vue', () => {
 				expect(searchBoxEl.exists()).toBe(true)
 				expect(input.element.value).toBe('')
 			})
-			test('does not clear search results when clicking group chat', async() => {
+			test('does not clear search results when clicking group chat', async () => {
 				const wrapper = await testSearch('search', [...groupsResults], [])
 
 				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
@@ -710,7 +726,7 @@ describe('LeftSidebar.vue', () => {
 		})
 	})
 
-	test('shows settings when clicking the settings button', async() => {
+	test('shows settings when clicking the settings button', async () => {
 		conversationsListMock.mockImplementation(() => [])
 		const eventHandler = jest.fn()
 		subscribe('show-settings', eventHandler)

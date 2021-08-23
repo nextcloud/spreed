@@ -68,7 +68,7 @@ export default {
 		/**
 		 * Gets the participants array.
 		 *
-		 * @returns {array}
+		 * @return {Array}
 		 */
 		participantsList() {
 			let participants = this.$store.getters.participantsList(this.token)
@@ -134,7 +134,7 @@ export default {
 		 * @param {string} participant2.actorType Second participant actor type
 		 * @param {string} participant2.status Second participant user status
 		 * @param {int} participant2.inCall Second participant in call flag
-		 * @returns {number}
+		 * @return {number}
 		 */
 		sortParticipants(participant1, participant2) {
 			const p1IsGroup = participant1.actorType === ATTENDEE.ACTOR_TYPE.GROUPS

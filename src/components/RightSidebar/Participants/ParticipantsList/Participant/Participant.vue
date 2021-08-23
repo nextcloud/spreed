@@ -256,7 +256,8 @@ export default {
 		/**
 		 * Check if the current participant belongs to the selected participants array
 		 * in the store
-		 * @returns {boolean}
+		 *
+		 * @return {boolean}
 		 */
 		isSelected() {
 			if (this.isSelectable) {
@@ -274,7 +275,8 @@ export default {
 		 * If the Participant component is used as to display a search result, it will
 		 * return true. We use this not to display actions on the searched contacts and
 		 * groups.
-		 * @returns {boolean}
+		 *
+		 * @return {boolean}
 		 */
 		isSearched() {
 			return this.participant.label !== undefined

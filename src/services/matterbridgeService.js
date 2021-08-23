@@ -28,6 +28,7 @@ import {
 
 /**
  * Edit the bridge of a room
+ *
  * @param {token} token the conversation token.
  * @param {string} enabled state of the bridge
  * @param {string} parts parts of the bridge, where it has to connect
@@ -43,6 +44,7 @@ const editBridge = async function(token, enabled, parts) {
 
 /**
  * Get the bridge of a room
+ *
  * @param {token} token the conversation token.
  */
 const getBridge = async function(token) {
@@ -52,6 +54,7 @@ const getBridge = async function(token) {
 
 /**
  * Get the bridge binary state for a room
+ *
  * @param {token} token the conversation token.
  */
 const getBridgeProcessState = async function(token) {

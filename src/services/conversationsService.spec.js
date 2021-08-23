@@ -9,6 +9,11 @@ describe('conversationsService', () => {
 		mockAxios.reset()
 	})
 
+	/**
+	 * @param token
+	 * @param onlyUsers
+	 * @param expectedShareTypes
+	 */
 	function testSearchPossibleConversations(token, onlyUsers, expectedShareTypes) {
 		searchPossibleConversations(
 			{

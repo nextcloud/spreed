@@ -59,7 +59,7 @@ export default {
 		 * The "atwho" property is an object when the panel is open and null
 		 * when the panel is closed.
 		 *
-		 * @returns {Object} the "atwho" property of the vue-at component.
+		 * @return {object} the "atwho" property of the vue-at component.
 		 */
 		atwho() {
 			if (!this.at) {
@@ -73,7 +73,7 @@ export default {
 		 * Returns a list of CSS clases from the space separated string
 		 * "atWhoPanelExtraClasses".
 		 *
-		 * @returns {Array} the list of CSS classes
+		 * @return {Array} the list of CSS classes
 		 */
 		atWhoPanelExtraClassesList() {
 			return this.atWhoPanelExtraClasses.split(' ').filter(cssClass => cssClass !== '')
@@ -91,8 +91,8 @@ export default {
 		 * for anything else, so it can be modified while the panel is open to
 		 * point to the new parent.
 		 *
-		 * @param {Object} atwho current value of atwho
-		 * @param {Object} atwhoOld previous value of atwho
+		 * @param {object} atwho current value of atwho
+		 * @param {object} atwhoOld previous value of atwho
 		 */
 		atwho(atwho, atwhoOld) {
 			// Only check whether the object existed or not; its properties are

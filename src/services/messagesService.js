@@ -53,7 +53,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {object} options options
  * @param {int} lastKnownMessageId The id of the last message in the store.
  */
-const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
+const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
 		params: {
 			setReadMarker: 0,
@@ -71,8 +71,9 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {string} param0.token The conversation token
  * @param {string} param0.message The message object
  * @param {string} param0.referenceId A reference id to identify the message later again
- * @param {Number} param0.parent The id of the message to be replied to
+ * @param {number} param0.parent The id of the message to be replied to
  * @param {object} options request options
+ * @param param0.actorDisplayName
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
@@ -87,8 +88,10 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
  * Deletes a message from the server.
  *
  * @param {object} param0 The message object that is destructured
+ * @param param0.token
  * @param {string} token The conversation token
  * @param {string} id The id of the message to be deleted
+ * @param param0.id
  */
 const deleteMessage = async function({ token, id }) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }))

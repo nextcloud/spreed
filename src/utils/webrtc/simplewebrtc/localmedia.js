@@ -10,6 +10,9 @@ const UAParser = require('ua-parser-js')
 // being initialized yet.
 const webrtcIndex = require('../index.js')
 
+/**
+ * @param stream
+ */
 function isAllTracksEnded(stream) {
 	let isAllTracksEnded = true
 	stream.getTracks().forEach(function(t) {
@@ -18,6 +21,9 @@ function isAllTracksEnded(stream) {
 	return isAllTracksEnded
 }
 
+/**
+ * @param stream
+ */
 function isAllAudioTracksEnded(stream) {
 	let isAllAudioTracksEnded = true
 	stream.getAudioTracks().forEach(function(t) {
@@ -26,6 +32,9 @@ function isAllAudioTracksEnded(stream) {
 	return isAllAudioTracksEnded
 }
 
+/**
+ * @param opts
+ */
 function LocalMedia(opts) {
 	WildEmitter.call(this)
 
@@ -74,7 +83,7 @@ util.inherits(LocalMedia, WildEmitter)
  * MediaStreamTrack is ended.
  *
  * @param {MediaStreamTrack} track the track to clone
- * @returns {MediaStreamTrack} the linked track
+ * @return {MediaStreamTrack} the linked track
  */
 const cloneLinkedTrack = function(track) {
 	const linkedTrack = track.clone()
@@ -98,7 +107,7 @@ const cloneLinkedTrack = function(track) {
  * ended.
  *
  * @param {MediaStream} stream the stream to clone
- * @returns {MediaStream} the linked stream
+ * @return {MediaStream} the linked stream
  */
 const cloneLinkedStream = function(stream) {
 	const linkedStream = new MediaStream()
@@ -127,7 +136,7 @@ const cloneLinkedStream = function(stream) {
  * no media was available when started. An active local media will automatically
  * react to changes in the selected media devices.
  *
- * @returns {bool} true if the local media is active, false otherwise
+ * @return {bool} true if the local media is active, false otherwise
  */
 LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive
@@ -143,7 +152,7 @@ LocalMedia.prototype.isLocalMediaActive = function() {
  * resolution, so if the camera does not have such resolution it will still
  * return the highest resolution available without failing.
  *
- * @param {Object} constraints the constraints to be adjusted
+ * @param {object} constraints the constraints to be adjusted
  */
 LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) {
 	const parser = new UAParser()

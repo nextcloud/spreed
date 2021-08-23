@@ -6,6 +6,9 @@ const mockconsole = require('mockconsole')
 const localMedia = require('./localmedia')
 const Peer = require('./peer')
 
+/**
+ * @param opts
+ */
 function WebRTC(opts) {
 	const self = this
 	const options = opts || {}

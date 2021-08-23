@@ -120,7 +120,8 @@ export default {
 
 		/**
 		 * Keeps a list for all last message ids
-		 * @returns {object} Map with token => lastMessageId
+		 *
+		 * @return {object} Map with token => lastMessageId
 		 */
 		lastMessageMap() {
 			const conversationList = this.$store.getters.conversationsList
@@ -151,7 +152,7 @@ export default {
 		},
 
 		/**
-		 * @returns {boolean} Returns true, if
+		 * @return {boolean} Returns true, if
 		 * - a conversation is newly added to lastMessageMap
 		 * - a conversation has a different last message id then previously
 		 */
@@ -170,7 +171,8 @@ export default {
 
 		/**
 		 * The current conversation token
-		 * @returns {string} The token.
+		 *
+		 * @return {string} The token.
 		 */
 		token() {
 			return this.$store.getters.getToken()
@@ -178,7 +180,8 @@ export default {
 
 		/**
 		 * The current conversation
-		 * @returns {object} The conversation object.
+		 *
+		 * @return {object} The conversation object.
 		 */
 		currentConversation() {
 			return this.$store.getters.conversation(this.token)
@@ -186,7 +189,8 @@ export default {
 
 		/**
 		 * Computes whether the current conversation is one to one
-		 * @returns {boolean} The result
+		 *
+		 * @return {boolean} The result
 		 */
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
@@ -316,7 +320,7 @@ export default {
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
-		*/
+		 */
 		Router.beforeEach((to, from, next) => {
 			if (this.warnLeaving && !to.params?.skipLeaveWarning) {
 				OC.dialogs.confirmDestructive(
@@ -403,6 +407,7 @@ export default {
 
 		/**
 		 * Set the page title to the conversation name
+		 *
 		 * @param {string} title Prefix for the page title e.g. conversation name
 		 * @param {boolean} showAsterix Prefix for the page title e.g. conversation name
 		 */
@@ -438,8 +443,9 @@ export default {
 
 		/**
 		 * Get a conversation's name.
+		 *
 		 * @param {string} token The conversation's token
-		 * @returns {string} The conversation's name
+		 * @return {string} The conversation's name
 		 */
 		getConversationName(token) {
 			if (!this.$store.getters.conversation(token)) {

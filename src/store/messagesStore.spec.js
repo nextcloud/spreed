@@ -164,7 +164,7 @@ describe('messagesStore', () => {
 			store.dispatch('processMessage', message)
 		})
 
-		test('deletes from server and replaces with returned system message', async() => {
+		test('deletes from server and replaces with returned system message', async () => {
 			deleteMessage.mockResolvedValueOnce({
 				status: 200,
 				data: {
@@ -191,7 +191,7 @@ describe('messagesStore', () => {
 			}])
 		})
 
-		test('deletes from server and replaces with returned system message including parent', async() => {
+		test('deletes from server and replaces with returned system message including parent', async () => {
 			deleteMessage.mockResolvedValueOnce({
 				status: 200,
 				data: {
@@ -285,7 +285,7 @@ describe('messagesStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('creates temporary message', async() => {
+		test('creates temporary message', async () => {
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
 				token: TOKEN,
@@ -317,7 +317,7 @@ describe('messagesStore', () => {
 			})
 		})
 
-		test('creates temporary message with message to be replied', async() => {
+		test('creates temporary message with message to be replied', async () => {
 			getMessageToBeRepliedMock.mockReset()
 			getMessageToBeRepliedMock.mockReturnValue(() => ({
 				id: 123,
@@ -350,7 +350,7 @@ describe('messagesStore', () => {
 			})
 		})
 
-		test('creates temporary message with file', async() => {
+		test('creates temporary message with file', async () => {
 			const file = {
 				type: 'text/plain',
 				name: 'original-name.txt',
@@ -393,7 +393,7 @@ describe('messagesStore', () => {
 			})
 		})
 
-		test('adds temporary message to the list', async() => {
+		test('adds temporary message to the list', async () => {
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
 				token: TOKEN,
@@ -444,7 +444,7 @@ describe('messagesStore', () => {
 			}])
 		})
 
-		test('marks temporary message as failed', async() => {
+		test('marks temporary message as failed', async () => {
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
 				token: TOKEN,
@@ -477,7 +477,7 @@ describe('messagesStore', () => {
 			}])
 		})
 
-		test('removeTemporaryMessageFromStore', async() => {
+		test('removeTemporaryMessageFromStore', async () => {
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
 				token: TOKEN,
@@ -493,7 +493,7 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
 		})
 
-		test('gets temporary message by reference', async() => {
+		test('gets temporary message by reference', async () => {
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
 				token: TOKEN,
@@ -574,7 +574,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId('token-2')).toBe(2)
 		})
 
-		test('clears last read message', async() => {
+		test('clears last read message', async () => {
 			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -595,7 +595,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(100)
 		})
 
-		test('clears last read message and update visually', async() => {
+		test('clears last read message and update visually', async () => {
 			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -616,7 +616,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(123)
 		})
 
-		test('clears last read message for guests', async() => {
+		test('clears last read message for guests', async () => {
 			getUserIdMock.mockReturnValue(() => null)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -637,7 +637,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(123)
 		})
 
-		test('updates last read message', async() => {
+		test('updates last read message', async () => {
 			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -659,7 +659,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(100)
 		})
 
-		test('updates last read message and update visually', async() => {
+		test('updates last read message and update visually', async () => {
 			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -681,7 +681,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(200)
 		})
 
-		test('updates last read message for guests', async() => {
+		test('updates last read message for guests', async () => {
 			getUserIdMock.mockReturnValue(() => null)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
@@ -728,7 +728,7 @@ describe('messagesStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('fetches messages from server including last known', async() => {
+		test('fetches messages from server including last known', async () => {
 			const messages = [{
 				id: 1,
 				token: TOKEN,
@@ -779,7 +779,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(2)
 		})
 
-		test('fetches messages from server excluding last known', async() => {
+		test('fetches messages from server excluding last known', async () => {
 			const messages = [{
 				id: 1,
 				token: TOKEN,
@@ -847,7 +847,7 @@ describe('messagesStore', () => {
 			expect(store.state.cancelFetchMessages).toBe(null)
 		})
 
-		test('cancels fetching messages when fetching again', async() => {
+		test('cancels fetching messages when fetching again', async () => {
 			store.dispatch('fetchMessages', {
 				token: TOKEN,
 				lastKnownMessageId: 100,
@@ -899,7 +899,7 @@ describe('messagesStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('looks for new messages', async() => {
+		test('looks for new messages', async () => {
 			const messages = [{
 				id: 1,
 				token: TOKEN,
@@ -958,7 +958,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(null)
 		})
 
-		test('looks for new messages does not update last message if lower', async() => {
+		test('looks for new messages does not update last message if lower', async () => {
 			const messages = [{
 				id: 1,
 				token: TOKEN,
@@ -998,7 +998,7 @@ describe('messagesStore', () => {
 			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(null)
 		})
 
-		test('cancels look for new messages', async() => {
+		test('cancels look for new messages', async () => {
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
@@ -1012,7 +1012,7 @@ describe('messagesStore', () => {
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 		})
 
-		test('cancels look for new messages when called again', async() => {
+		test('cancels look for new messages when called again', async () => {
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
@@ -1028,7 +1028,7 @@ describe('messagesStore', () => {
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 		})
 
-		test('cancels look for new messages call individually', async() => {
+		test('cancels look for new messages call individually', async () => {
 			store.dispatch('lookForNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
@@ -1061,6 +1061,10 @@ describe('messagesStore', () => {
 				}
 			})
 
+			/**
+			 * @param messages
+			 * @param expectedPayload
+			 */
 			async function testUpdateMessageCounters(messages, expectedPayload) {
 				const response = {
 					headers: {
@@ -1092,7 +1096,7 @@ describe('messagesStore', () => {
 			}
 
 			describe('updating unread messages counter', () => {
-				test('updates unread message counter for regular messages', async() => {
+				test('updates unread message counter for regular messages', async () => {
 					const messages = [{
 						id: 101,
 						token: TOKEN,
@@ -1110,7 +1114,7 @@ describe('messagesStore', () => {
 					await testUpdateMessageCounters(messages, expectedPayload)
 				})
 
-				test('skips system messages when counting unread messages', async() => {
+				test('skips system messages when counting unread messages', async () => {
 					const messages = [{
 						id: 101,
 						token: TOKEN,
@@ -1129,7 +1133,7 @@ describe('messagesStore', () => {
 					await testUpdateMessageCounters(messages, expectedPayload)
 				})
 
-				test('only counts unread messages from the last unread message', async() => {
+				test('only counts unread messages from the last unread message', async () => {
 					const messages = [{
 						id: 99,
 						token: TOKEN,
@@ -1156,7 +1160,7 @@ describe('messagesStore', () => {
 					await testUpdateMessageCounters(messages, expectedPayload)
 				})
 
-				test('does not update counter if no new messages were found', async() => {
+				test('does not update counter if no new messages were found', async () => {
 					const messages = [{
 						// this one is the last read message so doesn't count
 						id: 100,
@@ -1166,7 +1170,7 @@ describe('messagesStore', () => {
 					await testUpdateMessageCounters(messages, null)
 				})
 
-				test('does not update counter if the conversation store is already in sync', async() => {
+				test('does not update counter if the conversation store is already in sync', async () => {
 					// same as the retrieved message, conversation is in sync
 					testConversation.lastMessage.id = 102
 					const messages = [{
@@ -1198,6 +1202,10 @@ describe('messagesStore', () => {
 					store = new Vuex.Store(testStoreConfig)
 				})
 
+				/**
+				 * @param messageParameters
+				 * @param expectedValue
+				 */
 				async function testMentionFlag(messageParameters, expectedValue) {
 					const messages = [{
 						id: 101,
@@ -1213,7 +1221,7 @@ describe('messagesStore', () => {
 					await testUpdateMessageCounters(messages, expectedPayload)
 				}
 
-				test('updates unread mention flag for global message', async() => {
+				test('updates unread mention flag for global message', async () => {
 					await testMentionFlag({
 						'mention-1': {
 							type: 'call',
@@ -1221,7 +1229,7 @@ describe('messagesStore', () => {
 					}, true)
 				})
 
-				test('updates unread mention flag for guest mention', async() => {
+				test('updates unread mention flag for guest mention', async () => {
 					getActorIdMock.mockReturnValue(() => 'me_as_guest')
 					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
 					await testMentionFlag({
@@ -1236,7 +1244,7 @@ describe('messagesStore', () => {
 					}, true)
 				})
 
-				test('does not update unread mention flag for a different guest mention', async() => {
+				test('does not update unread mention flag for a different guest mention', async () => {
 					getActorIdMock.mockReturnValue(() => 'me_as_guest')
 					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
 					await testMentionFlag({
@@ -1247,7 +1255,7 @@ describe('messagesStore', () => {
 					}, undefined)
 				})
 
-				test('updates unread mention flag for user mention', async() => {
+				test('updates unread mention flag for user mention', async () => {
 					getUserIdMock.mockReturnValue(() => 'me_as_user')
 					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
 					await testMentionFlag({
@@ -1262,7 +1270,7 @@ describe('messagesStore', () => {
 					}, true)
 				})
 
-				test('does not update unread mention flag for another user mention', async() => {
+				test('does not update unread mention flag for another user mention', async () => {
 					getUserIdMock.mockReturnValue(() => 'me_as_user')
 					getActorTypeMock.mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
 					await testMentionFlag({
@@ -1273,12 +1281,12 @@ describe('messagesStore', () => {
 					}, undefined)
 				})
 
-				test('does not update unread mention flag when no params', async() => {
+				test('does not update unread mention flag when no params', async () => {
 					await testMentionFlag({}, undefined)
 					await testMentionFlag(null, undefined)
 				})
 
-				test('does not update unread mention flag when already set', async() => {
+				test('does not update unread mention flag when already set', async () => {
 					testConversation.unreadMention = true
 					await testMentionFlag({
 						'mention-1': {
@@ -1287,7 +1295,7 @@ describe('messagesStore', () => {
 					}, undefined)
 				})
 
-				test('does not update unread mention flag for non-mention parameter', async() => {
+				test('does not update unread mention flag for non-mention parameter', async () => {
 					testConversation.unreadMention = true
 					await testMentionFlag({
 						'file-1': {
@@ -1296,7 +1304,7 @@ describe('messagesStore', () => {
 					}, undefined)
 				})
 
-				test('does not update unread mention flag for previously read messages', async() => {
+				test('does not update unread mention flag for previously read messages', async () => {
 					const messages = [{
 						// this message was already read
 						id: 100,
@@ -1373,7 +1381,7 @@ describe('messagesStore', () => {
 			restoreConsole()
 		})
 
-		test('posts new message', async() => {
+		test('posts new message', async () => {
 			const temporaryMessage = {
 				id: 'temp-123',
 				message: 'blah',
@@ -1477,6 +1485,10 @@ describe('messagesStore', () => {
 			expect(store.getters.isSendingMessages).toBe(false)
 		})
 
+		/**
+		 * @param statusCode
+		 * @param reasonCode
+		 */
 		async function testMarkMessageErrors(statusCode, reasonCode) {
 			const temporaryMessage = {
 				id: 'temp-123',
@@ -1512,15 +1524,15 @@ describe('messagesStore', () => {
 			expect(console.error).toHaveBeenCalled()
 		}
 
-		test('marks message as failed on permission denied', async() => {
+		test('marks message as failed on permission denied', async () => {
 			await testMarkMessageErrors(403, 'read-only')
 		})
 
-		test('marks message as failed when lobby enabled', async() => {
+		test('marks message as failed when lobby enabled', async () => {
 			await testMarkMessageErrors(412, 'lobby')
 		})
 
-		test('marks message as failed with generic error', async() => {
+		test('marks message as failed with generic error', async () => {
 			await testMarkMessageErrors(500, 'other')
 		})
 
@@ -1550,7 +1562,7 @@ describe('messagesStore', () => {
 			])
 		})
 
-		test('does not timeout after request returns', async() => {
+		test('does not timeout after request returns', async () => {
 			const temporaryMessage = {
 				id: 'temp-123',
 				message: 'blah',
@@ -1584,6 +1596,10 @@ describe('messagesStore', () => {
 	})
 
 	describe('hasMoreMessagesToLoad', () => {
+		/**
+		 * @param lastKnownMessageId
+		 * @param lastConversationMessageId
+		 */
 		function setupWithValues(lastKnownMessageId, lastConversationMessageId) {
 			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 123 })
 			const conversationMock = jest.fn().mockReturnValue({

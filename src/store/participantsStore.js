@@ -61,8 +61,9 @@ const getters = {
 	},
 	/**
 	 * Gets the participants array
+	 *
 	 * @param {object} state the state object.
-	 * @returns {array} the participants array (if there are participants in the store)
+	 * @return {Array} the participants array (if there are participants in the store)
 	 */
 	participantsList: (state) => (token) => {
 		if (state.participants[token]) {
@@ -109,9 +110,12 @@ const getters = {
 const mutations = {
 	/**
 	 * Adds a message to the store.
+	 *
 	 * @param {object} state current store state;
+	 * @param token.token
 	 * @param {object} token the token of the conversation;
 	 * @param {object} participant the participant;
+	 * @param token.participant
 	 */
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
@@ -161,6 +165,7 @@ const mutations = {
 	},
 	/**
 	 * Purges a given conversation from the previously added participants
+	 *
 	 * @param {object} state current store state;
 	 * @param {string} token the conversation to purge;
 	 */
@@ -191,6 +196,7 @@ const actions = {
 	 * Only call this after purgeParticipantsStore, otherwise use addParticipantOnce
 	 *
 	 * @param {object} context default store context;
+	 * @param context.commit
 	 * @param {string} token the conversation to add the participant;
 	 * @param {object} participant the participant;
 	 */
@@ -201,6 +207,8 @@ const actions = {
 	 * Only add a participant when they are not there yet
 	 *
 	 * @param {object} context default store context;
+	 * @param context.commit
+	 * @param context.getters
 	 * @param {string} token the conversation to add the participant;
 	 * @param {object} participant the participant;
 	 */
@@ -255,7 +263,9 @@ const actions = {
 	},
 	/**
 	 * Purges a given conversation from the previously added participants
+	 *
 	 * @param {object} context default store context;
+	 * @param context.commit
 	 * @param {string} token the conversation to purge;
 	 */
 	purgeParticipantsStore({ commit }, token) {
@@ -358,7 +368,7 @@ const actions = {
 	 * Resends email invitations for the given conversation.
 	 * If no userId is set, send to all applicable participants.
 	 *
-	 * @param {Object} _ unused
+	 * @param {object} _ unused
 	 * @param {string} token conversation token
 	 * @param {int} attendeeId attendee id to target, or null for all
 	 */
@@ -369,7 +379,7 @@ const actions = {
 	/**
 	 * Makes the current user active in the given conversation.
 	 *
-	 * @param {Object} context unused
+	 * @param {object} context unused
 	 * @param {string} token conversation token
 	 */
 	async joinConversation(context, { token }) {
@@ -457,7 +467,7 @@ const actions = {
 	/**
 	 * Makes the current user inactive in the given conversation.
 	 *
-	 * @param {Object} context unused
+	 * @param {object} context unused
 	 * @param {string} token conversation token
 	 */
 	async leaveConversation(context, { token }) {
@@ -468,7 +478,7 @@ const actions = {
 	 * Removes the current user from the conversation, which
 	 * means the user is not a participant any more.
 	 *
-	 * @param {Object} context unused
+	 * @param {object} context unused
 	 * @param {string} token conversation token
 	 */
 	async removeCurrentUserFromConversation(context, { token }) {

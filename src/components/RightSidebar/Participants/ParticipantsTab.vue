@@ -234,7 +234,8 @@ export default {
 
 		/**
 		 * Add the selected group/user/circle to the conversation
-		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 *
+		 * @param {object} item The autocomplete suggestion to start a conversation with
 		 * @param {string} item.id The ID of the target
 		 * @param {string} item.source The source of the target
 		 */

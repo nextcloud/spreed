@@ -114,6 +114,10 @@ describe('callViewStore', () => {
 			expect(store.getters.isStripeOpen).toBe(true)
 		})
 
+		/**
+		 * @param conversationType
+		 * @param state
+		 */
 		function testDefaultGridState(conversationType, state) {
 			localStorage.getItem.mockReturnValueOnce(null)
 

@@ -74,6 +74,7 @@ const arrowNavigation = {
 
 		/**
 		 * If none already focused, focus the first rendered result
+		 *
 		 * @param {Event} event the keydown event
 		 */
 		focusInitialise(event) {
@@ -84,6 +85,7 @@ const arrowNavigation = {
 
 		/**
 		 * Focus the first item if any
+		 *
 		 * @param {Event} event the keydown event
 		 */
 		focusFirst(event) {
@@ -99,6 +101,7 @@ const arrowNavigation = {
 
 		/**
 		 * Focus the next item if any
+		 *
 		 * @param {Event} event the keydown event
 		 */
 		focusNext(event) {
@@ -124,6 +127,7 @@ const arrowNavigation = {
 
 		/**
 		 * Focus the previous item if any
+		 *
 		 * @param {Event} event the keydown event
 		 */
 		focusPrev(event) {
@@ -149,6 +153,7 @@ const arrowNavigation = {
 
 		/**
 		 * Focus the specified item index if it exists
+		 *
 		 * @param {number} index the item index
 		 */
 		focusIndex(index) {
@@ -160,6 +165,7 @@ const arrowNavigation = {
 
 		/**
 		 * Set the current focused element based on the target
+		 *
 		 * @param {Event} event the focus event
 		 */
 		setFocusedIndex(event) {

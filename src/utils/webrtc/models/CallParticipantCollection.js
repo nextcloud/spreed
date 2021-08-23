@@ -21,6 +21,9 @@
 
 import CallParticipantModel from './CallParticipantModel'
 
+/**
+ *
+ */
 export default function CallParticipantCollection() {
 
 	this.callParticipantModels = []

@@ -112,28 +112,32 @@ export default {
 	computed: {
 		/**
 		 * The message actor type.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		actorType() {
 			return this.messages[0].actorType
 		},
 		/**
 		 * The message actor id.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		actorId() {
 			return this.messages[0].actorId
 		},
 		/**
 		 * The message date.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		dateSeparator() {
 			return this.messages[0].dateSeparator || ''
 		},
 		/**
 		 * The message actor display name.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		actorDisplayName() {
 			const displayName = this.messages[0].actorDisplayName.trim()
@@ -150,7 +154,8 @@ export default {
 		},
 		/**
 		 * Whether the given message is a system message
-		 * @returns {bool}
+		 *
+		 * @return {bool}
 		 */
 		isSystemMessage() {
 			return this.messages[0].systemMessage.length !== 0

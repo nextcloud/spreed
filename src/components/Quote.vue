@@ -134,7 +134,8 @@ export default {
 	computed: {
 		/**
 		 * The message actor display name.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		getDisplayName() {
 			const displayName = this.actorDisplayName.trim()
@@ -186,7 +187,8 @@ export default {
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
 		 * e.g. no avatars on mentions.
-		 * @returns {string} A simple message to show below the conversation name
+		 *
+		 * @return {string} A simple message to show below the conversation name
 		 */
 		simpleQuotedMessage() {
 			if (!Object.keys(this.messageParameters).length) {

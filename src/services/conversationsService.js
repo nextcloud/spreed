@@ -26,6 +26,7 @@ import { CONVERSATION, SHARE } from '../constants'
 
 /**
  * Fetches the conversations from the server.
+ *
  * @param {object} options options
  */
 const fetchConversations = async function(options) {
@@ -37,6 +38,7 @@ const fetchConversations = async function(options) {
 
 /**
  * Fetches a conversation from the server.
+ *
  * @param {string} token The token of the conversation to be fetched.
  */
 const fetchConversation = async function(token) {
@@ -45,6 +47,7 @@ const fetchConversation = async function(token) {
 
 /**
  * Fetch listed conversations
+ *
  * @param {string} searchText The string that will be used in the search query.
  * @param {object} options options
  */
@@ -91,6 +94,7 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
 
 /**
  * Create a new one to one conversation with the specified user.
+ *
  * @param {string} userId The ID of the user with wich the new conversation will be opened.
  */
 const createOneToOneConversation = async function(userId) {
@@ -104,6 +108,7 @@ const createOneToOneConversation = async function(userId) {
 
 /**
  * Create a new group conversation.
+ *
  * @param {string} invite The group/circle ID
  * @param {string} source The source of the invite ID (defaults to groups)
  */
@@ -118,6 +123,7 @@ const createGroupConversation = async function(invite, source) {
 
 /**
  * Create a new private conversation.
+ *
  * @param {string} conversationName The name for the new conversation
  */
 const createPrivateConversation = async function(conversationName) {
@@ -131,6 +137,7 @@ const createPrivateConversation = async function(conversationName) {
 
 /**
  * Create a new private conversation.
+ *
  * @param {string} conversationName The name for the new conversation
  */
 const createPublicConversation = async function(conversationName) {
@@ -144,6 +151,7 @@ const createPublicConversation = async function(conversationName) {
 
 /**
  * Set a conversation's password
+ *
  * @param {string} token the conversation's token
  * @param {string} password the password to be set
  */
@@ -156,6 +164,7 @@ const setConversationPassword = async function(token, password) {
 
 /**
  * Set a conversation's name
+ *
  * @param {string} token the conversation's token
  * @param {string} name the name to be set
  */
@@ -168,6 +177,7 @@ const setConversationName = async function(token, name) {
 
 /**
  * Delete a conversation.
+ *
  * @param {string} token The token of the conversation to be deleted.
  */
 const deleteConversation = async function(token) {
@@ -181,6 +191,7 @@ const deleteConversation = async function(token) {
 
 /**
  * Clears the conversation history
+ *
  * @param {string} token The token of the conversation to be deleted.
  */
 const clearConversationHistory = async function(token) {
@@ -190,6 +201,7 @@ const clearConversationHistory = async function(token) {
 
 /**
  * Add a conversation to the favorites
+ *
  * @param {string} token The token of the conversation to be favorites
  */
 const addToFavorites = async function(token) {
@@ -203,6 +215,7 @@ const addToFavorites = async function(token) {
 
 /**
  * Remove a conversation from the favorites
+ *
  * @param {string} token The token of the conversation to be removed from favorites
  */
 const removeFromFavorites = async function(token) {
@@ -216,6 +229,7 @@ const removeFromFavorites = async function(token) {
 
 /**
  * Remove a conversation from the favorites
+ *
  * @param {string} token The token of the conversation to be removed from favorites
  * @param {int} level The notification level to set.
  */
@@ -230,6 +244,7 @@ const setNotificationLevel = async function(token, level) {
 
 /**
  * Make the conversation public
+ *
  * @param {string} token The token of the conversation to be removed from favorites
  */
 const makePublic = async function(token) {
@@ -243,6 +258,7 @@ const makePublic = async function(token) {
 
 /**
  * Make the conversation private
+ *
  * @param {string} token The token of the conversation to be removed from favorites
  */
 const makePrivate = async function(token) {
@@ -256,6 +272,7 @@ const makePrivate = async function(token) {
 
 /**
  * Change the SIP enabled
+ *
  * @param {string} token The token of the conversation to be modified
  * @param {int} newState The new SIP state to set
  */
@@ -267,6 +284,7 @@ const setSIPEnabled = async function(token, newState) {
 
 /**
  * Change the lobby state
+ *
  * @param {string} token The token of the conversation to be modified
  * @param {int} newState The new lobby state to set
  * @param {int} timestamp The UNIX timestamp (in seconds) to set, if any
@@ -285,6 +303,7 @@ const changeLobbyState = async function(token, newState, timestamp) {
 
 /**
  * Change the read-only state
+ *
  * @param {string} token The token of the conversation to be modified
  * @param {int} readOnly The new read-only state to set
  */
@@ -301,6 +320,7 @@ const changeReadOnlyState = async function(token, readOnly) {
 
 /**
  * Change the listable scope
+ *
  * @param {string} token The token of the conversation to be modified
  * @param {int} listable The new listable scope to set
  */

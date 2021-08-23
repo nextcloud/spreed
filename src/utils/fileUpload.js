@@ -24,21 +24,22 @@
  * Returns the file extension for the given path
  *
  * @param {string} path path
- * @returns {string} file extension including the dot
+ * @return {string} file extension including the dot
  */
 const getFileExtension = function(path) {
 	return path.match(/\.[0-9a-z]+$/i) ? path.match(/\.[0-9a-z]+$/i)[0] : ''
 }
 
 /**
-  * Checks the existence of a path in a folder and if a match is found, returns
-  * a unique path for that folder.
-  * @param {object} client The webdav client object
-  * @param {string} userRoot user root path
-  * @param {string} path The path whose existence in the destination is to
-  * be checked
-  * @returns {string} The unique path
-  */
+ * Checks the existence of a path in a folder and if a match is found, returns
+ * a unique path for that folder.
+ *
+ * @param {object} client The webdav client object
+ * @param {string} userRoot user root path
+ * @param {string} path The path whose existence in the destination is to
+ * be checked
+ * @return {string} The unique path
+ */
 const findUniquePath = async function(client, userRoot, path) {
 	// Return the input path if it doesn't exist in the destination folder
 	if (await client.exists(userRoot + path) === false) {

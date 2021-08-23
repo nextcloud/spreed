@@ -89,7 +89,7 @@ describe('fileUploadStore', () => {
 			restoreConsole()
 		})
 
-		test('initialises upload for given files', async() => {
+		test('initialises upload for given files', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -132,7 +132,7 @@ describe('fileUploadStore', () => {
 			expect(mockedActions.createTemporaryMessage.mock.calls[2][1].localUrl).toBe('icon-url:text/plain')
 		})
 
-		test('performs upload by uploading then sharing', async() => {
+		test('performs upload by uploading then sharing', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -181,7 +181,7 @@ describe('fileUploadStore', () => {
 			expect(store.getters.currentUploadId).not.toBeDefined()
 		})
 
-		test('marks temporary message as failed in case of upload error', async() => {
+		test('marks temporary message as failed in case of upload error', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -218,7 +218,7 @@ describe('fileUploadStore', () => {
 			expect(console.error).toHaveBeenCalled()
 		})
 
-		test('marks temporary message as failed in case of sharing error', async() => {
+		test('marks temporary message as failed in case of sharing error', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -256,7 +256,7 @@ describe('fileUploadStore', () => {
 			expect(console.error).toHaveBeenCalled()
 		})
 
-		test('removes file from selection', async() => {
+		test('removes file from selection', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -287,7 +287,7 @@ describe('fileUploadStore', () => {
 			expect(Object.values(uploads)[0].file).toBe(files[0])
 		})
 
-		test('discard an entire upload', async() => {
+		test('discard an entire upload', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -317,7 +317,7 @@ describe('fileUploadStore', () => {
 			expect(store.getters.currentUploadId).not.toBeDefined()
 		})
 
-		test('autorenames files using timestamps when requested', async() => {
+		test('autorenames files using timestamps when requested', async () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -349,7 +349,7 @@ describe('fileUploadStore', () => {
 		})
 	})
 
-	test('set attachment folder', async() => {
+	test('set attachment folder', async () => {
 		store = new Vuex.Store(storeConfig)
 
 		setAttachmentFolder.mockResolvedValue()

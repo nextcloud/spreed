@@ -55,6 +55,7 @@ const mutations = {
 	},
 	/**
 	 * Renaming state of the conversation
+	 *
 	 * @param {object} state current store state;
 	 * @param {boolean} boolean the state of the renaming action;
 	 */
@@ -91,6 +92,7 @@ const actions = {
 	},
 	/**
 	 * Renaming state of the conversation
+	 *
 	 * @param {object} context default store context;
 	 * @param {boolean} boolean the state of the renaming action;
 	 */

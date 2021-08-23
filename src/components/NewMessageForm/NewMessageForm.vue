@@ -185,7 +185,7 @@ export default {
 		/**
 		 * The current conversation token
 		 *
-		 * @returns {String}
+		 * @return {string}
 		 */
 		token() {
 			return this.$store.getters.getToken()
@@ -314,8 +314,8 @@ export default {
 		 *
 		 * The parsed text is also trimmed.
 		 *
-		 * @param {String} text the raw text
-		 * @returns {String} the parsed text
+		 * @param {string} text the raw text
+		 * @return {string} the parsed text
 		 */
 		rawToParsed(text) {
 			text = text.replace(/<br>/g, '\n')
@@ -397,7 +397,7 @@ export default {
 
 		async handleFileShare() {
 			picker.pick()
-				.then(async(path) => {
+				.then(async (path) => {
 					console.debug(`path ${path} selected for sharing`)
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
@@ -440,7 +440,6 @@ export default {
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {bool} rename whether to rename the files
 		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
-
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage) {
 			// Create a unique id for the upload operation

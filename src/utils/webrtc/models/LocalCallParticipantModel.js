@@ -23,6 +23,9 @@ import store from '../../../store/index.js'
 
 import { ConnectionState } from './CallParticipantModel'
 
+/**
+ *
+ */
 export default function LocalCallParticipantModel() {
 
 	this.attributes = {

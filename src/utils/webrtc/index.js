@@ -46,6 +46,9 @@ let cancelFetchSignalingSettings = null
 let signaling = null
 let tokensInSignaling = {}
 
+/**
+ * @param token
+ */
 async function getSignalingSettings(token) {
 	// If getSignalingSettings is called again while a previous one was still
 	// being executed the previous one is cancelled.
@@ -76,6 +79,9 @@ async function getSignalingSettings(token) {
 	return settings
 }
 
+/**
+ * @param token
+ */
 async function connectSignaling(token) {
 	const settings = await getSignalingSettings(token)
 	if (!settings) {
@@ -104,6 +110,10 @@ let pendingJoinCallToken = null
 let startedCall = null
 let failedToStartCall = null
 
+/**
+ * @param signaling
+ * @param configuration
+ */
 function startCall(signaling, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
@@ -122,6 +132,9 @@ function startCall(signaling, configuration) {
 	})
 }
 
+/**
+ *
+ */
 function setupWebRtc() {
 	if (webRtc) {
 		return
@@ -137,7 +150,7 @@ function setupWebRtc() {
  *
  * @param {string} token Conversation to join
  * @param {string} sessionId Session id to join with
- * @returns {Promise<void>}
+ * @return {Promise<void>}
  */
 async function signalingJoinConversation(token, sessionId) {
 	await connectSignaling(token)
@@ -151,7 +164,7 @@ async function signalingJoinConversation(token, sessionId) {
  *
  * @param {string} token Conversation to join the call
  * @param {int} flags Bitwise combination of PARTICIPANT.CALL_FLAG
- * @returns {Promise<void>} Resolved with the actual flags based on the
+ * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
 async function signalingJoinCall(token, flags) {
@@ -217,7 +230,7 @@ async function signalingJoinCall(token, flags) {
  * Leave the call of the given conversation
  *
  * @param {string} token Conversation to leave the call
- * @returns {Promise<void>}
+ * @return {Promise<void>}
  */
 async function signalingLeaveCall(token) {
 	sentVideoQualityThrottler.destroy()
@@ -235,7 +248,7 @@ async function signalingLeaveCall(token) {
  * Leave the given conversation on the respective signaling server
  *
  * @param {string} token Conversation to leave
- * @returns {Promise<void>}
+ * @return {Promise<void>}
  */
 async function signalingLeaveConversation(token) {
 	if (tokensInSignaling[token]) {

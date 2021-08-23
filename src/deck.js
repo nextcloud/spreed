@@ -29,6 +29,10 @@ import { postRichObjectToConversation } from './services/messagesService'
 import RoomSelector from './views/RoomSelector'
 
 (function(OC, OCA, t, n) {
+	/**
+	 * @param card
+	 * @param token
+	 */
 	async function postCardToRoom(card, token) {
 		try {
 			const response = await postRichObjectToConversation(token, {
@@ -53,6 +57,9 @@ import RoomSelector from './views/RoomSelector'
 		}
 	}
 
+	/**
+	 *
+	 */
 	function init() {
 		if (!OCA.Deck) {
 			return
