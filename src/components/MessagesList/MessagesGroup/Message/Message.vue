@@ -164,7 +164,7 @@ the main body of the message as well as a quote.
 								{{ t('spreed', 'Go to file') }}
 							</ActionLink>
 							<ActionButton
-								v-if="!isFileShare"
+								v-if="!isCurrentGuest && !isFileShare"
 								:close-after-click="true"
 								@click.stop="showForwarder = true">
 								<Share
@@ -660,6 +660,10 @@ export default {
 				metadata: this.conversation,
 				apiVersion: 'v3',
 			}
+		},
+
+		isCurrentGuest() {
+			return this.$store.getters.getActorType() === 'guests'
 		},
 	},
 
