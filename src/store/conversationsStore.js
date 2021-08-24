@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -76,9 +76,10 @@ const getters = {
 	conversationsList: state => Object.values(state.conversations),
 	/**
 	 * Get a conversation providing it's token
+	 *
 	 * @param {object} state state object
-	 * @returns {function} The callback function
-	 * @returns {object} The conversation object
+	 * @return {Function} The callback function
+	 * @return {object} The conversation object
 	 */
 	conversation: state => token => state.conversations[token],
 	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
@@ -96,6 +97,7 @@ const mutations = {
 	},
 	/**
 	 * Deletes a conversation from the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} token the token of the conversation to delete;
 	 */
@@ -104,6 +106,7 @@ const mutations = {
 	},
 	/**
 	 * Resets the store to it's original state
+	 *
 	 * @param {object} state current store state;
 	 */
 	purgeConversationsStore(state) {
@@ -189,6 +192,7 @@ const actions = {
 	 * Delete a conversation from the server.
 	 *
 	 * @param {object} context default store context;
+	 * @param token.token
 	 * @param {object} token the token of the conversation to be deleted;
 	 */
 	async deleteConversationFromServer(context, { token }) {
@@ -201,6 +205,7 @@ const actions = {
 	 * Delete all the messages from a conversation.
 	 *
 	 * @param {object} context default store context;
+	 * @param token.token
 	 * @param {object} token the token of the conversation whose history is
 	 * to be cleared;
 	 */
@@ -218,6 +223,7 @@ const actions = {
 
 	/**
 	 * Resets the store to it's original state.
+	 *
 	 * @param {object} context default store context;
 	 */
 	purgeConversationsStore(context) {

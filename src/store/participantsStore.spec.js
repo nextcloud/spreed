@@ -88,7 +88,7 @@ describe('participantsStore', () => {
 			expect(removeAttendeeFromConversation).not.toHaveBeenCalled()
 		})
 
-		test('removes participant', async() => {
+		test('removes participant', async () => {
 			store.dispatch('addParticipant', {
 				token: TOKEN, participant: { attendeeId: 1 },
 			})
@@ -209,6 +209,10 @@ describe('participantsStore', () => {
 				expect(promoteToModerator).not.toHaveBeenCalled()
 			})
 
+			/**
+			 * @param participantType
+			 * @param expectedParticipantType
+			 */
 			async function testPromoteModerator(participantType, expectedParticipantType) {
 				promoteToModerator.mockResolvedValue()
 
@@ -234,10 +238,10 @@ describe('participantsStore', () => {
 				])
 			}
 
-			test('promotes given user to moderator', async() => {
+			test('promotes given user to moderator', async () => {
 				await testPromoteModerator(PARTICIPANT.TYPE.USER, PARTICIPANT.TYPE.MODERATOR)
 			})
-			test('promotes given guest to guest moderator', async() => {
+			test('promotes given guest to guest moderator', async () => {
 				await testPromoteModerator(PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR)
 			})
 		})
@@ -252,6 +256,10 @@ describe('participantsStore', () => {
 				expect(demoteFromModerator).not.toHaveBeenCalled()
 			})
 
+			/**
+			 * @param participantType
+			 * @param expectedParticipantType
+			 */
 			async function testDemoteModerator(participantType, expectedParticipantType) {
 				promoteToModerator.mockResolvedValue()
 
@@ -277,10 +285,10 @@ describe('participantsStore', () => {
 				])
 			}
 
-			test('demotes given moderator to user', async() => {
+			test('demotes given moderator to user', async () => {
 				await testDemoteModerator(PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.USER)
 			})
-			test('promotes given guest to guest moderator', async() => {
+			test('promotes given guest to guest moderator', async () => {
 				await testDemoteModerator(PARTICIPANT.TYPE.GUEST_MODERATOR, PARTICIPANT.TYPE.GUEST)
 			})
 		})
@@ -324,7 +332,7 @@ describe('participantsStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('joins call', async() => {
+		test('joins call', async () => {
 			store.dispatch('addParticipant', {
 				token: TOKEN,
 				participant: {
@@ -366,14 +374,14 @@ describe('participantsStore', () => {
 
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 
-			EventBus.$emit('Signaling::usersInRoom')
+			EventBus.$emit('signaling-users-in-room')
 
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
 		})
 	})
 
-	test('joins and leaves call', async() => {
+	test('joins and leaves call', async () => {
 		store.dispatch('addParticipant', {
 			token: TOKEN,
 			participant: {
@@ -415,7 +423,7 @@ describe('participantsStore', () => {
 
 		expect(store.getters.isConnecting(TOKEN)).toBe(true)
 
-		EventBus.$emit('Signaling::usersInRoom')
+		EventBus.$emit('signaling-users-in-room')
 
 		expect(store.getters.isInCall(TOKEN)).toBe(true)
 		expect(store.getters.isConnecting(TOKEN)).toBe(false)
@@ -443,7 +451,7 @@ describe('participantsStore', () => {
 		])
 	})
 
-	test('resends invitations', async() => {
+	test('resends invitations', async () => {
 		resendInvitations.mockResolvedValue()
 
 		await store.dispatch('resendInvitations', {
@@ -461,7 +469,7 @@ describe('participantsStore', () => {
 
 		beforeEach(() => {
 			joinedConversationEventMock = jest.fn()
-			EventBus.$once('joinedConversation', joinedConversationEventMock)
+			EventBus.$once('joined-conversation', joinedConversationEventMock)
 
 			getParticipantIdentifierMock = jest.fn().mockReturnValue({
 				attendeeId: 1,
@@ -484,7 +492,7 @@ describe('participantsStore', () => {
 			})
 		})
 
-		test('joins conversation', async() => {
+		test('joins conversation', async () => {
 			store = new Vuex.Store(testStoreConfig)
 			const response = {
 				status: 200,
@@ -512,7 +520,7 @@ describe('participantsStore', () => {
 			expect(joinedConversationEventMock).toHaveBeenCalledWith({ token: TOKEN })
 		})
 
-		test('force join conversation', async() => {
+		test('force join conversation', async () => {
 			store = new Vuex.Store(testStoreConfig)
 			const updatedParticipantData = Object.assign({}, participantData, { sessionId: 'another-session-id' })
 			const response = {
@@ -560,6 +568,10 @@ describe('participantsStore', () => {
 				restoreConsole()
 			})
 
+			/**
+			 * @param lastPingAge
+			 * @param inCall
+			 */
 			function prepareTestJoinWithMaxPingAge(lastPingAge, inCall) {
 				const mockDate = new Date('2020-01-01 20:00:00')
 				participantData.lastPing = mockDate.getTime() / 1000 - lastPingAge
@@ -580,7 +592,7 @@ describe('participantsStore', () => {
 			}
 
 			describe('when not in call', () => {
-				test('forces join when max ping age > 40s', async() => {
+				test('forces join when max ping age > 40s', async () => {
 					prepareTestJoinWithMaxPingAge(41, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
@@ -593,7 +605,7 @@ describe('participantsStore', () => {
 					expect(testStoreConfig.actions.forceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				})
 
-				test('shows force when max ping age <= 40s', async() => {
+				test('shows force when max ping age <= 40s', async () => {
 					prepareTestJoinWithMaxPingAge(40, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
@@ -608,7 +620,7 @@ describe('participantsStore', () => {
 			})
 
 			describe('when in call', () => {
-				test('forces join when max ping age > 60s', async() => {
+				test('forces join when max ping age > 60s', async () => {
 					prepareTestJoinWithMaxPingAge(61, PARTICIPANT.CALL_FLAG.IN_CALL)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
@@ -621,7 +633,7 @@ describe('participantsStore', () => {
 					expect(testStoreConfig.actions.forceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				})
 
-				test('shows force when max ping age <= 60s', async() => {
+				test('shows force when max ping age <= 60s', async () => {
 					prepareTestJoinWithMaxPingAge(60, PARTICIPANT.CALL_FLAG.IN_CALL)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
@@ -637,7 +649,7 @@ describe('participantsStore', () => {
 		})
 	})
 
-	test('leaves conversation', async() => {
+	test('leaves conversation', async () => {
 		leaveConversation.mockResolvedValue()
 
 		await store.dispatch('leaveConversation', { token: TOKEN })
@@ -645,7 +657,7 @@ describe('participantsStore', () => {
 		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 	})
 
-	test('removes current user from conversation', async() => {
+	test('removes current user from conversation', async () => {
 		removeCurrentUserFromConversation.mockResolvedValue()
 
 		testStoreConfig = cloneDeep(participantsStore)

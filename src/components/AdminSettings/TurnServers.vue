@@ -47,7 +47,7 @@
 					:protocols.sync="servers[index].protocols"
 					:index="index"
 					:loading="loading"
-					@removeServer="removeServer"
+					@remove-server="removeServer"
 					@update:schemes="debounceUpdateServers"
 					@update:server="debounceUpdateServers"
 					@update:secret="debounceUpdateServers"

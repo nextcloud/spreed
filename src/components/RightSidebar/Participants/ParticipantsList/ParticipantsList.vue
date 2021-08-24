@@ -28,7 +28,7 @@
 				:participant="item"
 				:is-selectable="participantsSelectable"
 				:show-user-status="showUserStatus"
-				@clickParticipant="handleClickParticipant" />
+				@click-participant="handleClickParticipant" />
 		</ul>
 		<template v-if="loading">
 			<LoadingParticipant

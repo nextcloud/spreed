@@ -665,7 +665,7 @@ export default {
 
 	watch: {
 		showJoinCallButton() {
-			EventBus.$emit('scrollChatToBottom')
+			EventBus.$emit('scroll-chat-to-bottom')
 		},
 	},
 
@@ -705,8 +705,8 @@ export default {
 		},
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
-				EventBus.$emit('retryMessage', this.id)
-				EventBus.$emit('focusChatInput')
+				EventBus.$emit('retry-message', this.id)
+				EventBus.$emit('focus-chat-input')
 			}
 		},
 		handleReply() {
@@ -722,7 +722,7 @@ export default {
 				messageParameters: this.messageParameters,
 				token: this.token,
 			})
-			EventBus.$emit('focusChatInput')
+			EventBus.$emit('focus-chat-input')
 		},
 		async handleDelete() {
 			this.isDeleting = true

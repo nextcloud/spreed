@@ -108,7 +108,7 @@
 					v-if="!hasText && canUploadFiles"
 					:disabled="disabled"
 					@recording="handleRecording"
-					@audioFile="handleAudioFile" />
+					@audio-file="handleAudioFile" />
 
 				<button
 					v-else
@@ -185,7 +185,7 @@ export default {
 		/**
 		 * The current conversation token
 		 *
-		 * @returns {String}
+		 * @return {string}
 		 */
 		token() {
 			return this.$store.getters.getToken()
@@ -274,15 +274,15 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('uploadStart', this.handleUploadStart)
-		EventBus.$on('retryMessage', this.handleRetryMessage)
+		EventBus.$on('upload-start', this.handleUploadStart)
+		EventBus.$on('retry-message', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
 		// this.startRecording()
 	},
 
 	beforeDestroy() {
-		EventBus.$off('uploadStart', this.handleUploadStart)
-		EventBus.$off('retryMessage', this.handleRetryMessage)
+		EventBus.$off('upload-start', this.handleUploadStart)
+		EventBus.$off('retry-message', this.handleRetryMessage)
 	},
 
 	methods: {
@@ -314,8 +314,8 @@ export default {
 		 *
 		 * The parsed text is also trimmed.
 		 *
-		 * @param {String} text the raw text
-		 * @returns {String} the parsed text
+		 * @param {string} text the raw text
+		 * @return {string} the parsed text
 		 */
 		rawToParsed(text) {
 			text = text.replace(/<br>/g, '\n')
@@ -360,7 +360,7 @@ export default {
 				this.text = ''
 				this.parsedText = ''
 				// Scrolls the message list to the last added message
-				EventBus.$emit('smoothScrollChatToBottom')
+				EventBus.$emit('smooth-scroll-chat-to-bottom')
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
 				await this.$store.dispatch('postNewMessage', temporaryMessage)
@@ -397,7 +397,7 @@ export default {
 
 		async handleFileShare() {
 			picker.pick()
-				.then(async(path) => {
+				.then(async (path) => {
 					console.debug(`path ${path} selected for sharing`)
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
@@ -440,7 +440,6 @@ export default {
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {bool} rename whether to rename the files
 		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
-
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage) {
 			// Create a unique id for the upload operation

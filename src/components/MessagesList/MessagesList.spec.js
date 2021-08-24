@@ -286,6 +286,9 @@ describe('MessagesList.vue', () => {
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
 		})
 
+		/**
+		 * @param messages
+		 */
 		function testNotGrouped(messages) {
 			messagesListMock.mockReturnValue(messages)
 

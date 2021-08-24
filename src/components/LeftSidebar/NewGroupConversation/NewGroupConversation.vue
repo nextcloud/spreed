@@ -48,7 +48,7 @@
 						v-if="page === 0">
 						<SetConversationName
 							v-model="conversationNameInput"
-							@clickEnter="handleEnter" />
+							@click-enter="handleEnter" />
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
@@ -205,11 +205,11 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('NewGroupConversationDialog', this.showModalForItem)
+		EventBus.$on('new-group-conversation-dialog', this.showModalForItem)
 	},
 
 	destroyed() {
-		EventBus.$off('NewGroupConversationDialog', this.showModalForItem)
+		EventBus.$off('new-group-conversation-dialog', this.showModalForItem)
 	},
 
 	methods: {
@@ -226,9 +226,11 @@ export default {
 
 			this.showModal()
 		},
-		/** Reinitialise the component to it's initial state. This is necessary
+		/**
+		 * Reinitialise the component to it's initial state. This is necessary
 		 * because once the component is mounted it's data would persist even if
-		 * the modal closes */
+		 * the modal closes
+		 */
 		closeModal() {
 			this.modal = false
 			this.page = 0
@@ -251,8 +253,10 @@ export default {
 		handleClickBack() {
 			this.page = 0
 		},
-		/** Handles the creation of the group conversation, adds the seleced
-		 * participants to it and routes to it */
+		/**
+		 * Handles the creation of the group conversation, adds the seleced
+		 * participants to it and routes to it
+		 */
 		async handleCreateConversation() {
 			this.page = 2
 
@@ -320,16 +324,20 @@ export default {
 				this.closeModal()
 			}
 		},
-		/** Creates a new private conversation, adds it to the store and sets
-		 * the local token value to the newly created conversation's token */
+		/**
+		 * Creates a new private conversation, adds it to the store and sets
+		 * the local token value to the newly created conversation's token
+		 */
 		async createPrivateConversation() {
 			const response = await createPrivateConversation(this.conversationName)
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.token = conversation.token
 		},
-		/** Creates a new public conversation, adds it to the store and sets
-		 * the local token value to the newly created conversation's token */
+		/**
+		 * Creates a new public conversation, adds it to the store and sets
+		 * the local token value to the newly created conversation's token
+		 */
 		async createPublicConversation() {
 			const response = await createPublicConversation(this.conversationName)
 			const conversation = response.data.ocs.data

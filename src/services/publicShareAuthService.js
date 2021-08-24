@@ -2,7 +2,7 @@
  *
  * @copyright Copyright (c) 2020, Daniel Calviño Sánchez <danxuliu@gmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,8 +25,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Gets the public share auth conversation token for a given share token.
  *
- * @param {String} shareToken the token of the share
- * @returns {String} the conversation token
+ * @param {string} shareToken the token of the share
+ * @return {string} the conversation token
  * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareAuthConversationToken = async function(shareToken) {

@@ -66,7 +66,7 @@ describe('RoomSelector.vue', () => {
 		jest.clearAllMocks()
 	})
 
-	test('renders sorted conversation list fetched from server', async() => {
+	test('renders sorted conversation list fetched from server', async () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
@@ -90,7 +90,7 @@ describe('RoomSelector.vue', () => {
 		expect(list.at(1).text()).toBe('zzz')
 		expect(list.at(2).text()).toBe('abc')
 	})
-	test('excludes non-postable conversations', async() => {
+	test('excludes non-postable conversations', async () => {
 		const wrapper = shallowMount(RoomSelector, {
 			propsData: {
 				showPostableOnly: true,
@@ -117,7 +117,7 @@ describe('RoomSelector.vue', () => {
 		expect(list.at(0).text()).toBe('conversation one')
 		expect(list.at(1).text()).toBe('zzz')
 	})
-	test('emits select event on select', async() => {
+	test('emits select event on select', async () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(mockAxios.get).toHaveBeenCalledWith(
@@ -145,7 +145,7 @@ describe('RoomSelector.vue', () => {
 		expect(eventHandler).toHaveBeenCalledWith('token-3')
 	})
 
-	test('emits close event', async() => {
+	test('emits close event', async () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		const eventHandler = jest.fn()

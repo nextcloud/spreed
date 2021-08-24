@@ -103,7 +103,8 @@ export default {
 
 		/**
 		 * Object containing all the mentions in the message that will be forwarded
-		 * @returns {Object} mentions.
+		 *
+		 * @return {object} mentions.
 		 */
 		mentions() {
 			const mentions = {}

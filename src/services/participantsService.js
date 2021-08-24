@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -37,7 +37,7 @@ import {
  * @param {options} options request options;
  * @param {bool} forceJoin whether to force join;
  */
-const joinConversation = async({ token, forceJoin = false }, options) => {
+const joinConversation = async ({ token, forceJoin = false }, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {
 		force: forceJoin,
 	}, options)
@@ -54,7 +54,7 @@ const joinConversation = async({ token, forceJoin = false }, options) => {
  *
  * @param {string} token The conversation token;
  */
-const rejoinConversation = async(token) => {
+const rejoinConversation = async (token) => {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }))
 }
 
@@ -87,6 +87,7 @@ const leaveConversationSync = function(token) {
 
 /**
  * Add a participant to a conversation.
+ *
  * @param {token} token the conversation token.
  * @param {string} newParticipant the id of the new participant
  * @param {string} source the source Source of the participant as returned by the autocomplete suggestion endpoint (default is users)
@@ -118,19 +119,19 @@ const removeAttendeeFromConversation = async function(token, attendeeId) {
 	return response
 }
 
-const promoteToModerator = async(token, options) => {
+const promoteToModerator = async (token, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), options)
 	return response
 }
 
-const demoteFromModerator = async(token, options) => {
+const demoteFromModerator = async (token, options) => {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), {
 		params: options,
 	})
 	return response
 }
 
-const fetchParticipants = async(token, options) => {
+const fetchParticipants = async (token, options) => {
 	options = options || {}
 	options.params = options.params || {}
 	options.params.includeStatus = true
@@ -138,7 +139,7 @@ const fetchParticipants = async(token, options) => {
 	return response
 }
 
-const setGuestUserName = async(token, userName) => {
+const setGuestUserName = async (token, userName) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest/{token}/name', { token }), {
 		displayName: userName,
 	})
@@ -152,7 +153,7 @@ const setGuestUserName = async(token, userName) => {
  * @param {string} token conversation token
  * @param {int} attendeeId attendee id to target, or null for all
  */
-const resendInvitations = async(token, { attendeeId = null }) => {
+const resendInvitations = async (token, { attendeeId = null }) => {
 	await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/resend-invitations', { token }), {
 		attendeeId,
 	})

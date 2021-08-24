@@ -1,15 +1,21 @@
 /**
  * @copyright Copyright (c) 2019 Daniel Calviño Sánchez <danxuliu@gmail.com>
+ *
  * @copyright Copyright (c) 2019 Ivan Sein <ivan@nextcloud.com>
+ *
  * @copyright Copyright (c) 2019 Joachim Bauch <bauch@struktur.de>
+ *
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
+ *
  * @author Ivan Sein <ivan@nextcloud.com>
+ *
  * @author Joachim Bauch <bauch@struktur.de>
+ *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license GNU AGPL version 3 or later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -51,12 +57,20 @@ let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
 let startedWithMedia
 
+/**
+ * @param a
+ * @param b
+ */
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
 		return b.indexOf(i) < 0
 	})
 }
 
+/**
+ * @param signaling
+ * @param sessionId
+ */
 function createScreensharingPeer(signaling, sessionId) {
 	const currentSessionId = signaling.getSessionId()
 	const useMcu = signaling.hasFeature('mcu')
@@ -120,6 +134,9 @@ function createScreensharingPeer(signaling, sessionId) {
 	}
 }
 
+/**
+ * @param signaling
+ */
 function checkStartPublishOwnPeer(signaling) {
 	'use strict'
 	const currentSessionId = signaling.getSessionId()
@@ -174,6 +191,9 @@ function checkStartPublishOwnPeer(signaling) {
 	}, 10000)
 }
 
+/**
+ *
+ */
 function sendCurrentMediaState() {
 	if (!webrtc.webrtc.isVideoEnabled()) {
 		webrtc.webrtc.emit('videoOff')
@@ -190,10 +210,16 @@ function sendCurrentMediaState() {
 // TODO The participant name should be got from the participant list, but it is
 // not currently possible to associate a Nextcloud ID with a standalone
 // signaling ID for guests.
+/**
+ *
+ */
 function sendCurrentNick() {
 	webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
 }
 
+/**
+ * @param timeout
+ */
 function sendCurrentStateWithRepetition(timeout) {
 	if (!timeout) {
 		timeout = 0
@@ -220,6 +246,9 @@ function sendCurrentStateWithRepetition(timeout) {
 	}, timeout)
 }
 
+/**
+ * @param user
+ */
 function userHasStreams(user) {
 	let flags = user
 	if (Object.prototype.hasOwnProperty.call(flags, 'inCall')) {
@@ -230,6 +259,11 @@ function userHasStreams(user) {
 	return (flags & REQUIRED_FLAGS) !== 0
 }
 
+/**
+ * @param signaling
+ * @param newUsers
+ * @param disconnectedSessionIds
+ */
 function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	'use strict'
 	const currentSessionId = signaling.getSessionId()
@@ -394,6 +428,10 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	}
 }
 
+/**
+ * @param signaling
+ * @param users
+ */
 function usersInCallChanged(signaling, users) {
 	const previousSelfInCall = selfInCall
 
@@ -447,6 +485,11 @@ function usersInCallChanged(signaling, users) {
 	}
 }
 
+/**
+ * @param signaling
+ * @param _callParticipantCollection
+ * @param _localCallParticipantModel
+ */
 export default function initWebRtc(signaling, _callParticipantCollection, _localCallParticipantModel) {
 	callParticipantCollection = _callParticipantCollection
 	localCallParticipantModel = _localCallParticipantModel
@@ -611,6 +654,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.sendDirectlyToAll(channel, message, payload)
 	}
 
+	/**
+	 * @param peer
+	 */
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the state.
 		if (!signaling.hasFeature('mcu')) {
@@ -627,6 +673,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	}
 
+	/**
+	 * @param peer
+	 */
 	function handleIceConnectionStateDisconnected(peer) {
 		setTimeout(function() {
 			if (peer.pc.iceConnectionState !== 'disconnected') {
@@ -653,6 +702,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}, 5000)
 	}
 
+	/**
+	 * @param peer
+	 */
 	function handleIceConnectionStateFailed(peer) {
 		if (!showedTURNWarning && !signaling.settings.turnservers.length) {
 			showError(
@@ -695,6 +747,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	}
 
+	/**
+	 * @param peer
+	 */
 	function setHandlerForIceConnectionStateChange(peer) {
 		// Initialize ice restart counter for peer
 		spreedPeerConnectionTable[peer.id] = 0
@@ -731,6 +786,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	/**
+	 * @param peer
+	 */
 	function setHandlerForOwnIceConnectionStateChange(peer) {
 		peer.pc.addEventListener('iceconnectionstatechange', function() {
 			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
@@ -791,6 +849,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		signaling.forceReconnect(true, flags)
 	}
 
+	/**
+	 * @param peer
+	 */
 	function setHandlerForNegotiationNeeded(peer) {
 		peer.pc.addEventListener('negotiationneeded', function() {
 			// Negotiation needed will be first triggered before the connection
@@ -951,6 +1012,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	/**
+	 * @param peer
+	 * @param track
+	 * @param mediaType
+	 */
 	function checkPeerMedia(peer, track, mediaType) {
 		return new Promise((resolve, reject) => {
 			peer.pc.getStats(track).then(function(stats) {
@@ -983,16 +1049,26 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	/**
+	 * @param peer
+	 */
 	function stopPeerCheckAudioMedia(peer) {
 		clearInterval(peer.check_audio_interval)
 		peer.check_audio_interval = null
 	}
 
+	/**
+	 * @param peer
+	 */
 	function stopPeerCheckVideoMedia(peer) {
 		clearInterval(peer.check_video_interval)
 		peer.check_video_interval = null
 	}
 
+	/**
+	 * @param peerId
+	 * @param mediaType
+	 */
 	function stopPeerIdCheckMediaType(peerId, mediaType) {
 		// There should be just one video peer with that id, but iterating is
 		// safer.
@@ -1015,11 +1091,18 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	/**
+	 * @param peer
+	 */
 	function stopPeerCheckMedia(peer) {
 		stopPeerCheckAudioMedia(peer)
 		stopPeerCheckVideoMedia(peer)
 	}
 
+	/**
+	 * @param peer
+	 * @param stream
+	 */
 	function startPeerCheckMedia(peer, stream) {
 		stopPeerCheckMedia(peer)
 		peer.check_video_interval = setInterval(function() {

@@ -6,6 +6,9 @@ const webrtcSupport = require('webrtcsupport')
 const attachMediaStream = require('attachmediastream')
 const mockconsole = require('mockconsole')
 
+/**
+ * @param opts
+ */
 function SimpleWebRTC(opts) {
 	const self = this
 	const options = opts || {}

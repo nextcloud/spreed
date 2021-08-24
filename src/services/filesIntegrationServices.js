@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,9 +26,10 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Gets the conversation token for a given file id
  *
- * @param {Object} .fileId the id of the file
- * @param {Object} options unused
- * @returns {String} the conversation token
+ * @param {object} .fileId the id of the file
+ * @param options.fileId
+ * @param {object} options unused
+ * @return {string} the conversation token
  */
 const getFileConversation = async function({ fileId }, options) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/file/{fileId}', { fileId }))
@@ -38,8 +39,8 @@ const getFileConversation = async function({ fileId }, options) {
 /**
  * Gets the public share conversation token for a given share token.
  *
- * @param {String} shareToken the token of the share
- * @returns {String} the conversation token
+ * @param {string} shareToken the token of the share
+ * @return {string} the conversation token
  * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareConversationData = async function(shareToken) {

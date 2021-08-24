@@ -135,19 +135,19 @@ export default {
 	},
 
 	beforeMount() {
-		EventBus.$on('routeChange', this.onRouteChange)
-		EventBus.$on('joinedConversation', this.onJoinedConversation)
+		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$on('joined-conversation', this.onJoinedConversation)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
 		// periodically gets a hash of all online sessions?
-		EventBus.$on('Signaling::participantListChanged', this.debounceUpdateParticipants)
+		EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
 	},
 
 	beforeDestroy() {
-		EventBus.$off('routeChange', this.onRouteChange)
-		EventBus.$off('joinedConversation', this.onJoinedConversation)
-		EventBus.$off('Signaling::participantListChanged', this.debounceUpdateParticipants)
+		EventBus.$off('route-change', this.onRouteChange)
+		EventBus.$off('joined-conversation', this.onJoinedConversation)
+		EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -234,7 +234,8 @@ export default {
 
 		/**
 		 * Add the selected group/user/circle to the conversation
-		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 *
+		 * @param {object} item The autocomplete suggestion to start a conversation with
 		 * @param {string} item.id The ID of the target
 		 * @param {string} item.source The source of the target
 		 */

@@ -3,7 +3,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,8 +29,9 @@ const state = {
 const getters = {
 	/**
 	 * Gets the participants array
+	 *
 	 * @param {object} state the state object.
-	 * @returns {array} the participants array (if there are participants in the store)
+	 * @return {Array} the participants array (if there are participants in the store)
 	 */
 	getGuestName: (state) => (token, actorId) => {
 		if (state.guestNames[token] && state.guestNames[token][actorId]) {
@@ -43,6 +44,7 @@ const getters = {
 const mutations = {
 	/**
 	 * Adds a guest name to the store
+	 *
 	 * @param {object} state current store state
 	 * @param {boolean} noUpdate Only set the guest name if it was not set before
 	 * @param {string} token the token of the conversation

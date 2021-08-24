@@ -22,6 +22,10 @@ describe('Participant.vue', () => {
 	let testStoreConfig
 	let tooltipMock
 
+	/**
+	 * @param wrapper
+	 * @param htmlEl
+	 */
 	async function getLastTooltipValue(wrapper, htmlEl) {
 		tooltipMock.mockClear()
 		await wrapper.vm.forceEnableTooltips()
@@ -76,6 +80,10 @@ describe('Participant.vue', () => {
 		jest.clearAllMocks()
 	})
 
+	/**
+	 * @param participant
+	 * @param showUserStatus
+	 */
 	function mountParticipant(participant, showUserStatus = false) {
 		return shallowMount(Participant, {
 			localVue,
@@ -173,6 +181,9 @@ describe('Participant.vue', () => {
 	})
 
 	describe('user name', () => {
+		/**
+		 * @param wrapper
+		 */
 		async function getUserTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__user-name').element
 			return getLastTooltipValue(wrapper, tooltipEl)
@@ -183,34 +194,34 @@ describe('Participant.vue', () => {
 			participant.statusMessage = ''
 		})
 
-		test('renders plain user name for regular user', async() => {
+		test('renders plain user name for regular user', async () => {
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.text()).toBe('Alice')
 			expect(await getUserTooltip(wrapper)).toBe('Alice')
 		})
 
-		test('renders guest suffix for guests', async() => {
+		test('renders guest suffix for guests', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (guest)')
 		})
 
-		test('renders moderator suffix for moderators', async() => {
+		test('renders moderator suffix for moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.MODERATOR
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator)')
 		})
 
-		test('renders guest moderator suffix for guest moderators', async() => {
+		test('renders guest moderator suffix for guest moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)\s+\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator) (guest)')
 		})
 
-		test('renders bot suffix for bots', async() => {
+		test('renders bot suffix for bots', async () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			participant.actorId = ATTENDEE.BRIDGE_BOT_ID
 			const wrapper = mountParticipant(participant)
@@ -220,12 +231,15 @@ describe('Participant.vue', () => {
 	})
 
 	describe('user status', () => {
+		/**
+		 * @param wrapper
+		 */
 		async function getStatusTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__status>span').element
 			return getLastTooltipValue(wrapper, tooltipEl)
 		}
 
-		test('renders user status', async() => {
+		test('renders user status', async () => {
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.find('.participant-row__status').text()).toBe('🌧️ rainy')
 			expect(await getStatusTooltip(wrapper)).toBe('🌧️ rainy')
@@ -238,7 +252,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.find('.participant-row__status').exists()).toBe(false)
 		})
 
-		test('renders dnd status', async() => {
+		test('renders dnd status', async () => {
 			participant.statusMessage = ''
 			participant.status = 'dnd'
 			const wrapper = mountParticipant(participant)
@@ -246,7 +260,7 @@ describe('Participant.vue', () => {
 			expect(await getStatusTooltip(wrapper)).toBe('🌧️ Do not disturb')
 		})
 
-		test('renders away status', async() => {
+		test('renders away status', async () => {
 			participant.statusMessage = ''
 			participant.status = 'away'
 			const wrapper = mountParticipant(participant)
@@ -258,6 +272,9 @@ describe('Participant.vue', () => {
 	describe('call icons', () => {
 		let getParticipantRaisedHandMock
 
+		/**
+		 * @param wrapper
+		 */
 		async function getCallIconTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__callstate-icon').element
 			return getLastTooltipValue(wrapper, tooltipEl)
@@ -278,7 +295,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(Hand).exists()).toBe(false)
 		})
-		test('renders video call icon', async() => {
+		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.findComponent(Video).exists()).toBe(true)
@@ -288,7 +305,7 @@ describe('Participant.vue', () => {
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined with video')
 		})
-		test('renders audio call icon', async() => {
+		test('renders audio call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
@@ -298,7 +315,7 @@ describe('Participant.vue', () => {
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined with audio')
 		})
-		test('renders phone call icon', async() => {
+		test('renders phone call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_PHONE
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
@@ -308,7 +325,7 @@ describe('Participant.vue', () => {
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined via phone')
 		})
-		test('renders hand raised icon', async() => {
+		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
@@ -322,7 +339,7 @@ describe('Participant.vue', () => {
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Raised their hand')
 		})
-		test('renders video call icon when joined with multiple', async() => {
+		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
 			const wrapper = mountParticipant(participant)
 			expect(wrapper.findComponent(Video).exists()).toBe(true)
@@ -365,6 +382,9 @@ describe('Participant.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
+			/**
+			 *
+			 */
 			async function testCanDemote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Demote from moderator')
@@ -378,49 +398,52 @@ describe('Participant.vue', () => {
 				})
 			}
 
+			/**
+			 *
+			 */
 			async function testCannotDemote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Demote to moderator')
 				expect(actionButton.exists()).toBe(false)
 			}
 
-			test('allows a moderator to demote a moderator', async() => {
+			test('allows a moderator to demote a moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCanDemote()
 			})
 
-			test('allows a moderator to demote a guest moderator', async() => {
+			test('allows a moderator to demote a guest moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCanDemote()
 			})
 
-			test('allows a guest moderator to demote a moderator', async() => {
+			test('allows a guest moderator to demote a moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCanDemote()
 			})
 
-			test('allows a guest moderator to demote a guest moderator', async() => {
+			test('allows a guest moderator to demote a guest moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCanDemote()
 			})
 
-			test('does not allow to demote an owner', async() => {
+			test('does not allow to demote an owner', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.OWNER
 				await testCannotDemote()
 			})
 
-			test('does not allow demoting groups', async() => {
+			test('does not allow demoting groups', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.GROUPS
 				await testCannotDemote()
 			})
 
-			test('does not allow demoting self', async() => {
+			test('does not allow demoting self', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
@@ -428,7 +451,7 @@ describe('Participant.vue', () => {
 				await testCannotDemote()
 			})
 
-			test('does not allow demoting self as guest', async() => {
+			test('does not allow demoting self as guest', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
@@ -436,7 +459,7 @@ describe('Participant.vue', () => {
 				await testCannotDemote()
 			})
 
-			test('does not allow a non-moderator to demote', async() => {
+			test('does not allow a non-moderator to demote', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				await testCannotDemote()
 			})
@@ -451,6 +474,9 @@ describe('Participant.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
+			/**
+			 *
+			 */
 			async function testCanPromote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Promote to moderator')
@@ -464,66 +490,69 @@ describe('Participant.vue', () => {
 				})
 			}
 
+			/**
+			 *
+			 */
 			async function testCannotPromote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Promote to moderator')
 				expect(actionButton.exists()).toBe(false)
 			}
 
-			test('allows a moderator to promote a user to moderator', async() => {
+			test('allows a moderator to promote a user to moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCanPromote()
 			})
 
-			test('allows a moderator to promote a self-joined user to moderator', async() => {
+			test('allows a moderator to promote a self-joined user to moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.USER_SELF_JOINED
 				await testCanPromote()
 			})
 
-			test('allows a moderator to promote a guest to moderator', async() => {
+			test('allows a moderator to promote a guest to moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST
 				await testCanPromote()
 			})
 
-			test('allows a guest moderator to promote a user to moderator', async() => {
+			test('allows a guest moderator to promote a user to moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCanPromote()
 			})
 
-			test('allows a guest moderator to promote a guest to moderator', async() => {
+			test('allows a guest moderator to promote a guest to moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST
 				await testCanPromote()
 			})
 
-			test('does not allow to promote a moderator', async() => {
+			test('does not allow to promote a moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCannotPromote()
 			})
 
-			test('does not allow to promote a guest moderator', async() => {
+			test('does not allow to promote a guest moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCannotPromote()
 			})
 
-			test('does not allow promoting groups', async() => {
+			test('does not allow promoting groups', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.GROUPS
 				await testCannotPromote()
 			})
 
-			test('does not allow promoting the bridge bot', async() => {
+			test('does not allow promoting the bridge bot', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				participant.actorId = ATTENDEE.BRIDGE_BOT_ID
 				await testCannotPromote()
 			})
 
-			test('does not allow a non-moderator to promote', async() => {
+			test('does not allow a non-moderator to promote', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				await testCannotPromote()
 			})
@@ -538,7 +567,7 @@ describe('Participant.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
-			test('allows moderators to resend invitations for email participants', async() => {
+			test('allows moderators to resend invitations for email participants', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 				const wrapper = mountParticipant(participant)
@@ -553,14 +582,14 @@ describe('Participant.vue', () => {
 				})
 			})
 
-			test('does not allow non-moderators to resend invitations', async() => {
+			test('does not allow non-moderators to resend invitations', async () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(false)
 			})
 
-			test('does not display resend invitations action when not an email actor', async() => {
+			test('does not display resend invitations action when not an email actor', async () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Resend invitation')
@@ -577,6 +606,9 @@ describe('Participant.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
+			/**
+			 * @param buttonText
+			 */
 			async function testCanRemove(buttonText = 'Remove participant') {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, buttonText)
@@ -590,49 +622,52 @@ describe('Participant.vue', () => {
 				})
 			}
 
+			/**
+			 *
+			 */
 			async function testCannotRemove() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findActionButton(wrapper, 'Remove participant')
 				expect(actionButton.exists()).toBe(false)
 			}
 
-			test('allows a moderator to remove a moderator', async() => {
+			test('allows a moderator to remove a moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCanRemove()
 			})
 
-			test('allows a moderator to remove a guest moderator', async() => {
+			test('allows a moderator to remove a guest moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCanRemove()
 			})
 
-			test('allows a guest moderator to remove a moderator', async() => {
+			test('allows a guest moderator to remove a moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
 				await testCanRemove()
 			})
 
-			test('allows a guest moderator to remove a guest moderator', async() => {
+			test('allows a guest moderator to remove a guest moderator', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				await testCanRemove()
 			})
 
-			test('allows a moderator to remove groups', async() => {
+			test('allows a moderator to remove groups', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.GROUPS
 				await testCanRemove('Remove group and members')
 			})
 
-			test('does not allow to remove an owner', async() => {
+			test('does not allow to remove an owner', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.OWNER
 				await testCannotRemove()
 			})
 
-			test('does not allow removing self', async() => {
+			test('does not allow removing self', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
@@ -640,7 +675,7 @@ describe('Participant.vue', () => {
 				await testCannotRemove()
 			})
 
-			test('does not allow removing self as guest', async() => {
+			test('does not allow removing self as guest', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
@@ -648,12 +683,15 @@ describe('Participant.vue', () => {
 				await testCannotRemove()
 			})
 
-			test('does not allow a non-moderator to remove', async() => {
+			test('does not allow a non-moderator to remove', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				await testCannotRemove()
 			})
 		})
 		describe('dial-in PIN', () => {
+			/**
+			 *
+			 */
 			function testPinVisible() {
 				const wrapper = mountParticipant(participant)
 				let actionTexts = wrapper.findAllComponents(ActionText)
@@ -716,22 +754,22 @@ describe('Participant.vue', () => {
 			expect(wrapper.findAllComponents(ActionButton).exists()).toBe(false)
 		})
 
-		test('triggers event when clicking', async() => {
+		test('triggers event when clicking', async () => {
 			const eventHandler = jest.fn()
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('clickParticipant', eventHandler)
+			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 
 			expect(eventHandler).toHaveBeenCalledWith(participant)
 		})
 
-		test('does not trigger click event when not a search result', async() => {
+		test('does not trigger click event when not a search result', async () => {
 			const eventHandler = jest.fn()
 			delete participant.label
 			delete participant.source
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('clickParticipant', eventHandler)
+			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 

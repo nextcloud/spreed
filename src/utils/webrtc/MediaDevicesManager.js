@@ -2,7 +2,7 @@
  *
  * @copyright Copyright (c) 2020, Daniel Calviño Sánchez (danxuliu@gmail.com)
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -176,7 +176,7 @@ MediaDevicesManager.prototype = {
 	 * technically supported by the browser but not available due to the page
 	 * being loaded in an insecure context.
 	 *
-	 * @returns {boolean} true if MediaDevices interface is supported, false
+	 * @return {boolean} true if MediaDevices interface is supported, false
 	 *          otherwise.
 	 */
 	isSupported() {
@@ -356,7 +356,7 @@ MediaDevicesManager.prototype = {
 	 *
 	 * @param {MediaStreamConstraints} constraints the constraints specifying
 	 *        the media to request
-	 * @returns {Promise} resolved with a MediaStream object when successful, or
+	 * @return {Promise} resolved with a MediaStream object when successful, or
 	 *          rejected with a DOMException in case of error
 	 */
 	getUserMedia(constraints) {

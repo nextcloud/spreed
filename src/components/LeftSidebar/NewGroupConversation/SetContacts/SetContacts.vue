@@ -49,7 +49,7 @@
 			:scrollable="true"
 			:display-search-hint="displaySearchHint"
 			:selectable="true"
-			@clickSearchHint="focusInput" />
+			@click-search-hint="focusInput" />
 	</div>
 </template>
 
@@ -97,8 +97,9 @@ export default {
 		/**
 		 * Search hint at the bottom of the participants list, displayed only if
 		 * the user is not searching
-		 * @returns {boolean}
-		 **/
+		 *
+		 * @return {boolean}
+		 */
 		displaySearchHint() {
 			return !this.contactsLoading && this.searchText === ''
 		},

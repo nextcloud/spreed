@@ -398,14 +398,14 @@ export default {
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
 	},
 	mounted() {
-		EventBus.$on('refreshPeerList', this.debounceFetchPeers)
+		EventBus.$on('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('talk:video:toggled', this.handleToggleVideo)
 	},
 	beforeDestroy() {
-		EventBus.$off('refreshPeerList', this.debounceFetchPeers)
+		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 

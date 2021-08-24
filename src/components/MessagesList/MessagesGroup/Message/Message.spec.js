@@ -86,7 +86,7 @@ describe('Message.vue', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('renders rich text message', async() => {
+		test('renders rich text message', async () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
@@ -97,7 +97,7 @@ describe('Message.vue', () => {
 			expect(message.attributes('text')).toBe('test message')
 		})
 
-		test('renders emoji as single plain text', async() => {
+		test('renders emoji as single plain text', async () => {
 			messageProps.isSingleEmoji = true
 			messageProps.message = '🌧️'
 			const wrapper = shallowMount(Message, {
@@ -268,6 +268,11 @@ describe('Message.vue', () => {
 		})
 
 		describe('rich objects', () => {
+			/**
+			 * @param message
+			 * @param messageParameters
+			 * @param expectedRichParameters
+			 */
 			function renderRichObject(message, messageParameters, expectedRichParameters) {
 				messageProps.message = message
 				messageProps.messageParameters = messageParameters
@@ -480,7 +485,7 @@ describe('Message.vue', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('renders author if first message', async() => {
+		test('renders author if first message', async () => {
 			messageProps.isFirstMessage = true
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -492,7 +497,7 @@ describe('Message.vue', () => {
 			expect(displayName.text()).toBe('user-display-name-1')
 		})
 
-		test('does not render author if not first message', async() => {
+		test('does not render author if not first message', async () => {
 			messageProps.isFirstMessage = false
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -512,7 +517,7 @@ describe('Message.vue', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('does not render actions for system messages are available', async() => {
+		test('does not render actions for system messages are available', async () => {
 			messageProps.systemMessage = 'this is a system message'
 
 			const wrapper = shallowMount(Message, {
@@ -527,7 +532,7 @@ describe('Message.vue', () => {
 			expect(actionsEl.exists()).toBe(false)
 		})
 
-		test('does not render actions for temporary messages', async() => {
+		test('does not render actions for temporary messages', async () => {
 			messageProps.isTemporary = true
 
 			const wrapper = shallowMount(Message, {
@@ -542,7 +547,7 @@ describe('Message.vue', () => {
 			expect(actionsEl.exists()).toBe(false)
 		})
 
-		test('actions become visible on mouse over', async() => {
+		test('actions become visible on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -573,7 +578,7 @@ describe('Message.vue', () => {
 		})
 
 		describe('reply action', () => {
-			test('replies to message', async() => {
+			test('replies to message', async () => {
 				const replyAction = jest.fn()
 				testStoreConfig.modules.quoteReplyStore.actions.addMessageToBeReplied = replyAction
 				store = new Vuex.Store(testStoreConfig)
@@ -607,7 +612,7 @@ describe('Message.vue', () => {
 				})
 			})
 
-			test('hides reply button when not replyable', async() => {
+			test('hides reply button when not replyable', async () => {
 				messageProps.isReplyable = false
 				store = new Vuex.Store(testStoreConfig)
 
@@ -626,7 +631,7 @@ describe('Message.vue', () => {
 		})
 
 		describe('private reply action', () => {
-			test('creates a new conversation when replying to message privately', async() => {
+			test('creates a new conversation when replying to message privately', async () => {
 				const routerPushMock = jest.fn().mockResolvedValue()
 				const createOneToOneConversation = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
@@ -667,6 +672,9 @@ describe('Message.vue', () => {
 				})
 			})
 
+			/**
+			 * @param visible
+			 */
 			function testPrivateReplyActionVisible(visible) {
 				store = new Vuex.Store(testStoreConfig)
 
@@ -683,25 +691,25 @@ describe('Message.vue', () => {
 				expect(actionButton.exists()).toBe(visible)
 			}
 
-			test('hides private reply action for own messages', async() => {
+			test('hides private reply action for own messages', async () => {
 				// using default message props which have the
 				// actor id set to the current user
 				testPrivateReplyActionVisible(false)
 			})
 
-			test('hides private reply action for one to one conversation type', async() => {
+			test('hides private reply action for one to one conversation type', async () => {
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
 				testPrivateReplyActionVisible(false)
 			})
 
-			test('hides private reply action for guest messages', async() => {
+			test('hides private reply action for guest messages', async () => {
 				messageProps.actorId = 'guest-user'
 				messageProps.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 				testPrivateReplyActionVisible(false)
 			})
 
-			test('hides private reply action when current user is a guest', async() => {
+			test('hides private reply action when current user is a guest', async () => {
 				messageProps.actorId = 'another-user'
 				getActorTypeMock.mockClear().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
 				testPrivateReplyActionVisible(false)
@@ -709,7 +717,7 @@ describe('Message.vue', () => {
 		})
 
 		describe('delete action', () => {
-			test('deletes message', async() => {
+			test('deletes message', async () => {
 				let resolveDeleteMessage
 				const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
 				testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
@@ -755,6 +763,11 @@ describe('Message.vue', () => {
 				expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
 			})
 
+			/**
+			 * @param visible
+			 * @param mockDate
+			 * @param participantType
+			 */
 			function testDeleteMessageVisible(visible, mockDate, participantType = PARTICIPANT.TYPE.USER) {
 				store = new Vuex.Store(testStoreConfig)
 
@@ -836,7 +849,7 @@ describe('Message.vue', () => {
 			})
 		})
 
-		test('marks message as unread', async() => {
+		test('marks message as unread', async () => {
 			const updateLastReadMessageAction = jest.fn().mockResolvedValueOnce()
 			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.updateLastReadMessage = updateLastReadMessageAction
@@ -888,7 +901,7 @@ describe('Message.vue', () => {
 			})
 		})
 
-		test('copies message link', async() => {
+		test('copies message link', async () => {
 			const copyTextMock = jest.fn()
 
 			// appears even with more restrictive conditions
@@ -926,7 +939,7 @@ describe('Message.vue', () => {
 			expect(copyTextMock).toHaveBeenCalledWith('http://localhost/nc-webroot/call/XXTOKENXX#message_123')
 		})
 
-		test('renders clickable custom actions', async() => {
+		test('renders clickable custom actions', async () => {
 			const handler = jest.fn()
 			const handler2 = jest.fn()
 			const actionsGetterMock = jest.fn().mockReturnValue([{
@@ -977,7 +990,7 @@ describe('Message.vue', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
-		test('lets user retry sending a timed out message', async() => {
+		test('lets user retry sending a timed out message', async () => {
 			messageProps.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -998,7 +1011,7 @@ describe('Message.vue', () => {
 			expect(reloadButtonIcon.exists()).toBe(true)
 
 			const retryEvent = jest.fn()
-			EventBus.$on('retryMessage', retryEvent)
+			EventBus.$on('retry-message', retryEvent)
 
 			await reloadButtonIcon.trigger('click')
 

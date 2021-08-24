@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -32,12 +32,13 @@ if (!window.OCA.Talk) {
 
 /**
  * Frontend message API for adding actions to talk messages.
+ *
  * @param {*} Object the wrapping object.
- * @param {String} label the action label.
+ * @param {string} label the action label.
  * @param {Function} callback the callback function. This function will receive
  * the messageAPIData object as a parameter and be triggered by a click on the
  * action.
- * @param {String} icon the action label. E.g. "icon-reply"
+ * @param {string} icon the action label. E.g. "icon-reply"
  */
 window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 	const messageAction = {
@@ -48,7 +49,7 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 	store.dispatch('addMessageAction', messageAction)
 }
 
-EventBus.$on('Signaling::joinRoom', (payload) => {
+EventBus.$on('signaling-join-room', (payload) => {
 	const token = payload[0]
 	store.dispatch('updateLastJoinedConversationToken', token)
 })

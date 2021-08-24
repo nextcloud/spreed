@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -55,6 +55,7 @@ const mutations = {
 	},
 	/**
 	 * Renaming state of the conversation
+	 *
 	 * @param {object} state current store state;
 	 * @param {boolean} boolean the state of the renaming action;
 	 */
@@ -91,6 +92,7 @@ const actions = {
 	},
 	/**
 	 * Renaming state of the conversation
+	 *
 	 * @param {object} context default store context;
 	 * @param {boolean} boolean the state of the renaming action;
 	 */

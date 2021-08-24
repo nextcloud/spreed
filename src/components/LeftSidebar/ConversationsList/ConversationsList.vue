@@ -73,14 +73,14 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('routeChange', this.onRouteChange)
-		EventBus.$once('joinedConversation', ({ token }) => {
+		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$once('joined-conversation', ({ token }) => {
 			this.scrollToConversation(token)
 		})
 	},
 
 	beforeDestroy() {
-		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('route-change', this.onRouteChange)
 	},
 
 	methods: {

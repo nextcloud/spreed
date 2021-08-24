@@ -2,7 +2,7 @@
  *
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -41,11 +41,11 @@ export default {
 	},
 
 	beforeDestroy() {
-		EventBus.$off('joinedConversation', this.readSessionStorageJoinedConversation)
+		EventBus.$off('joined-conversation', this.readSessionStorageJoinedConversation)
 	},
 
 	beforeMount() {
-		EventBus.$on('joinedConversation', this.readSessionStorageJoinedConversation)
+		EventBus.$on('joined-conversation', this.readSessionStorageJoinedConversation)
 		this.sessionStorageJoinedConversation = SessionStorage.getItem('joined_conversation')
 	},
 

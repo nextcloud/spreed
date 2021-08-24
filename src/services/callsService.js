@@ -3,7 +3,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -40,7 +40,7 @@ import {
  *
  * @param {string} token The token of the call to be joined.
  * @param {int} flags The available PARTICIPANT.CALL_FLAG for this participants
- * @returns {int} The actual flags based on the available media
+ * @return {int} The actual flags based on the available media
  */
 const joinCall = async function(token, flags) {
 	try {
@@ -52,6 +52,7 @@ const joinCall = async function(token, flags) {
 
 /**
  * Leave a call as participant
+ *
  * @param {string} token The token of the call to be left
  */
 const leaveCall = async function(token) {

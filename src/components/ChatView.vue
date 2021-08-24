@@ -48,7 +48,7 @@
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:token="token"
 			:is-visible="isVisible"
-			@setChatScrolledToBottom="setScrollStatus" />
+			@set-chat-scrolled-to-bottom="setScrollStatus" />
 		<NewMessageForm
 			role="region"
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"

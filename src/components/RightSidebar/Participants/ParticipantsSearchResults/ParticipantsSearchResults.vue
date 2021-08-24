@@ -131,7 +131,8 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		/** If so, this component will add clicked participant to the selected
+		/**
+		 * If so, this component will add clicked participant to the selected
 		 * participants store;
 		 */
 		selectable: {
@@ -232,7 +233,7 @@ export default {
 
 		},
 		handleClickHint() {
-			this.$emit('clickSearchHint')
+			this.$emit('click-search-hint')
 		},
 	},
 }

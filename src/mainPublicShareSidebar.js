@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2020 Daniel Calviño Sánchez <danxuliu@gmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -66,6 +66,9 @@ Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 Vue.use(VueObserveVisibility)
 
+/**
+ *
+ */
 function adjustLayout() {
 	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
 
@@ -89,6 +92,9 @@ if (window.innerWidth > 1111) {
 	sidebarState.isOpen = true
 }
 
+/**
+ *
+ */
 function addTalkSidebarTrigger() {
 	const talkSidebarTriggerElement = document.createElement('button')
 	talkSidebarTriggerElement.setAttribute('id', 'talk-sidebar-trigger')
@@ -110,6 +116,9 @@ function addTalkSidebarTrigger() {
 
 addTalkSidebarTrigger()
 
+/**
+ *
+ */
 function getShareToken() {
 	const shareTokenElement = document.getElementById('sharingToken')
 	return shareTokenElement.value

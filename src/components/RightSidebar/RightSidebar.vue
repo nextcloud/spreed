@@ -184,7 +184,8 @@ export default {
 
 		/**
 		 * The conversation title value passed into the AppSidebar component.
-		 * @returns {string} The conversation's title.
+		 *
+		 * @return {string} The conversation's title.
 		 */
 		title() {
 			if (this.isRenamingConversation) {
@@ -244,6 +245,7 @@ export default {
 
 		/**
 		 * Updates the conversationName value while editing the conversation's title.
+		 *
 		 * @param {string} title the conversation title emitted by the AppSidevar vue
 		 * component.
 		 */

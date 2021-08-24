@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -32,13 +32,13 @@ const sessionIssueHandler = {
 	},
 
 	beforeDestroy() {
-		EventBus.$off('duplicateSessionDetected', this.duplicateSessionTriggered)
-		EventBus.$off('deletedSessionDetected', this.deletedSessionTriggered)
+		EventBus.$off('duplicate-session-detected', this.duplicateSessionTriggered)
+		EventBus.$off('deleted-session-detected', this.deletedSessionTriggered)
 	},
 
 	beforeMount() {
-		EventBus.$on('duplicateSessionDetected', this.duplicateSessionTriggered)
-		EventBus.$on('deletedSessionDetected', this.deletedSessionTriggered)
+		EventBus.$on('duplicate-session-detected', this.duplicateSessionTriggered)
+		EventBus.$on('deleted-session-detected', this.deletedSessionTriggered)
 	},
 
 	methods: {

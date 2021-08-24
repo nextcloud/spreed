@@ -96,6 +96,11 @@ describe('Conversation.vue', () => {
 	})
 
 	describe('displayed subtitle', () => {
+		/**
+		 * @param item
+		 * @param expectedText
+		 * @param isSearchResult
+		 */
 		function testConversationLabel(item, expectedText, isSearchResult = false) {
 			const wrapper = mount(Conversation, {
 				localVue,
@@ -268,6 +273,11 @@ describe('Conversation.vue', () => {
 	})
 
 	describe('unread messages counter', () => {
+		/**
+		 * @param item
+		 * @param expectedCounterText
+		 * @param expectedHighlighted
+		 */
 		function testCounter(item, expectedCounterText, expectedHighlighted) {
 			const wrapper = mount(Conversation, {
 				localVue,
@@ -331,6 +341,10 @@ describe('Conversation.vue', () => {
 			$router = { push: jest.fn() }
 		})
 
+		/**
+		 * @param wrapper
+		 * @param text
+		 */
 		function findActionButton(wrapper, text) {
 			const actionButtons = wrapper.findAllComponents(ActionButton)
 			const items = actionButtons.filter(actionButton => {
@@ -342,6 +356,9 @@ describe('Conversation.vue', () => {
 			return items.at(0)
 		}
 
+		/**
+		 * @param actionName
+		 */
 		function shallowMountAndGetAction(actionName) {
 			const wrapper = shallowMount(Conversation, {
 				localVue,
@@ -364,7 +381,7 @@ describe('Conversation.vue', () => {
 			return findActionButton(el, actionName)
 		}
 
-		test('forwards click event on list item', async() => {
+		test('forwards click event on list item', async () => {
 			const wrapper = mount(Conversation, {
 				localVue,
 				store,
@@ -386,6 +403,10 @@ describe('Conversation.vue', () => {
 		})
 
 		describe('notification level', () => {
+			/**
+			 * @param actionName
+			 * @param level
+			 */
 			async function testSetNotificationLevel(actionName, level) {
 				const setNotificationLevelAction = jest.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.conversationsStore.actions.setNotificationLevel = setNotificationLevelAction
@@ -398,21 +419,21 @@ describe('Conversation.vue', () => {
 				expect(setNotificationLevelAction).toHaveBeenCalledWith(expect.anything(), { token: TOKEN, notificationLevel: level })
 			}
 
-			test('sets notification to all messages', async() => {
+			test('sets notification to all messages', async () => {
 				await testSetNotificationLevel('All messages', 1)
 			})
 
-			test('sets notification to at-mentions only', async() => {
+			test('sets notification to at-mentions only', async () => {
 				await testSetNotificationLevel('@-mentions only', 2)
 			})
 
-			test('sets notification to off', async() => {
+			test('sets notification to off', async () => {
 				await testSetNotificationLevel('Off', 3)
 			})
 		})
 
 		describe('leaving conversation', () => {
-			test('leaves conversation', async() => {
+			test('leaves conversation', async () => {
 				const actionHandler = jest.fn()
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
 
@@ -424,14 +445,14 @@ describe('Conversation.vue', () => {
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 			})
 
-			test('hides "leave conversation" action when not allowed', async() => {
+			test('hides "leave conversation" action when not allowed', async () => {
 				item.canLeaveConversation = false
 
 				const action = shallowMountAndGetAction('Leave conversation')
 				expect(action.exists()).toBe(false)
 			})
 
-			test('errors with notification when a new moderator is required before leaving', async() => {
+			test('errors with notification when a new moderator is required before leaving', async () => {
 				const actionHandler = jest.fn().mockRejectedValueOnce({
 					response: {
 						status: 400,
@@ -450,7 +471,7 @@ describe('Conversation.vue', () => {
 		})
 
 		describe('deleting conversation', () => {
-			test('deletes conversation when confirmed', async() => {
+			test('deletes conversation when confirmed', async () => {
 				const actionHandler = jest.fn().mockResolvedValueOnce()
 				const updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
@@ -474,7 +495,7 @@ describe('Conversation.vue', () => {
 				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
-			test('does not delete conversation when not confirmed', async() => {
+			test('does not delete conversation when not confirmed', async () => {
 				const actionHandler = jest.fn().mockResolvedValueOnce()
 				const updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
@@ -498,7 +519,7 @@ describe('Conversation.vue', () => {
 				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
-			test('hides "delete conversation" action when not allowed', async() => {
+			test('hides "delete conversation" action when not allowed', async () => {
 				item.canDeleteConversation = false
 
 				const action = shallowMountAndGetAction('Delete conversation')
@@ -506,7 +527,7 @@ describe('Conversation.vue', () => {
 			})
 		})
 
-		test('copies link conversation', async() => {
+		test('copies link conversation', async () => {
 			const copyTextMock = jest.fn().mockResolvedValueOnce()
 			const wrapper = shallowMount(Conversation, {
 				localVue,
@@ -536,7 +557,7 @@ describe('Conversation.vue', () => {
 			expect(copyTextMock).toHaveBeenCalledWith('http://localhost/nc-webroot/call/XXTOKENXX')
 			expect(showSuccess).toHaveBeenCalled()
 		})
-		test('sets favorite', async() => {
+		test('sets favorite', async () => {
 			const toggleFavoriteAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 
@@ -565,7 +586,7 @@ describe('Conversation.vue', () => {
 			expect(toggleFavoriteAction).toHaveBeenCalledWith(expect.anything(), item)
 		})
 
-		test('unsets favorite', async() => {
+		test('unsets favorite', async () => {
 			const toggleFavoriteAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 
@@ -595,7 +616,7 @@ describe('Conversation.vue', () => {
 
 			expect(toggleFavoriteAction).toHaveBeenCalledWith(expect.anything(), item)
 		})
-		test('marks conversation as read', async() => {
+		test('marks conversation as read', async () => {
 			const clearLastReadMessageAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.clearLastReadMessage = clearLastReadMessageAction
 

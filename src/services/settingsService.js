@@ -3,7 +3,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,7 +28,7 @@ import BrowserStorage from './BrowserStorage'
  * Sets the attachment folder setting for the user
  *
  * @param {string} path The name of the folder
- * @returns {Object} The axios response
+ * @return {object} The axios response
  */
 const setAttachmentFolder = async function(path) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
@@ -41,7 +41,7 @@ const setAttachmentFolder = async function(path) {
  * Sets the read status privacy setting for the user
  *
  * @param {int} privacy The selected value, either 0 or 1
- * @returns {Object} The axios response
+ * @return {object} The axios response
  */
 const setReadStatusPrivacy = async function(privacy) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
@@ -56,7 +56,7 @@ const setReadStatusPrivacy = async function(privacy) {
  * @param {Array<string>} sipGroups The groups allowed to enable SIP on a conversation
  * @param {string} sharedSecret The shared secret which is used by the SIP server to authenticate
  * @param {string} dialInInfo The dial-in Information displayed in the email and sidebar
- * @returns {Object} The axios response
+ * @return {object} The axios response
  */
 const setSIPSettings = async function(sipGroups, sharedSecret, dialInInfo) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/sip'), {

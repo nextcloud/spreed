@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2020 Daniel Calviño Sánchez <danxuliu@gmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -93,6 +93,9 @@ function wrapBody() {
 	bodyElement.appendChild(bodyWrapperElement)
 }
 
+/**
+ *
+ */
 function adjustLayout() {
 	const contentElement = document.createElement('div')
 	contentElement.setAttribute('id', 'content')
@@ -116,6 +119,9 @@ function adjustLayout() {
 
 adjustLayout()
 
+/**
+ *
+ */
 function getShareToken() {
 	const shareTokenElement = document.getElementById('sharingToken')
 	return shareTokenElement.value

@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -34,8 +34,9 @@ const getDefaultState = () => {
 const getters = {
 	/**
 	 * Gets the selected participants array
+	 *
 	 * @param {object} state the state object.
-	 * @returns {array} the selected participants array
+	 * @return {Array} the selected participants array
 	 */
 	selectedParticipants: (state) => {
 		if (state.selectedParticipants) {
@@ -48,6 +49,7 @@ const getters = {
 const mutations = {
 	/**
 	 * Adds a the selected participants to the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} participant the selected participant;
 	 */
@@ -57,6 +59,7 @@ const mutations = {
 
 	/**
 	 * Adds a the selected participants to the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} participant the selected participants
 	 */
@@ -68,6 +71,7 @@ const mutations = {
 
 	/**
 	 * Purges the store
+	 *
 	 * @param {object} state current store state;
 	 */
 	purgeNewGroupConversationStore(state) {
@@ -81,6 +85,8 @@ const actions = {
 	 * Adds or removes the participant to the selected participants array
 	 *
 	 * @param {object} context default store context;
+	 * @param context.commit
+	 * @param context.state
 	 * @param {object} participant the clicked participant;
 	 */
 	updateSelectedParticipants({ commit, state }, participant) {

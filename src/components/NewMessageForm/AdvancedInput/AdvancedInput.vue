@@ -107,7 +107,7 @@ import debounce from 'debounce'
  * vue-at component or not.
  *
  * @param {CSSStyleSheet} sheet the style sheet to check.
- * @returns {Boolean} True if it is the style sheet from vue-at, false
+ * @return {boolean} True if it is the style sheet from vue-at, false
  *          otherwise.
  */
 function isDefaultAtWhoStyleSheet(sheet) {
@@ -240,13 +240,13 @@ export default {
 		/**
 		 * Listen to routeChange global events and focus on the
 		 */
-		EventBus.$on('focusChatInput', this.focusInput)
+		EventBus.$on('focus-chat-input', this.focusInput)
 
 		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
 
 	beforeDestroy() {
-		EventBus.$off('focusChatInput', this.focusInput)
+		EventBus.$off('focus-chat-input', this.focusInput)
 	},
 
 	methods: {
@@ -281,7 +281,8 @@ export default {
 		 * The vue-at library only searches in the display name by default.
 		 * But luckily our server responds already only with matching items,
 		 * so we just filter none and show them all.
-		 * @returns {boolean} True as we never filter anything out
+		 *
+		 * @return {boolean} True as we never filter anything out
 		 */
 		atFilter() {
 			return true
@@ -347,7 +348,7 @@ export default {
 		 * Sets the autocomplete mention candidates based on the matched text
 		 * after the "@".
 		 *
-		 * @param {String} chunk the matched text to look candidate mentions for.
+		 * @param {string} chunk the matched text to look candidate mentions for.
 		 */
 		handleAtEvent: debounce(function(chunk) {
 			this.queryPossibleMentions(chunk)

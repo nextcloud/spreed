@@ -57,12 +57,15 @@ describe('FilePreview.vue', () => {
 		window.devicePixelRatio = oldPixelRatio
 	})
 
+	/**
+	 * @param url
+	 */
 	function parseRelativeUrl(url) {
 		return new URL('https://localhost' + url)
 	}
 
 	describe('file preview rendering', () => {
-		test('renders file preview', async() => {
+		test('renders file preview', async () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
@@ -82,7 +85,7 @@ describe('FilePreview.vue', () => {
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
 
-		test('renders file preview for guests', async() => {
+		test('renders file preview for guests', async () => {
 			propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
 			getUserIdMock.mockClear().mockReturnValue(null)
 
@@ -105,7 +108,7 @@ describe('FilePreview.vue', () => {
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
 
-		test('calculates preview size based on window pixel ratio', async() => {
+		test('calculates preview size based on window pixel ratio', async () => {
 			window.devicePixelRatio = 1.5
 
 			const wrapper = shallowMount(FilePreview, {
@@ -121,7 +124,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.get('y')).toBe('576')
 		})
 
-		test('renders small previews when requested', async() => {
+		test('renders small previews when requested', async () => {
 			propsData.smallPreview = true
 
 			const wrapper = shallowMount(FilePreview, {
@@ -146,7 +149,7 @@ describe('FilePreview.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
-			test('renders progress bar while uploading', async() => {
+			test('renders progress bar while uploading', async () => {
 				propsData.id = 'temp-123'
 				propsData.index = 'index-1'
 				propsData.uploadId = 1000
@@ -185,7 +188,7 @@ describe('FilePreview.vue', () => {
 			expect(wrapper.find('.loading').exists()).toBe(true)
 		})
 
-		test('renders default mime icon on load error', async() => {
+		test('renders default mime icon on load error', async () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
@@ -199,7 +202,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl).toBe(imagePath('core', 'filetypes/file'))
 		})
 
-		test('renders generic mime type icon for unknown mime types', async() => {
+		test('renders generic mime type icon for unknown mime types', async () => {
 			propsData.previewAvailable = 'no'
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
@@ -239,7 +242,7 @@ describe('FilePreview.vue', () => {
 					return null
 				})
 			})
-			test('directly renders small GIF files', async() => {
+			test('directly renders small GIF files', async () => {
 				propsData.size = 128
 
 				const wrapper = shallowMount(FilePreview, {
@@ -255,7 +258,7 @@ describe('FilePreview.vue', () => {
 					.toBe(generateRemoteUrl('dav/files/current-user-id') + '/path/to/test%20%2520.gif')
 			})
 
-			test('directly renders small GIF files (absolute path)', async() => {
+			test('directly renders small GIF files (absolute path)', async () => {
 				propsData.size = 128
 				propsData.path = '/path/to/test %20.gif'
 
@@ -272,7 +275,7 @@ describe('FilePreview.vue', () => {
 					.toBe(generateRemoteUrl('dav/files/current-user-id') + '/path/to/test%20%2520.gif')
 			})
 
-			test('directly renders small GIF files for guests', async() => {
+			test('directly renders small GIF files for guests', async () => {
 				propsData.size = 128
 				propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
 				getUserIdMock.mockClear().mockReturnValue(null)
@@ -290,7 +293,7 @@ describe('FilePreview.vue', () => {
 					.toBe(propsData.link + '/download/test%20%2520.gif')
 			})
 
-			test('renders static preview for big GIF files', async() => {
+			test('renders static preview for big GIF files', async () => {
 				// bigger than max from capability
 				propsData.size = 2048
 
@@ -345,7 +348,7 @@ describe('FilePreview.vue', () => {
 				}
 			})
 
-			test('opens viewer when clicking if viewer available', async() => {
+			test('opens viewer when clicking if viewer available', async () => {
 				OCA.Viewer = {
 					open: jest.fn(),
 					availableHandlers: [{
@@ -377,7 +380,7 @@ describe('FilePreview.vue', () => {
 				expect(OCA.Files.Sidebar.state.file).toBe('/path/to/test.jpg')
 			})
 
-			test('does not open viewer when clicking if no mime handler available', async() => {
+			test('does not open viewer when clicking if no mime handler available', async () => {
 				OCA.Viewer = {
 					open: jest.fn(),
 					availableHandlers: [{
@@ -398,7 +401,7 @@ describe('FilePreview.vue', () => {
 				expect(OCA.Viewer.open).not.toHaveBeenCalled()
 			})
 
-			test('does not open viewer when clicking if viewer is not available', async() => {
+			test('does not open viewer when clicking if viewer is not available', async () => {
 				delete OCA.Viewer
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -427,6 +430,9 @@ describe('FilePreview.vue', () => {
 					}
 				})
 
+				/**
+				 * @param visible
+				 */
 				async function testPlayButtonVisible(visible) {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
@@ -440,11 +446,11 @@ describe('FilePreview.vue', () => {
 					expect(buttonEl.exists()).toBe(visible)
 				}
 
-				test('renders play icon for video previews', async() => {
+				test('renders play icon for video previews', async () => {
 					await testPlayButtonVisible(true)
 				})
 
-				test('does not render play icon for direct renders', async() => {
+				test('does not render play icon for direct renders', async () => {
 					// gif is directly rendered
 					propsData.mimetype = 'image/gif'
 					propsData.name = 'test.gif'
@@ -453,7 +459,7 @@ describe('FilePreview.vue', () => {
 					await testPlayButtonVisible(false)
 				})
 
-				test('render play icon gif previews with big size', async() => {
+				test('render play icon gif previews with big size', async () => {
 					// gif is directly rendered
 					propsData.mimetype = 'image/gif'
 					propsData.name = 'test.gif'
@@ -463,12 +469,12 @@ describe('FilePreview.vue', () => {
 					await testPlayButtonVisible(true)
 				})
 
-				test('does not render play icon for small previews', async() => {
+				test('does not render play icon for small previews', async () => {
 					propsData.smallPreview = true
 					await testPlayButtonVisible(false)
 				})
 
-				test('does not render play icon for failed videos', async() => {
+				test('does not render play icon for failed videos', async () => {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
 						store,
@@ -481,12 +487,12 @@ describe('FilePreview.vue', () => {
 					expect(buttonEl.exists()).toBe(false)
 				})
 
-				test('does not render play icon if viewer not available', async() => {
+				test('does not render play icon if viewer not available', async () => {
 					delete OCA.Viewer
 					await testPlayButtonVisible(false)
 				})
 
-				test('does not render play icon for non-videos', async() => {
+				test('does not render play icon for non-videos', async () => {
 					// viewer supported, but not a video
 					propsData.mimetype = 'image/png'
 					propsData.name = 'test.png'
@@ -501,7 +507,7 @@ describe('FilePreview.vue', () => {
 		beforeEach(() => {
 			propsData.isUploadEditor = true
 		})
-		test('emits event when clicking remove button when inside upload editor', async() => {
+		test('emits event when clicking remove button when inside upload editor', async () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,

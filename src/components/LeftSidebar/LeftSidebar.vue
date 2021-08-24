@@ -259,13 +259,13 @@ export default {
 			}
 		}, 30000)
 
-		EventBus.$on('shouldRefreshConversations', this.debounceFetchConversations)
+		EventBus.$on('should-refresh-conversations', this.debounceFetchConversations)
 
 		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
-		EventBus.$off('shouldRefreshConversations', this.debounceFetchConversations)
+		EventBus.$off('should-refresh-conversations', this.debounceFetchConversations)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -358,7 +358,7 @@ export default {
 		 * Create a new conversation with the selected user
 		 * or bring up the dialog to create a new group/circle conversation
 		 *
-		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 * @param {object} item The autocomplete suggestion to start a conversation with
 		 * @param {string} item.id The ID of the target
 		 * @param {string} item.label The displayname of the target
 		 * @param {string} item.source The source of the target (e.g. users, groups, circle)
@@ -368,19 +368,19 @@ export default {
 				// Create one-to-one conversation directly
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
 				this.abortSearch()
-				EventBus.$once('joinedConversation', ({ token }) => {
+				EventBus.$once('joined-conversation', ({ token }) => {
 					this.$refs.conversationsList.scrollToConversation(token)
 				})
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types we start the conversation creation dialog
-				EventBus.$emit('NewGroupConversationDialog', item)
+				EventBus.$emit('new-group-conversation-dialog', item)
 			}
 		},
 
 		async joinListedConversation(conversation) {
 			this.abortSearch()
-			EventBus.$once('joinedConversation', ({ token }) => {
+			EventBus.$once('joined-conversation', ({ token }) => {
 				this.$refs.conversationsList.scrollToConversation(token)
 			})
 			// add as temporary item that will refresh after the joining process is complete
@@ -410,7 +410,7 @@ export default {
 
 		handleClickSearchResult(selectedConversationToken) {
 			if (this.searchText !== '') {
-				EventBus.$once('joinedConversation', ({ token }) => {
+				EventBus.$once('joined-conversation', ({ token }) => {
 					this.$refs.conversationsList.scrollToConversation(token)
 				})
 			}
@@ -446,7 +446,7 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversationsReceived', {
+				EventBus.$emit('conversations-received', {
 					singleConversation: false,
 				})
 				this.isFetchingConversations = false

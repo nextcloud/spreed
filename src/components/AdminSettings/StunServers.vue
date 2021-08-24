@@ -46,7 +46,7 @@
 					:server.sync="servers[index]"
 					:index="index"
 					:loading="loading"
-					@removeServer="removeServer"
+					@remove-server="removeServer"
 					@update:server="debounceUpdateServers" />
 			</transition-group>
 		</ul>

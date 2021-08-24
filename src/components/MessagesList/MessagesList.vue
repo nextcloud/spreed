@@ -147,7 +147,7 @@ export default {
 		/**
 		 * Finds the first visual unread message element
 		 *
-		 * @returns {object} DOM element of the first unread message
+		 * @return {object} DOM element of the first unread message
 		 */
 		unreadMessageElement() {
 			let el = document.getElementById('message_' + this.visualLastReadMessageId)
@@ -162,7 +162,7 @@ export default {
 		 * Gets the messages array. We need this because the DynamicScroller needs an array to
 		 * loop through.
 		 *
-		 * @returns {array}
+		 * @return {Array}
 		 */
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
@@ -172,7 +172,7 @@ export default {
 		 * corresponds to the id of the message, and makes it easy and efficient to access the
 		 * individual message object.
 		 *
-		 * @returns {object}
+		 * @return {object}
 		 */
 		messages() {
 			// FIXME: remove if unused ?
@@ -180,7 +180,8 @@ export default {
 		},
 		/**
 		 * Creates an array of messages grouped in nested arrays by same autor.
-		 * @returns {array}
+		 *
+		 * @return {Array}
 		 */
 		messagesGroupedByAuthor() {
 			const groups = []
@@ -211,7 +212,8 @@ export default {
 		 * When isSticky is true, as new messages are appended to the list, the div .scroller
 		 * automatically scrolls down to the last message, if it's false, new messages are
 		 * appended but the scrolling position is not altered.
-		 * @returns {boolean}
+		 *
+		 * @return {boolean}
 		 */
 		isSticky() {
 			return this.isChatScrolledToBottom
@@ -221,7 +223,7 @@ export default {
 		 * Returns whether the current participant is a participant of the
 		 * current conversation or not.
 		 *
-		 * @returns {Boolean} true if it is already a participant, false
+		 * @return {boolean} true if it is already a participant, false
 		 *          otherwise.
 		 */
 		isParticipant() {
@@ -273,10 +275,10 @@ export default {
 	mounted() {
 		this.viewId = uniqueId('messagesList')
 		this.scrollToBottom()
-		EventBus.$on('scrollChatToBottom', this.handleScrollChatToBottomEvent)
-		EventBus.$on('smoothScrollChatToBottom', this.smoothScrollToBottom)
-		EventBus.$on('focusMessage', this.focusMessage)
-		EventBus.$on('routeChange', this.onRouteChange)
+		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
+		EventBus.$on('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$on('focus-message', this.focusMessage)
+		EventBus.$on('route-change', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -284,10 +286,10 @@ export default {
 
 	beforeDestroy() {
 		window.removeEventListener('focus', this.onWindowFocus)
-		EventBus.$off('scrollChatToBottom', this.handleScrollChatToBottomEvent)
-		EventBus.$off('smoothScrollChatToBottom', this.smoothScrollToBottom)
-		EventBus.$off('focusMessage', this.focusMessage)
-		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
+		EventBus.$off('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$off('focus-message', this.focusMessage)
+		EventBus.$off('route-change', this.onRouteChange)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -314,7 +316,7 @@ export default {
 		 * @param {string} message2.actorDisplayName Actor display name of previous message
 		 * @param {string} message2.systemMessage System message content of the previous message
 		 * @param {int} message2.timestamp Timestamp of the second message
-		 * @returns {boolean} Boolean if the messages should be grouped or not
+		 * @return {boolean} Boolean if the messages should be grouped or not
 		 */
 		messagesShouldBeGrouped(message1, message2) {
 			if (!message2) {
@@ -354,7 +356,7 @@ export default {
 		 * @param {null|object} message2 The previous message
 		 * @param {string} message2.id The ID of the second message
 		 * @param {int} message2.timestamp Timestamp of the second message
-		 * @returns {boolean} Boolean if the messages have the same date
+		 * @return {boolean} Boolean if the messages have the same date
 		 */
 		messagesHaveDifferentDate(message1, message2) {
 			return !message2 // There is no previous message
@@ -367,7 +369,7 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {int} message.timestamp Timestamp of the message
-		 * @returns {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
+		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
 		generateDateSeparator(message) {
 			const date = this.getDateOfMessage(message)
@@ -402,7 +404,7 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {int} message.timestamp Timestamp of the message
-		 * @returns {object} MomentJS object
+		 * @return {object} MomentJS object
 		 */
 		getDateOfMessage(message) {
 			if (message.id.toString().startsWith('temp-')) {
@@ -512,6 +514,7 @@ export default {
 
 		/**
 		 * Get messages history.
+		 *
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
@@ -535,6 +538,7 @@ export default {
 
 		/**
 		 * Creates a long polling request for a new message.
+		 *
 		 * @param {boolean} scrollToBottom Whether we should try to automatically scroll to the bottom
 		 */
 		async getNewMessages(scrollToBottom = true) {
@@ -634,7 +638,7 @@ export default {
 		 * the bottom of the viewport.
 		 *
 		 * @param {object} messageEl message element after which to start searching
-		 * @returns {object} DOM element for the last visible message
+		 * @return {object} DOM element for the last visible message
 		 */
 		findFirstVisibleMessage(messageEl) {
 			let el = messageEl
@@ -789,7 +793,7 @@ export default {
 		 * @param {string} messageId message id
 		 * @param {boolean} smooth true to smooth scroll, false to jump directly
 		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
-		 * @returns {bool} true if element was found, false otherwise
+		 * @return {bool} true if element was found, false otherwise
 		 */
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
 			const element = document.getElementById(`message_${messageId}`)
@@ -799,7 +803,7 @@ export default {
 				return false
 			}
 
-			this.$nextTick(async() => {
+			this.$nextTick(async () => {
 				// FIXME: this doesn't wait for the smooth scroll to end
 				await element.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
@@ -821,7 +825,8 @@ export default {
 
 		/**
 		 * gets the last known message id.
-		 * @returns {string} The last known message id.
+		 *
+		 * @return {string} The last known message id.
 		 */
 		getLastKnownMessageId() {
 			let i = this.messagesList.length - 1
@@ -836,7 +841,8 @@ export default {
 		},
 		/**
 		 * gets the first message's id.
-		 * @returns {string}
+		 *
+		 * @return {string}
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
@@ -874,7 +880,7 @@ export default {
 		},
 
 		setChatScrolledToBottom(boolean) {
-			this.$emit('setChatScrolledToBottom', boolean)
+			this.$emit('set-chat-scrolled-to-bottom', boolean)
 			if (boolean) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocussing the window will remove the stickiness

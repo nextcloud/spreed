@@ -3,7 +3,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -150,6 +150,7 @@ const actions = {
 	},
 	/**
 	 * Sets displayName only, we currently use this for guests user names.
+	 *
 	 * @param {object} context default store context;
 	 * @param {string} displayName the display name to be set;
 	 */

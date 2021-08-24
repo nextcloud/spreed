@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -40,9 +40,9 @@ import {
  * Returns whether the given message contains a mention to self, directly
  * or indirectly through a global mention.
  *
- * @param {Object} context store context
- * @param {Object} message message object
- * @returns {bool} true if the message contains a mention to self or all,
+ * @param {object} context store context
+ * @param {object} message message object
+ * @return {bool} true if the message contains a mention to self or all,
  * false otherwise
  */
 function hasMentionToSelf(context, message) {
@@ -118,7 +118,7 @@ const getters = {
 	 *
 	 * @param {object} state the state object.
 	 * @param {object} getters the getters object.
-	 * @returns {bool} true if more messages exist that needs loading, false otherwise
+	 * @return {bool} true if more messages exist that needs loading, false otherwise
 	 */
 	hasMoreMessagesToLoad: (state, getters) => (token) => {
 		const conversation = getters.conversation(token)
@@ -131,8 +131,9 @@ const getters = {
 
 	/**
 	 * Gets the messages array
+	 *
 	 * @param {object} state the state object.
-	 * @returns {array} the messages array (if there are messages in the store)
+	 * @return {Array} the messages array (if there are messages in the store)
 	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
@@ -142,9 +143,10 @@ const getters = {
 	},
 	/**
 	 * Gets the messages object
+	 *
 	 * @param {object} state the state object.
 	 * @param {string} token the conversation token.
-	 * @returns {object} the messages object (if there are messages in the store)
+	 * @return {object} the messages object (if there are messages in the store)
 	 */
 	messages: (state) => (token) => {
 		if (state.messages[token]) {
@@ -154,10 +156,11 @@ const getters = {
 	},
 	/**
 	 * Gets a single message object
+	 *
 	 * @param {object} state the state object.
 	 * @param {string} token the conversation token.
 	 * @param {string} id the message id.
-	 * @returns {object} the message object (if the message is found in the store)
+	 * @return {object} the message object (if the message is found in the store)
 	 */
 	message: (state) => (token, id) => {
 		if (state.messages[token][id]) {
@@ -227,6 +230,7 @@ const mutations = {
 
 	/**
 	 * Adds a message to the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} message the message;
 	 */
@@ -244,6 +248,7 @@ const mutations = {
 	},
 	/**
 	 * Deletes a message from the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} message the message;
 	 */
@@ -255,9 +260,12 @@ const mutations = {
 
 	/**
 	 * Deletes a message from the store.
+	 *
 	 * @param {object} state current store state;
+	 * @param message.message
 	 * @param {object} message the message;
 	 * @param {string} placeholder Placeholder message until deleting finished
+	 * @param message.placeholder
 	 */
 	markMessageAsDeleting(state, { message, placeholder }) {
 		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
@@ -265,6 +273,7 @@ const mutations = {
 	},
 	/**
 	 * Adds a temporary message to the store.
+	 *
 	 * @param {object} state current store state;
 	 * @param {object} message the temporary message;
 	 */
@@ -277,9 +286,12 @@ const mutations = {
 
 	/**
 	 * Adds a temporary message to the store.
+	 *
 	 * @param {object} state current store state;
+	 * @param message.message
 	 * @param {object} message the temporary message;
 	 * @param {string} reason the reason the temporary message failed;
+	 * @param message.reason
 	 */
 	markTemporaryMessageAsFailed(state, { message, reason }) {
 		if (state.messages[message.token][message.id]) {
@@ -367,8 +379,10 @@ const actions = {
 	 * Delete a message
 	 *
 	 * @param {object} context default store context;
+	 * @param message.message
 	 * @param {object} message the message to be deleted;
 	 * @param {string} placeholder Placeholder message until deleting finished
+	 * @param message.placeholder
 	 */
 	async deleteMessage(context, { message, placeholder }) {
 		const messageObject = Object.assign({}, context.getters.message(message.token, message.id))
@@ -405,7 +419,7 @@ const actions = {
 	 * @param {int} index index;
 	 * @param {object} file file to upload;
 	 * @param {string} localUrl local URL of file to upload;
-	 * @returns {object} temporary message
+	 * @return {object} temporary message
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
 		const messageToBeReplied = context.getters.getMessageToBeReplied(token)
@@ -470,8 +484,10 @@ const actions = {
 	 * Mark a temporary message as failed to allow retrying it again
 	 *
 	 * @param {object} context default store context;
+	 * @param message.message
 	 * @param {object} message the temporary message;
 	 * @param {string} reason the reason the temporary message failed;
+	 * @param message.reason
 	 */
 	markTemporaryMessageAsFailed(context, { message, reason }) {
 		context.commit('markTemporaryMessageAsFailed', { message, reason })
@@ -529,8 +545,10 @@ const actions = {
 	 * in the conversation.
 	 *
 	 * @param {object} context default store context;
+	 * @param token.token
 	 * @param {object} token the token of the conversation to be updated;
 	 * @param {bool} updateVisually whether to also clear the marker visually in the UI;
+	 * @param token.updateVisually
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
 		const conversation = context.getters.conversations[token]
@@ -547,9 +565,12 @@ const actions = {
 	 * Optionally also updated the marker visually in the UI if specified.
 	 *
 	 * @param {object} context default store context;
+	 * @param token.token
 	 * @param {object} token the token of the conversation to be updated;
 	 * @param {number} id the id of the message on which to set the read marker;
 	 * @param {bool} updateVisually whether to also update the marker visually in the UI;
+	 * @param token.id
+	 * @param token.updateVisually
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
 		const conversation = context.getters.conversations[token]
@@ -642,7 +663,7 @@ const actions = {
 	 * Cancels a previously running "fetchMessages" action if applicable.
 	 *
 	 * @param {object} context default store context;
-	 * @returns {bool} true if a request got cancelled, false otherwise
+	 * @return {bool} true if a request got cancelled, false otherwise
 	 */
 	cancelFetchMessages(context) {
 		if (context.state.cancelFetchMessages) {
@@ -751,7 +772,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} requestId request id
-	 * @returns {bool} true if a request got cancelled, false otherwise
+	 * @return {bool} true if a request got cancelled, false otherwise
 	 */
 	cancelLookForNewMessages(context, { requestId }) {
 		if (context.state.cancelLookForNewMessages[requestId]) {
@@ -865,7 +886,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} messageId the message id for which to cancel;
-	 * @returns {bool} true if a request got cancelled, false otherwise
+	 * @return {bool} true if a request got cancelled, false otherwise
 	 */
 	cancelPostNewMessage(context, { messageId }) {
 		if (context.state.cancelPostNewMessage[messageId]) {
@@ -878,9 +899,11 @@ const actions = {
 
 	/**
 	 * Posts a simple text message to a room
+	 *
 	 * @param {object} context default store context;
 	 * will be forwarded;
 	 * @param {object} message the message object;
+	 * @param message.messageToBeForwarded
 	 */
 	async forwardMessage(context, { messageToBeForwarded }) {
 		const response = await postNewMessage(messageToBeForwarded)

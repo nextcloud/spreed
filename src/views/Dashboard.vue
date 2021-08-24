@@ -100,7 +100,8 @@ export default {
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
 		 * e.g. no avatars on mentions.
-		 * @returns {string} A simple message to show below the conversation name
+		 *
+		 * @return {string} A simple message to show below the conversation name
 		 */
 		simpleLastChatMessage() {
 			return (lastChatMessage) => {

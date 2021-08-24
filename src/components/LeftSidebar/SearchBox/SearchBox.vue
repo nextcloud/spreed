@@ -85,10 +85,10 @@ export default {
 		/**
 		 * Listen to routeChange global events and focus on the input
 		 */
-		EventBus.$on('routeChange', this.focusInputIfRoot)
+		EventBus.$on('route-change', this.focusInputIfRoot)
 	},
 	beforeDestroy() {
-		EventBus.$off('routeChange', this.focusInputIfRoot)
+		EventBus.$off('route-change', this.focusInputIfRoot)
 	},
 	methods: {
 		// Focus the input field of the searchbox component.

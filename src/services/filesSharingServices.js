@@ -3,7 +3,7 @@
  *
  * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,12 +25,13 @@ import { showError } from '@nextcloud/dialogs'
 
 /**
  * Appends a file as a message to the messagelist.
+ *
  * @param {string} path The file path from the user's root directory
  * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
  * @param {string} referenceId An optional reference id to recognize the message later
- * @param {array} metadata the metadata json encoded array
-*/
+ * @param {Array} metadata the metadata json encoded array
+ */
 const shareFile = async function(path, token, referenceId, metadata) {
 	try {
 		return axios.post(

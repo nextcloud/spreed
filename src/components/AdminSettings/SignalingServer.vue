@@ -118,7 +118,7 @@ export default {
 
 	methods: {
 		removeServer() {
-			this.$emit('removeServer', this.index)
+			this.$emit('remove-server', this.index)
 		},
 		updateServer(event) {
 			this.$emit('update:server', event.target.value)
