@@ -5,10 +5,14 @@ import { blur } from '../videofx/src/core/vanilla/blur'
 import segmFull from '../videofx/public/models/segm_full_v679.tflite'
 import segmLite from '../videofx/public/models/segm_lite_v681.tflite'
 import mlKit from '../videofx/public/models/selfiesegmentation_mlkit-256x256-2021_01_19-v1215.f16.tflite'
-import tfLiteWasm from '../videofx/public/tflite/tflite.wasm'
-import tfLiteSimdWasm from '../videofx/public/tflite/tflite-simd.wasm'
-import '../videofx/public/tflite/tflite-nosimd.js'
-import '../videofx/public/tflite/tflite-simd.js'
+// import tfLiteWasm from '../videofx/public/tflite/tflite.wasm'
+// import tfLiteSimdWasm from '../videofx/public/tflite/tflite-simd.wasm'
+// import videoEffectsWorker from './videoEffectsWorker.js'
+import { VIRTUAL_BACKGROUND_TYPE } from '../virtual-background/constants'
+import JitsiStreamBackgroundEffect from '../virtual-background/JitsiStreamBackgroundEffect'
+// import '../videofx/public/tflite/tflite-nosimd.js'
+// import '../videofx/public/tflite/tflite-simd.js'
+// import Worker from './videoEffects.worker.js'
 
 export default function VideoEffects() {
 	this._videoSource = document.createElement('video')
@@ -16,13 +20,15 @@ export default function VideoEffects() {
 	this._temporaryCanvas = document.createElement('canvas')
 	this._playing = false
 	this._stopStreamBound = this._stopStream.bind(this)
+	this._canvasBlurredStream = false
 }
 
 VideoEffects.prototype = {
-	getBlurredVideoStream(stream, model = 0) {
+	getBlurredVideoStream(stream, model = 2) {
+		console.log('getBlurredStream()')
 		window.switchStream = false
 		this._model = model
-		this._configureStreams(stream)
+		// this._configureStreams(stream)
 		switch (model) {
 		case 0:
 			this._useBodyPix(stream)
@@ -30,12 +36,15 @@ VideoEffects.prototype = {
 		case 1:
 			this._useTfLite(stream)
 			break
+		case 2:
+			this._canvasBlurredStream = this._useJitsi(stream)
+			break
 		default:
 			this._useBodyPix(stream)
 			break
 		}
-		this._canvasBlurredStream = this._temporaryCanvas.captureStream()
-		this._attachAudio()
+		if (!this._canvasBlurredStream) this._canvasBlurredStream = this._temporaryCanvas.captureStream()
+		if (!this._canvasBlurredStream.getAudioTracks().length) this._attachAudio()
 		// mainStreamEnded is sent in localmedia
 		this._canvasBlurredStream.addEventListener('mainStreamEnded', this._stopStreamBound)
 		return this._canvasBlurredStream
@@ -156,6 +165,51 @@ VideoEffects.prototype = {
 		window.tfLiteSimdWasm = tfLiteSimdWasm.split('/').pop()
 		blur(this._videoSource, this._temporaryCanvas)
 
+	},
+
+	_useJitsi(stream) {
+
+		const segmentationDimensions = {
+			model96: {
+				height: 96,
+				width: 160,
+			},
+			model144: {
+				height: 144,
+				width: 256,
+			},
+		}
+		// DONE?: Figure out message for model.
+		let isSimd = false
+		try {
+
+			const wasmCheck = require('wasm-check')
+			if (wasmCheck?.feature?.simd) {
+				this.wasmVersion = 'simd'
+				isSimd = true
+			} else {
+				this.wasmVersion = 'wasm'
+				isSimd = false
+			}
+		} catch (err) {
+			console.error('Looks like WebAssembly is disabled or not supported on this browser')
+			return
+		}
+		console.log('wasm version: ' + this.wasmVersion)
+
+		const virtualBackground = {
+			type: VIRTUAL_BACKGROUND_TYPE.NONE,
+		}
+		console.log('isSimd:')
+		console.log(isSimd)
+		const options = {
+			...this.wasmVersion === 'simd' ? segmentationDimensions.model144 : segmentationDimensions.model96,
+			virtualBackground,
+			simd: isSimd,
+		}
+
+		const blurFx = new JitsiStreamBackgroundEffect(options)
+		return blurFx.startEffect(stream)
 	},
 
 	_switchModel(model) {
