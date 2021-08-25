@@ -23,11 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
-use OCA\Circles\Model\Probes\CircleProbe;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
