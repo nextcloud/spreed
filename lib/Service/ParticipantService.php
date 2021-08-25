@@ -423,7 +423,7 @@ class ParticipantService {
 		$circlesManager->startSession($federatedUser);
 		try {
 			$circle = $circlesManager->getCircle($circleId);
-			$circlesManager->stopSession($federatedUser);
+			$circlesManager->stopSession();
 			return $circle;
 		} catch (\Exception $e) {
 		}
