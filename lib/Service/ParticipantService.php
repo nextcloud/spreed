@@ -82,6 +82,8 @@ class ParticipantService {
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
+	/** @var MembershipService */
+	private $membershipService;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
@@ -95,6 +97,7 @@ class ParticipantService {
 								IEventDispatcher $dispatcher,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
+								MembershipService $membershipService,
 								ITimeFactory $timeFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
@@ -106,6 +109,7 @@ class ParticipantService {
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
+		$this->membershipService = $membershipService;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -426,7 +430,7 @@ class ParticipantService {
 		} catch (\Exception $e) {
 		}
 
-		$circlesManager->stopSession($federatedUser);
+		$circlesManager->stopSession();
 		throw new ParticipantNotFoundException('Circle not found or not a member');
 	}
 
@@ -629,7 +633,13 @@ class ParticipantService {
 
 		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
 			$this->removeGroupMembers($room, $participant, $reason);
+		} else if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
+			$this->removeCircleMembers($room, $participant, $reason);
 		}
+	}
+
+	public function getActorsByType(Room $room, string $actorType): array {
+		return $this->attendeeMapper->getActorsByType($room->getId(), $actorType);
 	}
 
 	public function removeGroupMembers(Room $room, Participant $removedGroupParticipant, string $reason): void {
@@ -638,31 +648,81 @@ class ParticipantService {
 			return;
 		}
 
-		$attendeeGroups = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_GROUPS);
-
-		$groupsInRoom = [];
-		foreach ($attendeeGroups as $attendee) {
-			$groupsInRoom[] = $attendee->getActorId();
-		}
-
+		$users = $this->membershipService->getUsersWithoutOtherMemberships($room, $removedGroup->getUsers());
 		$attendees = [];
-		foreach ($removedGroup->getUsers() as $user) {
+		foreach ($users as $user) {
 			try {
 				$participant = $room->getParticipant($user->getUID());
+				$participantType = $participant->getAttendee()->getParticipantType();
+
+				$attendees[] = $participant->getAttendee();
+				if ($participantType === Participant::USER) {
+					// Only remove normal users, not moderators/admins
+					$this->removeAttendee($room, $participant, $reason, true);
+				}
 			} catch (ParticipantNotFoundException $e) {
+			}
+		}
+
+		$attendeeEvent = new AttendeesRemovedEvent($room, $attendees);
+		$this->dispatcher->dispatchTyped($attendeeEvent);
+	}
+
+	public function removeCircleMembers(Room $room, Participant $removedCircleParticipant, string $reason): void {
+		try {
+			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager->startSuperSession();
+			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
+			$circlesManager->stopSession();
+		} catch (\Exception $e) {
+			// Circles not enabled
+			return;
+		}
+
+		$circlesManager->startSuperSession();
+		try {
+			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
+			$circlesManager->stopSession();
+		} catch (\Exception $e) {
+			$circlesManager->stopSession();
+			return;
+		}
+
+		$membersInCircle = $circle->getInheritedMembers();
+		$users = [];
+		foreach ($membersInCircle as $member) {
+			/** @var Member $member */
+			if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
+				// Not a user?
 				continue;
 			}
 
-			$userGroups = $this->groupManager->getUserGroupIds($user);
-			$stillHasGroup = array_intersect($userGroups, $groupsInRoom);
-			if (!empty($stillHasGroup)) {
+			if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
+				// Only allow invited and regular members
 				continue;
 			}
 
-			$attendees[] = $participant->getAttendee();
-			if ($participant->getAttendee()->getParticipantType() === Participant::USER) {
-				// Only remove normal users, not moderators/admins
-				$this->removeAttendee($room, $participant, $reason, true);
+			$users[] = $this->userManager->get($member->getUserId());
+		}
+
+
+		if (empty($users)) {
+			return;
+		}
+
+		$users = $this->membershipService->getUsersWithoutOtherMemberships($room, $users);
+		$attendees = [];
+		foreach ($users as $user) {
+			try {
+				$participant = $room->getParticipant($user->getUID());
+				$participantType = $participant->getAttendee()->getParticipantType();
+
+				$attendees[] = $participant->getAttendee();
+				if ($participantType === Participant::USER) {
+					// Only remove normal users, not moderators/admins
+					$this->removeAttendee($room, $participant, $reason, true);
+				}
+			} catch (ParticipantNotFoundException $e) {
 			}
 		}
 
