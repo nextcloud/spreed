@@ -633,7 +633,7 @@ class ParticipantService {
 
 		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
 			$this->removeGroupMembers($room, $participant, $reason);
-		} else if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
+		} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 			$this->removeCircleMembers($room, $participant, $reason);
 		}
 	}
