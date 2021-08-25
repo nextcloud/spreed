@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
-use OCA\Circles\Api\v1\Circles;
+use OCA\Circles\CirclesManager;
+use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -34,6 +35,7 @@ use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\IUser;
+use Psr\Log\LoggerInterface;
 
 abstract class AMembershipListener implements IEventListener {
 
@@ -91,20 +93,21 @@ abstract class AMembershipListener implements IEventListener {
 
 	protected function filterRoomsWithOtherCircleMemberships(array $rooms, IUser $user): array {
 		if (!$this->appManager->isEnabledForUser('circles', $user)) {
-			\OC::$server->getLogger()->error('Circles not enabled', ['app' => 'nickv']);
+			\OC::$server->get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
 			return $rooms;
 		}
 
 		try {
-			/** @var Circles $circlesApi */
-			$circles = Circles::joinedCircles($user->getUID());
+			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$federatedUser = $circlesManager->getFederatedUser($user->getUID(), Member::TYPE_USER);
+			$memberships = $federatedUser->getMemberships();
 		} catch (\Exception $e) {
 			return $rooms;
 		}
 
 		$furtherMemberships = [];
-		foreach ($circles as $circle) {
-			$circleRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circle->getSingleId());
+		foreach ($memberships as $membership) {
+			$circleRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $membership->getCircleId());
 
 			foreach ($circleRooms as $room) {
 				$furtherMemberships[$room->getId()] = true;

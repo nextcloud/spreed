@@ -24,8 +24,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Circles\Api\v1\Circles;
+use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
+use OCA\Circles\Model\Probes\CircleProbe;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
@@ -411,20 +413,23 @@ class ParticipantService {
 	 */
 	public function getCircle(string $circleId, string $userId): Circle {
 		try {
-			$circle = Circles::detailsCircle($circleId);
+			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$federatedUser = $circlesManager->getFederatedUser($userId, Member::TYPE_USER);
+			$federatedUser->getLink($circleId);
 		} catch (\Exception $e) {
-			throw new ParticipantNotFoundException('Circle not found');
+			throw new ParticipantNotFoundException('Circle not found or not a member');
 		}
 
-		// FIXME use \OCA\Circles\Manager::getLink() in the future
-		$membersInCircle = $circle->getInheritedMembers();
-		foreach ($membersInCircle as $member) {
-			if ($member->isLocal() && $member->getUserType() === Member::TYPE_USER && $member->getUserId() === $userId) {
-				return $circle;
-			}
+		$circlesManager->startSession($federatedUser);
+		try {
+			$circle = $circlesManager->getCircle($circleId);
+			$circlesManager->stopSession($federatedUser);
+			return $circle;
+		} catch (\Exception $e) {
 		}
 
-		throw new ParticipantNotFoundException('Circle found but not a member');
+		$circlesManager->stopSession($federatedUser);
+		throw new ParticipantNotFoundException('Circle not found or not a member');
 	}
 
 	/**

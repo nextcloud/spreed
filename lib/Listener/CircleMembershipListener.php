@@ -106,7 +106,7 @@ class CircleMembershipListener extends AMembershipListener {
 		$invitedBy = $newMember->getInvitedBy();
 		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor', $invitedBy->getUserId());
-		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getUserId() === 'occ') {
+		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getBasedOn()->getSource() === Member::APP_OCC) {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
 
