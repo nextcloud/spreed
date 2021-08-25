@@ -353,6 +353,8 @@ class Listener implements IEventListener {
 		foreach ($event->getAttendees() as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_added', ['group' => $attendee->getActorId()]);
+			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
+				$this->sendSystemMessage($event->getRoom(), 'circle_added', ['circle' => $attendee->getActorId()]);
 			}
 		}
 	}
@@ -361,6 +363,8 @@ class Listener implements IEventListener {
 		foreach ($event->getAttendees() as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_removed', ['group' => $attendee->getActorId()]);
+			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
+				$this->sendSystemMessage($event->getRoom(), 'circle_removed', ['circle' => $attendee->getActorId()]);
 			}
 		}
 	}

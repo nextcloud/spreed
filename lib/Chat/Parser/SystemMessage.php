@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
@@ -71,6 +72,10 @@ class SystemMessage {
 	protected $displayNames = [];
 	/** @var string[] */
 	protected $groupNames = [];
+	/** @var string[] */
+	protected $circleNames = [];
+	/** @var string[] */
+	protected $circleLinks = [];
 	/** @var string[] */
 	protected $guestNames = [];
 
@@ -301,6 +306,22 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You removed group {group}');
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator removed group {group}');
+			}
+		} elseif ($message === 'circle_added') {
+			$parsedParameters['circle'] = $this->getCircle($parameters['circle']);
+			$parsedMessage = $this->l->t('{actor} added circle {circle}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You added circle {circle}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator added circle {circle}');
+			}
+		} elseif ($message === 'circle_removed') {
+			$parsedParameters['circle'] = $this->getCircle($parameters['circle']);
+			$parsedMessage = $this->l->t('{actor} removed circle {circle}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed circle {circle}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator removed circle {circle}');
 			}
 		} elseif ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
@@ -585,6 +606,27 @@ class SystemMessage {
 		];
 	}
 
+	protected function getCircle(string $circleId): array {
+		if (!isset($this->circleNames[$circleId])) {
+			$this->loadCircleDetails($circleId);
+		}
+
+		if (!isset($this->circleNames[$circleId])) {
+			return [
+				'type' => 'highlight',
+				'id' => $circleId,
+				'name' => $circleId,
+			];
+		}
+
+		return [
+			'type' => 'circle',
+			'id' => $circleId,
+			'name' => $this->circleNames[$circleId],
+			'url' => $this->circleLinks[$circleId],
+		];
+	}
+
 	protected function getDisplayName(string $uid): string {
 		$user = $this->userManager->get($uid);
 		if ($user instanceof IUser) {
@@ -599,6 +641,20 @@ class SystemMessage {
 			return $group->getDisplayName();
 		}
 		return $gid;
+	}
+
+	protected function loadCircleDetails(string $circleId): void {
+		try {
+			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager->startSuperSession();
+			$circle = $circlesManager->getCircle($circleId);
+			$circlesManager->stopSession();
+
+			$this->circleNames[$circleId] = $circle->getDisplayName();
+			$this->circleLinks[$circleId] = $circle->getUrl();
+		} catch (\Exception $e) {
+			$circlesManager->stopSession();
+		}
 	}
 
 	protected function getGuest(Room $room, string $actorId): array {
