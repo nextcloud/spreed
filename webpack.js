@@ -19,6 +19,8 @@ webpackConfig.entry = {
 	deck: path.join(__dirname, 'src', 'deck.js'),
 	// tflite: path.join(__dirname, 'src/utils/videofx/public/tflite', 'tflite.js'),
 	// 'tflite-simd': path.join(__dirname, 'src/utils/videofx/public/tflite', 'tflite-simd.js'),
+	// 'tflite-wasm': path.join(__dirname, 'src/utils/videofx/public/tflite', 'tflite.wasm'),
+	// 'tflite-simd-wasm': path.join(__dirname, 'src/utils/videofx/public/tflite', 'tflite-simd.wasm'),
 }
 
 webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'
@@ -75,14 +77,24 @@ webpackConfig.module.rules.push({
 	type: 'asset/resource',
 })
 
-webpackConfig.module.rules.push({
-	test: /tflite-nosimd\.js$/i,
-	type: 'asset/resource',
-})
+// webpackConfig.module.rules.push({
+// 	test: /\.worker\.js$/,
+// 	type: 'asset/resource',
+// })
+
+// webpackConfig.module.rules.push({
+// 	test: /tflite-nosimd\.js$/i,
+// 	type: 'asset/resource',
+// })
+
+// webpackConfig.module.rules.push({
+// 	test: /tflite-simd\.js$/i,
+// 	type: 'asset/resource',
+// })
 
 webpackConfig.module.rules.push({
-	test: /tflite-simd\.js$/i,
-	type: 'asset/resource',
+	test: /\.worker\.js$/,
+	use: { loader: 'worker-loader' },
 })
 
 webpackConfig.optimization.minimizer = [
