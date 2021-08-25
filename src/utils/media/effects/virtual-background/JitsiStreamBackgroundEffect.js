@@ -1,6 +1,7 @@
 // @flow
 
-import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants'
+import { VIRTUAL_BACKGROUND_TYPE } from './constants'
+import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 
 import {
 	CLEAR_TIMEOUT,
@@ -39,11 +40,12 @@ export default class JitsiStreamBackgroundEffect {
 	 * Represents a modified video MediaStream track.
 	 *
 	 * @class
-	 * @param {object} model - Meet model.
 	 * @param {object} options - Segmentation dimensions.
 	 */
-	constructor(model, options) {
+	constructor(options) {
+		const isSimd = options.simd
 		this._options = options
+		this._loaded = false
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
@@ -55,11 +57,22 @@ export default class JitsiStreamBackgroundEffect {
 			this._virtualVideo.autoplay = true
 			this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream
 		}
-		this._model = model
-		this._segmentationPixelCount = this._options.width * this._options.height
+		const segmentationPixelCount = this._options.width * this._options.height
+		this._segmentationPixelCount = segmentationPixelCount
+		this._model = new WebWorker()
+		this._model.postMessage({
+			message: 'makeTFLite',
+			segmentationPixelCount,
+			simd: isSimd,
+		})
+
+		this._segmentationPixelCount = segmentationPixelCount
 
 		// Bind event handler so it is only bound once for every instance.
 		this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this)
+		this._startFx = this._startFx.bind(this)
+
+		this._model.onmessage = this._startFx
 
 		// Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
 		this._outputCanvasElement = document.createElement('canvas')
@@ -77,6 +90,21 @@ export default class JitsiStreamBackgroundEffect {
 	_onMaskFrameTimer(response) {
 		if (response.data.id === TIMEOUT_TICK) {
 			this._renderMask()
+		}
+	}
+
+	_startFx(e) {
+		switch (e.data.message) {
+		case 'inferenceRun':
+			this.runInference(e.data.segmentationResult)
+			this.runPostProcessing()
+			break
+		case 'loaded':
+			this._loaded = true
+			break
+		default:
+			console.error('_startFx: Something went wrong.')
+			break
 		}
 	}
 
@@ -160,22 +188,15 @@ export default class JitsiStreamBackgroundEffect {
 
 	/**
 	 * Represents the run Tensorflow Interference.
+	 * Worker partly
 	 *
+	 * @param {Array} data the segmentation result
 	 * @return {void}
 	 */
-	runInference() {
-		this._model._runInference()
-		const outputMemoryOffset = this._model._getOutputMemoryOffset() / 4
-
+	runInference(data) {
+		// All consts in Worker in obj array.
 		for (let i = 0; i < this._segmentationPixelCount; i++) {
-			const background = this._model.HEAPF32[outputMemoryOffset + (i * 2)]
-			const person = this._model.HEAPF32[outputMemoryOffset + (i * 2) + 1]
-			const shift = Math.max(background, person)
-			const backgroundExp = Math.exp(background - shift)
-			const personExp = Math.exp(person - shift)
-
-			// Sets only the alpha component of each pixel.
-			this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp)
+			this._segmentationMask.data[(i * 4) + 3] = (255 * data[i].personExp) / (data[i].backgroundExp + data[i].personExp)
 		}
 		this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 	}
@@ -188,17 +209,16 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	_renderMask() {
 		this.resizeSource()
-		this.runInference()
-		this.runPostProcessing()
-
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / 30,
+			message: 'this._maskFrameTimerWorker',
 		})
 	}
 
 	/**
 	 * Represents the resize source process.
+	 * Worker partly
 	 *
 	 * @return {void}
 	 */
@@ -221,13 +241,8 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.width,
 			this._options.height
 		)
-		const inputMemoryOffset = this._model._getInputMemoryOffset() / 4
 
-		for (let i = 0; i < this._segmentationPixelCount; i++) {
-			this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255
-			this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255
-			this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255
-		}
+		this._model.postMessage({ message: 'resizeSource', imageData })
 	}
 
 	/**
@@ -272,6 +287,7 @@ export default class JitsiStreamBackgroundEffect {
 			this._maskFrameTimerWorker.postMessage({
 				id: SET_TIMEOUT,
 				timeMs: 1000 / 30,
+				message: 'this._maskFrameTimerWorker',
 			})
 		}
 
@@ -286,6 +302,7 @@ export default class JitsiStreamBackgroundEffect {
 	stopEffect() {
 		this._maskFrameTimerWorker.postMessage({
 			id: CLEAR_TIMEOUT,
+			message: 'stopEffect',
 		})
 
 		this._maskFrameTimerWorker.terminate()
