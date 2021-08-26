@@ -32,6 +32,7 @@ use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -52,6 +53,8 @@ class ListenerTest extends TestCase {
 	protected $chatManager;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
+	/** @var ISession|MockObject */
+	protected $session;
 	/** @var TalkSession|MockObject */
 	protected $talkSession;
 	/** @var ITimeFactory|MockObject */
@@ -75,6 +78,7 @@ class ListenerTest extends TestCase {
 		$this->dummyTime = new \DateTime();
 
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->session = $this->createMock(ISession::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -93,8 +97,9 @@ class ListenerTest extends TestCase {
 			$this->request,
 			$this->chatManager,
 			$this->talkSession,
+			$this->session,
 			$this->userSession,
-			$this->timeFactory,
+			$this->timeFactory
 		 );
 
 		$this->overwriteService(Listener::class, $this->listener);
