@@ -29,7 +29,6 @@ use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\RetryJob;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
-use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
@@ -64,9 +63,6 @@ class Notifications {
 	/** @var AttendeeMapper */
 	private $attendeeMapper;
 
-	/** @var MatterbridgeManager */
-	private $matterbridgeManager;
-
 	public function __construct(
 		ICloudFederationFactory $cloudFederationFactory,
 		AddressHandler $addressHandler,
@@ -74,8 +70,7 @@ class Notifications {
 		ICloudFederationProviderManager $federationProviderManager,
 		IJobList $jobList,
 		IUserManager $userManager,
-		AttendeeMapper $attendeeMapper,
-		MatterbridgeManager $matterbridgeManager
+		AttendeeMapper $attendeeMapper
 	) {
 		$this->cloudFederationFactory = $cloudFederationFactory;
 		$this->addressHandler = $addressHandler;
@@ -84,7 +79,6 @@ class Notifications {
 		$this->jobList = $jobList;
 		$this->userManager = $userManager;
 		$this->attendeeMapper = $attendeeMapper;
-		$this->matterbridgeManager = $matterbridgeManager;
 	}
 
 	/**
@@ -217,7 +211,7 @@ class Notifications {
 		return true;
 	}
 
-	public function sendRemoteUnShare(string $remote, string $id, string $token) {
+	public function sendRemoteUnShare(string $remote, string $id, string $token): void {
 		$remote = $this->prepareRemoteUrl($remote);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -234,7 +228,7 @@ class Notifications {
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
-	public function sendUpdateDataToRemote(string $remote, array $data = [], int $try = 0) {
+	public function sendUpdateDataToRemote(string $remote, array $data = [], int $try = 0): void {
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			$data['notificationType'],
@@ -245,7 +239,7 @@ class Notifications {
 		$this->sendUpdateToRemote($remote, $notification, $try);
 	}
 
-	public function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0) {
+	public function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
 			$this->jobList->add(RetryJob::class,
@@ -260,7 +254,7 @@ class Notifications {
 
 	private function prepareRemoteUrl(string $remote): string {
 		if ($this->addressHandler->urlContainProtocol($remote)) {
-			return "https://" . $remote;
+			return 'https://' . $remote;
 		}
 		return $remote;
 	}

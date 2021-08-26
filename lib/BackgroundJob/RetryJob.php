@@ -67,7 +67,7 @@ class RetryJob extends Job {
 	 * @param IJobList $jobList
 	 * @param ILogger|null $logger
 	 */
-	public function execute(IJobList $jobList, ILogger $logger = null) {
+	public function execute(IJobList $jobList, ?ILogger $logger = null) {
 		if (((int)$this->argument['try']) > $this->maxTry) {
 			$jobList->remove($this, $this->argument);
 			return;
@@ -78,7 +78,7 @@ class RetryJob extends Job {
 		}
 	}
 
-	protected function run($argument) {
+	protected function run($argument): void {
 		$remote = $argument['remote'];
 		$data = json_decode($argument['data'], true);
 		$try = (int)$argument['try'] + 1;
@@ -92,7 +92,7 @@ class RetryJob extends Job {
 	 * @param array $argument
 	 * @return bool
 	 */
-	protected function shouldRun(array $argument) {
+	protected function shouldRun(array $argument): bool {
 		$lastRun = (int)$argument['lastRun'];
 		return (($this->time->getTime() - $lastRun) > $this->interval);
 	}
