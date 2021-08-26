@@ -63,6 +63,8 @@ Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 
+store.dispatch('setMainContainerSelector', '.talkChatTab')
+
 const newCallView = () => new Vue({
 	store,
 	render: h => h(FilesSidebarCallViewApp),

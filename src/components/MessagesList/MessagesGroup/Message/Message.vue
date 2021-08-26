@@ -126,7 +126,8 @@ the main body of the message as well as a quote.
 					<Actions
 						v-show="hasActionsMenu"
 						:force-menu="true"
-						:container="container">
+						:container="container"
+						:boundaries-element="containerElement">
 						<template
 							v-for="action in messageActions">
 							<ActionButton
@@ -454,6 +455,10 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		containerElement() {
+			return document.querySelector(this.container)
 		},
 
 		isTemporaryUpload() {

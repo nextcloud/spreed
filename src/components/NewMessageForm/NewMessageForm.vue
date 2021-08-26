@@ -42,6 +42,7 @@
 					class="new-message-form__button">
 					<Actions
 						:container="container"
+						:boundaries-element="containerElement"
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button"
 						:aria-label="t('spreed', 'Share files to the conversation')"
@@ -216,6 +217,10 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		containerElement() {
+			return document.querySelector(this.container)
 		},
 	},
 
