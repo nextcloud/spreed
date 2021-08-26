@@ -707,7 +707,7 @@
     "Error while updating conversation description" : "Błąd podczas aktualizowania opisu rozmowy",
     "Be careful, these actions cannot be undone." : "Uważaj, tych działań nie można cofnąć.",
     "Leave conversation" : "Opuść rozmowę",
-    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Po opuszczeniu rozmowy, aby ponownie dołączyć do zamkniętej rozmowy, potrzebne będzie zaproszenie. Do otwartej rozmowy można dołączyć w dowolnym momencie.",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Po opuszczeniu rozmowy, aby ponownie dołączyć do zamkniętej rozmowy, potrzebne będzie zaproszenie. Do otwartej rozmowy będzie można dołączyć w dowolnym momencie.",
     "Delete conversation" : "Usuń rozmowę",
     "Permanently delete this conversation." : "Usuń trwale rozmowę.",
     "Delete chat messages" : "Usuń wiadomości czatu",
