@@ -43,6 +43,7 @@
 					<Actions
 						ref="uploadMenu"
 						:container="container"
+						:boundaries-element="containerElement"
 						:disabled="disabled"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
@@ -248,6 +249,10 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		containerElement() {
+			return document.querySelector(this.container)
 		},
 	},
 

@@ -132,7 +132,8 @@ the main body of the message as well as a quote.
 						</Actions>
 						<Actions
 							:force-menu="true"
-							:container="container">
+							:container="container"
+							:boundaries-element="containerElement">
 							<ActionButton
 								v-if="isPrivateReplyable"
 								icon="icon-user"
@@ -575,6 +576,10 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		containerElement() {
+			return document.querySelector(this.container)
 		},
 
 		isTemporaryUpload() {
