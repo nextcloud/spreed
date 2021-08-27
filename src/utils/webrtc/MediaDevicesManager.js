@@ -115,6 +115,8 @@ MediaDevicesManager.prototype = {
 		this._trigger('change:' + key, [value])
 
 		this._storeDeviceId(key, value)
+
+		console.debug('Storing device selection in the browser storage: ', key, value)
 	},
 
 	_storeDeviceId(key, value) {

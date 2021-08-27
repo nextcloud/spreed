@@ -155,7 +155,26 @@ export default {
 		// The watcher should not be set as "immediate" to prevent
 		// "update:deviceId" from being emitted when mounted with the same value
 		// initially passed to the component.
-		deviceSelectedOption(deviceSelectedOption) {
+		deviceSelectedOption(deviceSelectedOption, previousSelectedOption) {
+			// The deviceSelectedOption may be the same as before yet a change
+			// could be triggered if media permissions are granted, which would
+			// update the label.
+			if (deviceSelectedOption && previousSelectedOption && deviceSelectedOption.id === previousSelectedOption.id) {
+				return
+			}
+
+			// The previous selected option changed due to the device being
+			// disconnected, so ignore it as it was not explicitly changed by
+			// the user.
+			if (previousSelectedOption && previousSelectedOption.id && !this.deviceOptions.find(option => option.id === previousSelectedOption.id)) {
+				return
+			}
+
+			// Ignore device change on initial loading of the settings dialog.
+			if (typeof previousSelectedOption?.id === 'undefined') {
+				return
+			}
+
 			if (deviceSelectedOption && deviceSelectedOption.id === null) {
 				this.$emit('update:deviceId', null)
 				return
