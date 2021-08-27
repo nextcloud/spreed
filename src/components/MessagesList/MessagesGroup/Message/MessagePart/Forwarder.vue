@@ -25,7 +25,7 @@
 		message to -->
 		<RoomSelector
 			v-if="!showForwardedConfirmation"
-			container="#content-vue"
+			:container="container"
 			:show-postable-only="true"
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
@@ -89,6 +89,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		dialogTitle() {
 			return t('spreed', 'Forward message')
 		},
