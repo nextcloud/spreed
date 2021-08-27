@@ -707,6 +707,7 @@
     "Error while updating conversation description" : "Fehler bei der Aktualisierung der Beschreibung der Unterhaltung",
     "Be careful, these actions cannot be undone." : "Sei bitte vorsichtig, diese Aktionen können nicht rückgängig gemacht werden.",
     "Leave conversation" : "Unterhaltung verlassen",
+    "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Nachdem Du eine Unterhaltung verlassen hast, ist eine Einladung erforderlich, um einer bereits geschlossenen Unterhaltung wieder beizutreten. Einer noch geöffneter Unterhaltung kannst Du jederzeit wieder beitreten.",
     "Delete conversation" : "Unterhaltung löschen",
     "Permanently delete this conversation." : "Die Unterhaltung endgültig löschen.",
     "Delete chat messages" : "Chatnachrichten löschen",
