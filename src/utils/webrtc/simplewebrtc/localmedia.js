@@ -152,6 +152,12 @@ LocalMedia.prototype.isLocalMediaActive = function() {
  * resolution, so if the camera does not have such resolution it will still
  * return the highest resolution available without failing.
  *
+ * A high frame rate needs to be requested too, as some cameras offer high
+ * resolution but with low frame rates, so Chromium could end providing a laggy
+ * high resolution video. If the frame rate is requested too then Chromium needs
+ * to balance all the constraints and thus provide a video without the highest
+ * resolution but with an acceptable frame rate.
+ *
  * @param {object} constraints the constraints to be adjusted
  */
 LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) {
@@ -177,6 +183,7 @@ LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) 
 
 	constraints.video.width = 1920
 	constraints.video.height = 1200
+	constraints.video.frameRate = 60
 }
 
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
