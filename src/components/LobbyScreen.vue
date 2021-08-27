@@ -23,7 +23,24 @@
 		<div class="lobby emptycontent">
 			<div class="icon icon-lobby" />
 			<h2>{{ currentConversationName }}</h2>
-			<p>{{ message }}</p>
+
+			<p class="lobby__timer">
+				{{ t('spreed', 'You are currently waiting in the lobby') }}
+			</p>
+
+			<p
+				v-if="countdown"
+				class="lobby__countdown">
+				{{ message }} -
+				<span
+					class="lobby__countdown live-relative-timestamp"
+					:data-timestamp="countdown * 1000"
+					:title="startTime">
+					{{ relativeDate }}
+				</span>
+			</p>
+
+			<p class="lobby__description">{{ conversation.description }}</p>
 		</div>
 		<SetGuestUsername v-if="currentUserIsGuest" />
 	</div>
@@ -55,18 +72,30 @@ export default {
 			return this.conversation ? this.conversation.displayName : ''
 		},
 
-		message() {
-			let message = t('spreed', 'You are currently waiting in the lobby')
-
-			if (this.conversation.lobbyTimer) {
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				const startTime = moment.unix(this.conversation.lobbyTimer).format('LLL')
-				message = t('spreed', 'You are currently waiting in the lobby. This meeting is scheduled for {startTime}', { startTime })
-			}
-
-			return message
+		countdown() {
+			return this.conversation.lobbyTimer
 		},
+
+		relativeDate() {
+			const diff = moment().diff(this.timerInMoment)
+			if (diff > -45000 && diff < 45000) {
+				return t('spreed', 'The meeting will start soon')
+			}
+			return this.timerInMoment.fromNow()
+		},
+
+		timerInMoment() {
+			return moment.unix(this.countdown)
+		},
+
+		startTime() {
+			return this.timerInMoment.format('LLL')
+		},
+
+		message() {
+			return t('spreed', 'This meeting is scheduled for {startTime}', { startTime: this.startTime })
+		},
+
 		// Determines whether the current user is a guest user
 		currentUserIsGuest() {
 			return !this.$store.getters.getUserId()
@@ -77,10 +106,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/variables.scss';
 
 .lobby {
 	display: flex;
 	flex-direction: column;
+
+	&__timer {
+		max-width: $messages-list-max-width;
+		margin: 0 auto;
+	}
+
+	&__countdown,
+	&__description {
+		max-width: $messages-list-max-width;
+		margin: 0 auto;
+		margin-top: 25px;
+	}
 }
 
 </style>
