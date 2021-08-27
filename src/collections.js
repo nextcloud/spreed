@@ -50,7 +50,7 @@ import RoomSelector from './views/RoomSelector'
 							// on the store need to be explicitly injected.
 							container: window.store ? window.store.getters.getMainContainerSelector() : undefined,
 						},
-					})
+					}),
 				})
 				ComponentVM.$mount(container)
 				ComponentVM.$root.$on('close', () => {
