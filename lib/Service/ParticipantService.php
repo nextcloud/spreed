@@ -311,6 +311,7 @@ class ParticipantService {
 	 * @param Room $room
 	 * @param array $participants
 	 * @param IUser|null $addedBy User that is attempting to add these users (must be set for federated users to be added)
+	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
 	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
 		if (empty($participants)) {
@@ -331,7 +332,7 @@ class ParticipantService {
 				$readPrivacy = $this->talkConfig->getUserReadPrivacy($participant['actorId']);
 			} elseif ($participant['actorType'] === Attendee::ACTOR_FEDERATED_USERS) {
 				if ($addedBy === null) {
-					continue;
+					throw new \Exception('$addedBy must be set to add a federated user');
 				}
 				$participant['accessToken'] = $this->secureRandom->generate(
 					FederationManager::TOKEN_LENGTH,
@@ -356,16 +357,16 @@ class ParticipantService {
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			try {
-				$this->attendeeMapper->insert($attendee);
+				$entity = $this->attendeeMapper->insert($attendee);
 				$attendees[] = $attendee;
+
+				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+					$this->notifications->sendRemoteShare((string) $entity->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+				}
 			} catch (Exception $e) {
 				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 					throw $e;
 				}
-			}
-
-			if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-				$this->sendRemoteShare($room, $addedBy, $participant['actorId'], $participant['accessToken'], $entity->getId());
 			}
 		}
 
@@ -377,8 +378,28 @@ class ParticipantService {
 		}
 	}
 
-	private function sendRemoteShare(Room $room, IUser $addedBy, string $addingUserId, string $token, int $attendeeId) {
-		$this->notifications->sendRemoteShare((string) $attendeeId, $token, $addingUserId, $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room);
+	public function getHighestPermissionAttendee(Room $room): ?Attendee {
+		try {
+			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
+
+			if (!empty($roomOwners)) {
+				foreach ($roomOwners as $owner) {
+					if ($owner->getActorType() === Attendee::ACTOR_USERS) {
+						return $owner;
+					}
+				}
+			}
+			$roomModerators = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
+			if (!empty($roomOwners)) {
+				foreach ($roomModerators as $moderator) {
+					if ($moderator->getActorType() === Attendee::ACTOR_USERS) {
+						return $moderator;
+					}
+				}
+			}
+		} catch (Exception $e) {
+		}
+		return null;
 	}
 
 	/**

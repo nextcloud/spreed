@@ -30,13 +30,12 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\RetryJob;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Model\AttendeeMapper;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\BackgroundJob\IJobList;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
+use OCP\HintException;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
@@ -44,9 +43,6 @@ use Psr\Log\LoggerInterface;
 class Notifications {
 	/** @var ICloudFederationFactory */
 	private $cloudFederationFactory;
-
-	/** @var AddressHandler */
-	private $addressHandler;
 
 	/** @var LoggerInterface */
 	private $logger;
@@ -60,8 +56,8 @@ class Notifications {
 	/** @var IUserManager */
 	private $userManager;
 
-	/** @var AttendeeMapper */
-	private $attendeeMapper;
+	/** @var AddressHandler */
+	private $addressHandler;
 
 	public function __construct(
 		ICloudFederationFactory $cloudFederationFactory,
@@ -69,25 +65,23 @@ class Notifications {
 		LoggerInterface $logger,
 		ICloudFederationProviderManager $federationProviderManager,
 		IJobList $jobList,
-		IUserManager $userManager,
-		AttendeeMapper $attendeeMapper
+		IUserManager $userManager
 	) {
 		$this->cloudFederationFactory = $cloudFederationFactory;
-		$this->addressHandler = $addressHandler;
 		$this->logger = $logger;
 		$this->federationProviderManager = $federationProviderManager;
 		$this->jobList = $jobList;
 		$this->userManager = $userManager;
-		$this->attendeeMapper = $attendeeMapper;
+		$this->addressHandler = $addressHandler;
 	}
 
 	/**
-	 * @throws \OCP\HintException
+	 * @throws HintException
 	 * @throws RoomHasNoModeratorException
 	 * @throws \OCP\DB\Exception
 	 */
 	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $sharedBy,
-									string $sharedByFederatedId, string $shareType, Room $room): bool {
+									string $sharedByFederatedId, string $shareType, Room $room, Attendee $roomOwnerAttendee): bool {
 		[$user, $remote] = $this->addressHandler->splitUserRemote($shareWith);
 
 		$roomName = $room->getName();
@@ -104,21 +98,10 @@ class Notifications {
 
 		/** @var IUser|null $roomOwner */
 		$roomOwner = null;
-		try {
-			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
-			if (!empty($roomOwners) && $roomOwners[0]->getActorType() === Attendee::ACTOR_USERS) {
-				$roomOwner = $this->userManager->get($roomOwners[0]->getActorId());
-			}
-		} catch (\Exception $e) {
-			// Get a local moderator instead
-			try {
-				$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
-				if (!empty($roomOwners) && $roomOwners[0]->getActorType() === Attendee::ACTOR_USERS) {
-					$roomOwner = $this->userManager->get($roomOwners[0]->getActorId());
-				}
-			} catch (\Exception $e) {
-				throw new RoomHasNoModeratorException();
-			}
+		if ($roomOwnerAttendee) {
+			$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
+		} else {
+			throw new RoomHasNoModeratorException();
 		}
 
 		$remote = $this->prepareRemoteUrl($remote);
@@ -141,7 +124,7 @@ class Notifications {
 		$protocol = $share->getProtocol();
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
-		$protocol['name'] = 'nctalk';
+		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
 		$share->setProtocol($protocol);
 
 		$response = $this->federationProviderManager->sendShare($share);

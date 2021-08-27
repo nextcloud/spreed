@@ -51,9 +51,6 @@ class RetryJob extends Job {
 	/** @var int max number of attempts to send the request */
 	private $maxTry = 20;
 
-	/** @var int how much time should be between two tries (10 minutes) */
-	private $interval = 600;
-
 
 	public function __construct(Notifications $notifications,
 								ITimeFactory $timeFactory) {
@@ -94,6 +91,11 @@ class RetryJob extends Job {
 	 */
 	protected function shouldRun(array $argument): bool {
 		$lastRun = (int)$argument['lastRun'];
-		return (($this->time->getTime() - $lastRun) > $this->interval);
+		$try = (int)$argument['try'];
+		return (($this->time->getTime() - $lastRun) > $this->nextRunBreak($try));
+	}
+
+	protected function nextRunBreak(int $try): int {
+		return min(($try + 1) * 300, 3600);
 	}
 }
