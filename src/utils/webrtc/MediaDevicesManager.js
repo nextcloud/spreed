@@ -228,9 +228,17 @@ MediaDevicesManager.prototype = {
 
 			// Fallback in case we didn't find the previously picked device
 			if (this.attributes.audioInputId === undefined) {
+				if (BrowserStorage.getItem('audioInputId')) {
+					// Couldn't find device by id
+					console.debug('Could not find previous audio device, falling back to default/first device in the list', BrowserStorage.getItem('audioInputId'), this.attributes.devices)
+				}
 				this.attributes.audioInputId = this._fallbackAudioInputId
 			}
 			if (this.attributes.videoInputId === undefined) {
+				if (BrowserStorage.getItem('videoInputId')) {
+					// Couldn't find device by id, try the label
+					console.debug('Could not find previous video device, falling back to default/first device in the list', BrowserStorage.getItem('videoInputId'), this.attributes.devices)
+				}
 				this.attributes.videoInputId = this._fallbackVideoInputId
 			}
 
