@@ -69,6 +69,10 @@ const video = {
 			if (e.target.localName === 'button') {
 				return
 			}
+			// Prevent clicks on the "settings icon" of the popover/actions menu to trigger a video selection
+			if (e.target.localName === 'svg') {
+				return
+			}
 			this.$emit('click-video')
 		},
 	},
