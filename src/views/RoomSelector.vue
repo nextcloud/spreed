@@ -21,7 +21,9 @@
   -->
 
 <template>
-	<Modal @close="close" :container="container">
+	<Modal
+		:container="container"
+		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
 				<h2>{{ dialogTitle }}</h2>
