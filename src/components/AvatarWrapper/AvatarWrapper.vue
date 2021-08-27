@@ -29,7 +29,7 @@
 		<Avatar v-else-if="!isGuest"
 			:user="id"
 			:display-name="name"
-			menu-container="#content-vue"
+			:menu-container="menuContainer"
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
@@ -117,6 +117,9 @@ export default {
 		firstLetterOfGuestName() {
 			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
+		},
+		menuContainer() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 		// Takes the the size prop and makes it a string for the classes
 		sizeToString() {
