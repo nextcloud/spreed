@@ -226,6 +226,14 @@ MediaDevicesManager.prototype = {
 				this._addDevice(addedDevice)
 			})
 
+			// Fallback in case we didn't find the previously picked device
+			if (this.attributes.audioInputId === undefined) {
+				this.attributes.audioInputId = this._fallbackAudioInputId
+			}
+			if (this.attributes.videoInputId === undefined) {
+				this.attributes.videoInputId = this._fallbackVideoInputId
+			}
+
 			// Trigger change events after all the devices are processed to
 			// prevent change events for intermediate states.
 			if (previousAudioInputId !== this.attributes.audioInputId) {
@@ -325,18 +333,12 @@ MediaDevicesManager.prototype = {
 			if (!this._fallbackAudioInputId || addedDevice.deviceId === 'default') {
 				this._fallbackAudioInputId = addedDevice.deviceId
 			}
-			if (this.attributes.audioInputId === undefined) {
-				this.attributes.audioInputId = this._fallbackAudioInputId
-			}
 		} else if (addedDevice.kind === 'videoinput') {
 			if (BrowserStorage.getItem('videoInputId') === addedDevice.deviceId) {
 				this.attributes.videoInputId = addedDevice.deviceId
 			}
 			if (!this._fallbackVideoInputId || addedDevice.deviceId === 'default') {
 				this._fallbackVideoInputId = addedDevice.deviceId
-			}
-			if (this.attributes.videoInputId === undefined) {
-				this.attributes.videoInputId = this._fallbackVideoInputId
 			}
 		}
 
