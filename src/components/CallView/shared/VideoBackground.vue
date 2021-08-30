@@ -41,7 +41,7 @@ const browserStorage = getBuilder('nextcloud').persist().build()
 
 // note: this info is shared with the Avatar component
 /**
- * @param userId
+ * @param {string} userId ID of the user
  */
 function getUserHasAvatar(userId) {
 	const flag = browserStorage.getItem('user-has-avatar.' + userId)
@@ -52,8 +52,8 @@ function getUserHasAvatar(userId) {
 }
 
 /**
- * @param userId
- * @param flag
+ * @param {string} userId ID of the user
+ * @param {string} flag The boolean flag as string
  */
 function setUserHasAvatar(userId, flag) {
 	browserStorage.setItem('user-has-avatar.' + userId, flag)
