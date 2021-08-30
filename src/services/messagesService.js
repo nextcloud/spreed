@@ -29,7 +29,7 @@ import Hex from 'crypto-js/enc-hex'
  * Fetches messages that belong to a particular conversation
  * specified with its token.
  *
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {string} data.token the conversation token;
  * @param {string} data.lastKnownMessageId last known message id;
  * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
@@ -50,7 +50,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * Fetches newly created messages that belong to a particular conversation
  * specified with its token.
  *
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {number} data.lastKnownMessageId The id of the last message in the store.
  * @param {string} data.token The conversation token;
  * @param {object} options options
@@ -101,7 +101,7 @@ const deleteMessage = async function({ token, id }) {
  * Post a rich object to a conversation
  *
  * @param {string} token conversation token
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {string} data.objectType object type
  * @param {string} data.objectId object id
  * @param {string} data.metaData JSON metadata of the rich object encoded as string

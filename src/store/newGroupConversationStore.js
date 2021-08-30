@@ -85,8 +85,8 @@ const actions = {
 	 * Adds or removes the participant to the selected participants array
 	 *
 	 * @param {object} context default store context;
-	 * @param context.commit
-	 * @param context.state
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {object} context.state the contexts state object.
 	 * @param {object} participant the clicked participant;
 	 */
 	updateSelectedParticipants({ commit, state }, participant) {

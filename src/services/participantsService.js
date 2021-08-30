@@ -33,7 +33,7 @@ import {
  * Joins the current user to a conversation specified with
  * the token.
  *
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {string} data.token The conversation token;
  * @param {boolean} data.forceJoin whether to force join;
  * @param {options} options request options;
