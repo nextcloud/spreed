@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.1.1 – 2021-08-30
+
+### Changed
+- Improved device preference storing to better recover after switching between docking-station and normal usage with a device
+  [#6179](https://github.com/nextcloud/spreed/pull/6179)
+
+### Fixed
+- Fix laggy video with Full HD 60 FPS webcams in Chrome and Chromium
+  [#6159](https://github.com/nextcloud/spreed/pull/6159)
+- Fix infinite loop when video constrains can not be satisfied
+  [#6125](https://github.com/nextcloud/spreed/pull/6125)
+- Fix connection quality warning after media was stopped
+  [#6147](https://github.com/nextcloud/spreed/pull/6147)
+- Hide forward action for guests
+  [#6143](https://github.com/nextcloud/spreed/pull/6143)
+- Don't select the own video when trying to open the video settings
+  [#6158](https://github.com/nextcloud/spreed/pull/6158)
+- Fix issues with several popovers in fullscreen mode or sidebar mode
+  [#6155](https://github.com/nextcloud/spreed/pull/6155)
+- Fix issue with video recording in sidebar mode
+  [#6129](https://github.com/nextcloud/spreed/pull/6129)
+  [#6131](https://github.com/nextcloud/spreed/pull/6131)
+
 ## 12.1.0 – 2021-08-10
 ### Added
 - Allow to forward messages to another chat
