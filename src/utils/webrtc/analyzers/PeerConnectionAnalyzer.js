@@ -136,6 +136,7 @@ function PeerConnectionAnalyzer() {
 	this._getStatsInterval = null
 
 	this._handleIceConnectionStateChangedBound = this._handleIceConnectionStateChanged.bind(this)
+	this._handleConnectionStateChangedBound = this._handleConnectionStateChanged.bind(this)
 	this._processStatsBound = this._processStats.bind(this)
 
 	this._connectionQuality = {
@@ -209,6 +210,7 @@ PeerConnectionAnalyzer.prototype = {
 	setPeerConnection(peerConnection, peerDirection = null) {
 		if (this._peerConnection) {
 			this._peerConnection.removeEventListener('iceconnectionstatechange', this._handleIceConnectionStateChangedBound)
+			this._peerConnection.removeEventListener('connectionstatechange', this._handleConnectionStateChangedBound)
 			this._stopGetStatsInterval()
 		}
 
@@ -220,6 +222,7 @@ PeerConnectionAnalyzer.prototype = {
 
 		if (this._peerConnection) {
 			this._peerConnection.addEventListener('iceconnectionstatechange', this._handleIceConnectionStateChangedBound)
+			this._peerConnection.addEventListener('connectionstatechange', this._handleConnectionStateChangedBound)
 			this._handleIceConnectionStateChangedBound()
 		}
 	},
@@ -265,7 +268,10 @@ PeerConnectionAnalyzer.prototype = {
 		// Note that even if the ICE connection state is "disconnected" the
 		// connection is actually active, media is still transmitted, and the
 		// stats are properly updated.
-		if (!this._peerConnection || (this._peerConnection.iceConnectionState !== 'connected' && this._peerConnection.iceConnectionState !== 'completed' && this._peerConnection.iceConnectionState !== 'disconnected')) {
+		// "connectionState === failed" needs to be checked due to a Chromium
+		// bug in which "iceConnectionState" can get stuck as "disconnected"
+		// even if the connection has already failed.
+		if (!this._peerConnection || (this._peerConnection.iceConnectionState !== 'connected' && this._peerConnection.iceConnectionState !== 'completed' && this._peerConnection.iceConnectionState !== 'disconnected') || this._peerConnection.connectionState === 'failed') {
 			this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
 			this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
 
@@ -295,13 +301,37 @@ PeerConnectionAnalyzer.prototype = {
 		}, 1000)
 	},
 
+	_handleConnectionStateChanged() {
+		if (!this._peerConnection) {
+			return
+		}
+
+		if (this._peerConnection.connectionState !== 'failed') {
+			return
+		}
+
+		if (this._peerConnection.iceConnectionState === 'failed') {
+			return
+		}
+
+		// Work around Chromium bug where "iceConnectionState" never changes
+		// to "failed" (it stays as "disconnected"). When that happens
+		// "connectionState" actually does change to "failed", so the normal
+		// handling of "iceConnectionState === failed" is triggered here.
+
+		this._handleIceConnectionStateChanged()
+	},
+
 	_stopGetStatsInterval() {
 		window.clearInterval(this._getStatsInterval)
 		this._getStatsInterval = null
 	},
 
 	_processStats(stats) {
-		if (!this._peerConnection || (this._peerConnection.iceConnectionState !== 'connected' && this._peerConnection.iceConnectionState !== 'completed' && this._peerConnection.iceConnectionState !== 'disconnected')) {
+		// "connectionState === failed" needs to be checked due to a Chromium
+		// bug in which "iceConnectionState" can get stuck as "disconnected"
+		// even if the connection has already failed.
+		if (!this._peerConnection || (this._peerConnection.iceConnectionState !== 'connected' && this._peerConnection.iceConnectionState !== 'completed' && this._peerConnection.iceConnectionState !== 'disconnected') || this._peerConnection.connectionState === 'failed') {
 			return
 		}
 
