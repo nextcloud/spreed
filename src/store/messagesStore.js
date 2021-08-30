@@ -416,7 +416,7 @@ const actions = {
 	 * @param {string} text message string;
 	 * @param {string} token conversation token;
 	 * @param {string} uploadId upload id;
-	 * @param {int} index index;
+	 * @param {number} index index;
 	 * @param {object} file file to upload;
 	 * @param {string} localUrl local URL of file to upload;
 	 * @return {object} temporary message
@@ -684,7 +684,7 @@ const actions = {
 	 * @param {string} token The conversation token;
 	 * @param {string} requestId id to identify request uniquely
 	 * @param {object} requestOptions request options;
-	 * @param {int} lastKnownMessageId The id of the last message in the store.
+	 * @param {number} lastKnownMessageId The id of the last message in the store.
 	 */
 	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
 		context.dispatch('cancelLookForNewMessages', { requestId })

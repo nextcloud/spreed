@@ -51,7 +51,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  *
  * @param {string} token The conversation token;
  * @param {object} options options
- * @param {int} lastKnownMessageId The id of the last message in the store.
+ * @param {number} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
@@ -123,7 +123,7 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
  * Updates the last read message id
  *
  * @param {string} token The token of the conversation to be removed from favorites
- * @param {int} lastReadMessage id of the last read message to set
+ * @param {number} lastReadMessage id of the last read message to set
  */
 const updateLastReadMessage = async function(token, lastReadMessage) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }), {

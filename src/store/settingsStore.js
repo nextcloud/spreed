@@ -50,7 +50,7 @@ const actions = {
 	 * Update the read status privacy for the user
 	 *
 	 * @param {object} context default store context;
-	 * @param {int} privacy The new selected privacy
+	 * @param {number} privacy The new selected privacy
 	 */
 	async updateReadStatusPrivacy(context, privacy) {
 		await setReadStatusPrivacy(privacy)

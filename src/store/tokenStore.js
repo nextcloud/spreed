@@ -61,7 +61,7 @@ const mutations = {
 	 *
 	 * @param {object} state current store state
 	 * @param {string} newToken The token of the active conversation
-	 * @param {int} newFileId The file ID of the active conversation
+	 * @param {number} newFileId The file ID of the active conversation
 	 */
 	updateTokenAndFileIdForToken(state, { newToken, newFileId }) {
 		state.token = newToken
@@ -90,7 +90,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context
 	 * @param {string} newToken The token of the active conversation
-	 * @param {int} newFileId The file ID of the active conversation
+	 * @param {number} newFileId The file ID of the active conversation
 	 */
 	updateTokenAndFileIdForToken(context, { newToken, newFileId }) {
 		context.commit('updateTokenAndFileIdForToken', { newToken, newFileId })

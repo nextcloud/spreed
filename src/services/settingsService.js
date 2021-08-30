@@ -40,7 +40,7 @@ const setAttachmentFolder = async function(path) {
 /**
  * Sets the read status privacy setting for the user
  *
- * @param {int} privacy The selected value, either 0 or 1
+ * @param {number} privacy The selected value, either 0 or 1
  * @return {object} The axios response
  */
 const setReadStatusPrivacy = async function(privacy) {

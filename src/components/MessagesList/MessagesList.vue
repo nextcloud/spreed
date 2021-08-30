@@ -308,14 +308,14 @@ export default {
 		 * @param {string} message1.actorId Actor id of the new message
 		 * @param {string} message1.actorDisplayName Actor displayname of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
-		 * @param {int} message1.timestamp Timestamp of the new message
+		 * @param {number} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
 		 * @param {string} message2.id The ID of the second message
 		 * @param {string} message2.actorType Actor type of the previous message
 		 * @param {string} message2.actorId Actor id of the previous message
 		 * @param {string} message2.actorDisplayName Actor display name of previous message
 		 * @param {string} message2.systemMessage System message content of the previous message
-		 * @param {int} message2.timestamp Timestamp of the second message
+		 * @param {number} message2.timestamp Timestamp of the second message
 		 * @return {boolean} Boolean if the messages should be grouped or not
 		 */
 		messagesShouldBeGrouped(message1, message2) {
@@ -352,10 +352,10 @@ export default {
 		 *
 		 * @param {object} message1 The new message
 		 * @param {string} message1.id The ID of the new message
-		 * @param {int} message1.timestamp Timestamp of the new message
+		 * @param {number} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
 		 * @param {string} message2.id The ID of the second message
-		 * @param {int} message2.timestamp Timestamp of the second message
+		 * @param {number} message2.timestamp Timestamp of the second message
 		 * @return {boolean} Boolean if the messages have the same date
 		 */
 		messagesHaveDifferentDate(message1, message2) {
@@ -368,7 +368,7 @@ export default {
 		 *
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
-		 * @param {int} message.timestamp Timestamp of the message
+		 * @param {number} message.timestamp Timestamp of the message
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
 		generateDateSeparator(message) {
@@ -403,7 +403,7 @@ export default {
 		 *
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
-		 * @param {int} message.timestamp Timestamp of the message
+		 * @param {number} message.timestamp Timestamp of the message
 		 * @return {object} MomentJS object
 		 */
 		getDateOfMessage(message) {

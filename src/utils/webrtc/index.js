@@ -163,7 +163,7 @@ async function signalingJoinConversation(token, sessionId) {
  * Join the call of the given conversation
  *
  * @param {string} token Conversation to join the call
- * @param {int} flags Bitwise combination of PARTICIPANT.CALL_FLAG
+ * @param {number} flags Bitwise combination of PARTICIPANT.CALL_FLAG
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
