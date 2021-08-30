@@ -86,6 +86,25 @@ function Peer(options) {
 			break
 		}
 	})
+	this.pc.addEventListener('connectionstatechange', function() {
+		if (self.pc.connectionState !== 'failed') {
+			return
+		}
+
+		if (self.pc.iceConnectionState === 'failed') {
+			return
+		}
+
+		// Work around Chromium bug where "iceConnectionState" never changes to
+		// "failed" (it stays as "disconnected"). When that happens
+		// "connectionState" actually does change to "failed", so the normal
+		// handling of "iceConnectionState === failed" is triggered here.
+
+		if (self.pc.localDescription.type === 'offer') {
+			self.parent.emit('iceFailed', self)
+			self.send('connectivityError')
+		}
+	})
 	this.pc.addEventListener('signalingstatechange', this.emit.bind(this, 'signalingStateChange'))
 	this.logger = this.parent.logger
 
