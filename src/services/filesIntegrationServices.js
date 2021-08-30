@@ -26,8 +26,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Gets the conversation token for a given file id
  *
- * @param {object} .fileId the id of the file
- * @param options.fileId
+ * @param {object} data the wrapping object.
+ * @param {number} data.fileId The file id to get the conversation for
  * @param {object} options unused
  * @return {string} the conversation token
  */
@@ -41,7 +41,6 @@ const getFileConversation = async function({ fileId }, options) {
  *
  * @param {string} shareToken the token of the share
  * @return {string} the conversation token
- * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareConversationData = async function(shareToken) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/publicshare/{shareToken}', { shareToken }))

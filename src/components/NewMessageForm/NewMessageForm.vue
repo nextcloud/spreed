@@ -465,7 +465,7 @@ export default {
 		 * does not have the focus there will be no caret or selection; in that
 		 * case the emoji will be added at the end.
 		 *
-		 * @param {Emoji} emoji Emoji object
+		 * @param {string} emoji Emoji object
 		 */
 		addEmoji(emoji) {
 			const selection = document.getSelection()

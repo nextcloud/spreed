@@ -33,9 +33,10 @@ import {
  * Joins the current user to a conversation specified with
  * the token.
  *
- * @param {string} token The conversation token;
+ * @param {object} data the wrapping object.
+ * @param {string} data.token The conversation token;
+ * @param {boolean} data.forceJoin whether to force join;
  * @param {options} options request options;
- * @param {boolean} forceJoin whether to force join;
  */
 const joinConversation = async ({ token, forceJoin = false }, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {

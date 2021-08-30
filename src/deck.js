@@ -30,8 +30,8 @@ import RoomSelector from './views/RoomSelector'
 
 (function(OC, OCA, t, n) {
 	/**
-	 * @param card
-	 * @param token
+	 * @param {object} card The card object given by the deck app
+	 * @param {string} token The conversation to post to
 	 */
 	async function postCardToRoom(card, token) {
 		try {
