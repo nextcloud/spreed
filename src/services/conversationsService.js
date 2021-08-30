@@ -62,10 +62,11 @@ const searchListedConversations = async function({ searchText }, options) {
 /**
  * Fetch possible conversations
  *
- * @param {string} searchText The string that will be used in the search query.
+ * @param {object} data the wrapping object.
+ * @param {string} data.searchText The string that will be used in the search query.
+ * @param {string} [data.token] The token of the conversation (if any), or "new" for a new one
+ * @param {boolean} [data.onlyUsers] Only return users
  * @param {object} options options
- * @param {string} [token] The token of the conversation (if any), or "new" for a new one
- * @param {boolean} [onlyUsers] Only return users
  */
 const searchPossibleConversations = async function({ searchText, token, onlyUsers }, options) {
 	token = token || 'new'
@@ -231,7 +232,7 @@ const removeFromFavorites = async function(token) {
  * Remove a conversation from the favorites
  *
  * @param {string} token The token of the conversation to be removed from favorites
- * @param {int} level The notification level to set.
+ * @param {number} level The notification level to set.
  */
 const setNotificationLevel = async function(token, level) {
 	try {
@@ -274,7 +275,7 @@ const makePrivate = async function(token) {
  * Change the SIP enabled
  *
  * @param {string} token The token of the conversation to be modified
- * @param {int} newState The new SIP state to set
+ * @param {number} newState The new SIP state to set
  */
 const setSIPEnabled = async function(token, newState) {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/sip', { token }), {
@@ -286,8 +287,8 @@ const setSIPEnabled = async function(token, newState) {
  * Change the lobby state
  *
  * @param {string} token The token of the conversation to be modified
- * @param {int} newState The new lobby state to set
- * @param {int} timestamp The UNIX timestamp (in seconds) to set, if any
+ * @param {number} newState The new lobby state to set
+ * @param {number} timestamp The UNIX timestamp (in seconds) to set, if any
  */
 const changeLobbyState = async function(token, newState, timestamp) {
 	try {
@@ -305,7 +306,7 @@ const changeLobbyState = async function(token, newState, timestamp) {
  * Change the read-only state
  *
  * @param {string} token The token of the conversation to be modified
- * @param {int} readOnly The new read-only state to set
+ * @param {number} readOnly The new read-only state to set
  */
 const changeReadOnlyState = async function(token, readOnly) {
 	try {
@@ -322,7 +323,7 @@ const changeReadOnlyState = async function(token, readOnly) {
  * Change the listable scope
  *
  * @param {string} token The token of the conversation to be modified
- * @param {int} listable The new listable scope to set
+ * @param {number} listable The new listable scope to set
  */
 const changeListable = async function(token, listable) {
 	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/listable', { token }), {

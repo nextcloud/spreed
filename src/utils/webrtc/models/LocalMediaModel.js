@@ -442,7 +442,7 @@ LocalMediaModel.prototype = {
 	/**
 	 * Toggles hand raised mode for the local participant
 	 *
-	 * @param {bool} raised true for raised, false for lowered
+	 * @param {boolean} raised true for raised, false for lowered
 	 */
 	toggleHandRaised(raised) {
 		if (!this._webRtc) {

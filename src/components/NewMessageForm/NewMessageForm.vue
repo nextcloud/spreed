@@ -447,8 +447,8 @@ export default {
 		 * Handles file upload
 		 *
 		 * @param {File[] | FileList} files pasted files list
-		 * @param {bool} rename whether to rename the files
-		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
+		 * @param {boolean} rename whether to rename the files
+		 * @param {boolean} isVoiceMessage indicates whether the file is a vooicemessage
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage) {
 			// Create a unique id for the upload operation
@@ -465,7 +465,7 @@ export default {
 		 * does not have the focus there will be no caret or selection; in that
 		 * case the emoji will be added at the end.
 		 *
-		 * @param {Emoji} emoji Emoji object
+		 * @param {string} emoji Emoji object
 		 */
 		addEmoji(emoji) {
 			const selection = document.getSelection()

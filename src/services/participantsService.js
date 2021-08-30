@@ -33,9 +33,10 @@ import {
  * Joins the current user to a conversation specified with
  * the token.
  *
- * @param {string} token The conversation token;
+ * @param {object} data the wrapping object.
+ * @param {string} data.token The conversation token;
+ * @param {boolean} data.forceJoin whether to force join;
  * @param {options} options request options;
- * @param {bool} forceJoin whether to force join;
  */
 const joinConversation = async ({ token, forceJoin = false }, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {
@@ -151,7 +152,7 @@ const setGuestUserName = async (token, userName) => {
  * If no userId is set, send to all applicable participants.
  *
  * @param {string} token conversation token
- * @param {int} attendeeId attendee id to target, or null for all
+ * @param {number} attendeeId attendee id to target, or null for all
  */
 const resendInvitations = async (token, { attendeeId = null }) => {
 	await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/resend-invitations', { token }), {

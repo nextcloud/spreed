@@ -194,7 +194,7 @@ const actions = {
 	 * @param {object} files the files to be processed
 	 * @param {string} token the conversation's token where to share the files
 	 * @param {number} uploadId a unique id for the upload operation indexing
-	 * @param {bool} rename whether to rename the files (usually after pasting)
+	 * @param {boolean} rename whether to rename the files (usually after pasting)
 	 */
 	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false, isVoiceMessage }) {
 		// Set last upload id

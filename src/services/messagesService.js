@@ -29,10 +29,11 @@ import Hex from 'crypto-js/enc-hex'
  * Fetches messages that belong to a particular conversation
  * specified with its token.
  *
- * @param {string} token the conversation token;
+ * @param {object} data the wrapping object.
+ * @param {string} data.token the conversation token;
+ * @param {string} data.lastKnownMessageId last known message id;
+ * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
  * @param {object} options options;
- * @param {string} lastKnownMessageId last known message id;
- * @param {bool} includeLastKnown whether to include the last known message in the response;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
@@ -49,9 +50,10 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * Fetches newly created messages that belong to a particular conversation
  * specified with its token.
  *
- * @param {string} token The conversation token;
+ * @param {object} data the wrapping object.
+ * @param {number} data.lastKnownMessageId The id of the last message in the store.
+ * @param {string} data.token The conversation token;
  * @param {object} options options
- * @param {int} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
@@ -70,10 +72,10 @@ const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
  * @param {object} param0 The message object that is destructured
  * @param {string} param0.token The conversation token
  * @param {string} param0.message The message object
+ * @param {string} param0.actorDisplayName The display name of the actor
  * @param {string} param0.referenceId A reference id to identify the message later again
  * @param {number} param0.parent The id of the message to be replied to
  * @param {object} options request options
- * @param param0.actorDisplayName
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
@@ -88,10 +90,8 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
  * Deletes a message from the server.
  *
  * @param {object} param0 The message object that is destructured
- * @param param0.token
- * @param {string} token The conversation token
- * @param {string} id The id of the message to be deleted
- * @param param0.id
+ * @param {string} param0.token The conversation token
+ * @param {string} param0.id The id of the message to be deleted
  */
 const deleteMessage = async function({ token, id }) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }))
@@ -101,10 +101,11 @@ const deleteMessage = async function({ token, id }) {
  * Post a rich object to a conversation
  *
  * @param {string} token conversation token
- * @param {string} objectType object type
- * @param {string} objectId object id
- * @param {string} metaData JSON metadata of the rich object encoded as string
- * @param {string} referenceId generated reference id, leave empty to generate it based on the other args
+ * @param {object} data the wrapping object.
+ * @param {string} data.objectType object type
+ * @param {string} data.objectId object id
+ * @param {string} data.metaData JSON metadata of the rich object encoded as string
+ * @param {string} data.referenceId generated reference id, leave empty to generate it based on the other args
  */
 const postRichObjectToConversation = async function(token, { objectType, objectId, metaData, referenceId }) {
 	if (!referenceId) {
@@ -123,7 +124,7 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
  * Updates the last read message id
  *
  * @param {string} token The token of the conversation to be removed from favorites
- * @param {int} lastReadMessage id of the last read message to set
+ * @param {number} lastReadMessage id of the last read message to set
  */
 const updateLastReadMessage = async function(token, lastReadMessage) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }), {

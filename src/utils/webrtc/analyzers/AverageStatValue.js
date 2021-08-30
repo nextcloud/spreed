@@ -58,9 +58,9 @@ const STAT_VALUE_TYPE = {
  * A string representation of the current relative values can be got by calling
  * "toString()".
  *
- * @param {int} count the number of instances to take into account.
+ * @param {number} count the number of instances to take into account.
  * @param {STAT_VALUE_TYPE} type whether the value is cumulative or relative.
- * @param {int} lastValueWeight the value to calculate the weights of all the
+ * @param {number} lastValueWeight the value to calculate the weights of all the
  *        items, from the first (weight 1) to the last one.
  */
 function AverageStatValue(count, type = STAT_VALUE_TYPE.CUMULATIVE, lastValueWeight = 3) {

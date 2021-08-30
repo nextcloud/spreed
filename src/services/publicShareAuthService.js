@@ -27,7 +27,6 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @param {string} shareToken the token of the share
  * @return {string} the conversation token
- * @throws {Exception} if the conversation token could not be got
  */
 const getPublicShareAuthConversationToken = async function(shareToken) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/publicshareauth'), {

@@ -133,7 +133,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} participant The participant data
-	 * @param {int} participant.participantType The type of the participant
+	 * @param {number} participant.participantType The type of the participant
 	 * @param {string} participant.sessionId The session id of the participant
 	 * @param {string} participant.actorId The actor id of the participant
 	 */

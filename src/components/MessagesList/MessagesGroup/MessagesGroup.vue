@@ -155,7 +155,7 @@ export default {
 		/**
 		 * Whether the given message is a system message
 		 *
-		 * @return {bool}
+		 * @return {boolean}
 		 */
 		isSystemMessage() {
 			return this.messages[0].systemMessage.length !== 0

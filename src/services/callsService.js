@@ -39,8 +39,8 @@ import {
  * example, if WITH_VIDEO is provided but the device does not have a camera.
  *
  * @param {string} token The token of the call to be joined.
- * @param {int} flags The available PARTICIPANT.CALL_FLAG for this participants
- * @return {int} The actual flags based on the available media
+ * @param {number} flags The available PARTICIPANT.CALL_FLAG for this participants
+ * @return {number} The actual flags based on the available media
  */
 const joinCall = async function(token, flags) {
 	try {
