@@ -60,13 +60,15 @@
 					:size="24"
 					title=""
 					fill-color="#ffffff"
-					decorative />
+					decorative
+					@click.stop />
 				<VideoOff
 					v-else
 					:size="24"
 					title=""
 					fill-color="#ffffff"
-					decorative />
+					decorative
+					@click.stop />
 			</button>
 			<Actions
 				v-if="!screenSharingButtonHidden"
@@ -78,6 +80,7 @@
 				:boundaries-element="boundaryElement"
 				:container="container"
 				:open="screenSharingMenuOpen"
+				@click.stop
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
@@ -110,7 +113,7 @@
 				</ActionButton>
 				<ActionButton
 					v-if="model.attributes.localScreen"
-					@click="showScreen">
+					@click.stop="showScreen">
 					<Monitor
 						slot="icon"
 						:size="24"
@@ -120,7 +123,7 @@
 				</ActionButton>
 				<ActionButton
 					v-if="model.attributes.localScreen"
-					@click="stopScreen">
+					@click.stop="stopScreen">
 					<CancelPresentation
 						slot="icon"
 						:size="24"
@@ -142,16 +145,18 @@
 					:size="24"
 					title=""
 					fill-color="#ffffff"
-					decorative />
+					decorative
+					@click.stop />
 			</button>
 			<Actions
 				v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
-				:aria-label="t('spreed', 'More actions')">
+				:aria-label="t('spreed', 'More actions')"
+				@click.stop>
 				<ActionButton
 					:close-after-click="true"
-					@click="toggleHandRaised">
+					@click.stop="toggleHandRaised">
 					<Hand
 						slot="icon"
 						:size="16"
@@ -163,7 +168,7 @@
 				<ActionButton
 					icon="icon-settings"
 					:close-after-click="true"
-					@click="showSettings">
+					@click.stop="showSettings">
 					{{ t('spreed', 'Settings') }}
 				</ActionButton>
 			</Actions>
@@ -190,13 +195,13 @@
 						<button
 							v-if="qualityWarningTooltip.action"
 							class="primary hint__button"
-							@click="executeQualityWarningTooltipAction">
+							@click.stop="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
 						</button>
 						<button
 							v-if="!isQualityWarningTooltipDismissed"
 							class="hint__button"
-							@click="dismissQualityWarningTooltip">
+							@click.stop="dismissQualityWarningTooltip">
 							{{ t('spreed', 'Dismiss') }}
 						</button>
 					</div>
