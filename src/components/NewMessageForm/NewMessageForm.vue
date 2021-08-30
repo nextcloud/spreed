@@ -447,8 +447,8 @@ export default {
 		 * Handles file upload
 		 *
 		 * @param {File[] | FileList} files pasted files list
-		 * @param {bool} rename whether to rename the files
-		 * @param {bool} isVoiceMessage indicates whether the file is a vooicemessage
+		 * @param {boolean} rename whether to rename the files
+		 * @param {boolean} isVoiceMessage indicates whether the file is a vooicemessage
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage) {
 			// Create a unique id for the upload operation

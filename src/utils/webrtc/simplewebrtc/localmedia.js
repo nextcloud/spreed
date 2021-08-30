@@ -136,7 +136,7 @@ const cloneLinkedStream = function(stream) {
  * no media was available when started. An active local media will automatically
  * react to changes in the selected media devices.
  *
- * @return {bool} true if the local media is active, false otherwise
+ * @return {boolean} true if the local media is active, false otherwise
  */
 LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive

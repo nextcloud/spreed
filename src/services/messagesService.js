@@ -30,9 +30,9 @@ import Hex from 'crypto-js/enc-hex'
  * specified with its token.
  *
  * @param {string} token the conversation token;
- * @param {object} options options;
  * @param {string} lastKnownMessageId last known message id;
- * @param {bool} includeLastKnown whether to include the last known message in the response;
+ * @param {boolean} includeLastKnown whether to include the last known message in the response;
+ * @param {object} options options;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {

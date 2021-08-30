@@ -35,7 +35,7 @@ import {
  *
  * @param {string} token The conversation token;
  * @param {options} options request options;
- * @param {bool} forceJoin whether to force join;
+ * @param {boolean} forceJoin whether to force join;
  */
 const joinConversation = async ({ token, forceJoin = false }, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {

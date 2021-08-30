@@ -42,7 +42,7 @@ import {
  *
  * @param {object} context store context
  * @param {object} message message object
- * @return {bool} true if the message contains a mention to self or all,
+ * @return {boolean} true if the message contains a mention to self or all,
  * false otherwise
  */
 function hasMentionToSelf(context, message) {
@@ -118,7 +118,7 @@ const getters = {
 	 *
 	 * @param {object} state the state object.
 	 * @param {object} getters the getters object.
-	 * @return {bool} true if more messages exist that needs loading, false otherwise
+	 * @return {boolean} true if more messages exist that needs loading, false otherwise
 	 */
 	hasMoreMessagesToLoad: (state, getters) => (token) => {
 		const conversation = getters.conversation(token)
@@ -547,7 +547,7 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param token.token
 	 * @param {object} token the token of the conversation to be updated;
-	 * @param {bool} updateVisually whether to also clear the marker visually in the UI;
+	 * @param {boolean} updateVisually whether to also clear the marker visually in the UI;
 	 * @param token.updateVisually
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
@@ -568,7 +568,7 @@ const actions = {
 	 * @param token.token
 	 * @param {object} token the token of the conversation to be updated;
 	 * @param {number} id the id of the message on which to set the read marker;
-	 * @param {bool} updateVisually whether to also update the marker visually in the UI;
+	 * @param {boolean} updateVisually whether to also update the marker visually in the UI;
 	 * @param token.id
 	 * @param token.updateVisually
 	 */
@@ -602,7 +602,7 @@ const actions = {
 	 * @param {string} token the conversation token;
 	 * @param {object} requestOptions request options;
 	 * @param {string} lastKnownMessageId last known message id;
-	 * @param {bool} includeLastKnown whether to include the last known message in the response;
+	 * @param {boolean} includeLastKnown whether to include the last known message in the response;
 	 */
 	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
 		context.dispatch('cancelFetchMessages')
@@ -663,7 +663,7 @@ const actions = {
 	 * Cancels a previously running "fetchMessages" action if applicable.
 	 *
 	 * @param {object} context default store context;
-	 * @return {bool} true if a request got cancelled, false otherwise
+	 * @return {boolean} true if a request got cancelled, false otherwise
 	 */
 	cancelFetchMessages(context) {
 		if (context.state.cancelFetchMessages) {
@@ -772,7 +772,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} requestId request id
-	 * @return {bool} true if a request got cancelled, false otherwise
+	 * @return {boolean} true if a request got cancelled, false otherwise
 	 */
 	cancelLookForNewMessages(context, { requestId }) {
 		if (context.state.cancelLookForNewMessages[requestId]) {
@@ -886,7 +886,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} messageId the message id for which to cancel;
-	 * @return {bool} true if a request got cancelled, false otherwise
+	 * @return {boolean} true if a request got cancelled, false otherwise
 	 */
 	cancelPostNewMessage(context, { messageId }) {
 		if (context.state.cancelPostNewMessage[messageId]) {

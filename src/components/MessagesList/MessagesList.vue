@@ -793,7 +793,7 @@ export default {
 		 * @param {string} messageId message id
 		 * @param {boolean} smooth true to smooth scroll, false to jump directly
 		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
-		 * @return {bool} true if element was found, false otherwise
+		 * @return {boolean} true if element was found, false otherwise
 		 */
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
 			const element = document.getElementById(`message_${messageId}`)
