@@ -432,7 +432,7 @@ const actions = {
 		// not listen to when it was used.
 		const interval = setInterval(function() {
 			// eslint-disable-next-line no-undef
-			if ($('.oc-dialog-dim').length === 0) {
+			if (document.getElementsByClassName('oc-dialog-dim').length === 0) {
 				clearInterval(interval)
 				EventBus.$emit('duplicate-session-detected')
 				window.location = generateUrl('/apps/spreed')

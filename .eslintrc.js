@@ -1,13 +1,13 @@
 module.exports = {
 	extends: [
-		'@nextcloud'
+		'@nextcloud',
 	],
 	overrides: [
 		{
-			'files': ['**/*.spec.js'],
-			'rules': {
-				'node/no-unpublished-import': 0
-			}
-		}
-	]
+			files: ['**/*.spec.js'],
+			rules: {
+				'node/no-unpublished-import': 0,
+			},
+		},
+	],
 }

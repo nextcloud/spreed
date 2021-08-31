@@ -11,7 +11,7 @@ const UAParser = require('ua-parser-js')
 const webrtcIndex = require('../index.js')
 
 /**
- * @param stream
+ * @param {object} stream the stream object.
  */
 function isAllTracksEnded(stream) {
 	let isAllTracksEnded = true
@@ -22,7 +22,7 @@ function isAllTracksEnded(stream) {
 }
 
 /**
- * @param stream
+ * @param {object} stream the stream object.
  */
 function isAllAudioTracksEnded(stream) {
 	let isAllAudioTracksEnded = true
@@ -33,7 +33,7 @@ function isAllAudioTracksEnded(stream) {
 }
 
 /**
- * @param opts
+ * @param {object} opts the options object.
  */
 function LocalMedia(opts) {
 	WildEmitter.call(this)

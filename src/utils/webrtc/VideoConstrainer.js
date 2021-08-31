@@ -40,7 +40,7 @@ const QUALITY = {
  * a simple interface to set the constraints based on some general quality
  * description.
  *
- * @param {LocalMediaModel} localMediaModel the model for the local media.
+ * @param {object} localMediaModel the model for the local media.
  */
 function VideoConstrainer(localMediaModel) {
 	this._localMediaModel = localMediaModel

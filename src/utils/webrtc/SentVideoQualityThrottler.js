@@ -34,8 +34,8 @@ import {
  * increase the video quality depending on the call state. Basically the goal is
  * to reduce the CPU usage when there are too many participants in a call.
  *
- * @param {LocalMediaModel} localMediaModel the model for the local media.
- * @param {CallParticipantCollection} callParticipantCollection the collection
+ * @param {object} localMediaModel the model for the local media.
+ * @param {object} callParticipantCollection the collection.
  *        that contains the models for the rest of the participants in the call.
  */
 export default function SentVideoQualityThrottler(localMediaModel, callParticipantCollection) {

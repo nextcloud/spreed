@@ -40,13 +40,13 @@
 	* to the user even if the browser window is not in the foreground (provided
 	* the user granted the permissions to receive notifications from the site).
 	*
-	* @param {LocalMediaModel} model the model that emits "speakingWhileMuted"
-	*        events
-	* @param {View} view the view that provides the
-	*        "setSpeakingWhileMutedNotification" method
+	* @param {object} LocalMediaModel the model that emits "speakingWhileMuted"
+	* events.
+	* @param {object} view the view that provides the
+	* "setSpeakingWhileMutedNotification" method.
 	*/
-export default function SpeakingWhileMutedWarner(model, view) {
-	this._model = model
+export default function SpeakingWhileMutedWarner(LocalMediaModel, view) {
+	this._model = LocalMediaModel
 	this._view = view
 
 	this._handleSpeakingWhileMutedChangeBound = this._handleSpeakingWhileMutedChange.bind(this)

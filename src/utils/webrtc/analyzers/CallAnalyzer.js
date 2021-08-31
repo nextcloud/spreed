@@ -43,11 +43,11 @@ import {
  * Once the CallAnalyzer is no longer needed "destroy()" must be called to stop
  * the analysis.
  *
- * @param {LocalMediaModel} localMediaModel the model for the local media.
- * @param {LocalCallParticipantModel} localCallParticipantModel the model for
- *        the local participant; null if an MCU is not used.
- * @param {CallParticipantCollection} callParticipantCollection the collection
- *        for the remote participants.
+ * @param {object} localMediaModel the model for the local media.
+ * @param {object} localCallParticipantModel the model for
+ * the local participant; null if an MCU is not used.
+ * @param {object} callParticipantCollection the collection
+ * for the remote participants.
  */
 export default function CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection) {
 	this.attributes = {

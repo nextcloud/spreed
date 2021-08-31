@@ -8,7 +8,7 @@ const webrtcSupport = require('webrtcsupport')
 const WildEmitter = require('wildemitter')
 
 /**
- * @param stream
+ * @param {object} stream the stream object.
  */
 function isAllTracksEnded(stream) {
 	let isAllTracksEnded = true
@@ -19,7 +19,7 @@ function isAllTracksEnded(stream) {
 }
 
 /**
- * @param options
+ * @param {object} options the options object.
  */
 function Peer(options) {
 	const self = this
@@ -144,7 +144,7 @@ function shouldPreferH264() {
 }
 
 /**
- * @param sessionDescription
+ * @param {string} sessionDescription the session description.
  */
 function preferH264VideoCodecIfAvailable(sessionDescription) {
 	const sdpInfo = sdpTransform.parse(sessionDescription.sdp)

@@ -7,7 +7,7 @@ const attachMediaStream = require('attachmediastream')
 const mockconsole = require('mockconsole')
 
 /**
- * @param opts
+ * @param {object} opts the options object.
  */
 function SimpleWebRTC(opts) {
 	const self = this
