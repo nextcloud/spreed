@@ -177,3 +177,33 @@ Feature: chat/reply
       | room  | actorType | actorId      | actorDisplayName         | message                      | messageParameters                                                               |
       | room1 | users     | participant2 | participant2-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
       | room1 | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+
+  Scenario: Clear chat history as a moderator
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    And user "participant2" sends message "Message 2" to room "room1" with 201
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    Then user "participant2" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    And user "participant2" deletes chat history for room "room1" with 403
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    And user "participant1" deletes chat history for room "room1" with 200
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage   |
+      | room1 | users     | participant1 | participant1-displayname | history_cleared |
+    Then user "participant2" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage   |
+      | room1 | users     | participant1 | participant1-displayname | history_cleared |

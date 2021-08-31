@@ -70,6 +70,8 @@ class ChatManager {
 	private $connection;
 	/** @var INotificationManager */
 	private $notificationManager;
+	/** @var RoomShareProvider */
+	private $shareProvider;
 	/** @var ParticipantService */
 	private $participantService;
 	/** @var RoomShareProvider */
@@ -87,6 +89,7 @@ class ChatManager {
 								IEventDispatcher $dispatcher,
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
+								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
 								RoomShareProvider $shareProvider,
 								Notifier $notifier,
@@ -281,6 +284,25 @@ class ChatManager {
 			false,
 			null,
 			$messageId
+		);
+	}
+
+	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
+		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+
+		$this->shareProvider->deleteInRoom($chat->getToken());
+
+		$this->notifier->removePendingNotificationsForRoom($chat, true);
+
+		$this->participantService->resetChatDetails($chat);
+
+		return $this->addSystemMessage(
+			$chat,
+			$actorType,
+			$actorId,
+			json_encode(['message' => 'history_cleared', 'parameters' => []]),
+			$this->timeFactory->getDateTime(),
+			false
 		);
 	}
 

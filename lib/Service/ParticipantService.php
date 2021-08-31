@@ -812,6 +812,15 @@ class ParticipantService {
 		$query->execute();
 	}
 
+	public function resetChatDetails(Room $room): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_attendees')
+			->set('last_read_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_mention_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$query->executeStatement();
+	}
+
 	public function updateReadPrivacyForActor(string $actorType, string $actorId, int $readPrivacy): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_attendees')

@@ -30,7 +30,7 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
-			menu-container="#content-vue"
+			:menu-container="menuContainer"
 			menu-position="left"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"
@@ -117,6 +117,15 @@ export default {
 				}
 			}
 			return undefined
+		},
+		menuContainer() {
+			// The store may not be defined in the RoomSelector if used from
+			// the Collaboration menu outside Talk.
+			if (!this.$store) {
+				return undefined
+			}
+
+			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 }

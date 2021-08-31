@@ -731,6 +731,27 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
+	function setHandlerForConnectionStateChange(peer) {
+		peer.pc.addEventListener('connectionstatechange', function() {
+			if (peer.pc.connectionState !== 'failed') {
+				return
+			}
+
+			if (peer.pc.iceConnectionState === 'failed') {
+				return
+			}
+
+			// Work around Chromium bug where "iceConnectionState" never changes
+			// to "failed" (it stays as "disconnected"). When that happens
+			// "connectionState" actually does change to "failed", so the normal
+			// handling of "iceConnectionState === failed" is triggered here.
+
+			peer.emit('extendedIceConnectionStateChange', peer.pc.connectionState)
+
+			handleIceConnectionStateFailed(peer)
+		})
+	}
+
 	function setHandlerForOwnIceConnectionStateChange(peer) {
 		peer.pc.addEventListener('iceconnectionstatechange', function() {
 			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
@@ -939,6 +960,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				setHandlerForOwnIceConnectionStateChange(peer)
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
+				setHandlerForConnectionStateChange(peer)
 			}
 
 			setHandlerForNegotiationNeeded(peer)

@@ -145,12 +145,12 @@ export default {
 		},
 
 		/**
-		 * Finds the first unread message element
+		 * Finds the first visual unread message element
 		 *
 		 * @returns {object} DOM element of the first unread message
 		 */
 		unreadMessageElement() {
-			let el = document.getElementById('message_' + this.conversation.lastReadMessage)
+			let el = document.getElementById('message_' + this.visualLastReadMessageId)
 			if (el) {
 				el = el.closest('.message')
 			}
@@ -469,7 +469,7 @@ export default {
 				let hasScrolled = false
 				// if lookForNewMessages will long poll instead of returning existing messages,
 				// scroll right away to avoid delays
-				if (this.$store.getters.getLastKnownMessageId(this.token) === this.conversation.lastMessage.id) {
+				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 					hasScrolled = true
 					await this.$nextTick(() => {
 						this.scrollToFocussedMessage()
@@ -658,6 +658,9 @@ export default {
 		 * Also see updateReadMarkerPosition() for the backend update.
 		 */
 		refreshReadMarkerPosition() {
+			if (!this.conversation) {
+				return
+			}
 			console.debug('setVisualLastReadMessageId token=' + this.token + ' id=' + this.conversation.lastReadMessage)
 			this.$store.dispatch('setVisualLastReadMessageId', {
 				token: this.token,
@@ -699,8 +702,8 @@ export default {
 				return
 			}
 
-			// if we're at bottom of the chat, then simply clear the marker
-			if (this.isSticky) {
+			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
+			if (this.isSticky && !this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return

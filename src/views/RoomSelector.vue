@@ -21,10 +21,17 @@
   -->
 
 <template>
-	<Modal @close="close">
+	<Modal
+		:container="container"
+		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-				<h2>{{ dialogTitle }}</h2>
+				<h2>
+					{{ dialogTitle }}
+				</h2>
+				<p v-if="dialogSubtitle" class="subtitle">
+					{{ dialogSubtitle }}
+				</p>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
 						<li v-for="room in availableRooms"
@@ -71,9 +78,19 @@ export default {
 		Modal,
 	},
 	props: {
+		container: {
+			type: String,
+			default: undefined,
+		},
+
 		dialogTitle: {
 			type: String,
 			default: t('spreed', 'Link to a conversation'),
+		},
+
+		dialogSubtitle: {
+			type: String,
+			default: '',
 		},
 		/**
 		 * Whether to only show conversations to which
@@ -128,9 +145,11 @@ export default {
 		close() {
 			// FIXME: should not emit on $root but on itself
 			this.$root.$emit('close')
+			this.$emit('close')
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
+			this.$emit('select', this.selectedRoom)
 		},
 	},
 }
@@ -142,6 +161,10 @@ export default {
 	max-width: 400px;
 	height: 50vh;
 	position: relative;
+
+	h2 {
+		margin-bottom: 4px;
+	}
 }
 
 #modal-content {
@@ -186,12 +209,20 @@ li {
 
 #modal-buttons {
 	overflow: hidden;
-	height: 44px;
 	flex-shrink: 0;
+	button {
+		height: 44px;
+		margin: 0;
+	}
 
 	.primary {
 		float: right;
 	}
+}
+
+.subtitle {
+	color: var(--color-text-maxcontrast);
+	margin-bottom: 8px;
 }
 
 </style>

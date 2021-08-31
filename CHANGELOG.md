@@ -1,6 +1,49 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.1.1 – 2021-08-30
+
+### Changed
+- Improved device preference storing to better recover after switching between docking-station and normal usage with a device
+  [#6179](https://github.com/nextcloud/spreed/pull/6179)
+
+### Fixed
+- Fix laggy video with Full HD 60 FPS webcams in Chrome and Chromium
+  [#6159](https://github.com/nextcloud/spreed/pull/6159)
+- Fix infinite loop when video constrains can not be satisfied
+  [#6125](https://github.com/nextcloud/spreed/pull/6125)
+- Fix connection quality warning after media was stopped
+  [#6147](https://github.com/nextcloud/spreed/pull/6147)
+- Hide forward action for guests
+  [#6143](https://github.com/nextcloud/spreed/pull/6143)
+- Don't select the own video when trying to open the video settings
+  [#6158](https://github.com/nextcloud/spreed/pull/6158)
+- Fix issues with several popovers in fullscreen mode or sidebar mode
+  [#6155](https://github.com/nextcloud/spreed/pull/6155)
+- Fix issue with video recording in sidebar mode
+  [#6129](https://github.com/nextcloud/spreed/pull/6129)
+  [#6131](https://github.com/nextcloud/spreed/pull/6131)
+
+## 12.1.0 – 2021-08-10
+### Added
+- Allow to forward messages to another chat
+  [#6053](https://github.com/nextcloud/spreed/pull/6053)
+  [#6057](https://github.com/nextcloud/spreed/pull/6057)
+  [#6076](https://github.com/nextcloud/spreed/pull/6076)
+- Allow to clear chat history
+  [#6052](https://github.com/nextcloud/spreed/pull/6052)
+  [#5971](https://github.com/nextcloud/spreed/pull/5971)
+
+### Changed
+- Add "missed call" chat system message for one-to-one calls
+  [#6031](https://github.com/nextcloud/spreed/pull/6031)
+
+### Fixed
+- Remove div tags when pasting or writing multiline messages in Safari
+  [#6086](https://github.com/nextcloud/spreed/pull/6086)
+- Add list of "What's new in Talk 12"
+  [#6050](https://github.com/nextcloud/spreed/pull/6050)
+
 ## 12.0.1 – 2021-07-15
 ### Fixed
 - Unshare all items directly when deleting a room

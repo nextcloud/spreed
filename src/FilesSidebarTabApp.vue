@@ -39,9 +39,7 @@
 			</button>
 		</div>
 		<template v-else>
-			<div class="call-button-wrapper">
-				<CallButton class="call-button" />
-			</div>
+			<CallButton class="call-button" />
 			<ChatView />
 			<UploadEditor />
 		</template>
@@ -428,25 +426,13 @@ export default {
 	justify-content: center;
 }
 
-.call-button-wrapper {
-	width: 100%;
-	background-color: var(--color-main-background);
-	z-index: 1;
-}
-
 .call-button {
-	display: block;
-
 	/* Center button horizontally. */
 	margin-left: auto;
 	margin-right: auto;
 
 	margin-top: 10px;
 	margin-bottom: 10px;
-}
-
-::v-deep .scroller {
-	margin-top: 64px;
 }
 
 .chatView {

@@ -279,7 +279,13 @@ CallParticipantModel.prototype = {
 		}
 
 		// Reset state that depends on the Peer object.
-		this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
+		if (this.get('peer').pc.connectionState === 'failed' && this.get('peer').pc.iceConnectionState === 'disconnected') {
+			// Work around Chromium bug where "iceConnectionState" gets stuck as
+			// "disconnected" even if the connection already failed.
+			this._handleExtendedIceConnectionStateChange(this.get('peer').pc.connectionState)
+		} else {
+			this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
+		}
 		this._handlePeerStreamAdded(this.get('peer'))
 
 		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)

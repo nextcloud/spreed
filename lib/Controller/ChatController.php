@@ -601,6 +601,42 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 * @RequireReadWriteConversation
+	 *
+	 * @return DataResponse
+	 */
+	public function clearHistory(): DataResponse {
+		$attendee = $this->participant->getAttendee();
+		if (!$this->participant->hasModeratorPermissions(false)
+				|| $this->room->getType() === Room::ONE_TO_ONE_CALL) {
+			// Actor is not a moderator or not the owner of the message
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$systemMessageComment = $this->chatManager->clearHistory(
+			$this->room,
+			$attendee->getActorType(),
+			$attendee->getActorId()
+		);
+
+		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
+		$this->messageParser->parseMessage($systemMessage);
+
+
+		$data = $systemMessage->toArray();
+
+		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+
+		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK);
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+		}
+		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
 	 * @RequireParticipant
 	 *
 	 * @param int $lastReadMessage
