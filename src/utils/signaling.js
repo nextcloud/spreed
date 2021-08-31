@@ -72,7 +72,7 @@ const Signaling = {
 }
 
 /**
- * @param settings
+ * @param {object} settings The signaling settings
  */
 function Base(settings) {
 	this.settings = settings
@@ -337,7 +337,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 
 // Connection to the internal signaling server provided by the app.
 /**
- * @param settings
+ * @param {object} settings The signaling settings
  */
 function Internal(settings) {
 	Signaling.Base.prototype.constructor.apply(this, arguments)
@@ -545,8 +545,8 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 }
 
 /**
- * @param settings
- * @param urls
+ * @param {object} settings The signaling settings
+ * @param {string|string[]} urls The url of the signaling server
  */
 function Standalone(settings, urls) {
 	Signaling.Base.prototype.constructor.apply(this, arguments)

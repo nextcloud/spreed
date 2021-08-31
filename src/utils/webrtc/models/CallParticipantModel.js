@@ -34,7 +34,9 @@ export const ConnectionState = {
 }
 
 /**
- * @param options
+ * @param {object} options The model
+ * @param {string} options.peerId The peerId of the participant
+ * @param {object} options.webRtc The WebRTC connection to the participant
  */
 export default function CallParticipantModel(options) {
 
