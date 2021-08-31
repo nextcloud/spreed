@@ -95,6 +95,7 @@
 				{{ requestError }}
 			</p>
 
+			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="settings-hint additional-top-margin" v-html="disclaimerHint" />
 		</div>
 		<div v-else>

@@ -26,7 +26,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Gets the conversation token for a given file id
  *
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {number} data.fileId The file id to get the conversation for
  * @param {object} options unused
  * @return {string} the conversation token

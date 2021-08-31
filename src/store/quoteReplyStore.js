@@ -71,8 +71,9 @@ const mutations = {
 	 * Sets the current message input for a given conversation
 	 *
 	 * @param {object} state Current store state;
-	 * @param {string} token The conversation token;
-	 * @param {string} text Message text to set or null to clear it;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token The conversation token;
+	 * @param {string} data.text Message text to set or null to clear it;
 	 */
 	setCurrentMessageInput(state, { token, text = null }) {
 		if (text !== null) {
@@ -123,8 +124,9 @@ const actions = {
 	 * Stores the current message input for a given conversation
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} token the token of the conversation to be deleted;
-	 * @param {string} text string to set or null to clear it;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the token of the conversation to be deleted;
+	 * @param {string} data.text string to set or null to clear it;
 	 */
 	setCurrentMessageInput(context, { token, text }) {
 		context.commit('setCurrentMessageInput', { token, text })

@@ -78,8 +78,7 @@ const getters = {
 	 * Get a conversation providing it's token
 	 *
 	 * @param {object} state state object
-	 * @return {Function} The callback function
-	 * @return {object} The conversation object
+	 * @return {Function} The callback function returning the conversation object
 	 */
 	conversation: state => token => state.conversations[token],
 	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
@@ -192,8 +191,8 @@ const actions = {
 	 * Delete a conversation from the server.
 	 *
 	 * @param {object} context default store context;
-	 * @param token.token
-	 * @param {object} token the token of the conversation to be deleted;
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.token the token of the conversation to be deleted;
 	 */
 	async deleteConversationFromServer(context, { token }) {
 		await deleteConversation(token)
@@ -205,8 +204,8 @@ const actions = {
 	 * Delete all the messages from a conversation.
 	 *
 	 * @param {object} context default store context;
-	 * @param token.token
-	 * @param {object} token the token of the conversation whose history is
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.token the token of the conversation whose history is
 	 * to be cleared;
 	 */
 	async clearConversationHistory(context, { token }) {

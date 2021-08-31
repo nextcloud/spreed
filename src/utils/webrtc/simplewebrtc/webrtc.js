@@ -7,7 +7,7 @@ const localMedia = require('./localmedia')
 const Peer = require('./peer')
 
 /**
- * @param opts
+ * @param {object} opts the options object.
  */
 function WebRTC(opts) {
 	const self = this

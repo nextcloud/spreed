@@ -34,6 +34,7 @@
 			<span v-else class="icon icon-loading-small" />
 		</h2>
 
+		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p class="settings-hint" v-html="documentationHint" />
 
 		<ul class="turn-servers">

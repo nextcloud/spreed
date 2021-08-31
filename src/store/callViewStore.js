@@ -140,9 +140,10 @@ const actions = {
 	 * If clearLast is false, also remembers it in separate properties.
 	 *
 	 * @param {object} context default store context;
-	 * @param {boolean|null} isGrid true for enabled grid mode, false for speaker view;
-	 * @param {boolean|null} isStripeOpen true for visible stripel mode, false for speaker view;
-	 * @param {boolean} clearLast set to false to not reset last temporary remembered state;
+	 * @param {object} data the wrapping object;
+	 * @param {boolean|null} data.isGrid true for enabled grid mode, false for speaker view;
+	 * @param {boolean|null} data.isStripeOpen true for visible stripel mode, false for speaker view;
+	 * @param {boolean} data.clearLast set to false to not reset last temporary remembered state;
 	 */
 	setCallViewMode(context, { isGrid = null, isStripeOpen = null, clearLast = true }) {
 		if (clearLast) {

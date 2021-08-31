@@ -3,7 +3,7 @@
  *
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -49,7 +49,7 @@ const actions = {
 	 * By default the container selector is undefined, which in practice will
 	 * cause the components to use "body" as the selector.
 	 *
-	 * @param {Object} context default store context
+	 * @param {object} context default store context
 	 * @param {string} mainContainerSelector the selector for the container
 	 */
 	setMainContainerSelector(context, mainContainerSelector) {

@@ -112,10 +112,9 @@ const mutations = {
 	 * Adds a message to the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param token.token
-	 * @param {object} token the token of the conversation;
-	 * @param {object} participant the participant;
-	 * @param token.participant
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.token the token of the conversation;
+	 * @param {object} data.participant the participant;
 	 */
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
@@ -196,9 +195,10 @@ const actions = {
 	 * Only call this after purgeParticipantsStore, otherwise use addParticipantOnce
 	 *
 	 * @param {object} context default store context;
-	 * @param context.commit
-	 * @param {string} token the conversation to add the participant;
-	 * @param {object} participant the participant;
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation to add the participant;
+	 * @param {object} data.participant the participant;
 	 */
 	addParticipant({ commit }, { token, participant }) {
 		commit('addParticipant', { token, participant })
@@ -207,10 +207,11 @@ const actions = {
 	 * Only add a participant when they are not there yet
 	 *
 	 * @param {object} context default store context;
-	 * @param context.commit
-	 * @param context.getters
-	 * @param {string} token the conversation to add the participant;
-	 * @param {object} participant the participant;
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {object} context.getters the contexts getters object.
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation to add the participant;
+	 * @param {object} data.participant the participant;
 	 */
 	addParticipantOnce({ commit, getters }, { token, participant }) {
 		const index = getters.getParticipantIndex(token, participant)
@@ -265,7 +266,7 @@ const actions = {
 	 * Purges a given conversation from the previously added participants
 	 *
 	 * @param {object} context default store context;
-	 * @param context.commit
+	 * @param {Function} context.commit the contexts commit function.
 	 * @param {string} token the conversation to purge;
 	 */
 	purgeParticipantsStore({ commit }, token) {
@@ -369,8 +370,9 @@ const actions = {
 	 * If no userId is set, send to all applicable participants.
 	 *
 	 * @param {object} _ unused
-	 * @param {string} token conversation token
-	 * @param {number} attendeeId attendee id to target, or null for all
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token conversation token
+	 * @param {number} data.attendeeId attendee id to target, or null for all
 	 */
 	async resendInvitations(_, { token, attendeeId }) {
 		await resendInvitations(token, { attendeeId })
@@ -380,7 +382,8 @@ const actions = {
 	 * Makes the current user active in the given conversation.
 	 *
 	 * @param {object} context unused
-	 * @param {string} token conversation token
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token conversation token
 	 */
 	async joinConversation(context, { token }) {
 		const forceJoin = SessionStorage.getItem('joined_conversation') === token
@@ -429,7 +432,7 @@ const actions = {
 		// not listen to when it was used.
 		const interval = setInterval(function() {
 			// eslint-disable-next-line no-undef
-			if ($('.oc-dialog-dim').length === 0) {
+			if (document.getElementsByClassName('oc-dialog-dim').length === 0) {
 				clearInterval(interval)
 				EventBus.$emit('duplicate-session-detected')
 				window.location = generateUrl('/apps/spreed')
@@ -468,7 +471,8 @@ const actions = {
 	 * Makes the current user inactive in the given conversation.
 	 *
 	 * @param {object} context unused
-	 * @param {string} token conversation token
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token conversation token
 	 */
 	async leaveConversation(context, { token }) {
 		await leaveConversation(token)
@@ -479,7 +483,8 @@ const actions = {
 	 * means the user is not a participant any more.
 	 *
 	 * @param {object} context unused
-	 * @param {string} token conversation token
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token conversation token
 	 */
 	async removeCurrentUserFromConversation(context, { token }) {
 		await removeCurrentUserFromConversation(token)

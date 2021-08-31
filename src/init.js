@@ -33,7 +33,7 @@ if (!window.OCA.Talk) {
 /**
  * Frontend message API for adding actions to talk messages.
  *
- * @param {object} data the wrapping object.
+ * @param {object} data the wrapping object;
  * @param {string} data.label the action label.
  * @param {Function} data.callback the callback function. This function will receive
  * the messageAPIData object as a parameter and be triggered by a click on the

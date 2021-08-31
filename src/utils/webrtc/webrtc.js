@@ -15,7 +15,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or later
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -58,8 +58,8 @@ let sendCurrentStateWithRepetitionTimeout = null
 let startedWithMedia
 
 /**
- * @param a
- * @param b
+ * @param {Array} a Source object
+ * @param {Array} b Object to find all items in
  */
 function arrayDiff(a, b) {
 	return a.filter(function(i) {
@@ -68,8 +68,8 @@ function arrayDiff(a, b) {
 }
 
 /**
- * @param signaling
- * @param sessionId
+ * @param {object} signaling The signaling object
+ * @param {string} sessionId The user's sessionId
  */
 function createScreensharingPeer(signaling, sessionId) {
 	const currentSessionId = signaling.getSessionId()
@@ -135,7 +135,7 @@ function createScreensharingPeer(signaling, sessionId) {
 }
 
 /**
- * @param signaling
+ * @param {object} signaling The signaling object
  */
 function checkStartPublishOwnPeer(signaling) {
 	'use strict'
@@ -218,7 +218,7 @@ function sendCurrentNick() {
 }
 
 /**
- * @param timeout
+ * @param {number} timeout Time until we give up retrying
  */
 function sendCurrentStateWithRepetition(timeout) {
 	if (!timeout) {
@@ -247,7 +247,8 @@ function sendCurrentStateWithRepetition(timeout) {
 }
 
 /**
- * @param user
+ * @param {object} user The user to check
+ * @return {boolean} True if the user has an audio or video stream
  */
 function userHasStreams(user) {
 	let flags = user
@@ -260,9 +261,9 @@ function userHasStreams(user) {
 }
 
 /**
- * @param signaling
- * @param newUsers
- * @param disconnectedSessionIds
+ * @param {object} signaling The signaling object
+ * @param {Array} newUsers Newly added participants
+ * @param {Array} disconnectedSessionIds Remove participants
  */
 function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	'use strict'
@@ -429,8 +430,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 }
 
 /**
- * @param signaling
- * @param users
+ * @param {object} signaling The signaling object
+ * @param {object} users Participant list with sessionId as key
  */
 function usersInCallChanged(signaling, users) {
 	const previousSelfInCall = selfInCall
@@ -486,9 +487,9 @@ function usersInCallChanged(signaling, users) {
 }
 
 /**
- * @param signaling
- * @param _callParticipantCollection
- * @param _localCallParticipantModel
+ * @param {object} signaling The signaling object
+ * @param {object} _callParticipantCollection Collection with participants
+ * @param {object} _localCallParticipantModel The local participant
  */
 export default function initWebRtc(signaling, _callParticipantCollection, _localCallParticipantModel) {
 	callParticipantCollection = _callParticipantCollection
@@ -655,7 +656,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the state.
@@ -674,7 +675,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function handleIceConnectionStateDisconnected(peer) {
 		setTimeout(function() {
@@ -703,7 +704,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function handleIceConnectionStateFailed(peer) {
 		if (!showedTURNWarning && !signaling.settings.turnservers.length) {
@@ -748,7 +749,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function setHandlerForIceConnectionStateChange(peer) {
 		// Initialize ice restart counter for peer
@@ -787,7 +788,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function setHandlerForConnectionStateChange(peer) {
 		peer.pc.addEventListener('connectionstatechange', function() {
@@ -874,7 +875,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function setHandlerForNegotiationNeeded(peer) {
 		peer.pc.addEventListener('negotiationneeded', function() {
@@ -1038,9 +1039,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	/**
-	 * @param peer
-	 * @param track
-	 * @param mediaType
+	 * @param {object} peer The peer connection to check media on
+	 * @param {object} track The track to check the media on
+	 * @param {string} mediaType "video" or "audio"
 	 */
 	function checkPeerMedia(peer, track, mediaType) {
 		return new Promise((resolve, reject) => {
@@ -1075,7 +1076,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to check media on
 	 */
 	function stopPeerCheckAudioMedia(peer) {
 		clearInterval(peer.check_audio_interval)
@@ -1083,7 +1084,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to check media on
 	 */
 	function stopPeerCheckVideoMedia(peer) {
 		clearInterval(peer.check_video_interval)
@@ -1091,8 +1092,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peerId
-	 * @param mediaType
+	 * @param {string} peerId ID to get the peer for
+	 * @param {string} mediaType "video" or "audio"
 	 */
 	function stopPeerIdCheckMediaType(peerId, mediaType) {
 		// There should be just one video peer with that id, but iterating is
@@ -1117,7 +1118,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to check media on
 	 */
 	function stopPeerCheckMedia(peer) {
 		stopPeerCheckAudioMedia(peer)
@@ -1125,8 +1126,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
-	 * @param stream
+	 * @param {object} peer The peer connection to check media on
+	 * @param {object} stream The stream to check
 	 */
 	function startPeerCheckMedia(peer, stream) {
 		stopPeerCheckMedia(peer)

@@ -189,12 +189,15 @@ const actions = {
 	/**
 	 * Initialises uploads and shares files to a conversation
 	 *
-	 * @param files.commit
-	 * @param files.dispatch
-	 * @param {object} files the files to be processed
-	 * @param {string} token the conversation's token where to share the files
-	 * @param {number} uploadId a unique id for the upload operation indexing
-	 * @param {boolean} rename whether to rename the files (usually after pasting)
+	 * @param {object} context the wrapping object.
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {Function} context.dispatch the contexts dispatch function.
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.files the files to be processed
+	 * @param {string} data.token the conversation's token where to share the files
+	 * @param {number} data.uploadId a unique id for the upload operation indexing
+	 * @param {boolean} data.rename whether to rename the files (usually after pasting)
+	 * @param {boolean} data.isVoiceMessage whether the file is a voice recording
 	 */
 	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false, isVoiceMessage }) {
 		// Set last upload id
@@ -233,13 +236,12 @@ const actions = {
 	/**
 	 * Discards an upload
 	 *
-	 * @param {object} param0 Commit and state
-	 * @param param0.commit
-	 * @param param0.state
+	 * @param {object} context the wrapping object.
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {object} context.state the contexts state object.
 	 * @param {object} uploadId The unique uploadId
-	 * @param param0.getters
 	 */
-	discardUpload({ commit, state, getters }, uploadId) {
+	discardUpload({ commit, state }, uploadId) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
@@ -250,12 +252,12 @@ const actions = {
 	/**
 	 * Uploads the files to the root directory of the user
 	 *
-	 * @param {object} param0 Commit, state and getters
-	 * @param param0.commit
-	 * @param param0.dispatch
-	 * @param {object} uploadId The unique uploadId
-	 * @param param0.state
-	 * @param param0.getters
+	 * @param {object} context the wrapping object.
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {Function} context.dispatch the contexts dispatch function.
+	 * @param {object} context.getters the contexts getters object.
+	 * @param {object} context.state the contexts state object.
+	 * @param {string} uploadId The unique uploadId
 	 */
 	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
 		if (state.currentUploadId === uploadId) {
@@ -366,12 +368,12 @@ const actions = {
 	/**
 	 * Mark a file as shared
 	 *
-	 * @param {object} context default store context;
-	 * @param {object} param1 The unique upload id original file index
-	 * @param context.commit
-	 * @param context.state
-	 * @param param1.uploadId
-	 * @param param1.index
+	 * @param {object} context the wrapping object.
+	 * @param {Function} context.commit the contexts commit function.
+	 * @param {object} context.state the contexts state object.
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.uploadId The id of the upload process
+	 * @param {number} data.index The object index inside the upload process
 	 * @throws {Error} when the item is already being shared by another async call
 	 */
 	markFileAsSharing({ commit, state }, { uploadId, index }) {
@@ -385,9 +387,9 @@ const actions = {
 	 * Mark a file as shared
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} param1 The unique upload id original file index
-	 * @param param1.uploadId
-	 * @param param1.index
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.uploadId The id of the upload process
+	 * @param {number} data.index The object index inside the upload process
 	 */
 	markFileAsShared(context, { uploadId, index }) {
 		context.commit('markFileAsShared', { uploadId, index })
@@ -396,8 +398,8 @@ const actions = {
 	/**
 	 * Mark a file as shared
 	 *
-	 * @param {object} context default store context;
-	 * @param context.commit
+	 * @param {object} context the wrapping object.
+	 * @param {Function} context.commit the contexts commit function.
 	 * @param {string} temporaryMessageId message id of the temporary message associated to the file to remove
 	 */
 	removeFileFromSelection({ commit }, temporaryMessageId) {

@@ -47,8 +47,10 @@
 		</template>
 
 		<template v-else>
+			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="settings-hint" v-html="description" />
 
+			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="settings-hint" v-html="customBinaryText" />
 
 			<p v-if="errorText" class="settings-hint">

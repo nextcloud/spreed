@@ -141,27 +141,12 @@ const getters = {
 		}
 		return []
 	},
-	/**
-	 * Gets the messages object
-	 *
-	 * @param {object} state the state object.
-	 * @param {string} token the conversation token.
-	 * @return {object} the messages object (if there are messages in the store)
-	 */
 	messages: (state) => (token) => {
 		if (state.messages[token]) {
 			return state.messages[token]
 		}
 		return {}
 	},
-	/**
-	 * Gets a single message object
-	 *
-	 * @param {object} state the state object.
-	 * @param {string} token the conversation token.
-	 * @param {string} id the message id.
-	 * @return {object} the message object (if the message is found in the store)
-	 */
 	message: (state) => (token, id) => {
 		if (state.messages[token][id]) {
 			return state.messages[token][id]
@@ -262,10 +247,9 @@ const mutations = {
 	 * Deletes a message from the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param message.message
-	 * @param {object} message the message;
-	 * @param {string} placeholder Placeholder message until deleting finished
-	 * @param message.placeholder
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.message the message;
+	 * @param {string} data.placeholder Placeholder message until deleting finished
 	 */
 	markMessageAsDeleting(state, { message, placeholder }) {
 		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
@@ -288,10 +272,9 @@ const mutations = {
 	 * Adds a temporary message to the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param message.message
-	 * @param {object} message the temporary message;
-	 * @param {string} reason the reason the temporary message failed;
-	 * @param message.reason
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.message the temporary message;
+	 * @param {string} data.reason the reason the temporary message failed;
 	 */
 	markTemporaryMessageAsFailed(state, { message, reason }) {
 		if (state.messages[message.token][message.id]) {
@@ -301,8 +284,9 @@ const mutations = {
 
 	/**
 	 * @param {object} state current store state;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the first known chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the first known chat message
 	 */
 	setFirstKnownMessageId(state, { token, id }) {
 		Vue.set(state.firstKnown, token, id)
@@ -310,8 +294,9 @@ const mutations = {
 
 	/**
 	 * @param {object} state current store state;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the last known chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the last known chat message
 	 */
 	setLastKnownMessageId(state, { token, id }) {
 		Vue.set(state.lastKnown, token, id)
@@ -319,8 +304,9 @@ const mutations = {
 
 	/**
 	 * @param {object} state current store state;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the last read chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the last read chat message
 	 */
 	setVisualLastReadMessageId(state, { token, id }) {
 		Vue.set(state.visualLastReadMessageId, token, id)
@@ -379,10 +365,9 @@ const actions = {
 	 * Delete a message
 	 *
 	 * @param {object} context default store context;
-	 * @param message.message
-	 * @param {object} message the message to be deleted;
-	 * @param {string} placeholder Placeholder message until deleting finished
-	 * @param message.placeholder
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.message the message to be deleted;
+	 * @param {string} data.placeholder Placeholder message until deleting finished
 	 */
 	async deleteMessage(context, { message, placeholder }) {
 		const messageObject = Object.assign({}, context.getters.message(message.token, message.id))
@@ -413,12 +398,14 @@ const actions = {
 	 * on the message to be replied and the current actor
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} text message string;
-	 * @param {string} token conversation token;
-	 * @param {string} uploadId upload id;
-	 * @param {number} index index;
-	 * @param {object} file file to upload;
-	 * @param {string} localUrl local URL of file to upload;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.text message string;
+	 * @param {string} data.token conversation token;
+	 * @param {string} data.uploadId upload id;
+	 * @param {number} data.index index;
+	 * @param {object} data.file file to upload;
+	 * @param {string} data.localUrl local URL of file to upload;
+	 * @param {boolean} data.isVoiceMessage whether the temporary file is a voice message
 	 * @return {object} temporary message
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
@@ -484,10 +471,9 @@ const actions = {
 	 * Mark a temporary message as failed to allow retrying it again
 	 *
 	 * @param {object} context default store context;
-	 * @param message.message
-	 * @param {object} message the temporary message;
-	 * @param {string} reason the reason the temporary message failed;
-	 * @param message.reason
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.message the temporary message;
+	 * @param {string} data.reason the reason the temporary message failed;
 	 */
 	markTemporaryMessageAsFailed(context, { message, reason }) {
 		context.commit('markTemporaryMessageAsFailed', { message, reason })
@@ -505,8 +491,9 @@ const actions = {
 
 	/**
 	 * @param {object} context default store context;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the first known chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the first known chat message
 	 */
 	setFirstKnownMessageId(context, { token, id }) {
 		context.commit('setFirstKnownMessageId', { token, id })
@@ -514,8 +501,9 @@ const actions = {
 
 	/**
 	 * @param {object} context default store context;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the last known chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the last known chat message
 	 */
 	setLastKnownMessageId(context, { token, id }) {
 		context.commit('setLastKnownMessageId', { token, id })
@@ -523,8 +511,9 @@ const actions = {
 
 	/**
 	 * @param {object} context default store context;
-	 * @param {string} token Token of the conversation
-	 * @param {string} id Id of the last read chat message
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token Token of the conversation
+	 * @param {string} data.id Id of the last read chat message
 	 */
 	setVisualLastReadMessageId(context, { token, id }) {
 		context.commit('setVisualLastReadMessageId', { token, id })
@@ -545,10 +534,9 @@ const actions = {
 	 * in the conversation.
 	 *
 	 * @param {object} context default store context;
-	 * @param token.token
-	 * @param {object} token the token of the conversation to be updated;
-	 * @param {boolean} updateVisually whether to also clear the marker visually in the UI;
-	 * @param token.updateVisually
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.token the token of the conversation to be updated;
+	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
 		const conversation = context.getters.conversations[token]
@@ -565,12 +553,10 @@ const actions = {
 	 * Optionally also updated the marker visually in the UI if specified.
 	 *
 	 * @param {object} context default store context;
-	 * @param token.token
-	 * @param {object} token the token of the conversation to be updated;
-	 * @param {number} id the id of the message on which to set the read marker;
-	 * @param {boolean} updateVisually whether to also update the marker visually in the UI;
-	 * @param token.id
-	 * @param token.updateVisually
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.token the token of the conversation to be updated;
+	 * @param {number} data.id the id of the message on which to set the read marker;
+	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
 		const conversation = context.getters.conversations[token]
@@ -599,10 +585,11 @@ const actions = {
 	 * specified with its token.
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} token the conversation token;
-	 * @param {object} requestOptions request options;
-	 * @param {string} lastKnownMessageId last known message id;
-	 * @param {boolean} includeLastKnown whether to include the last known message in the response;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation token;
+	 * @param {object} data.requestOptions request options;
+	 * @param {string} data.lastKnownMessageId last known message id;
+	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 */
 	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
 		context.dispatch('cancelFetchMessages')
@@ -681,10 +668,11 @@ const actions = {
 	 * This call will long-poll when hasMoreMessagesToLoad() returns false.
 	 *
 	 * @param {object} context default store context;
-	 * @param {string} token The conversation token;
-	 * @param {string} requestId id to identify request uniquely
-	 * @param {object} requestOptions request options;
-	 * @param {number} lastKnownMessageId The id of the last message in the store.
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token The conversation token;
+	 * @param {string} data.requestId id to identify request uniquely
+	 * @param {object} data.requestOptions request options;
+	 * @param {number} data.lastKnownMessageId The id of the last message in the store.
 	 */
 	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
 		context.dispatch('cancelLookForNewMessages', { requestId })
@@ -902,8 +890,8 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * will be forwarded;
-	 * @param {object} message the message object;
-	 * @param message.messageToBeForwarded
+	 * @param {object} data the wrapping object;
+	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { messageToBeForwarded }) {
 		const response = await postNewMessage(messageToBeForwarded)

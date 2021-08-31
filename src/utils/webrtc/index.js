@@ -47,7 +47,7 @@ let signaling = null
 let tokensInSignaling = {}
 
 /**
- * @param token
+ * @param {string} token The token of the conversation to get the signaling settings for
  */
 async function getSignalingSettings(token) {
 	// If getSignalingSettings is called again while a previous one was still
@@ -80,7 +80,7 @@ async function getSignalingSettings(token) {
 }
 
 /**
- * @param token
+ * @param {string} token The token of the conversation to connect to
  */
 async function connectSignaling(token) {
 	const settings = await getSignalingSettings(token)
@@ -111,8 +111,8 @@ let startedCall = null
 let failedToStartCall = null
 
 /**
- * @param signaling
- * @param configuration
+ * @param {object} signaling The signaling object
+ * @param {object} configuration Media to connect with
  */
 function startCall(signaling, configuration) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
