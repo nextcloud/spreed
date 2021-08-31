@@ -65,11 +65,11 @@
 				:placeholder="t('spreed', 'Language')"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Language')">
-				<option v-for="l in languages.commonlanguages" :key="l.code" :value="l.code">
+				<option v-for="l in languages.commonLanguages" :key="l.code" :value="l.code">
 					{{ l.name }}
 				</option>
 				<optgroup label="––––––––––" />
-				<option v-for="l in languages.languages" :key="l.code" :value="l.code">
+				<option v-for="l in languages.otherLanguages" :key="l.code" :value="l.code">
 					{{ l.name }}
 				</option>
 			</select>
@@ -205,7 +205,7 @@ export default {
 		this.trialAccount = loadState('spreed', 'hosted_signaling_server_trial_data')
 
 		const languagesAndCountries = loadState('spreed', 'hosted_signaling_server_language_data')
-		this.languages = languagesAndCountries.languages // two lists of {code: "es", name: "Español"} - one is in 'commonlanguages' and one in 'languages'
+		this.languages = languagesAndCountries.languages // two lists of {code: "es", name: "Español"} - one is in 'commonLanguages' and one in 'otherLanguages'
 		this.countries = languagesAndCountries.countries // list of {code: "France", name: "France"}
 
 		const signaling = loadState('spreed', 'signaling_servers')
