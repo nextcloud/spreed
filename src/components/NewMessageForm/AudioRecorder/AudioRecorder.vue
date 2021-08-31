@@ -293,10 +293,13 @@ export default {
 		generateFileName() {
 			const token = this.$store.getters.getToken()
 			const conversation = this.$store.getters.conversation(token).name
+				.replace(/\/\\:%/gi, ' ') // Replace chars that are not allowed on the filesystem
+				.replace(/ +/gi, ' ') // Replace multiple replacement spaces with 1
 			const today = new Date()
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
-			return t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation }) + '.wav'
+			const name = t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation })
+			return name.substring(0, 246) + '.wav'
 		},
 
 		/**
