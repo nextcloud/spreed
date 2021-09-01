@@ -720,6 +720,13 @@ Signaling.Standalone.prototype.connect = function() {
 			message.from = data.control.sender.sessionid
 			this._trigger('message', [message])
 			break
+		case 'error':
+			if (data.error.code === 'processing_failed') {
+				console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
+			} else {
+				console.error('Ignore unknown error', data)
+			}
+			break
 		default:
 			if (!id) {
 				console.error('Ignore unknown event', data)
