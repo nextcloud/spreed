@@ -812,7 +812,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	/**
-	 * @param peer
+	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function setHandlerForOwnIceConnectionStateChange(peer) {
 		peer.pc.addEventListener('iceconnectionstatechange', function() {
