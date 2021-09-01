@@ -74,8 +74,6 @@ class ChatManager {
 	private $shareProvider;
 	/** @var ParticipantService */
 	private $participantService;
-	/** @var RoomShareProvider */
-	private $shareProvider;
 	/** @var Notifier */
 	private $notifier;
 	/** @var ITimeFactory */
@@ -91,7 +89,6 @@ class ChatManager {
 								INotificationManager $notificationManager,
 								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
-								RoomShareProvider $shareProvider,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory) {
