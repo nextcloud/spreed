@@ -158,6 +158,17 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
 	}
 
+	public function updateAllPublishingPermissions(Room $room, string $mode, int $newState, bool $includeModerators): void {
+		// FIXME Add events after checking what should be sent to the HPB
+		// $event = new ModifyParticipantEvent($room, $participant, 'publishingPermissions', $newState, $oldState);
+		// $this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+
+		$this->attendeeMapper->modifyPublishingPermissions($room->getId(), $mode, $newState, $includeModerators);
+
+		// FIXME Add events after checking what should be sent to the HPB
+		// $this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+	}
+
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setLastReadMessage($lastReadMessage);

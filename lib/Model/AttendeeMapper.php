@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -195,6 +196,87 @@ class AttendeeMapper extends QBMapper {
 			->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		return (int) $query->execute();
+	}
+
+	public function modifyPublishingPermissions(int $roomId, string $mode, int $newState, bool $includeModerators): void {
+		$query = $this->db->getQueryBuilder();
+		$query->update($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
+				Attendee::ACTOR_CIRCLES,
+				Attendee::ACTOR_GROUPS,
+			], IQueryBuilder::PARAM_STR_ARRAY)));
+
+		if (!$includeModerators) {
+			$query->andWhere($query->expr()->notIn('participant_type', $query->createNamedParameter([
+				Participant::OWNER,
+				Participant::MODERATOR,
+				Participant::GUEST_MODERATOR,
+			], IQueryBuilder::PARAM_INT_ARRAY)));
+		}
+
+		if ($mode === Participant::PERMISSIONS_SET) {
+			$query->set('publishing_permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
+			$query->executeStatement();
+		} else {
+			foreach ([
+				Participant::FLAG_IN_CALL,
+				Participant::FLAG_WITH_AUDIO,
+				Participant::FLAG_WITH_VIDEO
+			] as $permission) {
+				if ($permission & $newState) {
+					if ($mode === Participant::PERMISSIONS_ADD) {
+						$this->addSinglePublishingPermission($query, $permission);
+					} elseif ($mode === Participant::PERMISSIONS_REMOVE) {
+						$this->removeSinglePublishingPermission($query, $permission);
+					}
+				}
+			}
+		}
+	}
+
+	protected function addSinglePublishingPermission(IQueryBuilder $query, int $publishingPermission): void {
+		$query->set('publishing_permissions', $query->func()->add(
+			'publishing_permissions',
+			$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+		));
+
+		$query->andWhere(
+			$query->expr()->neq(
+				$query->expr()->castColumn(
+					$query->expr()->bitwiseAnd(
+						'publishing_permissions',
+						$publishingPermission
+					),
+					IQueryBuilder::PARAM_INT
+				),
+				$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+			)
+		);
+
+		$query->executeStatement();
+	}
+
+	protected function removeSinglePublishingPermission(IQueryBuilder $query, int $publishingPermission): void {
+		$query->set('publishing_permissions', $query->func()->subtract(
+			'publishing_permissions',
+			$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+		));
+
+		$query->andWhere(
+			$query->expr()->eq(
+				$query->expr()->castColumn(
+					$query->expr()->bitwiseAnd(
+						'publishing_permissions',
+						$publishingPermission
+					),
+				IQueryBuilder::PARAM_INT
+				),
+				$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+			)
+		);
+
+		$query->executeStatement();
 	}
 
 	public function createAttendeeFromRow(array $row): Attendee {

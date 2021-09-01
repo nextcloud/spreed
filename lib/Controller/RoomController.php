@@ -1521,11 +1521,38 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$this->participantService->updatePublishingPermissions($this->room, $targetParticipant, $state);
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param string $method
+	 * @param int $state
+	 * @param bool $includeModerators
+	 * @return DataResponse
+	 */
+	public function setAllAttendeesPublishingPermissions(string $method, int $state, bool $includeModerators): DataResponse {
+		if (!in_array($method, [
+			Participant::PERMISSIONS_ADD,
+			Participant::PERMISSIONS_REMOVE,
+			Participant::PERMISSIONS_SET
+		], true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->participantService->updateAllPublishingPermissions($this->room, $method, $state, $includeModerators);
 
 		return new DataResponse();
 	}
