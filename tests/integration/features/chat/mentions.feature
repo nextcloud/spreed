@@ -534,3 +534,92 @@ Feature: chat/mentions
     When user "participant1" sends message "hi @participant3" to room "file last share room" with 201
     And user "participant3" leaves room "file last share room" with 200 (v4)
     Then user "participant3" is not participant of room "file last share room" (v4)
+
+  Scenario: check direct mention marker after room mention
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Room mention @all no direct mention" to room "group room" with 201
+    And user "participant2" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 0                   |
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 0                   |
+
+  Scenario: check direct mention marker after user mention
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Direction mention for @participant3 only" to room "group room" with 201
+    And user "participant2" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 0             | 0                   |
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 1                   |
+
+  Scenario: check direct mention marker after mixed mention
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Direction mention for @participant3 and @all for participant2" to room "group room" with 201
+    And user "participant2" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 0                   |
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 1                   |
+    When user "participant3" reads message "Direction mention for @participant3 and @all for participant2" in room "group room" with 200
+    And user "participant2" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 0                   |
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 0             | 0                   |
+
+  Scenario: check direct mention marker after reading partly
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Test @participant3 #1" to room "group room" with 201
+    And user "participant1" sends message "Test @participant3 #2" to room "group room" with 201
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 1                   |
+    When user "participant3" reads message "Test @participant3 #1" in room "group room" with 200
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 1                   |
+    When user "participant3" reads message "Test @participant3 #2" in room "group room" with 200
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 0             | 0                   |
+
+  Scenario: check direct mention marker after reading partly with mixed mention
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Test @participant3 #1" to room "group room" with 201
+    And user "participant1" sends message "Test @all" to room "group room" with 201
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 1                   |
+    When user "participant3" reads message "Test @participant3 #1" in room "group room" with 200
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 1             | 0                   |
+    When user "participant3" reads message "Test @all" in room "group room" with 200
+    And user "participant3" is participant of the following rooms (v4)
+      | id         | unreadMention | unreadMentionDirect |
+      | group room | 0             | 0                   |

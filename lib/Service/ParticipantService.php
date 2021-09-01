@@ -870,7 +870,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $event);
 	}
 
-	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId): void {
+	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId, array $usersDirectlyMentioned): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_attendees')
 			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
@@ -878,6 +878,16 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$query->execute();
+
+		if (!empty($usersDirectlyMentioned)) {
+			$query = $this->connection->getQueryBuilder();
+			$query->update('talk_attendees')
+				->set('last_mention_direct', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
+				->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+				->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)));
+			$query->execute();
+		}
 	}
 
 	public function resetChatDetails(Room $room): void {
@@ -885,6 +895,7 @@ class ParticipantService {
 		$query->update('talk_attendees')
 			->set('last_read_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('last_mention_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_mention_direct', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}

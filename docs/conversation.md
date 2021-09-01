@@ -67,6 +67,7 @@
         `canEnableSIP` | int | v3 | | Whether the given user can enable SIP for this conversation. Note that when the token is not-numeric only, SIP can not be enabled even if the user is permitted and a moderator of the conversation
         `unreadMessages` | int | v1 | | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | v1 | | Flag if the user was mentioned since their last visit
+        `unreadMentionDirect` | bool | v4 | | Flag if the user was mentioned directly (ignoring @all mentions) since their last visit (only available with `direct-mention-flag` capability)
         `lastReadMessage` | int | v1 | | ID of the last read message in a room (only available with `chat-read-marker` capability)
         `lastCommonReadMessage` | int | v3 | | ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
         `lastMessage` | message | v1 | | Last message in a conversation if available, otherwise empty

@@ -81,3 +81,6 @@ title: Capabilities
 
 ## 12.1
 * `clear-history` - Whether chat API has the endpoint so moderators can clear the complete history of a chat
+
+## 13
+* `direct-mention-flag` - The conversation list populates the boolean `unreadMentionDirect` when the user was mentioned directly (ignoring @all mentions) since their last visit

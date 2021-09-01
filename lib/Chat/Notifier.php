@@ -251,7 +251,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return string[] the mentioned user IDs
 	 */
-	private function getMentionedUserIds(IComment $comment): array {
+	public function getMentionedUserIds(IComment $comment): array {
 		$mentions = $comment->getMentions();
 
 		if (empty($mentions)) {

@@ -239,13 +239,17 @@ class ChatManager {
 			}
 
 			$alreadyNotifiedUsers = [];
+			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
 			if ($replyTo instanceof IComment) {
 				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo);
+				if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
+					$usersDirectlyMentioned[] = $replyTo->getActorId();
+				}
 			}
 
 			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers);
 			if (!empty($alreadyNotifiedUsers)) {
-				$this->participantService->markUsersAsMentioned($chat, $alreadyNotifiedUsers, (int) $comment->getId());
+				$this->participantService->markUsersAsMentioned($chat, $alreadyNotifiedUsers, (int) $comment->getId(), $usersDirectlyMentioned);
 			}
 
 			// User was not mentioned, send a normal notification

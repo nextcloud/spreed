@@ -302,6 +302,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['lastMessage'])) {
 				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
 			}
+			if (isset($expectedRoom['unreadMention'])) {
+				$data['unreadMention'] = (int) $room['unreadMention'];
+			}
+			if (isset($expectedRoom['unreadMentionDirect'])) {
+				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
+			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
