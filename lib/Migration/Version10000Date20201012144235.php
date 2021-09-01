@@ -43,11 +43,13 @@ class Version10000Date20201012144235 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_rooms');
-		$table->addColumn('sip_enabled', Types::SMALLINT, [
-			'notnull' => true,
-			'default' => 0,
-			'unsigned' => true,
-		]);
+		if (!$table->hasColumn('sip_enabled')) {
+			$table->addColumn('sip_enabled', Types::SMALLINT, [
+				'notnull' => true,
+				'default' => 0,
+				'unsigned' => true,
+			]);
+		}
 
 		return $schema;
 	}
