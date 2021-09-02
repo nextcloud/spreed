@@ -474,7 +474,7 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 8px 0;
+	padding: 8px 8px 8px 4px;
 	&--scrolled-down {
 		border-bottom: 1px solid var(--color-border);
 	}
