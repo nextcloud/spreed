@@ -154,7 +154,7 @@ describe('Participant.vue', () => {
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)
 
-			expect(avatarEl.props('name')).toBe('[Unknown username]')
+			expect(avatarEl.props('name')).toBe('Deleted user')
 		})
 
 		test('renders offline avatar when no sessions exist', () => {
