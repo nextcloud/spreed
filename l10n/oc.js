@@ -580,7 +580,7 @@ OC.L10N.register(
     "Be careful, these actions cannot be undone." : "Fasètz atencion, aquelas accions pòdon pas èsser anulladas.",
     "Leave conversation" : "Quitar la conversacion",
     "Delete conversation" : "Suprimir la conversacion",
-    "Permanently delete this conversation." : "Suprimir permanent aqueste conversacion",
+    "Permanently delete this conversation." : "Suprimir permanent aquesta conversacion",
     "Delete chat messages" : "Suprimir los messatges del chat",
     "Do you really want to delete \"{displayName}\"?" : "Volètz vertadièrament suprimir « {displayName} » ?",
     "Error while deleting conversation" : "Error pendent la supression de la conversacion",
