@@ -318,7 +318,7 @@ export default {
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
 			const name = t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation })
-			return name.substring(0, 246) + '.wav'
+			return name.substring(0, 146) + '.wav'
 		},
 
 		/**
