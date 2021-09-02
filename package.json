@@ -29,7 +29,7 @@
 		"@nextcloud/moment": "^1.1.1",
 		"@nextcloud/paths": "^2.0.0",
 		"@nextcloud/router": "^2.0.0",
-		"@nextcloud/vue": "^4.0.2",
+		"@nextcloud/vue": "^4.0.3",
 		"@nextcloud/vue-dashboard": "^2.0.1",
 		"@tensorflow-models/body-pix": "^2.2.0",
 		"@tensorflow/tfjs": "^3.7.0",
