@@ -550,6 +550,14 @@ export default {
 		},
 
 		toggleVideo() {
+			/**
+			 * Abort toggling the video if the 'v' key is lifted when pasting an
+			 * image in the new message form.
+			 */
+			if (document.getElementsByClassName('upload-editor').length !== 0) {
+				return
+			}
+
 			if (!this.model.attributes.videoAvailable) {
 				return
 			}
