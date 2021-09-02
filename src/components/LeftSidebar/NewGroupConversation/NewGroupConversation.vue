@@ -89,6 +89,13 @@
 					class="navigation">
 					<!-- First page -->
 					<button
+						v-if="page===0 && isPublic"
+						class="navigation__button navigation__button-left "
+						:disabled="disabled"
+						@click="handleCreateConversation">
+						{{ t('spreed', 'Create conversation') }}
+					</button>
+					<button
 						v-if="page===0"
 						class="navigation__button navigation__button-right primary"
 						:disabled="disabled"
