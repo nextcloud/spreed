@@ -184,6 +184,15 @@ VideoEffects.prototype = {
 		window.tfLiteSimdWasm = tfLiteSimdWasm.split('/').pop()
 		blur(this._videoSource, this._temporaryCanvas)
 
+		// In Firefox "captureStream" can not be currently called before setting
+		// a context (https://bugzilla.mozilla.org/show_bug.cgi?id=1257440). The
+		// context will be asynchronously set by "blur", so it needs to be
+		// explicitly set here before capturing the stream.
+		//
+		// Once a context is set in an HTMLCanvasElement it is not possible to
+		// change it, so the same context that will be set by "blur" must be set
+		// here.
+		this._temporaryCanvas.getContext('webgl2')
 	},
 
 	_useJitsi(stream) {
