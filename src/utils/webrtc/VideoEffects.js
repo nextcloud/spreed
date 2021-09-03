@@ -29,6 +29,7 @@ VideoEffects.prototype = {
 		window.switchStream = false
 		this._model = model
 		// this._configureStreams(stream)
+		this._stream = stream
 		switch (model) {
 		case 0:
 			this._useBodyPix(stream)
@@ -68,6 +69,9 @@ VideoEffects.prototype = {
 		case 1:
 			this._stopTfLiteStream()
 			break
+		case 2:
+			this._stopJitsi()
+			break
 		default:
 			this._stopBodyPixStream()
 			break
@@ -91,6 +95,21 @@ VideoEffects.prototype = {
 		window.stopBlur = true
 		this._attachment = null
 		this._temporaryCanvas = null
+		const tracks = this._stream.getTracks()
+		tracks.forEach(track => {
+			track.stop()
+		})
+		this._stream = null
+	},
+
+	_stopJitsi() {
+		if (!window.blurFx) {
+			return
+		}
+
+		window.blurFx.stopEffect()
+		window.blurFx = null
+
 		const tracks = this._stream.getTracks()
 		tracks.forEach(track => {
 			track.stop()
@@ -208,8 +227,8 @@ VideoEffects.prototype = {
 			simd: isSimd,
 		}
 
-		const blurFx = new JitsiStreamBackgroundEffect(options)
-		return blurFx.startEffect(stream)
+		window.blurFx = new JitsiStreamBackgroundEffect(options)
+		return window.blurFx.startEffect(stream)
 	},
 
 	_switchModel(model) {
