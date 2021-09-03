@@ -215,8 +215,15 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	// being used, so they must be set when the promise is resolved or rejected.
 
 	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
-		const videoEffect = new VideoEffects()
-		stream = videoEffect.getBlurredVideoStream(stream)
+		if (stream.getVideoTracks().length > 0) {
+			try {
+				const videoEffect = new VideoEffects()
+				stream = videoEffect.getBlurredVideoStream(stream)
+			} catch (exception) {
+				console.log(exception)
+			}
+		}
+
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
 		// only audio is available.
