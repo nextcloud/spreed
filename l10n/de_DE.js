@@ -862,6 +862,8 @@ OC.L10N.register(
     "Allow guests to join via link" : "Gästen die Teilnahme per Link erlauben",
     "Search conversations or users" : "Nach Unterhaltungen oder Benutzern suchen",
     "You are currently waiting in the lobby" : "Sie warten derzeit in der Lobby",
+    "The meeting will start soon" : "Das Treffen beginnt bald",
+    "This meeting is scheduled for {startTime}" : "Dieses Treffen ist geplant für {startTime}",
     "Calls are not supported in your browser" : "Anrufe werden von Ihrem Browser nicht unterstützt",
     "Access to microphone is only possible with HTTPS" : "Zugriff auf Mikrofon ist nur über HTTPS möglich",
     "Access to microphone was denied" : "Zugriff auf Mikrofon wurde verweigert",

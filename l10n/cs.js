@@ -862,6 +862,8 @@ OC.L10N.register(
     "Allow guests to join via link" : "Umožnit hostům, připojit se přes odkaz.",
     "Search conversations or users" : "Hledat konverzace nebo uživatele",
     "You are currently waiting in the lobby" : "V tuto chvíli se nacházíte v čekárně",
+    "The meeting will start soon" : "Schůzka brzy začne",
+    "This meeting is scheduled for {startTime}" : "Tato schůzka je naplánována na {startTime}",
     "Calls are not supported in your browser" : "Vámi používaný prohlížeč nepodporuje volání",
     "Access to microphone is only possible with HTTPS" : "Přístup k mikrofonu je možný pouze přes HTTPS",
     "Access to microphone was denied" : "Přístup k mikrofonu byl odepřen",
