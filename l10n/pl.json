@@ -860,6 +860,8 @@
     "Allow guests to join via link" : "Zezwól gościom na dołączanie za pomocą linku",
     "Search conversations or users" : "Szukaj rozmów lub użytkowników",
     "You are currently waiting in the lobby" : "Obecnie czekasz w poczekalni",
+    "The meeting will start soon" : "Spotkanie rozpocznie się wkrótce",
+    "This meeting is scheduled for {startTime}" : "Spotkanie jest zaplanowane na {startTime}",
     "Calls are not supported in your browser" : "Twoja przeglądarka nie obsługuje połączeń",
     "Access to microphone is only possible with HTTPS" : "Dostęp do mikrofonu jest możliwy tylko przy użyciu protokołu HTTPS",
     "Access to microphone was denied" : "Odmowa dostępu do mikrofonu",
