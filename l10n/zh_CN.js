@@ -861,6 +861,8 @@ OC.L10N.register(
     "Allow guests to join via link" : "允许来宾通过链接加入",
     "Search conversations or users" : "搜索会话或用户",
     "You are currently waiting in the lobby" : "您当前正在休息室等待。",
+    "The meeting will start soon" : "会议不久后开始",
+    "This meeting is scheduled for {startTime}" : "此会议定于 {startTime} 开始",
     "Calls are not supported in your browser" : "您的浏览器不支持呼叫",
     "Access to microphone is only possible with HTTPS" : "麦克风只能通过 HTTPS 协议访问",
     "Access to microphone was denied" : "无权访问麦克风",
