@@ -862,6 +862,8 @@ OC.L10N.register(
     "Allow guests to join via link" : "允許訪客透過連結加入",
     "Search conversations or users" : "搜尋對話或用戶",
     "You are currently waiting in the lobby" : "您當前正在等候室等候。",
+    "The meeting will start soon" : "會議即將開始",
+    "This meeting is scheduled for {startTime}" : "此會議定於 {startTime} 開始",
     "Calls are not supported in your browser" : "你使用的瀏覽器不支援通話",
     "Access to microphone is only possible with HTTPS" : "只有使用 HTTPS 才能存取米高風",
     "Access to microphone was denied" : "存取米高風被拒絕",
