@@ -862,6 +862,8 @@ OC.L10N.register(
     "Allow guests to join via link" : "Konuklar bağlantı ile katılabilsin",
     "Search conversations or users" : "Görüşme ya da kullanıcı arama",
     "You are currently waiting in the lobby" : "Şu anda girişte bekliyorsunuz",
+    "The meeting will start soon" : "Toplantı yakında başlayacak",
+    "This meeting is scheduled for {startTime}" : "Bu toplantının başlangıcı {startTime} olarak ayarlanmış",
     "Calls are not supported in your browser" : "Web tarayıcınız çağrıları desteklemiyor",
     "Access to microphone is only possible with HTTPS" : "Mikrofona yalnız HTTPS üzerinden erişilebilir",
     "Access to microphone was denied" : "Mikrofona erişim reddedildi",
