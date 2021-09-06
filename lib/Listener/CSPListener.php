@@ -59,6 +59,7 @@ class CSPListener implements IEventListener {
 		foreach ($this->config->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}
+		$csp->addAllowedWorkerSrcDomain('\'self\'');
 
 		$event->addPolicy($csp);
 	}
