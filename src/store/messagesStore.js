@@ -36,6 +36,12 @@ import {
 	ATTENDEE,
 } from '../constants'
 
+import {
+	messagesShouldBeGroupedByAuthor,
+	messagesHaveSameDate,
+	generateDateSeparator,
+} from '../utils/messages'
+
 /**
  * Returns whether the given message contains a mention to self, directly
  * or indirectly through a global mention.
@@ -86,7 +92,6 @@ const state = {
 	 * Map of conversation token to last known message id
 	 */
 	lastKnown: {},
-
 	/**
 	 * Cached last read message id for display.
 	 */
@@ -107,7 +112,7 @@ const state = {
 	/**
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
-	cancelPostNewMessage: {},
+	cancelPostNewMessage: { },
 }
 
 const getters = {
@@ -189,6 +194,36 @@ const getters = {
 	isSendingMessages: (state) => {
 		// the cancel handler only exists when a message is being sent
 		return Object.keys(state.cancelPostNewMessage).length !== 0
+	},
+
+	/**
+	 * Creates an array of messages grouped in nested arrays by same autor.
+	 *
+	 * @param state
+	 * @return {Array}
+	 */
+	dateGroups: (state) => {
+		const dateGroups = []
+		for (const message of state.messagesList) {
+			let lastMessage = null
+			message.dateSeparator = generateDateSeparator(message)
+			if (message.systemMessage === 'message_deleted') {
+				continue
+			}
+			const authorGroups = []
+
+			while (messagesHaveSameDate(message, lastMessage)) {
+				if (messagesShouldBeGroupedByAuthor(message, lastMessage)) {
+
+					authorGroups.push([message])
+					lastMessage = message
+				} else {
+					authorGroups[authorGroups.length - 1].push(message)
+				}
+			}
+			dateGroups.push(authorGroups)
+		}
+		return dateGroups
 	},
 }
 

@@ -1,32 +1,32 @@
-<!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
-  -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
-  -
-  - @license GNU AGPL version 3 or any later version
-  -
-  - This program is free software: you can redistribute it and/or modify
-  - it under the terms of the GNU Affero General Public License as
-  - published by the Free Software Foundation, either version 3 of the
-  - License, or (at your option) any later version.
-  -
-  - This program is distributed in the hope that it will be useful,
-  - but WITHOUT ANY WARRANTY; without even the implied warranty of
-  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  - GNU Affero General Public License for more details.
-  -
-  - You should have received a copy of the GNU Affero General Public License
-  - along with this program. If not, see <http://www.gnu.org/licenses/>.
--->
+	<!--
+	- @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+	-
+	- @author Marco Ambrosini <marcoambrosini@pm.me>
+	-
+	- @license GNU AGPL version 3 or any later version
+	-
+	- This program is free software: you can redistribute it and/or modify
+	- it under the terms of the GNU Affero General Public License as
+	- published by the Free Software Foundation, either version 3 of the
+	- License, or (at your option) any later version.
+	-
+	- This program is distributed in the hope that it will be useful,
+	- but WITHOUT ANY WARRANTY; without even the implied warranty of
+	- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	- GNU Affero General Public License for more details.
+	-
+	- You should have received a copy of the GNU Affero General Public License
+	- along with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
 
 <template>
-	<div class="message-group">
-		<div v-if="dateSeparator"
-			class="message-group__date-header">
-			<span class="date"
-				role="heading"
-				aria-level="3">{{ dateSeparator }}</span>
-		</div>
+	<div
+		v-for="dateGroup in dateGroups"
+		:key="dateGroup.toString()"
+		class="date-group">
+		v-for="authorGroup in dateGroup"
+		:key="authorGroup.toString()"
+		class="author-group">
 		<div class="wrapper"
 			:class="{'wrapper--system': isSystemMessage}">
 			<div v-if="!isSystemMessage" class="messages__avatar">
@@ -51,6 +51,8 @@
 					:is-temporary="message.timestamp === 0" />
 			</ul>
 		</div>
+	</div>
+	</div>
 	</div>
 </template>
 
@@ -107,6 +109,7 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
+
 	},
 
 	computed: {
@@ -164,53 +167,53 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../../../assets/variables';
+	<style lang="scss" scoped>
+	@import '../../../assets/variables';
 
-.message-group {
-	&__date-header {
-		display: block;
-		text-align: center;
-		padding-top: 20px;
-		position: relative;
-		margin: 20px 0;
-		.date {
-			margin-right: $clickable-area * 2;
-			content: attr(data-date);
-			padding: 4px 12px;
-			left: 50%;
-			color: var(--color-text-maxcontrast);
-			background-color: var(--color-background-dark);
-			border-radius: var(--border-radius-pill);
+	.author-group {
+		&__date-header {
+			display: block;
+			text-align: center;
+			padding-top: 20px;
+			position: relative;
+			margin: 20px 0;
+			.date {
+				margin-right: $clickable-area * 2;
+				content: attr(data-date);
+				padding: 4px 12px;
+				left: 50%;
+				color: var(--color-text-maxcontrast);
+				background-color: var(--color-background-dark);
+				border-radius: var(--border-radius-pill);
+			}
 		}
 	}
-}
 
-.wrapper {
-	max-width: $messages-list-max-width;
-	display: flex;
-	margin: auto;
-	padding: 0;
-	&--system {
-		padding-left: $clickable-area + 8px;
+	.wrapper {
+		max-width: $messages-list-max-width;
+		display: flex;
+		margin: auto;
+		padding: 0;
+		&--system {
+			padding-left: $clickable-area + 8px;
+		}
+		&:focus {
+			background-color: rgba(47, 47, 47, 0.068);
+		}
 	}
-	&:focus {
-		background-color: rgba(47, 47, 47, 0.068);
-	}
-}
 
-.messages {
-	flex: auto;
-	display: flex;
-	padding: 8px 0 8px 0;
-	flex-direction: column;
-	width: 100%;
-	&__avatar {
-		position: sticky;
-		top: 0;
-		height: 52px;
-		width: 52px;
-		padding: 18px 10px 10px 10px;
+	.messages {
+		flex: auto;
+		display: flex;
+		padding: 8px 0 8px 0;
+		flex-direction: column;
+		width: 100%;
+		&__avatar {
+			position: sticky;
+			top: 0;
+			height: 52px;
+			width: 52px;
+			padding: 18px 10px 10px 10px;
+		}
 	}
-}
-</style>
+	</style>

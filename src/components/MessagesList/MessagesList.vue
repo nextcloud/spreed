@@ -40,15 +40,13 @@ get the messagesList array and loop through the list to generate the messages.
 				class="icon-loading" />
 		</div>
 		<MessagesGroup
-			v-for="(item, index) of messagesGroupedByAuthor"
-			:key="item[0].id"
+			v-for="dateGroup of dateGroups"
+			:key="dateGroup[0].id"
 			:style="{ height: item.height + 'px' }"
-			v-bind="item"
+			:date-group="dateGroup"
 			:last-read-message-id="visualLastReadMessageId"
-			:messages="item"
-			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
-			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
-		<template v-if="!messagesGroupedByAuthor.length">
+			:messages="item" />
+		<template v-if="!mdateGroups.length">
 			<LoadingPlaceholder
 				type="messages"
 				:count="15" />
@@ -73,7 +71,6 @@ import MessagesGroup from './MessagesGroup/MessagesGroup'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby'
-import { ATTENDEE } from '../../constants'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
@@ -178,33 +175,6 @@ export default {
 			// FIXME: remove if unused ?
 			return this.$store.getters.messages(this.token)
 		},
-		/**
-		 * Creates an array of messages grouped in nested arrays by same autor.
-		 *
-		 * @return {Array}
-		 */
-		messagesGroupedByAuthor() {
-			const groups = []
-			let lastMessage = null
-			for (const message of this.messagesList) {
-				if (message.systemMessage === 'message_deleted') {
-					continue
-				}
-
-				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					// Add the date separator for different days
-					if (this.messagesHaveDifferentDate(message, lastMessage)) {
-						message.dateSeparator = this.generateDateSeparator(message)
-					}
-
-					groups.push([message])
-					lastMessage = message
-				} else {
-					groups[groups.length - 1].push(message)
-				}
-			}
-			return groups
-		},
 
 		/**
 		 * In order for the state of the component to be sticky,
@@ -249,6 +219,10 @@ export default {
 
 		scroller() {
 			return this.$refs.scroller
+		},
+
+		dateGroups() {
+			return this.$store.getters.dateGroups
 		},
 	},
 
@@ -299,104 +273,6 @@ export default {
 	},
 
 	methods: {
-		/**
-		 * Compare two messages to decide if they should be grouped
-		 *
-		 * @param {object} message1 The new message
-		 * @param {string} message1.id The ID of the new message
-		 * @param {string} message1.actorType Actor type of the new message
-		 * @param {string} message1.actorId Actor id of the new message
-		 * @param {string} message1.actorDisplayName Actor displayname of the new message
-		 * @param {string} message1.systemMessage System message content of the new message
-		 * @param {number} message1.timestamp Timestamp of the new message
-		 * @param {null|object} message2 The previous message
-		 * @param {string} message2.id The ID of the second message
-		 * @param {string} message2.actorType Actor type of the previous message
-		 * @param {string} message2.actorId Actor id of the previous message
-		 * @param {string} message2.actorDisplayName Actor display name of previous message
-		 * @param {string} message2.systemMessage System message content of the previous message
-		 * @param {number} message2.timestamp Timestamp of the second message
-		 * @return {boolean} Boolean if the messages should be grouped or not
-		 */
-		messagesShouldBeGrouped(message1, message2) {
-			if (!message2) {
-				return false // No previous message
-			}
-
-			if (message1.actorType === ATTENDEE.ACTOR_TYPE_BOTS // Don't group messages of commands and bots
-				&& message1.actorId !== ATTENDEE.CHANGELOG_BOT_ID) { // Apart from the changelog bot
-				return false
-			}
-
-			const message1IsSystem = message1.systemMessage.length !== 0
-			const message2IsSystem = message2.systemMessage.length !== 0
-
-			if (message1IsSystem !== message2IsSystem) {
-				// Only group system messages with each others
-				return false
-			}
-
-			if (!message1IsSystem // System messages are grouped independent from author
-				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
-					|| message1.actorId !== message2.actorId)
-				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
-					&& message1.actorDisplayName !== message2.actorDisplayName))) {
-				return false
-			}
-
-			return !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
-		},
-
-		/**
-		 * Check if 2 messages are from the same date
-		 *
-		 * @param {object} message1 The new message
-		 * @param {string} message1.id The ID of the new message
-		 * @param {number} message1.timestamp Timestamp of the new message
-		 * @param {null|object} message2 The previous message
-		 * @param {string} message2.id The ID of the second message
-		 * @param {number} message2.timestamp Timestamp of the second message
-		 * @return {boolean} Boolean if the messages have the same date
-		 */
-		messagesHaveDifferentDate(message1, message2) {
-			return !message2 // There is no previous message
-				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
-		},
-
-		/**
-		 * Generate the date header between the messages
-		 *
-		 * @param {object} message The message object
-		 * @param {string} message.id The ID of the message
-		 * @param {number} message.timestamp Timestamp of the message
-		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
-		 */
-		generateDateSeparator(message) {
-			const date = this.getDateOfMessage(message)
-			const dayOfYear = date.format('YYYY-DDD')
-			let relativePrefix = date.fromNow()
-
-			// Use the relative day for today and yesterday
-			const dayOfYearToday = moment().format('YYYY-DDD')
-			if (dayOfYear === dayOfYearToday) {
-				relativePrefix = t('spreed', 'Today')
-			} else {
-				const dayOfYearYesterday = moment().subtract(1, 'days').format('YYYY-DDD')
-				if (dayOfYear === dayOfYearYesterday) {
-					relativePrefix = t('spreed', 'Yesterday')
-				}
-			}
-
-			// <Today>, <November 11th, 2019>
-			return t('spreed', '{relativeDate}, {absoluteDate}', {
-				relativeDate: relativePrefix,
-				// 'LL' formats a localized date including day of month, month
-				// name and year
-				absoluteDate: date.format('LL'),
-			}, undefined, {
-				escape: false, // French "Today" has a ' in it
-			})
-		},
 
 		/**
 		 * Generate the date of the messages
