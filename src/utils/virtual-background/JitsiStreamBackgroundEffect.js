@@ -74,10 +74,9 @@ export default class JitsiStreamBackgroundEffect {
 		// this._model.postMessage({message: 'testObj', other: 'other'})
 		this._model.postMessage({
 			message: 'makeTFLite',
-			segmentationPixelCount:  segmentationPixelCount,
+			segmentationPixelCount,
 			simd: isSimd,
 		})
-		
 
 		this._segmentationPixelCount = segmentationPixelCount
 
@@ -109,19 +108,19 @@ export default class JitsiStreamBackgroundEffect {
 
 	_startFx(e) {
 		switch (e.data.message) {
-			case 'inferenceRun':
-				this.runInference(e.data.segmentationResult)
-				break;
+		case 'inferenceRun':
+			this.runInference(e.data.segmentationResult)
+			break
 			// case 'inferenceRun':
 			// 	this.runPostProcessing()
 			// 	break;
-			case 'loaded':
-				this._loaded = true
-				break
-			default:
-				console.error('_startFx: Something went wrong.')
-				console.dir(e)
-				break;
+		case 'loaded':
+			this._loaded = true
+			break
+		default:
+			console.error('_startFx: Something went wrong.')
+			console.dir(e)
+			break
 		}
 	}
 
@@ -234,7 +233,7 @@ export default class JitsiStreamBackgroundEffect {
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / 30,
-			message: 'this._maskFrameTimerWorker'
+			message: 'this._maskFrameTimerWorker',
 		})
 	}
 
@@ -264,10 +263,10 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height
 		)
 
-		this._model.postMessage({ message: 'resizeSource', imageData: imageData })
+		this._model.postMessage({ message: 'resizeSource', imageData })
 		// Can be determined in Worker.
 		// const inputMemoryOffset = this._model._getInputMemoryOffset() / 4
-		
+
 		// Worker: seems to be the input data
 		// Run this in Worker -> onMessage: runInference() -> onMessage: runPostProcessing()
 		// for (let i = 0; i < this._segmentationPixelCount; i++) {
@@ -318,7 +317,7 @@ export default class JitsiStreamBackgroundEffect {
 		this._inputVideoElement.height = parseInt(height, 10)
 		this._inputVideoElement.autoplay = true
 		this._inputVideoElement.srcObject = this._stream
-		
+
 		this._inputVideoElement.onloadeddata = () => {
 			// while (!this._loaded) {}
 			this._maskFrameTimerWorker.postMessage({
@@ -328,7 +327,8 @@ export default class JitsiStreamBackgroundEffect {
 			})
 		}
 
-		return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
+		// return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
+		return this._outputCanvasElement.captureStream()
 	}
 
 	/**
