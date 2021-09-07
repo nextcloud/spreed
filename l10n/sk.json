@@ -860,6 +860,8 @@
     "Allow guests to join via link" : "Umožnite hosťom pripojiť sa prostredníctvom odkazu",
     "Search conversations or users" : "Vyhľadajte konverzácie alebo používateľov",
     "You are currently waiting in the lobby" : "Momentálne ste v čakárni",
+    "The meeting will start soon" : "Rozhovor začne čoskoro",
+    "This meeting is scheduled for {startTime}" : "Tento rozhovor je naplánovaný na {startTime}",
     "Calls are not supported in your browser" : "Váš prehliadač nepodporuje hovory",
     "Access to microphone is only possible with HTTPS" : "Prístup k mikrofónu je možný iba pomocou protokolu HTTPS",
     "Access to microphone was denied" : "Prístup k mikrofónu bol zamietnutý",
