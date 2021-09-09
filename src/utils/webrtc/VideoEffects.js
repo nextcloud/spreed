@@ -25,7 +25,6 @@ export default function VideoEffects() {
 
 VideoEffects.prototype = {
 	getBlurredVideoStream(stream, model = 2) {
-		console.log('getBlurredStream()')
 		window.switchStream = false
 		this._model = model
 		// this._configureStreams(stream)
@@ -223,14 +222,11 @@ VideoEffects.prototype = {
 			console.error('Looks like WebAssembly is disabled or not supported on this browser')
 			return
 		}
-		console.log('wasm version: ' + this.wasmVersion)
 
 		const virtualBackground = {
 			type: VIRTUAL_BACKGROUND_TYPE.NONE,
 			blurValue: 8,
 		}
-		console.log('isSimd:')
-		console.log(isSimd)
 		const options = {
 			...this.wasmVersion === 'simd' ? segmentationDimensions.model144 : segmentationDimensions.model96,
 			virtualBackground,

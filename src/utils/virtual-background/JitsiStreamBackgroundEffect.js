@@ -45,7 +45,6 @@ export default class JitsiStreamBackgroundEffect {
      */
 	// constructor(model: Object, options: Object) {
 	constructor(options) {
-		// console.log(videoWorker)
 		const isSimd = options.simd
 		this._options = options
 		this._loaded = false
@@ -65,7 +64,6 @@ export default class JitsiStreamBackgroundEffect {
 		}
 		// this._model = model
 		const segmentationPixelCount = this._options.width * this._options.height
-		console.log('segPix: ' + segmentationPixelCount)
 		this._segmentationPixelCount = segmentationPixelCount
 		// this._model = new VideoWorker()
 		// this._model = new Worker(videoWorker)
@@ -296,7 +294,6 @@ export default class JitsiStreamBackgroundEffect {
      */
 	// startEffect(stream: MediaStream) {
 	startEffect(stream) {
-		console.log('startEffect()')
 		this._stream = stream
 		this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' })
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer

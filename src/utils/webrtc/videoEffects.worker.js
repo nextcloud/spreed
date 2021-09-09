@@ -14,8 +14,6 @@ const models = {
 self.compiled = false
 
 self.onmessage =  (e) => {
-	console.log('Worker: Message received.')
-	console.dir(e)
 	const message = e.data.message
 	switch (message) {
 		case 'makeTFLite':
@@ -40,22 +38,16 @@ async function makeTFLite(message) {
 	try {
 		switch (message) {
 		case true:
-			console.log('worker simd')
 			self.wasmUrl = withSIMD.split('/').pop()
-			console.log(self.wasmUrl)
 			self.tflite = await createTFLiteSIMDModule()
-			console.log('worker after createTFLiteSIMDModule()')
 			break
 		case false:
-			console.log('worker wasm')
 			self.wasmUrl = withoutSIMD.split('/').pop()
 			self.tflite = await createTFLiteModule()
 			break
 		default:
-			console.log('worker returns')
 			return
 		}
-		console.log('worker after switch ' + self.wasmUrl)
 		self.modelBufferOffset = self.tflite._getModelBufferMemoryOffset()
 		self.modelResponse = await fetch(message === true ? models.model144 : models.model96)
 
@@ -80,15 +72,11 @@ async function makeTFLite(message) {
 
 function resizeSource(imageData) {
 	const inputMemoryOffset = self.tflite._getInputMemoryOffset() / 4
-	console.log(inputMemoryOffset)
 	for (let i = 0; i < self.segmentationPixelCount; i++) {
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255
-		// console.log(imageData.data[i * 4])
-		// console.log(imageData.data[i * 4] / 255)
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255
 	}
-	// self.postMessage({ message: 'sourceResized' })
 	runInference()
 }
 
