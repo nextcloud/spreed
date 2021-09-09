@@ -227,6 +227,7 @@ VideoEffects.prototype = {
 
 		const virtualBackground = {
 			type: VIRTUAL_BACKGROUND_TYPE.NONE,
+			blurValue: 8,
 		}
 		console.log('isSimd:')
 		console.log(isSimd)
