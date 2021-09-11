@@ -67,7 +67,7 @@
 		"webrtc-adapter": "^8.1.0",
 		"webrtcsupport": "^2.2.0",
 		"wildemitter": "^1.2.1",
-		"workbox-webpack-plugin": "^6.2.4"
+		"workbox-webpack-plugin": "^6.3.0"
 	},
 	"devDependencies": {
 		"@nextcloud/babel-config": "^1.0.0",
