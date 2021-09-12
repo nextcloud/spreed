@@ -879,7 +879,7 @@ OC.L10N.register(
     "Reply privately" : "Odpowiedz prywatnie",
     "Copy message link" : "Kopiuj link wiadomości",
     "Mark as unread" : "Oznacz jako nieprzeczytane",
-    "Go to file" : "Idź do pliku",
+    "Go to file" : "Przejdź do pliku",
     "Forward message" : "Przekaż wiadomość",
     "Unread messages" : "Nieprzeczytane wiadomości",
     "Sending message" : "Wysyłanie wiadomości",
