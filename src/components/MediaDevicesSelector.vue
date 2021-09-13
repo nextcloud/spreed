@@ -20,9 +20,15 @@
 
 <template>
 	<div class="media-devices-selector">
-		<h3 class="media-devices-selector__heading" :for="deviceSelectorId">
-			{{ deviceSelectorLabel }}
-		</h3>
+		<div class="media-devices-selector__icon">
+			<Microphone v-if="deviceIcon === 'microphone'"
+				title=""
+				:size="16" />
+			<Video v-if="deviceIcon === 'camera'"
+				title=""
+				:size="16" />
+		</div>
+
 		<Multiselect :id="deviceSelectorId"
 			v-model="deviceSelectedOption"
 			:options="deviceOptions"
@@ -36,6 +42,8 @@
 
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import Video from 'vue-material-design-icons/Video.vue'
 
 export default {
 
@@ -43,6 +51,8 @@ export default {
 
 	components: {
 		Multiselect,
+		Microphone,
+		Video,
 	},
 
 	props: {
@@ -77,13 +87,13 @@ export default {
 			return 'device-selector-' + this.kind
 		},
 
-		deviceSelectorLabel() {
+		deviceIcon() {
 			if (this.kind === 'audioinput') {
-				return t('spreed', 'Microphone')
+				return 'microphone'
 			}
 
 			if (this.kind === 'videoinput') {
-				return t('spreed', 'Camera')
+				return 'camera'
 			}
 
 			return null
@@ -187,8 +197,14 @@ export default {
 
 <style lang="scss" scoped>
 .media-devices-selector {
-	margin-top: 28px;
-	margin-bottom: 8px;
+	display: flex;
+	margin: 16px 8px 16px 4px;
+	&__icon {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		width: 36px;
+	}
 	&__heading {
 		font-weight: bold;
 	}
