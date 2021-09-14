@@ -748,7 +748,6 @@ OC.L10N.register(
     "Go to conversation" : "Anar a la conversacion",
     "Choose a conversation to forward the selected message." : "Causir una conversacion destinària del messatge seleccionat.",
     "Error while forwarding message" : "Error en transferissent lo messatge",
-    "Open this location in Openstreetmap" : "Dobrir aqueste lòc dins Openstreetmap",
     "[Unknown username]" : "[utilizaire desconegut]",
     "Scroll to bottom" : "Desfilar enbàs",
     "Today" : "Uèi",
@@ -934,6 +933,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
     "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion",
+    "Open this location in Openstreetmap" : "Dobrir aqueste lòc dins Openstreetmap"
 },
 "nplurals=2; plural=(n > 1);");

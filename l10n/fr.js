@@ -883,7 +883,6 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Le message a été transmis sur {selectedConversationName}",
     "Choose a conversation to forward the selected message." : "Choisissez une conversation où faire suivre le message sélectionné.",
     "Error while forwarding message" : "Erreur lors de la transmission du message",
-    "Open this location in Openstreetmap" : "Ouvrir cette localisation avec Openstreetmap",
     "[Unknown username]" : "[Nom d'utilisateur inconnu]",
     "Scroll to bottom" : "Défiler jusqu'en bas",
     "Today" : "Aujourd'hui",
@@ -1103,6 +1102,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
-    "Add a description for this conversation" : "Ajouter une description pour cette conversation"
+    "Add a description for this conversation" : "Ajouter une description pour cette conversation",
+    "Open this location in Openstreetmap" : "Ouvrir cette localisation avec Openstreetmap"
 },
 "nplurals=2; plural=(n > 1);");
