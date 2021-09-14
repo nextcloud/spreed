@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "前往對話",
     "Choose a conversation to forward the selected message." : "選擇要將所選消息轉發到的對話。",
     "Error while forwarding message" : "轉寄訊息時發生錯誤",
-    "Open this location in Openstreetmap" : "在 Openstreetmap 中打開此位置",
     "[Unknown username]" : "[用戶名不詳]",
     "Scroll to bottom" : "滾動到底部",
     "Today" : "今日",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "You can not send messages to this conversation at the moment" : "您目前無法向此對話發送消息",
-    "Add a description for this conversation" : "添加此對話的描述"
+    "Add a description for this conversation" : "添加此對話的描述",
+    "Open this location in Openstreetmap" : "在 Openstreetmap 中打開此位置"
 },
 "nplurals=1; plural=0;");

@@ -897,7 +897,6 @@ OC.L10N.register(
     "Go to conversation" : "Bae a sa resonada",
     "Choose a conversation to forward the selected message." : "Sèbera una resonada pro torrare a imbiare su messàgiu seletzionadu.",
     "Error while forwarding message" : "Errore torrende a imbiare su messàgiu",
-    "Open this location in Openstreetmap" : "Aberi custa positzione in Openstreetmap",
     "[Unknown username]" : "[Nùmene de utente disconnotu]",
     "Scroll to bottom" : "Iscurre a bàsciu",
     "Today" : "Oe",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
+    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada",
+    "Open this location in Openstreetmap" : "Aberi custa positzione in Openstreetmap"
 },
 "nplurals=2; plural=(n != 1);");
