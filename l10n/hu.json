@@ -903,7 +903,6 @@
     "Go to conversation" : "Ugrás a beszélgetéshez",
     "Choose a conversation to forward the selected message." : "Válasszon egy beszélgetést a kiválasztott üzenet továbbításához.",
     "Error while forwarding message" : "Hiba az üzenet továbbítása során",
-    "Open this location in Openstreetmap" : "Hely megnyitása az OpenStreetMap-en",
     "[Unknown username]" : "[Ismeretlen felhasználónév]",
     "Scroll to bottom" : "Görgetés az aljára",
     "Today" : "Ma",
@@ -1133,6 +1132,7 @@
     "Conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
+    "Open this location in Openstreetmap" : "Hely megnyitása az OpenStreetMap-en"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

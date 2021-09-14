@@ -903,7 +903,6 @@
     "Go to conversation" : "Перейти в обсуждение",
     "Choose a conversation to forward the selected message." : "Выберете обсуждение для пересылки выбранного сообщения.",
     "Error while forwarding message" : "Не удалось переслать сообщение",
-    "Open this location in Openstreetmap" : "Открыть местоположение в OpenStreetMap",
     "[Unknown username]" : "[Неизвестный пользователь]",
     "Scroll to bottom" : "Прокрутить вниз",
     "Today" : "Сегодня",
@@ -1133,6 +1132,7 @@
     "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
-    "Add a description for this conversation" : "Добавьте описание этого обсуждения"
+    "Add a description for this conversation" : "Добавьте описание этого обсуждения",
+    "Open this location in Openstreetmap" : "Открыть местоположение в OpenStreetMap"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
