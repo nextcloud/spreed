@@ -688,7 +688,7 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Aby udostępnić ekran wymagane jest rozszerzenie do udostępniania ekranu.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Aby udostępnić ekran, użyj innej przeglądarki, takiej jak Firefox lub Chrome.",
     "An error occurred while starting screensharing." : "Wystąpił błąd podczas uruchamiania udostępniania ekranu.",
-    "Back" : "Wróć",
+    "Back" : "Wstecz",
     "Access to camera was denied" : "Odmowa dostępu do aparatu",
     "Error while accessing camera: it is likely in use by another program" : "Błąd podczas uzyskiwania dostępu do kamery: prawdopodobnie jest używana przez inny program",
     "Error while accessing camera" : "Wystąpił błąd podczas dostępu do kamery",
@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "Przejdź do rozmowy",
     "Choose a conversation to forward the selected message." : "Wybierz rozmowę, aby przekazać wybraną wiadomość.",
     "Error while forwarding message" : "Błąd podczas przekazywania wiadomości",
-    "Open this location in Openstreetmap" : "Otwórz lokalizację w Openstreetmap",
     "[Unknown username]" : "[Nieznana nazwa użytkownika]",
     "Scroll to bottom" : "Przewiń do dołu",
     "Today" : "Dzisiaj",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Rozmowa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Ustawienia rozmowy \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "W tej chwili nie możesz wysyłać wiadomości dla tej rozmowy",
-    "Add a description for this conversation" : "Dodaj opis rozmowy"
+    "Add a description for this conversation" : "Dodaj opis rozmowy",
+    "Open this location in Openstreetmap" : "Otwórz lokalizację w Openstreetmap"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
