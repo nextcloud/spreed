@@ -896,7 +896,6 @@ OC.L10N.register(
     "Go to conversation" : "Idi na razgovor",
     "Choose a conversation to forward the selected message." : "Odaberite razgovor u koji ćete proslijediti odabranu poruku.",
     "Error while forwarding message" : "Pogreška pri prosljeđivanju poruke",
-    "Open this location in Openstreetmap" : "Otvorite ovu lokaciju u aplikaciji Openstreetmap",
     "[Unknown username]" : "[Nepoznato korisničko ime]",
     "Scroll to bottom" : "Pomakni se na dno",
     "Today" : "Danas",
@@ -1126,6 +1125,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
     "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
-    "Add a description for this conversation" : "Dodaj opis ovog razgovora"
+    "Add a description for this conversation" : "Dodaj opis ovog razgovora",
+    "Open this location in Openstreetmap" : "Otvorite ovu lokaciju u aplikaciji Openstreetmap"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

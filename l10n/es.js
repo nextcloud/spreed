@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "Ir a la conversación",
     "Choose a conversation to forward the selected message." : "Elija una conversación para reenviar el mensaje seleccionado.",
     "Error while forwarding message" : "Error al reenviar el mensaje",
-    "Open this location in Openstreetmap" : "Abrir esta ubicación en Openstreetmap",
     "[Unknown username]" : "[Nombre de usuario desconocido]",
     "Scroll to bottom" : "Ir al final",
     "Today" : "Hoy",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversación «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Ajustes de la conversación «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Por el momento no puede enviar mensajes a esta conversación",
-    "Add a description for this conversation" : "Añadir una descripción de esta conversación"
+    "Add a description for this conversation" : "Añadir una descripción de esta conversación",
+    "Open this location in Openstreetmap" : "Abrir esta ubicación en Openstreetmap"
 },
 "nplurals=2; plural=(n != 1);");

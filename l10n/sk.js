@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "Prejisť na konverzáciu",
     "Choose a conversation to forward the selected message." : "Vyberte konverzáciu, ktorou chcete vybranú správu poslať ďalej.",
     "Error while forwarding message" : "Chyba počas preposielania správy",
-    "Open this location in Openstreetmap" : "Otvoriť toto umiestnenie v Openstreetmap",
     "[Unknown username]" : "[Neznáme používateľské meno]",
     "Scroll to bottom" : "Posuňte sa nadol",
     "Today" : "Dnes",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Konverzácia \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Nastavenia konverzácie \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Teraz nemôžete poslať správu do tejto konverzácie",
-    "Add a description for this conversation" : "Pridať popis tejto konverzácie"
+    "Add a description for this conversation" : "Pridať popis tejto konverzácie",
+    "Open this location in Openstreetmap" : "Otvoriť toto umiestnenie v Openstreetmap"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

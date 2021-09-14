@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "Joan elkarrizketara",
     "Choose a conversation to forward the selected message." : "Hautatu elkarrizketa bat hurrengo mezua birbidaltzeko.",
     "Error while forwarding message" : "Errorea mezua birbidaltzen",
-    "Open this location in Openstreetmap" : "Ireki kokaleku hau Openstreetmap-en",
     "[Unknown username]" : "[Erabiltzaile-izen ezezaguna]",
     "Scroll to bottom" : "Korritu beherantz",
     "Today" : "Gaur",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "You can not send messages to this conversation at the moment" : "Ezin dituzu mezuak bidali elkarrizketa honetara une honetan",
-    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
+    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi",
+    "Open this location in Openstreetmap" : "Ireki kokaleku hau Openstreetmap-en"
 },
 "nplurals=2; plural=(n != 1);");

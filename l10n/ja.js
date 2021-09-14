@@ -878,7 +878,6 @@ OC.L10N.register(
     "Contact" : "連絡先",
     "Deck Card" : "Deckカード",
     "Remove {fileName}" : "{fileName} を削除",
-    "Open this location in Openstreetmap" : "オープンストリートマップでこの場所を表示",
     "[Unknown username]" : "[不明なユーザー名]",
     "Scroll to bottom" : "下にスクロール",
     "Today" : "本日",
@@ -1107,6 +1106,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
-    "Add a description for this conversation" : "この会話の詳細を追加する"
+    "Add a description for this conversation" : "この会話の詳細を追加する",
+    "Open this location in Openstreetmap" : "オープンストリートマップでこの場所を表示"
 },
 "nplurals=1; plural=0;");
