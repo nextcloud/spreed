@@ -905,7 +905,6 @@ OC.L10N.register(
     "Go to conversation" : "Görüşmeye git",
     "Choose a conversation to forward the selected message." : "Seçilmiş iletinin iletileceği bir görüşme seçin.",
     "Error while forwarding message" : "İleti iletilirken bir sorun çıktı",
-    "Open this location in Openstreetmap" : "Bu konumu Openstreetmap üzerinde aç",
     "[Unknown username]" : "[Kullanıcı adı bilinmiyor]",
     "Scroll to bottom" : "Aşağıya kaydır",
     "Today" : "Bugün",
@@ -1135,6 +1134,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesi",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesinin ayarları",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin",
+    "Open this location in Openstreetmap" : "Bu konumu Openstreetmap üzerinde aç"
 },
 "nplurals=2; plural=(n > 1);");
