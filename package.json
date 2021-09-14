@@ -52,7 +52,7 @@
 		"util": "^0.12.4",
 		"vue": "^2.6.14",
 		"vue-at": "^2.5.0-beta.2",
-		"vue-clipboard2": "^0.3.1",
+		"vue-clipboard2": "^0.3.2",
 		"vue-fragment": "^1.5.2",
 		"vue-material-design-icons": "^4.12.1",
 		"vue-observe-visibility": "^1.0.0",
