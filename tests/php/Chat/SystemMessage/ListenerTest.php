@@ -298,18 +298,21 @@ class ListenerTest extends TestCase {
 
 		$event = new ModifyParticipantEvent($room, $participant, '', $newParticipantType, $oldParticipantType);
 
-		foreach ($expectedMessages as $index => $expectedMessage) {
-			$this->chatManager->expects($this->at($index))
+		foreach ($expectedMessages as $expectedMessage) {
+			$consecutive[] = [
+				$room,
+				Attendee::ACTOR_USERS,
+				'alice_actor',
+				json_encode($expectedMessage),
+				$this->dummyTime,
+				false,
+				self::DUMMY_REFERENCE_ID
+			];
+		}
+		if (isset($consecutive)) {
+			$this->chatManager->expects($this->once())
 				->method('addSystemMessage')
-				->with(
-					$room,
-					Attendee::ACTOR_USERS,
-					'alice_actor',
-					json_encode($expectedMessage),
-					$this->dummyTime,
-					false,
-					self::DUMMY_REFERENCE_ID,
-				);
+				->withConsecutive(...$consecutive);
 		}
 
 		$this->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
