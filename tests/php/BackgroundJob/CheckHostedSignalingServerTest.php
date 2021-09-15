@@ -81,15 +81,15 @@ class CheckHostedSignalingServerTest extends TestCase {
 	public function testRunWithNoChange() {
 		$backgroundJob = $this->getBackgroundJob();
 
-		$this->config->expects($this->at(0))
+		$this->config
 			->method('getAppValue')
-			->with('spreed', 'hosted-signaling-server-account-id', '')
-			->willReturn('my-account-id');
-		$this->config->expects($this->at(1))
-			->method('getAppValue')
-			->with('spreed', 'hosted-signaling-server-account', '{}')
-			->willReturn('{"status": "pending"}');
-		$this->config->expects($this->at(2))
+			->willReturnCallback(function ($appid, $key, $default) {
+				switch ($key) {
+					case 'hosted-signaling-server-account-id': return 'my-account-id';
+					case 'hosted-signaling-server-account': return '{"status": "pending"}';
+				}
+			});
+		$this->config->expects($this->once())
 			->method('setAppValue')
 			->with('spreed', 'hosted-signaling-server-account-last-checked', null);
 
@@ -110,26 +110,22 @@ class CheckHostedSignalingServerTest extends TestCase {
 			],
 		];
 
-		$this->config->expects($this->at(0))
+		$this->config
 			->method('getAppValue')
-			->with('spreed', 'hosted-signaling-server-account-id', '')
-			->willReturn('my-account-id');
-		$this->config->expects($this->at(1))
-			->method('getAppValue')
-			->with('spreed', 'hosted-signaling-server-account', '{}')
-			->willReturn('{"status": "pending"}');
-		$this->config->expects($this->at(2))
+			->willReturnCallback(function ($appid, $key, $default) {
+				switch ($key) {
+					case 'hosted-signaling-server-account-id': return 'my-account-id';
+					case 'hosted-signaling-server-account': return '{"status": "pending"}';
+				}
+			});
+		$this->config->expects($this->exactly(4))
 			->method('setAppValue')
-			->with('spreed', 'signaling_mode', 'external');
-		$this->config->expects($this->at(3))
-			->method('setAppValue')
-			->with('spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}');
-		$this->config->expects($this->at(4))
-			->method('setAppValue')
-			->with('spreed', 'hosted-signaling-server-account', json_encode($newStatus));
-		$this->config->expects($this->at(5))
-			->method('setAppValue')
-			->with('spreed', 'hosted-signaling-server-account-last-checked', null);
+			->withConsecutive(
+				['spreed', 'signaling_mode', 'external'],
+				['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
+				['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+				['spreed', 'hosted-signaling-server-account-last-checked', null]
+			);
 
 		$group = $this->createMock(IGroup::class);
 		$this->groupManager->expects($this->once())
