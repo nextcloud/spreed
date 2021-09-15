@@ -905,6 +905,7 @@ OC.L10N.register(
     "Go to conversation" : "Przejdź do rozmowy",
     "Choose a conversation to forward the selected message." : "Wybierz rozmowę, aby przekazać wybraną wiadomość.",
     "Error while forwarding message" : "Błąd podczas przekazywania wiadomości",
+    "Open this location in OpenStreetMap" : "Otwórz lokalizację w OpenStreetMap",
     "[Unknown username]" : "[Nieznana nazwa użytkownika]",
     "Scroll to bottom" : "Przewiń do dołu",
     "Today" : "Dzisiaj",

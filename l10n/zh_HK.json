@@ -903,6 +903,7 @@
     "Go to conversation" : "前往對話",
     "Choose a conversation to forward the selected message." : "選擇要將所選消息轉發到的對話。",
     "Error while forwarding message" : "轉寄訊息時發生錯誤",
+    "Open this location in OpenStreetMap" : "在 OpenStreetMap 中打開此位置",
     "[Unknown username]" : "[用戶名不詳]",
     "Scroll to bottom" : "滾動到底部",
     "Today" : "今日",
