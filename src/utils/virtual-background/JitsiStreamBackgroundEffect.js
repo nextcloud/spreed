@@ -43,7 +43,6 @@ export default class JitsiStreamBackgroundEffect {
      * @class
      * @param {Object} options - Segmentation dimensions.
      */
-	// constructor(model: Object, options: Object) {
 	constructor(options) {
 		const isSimd = options.simd
 		this._options = options
@@ -51,25 +50,17 @@ export default class JitsiStreamBackgroundEffect {
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
-			// TODO: Is this necessary?
 			this._virtualImage.crossOrigin = 'anonymous'
-			// TODO: Account for this in VideoEffects.
 			this._virtualImage.src = this._options.virtualBackground.virtualSource
 		}
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._virtualVideo = document.createElement('video')
 			this._virtualVideo.autoplay = true
-			// TODO: Change to .stream to only pass the stream.
 			this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream
 		}
-		// this._model = model
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
-		// this._model = new VideoWorker()
-		// this._model = new Worker(videoWorker)
 		this._model = new WebWorker({ a: 1 })
-		// this._model.postMessage('testMessage')
-		// this._model.postMessage({message: 'testObj', other: 'other'})
 		this._model.postMessage({
 			message: 'makeTFLite',
 			segmentationPixelCount,
@@ -97,7 +88,6 @@ export default class JitsiStreamBackgroundEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-	// _onMaskFrameTimer(response: Object) {
 	_onMaskFrameTimer(response) {
 		if (response.data.id === TIMEOUT_TICK) {
 			this._renderMask()
@@ -115,7 +105,6 @@ export default class JitsiStreamBackgroundEffect {
 			break
 		default:
 			console.error('_startFx: Something went wrong.')
-			console.dir(e)
 			break
 		}
 	}
@@ -205,9 +194,6 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
 	runInference(data) {
-		// this._model._runInference()
-		// const outputMemoryOffset = this._model._getOutputMemoryOffset() / 4
-
 		// All consts in Worker in obj array.
 		for (let i = 0; i < this._segmentationPixelCount; i++) {
 			this._segmentationMask.data[(i * 4) + 3] = (255 * data[i].personExp) / (data[i].backgroundExp + data[i].personExp)
@@ -223,9 +209,6 @@ export default class JitsiStreamBackgroundEffect {
      */
 	_renderMask() {
 		this.resizeSource()
-		// this.runInference()
-		// this.runPostProcessing()
-
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / 30,
@@ -260,16 +243,6 @@ export default class JitsiStreamBackgroundEffect {
 		)
 
 		this._model.postMessage({ message: 'resizeSource', imageData })
-		// Can be determined in Worker.
-		// const inputMemoryOffset = this._model._getInputMemoryOffset() / 4
-
-		// Worker: seems to be the input data
-		// Run this in Worker -> onMessage: runInference() -> onMessage: runPostProcessing()
-		// for (let i = 0; i < this._segmentationPixelCount; i++) {
-		// 	this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255
-		// 	this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255
-		// 	this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255
-		// }
 	}
 
 	/**
@@ -279,7 +252,6 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {boolean} - Returns true if this effect can run on the specified track
      * false otherwise.
      */
-	// isEnabled(jitsiLocalTrack: Object) {
 	isEnabled(jitsiLocalTrack) {
 		return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera'
 	}
@@ -322,7 +294,6 @@ export default class JitsiStreamBackgroundEffect {
 			})
 		}
 
-		// return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
 		return this._outputCanvasElement.captureStream()
 	}
 
