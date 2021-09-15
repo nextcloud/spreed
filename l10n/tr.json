@@ -903,6 +903,7 @@
     "Go to conversation" : "Görüşmeye git",
     "Choose a conversation to forward the selected message." : "Seçilmiş iletinin iletileceği bir görüşme seçin.",
     "Error while forwarding message" : "İleti iletilirken bir sorun çıktı",
+    "Open this location in OpenStreetMap" : "Bu konumu OpenStreetMap üzerinde aç",
     "[Unknown username]" : "[Kullanıcı adı bilinmiyor]",
     "Scroll to bottom" : "Aşağıya kaydır",
     "Today" : "Bugün",
