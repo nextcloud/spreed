@@ -108,10 +108,8 @@ export default class JitsiStreamBackgroundEffect {
 		switch (e.data.message) {
 		case 'inferenceRun':
 			this.runInference(e.data.segmentationResult)
+			this.runPostProcessing()
 			break
-			// case 'inferenceRun':
-			// 	this.runPostProcessing()
-			// 	break;
 		case 'loaded':
 			this._loaded = true
 			break
