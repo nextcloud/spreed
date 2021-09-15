@@ -905,6 +905,7 @@ OC.L10N.register(
     "Go to conversation" : "Joan elkarrizketara",
     "Choose a conversation to forward the selected message." : "Hautatu elkarrizketa bat hurrengo mezua birbidaltzeko.",
     "Error while forwarding message" : "Errorea mezua birbidaltzen",
+    "Open this location in OpenStreetMap" : "Ireki kokaleku hau OpenStreetMap-en",
     "[Unknown username]" : "[Erabiltzaile-izen ezezaguna]",
     "Scroll to bottom" : "Korritu beherantz",
     "Today" : "Gaur",
