@@ -815,7 +815,7 @@
     "SIP dial-in is now disabled" : "S'atzessu SIP immoe est disativu",
     "Error occurred when enabling SIP dial-in" : "B'at àpidu un'errore ativende s'atzessu SIP",
     "Error occurred when disabling SIP dial-in" : "B'at àpidu un'errore disativende s'atzessu SIP",
-    "Cancel editing description" : "Cantzella sa modìfica de sa descritzione",
+    "Cancel editing description" : "Annulla sa modìfica de sa descritzione",
     "Submit conversation description" : "Imbia sa descritzione de sa resonada",
     "Edit conversation description" : "Modìfica sa descritzione de sa resonada",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Sa descritzione depet èssere prus curtza o paris a {maxLength} caràteres. Su testu immoe est longu {charactersCount} caràteres",
