@@ -158,18 +158,20 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->at(0))
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->at(1))
+		$this->userManager->expects($this->exactly(2))
 			->method('get')
-			->with($uid)
-			->willReturn($u);
+			->withConsecutive(
+				['recipient'],
+				[$uid]
+			)
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$u
+			);
 
 		$n->expects($this->once())
 			->method('setIcon')
@@ -383,18 +385,20 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->at(0))
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->at(1))
+		$this->userManager->expects($this->exactly(2))
 			->method('get')
-			->with($uid)
-			->willReturn($u);
+			->withConsecutive(
+				['recipient'],
+				[$uid]
+			)
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$u
+			);
 
 		$n->expects($this->once())
 			->method('setIcon')
