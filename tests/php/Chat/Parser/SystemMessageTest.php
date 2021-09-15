@@ -926,6 +926,7 @@ class SystemMessageTest extends TestCase {
 				->method('get')
 				->with($uid)
 				->willReturn(null);
+			$this->expectException(ParticipantNotFoundException::class);
 		}
 
 		$this->assertSame($name, self::invokePrivate($parser, 'getDisplayName', [$uid]));

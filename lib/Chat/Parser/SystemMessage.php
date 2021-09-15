@@ -68,7 +68,9 @@ class SystemMessage {
 	/** @var IL10N */
 	protected $l;
 
-	/** @var string[] */
+	/**
+	 * @psalm-var array<array-key, null|string>
+	 */
 	protected $displayNames = [];
 	/** @var string[] */
 	protected $groupNames = [];
@@ -584,7 +586,19 @@ class SystemMessage {
 
 	protected function getUser(string $uid): array {
 		if (!isset($this->displayNames[$uid])) {
-			$this->displayNames[$uid] = $this->getDisplayName($uid);
+			try {
+				$this->displayNames[$uid] = $this->getDisplayName($uid);
+			} catch (ParticipantNotFoundException $e) {
+				$this->displayNames[$uid] = null;
+			}
+		}
+
+		if ($this->displayNames[$uid] === null) {
+			return [
+				'type' => 'highlight',
+				'id' => 'deleted_user',
+				'name' => $this->l->t('Deleted user'),
+			];
 		}
 
 		return [
@@ -592,6 +606,15 @@ class SystemMessage {
 			'id' => $uid,
 			'name' => $this->displayNames[$uid],
 		];
+	}
+
+	protected function getDisplayName(string $uid): string {
+		$user = $this->userManager->get($uid);
+		if ($user instanceof IUser) {
+			return $user->getDisplayName();
+		}
+
+		throw new ParticipantNotFoundException();
 	}
 
 	protected function getGroup(string $gid): array {
@@ -625,14 +648,6 @@ class SystemMessage {
 			'name' => $this->circleNames[$circleId],
 			'url' => $this->circleLinks[$circleId],
 		];
-	}
-
-	protected function getDisplayName(string $uid): string {
-		$user = $this->userManager->get($uid);
-		if ($user instanceof IUser) {
-			return $user->getDisplayName();
-		}
-		return $uid;
 	}
 
 	protected function getDisplayNameGroup(string $gid): string {

@@ -147,7 +147,7 @@ export default {
 			}
 
 			if (displayName === '') {
-				return t('spreed', '[Unknown username]')
+				return t('spreed', 'Deleted user')
 			}
 
 			return displayName
