@@ -40,7 +40,9 @@
 				</span>
 			</p>
 
-			<p class="lobby__description">{{ conversation.description }}</p>
+			<p class="lobby__description">
+				{{ conversation.description }}
+			</p>
 		</div>
 		<SetGuestUsername v-if="currentUserIsGuest" />
 	</div>
