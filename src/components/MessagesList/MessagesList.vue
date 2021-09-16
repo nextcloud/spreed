@@ -145,20 +145,6 @@ export default {
 		},
 
 		/**
-		 * Finds the first visual unread message element
-		 *
-		 * @return {object} DOM element of the first unread message
-		 */
-		unreadMessageElement() {
-			let el = document.getElementById('message_' + this.visualLastReadMessageId)
-			if (el) {
-				el = el.closest('.message')
-			}
-
-			return el
-		},
-
-		/**
 		 * Gets the messages array. We need this because the DynamicScroller needs an array to
 		 * loop through.
 		 *
@@ -681,6 +667,20 @@ export default {
 		}, 1000),
 
 		/**
+		 * Finds the first visual unread message element
+		 *
+		 * @return {object} DOM element of the first unread message
+		 */
+		getUnreadMessageElement() {
+			let el = document.getElementById('message_' + this.visualLastReadMessageId)
+			if (el) {
+				el = el.closest('.message')
+			}
+
+			return el
+		},
+
+		/**
 		 * Recalculates the current read marker position based on the first visible element,
 		 * but only do so if the previous marker was already seen.
 		 *
@@ -705,8 +705,10 @@ export default {
 				return
 			}
 
+			const unreadMessageElement = this.getUnreadMessageElement()
+
 			// first unread message has not been seen yet, so don't move it
-			if (!this.unreadMessageElement || this.unreadMessageElement.getAttribute('data-seen') !== 'true') {
+			if (!unreadMessageElement || unreadMessageElement.getAttribute('data-seen') !== 'true') {
 				return
 			}
 
@@ -717,12 +719,12 @@ export default {
 				return
 			}
 
-			if (this.unreadMessageElement.offsetTop - this.scroller.scrollTop > 0) {
+			if (unreadMessageElement.offsetTop - this.scroller.scrollTop > 0) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
 
-			const firstVisibleMessage = this.findFirstVisibleMessage(this.unreadMessageElement)
+			const firstVisibleMessage = this.findFirstVisibleMessage(unreadMessageElement)
 			if (!firstVisibleMessage) {
 				console.warn('First visible message not found: ', firstVisibleMessage)
 				return
