@@ -66,6 +66,7 @@ import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants'
+import { updateLastReadMessage } from '../services/messagesService'
 
 const ROOM_POLLING_INTERVAL = 30
 
@@ -210,8 +211,11 @@ export default {
 			window.location = generateUrl('/apps/spreed')
 		},
 
-		onMarkAsRead(item) {
-			this.$store.dispatch('clearLastReadMessage', { token: item.token, updateVisually: true })
+		async onMarkAsRead(item) {
+			if (item.lastMessage?.id) {
+				await updateLastReadMessage(item.token, item.lastMessage?.id)
+			}
+
 			this.fetchRooms()
 		},
 	},

@@ -25,7 +25,6 @@ import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import Dashboard from './views/Dashboard'
-import store from './store'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		const View = Vue.extend(Dashboard)
 		new View({
 			propsData: {},
-			store,
 		}).$mount(el)
 	})
 

@@ -539,10 +539,7 @@ const actions = {
 	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
-		console.log(context.getters.conversations)
-		console.log(token)
 		const conversation = context.getters.conversations[token]
-		console.log(conversation)
 		if (!conversation || !conversation.lastMessage) {
 			return
 		}
