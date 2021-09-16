@@ -34,8 +34,7 @@
 				:sub-text="getSubText(item)"
 				:item="item"
 				:item-menu="itemMenu"
-				@markAsRead="onMarkAsRead(item)"
-				v-on="handlers">
+				@markAsRead="onMarkAsRead(item)">
 				<template #avatar>
 					<ConversationIcon
 						:item="item"
