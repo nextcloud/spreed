@@ -121,7 +121,7 @@ export default {
 		},
 
 		linkAriaLabel() {
-			return t('spreed', 'Open this location in Openstreetmap')
+			return t('spreed', 'Open this location in OpenStreetMap')
 		},
 	},
 }
