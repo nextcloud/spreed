@@ -83,12 +83,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->config
 			->method('getAppValue')
-			->willReturnCallback(function ($appid, $key, $default) {
-				switch ($key) {
-					case 'hosted-signaling-server-account-id': return 'my-account-id';
-					case 'hosted-signaling-server-account': return '{"status": "pending"}';
-				}
-			});
+			->will($this->returnValueMap([
+				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
+				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
+			]));
 		$this->config->expects($this->once())
 			->method('setAppValue')
 			->with('spreed', 'hosted-signaling-server-account-last-checked', null);
@@ -112,12 +110,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->config
 			->method('getAppValue')
-			->willReturnCallback(function ($appid, $key, $default) {
-				switch ($key) {
-					case 'hosted-signaling-server-account-id': return 'my-account-id';
-					case 'hosted-signaling-server-account': return '{"status": "pending"}';
-				}
-			});
+			->will($this->returnValueMap([
+				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
+				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
+			]));
 		$this->config->expects($this->exactly(4))
 			->method('setAppValue')
 			->withConsecutive(
