@@ -148,6 +148,7 @@ OC.L10N.register(
     "Message deleted by author" : "Správa vymazaná autorom",
     "Message deleted by {actor}" : "Správa vymazaná od {actor}",
     "Message deleted by you" : "Správa bola vami zmazaná",
+    "Deleted user" : "Zmazaný užívateľ",
     "%s (guest)" : "%s (guest)",
     "You missed a call from {user}" : "Zmeškali ste hovor od používateľa {user}",
     "You tried to call {user}" : "Pokúšali ste sa zavolať {user}",
