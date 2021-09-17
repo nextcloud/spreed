@@ -148,6 +148,7 @@ OC.L10N.register(
     "Message deleted by author" : "Egileak mezua ezabatu du",
     "Message deleted by {actor}" : "{actor} erabiltzaileak mezua ezabatu du",
     "Message deleted by you" : "Mezua ezabatu duzu",
+    "Deleted user" : "Ezabatutako erabiltzaileak",
     "%s (guest)" : "%s (gonbidatua)",
     "You missed a call from {user}" : "{user} erabiltzailearen dei bat galdu duzu",
     "You tried to call {user}" : "{user}-(r)i deitzen saiatu zara",
