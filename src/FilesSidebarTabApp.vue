@@ -42,6 +42,7 @@
 			<CallButton class="call-button" />
 			<ChatView />
 			<UploadEditor />
+			<DeviceChecker />
 		</template>
 	</div>
 </template>
@@ -64,6 +65,7 @@ import ChatView from './components/ChatView'
 import sessionIssueHandler from './mixins/sessionIssueHandler'
 import browserCheck from './mixins/browserCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 
 export default {
 
@@ -73,6 +75,7 @@ export default {
 		CallButton,
 		ChatView,
 		UploadEditor,
+		DeviceChecker,
 	},
 
 	mixins: [
