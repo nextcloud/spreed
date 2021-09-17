@@ -148,6 +148,7 @@ OC.L10N.register(
     "Message deleted by author" : "消息被作者删除了",
     "Message deleted by {actor}" : "消息被 {actor} 删除了",
     "Message deleted by you" : "消息被你删除了",
+    "Deleted user" : "删除用户",
     "%s (guest)" : "%s (访客)",
     "You missed a call from {user}" : "您错过了来自 {user} 的一个通话",
     "You tried to call {user}" : "你尝试呼叫 {user}",
