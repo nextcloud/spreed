@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Parser;
 
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -373,6 +374,14 @@ class SystemMessage {
 		} elseif ($message === 'object_shared') {
 			$parsedParameters['object'] = $parameters['metaData'];
 			$parsedMessage = '{object}';
+
+			if (isset($parsedParameters['object']['type'])
+				&& $parsedParameters['object']['type'] === 'geo-location'
+				&& !preg_match(ChatManager::GEO_LOCATION_VALIDATOR, $parsedParameters['object']['id'])) {
+				$parsedParameters = [];
+				$parsedMessage = $this->l->t('The shared location is malformed');
+			}
+
 			$chatMessage->setMessageType('comment');
 		} elseif ($message === 'matterbridge_config_added') {
 			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats');

@@ -62,6 +62,8 @@ class ChatManager {
 
 	public const MAX_CHAT_LENGTH = 32000;
 
+	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
+
 	/** @var ICommentsManager */
 	private $commentsManager;
 	/** @var IEventDispatcher */
