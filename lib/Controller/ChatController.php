@@ -288,6 +288,11 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($data['type'] === 'geo-location'
+			&& !preg_match(ChatManager::GEO_LOCATION_VALIDATOR, $data['id'])) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
