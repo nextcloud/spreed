@@ -1,6 +1,74 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.0 – 2021-09-17
+
+### Added
+- Add "Create conversation" button on first page of dialog when creating a public conversation
+  [#6206](https://github.com/nextcloud/spreed/pull/6206)
+
+### Fixed
+- Add some validation for shared geo-locations
+  [#6242](https://github.com/nextcloud/spreed/pull/6242)
+- Move unreadMessageElement from computed to a method
+  [#6241](https://github.com/nextcloud/spreed/pull/6241)
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6230](https://github.com/nextcloud/spreed/pull/6230)
+- Don't toggle the video on/off when pasting files into the chat and first releasing the CTRL key
+  [#6198](https://github.com/nextcloud/spreed/pull/6198)
+- Disable recording voice messages on readonly conversations
+  [#6182](https://github.com/nextcloud/spreed/pull/6182)
+
+## 12.1.2 – 2021-09-17
+
+### Fixed
+- Add some validation for shared geo-locations
+  [#6243](https://github.com/nextcloud/spreed/pull/6243)
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6229](https://github.com/nextcloud/spreed/pull/6229)
+- Don't toggle the video on/off when pasting files into the chat and first releasing the CTRL key
+  [#6199](https://github.com/nextcloud/spreed/pull/6199)
+- Fix blocked audio recording preview when Talk is embedded in the sidebar
+  [#6130](https://github.com/nextcloud/spreed/pull/6130)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6126](https://github.com/nextcloud/spreed/pull/6126)
+- Fix connection quality warning not disappearing when media is stopped
+  [#6146](https://github.com/nextcloud/spreed/pull/6146)
+- Send offer again when own peer was not initially connected
+  [#6080](https://github.com/nextcloud/spreed/pull/6080)
+
+## 11.3.2 – 2021-09-17
+
+### Fixed
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6231](https://github.com/nextcloud/spreed/pull/6231)
+- Don't toggle the video on/off when pasting files into the chat and first releasing the CTRL key
+  [#6200](https://github.com/nextcloud/spreed/pull/6200)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6127](https://github.com/nextcloud/spreed/pull/6127)
+- Fix connection quality warning not disappearing when media is stopped
+  [#6148](https://github.com/nextcloud/spreed/pull/6148)
+- Send offer again when own peer was not initially connected
+  [#6081](https://github.com/nextcloud/spreed/pull/6081)
+- Don't refresh the room when the participant list changes
+  [#5786](https://github.com/nextcloud/spreed/pull/5786)
+
+## 10.1.7 – 2021-09-17
+
+### Fixed
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6232](https://github.com/nextcloud/spreed/pull/6232)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6240](https://github.com/nextcloud/spreed/pull/6240)
+
+## 10.0.10 – 2021-09-17
+
+### Fixed
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6233](https://github.com/nextcloud/spreed/pull/6233)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6128](https://github.com/nextcloud/spreed/pull/6128)
+
 ## 12.1.1 – 2021-08-30
 
 ### Changed
