@@ -158,18 +158,20 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->at(0))
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->at(1))
+		$this->userManager->expects($this->exactly(2))
 			->method('get')
-			->with($uid)
-			->willReturn($u);
+			->withConsecutive(
+				['recipient'],
+				[$uid]
+			)
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$u
+			);
 
 		$n->expects($this->once())
 			->method('setIcon')
@@ -383,18 +385,20 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->at(0))
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->at(1))
+		$this->userManager->expects($this->exactly(2))
 			->method('get')
-			->with($uid)
-			->willReturn($u);
+			->withConsecutive(
+				['recipient'],
+				[$uid]
+			)
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$u
+			);
 
 		$n->expects($this->once())
 			->method('setIcon')
@@ -904,31 +908,29 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->at(0))
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
+		$userManagerGet['with'][] = ['recipient'];
+		$userManagerGet['willReturn'][] = $recipient;
 
 		$user = $this->createMock(IUser::class);
 		if ($subjectParameters['userType'] === 'users' && !$deletedUser) {
 			$user->expects($this->once())
 				->method('getDisplayName')
 				->willReturn($displayName);
-			$this->userManager->expects($this->at(1))
-				->method('get')
-				->with($subjectParameters['userId'])
-				->willReturn($user);
+			$userManagerGet['with'][] = [$subjectParameters['userId']];
+			$userManagerGet['willReturn'][] = $user;
 		} elseif ($subjectParameters['userType'] === 'users' && $deletedUser) {
 			$user->expects($this->never())
 				->method('getDisplayName');
-			$this->userManager->expects($this->at(1))
-				->method('get')
-				->with($subjectParameters['userId'])
-				->willReturn(null);
+			$userManagerGet['with'][] = [$subjectParameters['userId']];
+			$userManagerGet['willReturn'][] = null;
 		} else {
 			$user->expects($this->never())
 				->method('getDisplayName');
 		}
+		$this->userManager->expects($this->exactly(count($userManagerGet['with'])))
+			->method('get')
+			->withConsecutive(...$userManagerGet['with'])
+			->willReturnOnConsecutiveCalls(...$userManagerGet['willReturn']);
 
 		$comment = $this->createMock(IComment::class);
 		$comment->expects($this->any())
