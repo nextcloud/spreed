@@ -51,6 +51,7 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -329,15 +330,22 @@ class ParticipantService {
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
-			$this->attendeeMapper->insert($attendee);
-
-			$attendees[] = $attendee;
+			try {
+				$this->attendeeMapper->insert($attendee);
+				$attendees[] = $attendee;
+			} catch (Exception $e) {
+				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					throw $e;
+				}
+			}
 		}
 
-		$attendeeEvent = new AttendeesAddedEvent($room, $attendees);
-		$this->dispatcher->dispatchTyped($attendeeEvent);
+		if (!empty($attendees)) {
+			$attendeeEvent = new AttendeesAddedEvent($room, $attendees);
+			$this->dispatcher->dispatchTyped($attendeeEvent);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+		}
 	}
 
 	/**
