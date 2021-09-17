@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1.7 – 2021-09-17
+
+### Fixed
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6232](https://github.com/nextcloud/spreed/pull/6232)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6240](https://github.com/nextcloud/spreed/pull/6240)
+
+## 10.0.10 – 2021-09-17
+
+### Fixed
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6233](https://github.com/nextcloud/spreed/pull/6233)
+- Fix infinite loop when the media constraints can not be decreased
+  [#6128](https://github.com/nextcloud/spreed/pull/6128)
+
 ## 10.1.6 – 2021-07-15
 ### Fixed
 - Fix connection quality stats not reset when setting a new peer connection
