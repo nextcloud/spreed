@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.0 – 2021-09-17
+
+### Added
+- Add "Create conversation" button on first page of dialog when creating a public conversation
+  [#6206](https://github.com/nextcloud/spreed/pull/6206)
+
+### Fixed
+- Add some validation for shared geo-locations
+  [#6242](https://github.com/nextcloud/spreed/pull/6242)
+- Move unreadMessageElement from computed to a method
+  [#6241](https://github.com/nextcloud/spreed/pull/6241)
+- Fix logged-in users are unable to join a password protected public conversation
+  [#6230](https://github.com/nextcloud/spreed/pull/6230)
+- Don't toggle the video on/off when pasting files into the chat and first releasing the CTRL key
+  [#6198](https://github.com/nextcloud/spreed/pull/6198)
+- Disable recording voice messages on readonly conversations
+  [#6182](https://github.com/nextcloud/spreed/pull/6182)
+
 ## 12.1.2 – 2021-09-17
 
 ### Fixed
