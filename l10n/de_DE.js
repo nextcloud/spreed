@@ -148,6 +148,7 @@ OC.L10N.register(
     "Message deleted by author" : "Nachricht vom Autor gelöscht",
     "Message deleted by {actor}" : "Nachricht von {actor} gelöscht",
     "Message deleted by you" : "Nachricht von Ihnen gelöscht",
+    "Deleted user" : "Gelöschter Benutzer",
     "%s (guest)" : "%s (Gast)",
     "You missed a call from {user}" : "Sie haben einen Anruf von {user} verpasst",
     "You tried to call {user}" : "Sie haben versucht {user} anzurufen",
