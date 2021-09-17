@@ -148,6 +148,7 @@ OC.L10N.register(
     "Message deleted by author" : "İleti yazarı tarafından silindi",
     "Message deleted by {actor}" : "İleti {actor} tarafından silindi",
     "Message deleted by you" : "İleti sizin tarafınızdan silindi",
+    "Deleted user" : "Kullanıcıyı sildi ",
     "%s (guest)" : "%s (konuk)",
     "You missed a call from {user}" : "{user} kullanıcısı sizi aramış",
     "You tried to call {user}" : "{user} kullanıcısını aramayı denediniz",
