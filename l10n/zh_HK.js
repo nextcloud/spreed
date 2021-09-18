@@ -178,7 +178,7 @@ OC.L10N.register(
     "Dial-in information" : "撥入細節",
     "Meeting ID" : "會議 ID",
     "Your PIN" : "您的 PIN",
-    "Password request: %s" : "密碼請求： %s",
+    "Password request: %s" : "索取密碼： %s",
     "Private conversation" : "私人對話",
     "Deleted user (%s)" : "已刪除用戶（%s）",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{User1} 與您分享了在 {remoteServer} 上的房間 {roomName}",
@@ -510,8 +510,8 @@ OC.L10N.register(
     "Share this file with others to discuss it" : "與他人分享此檔案以進行討論",
     "Share this file" : "分享此檔案",
     "Join conversation" : "加入對話",
-    "Request password" : "請求密碼",
-    "Error requesting the password." : "要求輸入密碼時出錯。",
+    "Request password" : "索取密碼",
+    "Error requesting the password." : "索取密碼時出錯。",
     "This conversation has ended" : "對話已結束",
     "Limit to groups" : "限制給特定群組",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "選擇一或多個群組後，只有所選群組中的人才能參與對話。",
@@ -1136,7 +1136,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "You can not send messages to this conversation at the moment" : "您目前無法向此對話發送消息",
-    "Add a description for this conversation" : "添加此對話的描述",
-    "Open this location in Openstreetmap" : "在 Openstreetmap 中打開此位置"
+    "Add a description for this conversation" : "添加此對話的描述"
 },
 "nplurals=1; plural=0;");

@@ -1135,7 +1135,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会话 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会话 \"{conversationName}\" 的设置",
     "You can not send messages to this conversation at the moment" : "你目前不能向此会话发送消息",
-    "Add a description for this conversation" : "为这个对话添加一个描述 ",
-    "Open this location in Openstreetmap" : "在 Openstreetmap 中打开此位置"
+    "Add a description for this conversation" : "为这个对话添加一个描述 "
 },
 "nplurals=1; plural=0;");
