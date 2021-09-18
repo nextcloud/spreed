@@ -961,7 +961,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
     "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion",
-    "Open this location in Openstreetmap" : "Dobrir aqueste lòc dins Openstreetmap"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
 },
 "nplurals=2; plural=(n > 1);");

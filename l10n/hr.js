@@ -1125,7 +1125,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
     "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
-    "Add a description for this conversation" : "Dodaj opis ovog razgovora",
-    "Open this location in Openstreetmap" : "Otvorite ovu lokaciju u aplikaciji Openstreetmap"
+    "Add a description for this conversation" : "Dodaj opis ovog razgovora"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
