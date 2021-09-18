@@ -1126,7 +1126,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada",
-    "Open this location in Openstreetmap" : "Aberi custa positzione in Openstreetmap"
+    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
 },
 "nplurals=2; plural=(n != 1);");

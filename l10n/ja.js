@@ -1106,7 +1106,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
-    "Add a description for this conversation" : "この会話の詳細を追加する",
-    "Open this location in Openstreetmap" : "オープンストリートマップでこの場所を表示"
+    "Add a description for this conversation" : "この会話の詳細を追加する"
 },
 "nplurals=1; plural=0;");

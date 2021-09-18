@@ -1110,7 +1110,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek",
-    "Open this location in Openstreetmap" : "Open deze locatie in Openstreetmap"
+    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
 },
 "nplurals=2; plural=(n != 1);");
