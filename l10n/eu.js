@@ -1136,7 +1136,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "You can not send messages to this conversation at the moment" : "Ezin dituzu mezuak bidali elkarrizketa honetara une honetan",
-    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi",
-    "Open this location in Openstreetmap" : "Ireki kokaleku hau Openstreetmap-en"
+    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
 },
 "nplurals=2; plural=(n != 1);");

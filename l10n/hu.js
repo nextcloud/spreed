@@ -1134,7 +1134,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
-    "Open this location in Openstreetmap" : "Hely megnyitása az OpenStreetMap-en"
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
 },
 "nplurals=2; plural=(n != 1);");
