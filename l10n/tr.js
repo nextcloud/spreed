@@ -1136,7 +1136,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesi",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesinin ayarları",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin",
-    "Open this location in Openstreetmap" : "Bu konumu Openstreetmap üzerinde aç"
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
 },
 "nplurals=2; plural=(n > 1);");
