@@ -402,7 +402,7 @@ class SystemMessage {
 				&& $parsedParameters['object']['type'] === 'geo-location'
 				&& !preg_match(ChatManager::GEO_LOCATION_VALIDATOR, $parsedParameters['object']['id'])) {
 				$parsedParameters = [];
-				$parsedMessage = $this->l->t('The shared location is malformed');
+				$parsedMessage = $this->l->t('The shared location is inaccurate');
 			}
 
 			$chatMessage->setMessageType('comment');
