@@ -131,6 +131,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "Správce odebral {user} práva moderátora",
     "{actor} shared a file which is no longer available" : "{actor} nasdílel(a) soubor který už není k dispozici",
     "You shared a file which is no longer available" : "Sdílíte soubor který už není k dispozici",
+    "The shared location is malformed" : "Popis sdíleného umístění nemá správný formát",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} nastavil(a) Matterbridge pro synchronizaci této konverzace s ostatními chaty",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Nastavili jste Matterbridge pro synchronizaci této konverzace s ostatními chaty",
     "{actor} updated the Matterbridge configuration" : "{actor} aktualizoval(a) nastavení pro Matterbridge",
