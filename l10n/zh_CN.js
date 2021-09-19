@@ -131,6 +131,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "一位管理员将 {user} 降除主持人",
     "{actor} shared a file which is no longer available" : "{actor} 共享了一个不再可用的文件",
     "You shared a file which is no longer available" : "您共享了一个不再可用的文件",
+    "The shared location is malformed" : "共享的位置畸形",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} 设置了 Matterbridge，使此对话与其他聊天同步",
     "You set up Matterbridge to synchronize this conversation with other chats" : "你设置了 Matterbridge，以将此对话与其他聊天同步",
     "{actor} updated the Matterbridge configuration" : "{actor} 更新了 Matterbridge 配置",
