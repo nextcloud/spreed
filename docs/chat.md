@@ -271,6 +271,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `call_joined` - {actor} joined the call
 * `call_left` - {actor} left the call
 * `call_ended` - Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration 30:23)
+* `call_ended_everyone` - {user1} ended the call with {user2}, {user3}, {user4} and {user5} (Duration 30:23)
 * `call_missed` - You missed a call from {user}
 * `call_tried` - You tried to call {user}
 * `read_only_off` - {actor} unlocked the conversation

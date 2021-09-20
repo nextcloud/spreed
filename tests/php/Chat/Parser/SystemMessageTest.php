@@ -492,7 +492,7 @@ class SystemMessageTest extends TestCase {
 		if ($message === 'call_ended') {
 			$parser->expects($this->once())
 				->method('parseCall')
-				->with($parameters)
+				->with($message, $parameters, ['actor' => ['id' => 'actor', 'type' => 'user']])
 				->willReturn([$expectedMessage, $expectedParameters]);
 		} else {
 			$parser->expects($this->never())
@@ -1099,80 +1099,221 @@ class SystemMessageTest extends TestCase {
 	public function dataParseCall(): array {
 		return [
 			'1 user + guests' => [
+				'call_ended',
 				['users' => ['user1'], 'guests' => 3, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1} and 3 guests (Duration "duration")',
 					['user1' => ['data' => 'user1']],
 				],
 			],
 			'2 users' => [
+				'call_ended',
 				['users' => ['user1', 'user2'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1} and {user2} (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
 				],
 			],
 			'2 users + guests' => [
+				'call_ended',
 				['users' => ['user1', 'user2'], 'guests' => 1, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2} and 1 guest (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
 				],
 			],
 			'3 users' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2} and {user3} (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
 				],
 			],
 			'3 users + guests' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3'], 'guests' => 22, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3} and 22 guests (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
 				],
 			],
 			'4 users' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3} and {user4} (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
 			'4 users + guests' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
 			'5 users' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4'], 'user5' => ['data' => 'user5']],
 				],
 			],
 			'5 users + guests' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 1, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
 			'6 users' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
 			'6 users + guests' => [
+				'call_ended',
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 2, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and 4 others (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+
+			// Meetings
+			'meeting guests only' => [
+				'call_ended_everyone',
+				['users' => [], 'guests' => 33, 'duration' => 42],
+				['type' => 'guest', 'id' => sha1('guest1'), 'name' => 'guest1'],
+				[
+					'{actor} ended the call with 32 guests (Duration "duration")',
+					[],
+				],
+			],
+			'meeting 2 user' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2'], 'guests' => 3, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1} and 3 guests (Duration "duration")',
+					['user1' => ['data' => 'user2']],
+				],
+			],
+			'meeting 1 user + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1'], 'guests' => 3, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with 3 guests (Duration "duration")',
+					[],
+				],
+			],
+			'meeting 3 users' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1} and {user2} (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3']],
+				],
+			],
+			'meeting 2 users + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2'], 'guests' => 1, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1} and 1 guest (Duration "duration")',
+					['user1' => ['data' => 'user2']],
+				],
+			],
+			'meeting 4 users' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2} and {user3} (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4']],
+				],
+			],
+			'meeting 3 users + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3'], 'guests' => 22, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2} and 22 guests (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3']],
+				],
+			],
+			'meeting 5 users' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5']],
+				],
+			],
+			'meeting 4 users + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3} and 4 guests (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4']],
+				],
+			],
+			'meeting 6 users' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5'], 'user5' => ['data' => 'user6']],
+				],
+			],
+			'meeting 5 users + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 1, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and 1 guest (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5']],
+				],
+			],
+			'meeting 7 users' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6', 'user7'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5']],
+				],
+			],
+			'meeting 6 users + guests' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 2, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and 3 others (Duration "duration")',
+					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5']],
 				],
 			],
 		];
@@ -1183,7 +1324,7 @@ class SystemMessageTest extends TestCase {
 	 * @param array $parameters
 	 * @param array $expected
 	 */
-	public function testParseCall(array $parameters, array $expected) {
+	public function testParseCall(string $message, array $parameters, array $actor, array $expected) {
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')
@@ -1196,7 +1337,10 @@ class SystemMessageTest extends TestCase {
 				return ['data' => $user];
 			});
 
-		$this->assertSame($expected, self::invokePrivate($parser, 'parseCall', [$parameters]));
+		// Prepend the actor
+		$expected[1]['actor'] = $actor;
+
+		$this->assertEquals($expected, self::invokePrivate($parser, 'parseCall', [$message, $parameters, ['actor' => $actor]]));
 	}
 
 	public function dataGetDuration(): array {
