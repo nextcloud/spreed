@@ -678,15 +678,14 @@ export default {
 
 #call-container {
 	width: 100%;
-	height: 100%;
 	background-color: $color-call-background;
 }
 
 #videos {
 	position: absolute;
 	width: 100%;
-	height: 100%;
-	top: 0;
+	height: calc(100% - 60px);
+	top: 60px;
 	overflow: hidden;
 	display: -webkit-box;
 	display: -moz-box;
