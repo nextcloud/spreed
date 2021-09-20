@@ -481,11 +481,11 @@ export default {
 
 	&.in-call {
 		right: 0;
-		background-color: transparent;
 		border: none;
 		position: absolute;
 		top: 0;
 		left:0;
+		background-color: $color-call-background;
 		.forced-background {
 			background-color: rgba(0,0,0,0.1) !important;
 			border-radius: var(--border-radius-pill);
