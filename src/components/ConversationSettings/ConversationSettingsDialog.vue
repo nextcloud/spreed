@@ -46,6 +46,14 @@
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 
+		<!-- Devices preview sceren -->
+		<AppSettingsSection
+			:title="t('spreed', 'Device check')">
+			<CheckboxRadioSwitch :checked.sync="showDeviceChecker">
+				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
+			</CheckboxRadioSwitch>
+		</AppSettingsSection>
+
 		<!-- Guest access -->
 		<AppSettingsSection
 			v-if="canFullModerate"
@@ -105,6 +113,8 @@ import DangerZone from './DangerZone'
 import NotificationsSettings from './NotificationsSettings'
 import { showError } from '@nextcloud/dialogs'
 import Description from '../Description/Description'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import BrowserStorage from '../../services/BrowserStorage'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -121,6 +131,7 @@ export default {
 		DangerZone,
 		NotificationsSettings,
 		Description,
+		CheckboxRadioSwitch,
 	},
 
 	data() {
@@ -129,7 +140,7 @@ export default {
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
 			isEditingDescription: false,
 			isDescriptionLoading: false,
-
+			showDeviceChecker: false,
 		}
 	},
 
@@ -181,9 +192,21 @@ export default {
 		},
 	},
 
+	watch: {
+		showDeviceChecker(newValue) {
+			const browserValue = newValue ? 'true' : 'false'
+			BrowserStorage.setItem('showDeviceChecker' + this.token, browserValue)
+		},
+	},
+
 	mounted() {
 		subscribe('show-conversation-settings', this.handleShowSettings)
 		subscribe('hide-conversation-settings', this.handleHideSettings)
+
+		/**
+		 * Get the deviceChecker value from the browserstorage.
+		 */
+		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
 	},
 
 	methods: {
@@ -224,6 +247,7 @@ export default {
 	},
 }
 </script>
+
 <style lang="scss" scoped>
 ::v-deep button.icon {
 	height: 32px;

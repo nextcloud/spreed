@@ -123,6 +123,10 @@
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
+			<CheckboxRadioSwitch :checked.sync="showDeviceChecker"
+				class="checkbox">
+				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
+			</CheckboxRadioSwitch>
 
 			<!-- Join call -->
 			<CallButton
@@ -146,6 +150,8 @@ import VideoOff from 'vue-material-design-icons/VideoOff'
 import { localMediaModel } from '../../utils/webrtc/index'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import BrowserStorage from '../../services/BrowserStorage'
 
 export default {
 	name: 'DeviceChecker',
@@ -161,6 +167,7 @@ export default {
 		Video,
 		VideoOff,
 		CallButton,
+		CheckboxRadioSwitch,
 	},
 
 	mixins: [devices],
@@ -172,6 +179,8 @@ export default {
 			showDeviceSelection: false,
 			audioOn: undefined,
 			videoOn: undefined,
+			showDeviceChecker: true,
+
 		}
 	},
 
@@ -190,6 +199,24 @@ export default {
 
 		showVideo() {
 			return this.videoPreviewAvailable && this.videoOn
+		},
+	},
+
+	watch: {
+		modal(newValue) {
+			if (newValue) {
+				this.initializeDevicesMixin()
+			} else {
+				this.stopDevicesMixin()
+			}
+		},
+
+		showDeviceChecker(newValue) {
+			if (newValue) {
+				BrowserStorage.setItem('showDeviceChecker' + this.token, 'true')
+			} else {
+				BrowserStorage.setItem('showDeviceChecker' + this.token, 'false')
+			}
 		},
 	},
 
