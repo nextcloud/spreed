@@ -167,12 +167,7 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		if ($all && $this->participant->hasModeratorPermissions()) {
-			$participants = $this->participantService->getParticipantsInCall($this->room);
-
-			// kick out all participants out of the call
-			foreach ($participants as $participant) {
-				$this->participantService->changeInCall($this->room, $participant, Participant::FLAG_DISCONNECTED);
-			}
+			$this->participantService->endCallForEveryone($this->room, $this->participant);
 		} else {
 			$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
 		}

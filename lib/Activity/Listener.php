@@ -26,6 +26,7 @@ namespace OCA\Talk\Activity;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -80,6 +81,13 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
+		$listener = static function (ModifyRoomEvent $event): void {
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->generateCallActivity($event->getRoom(), true, $event->getActor());
+		};
+		$dispatcher->addListener(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $listener);
+
 		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
@@ -110,11 +118,13 @@ class Listener {
 	 * Call activity: "You attended a call with {user1} and {user2}"
 	 *
 	 * @param Room $room
+	 * @param bool $endForEveryone
+	 * @param Participant|null $actor
 	 * @return bool True if activity was generated, false otherwise
 	 */
-	public function generateCallActivity(Room $room): bool {
+	public function generateCallActivity(Room $room, bool $endForEveryone = false, ?Participant $actor = null): bool {
 		$activeSince = $room->getActiveSince();
-		if (!$activeSince instanceof \DateTime || $this->participantService->hasActiveSessionsInCall($room)) {
+		if (!$activeSince instanceof \DateTime || (!$endForEveryone && $this->participantService->hasActiveSessionsInCall($room))) {
 			return false;
 		}
 
@@ -130,6 +140,8 @@ class Listener {
 				return false;
 			}
 			$message = 'call_missed';
+		} elseif ($endForEveryone) {
+			$message = 'call_ended_everyone';
 		}
 
 		if (!$room->resetActiveSince()) {
@@ -137,8 +149,13 @@ class Listener {
 			return false;
 		}
 
-		$actorId = $userIds[0] ?? 'guests-only';
-		$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
+		if ($actor instanceof Participant) {
+			$actorId = $actor->getAttendee()->getActorId();
+			$actorType = $actor->getAttendee()->getActorType();
+		} else {
+			$actorId = $userIds[0] ?? 'guests-only';
+			$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
+		}
 		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
 			'message' => $message,
 			'parameters' => [

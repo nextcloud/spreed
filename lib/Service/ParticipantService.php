@@ -33,6 +33,7 @@ use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -904,6 +905,20 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($attendeeEvent);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUESTS_CLEAN, $event);
+	}
+
+	public function endCallForEveryone(Room $room, Participant $moderator): void {
+		$event = new ModifyRoomEvent($room, 'in_call', Participant::FLAG_DISCONNECTED, null, $moderator);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $event);
+
+		$participants = $this->getParticipantsInCall($room);
+
+		// kick out all participants out of the call
+		foreach ($participants as $participant) {
+			$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
+		}
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags): void {
