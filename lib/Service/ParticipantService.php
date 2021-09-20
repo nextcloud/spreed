@@ -139,7 +139,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
-	public function updatePublishingPermissions(Room $room, Participant $participant, int $newState): void {
+	public function updatePermissions(Room $room, Participant $participant, int $newState): void {
 		$attendee = $participant->getAttendee();
 
 		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS || $attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
@@ -158,7 +158,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
 	}
 
-	public function updateAllPublishingPermissions(Room $room, string $mode, int $newState, bool $includeModerators): void {
+	public function updateAllPermissions(Room $room, string $mode, int $newState, bool $includeModerators): void {
 		// FIXME Add events after checking what should be sent to the HPB
 		// $event = new ModifyParticipantEvent($room, $participant, 'publishingPermissions', $newState, $oldState);
 		// $this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
@@ -872,10 +872,10 @@ class ParticipantService {
 		}
 
 		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
@@ -917,10 +917,10 @@ class ParticipantService {
 		}
 
 		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 

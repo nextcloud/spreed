@@ -43,9 +43,9 @@ class Participant {
 	public const FLAG_WITH_VIDEO = 4;
 	public const FLAG_WITH_PHONE = 8;
 
-	public const PERMISSIONS_ADD = 'add';
-	public const PERMISSIONS_REMOVE = 'remove';
-	public const PERMISSIONS_SET = 'set';
+	public const PERMISSIONS_MODIFY_ADD = 'add';
+	public const PERMISSIONS_MODIFY_REMOVE = 'remove';
+	public const PERMISSIONS_MODIFY_SET = 'set';
 
 	public const NOTIFY_DEFAULT = 0;
 	public const NOTIFY_ALWAYS = 1;

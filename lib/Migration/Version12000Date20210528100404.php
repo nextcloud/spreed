@@ -27,7 +27,6 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use Doctrine\DBAL\Types\Types;
-use OCA\Talk\Model\Attendee;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -47,7 +46,7 @@ class Version12000Date20210528100404 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_attendees');
 		if (!$table->hasColumn('publishing_permissions')) {
 			$table->addColumn('publishing_permissions', Types::INTEGER, [
-				'default' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+				'default' => 7, // FIXME
 			]);
 
 			return $schema;

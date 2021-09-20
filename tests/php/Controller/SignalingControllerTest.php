@@ -670,14 +670,14 @@ class SignalingControllerTest extends \Test\TestCase {
 
 	public function dataBackendRoomUserPublicPublishingPermissions(): array {
 		return [
-			[Attendee::PUBLISHING_PERMISSIONS_NONE, []],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_VIDEO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
+			[Attendee::PERMISSIONS_NONE, []],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-media']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
+			[Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
 		];
 	}
 

@@ -215,19 +215,22 @@ class AttendeeMapper extends QBMapper {
 			], IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		if ($mode === Participant::PERMISSIONS_SET) {
+		if ($mode === Participant::PERMISSIONS_MODIFY_SET) {
 			$query->set('publishing_permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
 		} else {
 			foreach ([
-				Participant::FLAG_IN_CALL,
-				Participant::FLAG_WITH_AUDIO,
-				Participant::FLAG_WITH_VIDEO
+				Attendee::PERMISSIONS_CALL_JOIN,
+				Attendee::PERMISSIONS_CALL_START,
+				Attendee::PERMISSIONS_PUBLISH_AUDIO,
+				Attendee::PERMISSIONS_PUBLISH_VIDEO,
+				Attendee::PERMISSIONS_PUBLISH_SCREEN,
+				Attendee::PERMISSIONS_LOBBY_IGNORE,
 			] as $permission) {
 				if ($permission & $newState) {
-					if ($mode === Participant::PERMISSIONS_ADD) {
+					if ($mode === Participant::PERMISSIONS_MODIFY_ADD) {
 						$this->addSinglePublishingPermission($query, $permission);
-					} elseif ($mode === Participant::PERMISSIONS_REMOVE) {
+					} elseif ($mode === Participant::PERMISSIONS_MODIFY_REMOVE) {
 						$this->removeSinglePublishingPermission($query, $permission);
 					}
 				}

@@ -405,7 +405,7 @@ class RoomController extends AEnvironmentAwareController {
 			'actorType' => '',
 			'actorId' => '',
 			'attendeeId' => 0,
-			'publishingPermissions' => Attendee::PUBLISHING_PERMISSIONS_NONE,
+			'publishingPermissions' => Attendee::PERMISSIONS_NONE,
 			'canEnableSIP' => false,
 			'attendeePin' => '',
 			'description' => '',
@@ -1514,7 +1514,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int $state
 	 * @return DataResponse
 	 */
-	public function setAttendeePublishingPermissions(int $attendeeId, int $state): DataResponse {
+	public function setAttendeePermissions(int $attendeeId, int $state): DataResponse {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
@@ -1525,7 +1525,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updatePublishingPermissions($this->room, $targetParticipant, $state);
+		$this->participantService->updatePermissions($this->room, $targetParticipant, $state);
 
 		return new DataResponse();
 	}
@@ -1539,11 +1539,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param bool $includeModerators
 	 * @return DataResponse
 	 */
-	public function setAllAttendeesPublishingPermissions(string $method, int $state, bool $includeModerators): DataResponse {
+	public function setAllAttendeesPermissions(string $method, int $state, bool $includeModerators): DataResponse {
 		if (!in_array($method, [
-			Participant::PERMISSIONS_ADD,
-			Participant::PERMISSIONS_REMOVE,
-			Participant::PERMISSIONS_SET
+			Participant::PERMISSIONS_MODIFY_ADD,
+			Participant::PERMISSIONS_MODIFY_REMOVE,
+			Participant::PERMISSIONS_MODIFY_SET
 		], true)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -1552,7 +1552,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updateAllPublishingPermissions($this->room, $method, $state, $includeModerators);
+		$this->participantService->updateAllPermissions($this->room, $method, $state, $includeModerators);
 
 		return new DataResponse();
 	}

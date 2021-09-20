@@ -932,15 +932,21 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.ALL && webrtc.webrtc.isLocalMediaActive()) {
+		if ((currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& (currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+			&& webrtc.webrtc.isLocalMediaActive()) {
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.NONE && !webrtc.webrtc.isLocalMediaActive()) {
+		if (!(currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& !(currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+			&& !webrtc.webrtc.isLocalMediaActive()) {
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.NONE) {
+		// FIXME handle case where only one of the permissions is given
+		if (!(currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& !(currentParticipant.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
 			startedWithMedia = undefined
 
 			webrtc.stopLocalVideo()

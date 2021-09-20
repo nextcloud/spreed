@@ -296,7 +296,7 @@ class BackendNotifier {
 				'lastPing' => 0,
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
-				'publishingPermissions' => Attendee::PUBLISHING_PERMISSIONS_NONE,
+				'publishingPermissions' => Attendee::PERMISSIONS_NONE,
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
@@ -312,10 +312,10 @@ class BackendNotifier {
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$data['permissions'] = [];
-					if ($attendee->getPublishingPermissions() & (Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+					if ($attendee->getPublishingPermissions() & (Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 						$data['permissions'][] = 'publish-media';
 					}
-					if ($attendee->getPublishingPermissions() & Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING) {
+					if ($attendee->getPublishingPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
 						$data['permissions'][] = 'publish-screen';
 					}
 					if ($attendee->getParticipantType() === Participant::OWNER ||
