@@ -383,6 +383,7 @@ class RoomController extends AEnvironmentAwareController {
 			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
 			'unreadMention' => false,
+			'unreadMentionDirect' => false,
 			'isFavorite' => false,
 			'canLeaveConversation' => false,
 			'canDeleteConversation' => false,
@@ -540,7 +541,9 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				$lastMention = $attendee->getLastMentionMessage();
+				$lastMentionDirect = $attendee->getLastMentionDirect();
 				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL

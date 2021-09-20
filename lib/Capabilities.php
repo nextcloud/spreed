@@ -95,6 +95,7 @@ class Capabilities implements IPublicCapability {
 				'signaling-v3',
 				'publishing-permissions',
 				'clear-history',
+				'direct-mention-flag',
 			],
 			'config' => [
 				'attachments' => [

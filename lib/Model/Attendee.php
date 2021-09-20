@@ -47,6 +47,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastReadMessage()
  * @method void setLastMentionMessage(int $lastMentionMessage)
  * @method int getLastMentionMessage()
+ * @method void setLastMentionDirect(int $lastMentionDirect)
+ * @method int getLastMentionDirect()
  * @method void setReadPrivacy(int $readPrivacy)
  * @method int getReadPrivacy()
  * @method void setPublishingPermissions(int $publishingPermissions)
@@ -105,6 +107,9 @@ class Attendee extends Entity {
 	protected $lastMentionMessage;
 
 	/** @var int */
+	protected $lastMentionDirect;
+
+	/** @var int */
 	protected $readPrivacy;
 
 	/** @var int */
@@ -128,6 +133,7 @@ class Attendee extends Entity {
 		$this->addType('lastJoinedCall', 'int');
 		$this->addType('lastReadMessage', 'int');
 		$this->addType('lastMentionMessage', 'int');
+		$this->addType('lastMentionDirect', 'int');
 		$this->addType('readPrivacy', 'int');
 		$this->addType('publishingPermissions', 'int');
 		$this->addType('accessToken', 'string');
@@ -155,6 +161,7 @@ class Attendee extends Entity {
 			'last_joined_call' => $this->getLastJoinedCall(),
 			'last_read_message' => $this->getLastReadMessage(),
 			'last_mention_message' => $this->getLastMentionMessage(),
+			'last_mention_direct' => $this->getLastMentionDirect(),
 			'read_privacy' => $this->getReadPrivacy(),
 			'publishing_permissions' => $this->getPublishingPermissions(),
 			'access_token' => $this->getAccessToken(),
