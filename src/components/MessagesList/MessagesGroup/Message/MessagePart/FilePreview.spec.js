@@ -58,7 +58,7 @@ describe('FilePreview.vue', () => {
 	})
 
 	/**
-	 * @param url
+	 * @param {string} url Relative URL to parse (starting with / )
 	 */
 	function parseRelativeUrl(url) {
 		return new URL('https://localhost' + url)
@@ -431,7 +431,7 @@ describe('FilePreview.vue', () => {
 				})
 
 				/**
-				 * @param visible
+				 * @param {boolean} visible Whether or not the play button is visible
 				 */
 				async function testPlayButtonVisible(visible) {
 					const wrapper = shallowMount(FilePreview, {

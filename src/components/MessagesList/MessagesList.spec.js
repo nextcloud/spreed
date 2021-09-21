@@ -287,7 +287,7 @@ describe('MessagesList.vue', () => {
 		})
 
 		/**
-		 * @param messages
+		 * @param {Array} messages List of messages that should not be grouped
 		 */
 		function testNotGrouped(messages) {
 			messagesListMock.mockReturnValue(messages)

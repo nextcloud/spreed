@@ -97,9 +97,9 @@ describe('Conversation.vue', () => {
 
 	describe('displayed subtitle', () => {
 		/**
-		 * @param item
-		 * @param expectedText
-		 * @param isSearchResult
+		 * @param {object} item Conversation data
+		 * @param {string} expectedText Expected subtitle of the conversation item
+		 * @param {boolean} isSearchResult Whether or not the item is a search result (has no … menu)
 		 */
 		function testConversationLabel(item, expectedText, isSearchResult = false) {
 			const wrapper = mount(Conversation, {
@@ -274,9 +274,9 @@ describe('Conversation.vue', () => {
 
 	describe('unread messages counter', () => {
 		/**
-		 * @param item
-		 * @param expectedCounterText
-		 * @param expectedHighlighted
+		 * @param {object} item Conversation data
+		 * @param {string} expectedCounterText The expected unread counter
+		 * @param {boolean} expectedHighlighted Whether or not the unread counter is highlighted with primary color
 		 */
 		function testCounter(item, expectedCounterText, expectedHighlighted) {
 			const wrapper = mount(Conversation, {
@@ -342,8 +342,8 @@ describe('Conversation.vue', () => {
 		})
 
 		/**
-		 * @param wrapper
-		 * @param text
+		 * @param {object} wrapper Parent element to search the text in
+		 * @param {string} text Text to find within the wrapper
 		 */
 		function findActionButton(wrapper, text) {
 			const actionButtons = wrapper.findAllComponents(ActionButton)
@@ -357,7 +357,7 @@ describe('Conversation.vue', () => {
 		}
 
 		/**
-		 * @param actionName
+		 * @param {string} actionName The name of the action to shallow
 		 */
 		function shallowMountAndGetAction(actionName) {
 			const wrapper = shallowMount(Conversation, {
@@ -404,8 +404,8 @@ describe('Conversation.vue', () => {
 
 		describe('notification level', () => {
 			/**
-			 * @param actionName
-			 * @param level
+			 * @param {string} actionName The label of the notification level to select
+			 * @param {number} level The notification level to select
 			 */
 			async function testSetNotificationLevel(actionName, level) {
 				const setNotificationLevelAction = jest.fn().mockResolvedValueOnce()

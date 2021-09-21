@@ -10,9 +10,9 @@ describe('conversationsService', () => {
 	})
 
 	/**
-	 * @param token
-	 * @param onlyUsers
-	 * @param expectedShareTypes
+	 * @param {string} token The conversation to search in
+	 * @param {boolean} onlyUsers Whether or not to only search for users
+	 * @param {Array} expectedShareTypes The expected search types to look for
 	 */
 	function testSearchPossibleConversations(token, onlyUsers, expectedShareTypes) {
 		searchPossibleConversations(

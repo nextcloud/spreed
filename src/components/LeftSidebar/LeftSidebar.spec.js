@@ -279,10 +279,10 @@ describe('LeftSidebar.vue', () => {
 		})
 
 		/**
-		 * @param searchTerm
-		 * @param possibleResults
-		 * @param listedResults
-		 * @param loadStateSettingsOverride
+		 * @param {string} searchTerm The search term to filter by
+		 * @param {Array} possibleResults Result options returned by the APIs
+		 * @param {Array} listedResults The displayed results
+		 * @param {object} loadStateSettingsOverride Allows to override some properties
 		 */
 		async function testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride) {
 			searchPossibleConversations.mockResolvedValueOnce({
@@ -463,11 +463,11 @@ describe('LeftSidebar.vue', () => {
 
 		describe('not found caption', () => {
 			/**
-			 * @param searchTerm
-			 * @param possibleResults
-			 * @param listedResults
-			 * @param loadStateSettingsOverride
-			 * @param expectedCaption
+			 * @param {string} searchTerm The search term to filter by
+			 * @param {Array} possibleResults Result options returned by the APIs
+			 * @param {Array} listedResults The displayed results
+			 * @param {object} loadStateSettingsOverride Allows to override some properties
+			 * @param {string} expectedCaption The caption of the "No results found" section
 			 */
 			async function testSearchNotFound(searchTerm, possibleResults, listedResults, loadStateSettingsOverride, expectedCaption) {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)

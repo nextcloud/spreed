@@ -115,8 +115,8 @@ describe('callViewStore', () => {
 		})
 
 		/**
-		 * @param conversationType
-		 * @param state
+		 * @param {number} conversationType The type of the conversation
+		 * @param {boolean} state Whether or not the grid is shown
 		 */
 		function testDefaultGridState(conversationType, state) {
 			localStorage.getItem.mockReturnValueOnce(null)

@@ -269,9 +269,9 @@ describe('Message.vue', () => {
 
 		describe('rich objects', () => {
 			/**
-			 * @param message
-			 * @param messageParameters
-			 * @param expectedRichParameters
+			 * @param {object} message The rich-object-string message text
+			 * @param {object} messageParameters The rich-object-string parameters
+			 * @param {object} expectedRichParameters The expected Vue objects for the parameters
 			 */
 			function renderRichObject(message, messageParameters, expectedRichParameters) {
 				messageProps.message = message
@@ -673,7 +673,7 @@ describe('Message.vue', () => {
 			})
 
 			/**
-			 * @param visible
+			 * @param {boolean} visible Whether or not the reply-private action is visible
 			 */
 			function testPrivateReplyActionVisible(visible) {
 				store = new Vuex.Store(testStoreConfig)
@@ -764,9 +764,9 @@ describe('Message.vue', () => {
 			})
 
 			/**
-			 * @param visible
-			 * @param mockDate
-			 * @param participantType
+			 * @param {boolean} visible Whether or not the delete action is visible
+			 * @param {Date} mockDate The message date (deletion only works within 6h)
+			 * @param {number} participantType The participant type of the user
 			 */
 			function testDeleteMessageVisible(visible, mockDate, participantType = PARTICIPANT.TYPE.USER) {
 				store = new Vuex.Store(testStoreConfig)
