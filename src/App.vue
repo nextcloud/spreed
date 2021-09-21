@@ -121,7 +121,7 @@ export default {
 		/**
 		 * Keeps a list for all last message ids
 		 *
-		 * @return {object} Map with token => lastMessageId
+		 * @returns {object} Map with token => lastMessageId
 		 */
 		lastMessageMap() {
 			const conversationList = this.$store.getters.conversationsList
@@ -152,7 +152,7 @@ export default {
 		},
 
 		/**
-		 * @return {boolean} Returns true, if
+		 * @returns {boolean} Returns true, if
 		 * - a conversation is newly added to lastMessageMap
 		 * - a conversation has a different last message id then previously
 		 */
@@ -172,7 +172,7 @@ export default {
 		/**
 		 * The current conversation token
 		 *
-		 * @return {string} The token.
+		 * @returns {string} The token.
 		 */
 		token() {
 			return this.$store.getters.getToken()
@@ -181,7 +181,7 @@ export default {
 		/**
 		 * The current conversation
 		 *
-		 * @return {object} The conversation object.
+		 * @returns {object} The conversation object.
 		 */
 		currentConversation() {
 			return this.$store.getters.conversation(this.token)
@@ -190,7 +190,7 @@ export default {
 		/**
 		 * Computes whether the current conversation is one to one
 		 *
-		 * @return {boolean} The result
+		 * @returns {boolean} The result
 		 */
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
@@ -445,7 +445,7 @@ export default {
 		 * Get a conversation's name.
 		 *
 		 * @param {string} token The conversation's token
-		 * @return {string} The conversation's name
+		 * @returns {string} The conversation's name
 		 */
 		getConversationName(token) {
 			if (!this.$store.getters.conversation(token)) {
