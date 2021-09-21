@@ -5,7 +5,7 @@ Feature: public
     Given user "participant3" exists
 
   Scenario: User toggles the read privacy
-    Given user "participant1" creates room "chatting" (v3)
+    Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
 
@@ -29,7 +29,7 @@ Feature: public
 
 
   Scenario: Read status is the minimum of all public users
-    Given user "participant1" creates room "chatting" (v3)
+    Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
@@ -56,7 +56,7 @@ Feature: public
 
 
   Scenario: User switching to private is not considered anymore
-    Given user "participant1" creates room "chatting" (v3)
+    Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
@@ -84,7 +84,7 @@ Feature: public
 
 
   Scenario: New users added start with the last message of when they are added
-    Given user "participant1" creates room "chatting" (v3)
+    Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "chatting" with 200 (v4)
