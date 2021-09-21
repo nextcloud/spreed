@@ -1062,8 +1062,8 @@ describe('messagesStore', () => {
 			})
 
 			/**
-			 * @param messages
-			 * @param expectedPayload
+			 * @param {Array} messages List of messages the API call returned
+			 * @param {object} expectedPayload The parameters that should be updated when receiving the messages
 			 */
 			async function testUpdateMessageCounters(messages, expectedPayload) {
 				const response = {
@@ -1203,8 +1203,8 @@ describe('messagesStore', () => {
 				})
 
 				/**
-				 * @param messageParameters
-				 * @param expectedValue
+				 * @param {object} messageParameters The rich-object-string parameters of the message
+				 * @param {boolean} expectedValue New state of the mention flag
 				 */
 				async function testMentionFlag(messageParameters, expectedValue) {
 					const messages = [{
@@ -1486,8 +1486,8 @@ describe('messagesStore', () => {
 		})
 
 		/**
-		 * @param statusCode
-		 * @param reasonCode
+		 * @param {number} statusCode Return code of the API request
+		 * @param {string} reasonCode The reason for the return code
 		 */
 		async function testMarkMessageErrors(statusCode, reasonCode) {
 			const temporaryMessage = {
@@ -1597,8 +1597,8 @@ describe('messagesStore', () => {
 
 	describe('hasMoreMessagesToLoad', () => {
 		/**
-		 * @param lastKnownMessageId
-		 * @param lastConversationMessageId
+		 * @param {number} lastKnownMessageId The last known/loaded message id
+		 * @param {number} lastConversationMessageId The last message id of the conversation
 		 */
 		function setupWithValues(lastKnownMessageId, lastConversationMessageId) {
 			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 123 })

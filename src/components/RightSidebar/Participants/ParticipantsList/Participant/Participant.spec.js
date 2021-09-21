@@ -23,8 +23,8 @@ describe('Participant.vue', () => {
 	let tooltipMock
 
 	/**
-	 * @param wrapper
-	 * @param htmlEl
+	 * @param {object} wrapper Wrapper where the tooltip is mounted in
+	 * @param {HTMLElement} htmlEl Tooltip to find
 	 */
 	async function getLastTooltipValue(wrapper, htmlEl) {
 		tooltipMock.mockClear()
@@ -81,8 +81,8 @@ describe('Participant.vue', () => {
 	})
 
 	/**
-	 * @param participant
-	 * @param showUserStatus
+	 * @param {object} participant Participant with optional user status data
+	 * @param {boolean} showUserStatus Whether or not the user status should be shown
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
 		return shallowMount(Participant, {
@@ -182,7 +182,7 @@ describe('Participant.vue', () => {
 
 	describe('user name', () => {
 		/**
-		 * @param wrapper
+		 * @param {object} wrapper Wrapper where the tooltip is mounted in
 		 */
 		async function getUserTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__user-name').element
@@ -232,7 +232,7 @@ describe('Participant.vue', () => {
 
 	describe('user status', () => {
 		/**
-		 * @param wrapper
+		 * @param {object} wrapper Wrapper where the tooltip is mounted in
 		 */
 		async function getStatusTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__status>span').element
@@ -273,7 +273,7 @@ describe('Participant.vue', () => {
 		let getParticipantRaisedHandMock
 
 		/**
-		 * @param wrapper
+		 * @param {object} wrapper Wrapper where the tooltip is mounted in
 		 */
 		async function getCallIconTooltip(wrapper) {
 			const tooltipEl = wrapper.find('.participant-row__callstate-icon').element
@@ -607,7 +607,7 @@ describe('Participant.vue', () => {
 			})
 
 			/**
-			 * @param buttonText
+			 * @param {string} buttonText Label of the remove action to find
 			 */
 			async function testCanRemove(buttonText = 'Remove participant') {
 				const wrapper = mountParticipant(participant)

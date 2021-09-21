@@ -210,8 +210,8 @@ describe('participantsStore', () => {
 			})
 
 			/**
-			 * @param participantType
-			 * @param expectedParticipantType
+			 * @param {number} participantType Participant type before the action
+			 * @param {number} expectedParticipantType Expected participant type after the action
 			 */
 			async function testPromoteModerator(participantType, expectedParticipantType) {
 				promoteToModerator.mockResolvedValue()
@@ -257,8 +257,8 @@ describe('participantsStore', () => {
 			})
 
 			/**
-			 * @param participantType
-			 * @param expectedParticipantType
+			 * @param {number} participantType Participant type before the action
+			 * @param {number} expectedParticipantType Expected participant type after the action
 			 */
 			async function testDemoteModerator(participantType, expectedParticipantType) {
 				promoteToModerator.mockResolvedValue()
@@ -569,8 +569,8 @@ describe('participantsStore', () => {
 			})
 
 			/**
-			 * @param lastPingAge
-			 * @param inCall
+			 * @param {number} lastPingAge The unix timestamp of the last ping of the participant
+			 * @param {number} inCall The in_call flag of the participant
 			 */
 			function prepareTestJoinWithMaxPingAge(lastPingAge, inCall) {
 				const mockDate = new Date('2020-01-01 20:00:00')
