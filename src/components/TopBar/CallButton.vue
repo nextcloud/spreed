@@ -49,9 +49,10 @@
 </template>
 
 <script>
-import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../constants'
 import browserCheck from '../../mixins/browserCheck'
 import isInCall from '../../mixins/isInCall'
+import isInLobby from '../../mixins/isInLobby'
 import participant from '../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
@@ -67,6 +68,7 @@ export default {
 	mixins: [
 		browserCheck,
 		isInCall,
+		isInLobby,
 		participant,
 	],
 
@@ -99,15 +101,10 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		isBlockedByLobby() {
-			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
-				&& !this.isParticipantTypeModerator(this.conversation.participantType)
-		},
-
 		startCallButtonDisabled() {
 			return (!this.conversation.canStartCall
 					&& !this.conversation.hasCall)
-				|| this.isBlockedByLobby
+				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
 				|| !this.currentConversationIsJoined
@@ -126,7 +123,7 @@ export default {
 		},
 
 		startCallLabel() {
-			if (this.conversation.hasCall && !this.isBlockedByLobby) {
+			if (this.conversation.hasCall && !this.isInLobby) {
 				return t('spreed', 'Join call')
 			}
 
@@ -154,7 +151,7 @@ export default {
 				return 'icon-loading-small'
 			}
 
-			if (this.conversation.hasCall && !this.isBlockedByLobby) {
+			if (this.conversation.hasCall && !this.isInLobby) {
 				return 'icon-incoming-call'
 			}
 
@@ -163,8 +160,8 @@ export default {
 
 		startCallButtonClasses() {
 			return {
-				primary: !this.conversation.hasCall && !this.isBlockedByLobby,
-				success: this.conversation.hasCall && !this.isBlockedByLobby,
+				primary: !this.conversation.hasCall && !this.isInLobby,
+				success: this.conversation.hasCall && !this.isInLobby,
 			}
 		},
 

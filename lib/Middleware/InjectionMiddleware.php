@@ -30,6 +30,8 @@ use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -196,6 +198,12 @@ class InjectionMiddleware extends Middleware {
 			return;
 		} catch (NotAModeratorException $e) {
 		} catch (ParticipantNotFoundException $e) {
+		}
+
+		$participant = $controller->getParticipant();
+		if ($participant instanceof Participant &&
+			$participant->getAttendee()->getPublishingPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE) {
+			return;
 		}
 
 		$room = $controller->getRoom();

@@ -42,6 +42,7 @@ export default {
 			return this.conversation
 				&& this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 				&& !this.isModerator
+				&& (this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) === 0
 		},
 	},
 
