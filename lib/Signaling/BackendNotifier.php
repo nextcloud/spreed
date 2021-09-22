@@ -296,7 +296,7 @@ class BackendNotifier {
 				'lastPing' => 0,
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
-				'participantPermissions' => Attendee::PERMISSIONS_NONE,
+				'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();

@@ -137,16 +137,16 @@ class Participant {
 	}
 
 	protected function getPermissionsFromFallbackChain(): int {
-		if ($this->getAttendee()->getPermissions()) {
+		if ($this->getAttendee()->getPermissions() !== Attendee::PERMISSIONS_DEFAULT) {
 			return $this->getAttendee()->getPermissions();
 		}
 
-		if ($this->room->getCallPermissions()) {
+		if ($this->room->getCallPermissions() !== Attendee::PERMISSIONS_DEFAULT) {
 			// The currently ongoing call is in a special mode
 			return $this->room->getCallPermissions();
 		}
 
-		if ($this->room->getDefaultPermissions()) {
+		if ($this->room->getDefaultPermissions() !== Attendee::PERMISSIONS_DEFAULT) {
 			// The conversation has some permissions set
 			return $this->room->getDefaultPermissions();
 		}

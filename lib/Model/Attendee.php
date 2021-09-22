@@ -68,13 +68,14 @@ class Attendee extends Entity {
 	public const ACTOR_BRIDGED = 'bridged';
 	public const ACTOR_FEDERATED_USERS = 'federated_users';
 
-	public const PERMISSIONS_NONE = 0;
-	public const PERMISSIONS_PUBLISH_AUDIO = 1;
-	public const PERMISSIONS_PUBLISH_VIDEO = 2;
-	public const PERMISSIONS_PUBLISH_SCREEN = 4;
-	public const PERMISSIONS_CALL_START = 8;
-	public const PERMISSIONS_CALL_JOIN = 16;
-	public const PERMISSIONS_LOBBY_IGNORE = 32;
+	public const PERMISSIONS_DEFAULT = 0;
+	public const PERMISSIONS_CUSTOM = 1;
+	public const PERMISSIONS_CALL_START = 2;
+	public const PERMISSIONS_CALL_JOIN = 4;
+	public const PERMISSIONS_LOBBY_IGNORE = 8;
+	public const PERMISSIONS_PUBLISH_AUDIO = 16;
+	public const PERMISSIONS_PUBLISH_VIDEO = 32;
+	public const PERMISSIONS_PUBLISH_SCREEN = 64;
 
 	public const PUBLISHING_PERMISSIONS_ALL = 7;
 

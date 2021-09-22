@@ -185,6 +185,10 @@ class Room {
 	/** @var int */
 	private $activeGuests;
 	/** @var int */
+	private $defaultPermissions;
+	/** @var int */
+	private $callPermissions;
+	/** @var int */
 	private $callFlag;
 	/** @var \DateTime|null */
 	private $activeSince;
@@ -222,6 +226,8 @@ class Room {
 								string $password,
 								string $serverUrl,
 								int $activeGuests,
+								int $defaultPermissions,
+								int $callPermissions,
 								int $callFlag,
 								?\DateTime $activeSince,
 								?\DateTime $lastActivity,
@@ -248,6 +254,8 @@ class Room {
 		$this->password = $password;
 		$this->serverUrl = $serverUrl;
 		$this->activeGuests = $activeGuests;
+		$this->defaultPermissions = $defaultPermissions;
+		$this->callPermissions = $callPermissions;
 		$this->callFlag = $callFlag;
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
@@ -340,6 +348,14 @@ class Room {
 	 */
 	public function getActiveGuests(): int {
 		return $this->activeGuests;
+	}
+
+	public function getDefaultPermissions(): int {
+		return $this->defaultPermissions;
+	}
+
+	public function getCallPermissions(): int {
+		return $this->callPermissions;
 	}
 
 	public function getCallFlag(): int {

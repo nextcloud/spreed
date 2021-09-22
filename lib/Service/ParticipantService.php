@@ -148,6 +148,10 @@ class ParticipantService {
 		}
 
 		$oldState = $participant->getPermissions();
+		if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
+			// Make sure the custom flag is set when not setting to default permissions
+			$newState |= Attendee::PERMISSIONS_CUSTOM;
+		}
 
 		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newState, $oldState);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);

@@ -42,6 +42,8 @@ class SelectHelper {
 			->addSelect($alias . 'password')
 			->addSelect($alias . 'active_guests')
 			->addSelect($alias . 'active_since')
+			->addSelect($alias . 'default_permissions')
+			->addSelect($alias . 'call_permissions')
 			->addSelect($alias . 'call_flag')
 			->addSelect($alias . 'last_activity')
 			->addSelect($alias . 'last_message')
@@ -71,7 +73,7 @@ class SelectHelper {
 			->addSelect($alias . 'last_mention_message')
 			->addSelect($alias . 'last_mention_direct')
 			->addSelect($alias . 'read_privacy')
-			->addSelect($alias . 'publishing_permissions')
+			->addSelect($alias . 'permissions')
 			->addSelect($alias . 'access_token')
 			->addSelect($alias . 'remote_id')
 			->selectAlias($alias . 'id', 'a_id');

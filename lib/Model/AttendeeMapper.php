@@ -216,6 +216,7 @@ class AttendeeMapper extends QBMapper {
 		}
 
 		if ($mode === Participant::PERMISSIONS_MODIFY_SET) {
+			$newState |= Attendee::PERMISSIONS_CUSTOM;
 			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
 		} else {
