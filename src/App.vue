@@ -66,6 +66,7 @@ import UploadEditor from './components/UploadEditor'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog'
 import '@nextcloud/dialogs/styles/toast.scss'
+import { CONVERSATION } from './constants'
 
 export default {
 	name: 'App',
@@ -119,6 +120,7 @@ export default {
 
 		/**
 		 * Keeps a list for all last message ids
+		 *
 		 * @returns {object} Map with token => lastMessageId
 		 */
 		lastMessageMap() {
@@ -169,10 +171,29 @@ export default {
 
 		/**
 		 * The current conversation token
+		 *
 		 * @returns {string} The token.
 		 */
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		/**
+		 * The current conversation
+		 *
+		 * @returns {object} The conversation object.
+		 */
+		currentConversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		/**
+		 * Computes whether the current conversation is one to one
+		 *
+		 * @returns {boolean} The result
+		 */
+		isOneToOne() {
+			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 	},
 
@@ -183,6 +204,15 @@ export default {
 			}
 
 			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
+		},
+
+		token() {
+			// Collapse the sidebar if it's a 1to1 conversation
+			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false') {
+				this.$store.dispatch('hideSidebar')
+			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
+				this.$store.dispatch('showSidebar')
+			}
 		},
 	},
 
@@ -290,7 +320,7 @@ export default {
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
-		*/
+		 */
 		Router.beforeEach((to, from, next) => {
 			if (this.warnLeaving && !to.params?.skipLeaveWarning) {
 				OC.dialogs.confirmDestructive(
@@ -315,6 +345,7 @@ export default {
 			} else {
 				beforeRouteChangeListener(to, from, next)
 			}
+
 		})
 
 		if (getCurrentUser()) {
@@ -376,6 +407,7 @@ export default {
 
 		/**
 		 * Set the page title to the conversation name
+		 *
 		 * @param {string} title Prefix for the page title e.g. conversation name
 		 * @param {boolean} showAsterix Prefix for the page title e.g. conversation name
 		 */
@@ -411,6 +443,7 @@ export default {
 
 		/**
 		 * Get a conversation's name.
+		 *
 		 * @param {string} token The conversation's token
 		 * @returns {string} The conversation's name
 		 */
