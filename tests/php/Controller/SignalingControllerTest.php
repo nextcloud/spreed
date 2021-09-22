@@ -668,7 +668,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		], $result->getData());
 	}
 
-	public function dataBackendRoomUserPublicPublishingPermissions(): array {
+	public function dataBackendRoomUserPublicPermissions(): array {
 		return [
 			[Attendee::PERMISSIONS_NONE, []],
 			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-media']],
@@ -682,12 +682,12 @@ class SignalingControllerTest extends \Test\TestCase {
 	}
 
 	/**
-	 * @dataProvider dataBackendRoomUserPublicPublishingPermissions
+	 * @dataProvider dataBackendRoomUserPublicPermissions
 	 *
-	 * @param int $publishingPermissions
+	 * @param int $permissions
 	 * @param array $expectedBackendPermissions
 	 */
-	public function testBackendRoomUserPublicPublishingPermissions(int $publishingPermissions, array $expectedBackendPermissions) {
+	public function testBackendRoomUserPublicPermissions(int $permissions, array $expectedBackendPermissions) {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -697,7 +697,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => $publishingPermissions,
+			'permissions' => $permissions,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())

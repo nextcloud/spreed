@@ -398,8 +398,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['attendeePin'])) {
 					$data['attendeePin'] = $attendee['attendeePin'] ? '**PIN**' : '';
 				}
-				if (isset($expectedKeys['publishingPermissions'])) {
-					$data['publishingPermissions'] = (string) $attendee['publishingPermissions'];
+				if (isset($expectedKeys['permissions'])) {
+					$data['permissions'] = (string) $attendee['permissions'];
 				}
 
 				if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
@@ -417,8 +417,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['participantType'])) {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
-				if (isset($attendee['publishingPermissions'])) {
-					$attendee['publishingPermissions'] = (string)$this->mapPublishingPermissionsTestInput($attendee['publishingPermissions']);
+				if (isset($attendee['permissions'])) {
+					$attendee['permissions'] = (string)$this->mapPermissionsTestInput($attendee['permissions']);
 				}
 				return $attendee;
 			}, $formData->getHash());
@@ -480,12 +480,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::fail('Invalid test input value for participant type');
 	}
 
-	private function mapPublishingPermissionsTestInput($publishingPermissions) {
-		if (is_numeric($publishingPermissions)) {
-			return $publishingPermissions;
+	// FIXME this function needs rewriting
+	private function mapPermissionsTestInput($permissions) {
+		if (is_numeric($permissions)) {
+			return $permissions;
 		}
 
-		switch ($publishingPermissions) {
+		switch ($permissions) {
 			case 'NONE': return 0;
 			case 'AUDIO': return 1;
 			case 'VIDEO': return 2;
@@ -493,7 +494,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			case 'ALL': return 7;
 		}
 
-		Assert::fail('Invalid test input value for publishing permissions');
+		Assert::fail('Invalid test input value for permissions');
 	}
 
 	/**
@@ -1087,12 +1088,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^user "([^"]*)" sets publishing permissions for "([^"]*)" in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
+	 * @param string $participant
 	 * @param string $identifier
-	 * @param string $publishingPermissionsString
+	 * @param string $permissionsString
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSetsPublishingPermissionsForInRoomTo(string $user, string $participant, string $identifier, string $publishingPermissionsString, int $statusCode, string $apiVersion): void {
+	public function userSetsPermissionsForInRoomTo(string $user, string $participant, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
 			$attendeeId = 123456789;
 		} elseif (strpos($participant, 'guest') === 0) {
@@ -1102,23 +1104,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$attendeeId = $this->getAttendeeId('users', $participant, $identifier, $statusCode === 200 ? $user : null);
 		}
 
-		if ($publishingPermissionsString === 'NONE') {
-			$publishingPermissions = 0;
-		} elseif ($publishingPermissionsString === 'AUDIO') {
-			$publishingPermissions = 1;
-		} elseif ($publishingPermissionsString === 'VIDEO') {
-			$publishingPermissions = 2;
-		} elseif ($publishingPermissionsString === 'SCREENSHARING') {
-			$publishingPermissions = 4;
-		} elseif ($publishingPermissionsString === 'ALL') {
-			$publishingPermissions = 7;
+		if ($permissionsString === 'NONE') {
+			$permissions = 0;
+		} elseif ($permissionsString === 'AUDIO') {
+			$permissions = 1;
+		} elseif ($permissionsString === 'VIDEO') {
+			$permissions = 2;
+		} elseif ($permissionsString === 'SCREENSHARING') {
+			$permissions = 4;
+		} elseif ($permissionsString === 'ALL') {
+			$permissions = 7;
 		} else {
-			Assert::fail('Invalid publishing permissions');
+			Assert::fail('Invalid permissions');
 		}
 
 		$requestParameters = [
 			['attendeeId', $attendeeId],
-			['state', $publishingPermissions],
+			['state', $permissions],
 		];
 
 		$this->setCurrentUser($user);

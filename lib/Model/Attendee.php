@@ -51,8 +51,9 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastMentionDirect()
  * @method void setReadPrivacy(int $readPrivacy)
  * @method int getReadPrivacy()
- * @method void setPublishingPermissions(int $publishingPermissions)
- * @method int getPublishingPermissions()
+ * @method void setPermissions(int $permissions)
+ * @internal
+ * @method int getPermissions()
  * @method void setAccessToken(string $accessToken)
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
@@ -117,7 +118,7 @@ class Attendee extends Entity {
 	protected $readPrivacy;
 
 	/** @var int */
-	protected $publishingPermissions;
+	protected $permissions;
 
 	/** @var string */
 	protected $accessToken;
@@ -139,7 +140,7 @@ class Attendee extends Entity {
 		$this->addType('lastMentionMessage', 'int');
 		$this->addType('lastMentionDirect', 'int');
 		$this->addType('readPrivacy', 'int');
-		$this->addType('publishingPermissions', 'int');
+		$this->addType('permissions', 'int');
 		$this->addType('accessToken', 'string');
 		$this->addType('remote_id', 'string');
 	}
@@ -167,7 +168,7 @@ class Attendee extends Entity {
 			'last_mention_message' => $this->getLastMentionMessage(),
 			'last_mention_direct' => $this->getLastMentionDirect(),
 			'read_privacy' => $this->getReadPrivacy(),
-			'publishing_permissions' => $this->getPublishingPermissions(),
+			'permissions' => $this->getPermissions(),
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
 		];

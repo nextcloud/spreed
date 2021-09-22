@@ -99,6 +99,10 @@ class Participant {
 	public function canStartCall(IConfig $config): bool {
 		$defaultStartCall = (int) $config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
 
+		if (!($this->getPermissions() & Attendee::PERMISSIONS_CALL_START)) {
+			return false;
+		}
+
 		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
 			return true;
 		}
@@ -112,5 +116,49 @@ class Participant {
 		}
 
 		return false;
+	}
+
+	public function getPermissions(): int {
+		$permissions = $this->getPermissionsFromFallbackChain();
+
+		if ($this->hasModeratorPermissions()) {
+			// Moderators can always do everything
+			$permissions |=
+				Attendee::PERMISSIONS_CALL_START |
+				Attendee::PERMISSIONS_CALL_JOIN |
+				Attendee::PERMISSIONS_LOBBY_IGNORE |
+				Attendee::PERMISSIONS_PUBLISH_AUDIO |
+				Attendee::PERMISSIONS_PUBLISH_VIDEO |
+				Attendee::PERMISSIONS_PUBLISH_SCREEN
+			;
+		}
+
+		return $permissions;
+	}
+
+	protected function getPermissionsFromFallbackChain(): int {
+		if ($this->getAttendee()->getPermissions()) {
+			return $this->getAttendee()->getPermissions();
+		}
+
+		if ($this->room->getCallPermissions()) {
+			// The currently ongoing call is in a special mode
+			return $this->room->getCallPermissions();
+		}
+
+		if ($this->room->getDefaultPermissions()) {
+			// The conversation has some permissions set
+			return $this->room->getDefaultPermissions();
+		}
+
+		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
+		return
+			Attendee::PERMISSIONS_CALL_START |
+			Attendee::PERMISSIONS_CALL_JOIN |
+			// Attendee::PERMISSIONS_LOBBY_IGNORE |
+			Attendee::PERMISSIONS_PUBLISH_AUDIO |
+			Attendee::PERMISSIONS_PUBLISH_VIDEO |
+			Attendee::PERMISSIONS_PUBLISH_SCREEN
+		;
 	}
 }

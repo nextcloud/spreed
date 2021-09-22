@@ -301,15 +301,15 @@ export default {
 		},
 
 		isAudioAllowed() {
-			return this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
+			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 		},
 
 		isVideoAllowed() {
-			return this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
+			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 		},
 
 		isScreensharingAllowed() {
-			return this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN
+			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN
 		},
 
 		audioButtonClass() {

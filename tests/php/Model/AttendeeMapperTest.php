@@ -46,7 +46,7 @@ class AttendeeMapperTest extends TestCase {
 		);
 	}
 
-	public function dataModifyPublishingPermissions(): array {
+	public function dataModifyPermissions(): array {
 		return [
 			0 => [
 				[
@@ -54,34 +54,34 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_CIRCLES,
 						'actor_id' => 'c1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_GROUPS,
 						'actor_id' => 'g1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 				],
-				Participant::PERMISSIONS_SET,
+				Participant::PERMISSIONS_MODIFY_SET,
 				Participant::FLAG_IN_CALL,
 				false,
 				[
@@ -89,31 +89,31 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_CIRCLES,
 						'actor_id' => 'c1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_GROUPS,
 						'actor_id' => 'g1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
 			],
@@ -123,34 +123,34 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_CIRCLES,
 						'actor_id' => 'c1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_GROUPS,
 						'actor_id' => 'g1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 				],
-				Participant::PERMISSIONS_SET,
+				Participant::PERMISSIONS_MODIFY_SET,
 				Participant::FLAG_IN_CALL,
 				true,
 				[
@@ -158,31 +158,31 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_CIRCLES,
 						'actor_id' => 'c1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_GROUPS,
 						'actor_id' => 'g1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
 			],
@@ -192,22 +192,22 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 				],
-				Participant::PERMISSIONS_SET,
+				Participant::PERMISSIONS_MODIFY_SET,
 				Participant::FLAG_IN_CALL,
 				false,
 				[
@@ -215,19 +215,19 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
 			],
@@ -237,22 +237,22 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 				],
-				Participant::PERMISSIONS_SET,
+				Participant::PERMISSIONS_MODIFY_SET,
 				Participant::FLAG_IN_CALL,
 				true,
 				[
@@ -260,19 +260,19 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
 			],
@@ -282,28 +282,28 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO,
+						'permissions' => Participant::FLAG_WITH_AUDIO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u2',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
-				Participant::PERMISSIONS_ADD,
+				Participant::PERMISSIONS_MODIFY_ADD,
 				Participant::FLAG_IN_CALL,
 				true,
 				[
@@ -311,25 +311,25 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u2',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 				],
 			],
@@ -339,34 +339,34 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_VIDEO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u2',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_IN_CALL,
+						'permissions' => Participant::FLAG_IN_CALL,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u3',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 				],
-				Participant::PERMISSIONS_REMOVE,
+				Participant::PERMISSIONS_MODIFY_REMOVE,
 				Participant::FLAG_IN_CALL,
 				true,
 				[
@@ -374,31 +374,31 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'publishing_permissions' => Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO,
+						'permissions' => Participant::FLAG_WITH_AUDIO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u2',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_DISCONNECTED,
+						'permissions' => Participant::FLAG_DISCONNECTED,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u3',
 						'participant_type' => Participant::USER,
-						'publishing_permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
+						'permissions' => Participant::FLAG_WITH_AUDIO + Participant::FLAG_WITH_VIDEO,
 					],
 				],
 			],
@@ -406,14 +406,14 @@ class AttendeeMapperTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataModifyPublishingPermissions
+	 * @dataProvider dataModifyPermissions
 	 * @param array $attendees
 	 * @param string $mode
 	 * @param int $permission
 	 * @param bool $includeModerators
 	 * @param array $expected
 	 */
-	public function testModifyPublishingPermissions(array $attendees, string $mode, int $permission, bool $includeModerators, array $expected): void {
+	public function testModifyPermissions(array $attendees, string $mode, int $permission, bool $includeModerators, array $expected): void {
 		$roomId = 12345678;
 
 		foreach ($attendees as $attendeeData) {
@@ -428,19 +428,19 @@ class AttendeeMapperTest extends TestCase {
 			$attendee->setActorType($attendeeData['actor_type']);
 			$attendee->setActorId($attendeeData['actor_id']);
 			$attendee->setParticipantType($attendeeData['participant_type']);
-			$attendee->setPublishingPermissions($attendeeData['publishing_permissions']);
+			$attendee->setPermissions($attendeeData['permissions']);
 			$this->attendeeMapper->insert($attendee);
 		}
 
-		$this->attendeeMapper->modifyPublishingPermissions($roomId, $mode, $permission, $includeModerators);
+		$this->attendeeMapper->modifyPermissions($roomId, $mode, $permission, $includeModerators);
 
 		foreach ($expected as $attendeeData) {
 			$attendee = $this->attendeeMapper->findByActor($roomId, $attendeeData['actor_type'], $attendeeData['actor_id']);
 
 			$this->assertEquals(
-				$attendeeData['publishing_permissions'],
-				$attendee->getPublishingPermissions(),
-				'Publishing permissions mismatch for ' . $attendeeData['actor_type'] . '#' . $attendeeData['actor_id']
+				$attendeeData['permissions'],
+				$attendee->getPermissions(),
+				'Permissions mismatch for ' . $attendeeData['actor_type'] . '#' . $attendeeData['actor_id']
 			);
 			$this->attendeeMapper->delete($attendee);
 		}

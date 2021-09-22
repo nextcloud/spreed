@@ -355,22 +355,20 @@ return [
 		],
 		[
 			'name' => 'Room#setAttendeePermissions',
-			'url' => '/api/{apiVersion}/room/{token}/attendees/{permissions}',
+			'url' => '/api/{apiVersion}/room/{token}/attendees/permissions',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
-				'permissions' => '^(publishing-permissions|permissions)$',
 			],
 		],
 		[
 			'name' => 'Room#setAllAttendeesPermissions',
-			'url' => '/api/{apiVersion}/room/{token}/attendees/{permissions}/all',
+			'url' => '/api/{apiVersion}/room/{token}/attendees/permissions/all',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v(4)',
 				'token' => '^[a-z0-9]{4,30}$',
-				'permissions' => '^(publishing-permissions|permissions)$',
 			],
 		],
 		[

@@ -198,7 +198,7 @@ class AttendeeMapper extends QBMapper {
 		return (int) $query->execute();
 	}
 
-	public function modifyPublishingPermissions(int $roomId, string $mode, int $newState, bool $includeModerators): void {
+	public function modifyPermissions(int $roomId, string $mode, int $newState, bool $includeModerators): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
@@ -216,7 +216,7 @@ class AttendeeMapper extends QBMapper {
 		}
 
 		if ($mode === Participant::PERMISSIONS_MODIFY_SET) {
-			$query->set('publishing_permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
+			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
 		} else {
 			foreach ([
@@ -229,53 +229,53 @@ class AttendeeMapper extends QBMapper {
 			] as $permission) {
 				if ($permission & $newState) {
 					if ($mode === Participant::PERMISSIONS_MODIFY_ADD) {
-						$this->addSinglePublishingPermission($query, $permission);
+						$this->addSinglePermission($query, $permission);
 					} elseif ($mode === Participant::PERMISSIONS_MODIFY_REMOVE) {
-						$this->removeSinglePublishingPermission($query, $permission);
+						$this->removeSinglePermission($query, $permission);
 					}
 				}
 			}
 		}
 	}
 
-	protected function addSinglePublishingPermission(IQueryBuilder $query, int $publishingPermission): void {
-		$query->set('publishing_permissions', $query->func()->add(
-			'publishing_permissions',
-			$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+	protected function addSinglePermission(IQueryBuilder $query, int $permission): void {
+		$query->set('permissions', $query->func()->add(
+			'permissions',
+			$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
 		));
 
 		$query->andWhere(
 			$query->expr()->neq(
 				$query->expr()->castColumn(
 					$query->expr()->bitwiseAnd(
-						'publishing_permissions',
-						$publishingPermission
+						'permissions',
+						$permission
 					),
 					IQueryBuilder::PARAM_INT
 				),
-				$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
 			)
 		);
 
 		$query->executeStatement();
 	}
 
-	protected function removeSinglePublishingPermission(IQueryBuilder $query, int $publishingPermission): void {
-		$query->set('publishing_permissions', $query->func()->subtract(
-			'publishing_permissions',
-			$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+	protected function removeSinglePermission(IQueryBuilder $query, int $permission): void {
+		$query->set('permissions', $query->func()->subtract(
+			'permissions',
+			$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
 		));
 
 		$query->andWhere(
 			$query->expr()->eq(
 				$query->expr()->castColumn(
 					$query->expr()->bitwiseAnd(
-						'publishing_permissions',
-						$publishingPermission
+						'permissions',
+						$permission
 					),
-				IQueryBuilder::PARAM_INT
+					IQueryBuilder::PARAM_INT
 				),
-				$query->createNamedParameter($publishingPermission, IQueryBuilder::PARAM_INT)
+				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
 			)
 		);
 
@@ -298,7 +298,7 @@ class AttendeeMapper extends QBMapper {
 			'last_mention_message' => (int) $row['last_mention_message'],
 			'last_mention_direct' => (int) $row['last_mention_direct'],
 			'read_privacy' => (int) $row['read_privacy'],
-			'publishing_permissions' => (int) $row['publishing_permissions'],
+			'permissions' => (int) $row['permissions'],
 			'access_token' => (string) $row['access_token'],
 			'remote_id' => (string) $row['remote_id'],
 		]);

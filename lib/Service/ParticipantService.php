@@ -147,26 +147,26 @@ class ParticipantService {
 			return;
 		}
 
-		$oldState = $attendee->getPublishingPermissions();
+		$oldState = $participant->getPermissions();
 
-		$event = new ModifyParticipantEvent($room, $participant, 'publishingPermissions', $newState, $oldState);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newState, $oldState);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
-		$attendee->setPublishingPermissions($newState);
+		$attendee->setPermissions($newState);
 		$this->attendeeMapper->update($attendee);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
 	}
 
 	public function updateAllPermissions(Room $room, string $mode, int $newState, bool $includeModerators): void {
 		// FIXME Add events after checking what should be sent to the HPB
-		// $event = new ModifyParticipantEvent($room, $participant, 'publishingPermissions', $newState, $oldState);
-		// $this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		// $event = new ModifyParticipantEvent($room, $participant, 'permissions', $newState, $oldState);
+		// $this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
-		$this->attendeeMapper->modifyPublishingPermissions($room->getId(), $mode, $newState, $includeModerators);
+		$this->attendeeMapper->modifyPermissions($room->getId(), $mode, $newState, $includeModerators);
 
 		// FIXME Add events after checking what should be sent to the HPB
-		// $this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		// $this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
 	}
 
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
@@ -871,11 +871,11 @@ class ParticipantService {
 			return;
 		}
 
-		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
+		$permissions = $participant->getPermissions();
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
@@ -916,11 +916,11 @@ class ParticipantService {
 			throw new \InvalidArgumentException('Invalid flags');
 		}
 
-		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
+		$permissions = $participant->getPermissions();
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 

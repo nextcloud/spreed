@@ -405,7 +405,7 @@ class RoomController extends AEnvironmentAwareController {
 			'actorType' => '',
 			'actorId' => '',
 			'attendeeId' => 0,
-			'publishingPermissions' => Attendee::PERMISSIONS_NONE,
+			'permissions' => Attendee::PERMISSIONS_NONE,
 			'canEnableSIP' => false,
 			'attendeePin' => '',
 			'description' => '',
@@ -471,7 +471,7 @@ class RoomController extends AEnvironmentAwareController {
 			'actorType' => $attendee->getActorType(),
 			'actorId' => $attendee->getActorId(),
 			'attendeeId' => $attendee->getId(),
-			'publishingPermissions' => $attendee->getPublishingPermissions(),
+			'permissions' => $currentParticipant->getPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 		]);
@@ -520,7 +520,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
 			!$currentParticipant->hasModeratorPermissions() &&
-			!($currentParticipant->getAttendee()->getPublishingPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 			// No participants and chat messages for users in the lobby.
 			$roomData['hasCall'] = false;
 			return $roomData;
@@ -955,7 +955,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $participant->getAttendee()->getActorId(),
 				'actorType' => $participant->getAttendee()->getActorType(),
 				'displayName' => $participant->getAttendee()->getActorId(),
-				'publishingPermissions' => $participant->getAttendee()->getPublishingPermissions(),
+				'permissions' => $participant->getPermissions(),
 				'attendeePin' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()

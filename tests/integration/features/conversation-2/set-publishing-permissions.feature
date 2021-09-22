@@ -17,11 +17,11 @@ Feature: set-publishing-permissions
     And user "moderator" sets publishing permissions for "owner" in room "one-to-one room" to "NONE" with 400 (v4)
     And user "moderator" sets publishing permissions for "moderator" in room "one-to-one room" to "NONE" with 400 (v4)
     Then user "owner" sees the following attendees in room "one-to-one room" with 200 (v4)
-      | actorType  | actorId   | publishingPermissions |
+      | actorType  | actorId   | permissions |
       | users      | owner     | ALL                   |
       | users      | moderator | ALL                   |
     And user "moderator" sees the following attendees in room "one-to-one room" with 200 (v4)
-      | actorType  | actorId   | publishingPermissions |
+      | actorType  | actorId   | permissions |
       | users      | owner     | ALL                   |
       | users      | moderator | ALL                   |
 
@@ -39,17 +39,17 @@ Feature: set-publishing-permissions
     And user "owner" sets publishing permissions for "moderator" in room "group room" to "NONE" with 200 (v4)
     And user "owner" sets publishing permissions for "invited user" in room "group room" to "NONE" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
@@ -66,17 +66,17 @@ Feature: set-publishing-permissions
     And user "moderator" sets publishing permissions for "moderator" in room "group room" to "NONE" with 200 (v4)
     And user "moderator" sets publishing permissions for "invited user" in room "group room" to "NONE" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | NONE                  |
       | users      | moderator    | NONE                  |
       | users      | invited user | NONE                  |
@@ -100,17 +100,17 @@ Feature: set-publishing-permissions
     And user "guest not joined" sets publishing permissions for "moderator" in room "group room" to "NONE" with 404 (v4)
     And user "guest not joined" sets publishing permissions for "invited user" in room "group room" to "NONE" with 404 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | ALL                   |
       | users      | moderator    | ALL                   |
       | users      | invited user | ALL                   |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | ALL                   |
       | users      | moderator    | ALL                   |
       | users      | invited user | ALL                   |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
-      | actorType  | actorId      | publishingPermissions |
+      | actorType  | actorId      | permissions |
       | users      | owner        | ALL                   |
       | users      | moderator    | ALL                   |
       | users      | invited user | ALL                   |
@@ -136,7 +136,7 @@ Feature: set-publishing-permissions
     And user "owner" sets publishing permissions for "guest moderator" in room "public room" to "NONE" with 200 (v4)
     And user "owner" sets publishing permissions for "guest" in room "public room" to "NONE" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -144,7 +144,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -152,7 +152,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -160,7 +160,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -168,7 +168,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -195,7 +195,7 @@ Feature: set-publishing-permissions
     And user "moderator" sets publishing permissions for "guest moderator" in room "public room" to "NONE" with 200 (v4)
     And user "moderator" sets publishing permissions for "guest" in room "public room" to "NONE" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -203,7 +203,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -211,7 +211,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -219,7 +219,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -227,7 +227,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -256,7 +256,7 @@ Feature: set-publishing-permissions
     And user "guest moderator" sets publishing permissions for "guest moderator" in room "public room" to "NONE" with 200 (v4)
     And user "guest moderator" sets publishing permissions for "guest" in room "public room" to "NONE" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -264,7 +264,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -272,7 +272,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -280,7 +280,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -288,7 +288,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | NONE                  |
       | guests     | "guest"                     | NONE                  |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | NONE                  |
       | users      | moderator                   | NONE                  |
       | users      | invited user                | NONE                  |
@@ -341,7 +341,7 @@ Feature: set-publishing-permissions
     And user "guest not joined" sets publishing permissions for "guest moderator" in room "public room" to "NONE" with 404 (v4)
     And user "guest not joined" sets publishing permissions for "guest" in room "public room" to "NONE" with 404 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | ALL                   |
       | users      | moderator                   | ALL                   |
       | users      | invited user                | ALL                   |
@@ -349,7 +349,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | ALL                   |
       | guests     | "guest"                     | ALL                   |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | ALL                   |
       | users      | moderator                   | ALL                   |
       | users      | invited user                | ALL                   |
@@ -357,7 +357,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | ALL                   |
       | guests     | "guest"                     | ALL                   |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | ALL                   |
       | users      | moderator                   | ALL                   |
       | users      | invited user                | ALL                   |
@@ -365,7 +365,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | ALL                   |
       | guests     | "guest"                     | ALL                   |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | ALL                   |
       | users      | moderator                   | ALL                   |
       | users      | invited user                | ALL                   |
@@ -373,7 +373,7 @@ Feature: set-publishing-permissions
       | guests     | "guest moderator"           | ALL                   |
       | guests     | "guest"                     | ALL                   |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
-      | actorType  | actorId                     | publishingPermissions |
+      | actorType  | actorId                     | permissions |
       | users      | owner                       | ALL                   |
       | users      | moderator                   | ALL                   |
       | users      | invited user                | ALL                   |
@@ -407,12 +407,12 @@ Feature: set-publishing-permissions
     And user "guest" sets publishing permissions for "user with access to file" in room "file last share room" to "NONE" with 403 (v4)
     And user "guest" sets publishing permissions for "guest" in room "file last share room" to "NONE" with 403 (v4)
     Then user "owner of file" sees the following attendees in room "file last share room" with 200 (v4)
-      | actorType  | actorId                  | publishingPermissions |
+      | actorType  | actorId                  | permissions |
       | users      | owner of file            | ALL                   |
       | users      | user with access to file | ALL                   |
       | guests     | "guest"                  | ALL                   |
     And user "user with access to file" sees the following attendees in room "file last share room" with 200 (v4)
-      | actorType  | actorId                  | publishingPermissions |
+      | actorType  | actorId                  | permissions |
       | users      | owner of file            | ALL                   |
       | users      | user with access to file | ALL                   |
       | guests     | "guest"                  | ALL                   |
@@ -434,6 +434,6 @@ Feature: set-publishing-permissions
     When user "owner of file" sets publishing permissions for "owner of file" in room "password request for last share room" to "NONE" with 200 (v4)
     And user "owner of file" sets publishing permissions for "guest" in room "password request for last share room" to "NONE" with 200 (v4)
     Then user "owner of file" sees the following attendees in room "password request for last share room" with 200 (v4)
-      | actorType  | actorId       | publishingPermissions |
+      | actorType  | actorId       | permissions |
       | users      | owner of file | NONE                  |
       | guests     | "guest"       | NONE                  |

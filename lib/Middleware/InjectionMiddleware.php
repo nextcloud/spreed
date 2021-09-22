@@ -202,7 +202,7 @@ class InjectionMiddleware extends Middleware {
 
 		$participant = $controller->getParticipant();
 		if ($participant instanceof Participant &&
-			$participant->getAttendee()->getPublishingPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE) {
+			$participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE) {
 			return;
 		}
 

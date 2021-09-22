@@ -187,10 +187,10 @@ export default {
 
 		async joinCall() {
 			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
-			if (this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
 				flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			}
-			if (this.conversation.publishingPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
 				flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			}
 
