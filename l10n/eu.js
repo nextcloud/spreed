@@ -131,6 +131,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "Administratzaile batek {user} erabiltzaileari moderatzaile rola kendu dio",
     "{actor} shared a file which is no longer available" : "{actor} erabiltzaileak erabilgarri ez dagoen fitxategi bat partekatu du",
     "You shared a file which is no longer available" : "Eskuragarri ez dagoen fitxategi bat partekatu duzu",
+    "The shared location is malformed" : "Partekatutako kokalekua gaizki osatuta dago",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} erabiltzaileak Matterbridge konfiguratu du elkarrizketa hau beste txat batzuekin sinkronizatzeko",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Matterbridge konfiguratu duzu elkarrizketa hau beste txat batzuekin sinkronizatzeko",
     "{actor} updated the Matterbridge configuration" : "{actor} erabiltzaileak Matterbridge konfigurazioa eguneratu du",
