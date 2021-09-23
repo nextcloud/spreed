@@ -129,6 +129,7 @@
     "An administrator demoted {user} from moderator" : "Administrátor zrušil {user} ako moderátora",
     "{actor} shared a file which is no longer available" : "{actor} sprístupnil súbor ktorý už nie je dostupný",
     "You shared a file which is no longer available" : "Sprístupnili ste súbor ktorý už nie je dostupný",
+    "The shared location is malformed" : "Zdieľané umiestnenie je poškodené",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} nastavil Matterbridge na synchronizáciu tejto konverzácie s inými rozhovormi.",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Nastavili ste Matterbridge na synchronizáciu tejto konverzácie s inými rozhovormi.",
     "{actor} updated the Matterbridge configuration" : "{actor} aktualizoval nastavenie Matterbridge",
