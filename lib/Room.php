@@ -830,6 +830,7 @@ class Room {
 			->set('active_guests', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('active_since', $query->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
 			->set('call_flag', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('call_permissions', $query->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('active_since'));
 
