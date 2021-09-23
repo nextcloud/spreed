@@ -1046,6 +1046,46 @@ class Room {
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
 
+		return true;
+	}
+
+	public function setPermissions(string $mode, int $newPermissions): bool {
+		if ($mode === 'default') {
+			$oldPermissions = $this->defaultPermissions;
+		} elseif ($mode === 'call') {
+			$oldPermissions = $this->callPermissions;
+		} else {
+			return false;
+		}
+
+		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX) {
+			return false;
+		}
+
+		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($newPermissions === $oldPermissions) {
+			return true;
+		}
+
+		$event = new ModifyRoomEvent($this, $mode . 'Permissions', $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_PERMISSIONS_SET, $event);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('default_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		if ($mode === 'default') {
+			$this->defaultPermissions = $newPermissions;
+		} else {
+			$this->callPermissions = $newPermissions;
+		}
+
+		$this->dispatcher->dispatch(self::EVENT_AFTER_PERMISSIONS_SET, $event);
 
 		return true;
 	}

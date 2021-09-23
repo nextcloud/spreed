@@ -318,6 +318,16 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setPermissions',
+			'url' => '/api/{apiVersion}/room/{token}/permissions/{mode}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+				'mode' => '^(call|default)$',
+			],
+		],
+		[
 			'name' => 'Room#getParticipants',
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'GET',

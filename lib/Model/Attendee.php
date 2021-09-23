@@ -76,6 +76,7 @@ class Attendee extends Entity {
 	public const PERMISSIONS_PUBLISH_AUDIO = 16;
 	public const PERMISSIONS_PUBLISH_VIDEO = 32;
 	public const PERMISSIONS_PUBLISH_SCREEN = 64;
+	public const PERMISSIONS_MAX = 127; // Max int (when all permissions are granted)
 
 	public const PUBLISHING_PERMISSIONS_ALL = 7;
 

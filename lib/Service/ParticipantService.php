@@ -302,6 +302,7 @@ class ParticipantService {
 			$attendee->setActorType(Attendee::ACTOR_GUESTS);
 			$attendee->setActorId($randomActorId);
 			$attendee->setParticipantType(Participant::GUEST);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$this->attendeeMapper->insert($attendee);
 
@@ -369,6 +370,7 @@ class ParticipantService {
 				$attendee->setRemoteId($participant['remoteId']);
 			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			try {
@@ -464,6 +466,7 @@ class ParticipantService {
 			$attendee->setActorId($group->getGID());
 			$attendee->setDisplayName($group->getDisplayName());
 			$attendee->setParticipantType(Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
 			$this->attendeeMapper->insert($attendee);
 
@@ -564,6 +567,7 @@ class ParticipantService {
 			$attendee->setActorId($circle->getSingleId());
 			$attendee->setDisplayName($circle->getDisplayName());
 			$attendee->setParticipantType(Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
 			$this->attendeeMapper->insert($attendee);
 

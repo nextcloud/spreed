@@ -1511,11 +1511,26 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 *
-	 * @param int $attendeeId
-	 * @param int $state
+	 * @param int $permissions
 	 * @return DataResponse
 	 */
-	public function setAttendeePermissions(int $attendeeId, int $state): DataResponse {
+	public function setPermissions(string $mode, int $permissions): DataResponse {
+		if (!$this->room->setPermissions($mode, $permissions)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $attendeeId
+	 * @param int $permissions
+	 * @return DataResponse
+	 */
+	public function setAttendeePermissions(int $attendeeId, int $permissions): DataResponse {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
@@ -1526,7 +1541,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updatePermissions($this->room, $targetParticipant, $state);
+		$this->participantService->updatePermissions($this->room, $targetParticipant, $permissions);
 
 		return new DataResponse();
 	}
@@ -1536,11 +1551,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 *
 	 * @param string $method
-	 * @param int $state
+	 * @param int $permissions
 	 * @param bool $includeModerators
 	 * @return DataResponse
 	 */
-	public function setAllAttendeesPermissions(string $method, int $state, bool $includeModerators): DataResponse {
+	public function setAllAttendeesPermissions(string $method, int $permissions, bool $includeModerators): DataResponse {
 		if (!in_array($method, [
 			Participant::PERMISSIONS_MODIFY_ADD,
 			Participant::PERMISSIONS_MODIFY_REMOVE,
@@ -1553,7 +1568,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updateAllPermissions($this->room, $method, $state, $includeModerators);
+		$this->participantService->updateAllPermissions($this->room, $method, $permissions, $includeModerators);
 
 		return new DataResponse();
 	}
