@@ -116,6 +116,8 @@ class Room {
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
 	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
+	public const EVENT_BEFORE_PERMISSIONS_SET = self::class . '::preSetPermissions';
+	public const EVENT_AFTER_PERMISSIONS_SET = self::class . '::postSetPermissions';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
 	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
@@ -1059,7 +1061,7 @@ class Room {
 			return false;
 		}
 
-		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX) {
+		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
 			return false;
 		}
 

@@ -391,12 +391,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -447,12 +450,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -503,12 +509,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$participant->expects($this->once())
 			->method('hasModeratorPermissions')
 			->with(false)
@@ -565,12 +574,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
@@ -622,12 +634,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
@@ -670,7 +685,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 	public function dataBackendRoomUserPublicPermissions(): array {
 		return [
-			[Attendee::PERMISSIONS_NONE, []],
+			[Attendee::PERMISSIONS_DEFAULT, []],
 			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-media']],
 			[Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
 			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
@@ -703,6 +718,9 @@ class SignalingControllerTest extends \Test\TestCase {
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn($permissions);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -788,12 +806,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)

@@ -76,9 +76,15 @@ class Attendee extends Entity {
 	public const PERMISSIONS_PUBLISH_AUDIO = 16;
 	public const PERMISSIONS_PUBLISH_VIDEO = 32;
 	public const PERMISSIONS_PUBLISH_SCREEN = 64;
-	public const PERMISSIONS_MAX = 127; // Max int (when all permissions are granted)
-
-	public const PUBLISHING_PERMISSIONS_ALL = 7;
+	public const PERMISSIONS_MAX_DEFAULT = // Max int (when all permissions are granted as default)
+		self::PERMISSIONS_CALL_START
+		| self::PERMISSIONS_CALL_JOIN
+		| self::PERMISSIONS_LOBBY_IGNORE
+		| self::PERMISSIONS_PUBLISH_AUDIO
+		| self::PERMISSIONS_PUBLISH_VIDEO
+		| self::PERMISSIONS_PUBLISH_SCREEN
+	;
+	public const PERMISSIONS_MAX_CUSTOM = self::PERMISSIONS_MAX_DEFAULT | self::PERMISSIONS_CUSTOM; // Max int (when all permissions are granted as custom)
 
 	/** @var int */
 	protected $roomId;
