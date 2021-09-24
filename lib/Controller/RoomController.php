@@ -1541,6 +1541,10 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($targetParticipant->hasModeratorPermissions()) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
 		$this->participantService->updatePermissions($this->room, $targetParticipant, $permissions);
 
 		return new DataResponse();
