@@ -89,7 +89,7 @@
 				:size="24"
 				title=""
 				decorative />
-			<Hand
+			<HandBackLeft
 				v-if="callIcon === 'hand'"
 				:size="24"
 				title=""
@@ -154,7 +154,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
-import Hand from 'vue-material-design-icons/Hand'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import readableNumber from '../../../../../mixins/readableNumber'
@@ -173,7 +173,7 @@ export default {
 		Microphone,
 		Phone,
 		Video,
-		Hand,
+		HandBackLeft,
 	},
 
 	directives: {

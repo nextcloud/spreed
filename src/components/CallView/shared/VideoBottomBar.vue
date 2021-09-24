@@ -28,7 +28,7 @@
 				<div
 					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
 					class="bottom-bar__statusIndicator">
-					<Hand
+					<HandBackLeft
 						class="handIndicator"
 						decorative
 						title=""
@@ -125,7 +125,7 @@ import Monitor from 'vue-material-design-icons/Monitor'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import { PARTICIPANT } from '../../../constants'
-import Hand from 'vue-material-design-icons/Hand'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { emit } from '@nextcloud/event-bus'
 
 export default {
@@ -133,7 +133,7 @@ export default {
 
 	components: {
 		AlertCircle,
-		Hand,
+		HandBackLeft,
 		Microphone,
 		MicrophoneOff,
 		Monitor,

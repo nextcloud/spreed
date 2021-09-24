@@ -152,7 +152,7 @@
 				<ActionButton
 					:close-after-click="true"
 					@click="toggleHandRaised">
-					<Hand
+					<HandBackLeft
 						slot="icon"
 						:size="16"
 						decorative
@@ -211,7 +211,7 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation'
-import Hand from 'vue-material-design-icons/Hand'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
@@ -242,7 +242,7 @@ export default {
 		ActionSeparator,
 		ActionButton,
 		CancelPresentation,
-		Hand,
+		HandBackLeft,
 		Microphone,
 		MicrophoneOff,
 		PresentToAll,

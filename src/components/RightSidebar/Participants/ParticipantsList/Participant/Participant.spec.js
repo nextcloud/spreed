@@ -7,7 +7,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
-import Hand from 'vue-material-design-icons/Hand'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import { findActionButton } from '../../../../../test-helpers'
@@ -293,7 +293,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 		})
 		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
@@ -301,7 +301,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(true)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined with video')
 		})
@@ -311,7 +311,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(true)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined with audio')
 		})
@@ -321,7 +321,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(true)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined via phone')
 		})
@@ -333,7 +333,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(Hand).exists()).toBe(true)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(true)
 
 			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
 
@@ -345,7 +345,7 @@ describe('Participant.vue', () => {
 			expect(wrapper.findComponent(Video).exists()).toBe(true)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(await getCallIconTooltip(wrapper)).toBe('Joined with video')
 		})
@@ -354,7 +354,7 @@ describe('Participant.vue', () => {
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
@@ -365,7 +365,7 @@ describe('Participant.vue', () => {
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Hand).exists()).toBe(false)
+			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
 
 			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
