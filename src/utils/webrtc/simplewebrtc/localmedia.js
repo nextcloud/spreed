@@ -793,6 +793,10 @@ LocalMedia.prototype._setupAudioMonitor = function(stream, harkOptions) {
 	})
 
 	audio.on('speaking', function() {
+		if (timeout) {
+			clearTimeout(timeout)
+		}
+
 		self._speaking = true
 
 		if (self._audioEnabled) {
