@@ -1515,6 +1515,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setPermissions(string $mode, int $permissions): DataResponse {
+		if ($permissions !== Attendee::PERMISSIONS_DEFAULT) {
+			// Make sure the custom flag is set when not setting to default permissions
+			$permissions |= Attendee::PERMISSIONS_CUSTOM;
+		}
+
 		if (!$this->room->setPermissions($mode, $permissions)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

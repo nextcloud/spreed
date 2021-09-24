@@ -1157,6 +1157,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets (call|default) permissions for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $mode
+	 * @param string $identifier
+	 * @param string $permissionsString
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsPermissionsForRoomTo(string $user, string $mode, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
+		$permissions = $this->mapPermissionsTestInput($permissionsString);
+
+		$requestParameters = [
+			['permissions', $permissions],
+		];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/permissions/' . $mode,
+			new TableNode($requestParameters)
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user

@@ -1078,7 +1078,7 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
-			->set('default_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->set($mode . '_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 

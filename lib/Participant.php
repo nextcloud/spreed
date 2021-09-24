@@ -123,14 +123,7 @@ class Participant {
 
 		if ($this->hasModeratorPermissions()) {
 			// Moderators can always do everything
-			$permissions |=
-				Attendee::PERMISSIONS_CALL_START |
-				Attendee::PERMISSIONS_CALL_JOIN |
-				Attendee::PERMISSIONS_LOBBY_IGNORE |
-				Attendee::PERMISSIONS_PUBLISH_AUDIO |
-				Attendee::PERMISSIONS_PUBLISH_VIDEO |
-				Attendee::PERMISSIONS_PUBLISH_SCREEN
-			;
+			$permissions = Attendee::PERMISSIONS_MAX_DEFAULT;
 		}
 
 		return $permissions;
@@ -152,13 +145,6 @@ class Participant {
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
-		return
-			Attendee::PERMISSIONS_CALL_START |
-			Attendee::PERMISSIONS_CALL_JOIN |
-			// Attendee::PERMISSIONS_LOBBY_IGNORE |
-			Attendee::PERMISSIONS_PUBLISH_AUDIO |
-			Attendee::PERMISSIONS_PUBLISH_VIDEO |
-			Attendee::PERMISSIONS_PUBLISH_SCREEN
-		;
+		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE;
 	}
 }
