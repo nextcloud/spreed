@@ -138,7 +138,7 @@
 				:aria-label="t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
-				<Hand
+				<HandBackLeft
 					:size="24"
 					title=""
 					fill-color="#ffffff"
