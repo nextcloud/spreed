@@ -198,7 +198,7 @@ class AttendeeMapper extends QBMapper {
 		return (int) $query->execute();
 	}
 
-	public function modifyPermissions(int $roomId, string $mode, int $newState, bool $includeModerators): void {
+	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
@@ -206,14 +206,6 @@ class AttendeeMapper extends QBMapper {
 				Attendee::ACTOR_CIRCLES,
 				Attendee::ACTOR_GROUPS,
 			], IQueryBuilder::PARAM_STR_ARRAY)));
-
-		if (!$includeModerators) {
-			$query->andWhere($query->expr()->notIn('participant_type', $query->createNamedParameter([
-				Participant::OWNER,
-				Participant::MODERATOR,
-				Participant::GUEST_MODERATOR,
-			], IQueryBuilder::PARAM_INT_ARRAY)));
-		}
 
 		if ($mode === Participant::PERMISSIONS_MODIFY_SET) {
 			$newState |= Attendee::PERMISSIONS_CUSTOM;

@@ -24,11 +24,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 
 class RoomService {
@@ -37,11 +39,15 @@ class RoomService {
 	protected $manager;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var IEventDispatcher */
+	private $dispatcher;
 
 	public function __construct(Manager $manager,
-					ParticipantService $participantService) {
+								ParticipantService $participantService,
+								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -138,5 +144,39 @@ class RoomService {
 
 	public function prepareConversationName(string $objectName): string {
 		return rtrim(mb_substr(ltrim($objectName), 0, 64));
+	}
+
+	public function setPermissions(Room $room, string $mode, int $newPermissions): bool {
+		if ($mode === 'default') {
+			$oldPermissions = $room->getDefaultPermissions();
+		} elseif ($mode === 'call') {
+			$oldPermissions = $room->getCallPermissions();
+		} else {
+			return false;
+		}
+
+		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
+			return false;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($newPermissions === $oldPermissions) {
+			return true;
+		}
+
+		$event = new ModifyRoomEvent($room, $mode . 'Permissions', $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PERMISSIONS_SET, $event);
+
+		// FIXME Make sure participant service is not sending another set of permissions and events
+		$this->participantService->updateAllPermissions($room, Participant::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
+
+		$room->setPermissions($mode, $newPermissions);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
+
+		return true;
 	}
 }

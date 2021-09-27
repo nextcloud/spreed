@@ -83,7 +83,6 @@ class AttendeeMapperTest extends TestCase {
 				],
 				Participant::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
-				false,
 				[
 					[
 						'actor_type' => Attendee::ACTOR_CIRCLES,
@@ -120,52 +119,27 @@ class AttendeeMapperTest extends TestCase {
 			1 => [
 				[
 					[
-						'actor_type' => Attendee::ACTOR_CIRCLES,
-						'actor_id' => 'c1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_GROUPS,
-						'actor_id' => 'g1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
-					],
-					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
 					],
 				],
 				Participant::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
-				true,
 				[
-					[
-						'actor_type' => Attendee::ACTOR_CIRCLES,
-						'actor_id' => 'c1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_GROUPS,
-						'actor_id' => 'g1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM,
-					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
@@ -209,19 +183,18 @@ class AttendeeMapperTest extends TestCase {
 				],
 				Participant::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
-				false,
 				[
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
 						'participant_type' => Participant::OWNER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'm1',
 						'participant_type' => Participant::MODERATOR,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
 					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
@@ -232,51 +205,6 @@ class AttendeeMapperTest extends TestCase {
 				],
 			],
 			3 => [
-				[
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'o1',
-						'participant_type' => Participant::OWNER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'm1',
-						'participant_type' => Participant::MODERATOR,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'u1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-				],
-				Participant::PERMISSIONS_MODIFY_SET,
-				Attendee::PERMISSIONS_CALL_START,
-				true,
-				[
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'o1',
-						'participant_type' => Participant::OWNER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'm1',
-						'participant_type' => Participant::MODERATOR,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'u1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
-					],
-				],
-			],
-			4 => [
 				[
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
@@ -305,7 +233,6 @@ class AttendeeMapperTest extends TestCase {
 				],
 				Participant::PERMISSIONS_MODIFY_ADD,
 				Attendee::PERMISSIONS_CALL_START,
-				true,
 				[
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
@@ -333,7 +260,7 @@ class AttendeeMapperTest extends TestCase {
 					],
 				],
 			],
-			5 => [
+			4 => [
 				[
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
@@ -368,7 +295,6 @@ class AttendeeMapperTest extends TestCase {
 				],
 				Participant::PERMISSIONS_MODIFY_REMOVE,
 				Attendee::PERMISSIONS_CALL_START,
-				true,
 				[
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
@@ -410,10 +336,9 @@ class AttendeeMapperTest extends TestCase {
 	 * @param array $attendees
 	 * @param string $mode
 	 * @param int $permission
-	 * @param bool $includeModerators
 	 * @param array $expected
 	 */
-	public function testModifyPermissions(array $attendees, string $mode, int $permission, bool $includeModerators, array $expected): void {
+	public function testModifyPermissions(array $attendees, string $mode, int $permission, array $expected): void {
 		$roomId = 12345678;
 
 		foreach ($attendees as $attendeeData) {
@@ -432,7 +357,7 @@ class AttendeeMapperTest extends TestCase {
 			$this->attendeeMapper->insert($attendee);
 		}
 
-		$this->attendeeMapper->modifyPermissions($roomId, $mode, $permission, $includeModerators);
+		$this->attendeeMapper->modifyPermissions($roomId, $mode, $permission);
 
 		foreach ($expected as $attendeeData) {
 			$attendee = $this->attendeeMapper->findByActor($roomId, $attendeeData['actor_type'], $attendeeData['actor_id']);

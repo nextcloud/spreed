@@ -1520,7 +1520,7 @@ class RoomController extends AEnvironmentAwareController {
 			$permissions |= Attendee::PERMISSIONS_CUSTOM;
 		}
 
-		if (!$this->room->setPermissions($mode, $permissions)) {
+		if (!$this->roomService->setPermissions($this->room, $mode, $permissions)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1561,10 +1561,9 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $method
 	 * @param int $permissions
-	 * @param bool $includeModerators
 	 * @return DataResponse
 	 */
-	public function setAllAttendeesPermissions(string $method, int $permissions, bool $includeModerators): DataResponse {
+	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
 		if (!in_array($method, [
 			Participant::PERMISSIONS_MODIFY_ADD,
 			Participant::PERMISSIONS_MODIFY_REMOVE,
@@ -1577,7 +1576,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updateAllPermissions($this->room, $method, $permissions, $includeModerators);
+		$this->participantService->updateAllPermissions($this->room, $method, $permissions);
 
 		return new DataResponse();
 	}
