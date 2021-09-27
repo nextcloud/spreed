@@ -36,6 +36,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -107,6 +108,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $config;
 	/** @var Config */
 	protected $talkConfig;
+	/** @var FederationManager */
+	protected $federationManager;
 
 	/** @var array */
 	protected $commonReadMessages = [];
@@ -1093,6 +1096,9 @@ class RoomController extends AEnvironmentAwareController {
 
 			return new DataResponse($data);
 		} elseif ($source === 'remote') {
+			if (!$this->federationManager->isEnabled()) {
+				return new DataResponse([]. Http::STATUS_BAD_REQUEST);
+			}
 			try {
 				$newUser = $this->cloudIdManager->resolveCloudId($newParticipant);
 			} catch (\InvalidArgumentException $e) {
