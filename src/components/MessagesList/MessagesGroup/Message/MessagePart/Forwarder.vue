@@ -78,6 +78,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		user: {
+			type: String,
+			required: true,
+		},
 	},
 
 	data() {
@@ -135,6 +139,7 @@ export default {
 				}
 			}
 			try {
+				messageToBeForwarded.message = this.user + ': ' + messageToBeForwarded.message
 				const response = await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
 				this.showForwardedConfirmation = true
 				this.forwardedMessageID = response.data.ocs.data.id

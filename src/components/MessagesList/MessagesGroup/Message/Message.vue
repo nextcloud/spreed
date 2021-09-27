@@ -208,6 +208,7 @@ the main body of the message as well as a quote.
 		</div>
 		<Forwarder v-if="showForwarder"
 			:message-object="messageObject"
+			:user="actorId"
 			@close="showForwarder = false" />
 	</li>
 </template>
