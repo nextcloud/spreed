@@ -70,7 +70,6 @@ function LocalMedia(opts) {
 	}
 
 	this._audioMonitors = []
-	this.on('localScreenStopped', this._stopAudioMonitor.bind(this))
 
 	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
