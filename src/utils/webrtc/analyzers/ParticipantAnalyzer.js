@@ -19,6 +19,8 @@
  *
  */
 
+import EmitterMixin from '../../EmitterMixin'
+
 import {
 	PEER_DIRECTION,
 	PeerConnectionAnalyzer,
@@ -57,7 +59,7 @@ import {
  * to stop the analysis.
  */
 function ParticipantAnalyzer() {
-	this._handlers = []
+	this._superEmitterMixin()
 
 	this._localMediaModel = null
 	this._localCallParticipantModel = null
@@ -82,41 +84,6 @@ function ParticipantAnalyzer() {
 	this._handleConnectionQualityScreenChangeBound = this._handleConnectionQualityScreenChange.bind(this)
 }
 ParticipantAnalyzer.prototype = {
-
-	on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
-			this._handlers[event] = [handler]
-		} else {
-			this._handlers[event].push(handler)
-		}
-	},
-
-	off(event, handler) {
-		const handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		const index = handlers.indexOf(handler)
-		if (index !== -1) {
-			handlers.splice(index, 1)
-		}
-	},
-
-	_trigger(event, args) {
-		let handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		args.unshift(this)
-
-		handlers = handlers.slice(0)
-		for (let i = 0; i < handlers.length; i++) {
-			const handler = handlers[i]
-			handler.apply(handler, args)
-		}
-	},
 
 	destroy() {
 		if (this._localCallParticipantModel) {
@@ -349,6 +316,8 @@ ParticipantAnalyzer.prototype = {
 	},
 
 }
+
+EmitterMixin.apply(ParticipantAnalyzer.prototype)
 
 export {
 	ParticipantAnalyzer,

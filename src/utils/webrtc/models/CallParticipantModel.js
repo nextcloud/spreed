@@ -21,6 +21,8 @@
 
 import attachMediaStream from 'attachmediastream'
 
+import EmitterMixin from '../../EmitterMixin'
+
 export const ConnectionState = {
 	NEW: 'new',
 	CHECKING: 'checking',
@@ -39,6 +41,8 @@ export const ConnectionState = {
  * @param {object} options.webRtc The WebRTC connection to the participant
  */
 export default function CallParticipantModel(options) {
+
+	this._superEmitterMixin()
 
 	this.attributes = {
 		peerId: null,
@@ -64,8 +68,6 @@ export default function CallParticipantModel(options) {
 			timestamp: null,
 		},
 	}
-
-	this._handlers = []
 
 	this.set('peerId', options.peerId)
 
@@ -113,45 +115,6 @@ CallParticipantModel.prototype = {
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
-	},
-
-	on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
-			this._handlers[event] = [handler]
-		} else {
-			this._handlers[event].push(handler)
-		}
-	},
-
-	off(event, handler) {
-		const handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		const index = handlers.indexOf(handler)
-		if (index !== -1) {
-			handlers.splice(index, 1)
-		}
-	},
-
-	_trigger(event, args) {
-		let handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		if (!args) {
-			args = []
-		}
-
-		args.unshift(this)
-
-		handlers = handlers.slice(0)
-		for (let i = 0; i < handlers.length; i++) {
-			const handler = handlers[i]
-			handler.apply(handler, args)
-		}
 	},
 
 	_handlePeerStreamAdded(peer) {
@@ -385,3 +348,5 @@ CallParticipantModel.prototype = {
 	},
 
 }
+
+EmitterMixin.apply(CallParticipantModel.prototype)
