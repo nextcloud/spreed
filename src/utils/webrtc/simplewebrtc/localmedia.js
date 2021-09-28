@@ -419,7 +419,7 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			})
 
 			this.emit('localStreamChanged', stream)
-			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, trackStreamPair.stream)
+			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, stream)
 		})
 
 		// After the clones were added to the local streams the original track
@@ -554,7 +554,7 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			})
 
 			this.emit('localStreamChanged', stream)
-			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, trackStreamPair.stream)
+			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, stream)
 		})
 
 		// After the clones were added to the local streams the original track
