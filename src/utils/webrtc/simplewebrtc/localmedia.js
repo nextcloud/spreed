@@ -41,7 +41,6 @@ function LocalMedia(opts) {
 	const config = this.config = {
 		detectSpeakingEvents: false,
 		audioFallback: false,
-		harkOptions: null,
 		logger: mockconsole,
 	}
 
@@ -243,7 +242,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		// even when the stream sent is muted.
 		const audioMonitorStream = cloneLinkedStream(stream)
 		if (constraints.audio && self.config.detectSpeakingEvents) {
-			self._setupAudioMonitor(audioMonitorStream, self.config.harkOptions)
+			self._setupAudioMonitor(audioMonitorStream)
 		}
 		self.localStreams.push(stream)
 		self._audioMonitorStreams.push(audioMonitorStream)
@@ -404,7 +403,7 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			}
 
 			if (this.config.detectSpeakingEvents) {
-				this._setupAudioMonitor(audioMonitorStream, this.config.harkOptions)
+				this._setupAudioMonitor(audioMonitorStream)
 			}
 
 			if (!this._audioEnabled) {
@@ -777,9 +776,9 @@ LocalMedia.prototype._removeStream = function(stream) {
 	}
 }
 
-LocalMedia.prototype._setupAudioMonitor = function(stream, harkOptions) {
+LocalMedia.prototype._setupAudioMonitor = function(stream) {
 	this._log('Setup audio')
-	const audio = hark(stream, harkOptions)
+	const audio = hark(stream)
 	const self = this
 	let timeout
 
