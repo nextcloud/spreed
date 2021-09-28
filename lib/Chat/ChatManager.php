@@ -531,4 +531,37 @@ class ChatManager {
 	public function searchForObjects(string $search,  array $objectIds, string $verb = '', int $offset = 0, int $limit = 50): array {
 		return $this->commentsManager->searchForObjects($search, 'chat', $objectIds, $verb, $offset, $limit);
 	}
+
+	public function addConversationNotify(array $results, string $search, Room $room, Participant $participant): array {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return $results;
+		}
+		$attendee = $participant->getAttendee();
+		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+			$roomDisplayName = $room->getDisplayName($attendee->getActorId());
+		} else {
+			$roomDisplayName = $room->getDisplayName('');
+		}
+		if ($search === '' || $this->searchIsPartOfConversationNameOrAtAll($search, $roomDisplayName)) {
+			array_unshift($results, [
+				'id' => 'all',
+				'label' => $roomDisplayName,
+				'source' => 'calls',
+			]);
+		}
+		return $results;
+	}
+
+	private function searchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName): bool {
+		if (stripos($roomDisplayName, $search) === 0) {
+			return true;
+		}
+		if (strpos('all', $search) === 0) {
+			return true;
+		}
+		if (strpos('here', $search) === 0) {
+			return true;
+		}
+		return false;
+	}
 }
