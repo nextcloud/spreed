@@ -39,7 +39,6 @@ function LocalMedia(opts) {
 	WildEmitter.call(this)
 
 	const config = this.config = {
-		detectSpeakingEvents: false,
 		audioFallback: false,
 		logger: mockconsole,
 	}
@@ -241,7 +240,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		// The audio monitor stream is never disabled to be able to analyze it
 		// even when the stream sent is muted.
 		const audioMonitorStream = cloneLinkedStream(stream)
-		if (constraints.audio && self.config.detectSpeakingEvents) {
+		if (constraints.audio) {
 			self._setupAudioMonitor(audioMonitorStream)
 		}
 		self.localStreams.push(stream)
@@ -402,9 +401,7 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 				audioMonitorStream = this._audioMonitorStreams[streamIndex]
 			}
 
-			if (this.config.detectSpeakingEvents) {
-				this._setupAudioMonitor(audioMonitorStream)
-			}
+			this._setupAudioMonitor(audioMonitorStream)
 
 			if (!this._audioEnabled) {
 				clonedTrack.enabled = false
