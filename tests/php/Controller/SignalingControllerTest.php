@@ -433,7 +433,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::ONE_TO_ONE_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -492,7 +493,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -555,7 +557,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 					'control',
 				],
@@ -616,7 +619,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -676,7 +680,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -686,13 +691,13 @@ class SignalingControllerTest extends \Test\TestCase {
 	public function dataBackendRoomUserPublicPermissions(): array {
 		return [
 			[Attendee::PERMISSIONS_DEFAULT, []],
-			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-media']],
-			[Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
-			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-media']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-audio']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-video']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-audio', 'publish-video']],
 			[Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-screen']],
-			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
-			[Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
-			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-media', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-audio', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-video', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-audio', 'publish-video', 'publish-screen']],
 		];
 	}
 
@@ -848,7 +853,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::ONE_TO_ONE_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 				'session' => [

@@ -661,7 +661,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
-						'permissions' => ['publish-media', 'publish-screen', 'control'],
+						'permissions' => ['publish-audio', 'publish-video', 'publish-screen', 'control'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
@@ -696,7 +696,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
-						'permissions' => ['publish-media', 'publish-screen'],
+						'permissions' => ['publish-audio', 'publish-video', 'publish-screen'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
@@ -775,7 +775,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
-						'permissions' => ['publish-media', 'publish-screen'],
+						'permissions' => ['publish-audio', 'publish-video', 'publish-screen'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
@@ -820,7 +820,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'participants' => [
 				'changed' => [
 					[
-						'permissions' => ['publish-media', 'publish-screen'],
+						'permissions' => ['publish-audio', 'publish-video', 'publish-screen'],
 						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,

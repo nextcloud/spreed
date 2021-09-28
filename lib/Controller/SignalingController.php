@@ -687,9 +687,11 @@ class SignalingController extends OCSController {
 				'app' => 'spreed-hpb',
 			]);
 
-			// TODO split into two permissions?
-			if ($participant->getPermissions() & (Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
-				$permissions[] = 'publish-media';
+			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) {
+				$permissions[] = 'publish-audio';
+			}
+			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) {
+				$permissions[] = 'publish-video';
 			}
 			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
 				$permissions[] = 'publish-screen';

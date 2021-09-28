@@ -312,15 +312,16 @@ class BackendNotifier {
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$data['permissions'] = [];
-					// TODO split into two permissions?
-					if ($participant->getPermissions() & (Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
-						$data['permissions'][] = 'publish-media';
+					if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) {
+						$data['permissions'][] = 'publish-audio';
+					}
+					if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) {
+						$data['permissions'][] = 'publish-video';
 					}
 					if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
 						$data['permissions'][] = 'publish-screen';
 					}
-					if ($attendee->getParticipantType() === Participant::OWNER ||
-						$attendee->getParticipantType() === Participant::MODERATOR) {
+					if ($participant->hasModeratorPermissions(false)) {
 						$data['permissions'][] = 'control';
 					}
 					$changed[] = $data;
