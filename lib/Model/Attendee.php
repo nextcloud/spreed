@@ -86,6 +86,10 @@ class Attendee extends Entity {
 	;
 	public const PERMISSIONS_MAX_CUSTOM = self::PERMISSIONS_MAX_DEFAULT | self::PERMISSIONS_CUSTOM; // Max int (when all permissions are granted as custom)
 
+	public const PERMISSIONS_MODIFY_SET = 'set';
+	public const PERMISSIONS_MODIFY_REMOVE = 'remove';
+	public const PERMISSIONS_MODIFY_ADD = 'add';
+
 	/** @var int */
 	protected $roomId;
 

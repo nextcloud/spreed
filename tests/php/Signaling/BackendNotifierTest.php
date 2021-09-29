@@ -857,7 +857,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 
 		$this->controller->clearRequests();
-		$this->participantService->updatePermissions($room, $guestParticipant, Attendee::PERMISSIONS_CUSTOM);
+		$this->participantService->updatePermissions($room, $guestParticipant, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_CUSTOM);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'participants',

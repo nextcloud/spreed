@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -207,7 +206,7 @@ class AttendeeMapper extends QBMapper {
 				Attendee::ACTOR_GROUPS,
 			], IQueryBuilder::PARAM_STR_ARRAY)));
 
-		if ($mode === Participant::PERMISSIONS_MODIFY_SET) {
+		if ($mode === Attendee::PERMISSIONS_MODIFY_SET) {
 			$newState |= Attendee::PERMISSIONS_CUSTOM;
 			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
@@ -221,9 +220,9 @@ class AttendeeMapper extends QBMapper {
 				Attendee::PERMISSIONS_LOBBY_IGNORE,
 			] as $permission) {
 				if ($permission & $newState) {
-					if ($mode === Participant::PERMISSIONS_MODIFY_ADD) {
+					if ($mode === Attendee::PERMISSIONS_MODIFY_ADD) {
 						$this->addSinglePermission($query, $permission);
-					} elseif ($mode === Participant::PERMISSIONS_MODIFY_REMOVE) {
+					} elseif ($mode === Attendee::PERMISSIONS_MODIFY_REMOVE) {
 						$this->removeSinglePermission($query, $permission);
 					}
 				}

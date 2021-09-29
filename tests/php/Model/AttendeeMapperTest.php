@@ -81,8 +81,42 @@ class AttendeeMapperTest extends TestCase {
 						'permissions' => Attendee::PERMISSIONS_CUSTOM,
 					],
 				],
-				Participant::PERMISSIONS_MODIFY_SET,
+				Attendee::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
+				[
+					[
+						'actor_type' => Attendee::ACTOR_CIRCLES,
+						'actor_id' => 'c1',
+						'participant_type' => Participant::USER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+					],
+					[
+						'actor_type' => Attendee::ACTOR_GROUPS,
+						'actor_id' => 'g1',
+						'participant_type' => Participant::USER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+					],
+					[
+						'actor_type' => Attendee::ACTOR_USERS,
+						'actor_id' => 'o1',
+						'participant_type' => Participant::OWNER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
+					],
+					[
+						'actor_type' => Attendee::ACTOR_USERS,
+						'actor_id' => 'm1',
+						'participant_type' => Participant::MODERATOR,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
+					],
+					[
+						'actor_type' => Attendee::ACTOR_USERS,
+						'actor_id' => 'u1',
+						'participant_type' => Participant::USER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
+					],
+				],
+			],
+			1 => [
 				[
 					[
 						'actor_type' => Attendee::ACTOR_CIRCLES,
@@ -112,34 +146,24 @@ class AttendeeMapperTest extends TestCase {
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'u1',
 						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM,
 					],
 				],
-			],
-			1 => [
-				[
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'o1',
-						'participant_type' => Participant::OWNER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'm1',
-						'participant_type' => Participant::MODERATOR,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-					[
-						'actor_type' => Attendee::ACTOR_USERS,
-						'actor_id' => 'u1',
-						'participant_type' => Participant::USER,
-						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
-					],
-				],
-				Participant::PERMISSIONS_MODIFY_SET,
+				Attendee::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
 				[
+					[
+						'actor_type' => Attendee::ACTOR_CIRCLES,
+						'actor_id' => 'c1',
+						'participant_type' => Participant::USER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+					],
+					[
+						'actor_type' => Attendee::ACTOR_GROUPS,
+						'actor_id' => 'g1',
+						'participant_type' => Participant::USER,
+						'permissions' => Attendee::PERMISSIONS_CUSTOM,
+					],
 					[
 						'actor_type' => Attendee::ACTOR_USERS,
 						'actor_id' => 'o1',
@@ -181,7 +205,7 @@ class AttendeeMapperTest extends TestCase {
 						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
 					],
 				],
-				Participant::PERMISSIONS_MODIFY_SET,
+				Attendee::PERMISSIONS_MODIFY_SET,
 				Attendee::PERMISSIONS_CALL_START,
 				[
 					[
@@ -231,7 +255,7 @@ class AttendeeMapperTest extends TestCase {
 						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_CALL_START,
 					],
 				],
-				Participant::PERMISSIONS_MODIFY_ADD,
+				Attendee::PERMISSIONS_MODIFY_ADD,
 				Attendee::PERMISSIONS_CALL_START,
 				[
 					[
@@ -293,7 +317,7 @@ class AttendeeMapperTest extends TestCase {
 						'permissions' => Attendee::PERMISSIONS_CUSTOM + Attendee::PERMISSIONS_PUBLISH_AUDIO + Attendee::PERMISSIONS_PUBLISH_VIDEO,
 					],
 				],
-				Participant::PERMISSIONS_MODIFY_REMOVE,
+				Attendee::PERMISSIONS_MODIFY_REMOVE,
 				Attendee::PERMISSIONS_CALL_START,
 				[
 					[

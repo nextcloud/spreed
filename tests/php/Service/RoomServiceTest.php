@@ -30,6 +30,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -40,6 +41,8 @@ class RoomServiceTest extends TestCase {
 	protected $manager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var IEventDispatcher|MockObject */
+	protected $dispatcher;
 	/** @var RoomService */
 	private $service;
 
@@ -49,9 +52,11 @@ class RoomServiceTest extends TestCase {
 
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->service = new RoomService(
 			$this->manager,
-			$this->participantService
+			$this->participantService,
+			$this->dispatcher
 		);
 	}
 

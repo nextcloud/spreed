@@ -152,14 +152,14 @@ class ParticipantService {
 		}
 
 		$oldPermissions = $participant->getPermissions();
-		if ($method === Participant::PERMISSIONS_MODIFY_SET) {
+		if ($method === Attendee::PERMISSIONS_MODIFY_SET) {
 			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
 				// Make sure the custom flag is set when not setting to default permissions
 				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
 			}
-		} elseif ($method === Participant::PERMISSIONS_MODIFY_ADD) {
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
 			$newPermissions = $oldPermissions | $newPermissions;
-		} elseif ($method === Participant::PERMISSIONS_MODIFY_REMOVE) {
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
 			$newPermissions = $oldPermissions & ~$newPermissions;
 		} else {
 			return false;

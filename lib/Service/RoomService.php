@@ -160,14 +160,14 @@ class RoomService {
 		}
 
 		$newPermissions = $permissions;
-		if ($method === Participant::PERMISSIONS_MODIFY_SET) {
+		if ($method === Attendee::PERMISSIONS_MODIFY_SET) {
 			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
 				// Make sure the custom flag is set when not setting to default permissions
 				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
 			}
-		} elseif ($method === Participant::PERMISSIONS_MODIFY_ADD) {
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
 			$newPermissions = $oldPermissions | $newPermissions;
-		} elseif ($method === Participant::PERMISSIONS_MODIFY_REMOVE) {
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
 			$newPermissions = $oldPermissions & ~$newPermissions;
 		} else {
 			return false;
@@ -177,7 +177,7 @@ class RoomService {
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PERMISSIONS_SET, $event);
 
 		if ($resetCustomPermissions) {
-			$this->participantService->updateAllPermissions($room, Participant::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
+			$this->participantService->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
 		} else {
 			$this->participantService->updateAllPermissions($room, $method, $permissions);
 		}

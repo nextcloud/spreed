@@ -1515,7 +1515,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setPermissions(string $mode, int $permissions): DataResponse {
-		if (!$this->roomService->setPermissions($this->room, $mode, Participant::PERMISSIONS_MODIFY_SET, $permissions, true)) {
+		if (!$this->roomService->setPermissions($this->room, $mode, Attendee::PERMISSIONS_MODIFY_SET, $permissions, true)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
