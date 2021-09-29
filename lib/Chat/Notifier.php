@@ -33,6 +33,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
@@ -58,6 +59,8 @@ class Notifier {
 	private $manager;
 	/** @var IConfig */
 	private $config;
+	/** @var ITimeFactory */
+	private $timeFactory;
 	/** @var Util */
 	private $util;
 
@@ -66,12 +69,14 @@ class Notifier {
 								ParticipantService $participantService,
 								Manager $manager,
 								IConfig $config,
+								ITimeFactory $timeFactory,
 								Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
 		$this->participantService = $participantService;
 		$this->manager = $manager;
 		$this->config = $config;
+		$this->timeFactory = $timeFactory;
 		$this->util = $util;
 	}
 
@@ -385,7 +390,7 @@ class Notifier {
 
 		if ($participant->getSession() instanceof Session) {
 			// User is online
-			return false;
+			return $participant->getSession()->getLastPing() < $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
 		}
 
 		return true;
