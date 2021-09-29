@@ -705,7 +705,7 @@ class ParticipantService {
 			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('s.attendee_id', 'a.id'))
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_GUESTS)))
-			->andWhere($query->expr()->lte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->lte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL, IQueryBuilder::PARAM_INT)));
 
 		$sessionTableIds = [];
 		$result = $query->execute();
@@ -1070,6 +1070,7 @@ class ParticipantService {
 				$query->expr()->andX(
 					$query->expr()->eq('s.attendee_id', 'a.id'),
 					$query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)),
+					$query->expr()->gte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT, IQueryBuilder::PARAM_INT)),
 				)
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))

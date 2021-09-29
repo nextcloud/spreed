@@ -45,6 +45,9 @@ use OCP\AppFramework\Db\Entity;
  */
 class Session extends Entity {
 
+	public const SESSION_TIMEOUT = 30;
+	public const SESSION_TIMEOUT_KILL = self::SESSION_TIMEOUT * 3 + 10;
+
 	/** @var int */
 	protected $attendeeId;
 

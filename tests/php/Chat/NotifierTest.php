@@ -27,9 +27,12 @@ use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
@@ -50,6 +53,8 @@ class NotifierTest extends TestCase {
 	protected $manager;
 	/** @var IConfig|MockObject */
 	protected $config;
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
 	/** @var Util|MockObject */
 	protected $util;
 
@@ -71,6 +76,7 @@ class NotifierTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->config = $this->createMock(IConfig::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->util = $this->createMock(Util::class);
 
 		$this->notifier = new Notifier(
@@ -79,6 +85,7 @@ class NotifierTest extends TestCase {
 			$this->participantService,
 			$this->manager,
 			$this->config,
+			$this->timeFactory,
 			$this->util
 		);
 	}
@@ -522,6 +529,55 @@ class NotifierTest extends TestCase {
 			);
 
 		$this->notifier->notifyMentionedUsers($room, $comment, []);
+	}
+
+	public function dataShouldParticipantBeNotified(): array {
+		return [
+			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [], true],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', ['test1'], false],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT - 5, Attendee::ACTOR_USERS, 'test2', [], false],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT + 5, Attendee::ACTOR_USERS, 'test2', [], true],
+		];
+	}
+
+	/**
+	 * @dataProvider dataShouldParticipantBeNotified
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param int|null $sessionAge
+	 * @param string $commentActorType
+	 * @param string $commentActorId
+	 * @param array $alreadyNotifiedUsers
+	 * @param bool $expected
+	 */
+	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $expected): void {
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getActorType')
+			->willReturn($commentActorType);
+		$comment->method('getActorId')
+			->willReturn($commentActorId);
+
+		$room = $this->createMock(Room::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => $actorType,
+			'actor_id' => $actorId,
+		]);
+		$session = null;
+		if ($sessionAge !== null) {
+			$current = 1234567;
+			$this->timeFactory->method('getTime')
+				->willReturn($current);
+
+			$session = Session::fromRow([
+				'last_ping' => $current - $sessionAge,
+			]);
+		}
+		$participant = new Participant($room, $attendee, $session);
+
+		self::assertSame($expected, self::invokePrivate($this->notifier, 'shouldParticipantBeNotified', [$participant, $comment, $alreadyNotifiedUsers]));
 	}
 
 	public function testRemovePendingNotificationsForRoom(): void {
