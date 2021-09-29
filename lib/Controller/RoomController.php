@@ -1515,12 +1515,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setPermissions(string $mode, int $permissions): DataResponse {
-		if ($permissions !== Attendee::PERMISSIONS_DEFAULT) {
-			// Make sure the custom flag is set when not setting to default permissions
-			$permissions |= Attendee::PERMISSIONS_CUSTOM;
-		}
-
-		if (!$this->roomService->setPermissions($this->room, $mode, $permissions)) {
+		if (!$this->roomService->setPermissions($this->room, $mode, Participant::PERMISSIONS_MODIFY_SET, $permissions, true)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1532,25 +1527,20 @@ class RoomController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 *
 	 * @param int $attendeeId
+	 * @param string $method
 	 * @param int $permissions
 	 * @return DataResponse
 	 */
-	public function setAttendeePermissions(int $attendeeId, int $permissions): DataResponse {
+	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if (!$this->participantService->updatePermissions($this->room, $targetParticipant, $method, $permissions)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-
-		if ($targetParticipant->hasModeratorPermissions()) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		$this->participantService->updatePermissions($this->room, $targetParticipant, $permissions);
 
 		return new DataResponse();
 	}
@@ -1564,21 +1554,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
-		if (!in_array($method, [
-			Participant::PERMISSIONS_MODIFY_ADD,
-			Participant::PERMISSIONS_MODIFY_REMOVE,
-			Participant::PERMISSIONS_MODIFY_SET
-		], true)) {
+		if (!$this->roomService->setPermissions($this->room, 'call', $method, $permissions, false)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->participantService->updateAllPermissions($this->room, $method, $permissions);
-
-		return new DataResponse();
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
 	/**

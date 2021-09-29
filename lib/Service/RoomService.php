@@ -146,34 +146,43 @@ class RoomService {
 		return rtrim(mb_substr(ltrim($objectName), 0, 64));
 	}
 
-	public function setPermissions(Room $room, string $mode, int $newPermissions): bool {
-		if ($mode === 'default') {
+	public function setPermissions(Room $room, string $level, string $method, int $permissions, bool $resetCustomPermissions): bool {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+
+		if ($level === 'default') {
 			$oldPermissions = $room->getDefaultPermissions();
-		} elseif ($mode === 'call') {
+		} elseif ($level === 'call') {
 			$oldPermissions = $room->getCallPermissions();
 		} else {
 			return false;
 		}
 
-		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
+		$newPermissions = $permissions;
+		if ($method === Participant::PERMISSIONS_MODIFY_SET) {
+			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
+				// Make sure the custom flag is set when not setting to default permissions
+				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
+			}
+		} elseif ($method === Participant::PERMISSIONS_MODIFY_ADD) {
+			$newPermissions = $oldPermissions | $newPermissions;
+		} elseif ($method === Participant::PERMISSIONS_MODIFY_REMOVE) {
+			$newPermissions = $oldPermissions & ~$newPermissions;
+		} else {
 			return false;
 		}
 
-		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
-		}
-
-		if ($newPermissions === $oldPermissions) {
-			return true;
-		}
-
-		$event = new ModifyRoomEvent($room, $mode . 'Permissions', $newPermissions, $oldPermissions);
+		$event = new ModifyRoomEvent($room, $level . 'Permissions', $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PERMISSIONS_SET, $event);
 
-		// FIXME Make sure participant service is not sending another set of permissions and events
-		$this->participantService->updateAllPermissions($room, Participant::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
+		if ($resetCustomPermissions) {
+			$this->participantService->updateAllPermissions($room, Participant::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
+		} else {
+			$this->participantService->updateAllPermissions($room, $method, $permissions);
+		}
 
-		$room->setPermissions($mode, $newPermissions);
+		$room->setPermissions($level, $newPermissions);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
 

@@ -139,38 +139,45 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
-	public function updatePermissions(Room $room, Participant $participant, int $newState): void {
+	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): bool {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+
 		$attendee = $participant->getAttendee();
 
 		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS || $attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 			// Can not set publishing permissions for those actor types
-			return;
+			return false;
 		}
 
-		$oldState = $participant->getPermissions();
-		if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
-			// Make sure the custom flag is set when not setting to default permissions
-			$newState |= Attendee::PERMISSIONS_CUSTOM;
+		$oldPermissions = $participant->getPermissions();
+		if ($method === Participant::PERMISSIONS_MODIFY_SET) {
+			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
+				// Make sure the custom flag is set when not setting to default permissions
+				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
+			}
+		} elseif ($method === Participant::PERMISSIONS_MODIFY_ADD) {
+			$newPermissions = $oldPermissions | $newPermissions;
+		} elseif ($method === Participant::PERMISSIONS_MODIFY_REMOVE) {
+			$newPermissions = $oldPermissions & ~$newPermissions;
+		} else {
+			return false;
 		}
 
-		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newState, $oldState);
+		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
-		$attendee->setPermissions($newState);
+		$attendee->setPermissions($newPermissions);
 		$this->attendeeMapper->update($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
+
+		return true;
 	}
 
-	public function updateAllPermissions(Room $room, string $mode, int $newState): void {
-		// FIXME Add events after checking what should be sent to the HPB
-		// $event = new ModifyParticipantEvent($room, $participant, 'permissions', $newState, $oldState);
-		// $this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
-
-		$this->attendeeMapper->modifyPermissions($room->getId(), $mode, $newState);
-
-		// FIXME Add events after checking what should be sent to the HPB
-		// $this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
+	public function updateAllPermissions(Room $room, string $method, int $newState): void {
+		$this->attendeeMapper->modifyPermissions($room->getId(), $method, $newState);
 	}
 
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
