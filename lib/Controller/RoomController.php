@@ -887,7 +887,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$maxPingAge = $this->timeFactory->getTime() - 100;
+		$maxPingAge = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL;
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($this->room);
 		$results = $headers = $statuses = [];
 
