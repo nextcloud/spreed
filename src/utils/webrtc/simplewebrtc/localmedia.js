@@ -1,7 +1,6 @@
 /* global module */
 
 const util = require('util')
-const hark = require('hark')
 const getScreenMedia = require('./getscreenmedia')
 const WildEmitter = require('wildemitter')
 const mockconsole = require('mockconsole')
@@ -9,6 +8,7 @@ const UAParser = require('ua-parser-js')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
 const webrtcIndex = require('../index.js')
+const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
 
 /**
  * @param {object} stream the stream object.
@@ -19,17 +19,6 @@ function isAllTracksEnded(stream) {
 		isAllTracksEnded = t.readyState === 'ended' && isAllTracksEnded
 	})
 	return isAllTracksEnded
-}
-
-/**
- * @param {object} stream the stream object.
- */
-function isAllAudioTracksEnded(stream) {
-	let isAllAudioTracksEnded = true
-	stream.getAudioTracks().forEach(function(t) {
-		isAllAudioTracksEnded = t.readyState === 'ended' && isAllAudioTracksEnded
-	})
-	return isAllAudioTracksEnded
 }
 
 /**
@@ -60,71 +49,59 @@ function LocalMedia(opts) {
 	this._localMediaActive = false
 
 	this.localStreams = []
-	this._audioMonitorStreams = []
 	this.localScreens = []
 
 	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		this._logerror('Your browser does not support local media capture.')
 	}
 
-	this._audioMonitors = []
+	this._speakingMonitor = new SpeakingMonitor()
+	this._speakingMonitor.on('speaking', () => {
+		this.emit('speaking')
+	})
+	this._speakingMonitor.on('speakingWhileMuted', () => {
+		this.emit('speakingWhileMuted')
+	})
+	this._speakingMonitor.on('stoppedSpeaking', () => {
+		this.emit('stoppedSpeaking')
+	})
+	this._speakingMonitor.on('stoppedSpeakingWhileMuted', () => {
+		this.emit('stoppedSpeakingWhileMuted')
+	})
+	this._speakingMonitor.on('volumeChange', (speakingMonitor, volume, threshold) => {
+		this.emit('volumeChange', volume, threshold)
+	})
+
+	// Although there could be several local streams active at the same time (if
+	// the local media is started again before stopping it first) in most cases
+	// there will be just a single local stream. For simplicity, and as this is
+	// just a temporal step in the refactoring, it is assumed that there will be
+	// just a single local stream.
+	this.on('localStream', (constraints, stream) => {
+		if (constraints.audio) {
+			this._speakingMonitor._setInputTrack('default', stream.getAudioTracks()[0])
+		}
+	})
+	this.on('localTrackReplaced', (newTrack, oldTrack, stream) => {
+		if (this._speakingMonitor.getInputTrack() === oldTrack
+				&& (oldTrack || (newTrack && newTrack.kind === 'audio'))) {
+			this._speakingMonitor._setInputTrack('default', newTrack)
+		}
+	})
+	this.on('localStreamStopped', () => {
+		this._speakingMonitor._setInputTrack('default', null)
+	})
+	this.on('localTrackEnabledChanged', (track, stream) => {
+		if (this._speakingMonitor.getInputTrack() === track) {
+			this._speakingMonitor._setInputTrackEnabled('default', track.enabled)
+		}
+	})
 
 	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
 }
 
 util.inherits(LocalMedia, WildEmitter)
-
-/**
- * Clones a MediaStreamTrack that will be ended when the original
- * MediaStreamTrack is ended.
- *
- * @param {MediaStreamTrack} track the track to clone
- * @return {MediaStreamTrack} the linked track
- */
-const cloneLinkedTrack = function(track) {
-	const linkedTrack = track.clone()
-
-	// Keep a reference of all the linked clones of a track to be able to
-	// remove them when the source track is removed.
-	if (!track.linkedTracks) {
-		track.linkedTracks = []
-	}
-	track.linkedTracks.push(linkedTrack)
-
-	track.addEventListener('ended', function() {
-		linkedTrack.stop()
-	})
-
-	return linkedTrack
-}
-
-/**
- * Clones a MediaStream that will be ended when the original MediaStream is
- * ended.
- *
- * @param {MediaStream} stream the stream to clone
- * @return {MediaStream} the linked stream
- */
-const cloneLinkedStream = function(stream) {
-	const linkedStream = new MediaStream()
-
-	stream.getTracks().forEach(function(track) {
-		linkedStream.addTrack(cloneLinkedTrack(track))
-	})
-
-	stream.addEventListener('addtrack', function(event) {
-		linkedStream.addTrack(cloneLinkedTrack(event.track))
-	})
-
-	stream.addEventListener('removetrack', function(event) {
-		event.track.linkedTracks.forEach(linkedTrack => {
-			linkedStream.removeTrack(linkedTrack)
-		})
-	})
-
-	return linkedStream
-}
 
 /**
  * Returns whether the local media is active or not.
@@ -237,14 +214,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			return
 		}
 
-		// The audio monitor stream is never disabled to be able to analyze it
-		// even when the stream sent is muted.
-		const audioMonitorStream = cloneLinkedStream(stream)
-		if (constraints.audio) {
-			self._setupAudioMonitor(audioMonitorStream)
-		}
 		self.localStreams.push(stream)
-		self._audioMonitorStreams.push(audioMonitorStream)
 
 		stream.getTracks().forEach(function(track) {
 			if ((track.kind === 'audio' && !self._audioEnabled)
@@ -382,26 +352,12 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			const clonedTrack = track.clone()
 
 			let stream = trackStreamPair.stream
-			let streamIndex = this.localStreams.indexOf(stream)
-			if (streamIndex < 0) {
+			if (!this.localStreams.includes(stream)) {
 				stream = new MediaStream()
 				this.localStreams.push(stream)
-				streamIndex = this.localStreams.length - 1
 			}
 
 			stream.addTrack(clonedTrack)
-
-			// The audio monitor stream is never disabled to be able to analyze
-			// it even when the stream sent is muted.
-			let audioMonitorStream
-			if (streamIndex > this._audioMonitorStreams.length - 1) {
-				audioMonitorStream = cloneLinkedStream(stream)
-				this._audioMonitorStreams.push(audioMonitorStream)
-			} else {
-				audioMonitorStream = this._audioMonitorStreams[streamIndex]
-			}
-
-			this._setupAudioMonitor(audioMonitorStream)
 
 			if (!this._audioEnabled) {
 				clonedTrack.enabled = false
@@ -531,9 +487,6 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			if (!this.localStreams.includes(stream)) {
 				stream = new MediaStream()
 				this.localStreams.push(stream)
-
-				const audioMonitorStream = cloneLinkedStream(stream)
-				this._audioMonitorStreams.push(audioMonitorStream)
 			}
 
 			stream.addTrack(clonedTrack)
@@ -762,7 +715,6 @@ LocalMedia.prototype._removeStream = function(stream) {
 	let idx = this.localStreams.indexOf(stream)
 	if (idx > -1) {
 		this.localStreams.splice(idx, 1)
-		this._audioMonitorStreams.splice(idx, 1)
 		this.emit('localStreamStopped', stream)
 	} else {
 		idx = this.localScreens.indexOf(stream)
@@ -770,85 +722,6 @@ LocalMedia.prototype._removeStream = function(stream) {
 			this.localScreens.splice(idx, 1)
 			this.emit('localScreenStopped', stream)
 		}
-	}
-}
-
-LocalMedia.prototype._setupAudioMonitor = function(stream) {
-	this._log('Setup audio')
-	const audio = hark(stream)
-	const self = this
-	let timeout
-
-	stream.getAudioTracks().forEach(function(track) {
-		track.addEventListener('ended', function() {
-			if (isAllAudioTracksEnded(stream)) {
-				self._stopAudioMonitor(stream)
-			}
-		})
-	})
-
-	audio.on('speaking', function() {
-		if (timeout) {
-			clearTimeout(timeout)
-		}
-
-		self._speaking = true
-
-		if (self._audioEnabled) {
-			self.emit('speaking')
-		} else {
-			self.emit('speakingWhileMuted')
-		}
-	})
-
-	audio.on('stopped_speaking', function() {
-		if (timeout) {
-			clearTimeout(timeout)
-		}
-
-		timeout = setTimeout(function() {
-			self._speaking = false
-
-			if (self._audioEnabled) {
-				self.emit('stoppedSpeaking')
-			} else {
-				self.emit('stoppedSpeakingWhileMuted')
-			}
-		}, 1000)
-	})
-
-	self.on('audioOn', function() {
-		if (self._speaking) {
-			self.emit('stoppedSpeakingWhileMuted')
-			self.emit('speaking')
-		}
-	})
-
-	self.on('audioOff', function() {
-		if (self._speaking) {
-			self.emit('stoppedSpeaking')
-			self.emit('speakingWhileMuted')
-		}
-	})
-
-	audio.on('volume_change', function(volume, threshold) {
-		self.emit('volumeChange', volume, threshold)
-	})
-
-	this._audioMonitors.push({ audio, stream })
-}
-
-LocalMedia.prototype._stopAudioMonitor = function(stream) {
-	let idx = -1
-	this._audioMonitors.forEach(function(monitors, i) {
-		if (monitors.stream === stream) {
-			idx = i
-		}
-	})
-
-	if (idx > -1) {
-		this._audioMonitors[idx].audio.stop()
-		this._audioMonitors.splice(idx, 1)
 	}
 }
 
