@@ -27,7 +27,7 @@
 		:to="to"
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
-		:counter-highlighted="counterShouldBePrimary"
+		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon
@@ -157,8 +157,14 @@ export default {
 
 	computed: {
 
-		counterShouldBePrimary() {
-			return this.item.unreadMention || (this.item.unreadMessages !== 0 && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)
+		counterType() {
+			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)) {
+				return 'highlighted'
+			} else if (this.item.unreadMention) {
+				return 'outlined'
+			} else {
+				return ''
+			}
 		},
 
 		linkToConversation() {
