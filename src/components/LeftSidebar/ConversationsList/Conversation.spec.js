@@ -276,9 +276,10 @@ describe('Conversation.vue', () => {
 		/**
 		 * @param {object} item Conversation data
 		 * @param {string} expectedCounterText The expected unread counter
+		 * @param expectedOutlined
 		 * @param {boolean} expectedHighlighted Whether or not the unread counter is highlighted with primary color
 		 */
-		function testCounter(item, expectedCounterText, expectedHighlighted) {
+		function testCounter(item, expectedCounterText, expectedOutlined, expectedHighlighted) {
 			const wrapper = mount(Conversation, {
 				localVue,
 				store,
@@ -295,23 +296,38 @@ describe('Conversation.vue', () => {
 			expect(el.exists()).toBe(true)
 
 			expect(el.props('counterNumber')).toBe(expectedCounterText)
-			expect(el.props('counterHighlighted')).toBe(expectedHighlighted)
+			if (expectedOutlined) {
+				expect(el.props('counterType')).toBe('outlined')
+			}
+			if (expectedHighlighted) {
+				expect(el.props('counterType')).toBe('highlighted')
+			}
 		}
 
 		test('renders unread messages counter', () => {
 			item.unreadMessages = 5
-			testCounter(item, 5, false)
+			item.unreadMention = false
+			item.unreadMentionDirect = false
+			testCounter(item, 5, false, false)
 		})
 		test('renders unread mentions highlighted for non one-to-one conversations', () => {
 			item.unreadMessages = 5
 			item.unreadMention = true
-			testCounter(item, 5, true)
+			item.unreadMentionDirect = true
+			testCounter(item, 5, false, true)
+		})
+		test('renders group mentions outlined for non one-to-one conversations', () => {
+			item.unreadMessages = 5
+			item.unreadMention = true
+			item.unreadMentionDirect = false
+			testCounter(item, 5, true, false)
 		})
 		test('renders unread mentions always highlighted for one-to-one conversations', () => {
 			item.unreadMessages = 5
 			item.unreadMention = false
+			item.unreadMentionDirect = false
 			item.type = CONVERSATION.TYPE.ONE_TO_ONE
-			testCounter(item, 5, true)
+			testCounter(item, 5, false, true)
 		})
 
 		test('does not render counter when no unread messages', () => {
