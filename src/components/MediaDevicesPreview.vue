@@ -23,7 +23,6 @@
 		<MediaDevicesSelector kind="audioinput"
 			:devices="devices"
 			:device-id="audioInputId"
-			:enabled="enabled"
 			@update:deviceId="audioInputId = $event" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
@@ -35,11 +34,6 @@
 					fill-color="#999" />
 				<MicrophoneOff
 					v-else-if="!audioInputId"
-					:size="64"
-					title=""
-					fill-color="#999" />
-				<Microphone
-					v-else-if="!enabled"
 					:size="64"
 					title=""
 					fill-color="#999" />
@@ -65,7 +59,6 @@
 		<MediaDevicesSelector kind="videoinput"
 			:devices="devices"
 			:device-id="videoInputId"
-			:enabled="enabled"
 			@update:deviceId="videoInputId = $event" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
@@ -77,11 +70,6 @@
 					fill-color="#999" />
 				<VideoOff
 					v-else-if="!videoInputId"
-					:size="64"
-					title=""
-					fill-color="#999" />
-				<VideoIcon
-					v-else-if="!enabled"
 					:size="64"
 					title=""
 					fill-color="#999" />
@@ -107,7 +95,6 @@ import hark from 'hark'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
-import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import { mediaDevicesManager } from '../utils/webrtc/index'
 import MediaDevicesSelector from './MediaDevicesSelector'
@@ -121,15 +108,7 @@ export default {
 		MediaDevicesSelector,
 		Microphone,
 		MicrophoneOff,
-		VideoIcon: Video,
 		VideoOff,
-	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			default: true,
-		},
 	},
 
 	data() {
@@ -282,34 +261,11 @@ export default {
 	},
 
 	watch: {
-		enabled: {
-			handler(enabled) {
-				if (this.enabled) {
-					this.mediaDevicesManager.enableDeviceEvents()
-					this.updateAudioStream()
-					this.updateVideoStream()
-				} else {
-					this.mediaDevicesManager.disableDeviceEvents()
-					this.stopAudioStream()
-					this.stopVideoStream()
-				}
-			},
-			immediate: true,
-		},
-
 		audioInputId(audioInputId) {
-			if (!this.enabled) {
-				return
-			}
-
 			this.updateAudioStream()
 		},
 
 		videoInputId(videoInputId) {
-			if (!this.enabled) {
-				return
-			}
-
 			this.updateVideoStream()
 		},
 	},
@@ -329,15 +285,17 @@ export default {
 				name: 'NotSupportedError',
 			}
 		}
+
+		this.mediaDevicesManager.enableDeviceEvents()
+		this.updateAudioStream()
+		this.updateVideoStream()
 	},
 
 	destroyed() {
 		this.stopAudioStream()
 		this.stopVideoStream()
 
-		if (this.enabled) {
-			this.mediaDevicesManager.disableDeviceEvents()
-		}
+		this.mediaDevicesManager.disableDeviceEvents()
 	},
 
 	methods: {
