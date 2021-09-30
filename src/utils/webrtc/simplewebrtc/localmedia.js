@@ -9,17 +9,7 @@ const UAParser = require('ua-parser-js')
 // being initialized yet.
 const webrtcIndex = require('../index.js')
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
-
-/**
- * @param {object} stream the stream object.
- */
-function isAllTracksEnded(stream) {
-	let isAllTracksEnded = true
-	stream.getTracks().forEach(function(t) {
-		isAllTracksEnded = t.readyState === 'ended' && isAllTracksEnded
-	})
-	return isAllTracksEnded
-}
+const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
 
 /**
  * @param {object} opts the options object.
@@ -96,6 +86,14 @@ function LocalMedia(opts) {
 			this._speakingMonitor._setInputTrackEnabled('default', track.enabled)
 		}
 	})
+
+	this._trackToStream = new TrackToStream()
+	this._trackToStream.addInputTrackSlot('audio')
+	this._trackToStream.addInputTrackSlot('video')
+
+	this._handleStreamSetBound = this._handleStreamSet.bind(this)
+	this._handleTrackReplacedBound = this._handleTrackReplaced.bind(this)
+	this._handleTrackEnabledBound = this._handleTrackEnabled.bind(this)
 
 	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
@@ -214,22 +212,27 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			return
 		}
 
-		self.localStreams.push(stream)
-
 		stream.getTracks().forEach(function(track) {
+			if (track.kind === 'audio') {
+				self._trackToStream._setInputTrack('audio', track)
+			}
+			if (track.kind === 'video') {
+				self._trackToStream._setInputTrack('video', track)
+			}
+
 			if ((track.kind === 'audio' && !self._audioEnabled)
 				|| (track.kind === 'video' && !self._videoEnabled)) {
 				track.enabled = false
 			}
-
-			track.addEventListener('ended', function() {
-				if (isAllTracksEnded(stream) && !self._pendingAudioInputIdChangedCount && !self._pendingVideoInputIdChangedCount) {
-					self._removeStream(stream)
-				}
-			})
 		})
 
-		self.emit('localStream', constraints, stream)
+		self.localStreams.push(self._trackToStream.getStream())
+
+		self.emit('localStream', constraints, self._trackToStream.getStream())
+
+		self._trackToStream.on('streamSet', self._handleStreamSetBound)
+		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
+		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
 
 		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
 		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
@@ -237,7 +240,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._localMediaActive = true
 
 		if (cb) {
-			return cb(null, stream, constraints)
+			return cb(null, self._trackToStream.getStream(), constraints)
 		}
 	}).catch(function(err) {
 		// Fallback for users without a camera or with a camera that can not be
@@ -251,6 +254,10 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 		self.emit('localStreamRequestFailed', constraints)
 
+		self._trackToStream.on('streamSet', self._handleStreamSetBound)
+		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
+		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
+
 		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
 		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
 
@@ -260,6 +267,32 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			return cb(err, null)
 		}
 	})
+}
+
+LocalMedia.prototype._handleStreamSet = function(trackToStream, newStream, oldStream) {
+	if (oldStream) {
+		this._removeStream(oldStream)
+	}
+
+	if (newStream) {
+		this.localStreams.push(newStream)
+	}
+
+	// "streamSet" is always emitted along with "trackReplaced", so the
+	// "localStreamChanged" only needs to be relayed on "trackReplaced".
+}
+
+LocalMedia.prototype._handleTrackReplaced = function(trackToStream, newTrack, oldTrack) {
+	// "localStreamChanged" is expected to be emitted also when the tracks of
+	// the stream change, even if the stream itself is the same.
+	this.emit('localStreamChanged', trackToStream.getStream())
+	this.emit('localTrackReplaced', newTrack, oldTrack, trackToStream.getStream())
+}
+
+LocalMedia.prototype._handleTrackEnabled = function(trackToStream, track) {
+	// MediaStreamTrack does not emit an event when the enabled property
+	// changes, so it needs to be explicitly notified.
+	this.emit('localTrackEnabledChanged', track, trackToStream.getStream())
 }
 
 LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, audioInputId) {
@@ -279,65 +312,24 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 		if (audioInputIdChangedAgain) {
 			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
 		}
-
-		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-			this.localStreams.forEach(stream => {
-				if (isAllTracksEnded(stream)) {
-					this._removeStream(stream)
-				}
-			})
-		}
 	}
-
-	const localStreamsChanged = []
-	const localTracksReplaced = []
-
-	if (this.localStreams.length === 0 && audioInputId) {
-		// Force the creation of a new stream to add a new audio track to it.
-		localTracksReplaced.push({ track: null, stream: null })
-	}
-
-	this.localStreams.forEach(stream => {
-		if (stream.getAudioTracks().length === 0) {
-			localStreamsChanged.push(stream)
-
-			localTracksReplaced.push({ track: null, stream })
-		}
-
-		stream.getAudioTracks().forEach(track => {
-			const settings = track.getSettings()
-			if (track.kind === 'audio' && settings && settings.deviceId !== audioInputId) {
-				track.stop()
-
-				stream.removeTrack(track)
-
-				if (!localStreamsChanged.includes(stream)) {
-					localStreamsChanged.push(stream)
-				}
-
-				localTracksReplaced.push({ track, stream })
-			}
-		})
-	})
 
 	if (audioInputId === null) {
-		localStreamsChanged.forEach(stream => {
-			this.emit('localStreamChanged', stream)
-		})
-
-		localTracksReplaced.forEach(trackStreamPair => {
-			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
-		})
+		if (this._trackToStream.getInputTrack('audio')) {
+			this._trackToStream.getInputTrack('audio').stop()
+		}
+		this._trackToStream._setInputTrack('audio', null)
 
 		resetPendingAudioInputIdChangedCount()
 
 		return
 	}
 
-	if (localTracksReplaced.length === 0) {
-		resetPendingAudioInputIdChangedCount()
-
-		return
+	if (this._trackToStream.getInputTrack('audio')) {
+		const settings = this._trackToStream.getInputTrack('audio').getSettings()
+		if (settings && settings.deviceId === audioInputId) {
+			return
+		}
 	}
 
 	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
@@ -348,44 +340,21 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			console.error('More than a single audio track returned by getUserMedia, only the first one will be used')
 		}
 
-		localTracksReplaced.forEach(trackStreamPair => {
-			const clonedTrack = track.clone()
+		if (this._trackToStream.getInputTrack('audio')) {
+			this._trackToStream.getInputTrack('audio').stop()
+		}
+		this._trackToStream._setInputTrack('audio', track)
 
-			let stream = trackStreamPair.stream
-			if (!this.localStreams.includes(stream)) {
-				stream = new MediaStream()
-				this.localStreams.push(stream)
-			}
-
-			stream.addTrack(clonedTrack)
-
-			if (!this._audioEnabled) {
-				clonedTrack.enabled = false
-			}
-
-			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-					this._removeStream(stream)
-				}
-			})
-
-			this.emit('localStreamChanged', stream)
-			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, stream)
-		})
-
-		// After the clones were added to the local streams the original track
-		// is no longer needed.
-		track.stop()
+		if (!this._audioEnabled) {
+			track.enabled = false
+		}
 
 		resetPendingAudioInputIdChangedCount()
 	}).catch(() => {
-		localStreamsChanged.forEach(stream => {
-			this.emit('localStreamChanged', stream)
-		})
-
-		localTracksReplaced.forEach(trackStreamPair => {
-			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
-		})
+		if (this._trackToStream.getInputTrack('audio')) {
+			this._trackToStream.getInputTrack('audio').stop()
+		}
+		this._trackToStream._setInputTrack('audio', null)
 
 		resetPendingAudioInputIdChangedCount()
 	})
@@ -408,65 +377,24 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 		if (videoInputIdChangedAgain) {
 			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
 		}
-
-		if (!this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-			this.localStreams.forEach(stream => {
-				if (isAllTracksEnded(stream)) {
-					this._removeStream(stream)
-				}
-			})
-		}
 	}
-
-	const localStreamsChanged = []
-	const localTracksReplaced = []
-
-	if (this.localStreams.length === 0 && videoInputId) {
-		// Force the creation of a new stream to add a new video track to it.
-		localTracksReplaced.push({ track: null, stream: null })
-	}
-
-	this.localStreams.forEach(stream => {
-		if (stream.getVideoTracks().length === 0) {
-			localStreamsChanged.push(stream)
-
-			localTracksReplaced.push({ track: null, stream })
-		}
-
-		stream.getVideoTracks().forEach(track => {
-			const settings = track.getSettings()
-			if (track.kind === 'video' && settings && settings.deviceId !== videoInputId) {
-				track.stop()
-
-				stream.removeTrack(track)
-
-				if (!localStreamsChanged.includes(stream)) {
-					localStreamsChanged.push(stream)
-				}
-
-				localTracksReplaced.push({ track, stream })
-			}
-		})
-	})
 
 	if (videoInputId === null) {
-		localStreamsChanged.forEach(stream => {
-			this.emit('localStreamChanged', stream)
-		})
-
-		localTracksReplaced.forEach(trackStreamPair => {
-			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
-		})
+		if (this._trackToStream.getInputTrack('video')) {
+			this._trackToStream.getInputTrack('video').stop()
+		}
+		this._trackToStream._setInputTrack('video', null)
 
 		resetPendingVideoInputIdChangedCount()
 
 		return
 	}
 
-	if (localTracksReplaced.length === 0) {
-		resetPendingVideoInputIdChangedCount()
-
-		return
+	if (this._trackToStream.getInputTrack('video')) {
+		const settings = this._trackToStream.getInputTrack('video').getSettings()
+		if (settings && settings.deviceId === videoInputId) {
+			return
+		}
 	}
 
 	const constraints = { video: true }
@@ -480,50 +408,33 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			console.error('More than a single video track returned by getUserMedia, only the first one will be used')
 		}
 
-		localTracksReplaced.forEach(trackStreamPair => {
-			const clonedTrack = track.clone()
+		if (this._trackToStream.getInputTrack('video')) {
+			this._trackToStream.getInputTrack('video').stop()
+		}
+		this._trackToStream._setInputTrack('video', track)
 
-			let stream = trackStreamPair.stream
-			if (!this.localStreams.includes(stream)) {
-				stream = new MediaStream()
-				this.localStreams.push(stream)
-			}
-
-			stream.addTrack(clonedTrack)
-
-			if (!this._videoEnabled) {
-				clonedTrack.enabled = false
-			}
-
-			clonedTrack.addEventListener('ended', () => {
-				if (isAllTracksEnded(stream) && !this._pendingAudioInputIdChangedCount && !this._pendingVideoInputIdChangedCount) {
-					this._removeStream(stream)
-				}
-			})
-
-			this.emit('localStreamChanged', stream)
-			this.emit('localTrackReplaced', clonedTrack, trackStreamPair.track, stream)
-		})
-
-		// After the clones were added to the local streams the original track
-		// is no longer needed.
-		track.stop()
+		if (!this._videoEnabled) {
+			track.enabled = false
+		}
 
 		resetPendingVideoInputIdChangedCount()
 	}).catch(() => {
-		localStreamsChanged.forEach(stream => {
-			this.emit('localStreamChanged', stream)
-		})
-
-		localTracksReplaced.forEach(trackStreamPair => {
-			this.emit('localTrackReplaced', null, trackStreamPair.track, trackStreamPair.stream)
-		})
+		if (this._trackToStream.getInputTrack('video')) {
+			this._trackToStream.getInputTrack('video').stop()
+		}
+		this._trackToStream._setInputTrack('video', null)
 
 		resetPendingVideoInputIdChangedCount()
 	})
 }
 
 LocalMedia.prototype.stop = function() {
+	// Handlers need to be removed before stopping the stream to prevent
+	// relaying no longer needed events.
+	this._trackToStream.off('streamSet', this._handleStreamSetBound)
+	this._trackToStream.off('trackReplaced', this._handleTrackReplacedBound)
+	this._trackToStream.off('trackEnabled', this._handleTrackEnabledBound)
+
 	this.stopStream()
 	this.stopScreenShare()
 
@@ -534,11 +445,20 @@ LocalMedia.prototype.stop = function() {
 }
 
 LocalMedia.prototype.stopStream = function() {
-	this.localStreams.forEach(function(stream) {
-		stream.getTracks().forEach(function(track) {
-			track.stop()
-		})
-	})
+	const stream = this._trackToStream.getStream()
+
+	if (this._trackToStream.getInputTrack('audio')) {
+		this._trackToStream.getInputTrack('audio').stop()
+		this._trackToStream._setInputTrack('audio', null)
+	}
+	if (this._trackToStream.getInputTrack('video')) {
+		this._trackToStream.getInputTrack('video').stop()
+		this._trackToStream._setInputTrack('video', null)
+	}
+
+	if (stream) {
+		this._removeStream(stream)
+	}
 }
 
 LocalMedia.prototype.startScreenShare = function(mode, constraints, cb) {
@@ -624,28 +544,18 @@ LocalMedia.prototype.resume = function() {
 LocalMedia.prototype._setAudioEnabled = function(bool) {
 	this._audioEnabled = bool
 
-	this.localStreams.forEach(stream => {
-		stream.getAudioTracks().forEach(track => {
-			track.enabled = !!bool
-
-			// MediaStreamTrack does not emit an event when the enabled property
-			// changes, so it needs to be explicitly notified.
-			this.emit('localTrackEnabledChanged', track, stream)
-		})
-	})
+	if (this._trackToStream.getInputTrack('audio')) {
+		this._trackToStream.getInputTrack('audio').enabled = !!bool
+		this._trackToStream._setInputTrackEnabled('audio', !!bool)
+	}
 }
 LocalMedia.prototype._setVideoEnabled = function(bool) {
 	this._videoEnabled = bool
 
-	this.localStreams.forEach(stream => {
-		stream.getVideoTracks().forEach(track => {
-			track.enabled = !!bool
-
-			// MediaStreamTrack does not emit an event when the enabled property
-			// changes, so it needs to be explicitly notified.
-			this.emit('localTrackEnabledChanged', track, stream)
-		})
-	})
+	if (this._trackToStream.getInputTrack('video')) {
+		this._trackToStream.getInputTrack('video').enabled = !!bool
+		this._trackToStream._setInputTrackEnabled('video', !!bool)
+	}
 }
 
 // check if all audio streams are enabled
