@@ -44,7 +44,6 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastPing()
  */
 class Session extends Entity {
-
 	public const SESSION_TIMEOUT = 30;
 	public const SESSION_TIMEOUT_KILL = self::SESSION_TIMEOUT * 3 + 10;
 

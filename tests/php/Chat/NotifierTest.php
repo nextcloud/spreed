@@ -553,7 +553,6 @@ class NotifierTest extends TestCase {
 	 * @param bool $expected
 	 */
 	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $expected): void {
-
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getActorType')
 			->willReturn($commentActorType);
