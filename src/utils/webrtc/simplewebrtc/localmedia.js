@@ -9,6 +9,7 @@ const UAParser = require('ua-parser-js')
 // being initialized yet.
 const webrtcIndex = require('../index.js')
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
+const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
 const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
 
 /**
@@ -33,9 +34,6 @@ function LocalMedia(opts) {
 	this._log = this.logger.log.bind(this.logger, 'LocalMedia:')
 	this._logerror = this.logger.error.bind(this.logger, 'LocalMedia:')
 
-	this._audioEnabled = true
-	this._videoEnabled = true
-
 	this._localMediaActive = false
 
 	this.localStreams = []
@@ -44,6 +42,9 @@ function LocalMedia(opts) {
 	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
 		this._logerror('Your browser does not support local media capture.')
 	}
+
+	this._audioTrackEnabler = new TrackEnabler()
+	this._videoTrackEnabler = new TrackEnabler()
 
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
@@ -62,31 +63,6 @@ function LocalMedia(opts) {
 		this.emit('volumeChange', volume, threshold)
 	})
 
-	// Although there could be several local streams active at the same time (if
-	// the local media is started again before stopping it first) in most cases
-	// there will be just a single local stream. For simplicity, and as this is
-	// just a temporal step in the refactoring, it is assumed that there will be
-	// just a single local stream.
-	this.on('localStream', (constraints, stream) => {
-		if (constraints.audio) {
-			this._speakingMonitor._setInputTrack('default', stream.getAudioTracks()[0])
-		}
-	})
-	this.on('localTrackReplaced', (newTrack, oldTrack, stream) => {
-		if (this._speakingMonitor.getInputTrack() === oldTrack
-				&& (oldTrack || (newTrack && newTrack.kind === 'audio'))) {
-			this._speakingMonitor._setInputTrack('default', newTrack)
-		}
-	})
-	this.on('localStreamStopped', () => {
-		this._speakingMonitor._setInputTrack('default', null)
-	})
-	this.on('localTrackEnabledChanged', (track, stream) => {
-		if (this._speakingMonitor.getInputTrack() === track) {
-			this._speakingMonitor._setInputTrackEnabled('default', track.enabled)
-		}
-	})
-
 	this._trackToStream = new TrackToStream()
 	this._trackToStream.addInputTrackSlot('audio')
 	this._trackToStream.addInputTrackSlot('video')
@@ -94,6 +70,11 @@ function LocalMedia(opts) {
 	this._handleStreamSetBound = this._handleStreamSet.bind(this)
 	this._handleTrackReplacedBound = this._handleTrackReplaced.bind(this)
 	this._handleTrackEnabledBound = this._handleTrackEnabled.bind(this)
+
+	this._audioTrackEnabler.connectTrackSink('default', this._speakingMonitor)
+	this._audioTrackEnabler.connectTrackSink('default', this._trackToStream, 'audio')
+
+	this._videoTrackEnabler.connectTrackSink('default', this._trackToStream, 'video')
 
 	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
@@ -214,15 +195,10 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 		stream.getTracks().forEach(function(track) {
 			if (track.kind === 'audio') {
-				self._trackToStream._setInputTrack('audio', track)
+				self._audioTrackEnabler._setInputTrack('default', track)
 			}
 			if (track.kind === 'video') {
-				self._trackToStream._setInputTrack('video', track)
-			}
-
-			if ((track.kind === 'audio' && !self._audioEnabled)
-				|| (track.kind === 'video' && !self._videoEnabled)) {
-				track.enabled = false
+				self._videoTrackEnabler._setInputTrack('default', track)
 			}
 		})
 
@@ -315,18 +291,18 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 	}
 
 	if (audioInputId === null) {
-		if (this._trackToStream.getInputTrack('audio')) {
-			this._trackToStream.getInputTrack('audio').stop()
+		if (this._audioTrackEnabler.getInputTrack()) {
+			this._audioTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('audio', null)
+		this._audioTrackEnabler._setInputTrack('default', null)
 
 		resetPendingAudioInputIdChangedCount()
 
 		return
 	}
 
-	if (this._trackToStream.getInputTrack('audio')) {
-		const settings = this._trackToStream.getInputTrack('audio').getSettings()
+	if (this._audioTrackEnabler.getInputTrack()) {
+		const settings = this._audioTrackEnabler.getInputTrack().getSettings()
 		if (settings && settings.deviceId === audioInputId) {
 			return
 		}
@@ -340,21 +316,17 @@ LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, 
 			console.error('More than a single audio track returned by getUserMedia, only the first one will be used')
 		}
 
-		if (this._trackToStream.getInputTrack('audio')) {
-			this._trackToStream.getInputTrack('audio').stop()
+		if (this._audioTrackEnabler.getInputTrack()) {
+			this._audioTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('audio', track)
-
-		if (!this._audioEnabled) {
-			track.enabled = false
-		}
+		this._audioTrackEnabler._setInputTrack('default', track)
 
 		resetPendingAudioInputIdChangedCount()
 	}).catch(() => {
-		if (this._trackToStream.getInputTrack('audio')) {
-			this._trackToStream.getInputTrack('audio').stop()
+		if (this._audioTrackEnabler.getInputTrack()) {
+			this._audioTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('audio', null)
+		this._audioTrackEnabler._setInputTrack('default', null)
 
 		resetPendingAudioInputIdChangedCount()
 	})
@@ -380,18 +352,18 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 	}
 
 	if (videoInputId === null) {
-		if (this._trackToStream.getInputTrack('video')) {
-			this._trackToStream.getInputTrack('video').stop()
+		if (this._videoTrackEnabler.getInputTrack()) {
+			this._videoTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('video', null)
+		this._videoTrackEnabler._setInputTrack('default', null)
 
 		resetPendingVideoInputIdChangedCount()
 
 		return
 	}
 
-	if (this._trackToStream.getInputTrack('video')) {
-		const settings = this._trackToStream.getInputTrack('video').getSettings()
+	if (this._videoTrackEnabler.getInputTrack()) {
+		const settings = this._videoTrackEnabler.getInputTrack().getSettings()
 		if (settings && settings.deviceId === videoInputId) {
 			return
 		}
@@ -408,21 +380,17 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 			console.error('More than a single video track returned by getUserMedia, only the first one will be used')
 		}
 
-		if (this._trackToStream.getInputTrack('video')) {
-			this._trackToStream.getInputTrack('video').stop()
+		if (this._videoTrackEnabler.getInputTrack()) {
+			this._videoTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('video', track)
-
-		if (!this._videoEnabled) {
-			track.enabled = false
-		}
+		this._videoTrackEnabler._setInputTrack('default', track)
 
 		resetPendingVideoInputIdChangedCount()
 	}).catch(() => {
-		if (this._trackToStream.getInputTrack('video')) {
-			this._trackToStream.getInputTrack('video').stop()
+		if (this._videoTrackEnabler.getInputTrack()) {
+			this._videoTrackEnabler.getInputTrack().stop()
 		}
-		this._trackToStream._setInputTrack('video', null)
+		this._videoTrackEnabler._setInputTrack('default', null)
 
 		resetPendingVideoInputIdChangedCount()
 	})
@@ -447,13 +415,13 @@ LocalMedia.prototype.stop = function() {
 LocalMedia.prototype.stopStream = function() {
 	const stream = this._trackToStream.getStream()
 
-	if (this._trackToStream.getInputTrack('audio')) {
-		this._trackToStream.getInputTrack('audio').stop()
-		this._trackToStream._setInputTrack('audio', null)
+	if (this._audioTrackEnabler.getInputTrack()) {
+		this._audioTrackEnabler.getInputTrack().stop()
+		this._audioTrackEnabler._setInputTrack('default', null)
 	}
-	if (this._trackToStream.getInputTrack('video')) {
-		this._trackToStream.getInputTrack('video').stop()
-		this._trackToStream._setInputTrack('video', null)
+	if (this._videoTrackEnabler.getInputTrack()) {
+		this._videoTrackEnabler.getInputTrack().stop()
+		this._videoTrackEnabler._setInputTrack('default', null)
 	}
 
 	if (stream) {
@@ -542,20 +510,10 @@ LocalMedia.prototype.resume = function() {
 
 // Internal methods for enabling/disabling audio/video
 LocalMedia.prototype._setAudioEnabled = function(bool) {
-	this._audioEnabled = bool
-
-	if (this._trackToStream.getInputTrack('audio')) {
-		this._trackToStream.getInputTrack('audio').enabled = !!bool
-		this._trackToStream._setInputTrackEnabled('audio', !!bool)
-	}
+	this._audioTrackEnabler.setEnabled(bool)
 }
 LocalMedia.prototype._setVideoEnabled = function(bool) {
-	this._videoEnabled = bool
-
-	if (this._trackToStream.getInputTrack('video')) {
-		this._trackToStream.getInputTrack('video').enabled = !!bool
-		this._trackToStream._setInputTrackEnabled('video', !!bool)
-	}
+	this._videoTrackEnabler.setEnabled(bool)
 }
 
 // check if all audio streams are enabled
