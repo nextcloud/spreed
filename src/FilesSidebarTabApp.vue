@@ -42,7 +42,7 @@
 			<CallButton class="call-button" />
 			<ChatView />
 			<UploadEditor />
-			<DeviceChecker />
+			<DeviceChecker :initialize-on-mounted="false" />
 		</template>
 	</div>
 </template>

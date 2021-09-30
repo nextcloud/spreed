@@ -36,10 +36,48 @@ export const devices = {
 			videoStream: null,
 			videoStreamError: null,
 			hark: null,
+			initialized: false,
 		}
 	},
 
+	props: {
+		initializeOnMounted: {
+			type: Boolean,
+			default: true,
+		},
+	},
+
 	methods: {
+		initializeDevicesMixin() {
+			this.initialized = true
+
+			if (!this.mediaDevicesManager.isSupported()) {
+				// DOMException constructor is not supported in Internet Explorer,
+				// so a plain object is used instead.
+				this.audioStreamError = {
+					message: 'MediaDevicesManager is not supported',
+					name: 'NotSupportedError',
+				}
+				this.videoStreamError = {
+					message: 'MediaDevicesManager is not supported',
+					name: 'NotSupportedError',
+				}
+			}
+
+			this.mediaDevicesManager.enableDeviceEvents()
+			this.updateAudioStream()
+			this.updateVideoStream()
+		},
+
+		stopDevicesMixin() {
+			this.initialized = false
+
+			this.stopAudioStream()
+			this.stopVideoStream()
+			this.mediaDevicesManager.disableDeviceEvents()
+
+		},
+
 		updateAudioStream() {
 			if (!this.mediaDevicesManager.isSupported()) {
 				return
@@ -216,37 +254,29 @@ export const devices = {
 	},
 
 	mounted() {
-		if (!this.mediaDevicesManager.isSupported()) {
-			// DOMException constructor is not supported in Internet Explorer,
-			// so a plain object is used instead.
-			this.audioStreamError = {
-				message: 'MediaDevicesManager is not supported',
-				name: 'NotSupportedError',
-			}
-			this.videoStreamError = {
-				message: 'MediaDevicesManager is not supported',
-				name: 'NotSupportedError',
-			}
+		if (this.initializeOnMounted) {
+			this.initializeDevicesMixin()
 		}
-
-		this.mediaDevicesManager.enableDeviceEvents()
-		this.updateAudioStream()
-		this.updateVideoStream()
 	},
 
 	destroyed() {
-		this.stopAudioStream()
-		this.stopVideoStream()
-
-		this.mediaDevicesManager.disableDeviceEvents()
+		this.stopDevicesMixin()
 	},
 
 	watch: {
 		audioInputId(audioInputId) {
+			if (!this.initialized) {
+				return
+			}
+
 			this.updateAudioStream()
 		},
 
 		videoInputId(videoInputId) {
+			if (!this.initialized) {
+				return
+			}
+
 			this.updateVideoStream()
 		},
 	},

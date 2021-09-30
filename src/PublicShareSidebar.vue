@@ -38,7 +38,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
-				<DeviceChecker />
+				<DeviceChecker :initialize-on-mounted="false" />
 			</template>
 		</aside>
 	</transition>

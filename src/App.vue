@@ -32,7 +32,7 @@
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
-		<DeviceChecker />
+		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
