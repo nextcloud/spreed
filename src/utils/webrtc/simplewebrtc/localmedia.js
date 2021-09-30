@@ -523,9 +523,9 @@ LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, 
 	})
 }
 
-LocalMedia.prototype.stop = function(stream) {
-	this.stopStream(stream)
-	this.stopScreenShare(stream)
+LocalMedia.prototype.stop = function() {
+	this.stopStream()
+	this.stopScreenShare()
 
 	webrtcIndex.mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
 	webrtcIndex.mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
@@ -533,21 +533,12 @@ LocalMedia.prototype.stop = function(stream) {
 	this._localMediaActive = false
 }
 
-LocalMedia.prototype.stopStream = function(stream) {
-	if (stream) {
-		const idx = this.localStreams.indexOf(stream)
-		if (idx > -1) {
-			stream.getTracks().forEach(function(track) {
-				track.stop()
-			})
-		}
-	} else {
-		this.localStreams.forEach(function(stream) {
-			stream.getTracks().forEach(function(track) {
-				track.stop()
-			})
+LocalMedia.prototype.stopStream = function() {
+	this.localStreams.forEach(function(stream) {
+		stream.getTracks().forEach(function(track) {
+			track.stop()
 		})
-	}
+	})
 }
 
 LocalMedia.prototype.startScreenShare = function(mode, constraints, cb) {
@@ -589,21 +580,13 @@ LocalMedia.prototype.startScreenShare = function(mode, constraints, cb) {
 	})
 }
 
-LocalMedia.prototype.stopScreenShare = function(stream) {
+LocalMedia.prototype.stopScreenShare = function() {
 	const self = this
 
-	if (stream) {
-		const idx = this.localScreens.indexOf(stream)
-		if (idx > -1) {
-			stream.getTracks().forEach(function(track) { track.stop() })
-			this._removeStream(stream)
-		}
-	} else {
-		this.localScreens.forEach(function(stream) {
-			stream.getTracks().forEach(function(track) { track.stop() })
-			self._removeStream(stream)
-		})
-	}
+	this.localScreens.forEach(function(stream) {
+		stream.getTracks().forEach(function(track) { track.stop() })
+		self._removeStream(stream)
+	})
 }
 
 // Audio controls
