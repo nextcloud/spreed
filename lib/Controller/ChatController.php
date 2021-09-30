@@ -706,26 +706,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$results = $this->prepareResultArray($results, $statuses);
 
-		$attendee = $this->participant->getAttendee();
-		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
-		$roomDisplayName = $this->room->getDisplayName($userId);
-		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
-			if ($search === '' ||
-				stripos($roomDisplayName, $search) === 0 ||
-				strpos('all', $search) === 0) {
-				array_unshift($results, [
-					'id' => 'all',
-					'label' => $roomDisplayName,
-					'source' => 'calls',
-				]);
-			} else {
-				$results[] = [
-					'id' => 'all',
-					'label' => $roomDisplayName,
-					'source' => 'calls',
-				];
-			}
-		}
+		$results = $this->chatManager->addConversationNotify($results, $search, $this->room, $this->participant);
 
 		return new DataResponse($results);
 	}

@@ -27,6 +27,7 @@ namespace OCA\Talk\Tests\php\Chat;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -432,5 +433,87 @@ class ChatManagerTest extends TestCase {
 				false
 			);
 		$manager->clearHistory($chat, 'users', 'admin');
+	}
+
+	public function dataSearchIsPartOfConversationNameOrAtAll(): array {
+		return [
+			['a', 'test', true],
+			['h', 'test', true],
+			['A', 'test', false],
+			['H', 'test', false],
+			['T', 'test', true],
+			['t', 'test', true],
+			['notbeginingall', 'test', false],
+			['notbegininghere', 'test', false],
+			['notbeginingtest', 'test', false]
+		];
+	}
+
+	/**
+	 * @dataProvider dataSearchIsPartOfConversationNameOrAtAll
+	 */
+	public function testSearchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName, bool $expected): void {
+		$actual = self::invokePrivate($this->chatManager, 'searchIsPartOfConversationNameOrAtAll', [$search, $roomDisplayName]);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function dataAddConversationNotify(): array {
+		return [
+			[
+				'',
+				['getType' => Room::TYPE_ONE_TO_ONE],
+				[],
+				[]
+			],
+			[
+				'',
+				['getDisplayName' => 'test'],
+				['getAttendee' => Attendee::fromRow([
+					'actor_type' => Attendee::ACTOR_USERS,
+					'actor_id' => 'user',
+				])],
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+			],
+			[
+				'all',
+				['getDisplayName' => 'test'],
+				['getAttendee' => Attendee::fromRow([
+					'actor_type' => Attendee::ACTOR_USERS,
+					'actor_id' => 'user',
+				])],
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+			],
+			[
+				'here',
+				['getDisplayName' => 'test'],
+				['getAttendee' => Attendee::fromRow([
+					'actor_type' => Attendee::ACTOR_GUESTS,
+					'actor_id' => 'guest',
+				])],
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider dataAddConversationNotify
+	 */
+	public function testAddConversationNotify($search, $roomMocks, $participantMocks, $expected) {
+		$room = $this->createMock(Room::class);
+		foreach ($roomMocks as $method => $return) {
+			$room->expects($this->once())
+				->method($method)
+				->willReturn($return);
+		}
+
+		$participant = $this->createMock(Participant::class);
+		foreach ($participantMocks as $method => $return) {
+			$participant->expects($this->once())
+				->method($method)
+				->willReturn($return);
+		}
+
+		$actual = $this->chatManager->addConversationNotify([], $search, $room, $participant);
+		$this->assertEquals($expected, $actual);
 	}
 }

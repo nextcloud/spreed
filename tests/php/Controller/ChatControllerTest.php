@@ -1075,6 +1075,10 @@ class ChatControllerTest extends TestCase {
 			->method('asArray')
 			->willReturn($result);
 
+		$this->chatManager->expects($this->once())
+			->method('addConversationNotify')
+			->willReturnArgument(0);
+
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->mentions($search, $limit);
