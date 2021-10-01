@@ -37,12 +37,14 @@ import {
  * @param {object} localMediaModel the model for the local media.
  * @param {object} callParticipantCollection the collection.
  *        that contains the models for the rest of the participants in the call.
+ * @param {object} trackConstrainer the track constrainer node on which apply
+ *        the constraints.
  */
-export default function SentVideoQualityThrottler(localMediaModel, callParticipantCollection) {
+export default function SentVideoQualityThrottler(localMediaModel, callParticipantCollection, trackConstrainer) {
 	this._localMediaModel = localMediaModel
 	this._callParticipantCollection = callParticipantCollection
 
-	this._videoConstrainer = new VideoConstrainer(localMediaModel)
+	this._videoConstrainer = new VideoConstrainer(trackConstrainer)
 
 	this._gracePeriodAfterSpeakingTimeout = null
 	this._speakingOrInGracePeriodAfterSpeaking = false

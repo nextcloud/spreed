@@ -173,7 +173,7 @@ async function signalingJoinCall(token, flags) {
 
 		setupWebRtc()
 
-		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection)
+		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection, webRtc.webrtc._videoTrackConstrainer)
 
 		if (signaling.hasFeature('mcu')) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)

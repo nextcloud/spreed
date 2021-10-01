@@ -9,6 +9,7 @@ const UAParser = require('ua-parser-js')
 // being initialized yet.
 const webrtcIndex = require('../index.js')
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
+const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
 const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
 const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
 
@@ -46,6 +47,8 @@ function LocalMedia(opts) {
 	this._audioTrackEnabler = new TrackEnabler()
 	this._videoTrackEnabler = new TrackEnabler()
 
+	this._videoTrackConstrainer = new TrackConstrainer()
+
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
 		this.emit('speaking')
@@ -74,7 +77,9 @@ function LocalMedia(opts) {
 	this._audioTrackEnabler.connectTrackSink('default', this._speakingMonitor)
 	this._audioTrackEnabler.connectTrackSink('default', this._trackToStream, 'audio')
 
-	this._videoTrackEnabler.connectTrackSink('default', this._trackToStream, 'video')
+	this._videoTrackEnabler.connectTrackSink('default', this._videoTrackConstrainer)
+
+	this._videoTrackConstrainer.connectTrackSink('default', this._trackToStream, 'video')
 
 	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
