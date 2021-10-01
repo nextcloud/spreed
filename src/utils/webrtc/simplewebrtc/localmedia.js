@@ -4,10 +4,10 @@ const util = require('util')
 const getScreenMedia = require('./getscreenmedia')
 const WildEmitter = require('wildemitter')
 const mockconsole = require('mockconsole')
-const UAParser = require('ua-parser-js')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
 const webrtcIndex = require('../index.js')
+const MediaDevicesSource = require('../../media/pipeline/MediaDevicesSource.js').default
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
 const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
 const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
@@ -44,6 +44,8 @@ function LocalMedia(opts) {
 		this._logerror('Your browser does not support local media capture.')
 	}
 
+	this._mediaDevicesSource = new MediaDevicesSource()
+
 	this._audioTrackEnabler = new TrackEnabler()
 	this._videoTrackEnabler = new TrackEnabler()
 
@@ -74,15 +76,15 @@ function LocalMedia(opts) {
 	this._handleTrackReplacedBound = this._handleTrackReplaced.bind(this)
 	this._handleTrackEnabledBound = this._handleTrackEnabled.bind(this)
 
+	this._mediaDevicesSource.connectTrackSink('audio', this._audioTrackEnabler)
+	this._mediaDevicesSource.connectTrackSink('video', this._videoTrackEnabler)
+
 	this._audioTrackEnabler.connectTrackSink('default', this._speakingMonitor)
 	this._audioTrackEnabler.connectTrackSink('default', this._trackToStream, 'audio')
 
 	this._videoTrackEnabler.connectTrackSink('default', this._videoTrackConstrainer)
 
 	this._videoTrackConstrainer.connectTrackSink('default', this._trackToStream, 'video')
-
-	this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
-	this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
 }
 
 util.inherits(LocalMedia, WildEmitter)
@@ -100,58 +102,14 @@ LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive
 }
 
-/**
- * Adjusts video constraints to work around bug in Chromium.
- *
- * In Chromium it is not possible to increase the resolution of a track once it
- * has been cloned, so the track needs to be initialized with a high resolution
- * (otherwise real devices are initialized with a resolution around 640x480).
- * Therefore, the video is requested with a loose constraint for a high
- * resolution, so if the camera does not have such resolution it will still
- * return the highest resolution available without failing.
- *
- * A high frame rate needs to be requested too, as some cameras offer high
- * resolution but with low frame rates, so Chromium could end providing a laggy
- * high resolution video. If the frame rate is requested too then Chromium needs
- * to balance all the constraints and thus provide a video without the highest
- * resolution but with an acceptable frame rate.
- *
- * @param {object} constraints the constraints to be adjusted
- */
-LocalMedia.prototype._adjustVideoConstraintsForChromium = function(constraints) {
-	const parser = new UAParser()
-	const browserName = parser.getBrowser().name
-
-	if (browserName !== 'Chrome'
-		&& browserName !== 'Chromium'
-		&& browserName !== 'Opera'
-		&& browserName !== 'Safari'
-		&& browserName !== 'Mobile Safari'
-		&& browserName !== 'Edge') {
-		return
-	}
-
-	if (!constraints.video) {
-		return
-	}
-
-	if (!(constraints.video instanceof Object)) {
-		constraints.video = {}
-	}
-
-	constraints.video.width = 1920
-	constraints.video.height = 1200
-	constraints.video.frameRate = 60
-}
-
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
 
 	// If local media is started with neither audio nor video the local media
 	// will not be active (it will not react to changes in the selected media
-	// devices). It is just a special case in which starting succeeds with a null
-	// stream.
+	// devices). It is just a special case in which starting succeeds with a
+	// null stream.
 	if (!constraints.audio && !constraints.video) {
 		self.emit('localStream', constraints, null)
 
@@ -175,38 +133,11 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this.emit('localStreamRequested', constraints, context)
 
-	if (!context) {
-		// Try to get the devices list before getting user media.
-		webrtcIndex.mediaDevicesManager.enableDeviceEvents()
-		webrtcIndex.mediaDevicesManager.disableDeviceEvents()
+	const retryNoVideoCallback = (constraints, error) => {
+		self.emit('localStreamRequestFailedRetryNoVideo', constraints, error)
 	}
 
-	this._adjustVideoConstraintsForChromium(constraints)
-
-	// The handlers for "change:audioInputId" and "change:videoInputId" events
-	// expect the initial "getUserMedia" call to have been completed before
-	// being used, so they must be set when the promise is resolved or rejected.
-
-	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(function(stream) {
-		// Although the promise should be resolved only if all the constraints
-		// are met Edge resolves it if both audio and video are requested but
-		// only audio is available.
-		if (constraints.video && stream.getVideoTracks().length === 0) {
-			self.emit('localStreamRequestFailedRetryNoVideo', constraints)
-			constraints.video = false
-			self.start(constraints, cb, 'retry-no-video')
-			return
-		}
-
-		stream.getTracks().forEach(function(track) {
-			if (track.kind === 'audio') {
-				self._audioTrackEnabler._setInputTrack('default', track)
-			}
-			if (track.kind === 'video') {
-				self._videoTrackEnabler._setInputTrack('default', track)
-			}
-		})
-
+	this._mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
 		self.localStreams.push(self._trackToStream.getStream())
 
 		self.emit('localStream', constraints, self._trackToStream.getStream())
@@ -215,32 +146,17 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
 		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
 
-		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
-		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
-
 		self._localMediaActive = true
 
 		if (cb) {
 			return cb(null, self._trackToStream.getStream(), constraints)
 		}
-	}).catch(function(err) {
-		// Fallback for users without a camera or with a camera that can not be
-		// accessed, but only if audio is meant to be used.
-		if (constraints.audio !== false && self.config.audioFallback && constraints.video !== false) {
-			self.emit('localStreamRequestFailedRetryNoVideo', constraints, err)
-			constraints.video = false
-			self.start(constraints, cb, 'retry-no-video')
-			return
-		}
-
+	}).catch(err => {
 		self.emit('localStreamRequestFailed', constraints)
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
 		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
-
-		webrtcIndex.mediaDevicesManager.on('change:audioInputId', self._handleAudioInputIdChangedBound)
-		webrtcIndex.mediaDevicesManager.on('change:videoInputId', self._handleVideoInputIdChangedBound)
 
 		self._localMediaActive = true
 
@@ -276,131 +192,6 @@ LocalMedia.prototype._handleTrackEnabled = function(trackToStream, track) {
 	this.emit('localTrackEnabledChanged', track, trackToStream.getStream())
 }
 
-LocalMedia.prototype._handleAudioInputIdChanged = function(mediaDevicesManager, audioInputId) {
-	if (this._pendingAudioInputIdChangedCount) {
-		this._pendingAudioInputIdChangedCount++
-
-		return
-	}
-
-	this._pendingAudioInputIdChangedCount = 1
-
-	const resetPendingAudioInputIdChangedCount = () => {
-		const audioInputIdChangedAgain = this._pendingAudioInputIdChangedCount > 1
-
-		this._pendingAudioInputIdChangedCount = 0
-
-		if (audioInputIdChangedAgain) {
-			this._handleAudioInputIdChanged(webrtcIndex.mediaDevicesManager.get('audioInputId'))
-		}
-	}
-
-	if (audioInputId === null) {
-		if (this._audioTrackEnabler.getInputTrack()) {
-			this._audioTrackEnabler.getInputTrack().stop()
-		}
-		this._audioTrackEnabler._setInputTrack('default', null)
-
-		resetPendingAudioInputIdChangedCount()
-
-		return
-	}
-
-	if (this._audioTrackEnabler.getInputTrack()) {
-		const settings = this._audioTrackEnabler.getInputTrack().getSettings()
-		if (settings && settings.deviceId === audioInputId) {
-			return
-		}
-	}
-
-	webrtcIndex.mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
-		// According to the specification "getUserMedia({ audio: true })" will
-		// return a single audio track.
-		const track = stream.getTracks()[0]
-		if (stream.getTracks().length > 1) {
-			console.error('More than a single audio track returned by getUserMedia, only the first one will be used')
-		}
-
-		if (this._audioTrackEnabler.getInputTrack()) {
-			this._audioTrackEnabler.getInputTrack().stop()
-		}
-		this._audioTrackEnabler._setInputTrack('default', track)
-
-		resetPendingAudioInputIdChangedCount()
-	}).catch(() => {
-		if (this._audioTrackEnabler.getInputTrack()) {
-			this._audioTrackEnabler.getInputTrack().stop()
-		}
-		this._audioTrackEnabler._setInputTrack('default', null)
-
-		resetPendingAudioInputIdChangedCount()
-	})
-}
-
-LocalMedia.prototype._handleVideoInputIdChanged = function(mediaDevicesManager, videoInputId) {
-	if (this._pendingVideoInputIdChangedCount) {
-		this._pendingVideoInputIdChangedCount++
-
-		return
-	}
-
-	this._pendingVideoInputIdChangedCount = 1
-
-	const resetPendingVideoInputIdChangedCount = () => {
-		const videoInputIdChangedAgain = this._pendingVideoInputIdChangedCount > 1
-
-		this._pendingVideoInputIdChangedCount = 0
-
-		if (videoInputIdChangedAgain) {
-			this._handleVideoInputIdChanged(webrtcIndex.mediaDevicesManager.get('videoInputId'))
-		}
-	}
-
-	if (videoInputId === null) {
-		if (this._videoTrackEnabler.getInputTrack()) {
-			this._videoTrackEnabler.getInputTrack().stop()
-		}
-		this._videoTrackEnabler._setInputTrack('default', null)
-
-		resetPendingVideoInputIdChangedCount()
-
-		return
-	}
-
-	if (this._videoTrackEnabler.getInputTrack()) {
-		const settings = this._videoTrackEnabler.getInputTrack().getSettings()
-		if (settings && settings.deviceId === videoInputId) {
-			return
-		}
-	}
-
-	const constraints = { video: true }
-	this._adjustVideoConstraintsForChromium(constraints)
-
-	webrtcIndex.mediaDevicesManager.getUserMedia(constraints).then(stream => {
-		// According to the specification "getUserMedia({ video: true })" will
-		// return a single video track.
-		const track = stream.getTracks()[0]
-		if (stream.getTracks().length > 1) {
-			console.error('More than a single video track returned by getUserMedia, only the first one will be used')
-		}
-
-		if (this._videoTrackEnabler.getInputTrack()) {
-			this._videoTrackEnabler.getInputTrack().stop()
-		}
-		this._videoTrackEnabler._setInputTrack('default', track)
-
-		resetPendingVideoInputIdChangedCount()
-	}).catch(() => {
-		if (this._videoTrackEnabler.getInputTrack()) {
-			this._videoTrackEnabler.getInputTrack().stop()
-		}
-		this._videoTrackEnabler._setInputTrack('default', null)
-
-		resetPendingVideoInputIdChangedCount()
-	})
-}
-
 LocalMedia.prototype.stop = function() {
 	// Handlers need to be removed before stopping the stream to prevent
 	// relaying no longer needed events.
@@ -411,23 +202,13 @@ LocalMedia.prototype.stop = function() {
 	this.stopStream()
 	this.stopScreenShare()
 
-	webrtcIndex.mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
-	webrtcIndex.mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
-
 	this._localMediaActive = false
 }
 
 LocalMedia.prototype.stopStream = function() {
 	const stream = this._trackToStream.getStream()
 
-	if (this._audioTrackEnabler.getInputTrack()) {
-		this._audioTrackEnabler.getInputTrack().stop()
-		this._audioTrackEnabler._setInputTrack('default', null)
-	}
-	if (this._videoTrackEnabler.getInputTrack()) {
-		this._videoTrackEnabler.getInputTrack().stop()
-		this._videoTrackEnabler._setInputTrack('default', null)
-	}
+	this._mediaDevicesSource.stop()
 
 	if (stream) {
 		this._removeStream(stream)
