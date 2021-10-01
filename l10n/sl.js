@@ -881,6 +881,8 @@ OC.L10N.register(
     "Today" : "Danes",
     "Yesterday" : "Včeraj",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Record voice message" : "Posnemi glasovno sporočilo",
+    "Error while recording audio" : "Prišlo je do napake med snemanjem zvoka",
     "Share files to the conversation" : "Poveži datoteke s pogovorom",
     "Upload new files" : "Pošlji nove datoteke",
     "Share from Files" : "Poveži iz oblaka",
