@@ -40,6 +40,8 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SelectHelper;
@@ -57,9 +59,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IGroupManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
@@ -85,6 +87,8 @@ class ParticipantService {
 	private $groupManager;
 	/** @var MembershipService */
 	private $membershipService;
+	/** @var Notifications */
+	private $notifications;
 	/** @var ITimeFactory */
 	private $timeFactory;
 
@@ -99,6 +103,7 @@ class ParticipantService {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								MembershipService $membershipService,
+								Notifications $notifications,
 								ITimeFactory $timeFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
@@ -112,6 +117,7 @@ class ParticipantService {
 		$this->groupManager = $groupManager;
 		$this->membershipService = $membershipService;
 		$this->timeFactory = $timeFactory;
+		$this->notifications = $notifications;
 	}
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {
@@ -221,7 +227,7 @@ class ParticipantService {
 					'displayName' => $user->getDisplayName(),
 					// need to use "USER" here, because "USER_SELF_JOINED" only works for public calls
 					'participantType' => Participant::USER,
-				]]);
+				]], $user);
 			} elseif ($room->getType() === Room::PUBLIC_CALL) {
 				// User joining a public room, without being invited
 				$this->addUsers($room, [[
@@ -229,7 +235,7 @@ class ParticipantService {
 					'actorId' => $user->getUID(),
 					'displayName' => $user->getDisplayName(),
 					'participantType' => Participant::USER_SELF_JOINED,
-				]]);
+				]], $user);
 			} else {
 				// shouldn't happen unless some code called joinRoom without previous checks
 				throw new UnauthorizedException('Participant is not allowed to join');
@@ -304,8 +310,10 @@ class ParticipantService {
 	/**
 	 * @param Room $room
 	 * @param array $participants
+	 * @param IUser|null $addedBy User that is attempting to add these users (must be set for federated users to be added)
+	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
-	public function addUsers(Room $room, array $participants): void {
+	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
 		if (empty($participants)) {
 			return;
 		}
@@ -322,6 +330,14 @@ class ParticipantService {
 			$readPrivacy = Participant::PRIVACY_PUBLIC;
 			if ($participant['actorType'] === Attendee::ACTOR_USERS) {
 				$readPrivacy = $this->talkConfig->getUserReadPrivacy($participant['actorId']);
+			} elseif ($participant['actorType'] === Attendee::ACTOR_FEDERATED_USERS) {
+				if ($addedBy === null) {
+					throw new \Exception('$addedBy must be set to add a federated user');
+				}
+				$participant['accessToken'] = $this->secureRandom->generate(
+					FederationManager::TOKEN_LENGTH,
+					ISecureRandom::CHAR_HUMAN_READABLE
+				);
 			}
 
 			$attendee = new Attendee();
@@ -341,8 +357,12 @@ class ParticipantService {
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			try {
-				$this->attendeeMapper->insert($attendee);
+				$entity = $this->attendeeMapper->insert($attendee);
 				$attendees[] = $attendee;
+
+				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+					$this->notifications->sendRemoteShare((string) $entity->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+				}
 			} catch (Exception $e) {
 				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 					throw $e;
@@ -356,6 +376,30 @@ class ParticipantService {
 
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 		}
+	}
+
+	public function getHighestPermissionAttendee(Room $room): ?Attendee {
+		try {
+			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
+
+			if (!empty($roomOwners)) {
+				foreach ($roomOwners as $owner) {
+					if ($owner->getActorType() === Attendee::ACTOR_USERS) {
+						return $owner;
+					}
+				}
+			}
+			$roomModerators = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
+			if (!empty($roomOwners)) {
+				foreach ($roomModerators as $moderator) {
+					if ($moderator->getActorType() === Attendee::ACTOR_USERS) {
+						return $moderator;
+					}
+				}
+			}
+		} catch (Exception $e) {
+		}
+		return null;
 	}
 
 	/**

@@ -43,10 +43,10 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IGroupManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 
