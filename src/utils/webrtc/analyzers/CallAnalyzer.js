@@ -19,6 +19,8 @@
  *
  */
 
+import EmitterMixin from '../../EmitterMixin'
+
 import {
 	ParticipantAnalyzer,
 } from './ParticipantAnalyzer'
@@ -50,13 +52,13 @@ import {
  * for the remote participants.
  */
 export default function CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection) {
+	this._superEmitterMixin()
+
 	this.attributes = {
 		senderConnectionQualityAudio: null,
 		senderConnectionQualityVideo: null,
 		senderConnectionQualityScreen: null,
 	}
-
-	this._handlers = []
 
 	this._localMediaModel = localMediaModel
 	this._localCallParticipantModel = localCallParticipantModel
@@ -87,41 +89,6 @@ CallAnalyzer.prototype = {
 		this._trigger('change:' + key, [value])
 	},
 
-	on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
-			this._handlers[event] = [handler]
-		} else {
-			this._handlers[event].push(handler)
-		}
-	},
-
-	off(event, handler) {
-		const handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		const index = handlers.indexOf(handler)
-		if (index !== -1) {
-			handlers.splice(index, 1)
-		}
-	},
-
-	_trigger(event, args) {
-		let handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		args.unshift(this)
-
-		handlers = handlers.slice(0)
-		for (let i = 0; i < handlers.length; i++) {
-			const handler = handlers[i]
-			handler.apply(handler, args)
-		}
-	},
-
 	destroy() {
 		if (this._localParticipantAnalyzer) {
 			this._localParticipantAnalyzer.off('change:senderConnectionQualityAudio', this._handleSenderConnectionQualityAudioChangeBound)
@@ -145,3 +112,5 @@ CallAnalyzer.prototype = {
 	},
 
 }
+
+EmitterMixin.apply(CallAnalyzer.prototype)

@@ -20,6 +20,7 @@
  */
 
 import BrowserStorage from '../../services/BrowserStorage'
+import EmitterMixin from '../EmitterMixin'
 
 /**
  * Special string to set null device ids in local storage (as only strings are
@@ -74,14 +75,14 @@ const LOCAL_STORAGE_NULL_DEVICE_ID = 'local-storage-null-device-id'
  * (in that case the fallback devices will not be taken into account).
  */
 export default function MediaDevicesManager() {
+	this._superEmitterMixin()
+
 	this.attributes = {
 		devices: [],
 
 		audioInputId: undefined,
 		videoInputId: undefined,
 	}
-
-	this._handlers = []
 
 	this._enabledCount = 0
 
@@ -132,41 +133,6 @@ MediaDevicesManager.prototype = {
 			BrowserStorage.setItem(key, value)
 		} else {
 			BrowserStorage.removeItem(key)
-		}
-	},
-
-	on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
-			this._handlers[event] = [handler]
-		} else {
-			this._handlers[event].push(handler)
-		}
-	},
-
-	off(event, handler) {
-		const handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		const index = handlers.indexOf(handler)
-		if (index !== -1) {
-			handlers.splice(index, 1)
-		}
-	},
-
-	_trigger(event, args) {
-		let handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		args.unshift(this)
-
-		handlers = handlers.slice(0)
-		for (let i = 0; i < handlers.length; i++) {
-			const handler = handlers[i]
-			handler.apply(handler, args)
 		}
 	},
 
@@ -501,3 +467,5 @@ MediaDevicesManager.prototype = {
 		}
 	},
 }
+
+EmitterMixin.apply(MediaDevicesManager.prototype)

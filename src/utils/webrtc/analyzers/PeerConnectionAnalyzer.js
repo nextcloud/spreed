@@ -19,6 +19,8 @@
  *
  */
 
+import EmitterMixin from '../../EmitterMixin'
+
 import {
 	STAT_VALUE_TYPE,
 	AverageStatValue,
@@ -72,6 +74,8 @@ const PEER_DIRECTION = {
  * not be enough.
  */
 function PeerConnectionAnalyzer() {
+	this._superEmitterMixin()
+
 	this._packets = {
 		audio: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
 		video: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
@@ -128,8 +132,6 @@ function PeerConnectionAnalyzer() {
 		video: true,
 	}
 
-	this._handlers = []
-
 	this._peerConnection = null
 	this._peerDirection = null
 
@@ -145,41 +147,6 @@ function PeerConnectionAnalyzer() {
 	}
 }
 PeerConnectionAnalyzer.prototype = {
-
-	on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
-			this._handlers[event] = [handler]
-		} else {
-			this._handlers[event].push(handler)
-		}
-	},
-
-	off(event, handler) {
-		const handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		const index = handlers.indexOf(handler)
-		if (index !== -1) {
-			handlers.splice(index, 1)
-		}
-	},
-
-	_trigger(event, args) {
-		let handlers = this._handlers[event]
-		if (!handlers) {
-			return
-		}
-
-		args.unshift(this)
-
-		handlers = handlers.slice(0)
-		for (let i = 0; i < handlers.length; i++) {
-			const handler = handlers[i]
-			handler.apply(handler, args)
-		}
-	},
 
 	getConnectionQualityAudio() {
 		return this._connectionQuality.audio
@@ -747,6 +714,8 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 }
+
+EmitterMixin.apply(PeerConnectionAnalyzer.prototype)
 
 export {
 	CONNECTION_QUALITY,
