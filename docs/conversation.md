@@ -248,6 +248,25 @@
         + `403 Forbidden` When the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
 
+## Set default or call permissions for a conversation
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/permissions/{mode}`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `mode` | string | `default` or `call`, in case of call the permissions will be reset to `Default` after the end of a call.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added. Note that this will reset all custom permissions that have been given to attendees so far.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the mode is invalid
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
 ## Add conversation to favorites
 
 * Required capability: `favorites`

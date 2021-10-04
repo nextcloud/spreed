@@ -191,24 +191,46 @@
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
 
-## Set publishing permissions for an attendee
+## Set permissions for an attendee
 
 * Method: `PUT`
-* Endpoint: `/room/{token}/attendees/publishing-permissions`
+* Endpoint: `/room/{token}/attendees/permissions`
 * Data:
 
     field | type | Description
     ---|---|---
     `attendeeId` | int | Attendee id can be used for guests and users
-    `state` | int | New state for the attendee, see [constants list](constants.md#attendee-publishing-permissions)
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `Default` and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to 126 for moderators and 118 for normal participants.
+    `permissions` | int | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added.
 
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When the conversation type does not support setting publishing permissions (only group and public conversations)
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the attendee type is `groups` or `circles`
+        + `400 Bad Request` When the mode is invalid
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the attendee to set publishing permissions could not be found
+
+## Set permissions for all attendees
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/attendees/permissions/all`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `Default` and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to 126 for moderators and 118 for normal participants.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the mode is invalid
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
 
 ## Get a participant by their pin
 

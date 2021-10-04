@@ -67,6 +67,11 @@ title: Constants
 * `32` Can publish video stream
 * `64` Can publish screenshare stream
 
+### Attendee permission modifications
+* `set` - Setting this permission set.
+* `add` - Add the given flags to the permissions.
+* `remove` - Remove the given flags from the permissions.
+
 ### Actor types of chat messages
 * `users` - Logged-in users
 * `guests` - Guest users (attendee type `guests` and `emails`)
@@ -74,6 +79,6 @@ title: Constants
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
 ## Signaling modes
-* `internal` No external signaling server is used
-* `external` A single external signaling server is used
-* `conversation_cluster` An external signaling server is assigned per conversation
+* `internal` - No external signaling server is used
+* `external` - A single external signaling server is used
+* `conversation_cluster` - An external signaling server is assigned per conversation.
