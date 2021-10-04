@@ -78,6 +78,12 @@
 							:size="20" />
 					</span>
 				</button>
+				<VolumeIndicator
+					class="indicator"
+					:audio-preview-available="audioPreviewAvailable"
+					:current-volume="currentVolume"
+					:volume-threshold="volumeThreshold"
+					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
 				<button
@@ -152,6 +158,7 @@ import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage'
+import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 
 export default {
 	name: 'DeviceChecker',
@@ -168,6 +175,7 @@ export default {
 		VideoOff,
 		CallButton,
 		CheckboxRadioSwitch,
+		VolumeIndicator,
 	},
 
 	mixins: [devices],
@@ -353,5 +361,9 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin: 14px;
+}
+
+.indicator {
+	margin-left: -8px;
 }
 </style>

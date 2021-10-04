@@ -37,6 +37,8 @@ export const devices = {
 			videoStreamError: null,
 			hark: null,
 			initialized: false,
+			currentVolume: -100,
+			volumeThreshold: -100,
 		}
 	},
 
