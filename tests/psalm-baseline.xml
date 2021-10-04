@@ -14,12 +14,6 @@
       <code>SchemaWrapper</code>
     </UndefinedClass>
   </file>
-  <file src="lib/BackgroundJob/RemoveEmptyRooms.php">
-    <UndefinedClass occurrences="2">
-      <code>Filesystem</code>
-      <code>View</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Chat/ChatManager.php">
     <UndefinedClass occurrences="1">
       <code>NullCache</code>

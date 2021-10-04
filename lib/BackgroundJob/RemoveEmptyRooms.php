@@ -23,9 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OC\Files\Filesystem;
-use OC\Files\View;
-use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
@@ -53,9 +50,6 @@ class RemoveEmptyRooms extends TimedJob {
 	/** @var IUserMountCache */
 	protected $userMountCache;
 
-	/** @var FederationManager */
-	protected $federationManager;
-
 	protected $numDeletedRooms = 0;
 
 	/**
@@ -69,8 +63,7 @@ class RemoveEmptyRooms extends TimedJob {
 								Manager $manager,
 								ParticipantService $participantService,
 								LoggerInterface $logger,
-								IUserMountCache $userMountCache,
-								FederationManager $federationManager) {
+								IUserMountCache $userMountCache) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes
@@ -80,7 +73,6 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->participantService = $participantService;
 		$this->logger = $logger;
 		$this->userMountCache = $userMountCache;
-		$this->federationManager = $federationManager;
 	}
 
 	protected function run($argument): void {
@@ -100,7 +92,8 @@ class RemoveEmptyRooms extends TimedJob {
 	}
 
 	private function defineRoomToProcces(Room $room) {
-		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+		if ($room->getType() === Room::TYPE_CHANGELOG) {
+			$this->room = null;
 			return;
 		}
 		$this->room = $room;
@@ -116,9 +109,6 @@ class RemoveEmptyRooms extends TimedJob {
 		if ($this->participantService->getNumberOfActors($this->room) !== 0) {
 			return;
 		}
-		if ($this->federationManager->getNumberOfInvitations($this->room) !== 0) {
-			return;
-		}
 		$this->doDeleteRoom();
 	}
 
@@ -129,14 +119,9 @@ class RemoveEmptyRooms extends TimedJob {
 		if ($this->room->getObjectType() !== 'file') {
 			return;
 		}
-		$rootView = new View();
 		$mountsForFile = $this->userMountCache->getMountsForFileId($this->room->getObjectId());
-		foreach ($mountsForFile as $mountPoint) {
-			Filesystem::initMountPoints($mountPoint->getUser()->getUID());
-			if (!$rootView->file_exists($mountPoint->getPath())) {
-				$this->doDeleteRoom();
-				break;
-			}
+		if (empty($mountsForFile)) {
+			$this->doDeleteRoom();
 		}
 	}
 
