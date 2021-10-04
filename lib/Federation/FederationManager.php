@@ -88,7 +88,7 @@ class FederationManager {
 	 */
 	public function isEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', "false") === "true";
+		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', 'false') === 'true';
 	}
 
 	/**

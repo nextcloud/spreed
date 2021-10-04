@@ -1097,7 +1097,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse($data);
 		} elseif ($source === 'remote') {
 			if (!$this->federationManager->isEnabled()) {
-				return new DataResponse([]. Http::STATUS_BAD_REQUEST);
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 			try {
 				$newUser = $this->cloudIdManager->resolveCloudId($newParticipant);
