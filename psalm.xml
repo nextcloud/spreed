@@ -23,6 +23,7 @@
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
+				<referencedClass name="GuzzleHttp\Exception\ClientException" />
 				<referencedClass name="OC" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\Events\AddingCircleMemberEvent" />
@@ -48,18 +49,28 @@
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
+				<referencedClass name="OCP\HintException" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
 			<errorLevel type="suppress">
 				<referencedMethod name="OCP\IDBConnection::getInner" />
+				<referencedMethod name="OCP\DB\QueryBuilder\IQueryBuilder::executeStatement" />
 			</errorLevel>
 		</UndefinedInterfaceMethod>
 		<InvalidThrow>
 			<errorLevel type="suppress">
+				<referencedClass name="OCP\Share\Exceptions\GenericShareException" />
+			</errorLevel>
+			<errorLevel type="suppress">
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 			</errorLevel>
 		</InvalidThrow>
+		<UnimplementedInterfaceMethod>
+			<errorLevel type="suppress">
+				<file name="lib/Chat/CommentsManager.php" />
+			</errorLevel>
+		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
 		<file name="tests/stubs/oc_comments_manager.php" />

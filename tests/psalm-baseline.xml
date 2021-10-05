@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.3.2@57b53ff26237074fdf5cbcb034f7da5172be4524">
+<files psalm-version="4.10.0@916b098b008f6de4543892b1e0651c1c3b92cbfa">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -8,6 +8,7 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>getSettingsManager</code>
     </UndefinedInterfaceMethod>
+    <InvalidArgument occurrences="16"/>
   </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
     <UndefinedClass occurrences="1">
@@ -168,6 +169,7 @@
     </InvalidArrayOffset>
   </file>
   <file src="lib/Controller/FilesIntegrationController.php">
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="2">
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
@@ -186,16 +188,10 @@
     </UndefinedDocblockClass>
   </file>
   <file src="lib/Controller/PublicShareAuthController.php">
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="1">
       <code>ShareNotFound</code>
     </MissingDependency>
-  </file>
-  <file src="lib/Controller/RoomController.php">
-    <UndefinedClass occurrences="2">
-      <code>Circles</code>
-      <code>Circles</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="2"/>
   </file>
   <file src="lib/Controller/SettingsController.php">
     <MissingDependency occurrences="3">
@@ -214,6 +210,12 @@
       <code>Filesystem</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Federation/CloudFederationProviderTalk.php">
+    <MissingDependency occurrences="19">
+      <code>ShareNotFound</code>
+      <code>AuthenticationFailedException</code>
+    </MissingDependency>
+  </file>
   <file src="lib/Files/TemplateLoader.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
@@ -225,6 +227,7 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="7">
       <code>$this-&gt;rootFolder</code>
       <code>$this-&gt;rootFolder</code>
@@ -234,9 +237,6 @@
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
     </MissingDependency>
-  </file>
-  <file src="lib/Flow/Operation.php">
-    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">
@@ -265,6 +265,7 @@
     <MissingDependency occurrences="1">
       <code>ShareNotFound</code>
     </MissingDependency>
+    <InvalidCatch occurrences="1"/>
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
     <UndefinedClass occurrences="1">
@@ -277,11 +278,12 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/HostedSignalingServerService.php">
-    <UndefinedClass occurrences="3">
-      <code>ClientException</code>
-      <code>ClientException</code>
-      <code>ClientException</code>
-    </UndefinedClass>
+    <InvalidReturnStatement occurrences="1">
+      <code>$data</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>array</code>
+    </InvalidReturnType>
   </file>
   <file src="lib/Settings/Admin/AdminSettings.php">
     <UndefinedInterfaceMethod occurrences="1">
