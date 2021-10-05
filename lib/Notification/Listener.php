@@ -69,7 +69,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (AddParticipantsEvent $event) {
+		$listener = static function (AddParticipantsEvent $event): void {
 			$room = $event->getRoom();
 
 			if ($room->getObjectType() === 'file') {
@@ -82,28 +82,28 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 
-		$listener = static function (JoinRoomUserEvent $event) {
+		$listener = static function (JoinRoomUserEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->markInvitationRead($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->checkCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->sendCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->markCallNotificationsRead($event->getRoom());

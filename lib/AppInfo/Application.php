@@ -202,7 +202,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	protected function registerRoomActivityHooks(IEventDispatcher $dispatcher): void {
-		$listener = function (ChatEvent $event) {
+		$listener = function (ChatEvent $event): void {
 			$room = $event->getRoom();
 			/** @var ITimeFactory $timeFactory */
 			$timeFactory = $this->getContainer()->query(ITimeFactory::class);
@@ -214,7 +214,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
-		$listener = function (RoomEvent $event) {
+		$listener = function (RoomEvent $event): void {
 			/** @var ChatManager $chatManager */
 			$chatManager = $this->getContainer()->query(ChatManager::class);
 			$chatManager->deleteMessages($event->getRoom());

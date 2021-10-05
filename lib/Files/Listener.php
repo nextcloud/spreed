@@ -73,7 +73,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (JoinRoomUserEvent $event) {
+		$listener = static function (JoinRoomUserEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
@@ -86,7 +86,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
-		$listener = static function (JoinRoomGuestEvent $event) {
+		$listener = static function (JoinRoomGuestEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 

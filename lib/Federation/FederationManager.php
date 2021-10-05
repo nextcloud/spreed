@@ -111,7 +111,7 @@ class FederationManager {
 	 * @throws UnauthorizedException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function acceptRemoteRoomShare(IUser $user, int $shareId) {
+	public function acceptRemoteRoomShare(IUser $user, int $shareId): void {
 		$invitation = $this->invitationMapper->getInvitationById($shareId);
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('invitation is for a different user');
@@ -140,7 +140,7 @@ class FederationManager {
 	 * @throws UnauthorizedException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function rejectRemoteRoomShare(IUser $user, int $shareId) {
+	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
 		$invitation = $this->invitationMapper->getInvitationById($shareId);
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('invitation is for a different user');

@@ -72,7 +72,10 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 	 * @param IOutput $output
 	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
 	 * @param array $options
+	 *
 	 * @since 13.0.0
+	 *
+	 * @return void
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		$query = $this->connection->getQueryBuilder();

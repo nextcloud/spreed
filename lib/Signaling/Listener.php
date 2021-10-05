@@ -53,7 +53,7 @@ class Listener {
 	}
 
 	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			if (!self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -69,7 +69,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, $listener);
 
-		$listener = static function (ParticipantEvent $event) {
+		$listener = static function (ParticipantEvent $event): void {
 			if (!self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -85,7 +85,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 			if (!self::isUsingInternalSignaling()) {
 				return;
@@ -109,7 +109,7 @@ class Listener {
 
 			$notifier->roomInvited($event->getRoom(), $event->getParticipants());
 		});
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -132,7 +132,7 @@ class Listener {
 		// "roomModified" message for participant type changes.
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
 
-		$listener = static function (ModifyParticipantEvent $event) {
+		$listener = static function (ModifyParticipantEvent $event): void {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -221,7 +221,7 @@ class Listener {
 			}
 		});
 
-		$listener = static function (ModifyParticipantEvent $event) {
+		$listener = static function (ModifyParticipantEvent $event): void {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}

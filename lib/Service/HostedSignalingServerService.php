@@ -246,8 +246,12 @@ class HostedSignalingServerService {
 
 	/**
 	 * @throws HostedSignalingServerAPIException
+	 *
+	 * @return (\ArrayAccess|array|mixed)[]|\ArrayAccess
+	 *
+	 * @psalm-return list<created: mixed, owner: <array>, status: mixed, signaling: <array>>
 	 */
-	public function fetchAccountInfo(AccountId $accountId): array {
+	public function fetchAccountInfo(AccountId $accountId) {
 		try {
 			$nonce = $this->secureRandom->generate(32);
 			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
@@ -400,8 +404,10 @@ class HostedSignalingServerService {
 
 	/**
 	 * @throws HostedSignalingServerAPIException
+	 *
+	 * @return void
 	 */
-	public function deleteAccount(AccountId $accountId) {
+	public function deleteAccount(AccountId $accountId): void {
 		try {
 			$nonce = $this->secureRandom->generate(32);
 			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);

@@ -95,6 +95,9 @@ class SettingsController extends OCSController {
 		return new DataResponse();
 	}
 
+	/**
+	 * @param int|null|string $value
+	 */
 	protected function validateUserSetting(string $setting, $value): bool {
 		if ($setting === 'attachment_folder') {
 			$userFolder = $this->rootFolder->getUserFolder($this->userId);
