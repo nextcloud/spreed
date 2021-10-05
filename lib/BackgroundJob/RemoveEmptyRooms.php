@@ -52,13 +52,6 @@ class RemoveEmptyRooms extends TimedJob {
 
 	protected $numDeletedRooms = 0;
 
-	/**
-	 * The room to proccess
-	 *
-	 * @var Room|null
-	 */
-	protected $room = null;
-
 	public function __construct(ITimeFactory $timeFactory,
 								Manager $manager,
 								ParticipantService $participantService,
@@ -86,48 +79,46 @@ class RemoveEmptyRooms extends TimedJob {
 	}
 
 	public function callback(Room $room): void {
-		$this->defineRoomToProcces($room);
-		$this->deleteIfIsEmpty();
-		$this->deleteIfFileIsRemoved();
-	}
-
-	private function defineRoomToProcces(Room $room) {
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
-			$this->room = null;
 			return;
 		}
-		$this->room = $room;
+
+		if ($this->deleteIfIsEmpty($room)) {
+			return;
+		}
+
+		$this->deleteIfFileIsRemoved($room);
 	}
 
-	private function deleteIfIsEmpty(): void {
-		if (!$this->room) {
-			return;
+	private function deleteIfIsEmpty(Room $room): bool {
+		if ($room->getObjectType() === 'file') {
+			return false;
 		}
-		if ($this->room->getObjectType() === 'file') {
-			return;
+
+		if ($this->participantService->getNumberOfActors($room) !== 0) {
+			return false;
 		}
-		if ($this->participantService->getNumberOfActors($this->room) !== 0) {
-			return;
-		}
-		$this->doDeleteRoom();
+
+		$this->doDeleteRoom($room);
+		return true;
 	}
 
-	private function deleteIfFileIsRemoved(): void {
-		if (!$this->room) {
-			return;
+	private function deleteIfFileIsRemoved(Room $room): bool {
+		if ($room->getObjectType() !== 'file') {
+			return false;
 		}
-		if ($this->room->getObjectType() !== 'file') {
-			return;
+
+		$mountsForFile = $this->userMountCache->getMountsForFileId($room->getObjectId());
+		if (!empty($mountsForFile)) {
+			return false;
 		}
-		$mountsForFile = $this->userMountCache->getMountsForFileId($this->room->getObjectId());
-		if (empty($mountsForFile)) {
-			$this->doDeleteRoom();
-		}
+
+		$this->doDeleteRoom($room);
+		return true;
 	}
 
-	private function doDeleteRoom(): void {
-		$this->room->deleteRoom();
+	private function doDeleteRoom(Room $room): void {
+		$room->deleteRoom();
 		$this->numDeletedRooms++;
-		$this->room = null;
 	}
 }

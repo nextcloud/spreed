@@ -73,112 +73,102 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$room->method('getType')
 			->willReturn(Room::TYPE_GROUP);
-		$this->invokePrivate($backgroundJob, 'defineRoomToProcces', [$room]);
 		$numDeletedRooms = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals(0, $numDeletedRooms);
+		$this->assertEquals(0, $numDeletedRooms, 'Invalid default quantity of rooms');
 
-		$this->invokePrivate($backgroundJob, 'doDeleteRoom', []);
+		$this->invokePrivate($backgroundJob, 'doDeleteRoom', [$room]);
 
 		$numDeletedRooms = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals(1, $numDeletedRooms);
-
-		$this->assertNull($this->invokePrivate($backgroundJob, 'room'));
+		$this->assertEquals(1, $numDeletedRooms, 'Invalid final quantity of rooms');
 	}
 
 	/**
 	 * @dataProvider dataDeleteIfFileIsRemoved
 	 */
-	public function testDeleteIfFileIsRemoved(bool $roomExists, string $objectType, array $fileList, int $numDeletedRoomsExpected): void {
+	public function testDeleteIfFileIsRemoved(string $objectType, array $fileList, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
 		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals(0, $numDeletedRoomsActual);
+		$this->assertEquals(0, $numDeletedRoomsActual, 'Invalid default quantity of rooms');
 
-		if ($roomExists) {
-			$room = $this->createMock(Room::class);
-			$room->method('getType')
-				->willReturn(Room::TYPE_GROUP);
-			$room->method('getObjectType')
-				->willReturn($objectType);
-			$this->invokePrivate($backgroundJob, 'defineRoomToProcces', [$room]);
-		}
+		$room = $this->createMock(Room::class);
+		$room->method('getType')
+			->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')
+			->willReturn($objectType);
+
 		$userMountCache = $this->invokePrivate($backgroundJob, 'userMountCache');
 		$userMountCache->method('getMountsForFileId')
 			->willReturn($fileList);
 
-		$this->invokePrivate($backgroundJob, 'deleteIfFileIsRemoved');
+		$this->invokePrivate($backgroundJob, 'deleteIfFileIsRemoved', [$room]);
 
 		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual);
+		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
 	public function dataDeleteIfFileIsRemoved(): array {
 		return [
-			[false, '', [], 0],
-			[true, 'email', [], 0],
-			[true, 'file', ['fileExists'], 0],
-			[true, 'file', [], 1],
+			['', [], 0],
+			['email', [], 0],
+			['file', ['fileExists'], 0],
+			['file', [], 1],
 		];
 	}
 
 	/**
 	 * @dataProvider dataDeleteIfIsEmpty
 	 */
-	public function testDeleteIfIsEmpty(bool $roomExists, string $objectType, int $actorsCount, int $numDeletedRoomsExpected): void {
+	public function testDeleteIfIsEmpty(string $objectType, int $actorsCount, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
 		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals(0, $numDeletedRoomsActual);
+		$this->assertEquals(0, $numDeletedRoomsActual, 'Invalid default quantity of rooms');
 
-		if ($roomExists) {
-			$room = $this->createMock(Room::class);
-			$room->method('getType')
-				->willReturn(Room::TYPE_GROUP);
-			$room->method('getObjectType')
-				->willReturn($objectType);
-			$this->invokePrivate($backgroundJob, 'defineRoomToProcces', [$room]);
-		}
+		$room = $this->createMock(Room::class);
+		$room->method('getType')
+			->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')
+			->willReturn($objectType);
+
 		$participantService = $this->invokePrivate($backgroundJob, 'participantService');
 		$participantService->method('getNumberOfActors')
 			->willReturn($actorsCount);
 
-		$this->invokePrivate($backgroundJob, 'deleteIfIsEmpty');
+		$this->invokePrivate($backgroundJob, 'deleteIfIsEmpty', [$room]);
 
 		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
-		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual);
+		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public function dataDeleteIfIsEmpty() {
+	public function dataDeleteIfIsEmpty(): array {
 		return [
-			[false, '', 1, 0],
-			[true, 'file', 1, 0],
-			[true, 'email', 1, 0],
-			[true, 'email', 0, 1]
+			['', 1, 0],
+			['file', 1, 0],
+			['email', 1, 0],
+			['email', 0, 1]
 		];
 	}
-	/**
-	 * @dataProvider dataDefineRoomToProcces
-	 */
-	public function testDefineRoomToProcces(int $roomType, bool $roomCanBeDeleted): void {
-		$backgroundJob = $this->getBackgroundJob();
 
+	/**
+	 * @dataProvider dataCallback
+	 */
+	public function testCallback(int $roomType, string $objectType, int $numDeletedRoomsExpected): void {
+		$backgroundJob = $this->getBackgroundJob();
 		$room = $this->createMock(Room::class);
 		$room->method('getType')
 			->willReturn($roomType);
-		$this->invokePrivate($backgroundJob, 'defineRoomToProcces', [$room]);
-		$actual = $this->invokePrivate($backgroundJob, 'room');
-
-		if ($roomCanBeDeleted) {
-			$this->assertEquals($room, $actual);
-		} else {
-			$this->assertNull($actual);
-		}
+		$room->method('getObjectType')
+			->willReturn($objectType);
+		$backgroundJob->callback($room);
+		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public function dataDefineRoomToProcces(): array {
+	public function dataCallback(): array {
 		return [
-			[Room::TYPE_GROUP, true],
-			[Room::TYPE_CHANGELOG, false],
+			[Room::TYPE_CHANGELOG, '', 0],
+			[Room::TYPE_GROUP, 'file', 1],
 		];
 	}
 }
