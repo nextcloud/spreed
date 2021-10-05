@@ -289,6 +289,16 @@ LocalMedia.prototype.resumeVideo = function() {
 	this.emit('videoOn')
 }
 
+LocalMedia.prototype.enableVirtualBackground = function() {
+	this._virtualBackground.setEnabled(true)
+	this.emit('virtualBackgroundOn')
+}
+
+LocalMedia.prototype.disableVirtualBackground = function() {
+	this._virtualBackground.setEnabled(false)
+	this.emit('virtualBackgroundOff')
+}
+
 // Combined controls
 LocalMedia.prototype.pause = function() {
 	this.mute()
@@ -351,6 +361,10 @@ LocalMedia.prototype.isVideoEnabled = function() {
 	}
 
 	return enabled
+}
+
+LocalMedia.prototype.isVirtualBackgroundEnabled = function() {
+	return this._virtualBackground.isEnabled()
 }
 
 LocalMedia.prototype._removeStream = function(stream) {
