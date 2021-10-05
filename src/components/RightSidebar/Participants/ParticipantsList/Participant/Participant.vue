@@ -517,7 +517,7 @@ export default {
 	align-items: center;
 	cursor: default;
 	margin: 4px 0;
-	border-radius: 22px;
+	border-radius: var(--border-radius-pill);
 	height: 56px;
 	padding: 0 4px;
 
