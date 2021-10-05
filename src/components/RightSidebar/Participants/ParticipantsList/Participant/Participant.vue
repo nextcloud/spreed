@@ -190,6 +190,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Whether to show the user status on the avatar.
 		 * This does not affect the status message row.
@@ -198,6 +199,7 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
 		// Toggles the bulk selection state of this component
 		isSelectable: {
 			type: Boolean,
@@ -220,6 +222,7 @@ export default {
 		participantSettingsAriaLabel() {
 			return t('spreed', 'Settings for participant "{user}"', { user: this.computedName })
 		},
+
 		participantAriaLabel() {
 			if (this.isSearched) {
 				return t('spreed', 'Add participant "{user}"', { user: this.computedName })
@@ -275,6 +278,7 @@ export default {
 			}
 			return false
 		},
+
 		/**
 		 * If the Participant component is used as to display a search result, it will
 		 * return true. We use this not to display actions on the searched contacts and
@@ -306,18 +310,22 @@ export default {
 			}
 			return this.participant.label
 		},
+
 		computedId() {
 			if (!this.isSearched) {
 				return this.participant.actorId
 			}
 			return this.participant.id
 		},
+
 		id() {
 			return this.participant.id
 		},
+
 		label() {
 			return this.participant.label
 		},
+
 		isHandRaised() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
@@ -326,6 +334,7 @@ export default {
 			const raisedState = this.$store.getters.getParticipantRaisedHand(this.participant.sessionIds)
 			return raisedState.state
 		},
+
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
@@ -343,6 +352,7 @@ export default {
 			}
 			return 'audio'
 		},
+
 		callIconTooltip() {
 			if (this.callIcon === 'audio') {
 				return t('spreed', 'Joined with audio')
@@ -355,27 +365,34 @@ export default {
 			}
 			return null
 		},
+
 		participantType() {
 			return this.participant.participantType
 		},
+
 		sessionIds() {
 			return this.participant.sessionIds || []
 		},
+
 		lastPing() {
 			return this.participant.lastPing
 		},
+
 		attendeePin() {
 			return this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		currentParticipant() {
 			return this.$store.getters.conversation(this.token) || {
 				sessionId: '0',
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				type: CONVERSATION.TYPE.GROUP,
@@ -390,6 +407,7 @@ export default {
 		isSelf() {
 			return this.sessionIds.length && this.sessionIds.indexOf(this.currentParticipant.sessionId) >= 0
 		},
+
 		selfIsModerator() {
 			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
@@ -402,35 +420,43 @@ export default {
 			 */
 			return !this.sessionIds.length && !this.isSearched
 		},
+
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
+
 		isGroup() {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
 		},
+
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
 		},
+
 		showModeratorLabel() {
 			return this.isModerator
 				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
+
 		canBeModerated() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER
 				&& !this.isSelf
 				&& this.selfIsModerator
 				&& !this.isBridgeBotUser
 		},
+
 		canBeDemoted() {
 			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 				&& !this.isGroup
 		},
+
 		canBePromoted() {
 			return this.canBeModerated
 				&& !this.isModerator
 				&& !this.isGroup
 		},
+
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
 				// We preloaded the status when via participants API
@@ -458,17 +484,20 @@ export default {
 			const e = this.$refs.userName
 			this.isUserNameTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
+
 		updateStatusNeedsTooltip() {
 			// check if ellipsized
 			const e = this.$refs.statusMessage
 			this.isStatusTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
+
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
 				this.$emit('click-participant', this.participant)
 			}
 		},
+
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},
@@ -479,12 +508,14 @@ export default {
 				attendeeId: this.participant.attendeeId,
 			})
 		},
+
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
 				attendeeId: this.participant.attendeeId,
 			})
 		},
+
 		async resendInvitation() {
 			try {
 				await this.$store.dispatch('resendInvitations', {
@@ -496,6 +527,7 @@ export default {
 				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
 		},
+
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
