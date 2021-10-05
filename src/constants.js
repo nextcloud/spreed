@@ -96,6 +96,8 @@ export const PARTICIPANT = {
 		PUBLISH_AUDIO: 16,
 		PUBLISH_VIDEO: 32,
 		PUBLISH_SCREEN: 64,
+		MAX_DEFAULT: 126,
+		MAX_CUSTOM: 127,
 	},
 }
 export const WEBINAR = {
