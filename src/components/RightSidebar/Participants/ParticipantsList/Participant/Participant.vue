@@ -525,10 +525,6 @@ export default {
 		cursor: pointer;
 	}
 
-	&:focus {
-		background-color: var(--color-background-hover);
-	}
-
 	&__user-wrapper {
 		margin-top: -4px;
 		margin-left: 12px;
