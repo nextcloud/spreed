@@ -33,6 +33,7 @@
 		:tabindex="isSearched ? 0 : -1"
 		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
 		@keydown.enter="handleClick">
+		<!-- Participant's avatar -->
 		<AvatarWrapper
 			:id="computedId"
 			:disable-tooltip="true"
@@ -45,12 +46,15 @@
 			:source="participant.source || participant.actorType"
 			:offline="isOffline"
 			:menu-container="container" />
+
+		<!-- Participant's data -->
 		<div
 			class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
 				'has-menu-icon': canBeModerated && !isSearched
 			}">
+			<!-- First line: participant's name and type -->
 			<div
 				ref="userName"
 				class="participant-row__user-descriptor"
@@ -62,6 +66,8 @@
 				<span v-if="isBridgeBotUser" class="participant-row__moderator-indicator">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
+
+			<!-- Second line: participant status message if applicable -->
 			<div
 				v-if="statusMessage"
 				ref="statusMessage"
@@ -70,6 +76,8 @@
 				<span v-tooltip.auto="statusMessageTooltip">{{ statusMessage }}</span>
 			</div>
 		</div>
+
+		<!-- Call state icon -->
 		<div v-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
@@ -95,6 +103,8 @@
 				title=""
 				decorative />
 		</div>
+
+		<!-- Participant's actions menu -->
 		<Actions
 			v-if="canBeModerated && !isSearched"
 			:container="container"
@@ -139,6 +149,8 @@
 				</template>
 			</ActionButton>
 		</Actions>
+
+		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
 </template>
@@ -200,7 +212,9 @@ export default {
 			default: true,
 		},
 
-		// Toggles the bulk selection state of this component
+		/**
+		 * Toggles the bulk selection state of this component
+		 */
 		isSelectable: {
 			type: Boolean,
 			default: false,
@@ -412,12 +426,12 @@ export default {
 			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
 
+		/**
+		 * For now the user status is not overwriting the online-offline status anymore
+		 * It felt too weird having users appear as offline but they are in the call or chat actively
+		 * return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
+		 */
 		isOffline() {
-			/**
-			 * For now the user status is not overwriting the online-offline status anymore
-			 * It felt too weird having users appear as offline but they are in the call or chat actively
-			 return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
-			 */
 			return !this.sessionIds.length && !this.isSearched
 		},
 
