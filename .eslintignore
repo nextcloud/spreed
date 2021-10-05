@@ -1,2 +1,3 @@
 /js/*
+/src/utils/media/effects/virtual-background/vendor/*
 /tests/*
