@@ -210,13 +210,6 @@ LocalMediaModel.prototype = {
 	_updateMediaAvailability(localStream) {
 		if (localStream && localStream.getAudioTracks().length > 0) {
 			this.set('audioAvailable', true)
-
-			if (!this.get('audioEnabled')) {
-				// Explicitly disable the audio to ensure that it will also be
-				// disabled in the other end. Otherwise the WebRTC media could
-				// be enabled.
-				this.disableAudio()
-			}
 		} else {
 			this.disableAudio()
 			this.set('audioAvailable', false)
@@ -224,13 +217,6 @@ LocalMediaModel.prototype = {
 
 		if (localStream && localStream.getVideoTracks().length > 0) {
 			this.set('videoAvailable', true)
-
-			if (!this.get('videoEnabled')) {
-				// Explicitly disable the video to ensure that it will also be
-				// disabled in the other end. Otherwise the WebRTC media could
-				// be enabled.
-				this.disableVideo()
-			}
 		} else {
 			this.disableVideo()
 			this.set('videoAvailable', false)
