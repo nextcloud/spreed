@@ -32,6 +32,7 @@
 		<RightSidebar
 			:show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
+		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
@@ -67,6 +68,7 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog'
 import '@nextcloud/dialogs/styles/toast.scss'
 import { CONVERSATION } from './constants'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 
 export default {
 	name: 'App',
@@ -79,6 +81,7 @@ export default {
 		UploadEditor,
 		SettingsDialog,
 		ConversationSettingsDialog,
+		DeviceChecker,
 	},
 
 	mixins: [

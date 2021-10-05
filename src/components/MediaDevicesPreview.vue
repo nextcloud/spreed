@@ -23,7 +23,6 @@
 		<MediaDevicesSelector kind="audioinput"
 			:devices="devices"
 			:device-id="audioInputId"
-			:enabled="enabled"
 			@update:deviceId="audioInputId = $event" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
@@ -35,11 +34,6 @@
 					fill-color="#999" />
 				<MicrophoneOff
 					v-else-if="!audioInputId"
-					:size="64"
-					title=""
-					fill-color="#999" />
-				<Microphone
-					v-else-if="!enabled"
 					:size="64"
 					title=""
 					fill-color="#999" />
@@ -65,7 +59,6 @@
 		<MediaDevicesSelector kind="videoinput"
 			:devices="devices"
 			:device-id="videoInputId"
-			:enabled="enabled"
 			@update:deviceId="videoInputId = $event" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
@@ -77,11 +70,6 @@
 					fill-color="#999" />
 				<VideoOff
 					v-else-if="!videoInputId"
-					:size="64"
-					title=""
-					fill-color="#999" />
-				<VideoIcon
-					v-else-if="!enabled"
 					:size="64"
 					title=""
 					fill-color="#999" />
@@ -102,15 +90,12 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream'
-import hark from 'hark'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
-import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
-import { mediaDevicesManager } from '../utils/webrtc/index'
 import MediaDevicesSelector from './MediaDevicesSelector'
+import { devices } from '../mixins/devices'
 
 export default {
 
@@ -121,141 +106,20 @@ export default {
 		MediaDevicesSelector,
 		Microphone,
 		MicrophoneOff,
-		VideoIcon: Video,
 		VideoOff,
 	},
 
-	props: {
-		enabled: {
-			type: Boolean,
-			default: true,
-		},
-	},
+	mixins: [devices],
 
 	data() {
 		return {
 			mounted: false,
-			mediaDevicesManager,
-			pendingGetUserMediaAudioCount: 0,
-			pendingGetUserMediaVideoCount: 0,
-			audioStream: null,
-			audioStreamError: null,
-			videoStream: null,
-			videoStreamError: null,
-			hark: null,
 			currentVolume: -100,
 			volumeThreshold: -100,
 		}
 	},
 
 	computed: {
-		devices() {
-			return mediaDevicesManager.attributes.devices
-		},
-
-		audioInputId: {
-			get() {
-				return mediaDevicesManager.attributes.audioInputId
-			},
-			set(value) {
-				mediaDevicesManager.set('audioInputId', value)
-			},
-		},
-
-		videoInputId: {
-			get() {
-				return mediaDevicesManager.attributes.videoInputId
-			},
-			set(value) {
-				mediaDevicesManager.set('videoInputId', value)
-			},
-		},
-
-		audioStreamInputId() {
-			if (!this.audioStream) {
-				return null
-			}
-
-			const audioTracks = this.audioStream.getAudioTracks()
-			if (audioTracks.length < 1) {
-				return null
-			}
-
-			return audioTracks[0].getSettings().deviceId
-		},
-
-		videoStreamInputId() {
-			if (!this.videoStream) {
-				return null
-			}
-
-			const videoTracks = this.videoStream.getVideoTracks()
-			if (videoTracks.length < 1) {
-				return null
-			}
-
-			return videoTracks[0].getSettings().deviceId
-		},
-
-		audioPreviewAvailable() {
-			return this.audioInputId && this.audioStream
-		},
-
-		videoPreviewAvailable() {
-			return this.videoInputId && this.videoStream
-		},
-
-		audioStreamErrorMessage() {
-			if (!this.audioStreamError) {
-				return null
-			}
-
-			if (this.audioStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.indexOf('Only secure origins') !== -1
-			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to microphone is only possible with HTTPS')
-			}
-
-			if (this.audioStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to microphone was denied')
-			}
-
-			return t('spreed', 'Error while accessing microphone')
-		},
-
-		videoStreamErrorMessage() {
-			if (!this.videoStreamError) {
-				return null
-			}
-
-			if (this.videoStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.indexOf('Only secure origins') !== -1
-			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to camera is only possible with HTTPS')
-			}
-
-			if (this.videoStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to camera was denied')
-			}
-
-			return t('spreed', 'Error while accessing camera')
-		},
 
 		currentVolumeIndicatorHeight() {
 			// refs can not be accessed on the initial render, only after the
@@ -281,240 +145,8 @@ export default {
 
 	},
 
-	watch: {
-		enabled: {
-			handler(enabled) {
-				if (this.enabled) {
-					this.mediaDevicesManager.enableDeviceEvents()
-					this.updateAudioStream()
-					this.updateVideoStream()
-				} else {
-					this.mediaDevicesManager.disableDeviceEvents()
-					this.stopAudioStream()
-					this.stopVideoStream()
-				}
-			},
-			immediate: true,
-		},
-
-		audioInputId(audioInputId) {
-			if (!this.enabled) {
-				return
-			}
-
-			this.updateAudioStream()
-		},
-
-		videoInputId(videoInputId) {
-			if (!this.enabled) {
-				return
-			}
-
-			this.updateVideoStream()
-		},
-	},
-
 	mounted() {
 		this.mounted = true
-
-		if (!this.mediaDevicesManager.isSupported()) {
-			// DOMException constructor is not supported in Internet Explorer,
-			// so a plain object is used instead.
-			this.audioStreamError = {
-				message: 'MediaDevicesManager is not supported',
-				name: 'NotSupportedError',
-			}
-			this.videoStreamError = {
-				message: 'MediaDevicesManager is not supported',
-				name: 'NotSupportedError',
-			}
-		}
-	},
-
-	destroyed() {
-		this.stopAudioStream()
-		this.stopVideoStream()
-
-		if (this.enabled) {
-			this.mediaDevicesManager.disableDeviceEvents()
-		}
-	},
-
-	methods: {
-
-		updateAudioStream() {
-			if (!this.mediaDevicesManager.isSupported()) {
-				return
-			}
-
-			if (this.audioStreamInputId && this.audioStreamInputId === this.audioInputId) {
-				return
-			}
-
-			if (this.pendingGetUserMediaAudioCount) {
-				this.pendingGetUserMediaAudioCount++
-
-				return
-			}
-
-			// When the audio input device changes the previous stream must be
-			// stopped before a new one is requested, as for example currently
-			// Firefox does not support having two different audio input devices
-			// active at the same time:
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=1468700
-			this.stopAudioStream()
-
-			this.audioStreamError = null
-
-			if (this.audioInputId === null || this.audioInputId === undefined) {
-				return
-			}
-
-			this.pendingGetUserMediaAudioCount = 1
-
-			const resetPendingGetUserMediaAudioCount = () => {
-				const updateAudioStreamAgain = this.pendingGetUserMediaAudioCount > 1
-
-				this.pendingGetUserMediaAudioCount = 0
-
-				if (updateAudioStreamAgain) {
-					this.updateAudioStream()
-				}
-			}
-
-			this.mediaDevicesManager.getUserMedia({ audio: true })
-				.then(stream => {
-					this.setAudioStream(stream)
-
-					resetPendingGetUserMediaAudioCount()
-				})
-				.catch(error => {
-					console.error('Error getting audio stream: ' + error.name + ': ' + error.message)
-					this.audioStreamError = error
-					this.setAudioStream(null)
-
-					resetPendingGetUserMediaAudioCount()
-				})
-		},
-
-		updateVideoStream() {
-			if (!this.mediaDevicesManager.isSupported()) {
-				return
-			}
-
-			if (this.videoStreamInputId && this.videoStreamInputId === this.videoInputId) {
-				return
-			}
-
-			if (this.pendingGetUserMediaVideoCount) {
-				this.pendingGetUserMediaVideoCount++
-
-				return
-			}
-
-			// Video stream is stopped too to avoid potential issues similar to
-			// the audio ones (see "updateAudioStream").
-			this.stopVideoStream()
-
-			this.videoStreamError = null
-
-			if (this.videoInputId === null || this.videoInputId === undefined) {
-				return
-			}
-
-			this.pendingGetUserMediaVideoCount = 1
-
-			const resetPendingGetUserMediaVideoCount = () => {
-				const updateVideoStreamAgain = this.pendingGetUserMediaVideoCount > 1
-
-				this.pendingGetUserMediaVideoCount = 0
-
-				if (updateVideoStreamAgain) {
-					this.updateVideoStream()
-				}
-			}
-
-			this.mediaDevicesManager.getUserMedia({ video: true })
-				.then(stream => {
-					this.setVideoStream(stream)
-
-					resetPendingGetUserMediaVideoCount()
-				})
-				.catch(error => {
-					console.error('Error getting video stream: ' + error.name + ': ' + error.message)
-					this.videoStreamError = error
-					this.setVideoStream(null)
-
-					resetPendingGetUserMediaVideoCount()
-				})
-		},
-
-		setAudioStream(audioStream) {
-			this.audioStream = audioStream
-
-			if (!audioStream) {
-				return
-			}
-
-			this.hark = hark(this.audioStream)
-			this.hark.on('volume_change', (volume, volumeThreshold) => {
-				this.currentVolume = volume
-				this.volumeThreshold = volumeThreshold
-			})
-		},
-
-		setVideoStream(videoStream) {
-			this.videoStream = videoStream
-
-			if (!this.$refs.video) {
-				return
-			}
-
-			if (!videoStream) {
-				return
-			}
-
-			const options = {
-				autoplay: true,
-				mirror: true,
-				muted: true,
-			}
-			attachMediaStream(videoStream, this.$refs.video, options)
-		},
-
-		stopAudioStream() {
-			if (!this.audioStream) {
-				return
-			}
-
-			this.audioStream.getTracks().forEach(function(track) {
-				track.stop()
-			})
-
-			this.audioStream = null
-
-			if (this.hark) {
-				this.hark.stop()
-				this.hark.off('volume_change')
-				this.hark = null
-			}
-		},
-
-		stopVideoStream() {
-			if (!this.videoStream) {
-				return
-			}
-
-			this.videoStream.getTracks().forEach(function(track) {
-				track.stop()
-			})
-
-			this.videoStream = null
-
-			if (this.$refs.video) {
-				this.$refs.video.srcObject = null
-			}
-		},
 	},
 }
 </script>
