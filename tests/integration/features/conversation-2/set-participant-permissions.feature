@@ -3,9 +3,7 @@ Feature: set-publishing-permissions
     Given user "owner" exists
     Given user "moderator" exists
     Given user "invited user" exists
-    Given user "not invited user" exists
     Given user "not invited but joined user" exists
-    Given user "not joined user" exists
 
   Scenario: owner can not set permissions in one-to-one room
     Given user "owner" creates room "one-to-one room" (v4)
@@ -80,6 +78,7 @@ Feature: set-publishing-permissions
       | users      | invited user | CS          |
 
   Scenario: others can not set permissions in group room
+    Given user "not invited user" exists
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -294,6 +293,7 @@ Feature: set-publishing-permissions
     # Guests can not fetch the participant list
 
   Scenario: others can not set permissions in public room
+    Given user "not joined user" exists
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |

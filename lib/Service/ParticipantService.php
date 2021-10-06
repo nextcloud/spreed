@@ -37,6 +37,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -139,9 +140,17 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
+	/**
+	 * @throws Exception
+	 * @throws ForbiddenException
+	 */
 	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): bool {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return false;
+		}
+
+		if ($participant->hasModeratorPermissions()) {
+			throw new ForbiddenException();
 		}
 
 		$attendee = $participant->getAttendee();

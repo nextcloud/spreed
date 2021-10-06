@@ -1146,6 +1146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$requestParameters = [
 			['attendeeId', $attendeeId],
 			['permissions', $permissions],
+			['method', 'set'],
 		];
 
 		$this->setCurrentUser($user);

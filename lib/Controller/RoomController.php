@@ -32,6 +32,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\UserEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -54,6 +55,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
@@ -1538,7 +1540,13 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if (!$this->participantService->updatePermissions($this->room, $targetParticipant, $method, $permissions)) {
+		try {
+			$result = $this->participantService->updatePermissions($this->room, $targetParticipant, $method, $permissions);
+		} catch (ForbiddenException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if (!$result) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
