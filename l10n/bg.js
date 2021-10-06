@@ -288,7 +288,6 @@ OC.L10N.register(
     "Circles" : "Обкръжения",
     "Password protect" : "Защита с парола",
     "Close" : "Затваряне",
-    "Camera" : "Камера",
     "Reply" : "Отговори",
     "Today" : "Днес",
     "Yesterday" : "Вчера",
@@ -319,6 +318,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "само UDP",
     "TCP only" : "само TCP",
+    "Camera" : "Камера",
     "Remove" : "Премахни",
     "Enabled" : "Включено",
     "Share link" : "Сподели връзка"

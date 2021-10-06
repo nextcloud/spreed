@@ -275,7 +275,6 @@ OC.L10N.register(
     "Circles" : "Cercuri",
     "Password protect" : "Protejare cu parolă",
     "Close" : "Închide",
-    "Camera" : "Cameră",
     "Reply" : "Răspunde",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
@@ -291,6 +290,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
+    "Camera" : "Cameră",
     "Remove" : "Șterge",
     "Enabled" : "Activat",
     "Share link" : "Partajează link-ul"
