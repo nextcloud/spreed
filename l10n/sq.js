@@ -199,7 +199,6 @@ OC.L10N.register(
     "Password protect" : "Mbroje me fjalëkalim",
     "Close" : "Mbylleni",
     "Conversation name" : "Emri i bisedës",
-    "Camera" : "Kamera",
     "Reply" : "Përgjigju",
     "Today" : "Sot",
     "Yesterday" : "Dje",
@@ -227,6 +226,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP dhe TCP",
     "UDP only" : "Vetëm UDP",
     "TCP only" : "Vetëm TCP",
+    "Camera" : "Kamera",
     "Remove" : "Hiq",
     "Enabled" : "I aktivizuar",
     "Share link" : "Shpërndaj ndërlidhjen"
