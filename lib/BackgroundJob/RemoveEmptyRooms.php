@@ -23,12 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCP\Files\Config\IUserMountCache;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,15 +47,16 @@ class RemoveEmptyRooms extends TimedJob {
 	/** @var LoggerInterface */
 	protected $logger;
 
-	/** @var FederationManager */
-	protected $federationManager;
+	/** @var IUserMountCache */
+	protected $userMountCache;
 
 	protected $numDeletedRooms = 0;
 
 	public function __construct(ITimeFactory $timeFactory,
 								Manager $manager,
 								ParticipantService $participantService,
-								LoggerInterface $logger) {
+								LoggerInterface $logger,
+								IUserMountCache $userMountCache) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes
@@ -64,6 +65,7 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->logger = $logger;
+		$this->userMountCache = $userMountCache;
 	}
 
 	protected function run($argument): void {
@@ -77,13 +79,46 @@ class RemoveEmptyRooms extends TimedJob {
 	}
 
 	public function callback(Room $room): void {
-		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return;
 		}
 
-		if ($this->participantService->getNumberOfActors($room) === 0 && $room->getObjectType() !== 'file' && $this->federationManager->getNumberOfInvitations($room) === 0) {
-			$room->deleteRoom();
-			$this->numDeletedRooms++;
+		if ($this->deleteIfIsEmpty($room)) {
+			return;
 		}
+
+		$this->deleteIfFileIsRemoved($room);
+	}
+
+	private function deleteIfIsEmpty(Room $room): bool {
+		if ($room->getObjectType() === 'file') {
+			return false;
+		}
+
+		if ($this->participantService->getNumberOfActors($room) !== 0) {
+			return false;
+		}
+
+		$this->doDeleteRoom($room);
+		return true;
+	}
+
+	private function deleteIfFileIsRemoved(Room $room): bool {
+		if ($room->getObjectType() !== 'file') {
+			return false;
+		}
+
+		$mountsForFile = $this->userMountCache->getMountsForFileId($room->getObjectId());
+		if (!empty($mountsForFile)) {
+			return false;
+		}
+
+		$this->doDeleteRoom($room);
+		return true;
+	}
+
+	private function doDeleteRoom(Room $room): void {
+		$room->deleteRoom();
+		$this->numDeletedRooms++;
 	}
 }
