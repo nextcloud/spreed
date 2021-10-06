@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5f67d253b4d507191ac7dd5eff8d3cf3",
+    "content-hash": "5ebfa9183dfe115f1856d80f98e0484c",
     "packages": [],
     "packages-dev": [
         {
@@ -179,12 +179,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "aae151a47c39125bc49b18ddee211bc5cab20533"
+                "reference": "21c2f3024a26861e0177c2057ae96ffdb4df9b52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/aae151a47c39125bc49b18ddee211bc5cab20533",
-                "reference": "aae151a47c39125bc49b18ddee211bc5cab20533",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/21c2f3024a26861e0177c2057ae96ffdb4df9b52",
+                "reference": "21c2f3024a26861e0177c2057ae96ffdb4df9b52",
                 "shasum": ""
             },
             "require": {
@@ -193,10 +193,11 @@
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "22.0.0-dev"
+                    "dev-master": "23.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -210,7 +211,11 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2021-04-13T23:43:29+00:00"
+            "support": {
+                "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
+                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
+            },
+            "time": "2021-10-06T01:08:57+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",

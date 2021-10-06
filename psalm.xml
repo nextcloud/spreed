@@ -49,19 +49,14 @@
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
-				<referencedClass name="OCP\HintException" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
 			<errorLevel type="suppress">
 				<referencedMethod name="OCP\IDBConnection::getInner" />
-				<referencedMethod name="OCP\DB\QueryBuilder\IQueryBuilder::executeStatement" />
 			</errorLevel>
 		</UndefinedInterfaceMethod>
 		<InvalidThrow>
-			<errorLevel type="suppress">
-				<referencedClass name="OCP\Share\Exceptions\GenericShareException" />
-			</errorLevel>
 			<errorLevel type="suppress">
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 			</errorLevel>
