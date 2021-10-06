@@ -23,6 +23,7 @@
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
+				<referencedClass name="GuzzleHttp\Exception\ClientException" />
 				<referencedClass name="OC" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\Events\AddingCircleMemberEvent" />
@@ -60,6 +61,11 @@
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 			</errorLevel>
 		</InvalidThrow>
+		<UnimplementedInterfaceMethod>
+			<errorLevel type="suppress">
+				<file name="lib/Chat/CommentsManager.php" />
+			</errorLevel>
+		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
 		<file name="tests/stubs/oc_comments_manager.php" />
