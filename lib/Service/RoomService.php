@@ -165,6 +165,9 @@ class RoomService {
 				// Make sure the custom flag is set when not setting to default permissions
 				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
 			}
+			// If we are setting a fixed set of permissions and apply that to users,
+			// we can also simplify it and reset to default.
+			$resetCustomPermissions = true;
 		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
 			$newPermissions = $oldPermissions | $newPermissions;
 		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
