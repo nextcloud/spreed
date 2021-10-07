@@ -28,6 +28,11 @@ import {
 	joinConversation,
 	leaveConversation,
 	removeCurrentUserFromConversation,
+	grantAllPermissionsToParticipant,
+	removeAllPermissionsFromParticipant,
+	addPermissions,
+	removePermissions,
+	setPermissions,
 } from '../services/participantsService'
 import { generateUrl } from '@nextcloud/router'
 import {
@@ -197,6 +202,32 @@ const mutations = {
 	purgePeersStore(state, token) {
 		if (state.peers[token]) {
 			Vue.delete(state.peers, token)
+		}
+	},
+
+	addPermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
+			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS | permissions)
+		} else {
+			console.error('Error while updating the participant')
+		}
+	},
+
+	removePermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
+			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS & ~permissions)
+		} else {
+			console.error('Error while updating the participant')
+		}
+	},
+
+	setPermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			Vue.set(state.participants[token][index], 'permissions', permissions)
+		} else {
+			console.error('Error while updating the participant')
 		}
 	},
 }
@@ -509,6 +540,115 @@ const actions = {
 		await removeCurrentUserFromConversation(token)
 		// If successful, deletes the conversation from the store
 		await context.dispatch('deleteConversation', token)
+	},
+
+	/**
+	 * PUBLISHING PERMISSIONS
+	 */
+
+	/**
+	 * Grant all permissions for a given participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 */
+	async grantAllPermissionsToParticipant(context, { token, attendeeId }) {
+		await grantAllPermissionsToParticipant(token, attendeeId)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+		const updatedData = {
+			permissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM,
+		}
+		context.commit('updateParticipant', { token, index, updatedData })
+	},
+
+	/**
+	 * Remove all permissions for a given participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 */
+	async removeAllPermissionsFromParticipant(context, { token, attendeeId }) {
+		await removeAllPermissionsFromParticipant(token, attendeeId)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+		const updatedData = {
+			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
+		}
+		context.commit('updateParticipant', { token, index, updatedData })
+	},
+
+	/**
+	 * Add a specific permission or permission combination to a given
+	 * participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {number} root0.permissions - bitwise combination of the permissions.
+	 */
+	async addPermissions(context, { token, attendeeId, permissions }) {
+		await addPermissions(token, attendeeId, permissions)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+
+		context.commit('addPermissions', { token, index, permissions })
+	},
+
+	/**
+	 * Remove a specific permission or permission combination to a given
+	 * participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {number} root0.permissions - the binary sum of the permission combination.
+	 */
+	async removePermissions(context, { token, attendeeId, permissions }) {
+		await removePermissions(token, attendeeId, permissions)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+
+		context.commit('removePermissions', { token, index, permissions })
+	},
+
+	/**
+	 * Add a specific permission or permission combination to a given
+	 * participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {number} root0.permissions - bitwise combination of the permissions.
+	 */
+	async setPermissions(context, { token, attendeeId, permissions }) {
+		await setPermissions(token, attendeeId, permissions)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+
+		context.commit('setPermissions', { token, index, permissions })
 	},
 }
 
