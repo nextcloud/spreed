@@ -557,7 +557,7 @@ export default {
 
 			const tooltip = {}
 			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && this.model.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable your video while doing a screenshare.')
 				tooltip.actionLabel = t('spreed', 'Disable video')
 				tooltip.action = 'disableVideo'
 			} else if (!this.model.attributes.audioEnabled && this.model.attributes.localScreen) {
@@ -573,7 +573,7 @@ export default {
 				tooltip.actionLabel = t('spreed', 'Disable video')
 				tooltip.action = 'disableVideo'
 			} else if (this.model.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you and see your screen. To improve the situation try to disable your screenshare.')
 				tooltip.actionLabel = t('spreed', 'Disable screenshare')
 				tooltip.action = 'disableScreenShare'
 			} else if (this.model.attributes.videoEnabled) {
