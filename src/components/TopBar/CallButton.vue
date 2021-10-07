@@ -31,7 +31,7 @@
 		:disabled="startCallButtonDisabled || loading || blockCalls"
 		class="top-bar__button"
 		:class="startCallButtonClasses"
-		@click="joinCall">
+		@click="handleClick">
 		<span
 			class="icon"
 			:class="startCallIcon" />
@@ -55,6 +55,7 @@ import isInCall from '../../mixins/isInCall'
 import participant from '../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
+import BrowserStorage from '../../services/BrowserStorage'
 
 export default {
 	name: 'CallButton',
@@ -68,6 +69,17 @@ export default {
 		isInCall,
 		participant,
 	],
+
+	props: {
+		/**
+		 * Skips the device checker dialog and joins or starts the call
+		 * upon clicking the button
+		 */
+		forceJoinCall: {
+			type: Boolean,
+			default: false,
+		},
+	},
 
 	data() {
 		return {
@@ -210,6 +222,18 @@ export default {
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 			})
 			this.loading = false
+		},
+
+		handleClick() {
+			const shouldShowDeviceCheckerScreen = (BrowserStorage.getItem('showDeviceChecker' + this.token) === null
+				|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true') && !this.forceJoinCall
+			console.debug(shouldShowDeviceCheckerScreen)
+			if (shouldShowDeviceCheckerScreen) {
+				emit('talk:device-checker:show')
+			} else {
+				emit('talk:device-checker:hide')
+				this.joinCall()
+			}
 		},
 	},
 }

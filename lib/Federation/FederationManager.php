@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
@@ -34,6 +35,7 @@ use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception as DBException;
 use OCP\IConfig;
@@ -47,6 +49,10 @@ use OCP\IUser;
  * FederationManager handles incoming federated rooms
  */
 class FederationManager {
+	public const TALK_ROOM_RESOURCE = 'talk-room';
+	public const TALK_PROTOCOL_NAME = 'nctalk';
+	public const TOKEN_LENGTH = 15;
+
 	/** @var IConfig */
 	private $config;
 
@@ -59,16 +65,21 @@ class FederationManager {
 	/** @var InvitationMapper */
 	private $invitationMapper;
 
+	/** @var Notifications */
+	private $notifications;
+
 	public function __construct(
 		IConfig $config,
 		Manager $manager,
 		ParticipantService $participantService,
-		InvitationMapper $invitationMapper
+		InvitationMapper $invitationMapper,
+		Notifications $notifications
 	) {
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->invitationMapper = $invitationMapper;
+		$this->notifications = $notifications;
 	}
 
 	/**
@@ -77,11 +88,12 @@ class FederationManager {
 	 */
 	public function isEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', "false") === "true";
+		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', 'false') === 'true';
 	}
 
 	/**
 	 * @param IUser $user
+	 * @param string $remoteId
 	 * @param int $roomType
 	 * @param string $roomName
 	 * @param string $roomToken
@@ -110,6 +122,8 @@ class FederationManager {
 	 * @throws DBException
 	 * @throws UnauthorizedException
 	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
+	 * @throws CannotReachRemoteException
 	 */
 	public function acceptRemoteRoomShare(IUser $user, int $shareId): void {
 		$invitation = $this->invitationMapper->getInvitationById($shareId);
@@ -119,6 +133,13 @@ class FederationManager {
 
 		// Add user to the room
 		$room = $this->manager->getRoomById($invitation->getRoomId());
+		if (
+			!$this->notifications->sendShareAccepted($room->getServerUrl(), $invitation->getRemoteId(), $invitation->getAccessToken())
+		) {
+			throw new CannotReachRemoteException();
+		}
+
+
 		$participant = [
 			[
 				'actorType' => Attendee::ACTOR_USERS,
@@ -128,26 +149,28 @@ class FederationManager {
 				'remoteId' => $invitation->getRemoteId(),
 			]
 		];
-		$this->participantService->addUsers($room, $participant);
+		$this->participantService->addUsers($room, $participant, $user);
 
 		$this->invitationMapper->delete($invitation);
-
-		// TODO: Send SHARE_ACCEPTED notification
 	}
 
 	/**
 	 * @throws DBException
 	 * @throws UnauthorizedException
 	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
 	 */
 	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
 		$invitation = $this->invitationMapper->getInvitationById($shareId);
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('invitation is for a different user');
 		}
+
+		$room = $this->manager->getRoomById($invitation->getRoomId());
+
 		$this->invitationMapper->delete($invitation);
 
-		// TODO: Send SHARE_DECLINED notification
+		$this->notifications->sendShareDeclined($room->getServerUrl(), $invitation->getRemoteId(), $invitation->getAccessToken());
 	}
 
 	/**

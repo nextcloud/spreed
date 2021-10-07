@@ -38,6 +38,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
+				<DeviceChecker :initialize-on-mounted="false" />
 			</template>
 		</aside>
 	</transition>
@@ -61,6 +62,7 @@ import isInCall from './mixins/isInCall'
 import participant from './mixins/participant'
 import talkHashCheck from './mixins/talkHashCheck'
 import '@nextcloud/dialogs/styles/toast.scss'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 
 export default {
 
@@ -71,6 +73,7 @@ export default {
 		CallView,
 		ChatView,
 		PreventUnload,
+		DeviceChecker,
 	},
 
 	mixins: [

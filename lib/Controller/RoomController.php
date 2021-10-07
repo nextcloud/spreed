@@ -36,6 +36,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -54,13 +55,14 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
+use OCP\IConfig;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IGroup;
-use OCP\IGroupManager;
-use OCP\IConfig;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -80,6 +82,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $groupManager;
 	/** @var Manager */
 	protected $manager;
+	/** @var ICloudIdManager */
+	protected $cloudIdManager;
 	/** @var RoomService */
 	protected $roomService;
 	/** @var ParticipantService */
@@ -104,6 +108,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $config;
 	/** @var Config */
 	protected $talkConfig;
+	/** @var FederationManager */
+	protected $federationManager;
 
 	/** @var array */
 	protected $commonReadMessages = [];
@@ -127,7 +133,8 @@ class RoomController extends AEnvironmentAwareController {
 								ITimeFactory $timeFactory,
 								IL10N $l10n,
 								IConfig $config,
-								Config $talkConfig) {
+								Config $talkConfig,
+								ICloudIdManager $cloudIdManager) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->appManager = $appManager;
@@ -147,6 +154,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
+		$this->cloudIdManager = $cloudIdManager;
 	}
 
 	protected function getTalkHashHeader(): array {
@@ -890,7 +898,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$maxPingAge = $this->timeFactory->getTime() - 100;
+		$maxPingAge = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL;
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($this->room);
 		$results = $headers = $statuses = [];
 
@@ -1029,9 +1037,12 @@ class RoomController extends AEnvironmentAwareController {
 
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		$participantsByUserId = [];
+		$remoteParticipantsByFederatedId = [];
 		foreach ($participants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
+			} elseif ($participant->getAttendee()->getAccessToken() === Attendee::ACTOR_FEDERATED_USERS) {
+				$remoteParticipantsByFederatedId[$participant->getAttendee()->getActorId()] = $participant;
 			}
 		}
 
@@ -1084,6 +1095,21 @@ class RoomController extends AEnvironmentAwareController {
 			$this->guestManager->sendEmailInvitation($this->room, $participant);
 
 			return new DataResponse($data);
+		} elseif ($source === 'remote') {
+			if (!$this->federationManager->isEnabled()) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				$newUser = $this->cloudIdManager->resolveCloudId($newParticipant);
+			} catch (\InvalidArgumentException $e) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
+				'actorId' => $newUser->getId(),
+				'displayName' => $newUser->getDisplayId(),
+			];
 		} else {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -1092,6 +1118,9 @@ class RoomController extends AEnvironmentAwareController {
 		// existing users with USER_SELF_JOINED will get converted to regular USER participants
 		foreach ($participantsToAdd as $index => $participantToAdd) {
 			$existingParticipant = $participantsByUserId[$participantToAdd['actorId']] ?? null;
+			if ($participantToAdd['actorType'] === Attendee::ACTOR_FEDERATED_USERS) {
+				$existingParticipant = $remoteParticipantsByFederatedId[$participantToAdd['actorId']] ?? null;
+			}
 
 			if ($existingParticipant !== null) {
 				unset($participantsToAdd[$index]);
@@ -1103,8 +1132,10 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+		$addedBy = $this->userManager->get($this->userId);
+
 		// add the remaining users in batch
-		$this->participantService->addUsers($this->room, $participantsToAdd);
+		$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
 
 		return new DataResponse([]);
 	}

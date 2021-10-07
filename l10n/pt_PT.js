@@ -116,7 +116,6 @@ OC.L10N.register(
     "Password protect" : "Proteger com palavra-passe",
     "Close" : "Fechar",
     "Conversation name" : "Nome da conversação",
-    "Camera" : "Câmera",
     "Reply" : "Resposta",
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
@@ -151,6 +150,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP e TCP",
     "UDP only" : "Só UDP",
     "TCP only" : "Só TCP",
+    "Camera" : "Câmera",
     "Remove" : "Remover",
     "Enabled" : "Habilidado",
     "Share link" : "Partilhar hiperligação"
