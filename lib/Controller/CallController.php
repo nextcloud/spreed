@@ -67,7 +67,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getPeersForCall(): DataResponse {
-		$timeout = $this->timeFactory->getTime() - 30;
+		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
 		$result = [];
 		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
 
