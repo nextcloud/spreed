@@ -343,11 +343,11 @@ export default {
 			if (!this.isSearched) {
 				return this.participant.actorId
 			}
-			return this.participant.id
+			return this.attendeeId
 		},
 
-		id() {
-			return this.participant.id
+		attendeeId() {
+			return this.participant.attendeeId
 		},
 
 		label() {
@@ -533,14 +533,14 @@ export default {
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
 		},
 
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
 		},
 
@@ -548,7 +548,7 @@ export default {
 			try {
 				await this.$store.dispatch('resendInvitations', {
 					token: this.token,
-					attendeeId: this.participant.attendeeId,
+					attendeeId: this.attendeeId,
 				})
 				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
 			} catch (error) {
@@ -559,7 +559,7 @@ export default {
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
 		},
 	},
