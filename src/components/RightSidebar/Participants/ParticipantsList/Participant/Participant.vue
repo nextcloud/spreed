@@ -118,15 +118,25 @@
 				{{ attendeePin }}
 			</ActionText>
 			<ActionButton v-if="canBeDemoted"
-				icon="icon-rename"
 				:close-after-click="true"
 				@click="demoteFromModerator">
-				{{ t('spreed', 'Demote from moderator') }}
+				<template #icon>
+					<Account
+						:size="20"
+						title=""
+						decorative />
+					{{ t('spreed', 'Demote from moderator') }}
+				</template>
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
-				icon="icon-rename"
 				:close-after-click="true"
 				@click="promoteToModerator">
+				<template #icon>
+					<Crown
+						:size="20"
+						title=""
+						decorative />
+				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
 			<ActionButton v-if="isEmailActor"
@@ -166,6 +176,8 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
+import Crown from 'vue-material-design-icons/Crown.vue'
+import Account from 'vue-material-design-icons/Account.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
@@ -186,6 +198,8 @@ export default {
 		Phone,
 		Video,
 		HandBackLeft,
+		Crown,
+		Account,
 	},
 
 	directives: {
