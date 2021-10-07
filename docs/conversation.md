@@ -256,8 +256,8 @@
 
     field | type | Description
     ---|---|---
-    `mode` | string | `default` or `call`, in case of call the permissions will be reset to `Default` after the end of a call.
-    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added. Note that this will reset all custom permissions that have been given to attendees so far.
+    `mode` | string | `default` or `call`, in case of call the permissions will be reset to `0` (default) after the end of a call.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added. Note that this will reset all custom permissions that have been given to attendees so far.
 
 * Response:
     - Status code:

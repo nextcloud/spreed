@@ -200,8 +200,8 @@
     field | type | Description
     ---|---|---
     `attendeeId` | int | Attendee id can be used for guests and users
-    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `Default` and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to 126 for moderators and 118 for normal participants.
-    `permissions` | int | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added.
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
+    `permissions` | int | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
 
 * Response:
     - Status code:
@@ -221,8 +221,8 @@
 
     field | type | Description
     ---|---|---
-    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `Default` and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to 126 for moderators and 118 for normal participants.
-    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `Default`, the `Custom` permission will always be added.
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
 
 * Response:
     - Status code:
