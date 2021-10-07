@@ -96,7 +96,9 @@ class SettingsController extends OCSController {
 	}
 
 	/**
+	 * @param string $setting
 	 * @param int|null|string $value
+	 * @return bool
 	 */
 	protected function validateUserSetting(string $setting, $value): bool {
 		if ($setting === 'attachment_folder') {
