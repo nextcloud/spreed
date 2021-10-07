@@ -3,9 +3,6 @@ Feature: set-publishing-permissions
     Given user "owner" exists
     Given user "moderator" exists
     Given user "invited user" exists
-    Given user "not invited user" exists
-    Given user "not invited but joined user" exists
-    Given user "not joined user" exists
 
   Scenario: Owner and moderators can set default permissions users can not
     Given user "owner" creates room "group room" (v4)
@@ -14,8 +11,23 @@ Feature: set-publishing-permissions
     And user "owner" adds user "moderator" to room "group room" with 200 (v4)
     And user "owner" promotes "moderator" in room "group room" with 200 (v4)
     And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | owner        | SJLAVP      |
+      | users      | moderator    | SJLAVP      |
+      | users      | invited user | SJAVP       |
     When user "owner" sets default permissions for room "group room" to "S" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | owner        | SJLAVP      |
+      | users      | moderator    | SJLAVP      |
+      | users      | invited user | CS          |
     When user "moderator" sets default permissions for room "group room" to "AV" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | owner        | SJLAVP      |
+      | users      | moderator    | SJLAVP      |
+      | users      | invited user | CAV         |
     When user "invited user" sets default permissions for room "group room" to "D" with 403 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
