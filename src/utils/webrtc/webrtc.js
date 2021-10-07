@@ -914,7 +914,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 	}
 
-	const reconnectOnPublishingPermissionsChange = (users) => {
+	const reconnectOnPermissionsChange = (users) => {
 		const currentParticipant = users.find(user => {
 			const sessionId = user.sessionId || user.sessionid
 			return sessionId === signaling.getSessionId()
@@ -928,19 +928,25 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === undefined) {
+		if (currentParticipant.participantPermissions === undefined) {
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.ALL && webrtc.webrtc.isLocalMediaActive()) {
+		if ((currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+			&& webrtc.webrtc.isLocalMediaActive()) {
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.NONE && !webrtc.webrtc.isLocalMediaActive()) {
+		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+			&& !webrtc.webrtc.isLocalMediaActive()) {
 			return
 		}
 
-		if (currentParticipant.publishingPermissions === PARTICIPANT.PUBLISHING_PERMISSIONS.NONE) {
+		// FIXME handle case where only one of the permissions is given
+		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
 			startedWithMedia = undefined
 
 			webrtc.stopLocalVideo()
@@ -993,10 +999,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	signaling.on('usersInRoom', function(users) {
-		reconnectOnPublishingPermissionsChange(users)
+		reconnectOnPermissionsChange(users)
 	})
 	signaling.on('usersChanged', function(users) {
-		reconnectOnPublishingPermissionsChange(users)
+		reconnectOnPermissionsChange(users)
 	})
 
 	webrtc.on('createdPeer', function(peer) {

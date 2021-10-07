@@ -391,12 +391,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -430,7 +433,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::ONE_TO_ONE_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -447,12 +451,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -486,7 +493,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -503,12 +511,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$participant->expects($this->once())
 			->method('hasModeratorPermissions')
 			->with(false)
@@ -546,7 +557,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 					'control',
 				],
@@ -565,12 +577,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
@@ -604,7 +619,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
@@ -622,12 +638,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
 			->with($sessionId)
@@ -661,33 +680,34 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::PUBLIC_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 			],
 		], $result->getData());
 	}
 
-	public function dataBackendRoomUserPublicPublishingPermissions(): array {
+	public function dataBackendRoomUserPublicPermissions(): array {
 		return [
-			[Attendee::PUBLISHING_PERMISSIONS_NONE, []],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_VIDEO, ['publish-media']],
-			[Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
-			[Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_VIDEO | Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING, ['publish-media', 'publish-screen']],
+			[Attendee::PERMISSIONS_DEFAULT, []],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-audio']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-video']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO, ['publish-audio', 'publish-video']],
+			[Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-audio', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-video', 'publish-screen']],
+			[Attendee::PERMISSIONS_PUBLISH_AUDIO | Attendee::PERMISSIONS_PUBLISH_VIDEO | Attendee::PERMISSIONS_PUBLISH_SCREEN, ['publish-audio', 'publish-video', 'publish-screen']],
 		];
 	}
 
 	/**
-	 * @dataProvider dataBackendRoomUserPublicPublishingPermissions
+	 * @dataProvider dataBackendRoomUserPublicPermissions
 	 *
-	 * @param int $publishingPermissions
+	 * @param int $permissions
 	 * @param array $expectedBackendPermissions
 	 */
-	public function testBackendRoomUserPublicPublishingPermissions(int $publishingPermissions, array $expectedBackendPermissions) {
+	public function testBackendRoomUserPublicPermissions(int $permissions, array $expectedBackendPermissions) {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -697,12 +717,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => $publishingPermissions,
+			'permissions' => $permissions,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn($permissions);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -788,12 +811,15 @@ class SignalingControllerTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$attendee = Attendee::fromRow([
-			'publishing_permissions' => Attendee::PUBLISHING_PERMISSIONS_ALL,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId)
@@ -827,7 +853,8 @@ class SignalingControllerTest extends \Test\TestCase {
 					'type' => Room::ONE_TO_ONE_CALL,
 				],
 				'permissions' => [
-					'publish-media',
+					'publish-audio',
+					'publish-video',
 					'publish-screen',
 				],
 				'session' => [

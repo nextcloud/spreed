@@ -34,7 +34,7 @@
         `participantType` | int | v1 | | Permissions level of the participant (see [constants list](constants.md#participant-types))
         `lastPing` | int | v1 | | Timestamp of the last ping of the user (should be used for sorting)
         `inCall` | int | v1 | | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))
-        `publishingPermissions` | int | v4 | | Publishing permissions for the participant (see [constants list](constants.md#attendee-publishing-permissions))
+        `permissions` | int | v4 | | Publishing permissions for the participant (see [constants list](constants.md#attendee-permissions))
         `sessionId` | string | v1 | v4 | `'0'` if not connected, otherwise a 512 character long string
         `sessionIds` | array | v4 | | array of session ids, each are 512 character long strings, or empty if no session
         `status` | string | v2 | | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
@@ -191,24 +191,46 @@
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
 
-## Set publishing permissions for an attendee
+## Set permissions for an attendee
 
 * Method: `PUT`
-* Endpoint: `/room/{token}/attendees/publishing-permissions`
+* Endpoint: `/room/{token}/attendees/permissions`
 * Data:
 
     field | type | Description
     ---|---|---
     `attendeeId` | int | Attendee id can be used for guests and users
-    `state` | int | New state for the attendee, see [constants list](constants.md#attendee-publishing-permissions)
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
+    `permissions` | int | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
 
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When the conversation type does not support setting publishing permissions (only group and public conversations)
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the attendee type is `groups` or `circles`
+        + `400 Bad Request` When the mode is invalid
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the attendee to set publishing permissions could not be found
+
+## Set permissions for all attendees
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/attendees/permissions/all`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the mode is invalid
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
 
 ## Get a participant by their pin
 

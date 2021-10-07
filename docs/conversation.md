@@ -43,7 +43,7 @@
         `attendeePin` | string | v3 | | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
         `actorType` | string | v3 | | Currently known `users|guests|emails|groups|circles`
         `actorId` | string | v3 | | The unique identifier for the given actor type
-        `publishingPermissions` | int | v4 | | Publishing permissions for the current participant (see [constants list](constants.md#attendee-publishing-permissions))
+        `permissions` | int | v4 | | Publishing permissions for the current participant (see [constants list](constants.md#attendee-permissions))
         `participantInCall` | bool | v1 | v2 | **Removed:** use `participantFlags` instead
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
         `readOnly` | int | v1 | | Read-only state for the current user (only available with `read-only-rooms` capability)
@@ -246,6 +246,25 @@
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Set default or call permissions for a conversation
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/permissions/{mode}`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `mode` | string | `default` or `call`, in case of call the permissions will be reset to `0` (default) after the end of a call.
+    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added. Note that this will reset all custom permissions that have been given to attendees so far.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
+        + `400 Bad Request` When the mode is invalid
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
 ## Add conversation to favorites

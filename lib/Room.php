@@ -116,12 +116,14 @@ class Room {
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
 	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
+	public const EVENT_BEFORE_PERMISSIONS_SET = self::class . '::preSetPermissions';
+	public const EVENT_AFTER_PERMISSIONS_SET = self::class . '::postSetPermissions';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
 	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
 	public const EVENT_AFTER_PARTICIPANT_TYPE_SET = self::class . '::postSetParticipantType';
-	public const EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET = self::class . '::preSetParticipantPublishingPermissions';
-	public const EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET = self::class . '::postSetParticipantPublishingPermissions';
+	public const EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET = self::class . '::preSetParticipantPermissions';
+	public const EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET = self::class . '::postSetParticipantPermissions';
 	public const EVENT_BEFORE_USER_REMOVE = self::class . '::preRemoveUser';
 	public const EVENT_AFTER_USER_REMOVE = self::class . '::postRemoveUser';
 	public const EVENT_BEFORE_PARTICIPANT_REMOVE = self::class . '::preRemoveBySession';
@@ -185,6 +187,10 @@ class Room {
 	/** @var int */
 	private $activeGuests;
 	/** @var int */
+	private $defaultPermissions;
+	/** @var int */
+	private $callPermissions;
+	/** @var int */
 	private $callFlag;
 	/** @var \DateTime|null */
 	private $activeSince;
@@ -222,6 +228,8 @@ class Room {
 								string $password,
 								string $serverUrl,
 								int $activeGuests,
+								int $defaultPermissions,
+								int $callPermissions,
 								int $callFlag,
 								?\DateTime $activeSince,
 								?\DateTime $lastActivity,
@@ -248,6 +256,8 @@ class Room {
 		$this->password = $password;
 		$this->serverUrl = $serverUrl;
 		$this->activeGuests = $activeGuests;
+		$this->defaultPermissions = $defaultPermissions;
+		$this->callPermissions = $callPermissions;
 		$this->callFlag = $callFlag;
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
@@ -340,6 +350,14 @@ class Room {
 	 */
 	public function getActiveGuests(): int {
 		return $this->activeGuests;
+	}
+
+	public function getDefaultPermissions(): int {
+		return $this->defaultPermissions;
+	}
+
+	public function getCallPermissions(): int {
+		return $this->callPermissions;
 	}
 
 	public function getCallFlag(): int {
@@ -814,6 +832,7 @@ class Room {
 			->set('active_guests', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('active_since', $query->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
 			->set('call_flag', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('call_permissions', $query->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('active_since'));
 
@@ -1030,6 +1049,25 @@ class Room {
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
 
+		return true;
+	}
+
+	public function setPermissions(string $level, int $newPermissions): bool {
+		if ($level !== 'default' && $level !== 'call') {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set($level . '_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->executeStatement();
+
+		if ($level === 'default') {
+			$this->defaultPermissions = $newPermissions;
+		} else {
+			$this->callPermissions = $newPermissions;
+		}
 
 		return true;
 	}

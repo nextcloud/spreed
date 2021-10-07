@@ -106,9 +106,10 @@ class CallController extends AEnvironmentAwareController {
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int|null $flags
+	 * @param int|null $forcePermissions
 	 * @return DataResponse
 	 */
-	public function joinCall(?int $flags): DataResponse {
+	public function joinCall(?int $flags = null, ?int $forcePermissions = null): DataResponse {
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
 		$session = $this->participant->getSession();
@@ -119,6 +120,10 @@ class CallController extends AEnvironmentAwareController {
 		if ($flags === null) {
 			// Default flags: user is in room with audio/video.
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
+		}
+
+		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
+			$this->room->setPermissions('call', $forcePermissions);
 		}
 
 		$this->participantService->changeInCall($this->room, $this->participant, $flags);

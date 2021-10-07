@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2021, Daniel Calviño Sánchez <danxuliu@gmail.com>
+ * @copyright Copyright (c) 2021, Joas Schilling <coding@schilljs.com>
  *
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -31,8 +31,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version12000Date20210528100404 extends SimpleMigrationStep {
-
+class Version13000Date20210921142733 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -40,19 +39,41 @@ class Version12000Date20210528100404 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		// Obsoleted by Version13000Date20210921142733
-//		/** @var ISchemaWrapper $schema */
-//		$schema = $schemaClosure();
-//
-//		$table = $schema->getTable('talk_attendees');
-//		if (!$table->hasColumn('publishing_permissions')) {
-//			$table->addColumn('publishing_permissions', Types::INTEGER, [
-//				'default' => 7,
-//			]);
-//
-//			return $schema;
-//		}
+		/** @var ISchemaWrapper $schema */
+		$schema = $schemaClosure();
 
-		return null;
+		$table = $schema->getTable('talk_attendees');
+		if ($table->hasColumn('publishing_permissions')) {
+			$table->dropColumn('publishing_permissions');
+		}
+
+		if (!$table->hasColumn('permissions')) {
+			$table->addColumn('permissions', Types::INTEGER, [
+				'default' => 0,
+			]);
+		}
+
+		$table = $schema->getTable('talk_rooms');
+		if (!$table->hasColumn('default_permissions')) {
+			$table->addColumn('default_permissions', Types::INTEGER, [
+				'default' => 0,
+			]);
+		}
+		if (!$table->hasColumn('call_permissions')) {
+			$table->addColumn('call_permissions', Types::INTEGER, [
+				'default' => 0,
+			]);
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * @param IOutput $output
+	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
+	 * @param array $options
+	 */
+	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+		// FIXME set default_permissions based on appconfig "start_calls"
 	}
 }

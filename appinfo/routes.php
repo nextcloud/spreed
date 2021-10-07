@@ -318,6 +318,16 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setPermissions',
+			'url' => '/api/{apiVersion}/room/{token}/permissions/{mode}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+				'mode' => '^(call|default)$',
+			],
+		],
+		[
 			'name' => 'Room#getParticipants',
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'GET',
@@ -354,8 +364,17 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#setAttendeePublishingPermissions',
-			'url' => '/api/{apiVersion}/room/{token}/attendees/publishing-permissions',
+			'name' => 'Room#setAttendeePermissions',
+			'url' => '/api/{apiVersion}/room/{token}/attendees/permissions',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setAllAttendeesPermissions',
+			'url' => '/api/{apiVersion}/room/{token}/attendees/permissions/all',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v(4)',

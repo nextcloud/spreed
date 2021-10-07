@@ -50,6 +50,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array[] */
 	protected static $messages;
 
+
+	protected static $permissionsMap = [
+		'D' => 0, // PERMISSIONS_DEFAULT
+		'C' => 1, // PERMISSIONS_CUSTOM
+		'S' => 2, // PERMISSIONS_CALL_START
+		'J' => 4, // PERMISSIONS_CALL_JOIN
+		'L' => 8, // PERMISSIONS_LOBBY_IGNORE
+		'A' => 16, // PERMISSIONS_PUBLISH_AUDIO
+		'V' => 32, // PERMISSIONS_PUBLISH_VIDEO
+		'P' => 64, // PERMISSIONS_PUBLISH_SCREEN
+	];
+
 	/** @var string */
 	protected $currentUser;
 
@@ -398,8 +410,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['attendeePin'])) {
 					$data['attendeePin'] = $attendee['attendeePin'] ? '**PIN**' : '';
 				}
-				if (isset($expectedKeys['publishingPermissions'])) {
-					$data['publishingPermissions'] = (string) $attendee['publishingPermissions'];
+				if (isset($expectedKeys['permissions'])) {
+					$data['permissions'] = (string) $attendee['permissions'];
 				}
 
 				if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
@@ -417,11 +429,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['participantType'])) {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
-				if (isset($attendee['publishingPermissions'])) {
-					$attendee['publishingPermissions'] = (string)$this->mapPublishingPermissionsTestInput($attendee['publishingPermissions']);
-				}
 				return $attendee;
 			}, $formData->getHash());
+
+			$result = array_map(function ($attendee) {
+				if (isset($attendee['permissions'])) {
+					$attendee['permissions'] = $this->mapPermissionsAPIOutput($attendee['permissions']);
+				}
+				return $attendee;
+			}, $result);
 
 			usort($expected, [$this, 'sortAttendees']);
 			usort($result, [$this, 'sortAttendees']);
@@ -480,20 +496,42 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::fail('Invalid test input value for participant type');
 	}
 
-	private function mapPublishingPermissionsTestInput($publishingPermissions) {
-		if (is_numeric($publishingPermissions)) {
-			return $publishingPermissions;
+	private function mapPermissionsTestInput($permissions): int {
+		if (is_numeric($permissions)) {
+			return $permissions;
 		}
 
-		switch ($publishingPermissions) {
-			case 'NONE': return 0;
-			case 'AUDIO': return 1;
-			case 'VIDEO': return 2;
-			case 'SCREENSHARING': return 4;
-			case 'ALL': return 7;
+		$numericPermissions = 0;
+		foreach (self::$permissionsMap as $char => $int) {
+			if (strpos($permissions, $char) !== false) {
+				$numericPermissions += $int;
+				$permissions = str_replace($char, '', $permissions);
+			}
 		}
 
-		Assert::fail('Invalid test input value for publishing permissions');
+		if (trim($permissions) !== '') {
+			Assert::fail('Invalid test input value for permissions');
+		}
+
+		return $numericPermissions;
+	}
+
+	private function mapPermissionsAPIOutput($permissions): string {
+		$permissions = (int) $permissions;
+
+		$permissionsString = '';
+		foreach (self::$permissionsMap as $char => $int) {
+			if ($permissions & $int) {
+				$permissionsString .= $char;
+				$permissions &= ~ $int;
+			}
+		}
+
+		if ($permissions !== 0) {
+			Assert::fail('Invalid API output value for permissions');
+		}
+
+		return $permissionsString;
 	}
 
 	/**
@@ -1084,15 +1122,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" sets publishing permissions for "([^"]*)" in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 * @When /^user "([^"]*)" sets permissions for "([^"]*)" in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
+	 * @param string $participant
 	 * @param string $identifier
-	 * @param string $publishingPermissionsString
+	 * @param string $permissionsString
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSetsPublishingPermissionsForInRoomTo(string $user, string $participant, string $identifier, string $publishingPermissionsString, int $statusCode, string $apiVersion): void {
+	public function userSetsPermissionsForInRoomTo(string $user, string $participant, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
 			$attendeeId = 123456789;
 		} elseif (strpos($participant, 'guest') === 0) {
@@ -1102,28 +1141,42 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$attendeeId = $this->getAttendeeId('users', $participant, $identifier, $statusCode === 200 ? $user : null);
 		}
 
-		if ($publishingPermissionsString === 'NONE') {
-			$publishingPermissions = 0;
-		} elseif ($publishingPermissionsString === 'AUDIO') {
-			$publishingPermissions = 1;
-		} elseif ($publishingPermissionsString === 'VIDEO') {
-			$publishingPermissions = 2;
-		} elseif ($publishingPermissionsString === 'SCREENSHARING') {
-			$publishingPermissions = 4;
-		} elseif ($publishingPermissionsString === 'ALL') {
-			$publishingPermissions = 7;
-		} else {
-			Assert::fail('Invalid publishing permissions');
-		}
+		$permissions = $this->mapPermissionsTestInput($permissionsString);
 
 		$requestParameters = [
 			['attendeeId', $attendeeId],
-			['state', $publishingPermissions],
+			['permissions', $permissions],
+			['method', 'set'],
 		];
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees/publishing-permissions',
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees/permissions',
+			new TableNode($requestParameters)
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sets (call|default) permissions for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $mode
+	 * @param string $identifier
+	 * @param string $permissionsString
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsPermissionsForRoomTo(string $user, string $mode, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
+		$permissions = $this->mapPermissionsTestInput($permissionsString);
+
+		$requestParameters = [
+			['permissions', $permissions],
+		];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/permissions/' . $mode,
 			new TableNode($requestParameters)
 		);
 		$this->assertStatusCode($this->response, $statusCode);

@@ -83,7 +83,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $listener);
 
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
@@ -155,7 +155,7 @@ class Listener {
 			$notifier->participantsModified($event->getRoom(), $sessionIds);
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $listener);
 
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {

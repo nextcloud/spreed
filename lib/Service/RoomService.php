@@ -24,11 +24,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 
 class RoomService {
@@ -37,11 +39,15 @@ class RoomService {
 	protected $manager;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var IEventDispatcher */
+	private $dispatcher;
 
 	public function __construct(Manager $manager,
-					ParticipantService $participantService) {
+								ParticipantService $participantService,
+								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -138,5 +144,51 @@ class RoomService {
 
 	public function prepareConversationName(string $objectName): string {
 		return rtrim(mb_substr(ltrim($objectName), 0, 64));
+	}
+
+	public function setPermissions(Room $room, string $level, string $method, int $permissions, bool $resetCustomPermissions): bool {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+
+		if ($level === 'default') {
+			$oldPermissions = $room->getDefaultPermissions();
+		} elseif ($level === 'call') {
+			$oldPermissions = $room->getCallPermissions();
+		} else {
+			return false;
+		}
+
+		$newPermissions = $permissions;
+		if ($method === Attendee::PERMISSIONS_MODIFY_SET) {
+			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
+				// Make sure the custom flag is set when not setting to default permissions
+				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
+			}
+			// If we are setting a fixed set of permissions and apply that to users,
+			// we can also simplify it and reset to default.
+			$resetCustomPermissions = true;
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
+			$newPermissions = $oldPermissions | $newPermissions;
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
+			$newPermissions = $oldPermissions & ~$newPermissions;
+		} else {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, $level . 'Permissions', $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PERMISSIONS_SET, $event);
+
+		if ($resetCustomPermissions) {
+			$this->participantService->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
+		} else {
+			$this->participantService->updateAllPermissions($room, $method, $permissions);
+		}
+
+		$room->setPermissions($level, $newPermissions);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
+
+		return true;
 	}
 }

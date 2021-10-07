@@ -188,6 +188,8 @@ class Manager {
 			(string) $row['password'],
 			(string) $row['server_url'],
 			(int) $row['active_guests'],
+			(int) $row['default_permissions'],
+			(int) $row['call_permissions'],
 			(int) $row['call_flag'],
 			$activeSince,
 			$lastActivity,

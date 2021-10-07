@@ -51,8 +51,9 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastMentionDirect()
  * @method void setReadPrivacy(int $readPrivacy)
  * @method int getReadPrivacy()
- * @method void setPublishingPermissions(int $publishingPermissions)
- * @method int getPublishingPermissions()
+ * @method void setPermissions(int $permissions)
+ * @internal
+ * @method int getPermissions()
  * @method void setAccessToken(string $accessToken)
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
@@ -67,11 +68,27 @@ class Attendee extends Entity {
 	public const ACTOR_BRIDGED = 'bridged';
 	public const ACTOR_FEDERATED_USERS = 'federated_users';
 
-	public const PUBLISHING_PERMISSIONS_NONE = 0;
-	public const PUBLISHING_PERMISSIONS_AUDIO = 1;
-	public const PUBLISHING_PERMISSIONS_VIDEO = 2;
-	public const PUBLISHING_PERMISSIONS_SCREENSHARING = 4;
-	public const PUBLISHING_PERMISSIONS_ALL = 7;
+	public const PERMISSIONS_DEFAULT = 0;
+	public const PERMISSIONS_CUSTOM = 1;
+	public const PERMISSIONS_CALL_START = 2;
+	public const PERMISSIONS_CALL_JOIN = 4;
+	public const PERMISSIONS_LOBBY_IGNORE = 8;
+	public const PERMISSIONS_PUBLISH_AUDIO = 16;
+	public const PERMISSIONS_PUBLISH_VIDEO = 32;
+	public const PERMISSIONS_PUBLISH_SCREEN = 64;
+	public const PERMISSIONS_MAX_DEFAULT = // Max int (when all permissions are granted as default)
+		self::PERMISSIONS_CALL_START
+		| self::PERMISSIONS_CALL_JOIN
+		| self::PERMISSIONS_LOBBY_IGNORE
+		| self::PERMISSIONS_PUBLISH_AUDIO
+		| self::PERMISSIONS_PUBLISH_VIDEO
+		| self::PERMISSIONS_PUBLISH_SCREEN
+	;
+	public const PERMISSIONS_MAX_CUSTOM = self::PERMISSIONS_MAX_DEFAULT | self::PERMISSIONS_CUSTOM; // Max int (when all permissions are granted as custom)
+
+	public const PERMISSIONS_MODIFY_SET = 'set';
+	public const PERMISSIONS_MODIFY_REMOVE = 'remove';
+	public const PERMISSIONS_MODIFY_ADD = 'add';
 
 	/** @var int */
 	protected $roomId;
@@ -113,7 +130,7 @@ class Attendee extends Entity {
 	protected $readPrivacy;
 
 	/** @var int */
-	protected $publishingPermissions;
+	protected $permissions;
 
 	/** @var string */
 	protected $accessToken;
@@ -135,7 +152,7 @@ class Attendee extends Entity {
 		$this->addType('lastMentionMessage', 'int');
 		$this->addType('lastMentionDirect', 'int');
 		$this->addType('readPrivacy', 'int');
-		$this->addType('publishingPermissions', 'int');
+		$this->addType('permissions', 'int');
 		$this->addType('accessToken', 'string');
 		$this->addType('remote_id', 'string');
 	}
@@ -163,7 +180,7 @@ class Attendee extends Entity {
 			'last_mention_message' => $this->getLastMentionMessage(),
 			'last_mention_direct' => $this->getLastMentionDirect(),
 			'read_privacy' => $this->getReadPrivacy(),
-			'publishing_permissions' => $this->getPublishingPermissions(),
+			'permissions' => $this->getPermissions(),
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
 		];

@@ -32,6 +32,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\UserEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -405,7 +406,7 @@ class RoomController extends AEnvironmentAwareController {
 			'actorType' => '',
 			'actorId' => '',
 			'attendeeId' => 0,
-			'publishingPermissions' => Attendee::PUBLISHING_PERMISSIONS_NONE,
+			'permissions' => Attendee::PERMISSIONS_CUSTOM,
 			'canEnableSIP' => false,
 			'attendeePin' => '',
 			'description' => '',
@@ -471,7 +472,7 @@ class RoomController extends AEnvironmentAwareController {
 			'actorType' => $attendee->getActorType(),
 			'actorId' => $attendee->getActorId(),
 			'attendeeId' => $attendee->getId(),
-			'publishingPermissions' => $attendee->getPublishingPermissions(),
+			'permissions' => $currentParticipant->getPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 		]);
@@ -519,7 +520,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
-			!$currentParticipant->hasModeratorPermissions()) {
+			!$currentParticipant->hasModeratorPermissions() &&
+			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 			// No participants and chat messages for users in the lobby.
 			$roomData['hasCall'] = false;
 			return $roomData;
@@ -954,7 +956,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $participant->getAttendee()->getActorId(),
 				'actorType' => $participant->getAttendee()->getActorType(),
 				'displayName' => $participant->getAttendee()->getActorId(),
-				'publishingPermissions' => $participant->getAttendee()->getPublishingPermissions(),
+				'permissions' => $participant->getPermissions(),
 				'attendeePin' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
@@ -1510,24 +1512,60 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 *
-	 * @param int $attendeeId
-	 * @param int $state
+	 * @param int $permissions
 	 * @return DataResponse
 	 */
-	public function setAttendeePublishingPermissions(int $attendeeId, int $state): DataResponse {
+	public function setPermissions(string $mode, int $permissions): DataResponse {
+		if (!$this->roomService->setPermissions($this->room, $mode, Attendee::PERMISSIONS_MODIFY_SET, $permissions, true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $attendeeId
+	 * @param string $method
+	 * @param int $permissions
+	 * @return DataResponse
+	 */
+	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		try {
+			$result = $this->participantService->updatePermissions($this->room, $targetParticipant, $method, $permissions);
+		} catch (ForbiddenException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if (!$result) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->updatePublishingPermissions($this->room, $targetParticipant, $state);
-
 		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 *
+	 * @param string $method
+	 * @param int $permissions
+	 * @return DataResponse
+	 */
+	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
+		if (!$this->roomService->setPermissions($this->room, 'call', $method, $permissions, false)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
 	/**

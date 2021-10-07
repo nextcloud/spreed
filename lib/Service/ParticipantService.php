@@ -37,6 +37,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -139,23 +140,53 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
-	public function updatePublishingPermissions(Room $room, Participant $participant, int $newState): void {
+	/**
+	 * @throws Exception
+	 * @throws ForbiddenException
+	 */
+	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): bool {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+
+		if ($participant->hasModeratorPermissions()) {
+			throw new ForbiddenException();
+		}
+
 		$attendee = $participant->getAttendee();
 
 		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS || $attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 			// Can not set publishing permissions for those actor types
-			return;
+			return false;
 		}
 
-		$oldState = $attendee->getPublishingPermissions();
+		$oldPermissions = $participant->getPermissions();
+		if ($method === Attendee::PERMISSIONS_MODIFY_SET) {
+			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
+				// Make sure the custom flag is set when not setting to default permissions
+				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
+			}
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
+			$newPermissions = $oldPermissions | $newPermissions;
+		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
+			$newPermissions = $oldPermissions & ~$newPermissions;
+		} else {
+			return false;
+		}
 
-		$event = new ModifyParticipantEvent($room, $participant, 'publishingPermissions', $newState, $oldState);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
-		$attendee->setPublishingPermissions($newState);
+		$attendee->setPermissions($newPermissions);
 		$this->attendeeMapper->update($attendee);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PUBLISHING_PERMISSIONS_SET, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
+
+		return true;
+	}
+
+	public function updateAllPermissions(Room $room, string $method, int $newState): void {
+		$this->attendeeMapper->modifyPermissions($room->getId(), $method, $newState);
 	}
 
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
@@ -287,6 +318,7 @@ class ParticipantService {
 			$attendee->setActorType(Attendee::ACTOR_GUESTS);
 			$attendee->setActorId($randomActorId);
 			$attendee->setParticipantType(Participant::GUEST);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$this->attendeeMapper->insert($attendee);
 
@@ -354,6 +386,7 @@ class ParticipantService {
 				$attendee->setRemoteId($participant['remoteId']);
 			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			try {
@@ -449,6 +482,7 @@ class ParticipantService {
 			$attendee->setActorId($group->getGID());
 			$attendee->setDisplayName($group->getDisplayName());
 			$attendee->setParticipantType(Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
 			$this->attendeeMapper->insert($attendee);
 
@@ -549,6 +583,7 @@ class ParticipantService {
 			$attendee->setActorId($circle->getSingleId());
 			$attendee->setDisplayName($circle->getDisplayName());
 			$attendee->setParticipantType(Participant::USER);
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
 			$this->attendeeMapper->insert($attendee);
 
@@ -860,11 +895,11 @@ class ParticipantService {
 			return;
 		}
 
-		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+		$permissions = $participant->getPermissions();
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
@@ -905,11 +940,11 @@ class ParticipantService {
 			throw new \InvalidArgumentException('Invalid flags');
 		}
 
-		$publishingPermissions = $participant->getAttendee()->getPublishingPermissions();
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_AUDIO)) {
+		$permissions = $participant->getPermissions();
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_AUDIO)) {
 			$flags &= ~Participant::FLAG_WITH_AUDIO;
 		}
-		if (!($publishingPermissions & Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
+		if (!($permissions & Attendee::PERMISSIONS_PUBLISH_VIDEO)) {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 

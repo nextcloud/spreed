@@ -57,11 +57,20 @@ title: Constants
 * `guests` - Guest without a login
 * `emails` - A guest invited by email address
 
-### Attendee publishing permissions
-* `0` None
-* `1` Audio
-* `2` Video
-* `4` Screensharing
+### Attendee permissions
+* `0` Default permissions (will pick the one from the next level of: user, call, conversation)
+* `1` Custom permissions (this is required to be able to remove all other permissions)
+* `2` Start call
+* `4` Join call
+* `8` Can ignore lobby
+* `16` Can publish audio stream
+* `32` Can publish video stream
+* `64` Can publish screenshare stream
+
+### Attendee permission modifications
+* `set` - Setting this permission set.
+* `add` - Add the given flags to the permissions.
+* `remove` - Remove the given flags from the permissions.
 
 ### Actor types of chat messages
 * `users` - Logged-in users
@@ -70,6 +79,6 @@ title: Constants
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
 ## Signaling modes
-* `internal` No external signaling server is used
-* `external` A single external signaling server is used
-* `conversation_cluster` An external signaling server is assigned per conversation
+* `internal` - No external signaling server is used
+* `external` - A single external signaling server is used
+* `conversation_cluster` - An external signaling server is assigned per conversation.

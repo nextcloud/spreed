@@ -404,7 +404,7 @@ class SignalingController extends OCSController {
 				'lastPing' => $session->getLastPing(),
 				'sessionId' => $session->getSessionId(),
 				'inCall' => $session->getInCall(),
-				'publishingPermissions' => $participant->getAttendee()->getPublishingPermissions(),
+				'permissions' => $participant->getPermissions(),
 			];
 		}
 
@@ -687,10 +687,13 @@ class SignalingController extends OCSController {
 				'app' => 'spreed-hpb',
 			]);
 
-			if ($participant->getAttendee()->getPublishingPermissions() & (Attendee::PUBLISHING_PERMISSIONS_AUDIO | Attendee::PUBLISHING_PERMISSIONS_VIDEO)) {
-				$permissions[] = 'publish-media';
+			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) {
+				$permissions[] = 'publish-audio';
 			}
-			if ($participant->getAttendee()->getPublishingPermissions() & Attendee::PUBLISHING_PERMISSIONS_SCREENSHARING) {
+			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) {
+				$permissions[] = 'publish-video';
+			}
+			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
 				$permissions[] = 'publish-screen';
 			}
 			if ($participant->hasModeratorPermissions(false)) {

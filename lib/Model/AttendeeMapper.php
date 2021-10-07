@@ -197,6 +197,85 @@ class AttendeeMapper extends QBMapper {
 		return (int) $query->execute();
 	}
 
+	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
+		$query = $this->db->getQueryBuilder();
+		$query->update($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
+				Attendee::ACTOR_CIRCLES,
+				Attendee::ACTOR_GROUPS,
+			], IQueryBuilder::PARAM_STR_ARRAY)));
+
+		if ($mode === Attendee::PERMISSIONS_MODIFY_SET) {
+			if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
+				$newState |= Attendee::PERMISSIONS_CUSTOM;
+			}
+			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
+			$query->executeStatement();
+		} else {
+			foreach ([
+				Attendee::PERMISSIONS_CALL_JOIN,
+				Attendee::PERMISSIONS_CALL_START,
+				Attendee::PERMISSIONS_PUBLISH_AUDIO,
+				Attendee::PERMISSIONS_PUBLISH_VIDEO,
+				Attendee::PERMISSIONS_PUBLISH_SCREEN,
+				Attendee::PERMISSIONS_LOBBY_IGNORE,
+			] as $permission) {
+				if ($permission & $newState) {
+					if ($mode === Attendee::PERMISSIONS_MODIFY_ADD) {
+						$this->addSinglePermission($query, $permission);
+					} elseif ($mode === Attendee::PERMISSIONS_MODIFY_REMOVE) {
+						$this->removeSinglePermission($query, $permission);
+					}
+				}
+			}
+		}
+	}
+
+	protected function addSinglePermission(IQueryBuilder $query, int $permission): void {
+		$query->set('permissions', $query->func()->add(
+			'permissions',
+			$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
+		));
+
+		$query->andWhere(
+			$query->expr()->neq(
+				$query->expr()->castColumn(
+					$query->expr()->bitwiseAnd(
+						'permissions',
+						$permission
+					),
+					IQueryBuilder::PARAM_INT
+				),
+				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
+			)
+		);
+
+		$query->executeStatement();
+	}
+
+	protected function removeSinglePermission(IQueryBuilder $query, int $permission): void {
+		$query->set('permissions', $query->func()->subtract(
+			'permissions',
+			$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
+		));
+
+		$query->andWhere(
+			$query->expr()->eq(
+				$query->expr()->castColumn(
+					$query->expr()->bitwiseAnd(
+						'permissions',
+						$permission
+					),
+					IQueryBuilder::PARAM_INT
+				),
+				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
+			)
+		);
+
+		$query->executeStatement();
+	}
+
 	public function createAttendeeFromRow(array $row): Attendee {
 		return $this->mapRowToEntity([
 			'id' => $row['a_id'],
@@ -213,7 +292,7 @@ class AttendeeMapper extends QBMapper {
 			'last_mention_message' => (int) $row['last_mention_message'],
 			'last_mention_direct' => (int) $row['last_mention_direct'],
 			'read_privacy' => (int) $row['read_privacy'],
-			'publishing_permissions' => (int) $row['publishing_permissions'],
+			'permissions' => (int) $row['permissions'],
 			'access_token' => (string) $row['access_token'],
 			'remote_id' => (string) $row['remote_id'],
 		]);
