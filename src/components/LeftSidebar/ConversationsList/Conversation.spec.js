@@ -276,7 +276,7 @@ describe('Conversation.vue', () => {
 		/**
 		 * @param {object} item Conversation data
 		 * @param {string} expectedCounterText The expected unread counter
-		 * @param expectedOutlined
+		 * @param {boolean} expectedOutlined The expected outlined counter
 		 * @param {boolean} expectedHighlighted Whether or not the unread counter is highlighted with primary color
 		 */
 		function testCounter(item, expectedCounterText, expectedOutlined, expectedHighlighted) {
