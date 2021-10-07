@@ -221,6 +221,23 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 * @param int $level
+	 */
+	public function updateNotificationCalls(Participant $participant, int $level): void {
+		if (!\in_array($level, [
+			Participant::NOTIFY_CALLS_OFF,
+			Participant::NOTIFY_CALLS_ON,
+		], true)) {
+			throw new \InvalidArgumentException('Invalid notification level');
+		}
+
+		$attendee = $participant->getAttendee();
+		$attendee->setNotificationCalls($level);
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param IUser $user
 	 * @param string $password

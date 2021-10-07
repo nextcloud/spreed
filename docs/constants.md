@@ -46,6 +46,10 @@ title: Constants
 * `2` Notify on mention
 * `3` Never notify
 
+### Participant call notification levels
+* `0` Off
+* `1` On (default)
+
 ### Participant read status privacy
 * `0` Read status is public
 * `1` Read status is private

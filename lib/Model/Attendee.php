@@ -41,6 +41,8 @@ use OCP\AppFramework\Db\Entity;
  * @method bool isFavorite()
  * @method void setNotificationLevel(int $notificationLevel)
  * @method int getNotificationLevel()
+ * @method void setNotificationCalls(int $notificationCalls)
+ * @method int getNotificationCalls()
  * @method void setLastJoinedCall(int $lastJoinedCall)
  * @method int getLastJoinedCall()
  * @method void setLastReadMessage(int $lastReadMessage)
@@ -115,6 +117,9 @@ class Attendee extends Entity {
 	protected $notificationLevel;
 
 	/** @var int */
+	protected $notificationCalls;
+
+	/** @var int */
 	protected $lastJoinedCall;
 
 	/** @var int */
@@ -147,6 +152,7 @@ class Attendee extends Entity {
 		$this->addType('participantType', 'int');
 		$this->addType('favorite', 'bool');
 		$this->addType('notificationLevel', 'int');
+		$this->addType('notificationCalls', 'int');
 		$this->addType('lastJoinedCall', 'int');
 		$this->addType('lastReadMessage', 'int');
 		$this->addType('lastMentionMessage', 'int');
@@ -175,6 +181,7 @@ class Attendee extends Entity {
 			'participant_type' => $this->getParticipantType(),
 			'favorite' => $this->isFavorite(),
 			'notification_level' => $this->getNotificationLevel(),
+			'notification_calls' => $this->getNotificationCalls(),
 			'last_joined_call' => $this->getLastJoinedCall(),
 			'last_read_message' => $this->getLastReadMessage(),
 			'last_mention_message' => $this->getLastMentionMessage(),

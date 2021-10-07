@@ -48,6 +48,9 @@ class Participant {
 	public const NOTIFY_MENTION = 2;
 	public const NOTIFY_NEVER = 3;
 
+	public const NOTIFY_CALLS_OFF = 0;
+	public const NOTIFY_CALLS_ON = 1;
+
 	public const PRIVACY_PUBLIC = 0;
 	public const PRIVACY_PRIVATE = 1;
 

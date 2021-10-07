@@ -464,6 +464,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setNotificationCalls',
+			'url' => '/api/{apiVersion}/room/{token}/notify-calls',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v(4)',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#setLobby',
 			'url' => '/api/{apiVersion}/room/{token}/webinar/lobby',
 			'verb' => 'PUT',

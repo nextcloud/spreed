@@ -93,6 +93,7 @@ class CapabilitiesTest extends TestCase {
 			'publishing-permissions',
 			'clear-history',
 			'direct-mention-flag',
+			'notification-calls',
 		];
 	}
 
