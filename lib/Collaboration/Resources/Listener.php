@@ -37,7 +37,7 @@ use OCP\IUserManager;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
@@ -51,7 +51,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 
-		$listener = static function (AddParticipantsEvent $event) {
+		$listener = static function (AddParticipantsEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
@@ -75,7 +75,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 
-		$listener = static function (RemoveUserEvent $event) {
+		$listener = static function (RemoveUserEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
@@ -89,7 +89,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
-		$listener = static function (RemoveParticipantEvent $event) {
+		$listener = static function (RemoveParticipantEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
@@ -110,7 +110,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);

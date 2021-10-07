@@ -115,7 +115,7 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (ParticipantEvent $event) {
+		$listener = static function (ParticipantEvent $event): void {
 			$room = $event->getRoom();
 
 			if ($event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
@@ -126,7 +126,7 @@ class RoomShareProvider implements IShareProvider {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
 
-		$listener = static function (RemoveUserEvent $event) {
+		$listener = static function (RemoveUserEvent $event): void {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
@@ -135,7 +135,7 @@ class RoomShareProvider implements IShareProvider {
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */

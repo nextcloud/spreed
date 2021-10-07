@@ -143,7 +143,7 @@ class Operation implements IOperation {
 		}
 	}
 
-	protected function prepareText(IEntity $entity, string $eventName) {
+	protected function prepareText(IEntity $entity, string $eventName): string {
 		$message = $eventName;
 		if ($entity instanceof IDisplayText) {
 			$message = trim($entity->getDisplayText(3));

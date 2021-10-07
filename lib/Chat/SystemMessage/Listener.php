@@ -306,7 +306,7 @@ class Listener implements IEventListener {
 				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 			}
 		});
-		$listener = function (GenericEvent $event) {
+		$listener = function (GenericEvent $event): void {
 			/** @var IShare $share */
 			$share = $event->getSubject();
 
@@ -406,7 +406,7 @@ class Listener implements IEventListener {
 		);
 	}
 
-	protected function getUserId() {
+	protected function getUserId(): ?string {
 		$user = $this->userSession->getUser();
 		return $user instanceof IUser ? $user->getUID() : null;
 	}

@@ -73,14 +73,14 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (ModifyParticipantEvent $event) {
+		$listener = static function (ModifyParticipantEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->setActive($event->getRoom(), $event->getParticipant());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateCallActivity($event->getRoom());
@@ -90,7 +90,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener, -100);
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener, -100);
 
-		$listener = static function (AddParticipantsEvent $event) {
+		$listener = static function (AddParticipantsEvent $event): void {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());

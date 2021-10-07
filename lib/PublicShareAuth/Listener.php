@@ -49,22 +49,22 @@ use OCP\EventDispatcher\IEventDispatcher;
  */
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (JoinRoomUserEvent $event) {
+		$listener = static function (JoinRoomUserEvent $event): void {
 			self::preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
-		$listener = static function (JoinRoomGuestEvent $event) {
+		$listener = static function (JoinRoomGuestEvent $event): void {
 			self::preventExtraGuestsFromJoining($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
 
-		$listener = static function (AddParticipantsEvent $event) {
+		$listener = static function (AddParticipantsEvent $event): void {
 			self::preventExtraUsersFromBeingAdded($event->getRoom(), $event->getParticipants());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_USERS_ADD, $listener);
 
-		$listener = static function (RoomEvent $event) {
+		$listener = static function (RoomEvent $event): void {
 			self::destroyRoomOnParticipantLeave($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
