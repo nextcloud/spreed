@@ -1053,11 +1053,15 @@ class Room {
 	}
 
 	public function setPermissions(string $level, int $newPermissions): bool {
+		if ($level !== 'default' && $level !== 'call') {
+			return false;
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
 			->set($level . '_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$query->executeStatement();
 
 		if ($level === 'default') {
 			$this->defaultPermissions = $newPermissions;
