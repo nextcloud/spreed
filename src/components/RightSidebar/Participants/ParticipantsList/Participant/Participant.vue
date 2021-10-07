@@ -139,6 +139,33 @@
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
+
+			<!-- Permissions -->
+			<template v-if="selfIsModerator && !isModerator">
+				<ActionSeparator />
+				<ActionButton
+					:close-after-click="true"
+					@click="grantAllPermissions">
+					<template #icon>
+						<LockOpenVariant
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Grant all permissions') }}
+				</ActionButton>
+				<ActionButton
+					:close-after-click="true"
+					@click="removeAllPermissions">
+					<template #icon>
+						<Lock
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Remove all permissions') }}
+				</ActionButton>
+			</template>
 			<ActionButton v-if="isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
@@ -178,6 +205,8 @@ import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
 import Crown from 'vue-material-design-icons/Crown.vue'
 import Account from 'vue-material-design-icons/Account.vue'
+import Lock from 'vue-material-design-icons/Lock.vue'
+import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
@@ -200,6 +229,8 @@ export default {
 		HandBackLeft,
 		Crown,
 		Account,
+		Lock,
+		LockOpenVariant,
 	},
 
 	directives: {
@@ -561,6 +592,24 @@ export default {
 				token: this.token,
 				attendeeId: this.attendeeId,
 			})
+		},
+
+		grantAllPermissions() {
+			try {
+				this.$store.dispatch('grantAllPermissions', { token: this.token, attendeeId: this.attendeeId })
+				showSuccess(t('spreed', 'Permissions granted to {actorId}', { actorId: this.participant.actorId }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
+			}
+		},
+
+		removeAllPermissions() {
+			try {
+				this.$store.dispatch('removeAllPermissions', { token: this.token, attendeeId: this.attendeeId })
+				showSuccess(t('spreed', 'Permissions removed for {actorId}', { actorId: this.participant.actorId }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
+			}
 		},
 	},
 }
