@@ -66,32 +66,12 @@
 				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
-
-			<ActionSeparator />
-			<ActionCaption
-				:title="t('spreed', 'Chat notifications')" />
-
 			<ActionButton
-				:class="{'forced-active': isNotifyAlways}"
-				icon="icon-sound"
-				@click.prevent.exact="setNotificationLevel(1)">
-				{{ t('spreed', 'All messages') }}
+				icon="icon-settings"
+				:close-after-click="true"
+				@click.prevent.exact="showConversationSettings">
+				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
-			<ActionButton
-				:class="{'forced-active': isNotifyMention}"
-				icon="icon-user"
-				@click.prevent.exact="setNotificationLevel(2)">
-				{{ t('spreed', '@-mentions only') }}
-			</ActionButton>
-			<ActionButton
-				:class="{'forced-active': isNotifyNever}"
-				icon="icon-sound-off"
-				@click.prevent.exact="setNotificationLevel(3)">
-				{{ t('spreed', 'Off') }}
-			</ActionButton>
-
-			<ActionSeparator />
-
 			<ActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
 				:icon="iconLeaveConversation"
@@ -112,11 +92,10 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
-import ActionCaption from '@nextcloud/vue/dist/Components/ActionCaption'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
 import ConversationIcon from './../../ConversationIcon'
 import { generateUrl } from '@nextcloud/router'
+import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
 import ListItem from '@nextcloud/vue/dist/Components/ListItem'
 
@@ -124,8 +103,6 @@ export default {
 	name: 'Conversation',
 	components: {
 		ActionButton,
-		ActionSeparator,
-		ActionCaption,
 		ListItem,
 		ConversationIcon,
 		EyeOutline,
@@ -353,6 +330,10 @@ export default {
 
 		markConversationAsRead() {
 			this.$store.dispatch('clearLastReadMessage', { token: this.item.token })
+		},
+
+		showConversationSettings() {
+			emit('show-conversation-settings')
 		},
 
 		/**
