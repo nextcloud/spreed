@@ -872,6 +872,8 @@ export default {
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-group-forced-white'
+				} else if (possibleMention.source === 'groups') {
+					possibleMention.icon = 'icon-group-forced-white'
 				} else if (possibleMention.source === 'guests') {
 					possibleMention.icon = 'icon-user-forced-white'
 				} else {
