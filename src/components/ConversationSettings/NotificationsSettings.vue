@@ -22,8 +22,10 @@
 <template>
 	<div>
 		<div class="app-settings-section__hint">
-			{{ t('spreed', 'Set the notification level for the current conversation. This will affect only the notifications you receive.') }}
+			{{ t('spreed', 'Set the notification settings for the current conversation.') }}
 		</div>
+
+		<h4>{{ t('spreed', 'Chat notifications') }}</h4>
 		<a
 			href="#"
 			class="radio-element"
@@ -85,11 +87,20 @@
 				title=""
 				:size="20" />
 		</a>
+
+		<h4>{{ t('spreed', 'Call notifications') }}</h4>
+		<CheckboxRadioSwitch
+			id="notification_calls"
+			:checked.sync="notifyCalls"
+			@update:checked="setNotificationCalls">
+			{{ t('spreed', 'Notify about calls in this conversation') }}
+		</CheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
 import { PARTICIPANT } from '../../constants'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh'
 import Account from 'vue-material-design-icons/Account'
 import VolumeOff from 'vue-material-design-icons/VolumeOff'
@@ -99,6 +110,7 @@ export default {
 	name: 'NotificationsSettings',
 
 	components: {
+		CheckboxRadioSwitch,
 		VolumeHigh,
 		Account,
 		VolumeOff,
@@ -110,6 +122,12 @@ export default {
 			type: Object,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			notifyCalls: true,
+		}
 	},
 
 	computed: {
@@ -130,6 +148,10 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.notifyCalls = this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+	},
+
 	methods: {
 		/**
 		 * Set the notification level for the conversation
@@ -138,6 +160,16 @@ export default {
 		 */
 		async setNotificationLevel(notificationLevel) {
 			await this.$store.dispatch('setNotificationLevel', { token: this.token, notificationLevel })
+		},
+
+		/**
+		 * Set the call notification level for the conversation
+		 *
+		 * @param {boolean} isChecked Whether or not call notifications are enabled
+		 */
+		async setNotificationCalls(isChecked) {
+			const notificationCalls = isChecked ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF
+			await this.$store.dispatch('setNotificationCalls', { token: this.token, notificationCalls })
 		},
 	},
 }
@@ -164,6 +196,10 @@ export default {
 	&__label {
 		margin-left: 12px;
 	}
+}
+
+h4 {
+	font-weight: bold;
 }
 
 .check {

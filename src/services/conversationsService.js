@@ -229,9 +229,9 @@ const removeFromFavorites = async function(token) {
 }
 
 /**
- * Remove a conversation from the favorites
+ * Set notification level
  *
- * @param {string} token The token of the conversation to be removed from favorites
+ * @param {string} token The token of the conversation to change the notification level
  * @param {number} level The notification level to set.
  */
 const setNotificationLevel = async function(token, level) {
@@ -240,6 +240,21 @@ const setNotificationLevel = async function(token, level) {
 		return response
 	} catch (error) {
 		console.debug('Error while setting the notification level: ', error)
+	}
+}
+
+/**
+ * Set call notifications
+ *
+ * @param {string} token The token of the conversation to change the call notification level
+ * @param {number} level The call notification level.
+ */
+const setNotificationCalls = async function(token, level) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/notify-calls', { token }), { level })
+		return response
+	} catch (error) {
+		console.debug('Error while setting the call notification level: ', error)
 	}
 }
 
@@ -352,6 +367,7 @@ export {
 	addToFavorites,
 	removeFromFavorites,
 	setNotificationLevel,
+	setNotificationCalls,
 	makePublic,
 	makePrivate,
 	setSIPEnabled,
