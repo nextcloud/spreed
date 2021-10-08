@@ -834,7 +834,7 @@ OC.L10N.register(
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Die Beschreibung muss weniger als oder gleich {maxLength} Zeichen lang sein. Ihr aktueller Text ist {charactersCount} Zeichen lang.",
     "Camera and microphone check" : "Überprüfung von Kamera und Mikrofon",
     "Choose devices" : "Geräte auswählen",
-    "Always show this dialog before joining a call in this conversation." : "Vor dem Beitreten eines Anrufs in dieser Unterhaltung immer diesen Dialog anzeigen",
+    "Always show this dialog before joining a call in this conversation." : "Vor dem Beitreten zu einem Anruf in dieser Unterhaltung immer diesen Dialog anzeigen",
     "Mark as read" : "Als gelesen markieren",
     "Remove from favorites" : "Von Favoriten entfernen",
     "Add to favorites" : "Zu Favoriten hinzufügen",
