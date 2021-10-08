@@ -30,11 +30,12 @@
 		:allow-spaces="false"
 		@at="handleAtEvent">
 		<template #item="scope">
-			<Avatar v-if="isMentionToAll(scope.item.id)"
+			<Avatar v-if="isMentionToAll(scope.item.id) || isGroupMention(scope.item.source)"
 				:size="44"
 				:icon-class="'icon-group-forced-white'"
 				:disable-tooltip="true"
 				:disable-menu="true"
+				:show-user-status="false"
 				:is-no-user="true" />
 			<div v-else-if="isMentionToGuest(scope.item.id)"
 				class="avatar guest"
@@ -367,6 +368,10 @@ export default {
 			})
 
 			this.autoCompleteMentionCandidates = possibleMentions
+		},
+
+		isGroupMention(mentionType) {
+			return mentionType === 'groups'
 		},
 
 		isMentionToAll(mentionId) {

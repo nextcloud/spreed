@@ -21,7 +21,7 @@
 
 <template>
 	<div class="mention">
-		<UserBubble v-if="isMentionToAll"
+		<UserBubble v-if="isMentionToAll || isGroupMention"
 			:display-name="name"
 			:avatar-image="'icon-group-forced-white'"
 			:primary="true" />
@@ -65,6 +65,9 @@ export default {
 	computed: {
 		isMentionToAll() {
 			return this.type === 'call'
+		},
+		isGroupMention() {
+			return this.type === 'group'
 		},
 		isMentionToGuest() {
 			return this.type === 'guest'
