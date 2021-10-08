@@ -31,6 +31,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -42,6 +43,8 @@ class SearchPluginTest extends TestCase {
 	protected $userManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var IGroupManager|MockObject */
+	protected $groupManager;
 	/** @var TalkSession|MockObject */
 	protected $talkSession;
 	/** @var ParticipantService|MockObject */
@@ -57,6 +60,7 @@ class SearchPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -78,6 +82,7 @@ class SearchPluginTest extends TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
+				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
@@ -90,6 +95,7 @@ class SearchPluginTest extends TestCase {
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
+				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,

@@ -32,11 +32,14 @@ use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
 
 class SearchPlugin implements ISearchPlugin {
 	protected IUserManager $userManager;
+	protected IGroupManager $groupManager;
 	protected GuestManager $guestManager;
 	protected TalkSession $talkSession;
 	protected ParticipantService $participantService;
@@ -47,6 +50,7 @@ class SearchPlugin implements ISearchPlugin {
 	protected ?Room $room = null;
 
 	public function __construct(IUserManager $userManager,
+								IGroupManager $groupManager,
 								GuestManager $guestManager,
 								TalkSession $talkSession,
 								ParticipantService $participantService,
@@ -54,6 +58,7 @@ class SearchPlugin implements ISearchPlugin {
 								?string $userId,
 								IL10N $l) {
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;
 		$this->talkSession = $talkSession;
 		$this->participantService = $participantService;
@@ -82,7 +87,7 @@ class SearchPlugin implements ISearchPlugin {
 			}
 		}
 
-		$userIds = $guestAttendees = [];
+		$userIds = $groupIds = $guestAttendees = [];
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
 			$participants = json_decode($this->room->getName(), true);
@@ -97,11 +102,14 @@ class SearchPlugin implements ISearchPlugin {
 					$guestAttendees[] = $attendee;
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$userIds[] = $attendee->getActorId();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+					$groupIds[] = $attendee->getActorId();
 				}
 			}
 		}
 
 		$this->searchUsers($search, $userIds, $searchResult);
+		$this->searchGroups($search, $groupIds, $searchResult);
 		$this->searchGuests($search, $guestAttendees, $searchResult);
 
 		return false;
@@ -150,6 +158,51 @@ class SearchPlugin implements ISearchPlugin {
 
 			if (stripos($userDisplayName, $search) !== false) {
 				$matches[] = $this->createResult('user', $userId, $userDisplayName);
+				continue;
+			}
+		}
+
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
+	protected function searchGroups(string $search, array $groupIds, ISearchResult $searchResult): void {
+		$search = strtolower($search);
+
+		$type = new SearchResultType('groups');
+
+		$matches = $exactMatches = [];
+		foreach ($groupIds as $groupId) {
+			if ($searchResult->hasResult($type, $groupId)) {
+				continue;
+			}
+
+			if ($search === '') {
+				$matches[] = $this->createGroupResult($groupId);
+				continue;
+			}
+
+			if (strtolower($groupId) === $search) {
+				$exactMatches[] = $this->createGroupResult($groupId);
+				continue;
+			}
+
+			if (stripos($groupId, $search) !== false) {
+				$matches[] = $this->createGroupResult($groupId);
+				continue;
+			}
+
+			$group = $this->groupManager->get($groupId);
+			if (!$group instanceof IGroup) {
+				continue;
+			}
+
+			if (strtolower($group->getDisplayName()) === $search) {
+				$exactMatches[] = $this->createGroupResult($group->getGID(), $group->getDisplayName());
+				continue;
+			}
+
+			if (stripos($group->getDisplayName(), $search) !== false) {
+				$matches[] = $this->createGroupResult($group->getGID(), $group->getDisplayName());
 				continue;
 			}
 		}
@@ -214,6 +267,25 @@ class SearchPlugin implements ISearchPlugin {
 			'value' => [
 				'shareType' => $type,
 				'shareWith' => $uid,
+			],
+		];
+	}
+
+	protected function createGroupResult(string $groupId, string $name = ''): array {
+		if ($name === '') {
+			$group = $this->groupManager->get($groupId);
+			if ($group instanceof IGroup) {
+				$name = $group->getDisplayName();
+			} else {
+				$name = $groupId;
+			}
+		}
+
+		return [
+			'label' => $name,
+			'value' => [
+				'shareType' => 'group',
+				'shareWith' => 'group/' . $groupId,
 			],
 		];
 	}
