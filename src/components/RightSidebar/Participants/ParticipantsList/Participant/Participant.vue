@@ -165,6 +165,17 @@
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</ActionButton>
+				<ActionButton
+					:close-after-click="true"
+					@click="showParticipantPermissionsEditor">
+					<template #icon>
+						<Pencil
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Edit permissions') }}
+				</ActionButton>
 			</template>
 			<ActionButton v-if="isEmailActor"
 				icon="icon-mail"
@@ -186,7 +197,13 @@
 				</template>
 			</ActionButton>
 		</Actions>
-
+		<ParticipantPermissionsEditor
+			v-if="participantPermissionsEditor"
+			:actor-id="participant.actorId"
+			:close-after-click="true"
+			:participant="participant"
+			:token="token"
+			@close="hideParticipantPermissionsEditor" />
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
@@ -207,12 +224,14 @@ import Crown from 'vue-material-design-icons/Crown.vue'
 import Account from 'vue-material-design-icons/Account.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import readableNumber from '../../../../../mixins/readableNumber'
 import isEqual from 'lodash/isEqual'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 export default {
 	name: 'Participant',
@@ -231,6 +250,8 @@ export default {
 		Account,
 		Lock,
 		LockOpenVariant,
+		Pencil,
+		ParticipantPermissionsEditor,
 	},
 
 	directives: {
@@ -270,6 +291,7 @@ export default {
 		return {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
+			participantPermissionsEditor: false,
 		}
 	},
 
@@ -596,7 +618,7 @@ export default {
 
 		grantAllPermissions() {
 			try {
-				this.$store.dispatch('grantAllPermissions', { token: this.token, attendeeId: this.attendeeId })
+				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
 				showSuccess(t('spreed', 'Permissions granted to {actorId}', { actorId: this.participant.actorId }))
 			} catch (error) {
 				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
@@ -605,11 +627,19 @@ export default {
 
 		removeAllPermissions() {
 			try {
-				this.$store.dispatch('removeAllPermissions', { token: this.token, attendeeId: this.attendeeId })
+				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
 				showSuccess(t('spreed', 'Permissions removed for {actorId}', { actorId: this.participant.actorId }))
 			} catch (error) {
 				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
 			}
+		},
+
+		showParticipantPermissionsEditor() {
+			this.participantPermissionsEditor = true
+		},
+
+		hideParticipantPermissionsEditor() {
+			this.participantPermissionsEditor = false
 		},
 	},
 }
