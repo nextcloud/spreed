@@ -89,6 +89,9 @@
 		"webpack-node-externals": "^3.0.0",
 		"worker-loader": "^3.0.8"
 	},
+	"browser": {
+		"fs": false
+	},
 	"browserslist": [
 		"extends @nextcloud/browserslist-config"
 	],
