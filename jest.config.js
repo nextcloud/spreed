@@ -52,5 +52,6 @@ module.exports = {
 	transform: {
 		// process `*.js` files with `babel-jest`
 		'.*\\.(js)$': 'babel-jest',
+		'src/utils/media/effects/virtual-background/vendor/*': 'jest-transform-stub',
 	},
 }
