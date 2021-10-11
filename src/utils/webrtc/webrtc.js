@@ -610,7 +610,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		debug: false,
 		autoAdjustMic: false,
 		audioFallback: true,
-		detectSpeakingEvents: true,
 		connection: signaling,
 		enableDataChannels: true,
 		enableSimulcast: signaling.hasFeature('simulcast'),

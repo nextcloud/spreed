@@ -40,10 +40,11 @@ const QUALITY = {
  * a simple interface to set the constraints based on some general quality
  * description.
  *
- * @param {object} localMediaModel the model for the local media.
+ * @param {object} trackConstrainer the track constrainer node on which apply
+ *        the constraints.
  */
-function VideoConstrainer(localMediaModel) {
-	this._localMediaModel = localMediaModel
+function VideoConstrainer(trackConstrainer) {
+	this._trackConstrainer = trackConstrainer
 
 	// The current quality is undefined until the constraints are applied at
 	// least once.
@@ -58,38 +59,26 @@ VideoConstrainer.prototype = {
 			return
 		}
 
-		const localStream = this._localMediaModel.get('localStream')
-		if (!localStream) {
-			console.warn('No local stream to adjust its video quality found')
+		if (!this._trackConstrainer.getOutputTrack() || this._trackConstrainer.getOutputTrack().kind !== 'video') {
+			console.warn('No video track to adjust its quality found')
 			return
 		}
 
-		const localVideoTracks = localStream.getVideoTracks()
-		if (localVideoTracks.length === 0) {
-			console.warn('No local video track to adjust its quality found')
-			return
-		}
-
-		if (localVideoTracks.length > 1) {
-			console.warn('More than one local video track to adjust its quality found: ' + localVideoTracks.length)
-			return
-		}
-
-		await this._applyRoughConstraints(localVideoTracks[0], quality)
+		await this._applyRoughConstraints(this._trackConstrainer, quality)
 
 		// Quality may not actually match the default constraints, but it is the
 		// best that can be done.
 		this._currentQuality = quality
 	},
 
-	async _applyRoughConstraints(localVideoTrack, quality) {
+	async _applyRoughConstraints(trackConstrainer, quality) {
 		let constraints = this._knownValidConstraintsForQuality[quality]
 		if (!constraints) {
 			constraints = this._getConstraintsForQuality(quality)
 		}
 
 		try {
-			await localVideoTrack.applyConstraints(constraints)
+			await trackConstrainer.applyConstraints(constraints)
 
 			this._knownValidConstraintsForQuality[quality] = constraints
 
@@ -102,7 +91,7 @@ VideoConstrainer.prototype = {
 				height: constraints.height,
 			}
 
-			await this._applyRoughResolutionConstraints(localVideoTrack, resolutionConstraints)
+			await this._applyRoughResolutionConstraints(trackConstrainer, resolutionConstraints)
 
 			const frameRateConstraints = {
 				width: constraints.width,
@@ -111,7 +100,7 @@ VideoConstrainer.prototype = {
 			}
 
 			try {
-				await this._applyRoughFrameRateConstraints(localVideoTrack, frameRateConstraints)
+				await this._applyRoughFrameRateConstraints(trackConstrainer, frameRateConstraints)
 
 				this._knownValidConstraintsForQuality[quality] = frameRateConstraints
 			} catch (error) {
@@ -125,9 +114,9 @@ VideoConstrainer.prototype = {
 		}
 	},
 
-	async _applyRoughResolutionConstraints(localVideoTrack, constraints) {
+	async _applyRoughResolutionConstraints(trackConstrainer, constraints) {
 		try {
-			await localVideoTrack.applyConstraints(constraints)
+			await trackConstrainer.applyConstraints(constraints)
 
 			console.debug('Changed resolution', constraints)
 		} catch (error) {
@@ -138,13 +127,13 @@ VideoConstrainer.prototype = {
 				throw error
 			}
 
-			this._applyRoughResolutionConstraints(localVideoTrack, constraints)
+			this._applyRoughResolutionConstraints(trackConstrainer, constraints)
 		}
 	},
 
-	async _applyRoughFrameRateConstraints(localVideoTrack, constraints) {
+	async _applyRoughFrameRateConstraints(trackConstrainer, constraints) {
 		try {
-			await localVideoTrack.applyConstraints(constraints)
+			await trackConstrainer.applyConstraints(constraints)
 
 			console.debug('Changed frame rate', constraints)
 		} catch (error) {
@@ -155,7 +144,7 @@ VideoConstrainer.prototype = {
 				throw error
 			}
 
-			this._applyRoughFrameRateConstraints(localVideoTrack, constraints)
+			this._applyRoughFrameRateConstraints(trackConstrainer, constraints)
 		}
 	},
 
