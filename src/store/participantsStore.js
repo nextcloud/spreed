@@ -94,13 +94,19 @@ const getters = {
 
 		return index
 	},
-	getPeer: (state) => (token, sessionId) => {
-		if (!state.peers[token]) {
-			return {}
+	getPeer: (state) => (token, sessionId, userId) => {
+		if (state.peers[token]) {
+			if (Object.prototype.hasOwnProperty.call(state.peers[token], sessionId)) {
+				return state.peers[token][sessionId]
+			}
 		}
 
-		if (Object.prototype.hasOwnProperty.call(state.peers[token], sessionId)) {
-			return state.peers[token][sessionId]
+		// Fallback to the participant list, if we have a user id that should be easy
+		if (state.participants[token] && userId) {
+			const index = state.participants[token].findIndex(participant => participant.actorId === userId && participant.actorType === 'users')
+			if (index !== -1) {
+				return state.participants[token][index]
+			}
 		}
 
 		return {}
