@@ -152,7 +152,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Konferenčni klic: {user1}, {user2} in {user3} (Trajanje: {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Konferenčni klic: {user1}, {user2}, {user3} in {user4} (Trajanje: {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Konferenčni klic: {user1}, {user2}, {user3}, {user4} in {user5} (Trajanje: {duration})",
-    "Talk to %s" : "Pogovor s stikom %s",
+    "Talk to %s" : "Pogovor: %s",
     "File is not shared, or shared but not with the user" : "Datoteka ni v uporabi, ali pa ni v uporabi z uporabnikom",
     "No account available to delete." : "Ni računa za brisanje.",
     "No image file provided" : "Ni podane slikovne datoteke",
