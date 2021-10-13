@@ -956,9 +956,15 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $participant->getAttendee()->getActorId(),
 				'actorType' => $participant->getAttendee()->getActorType(),
 				'displayName' => $participant->getAttendee()->getActorId(),
-				'permissions' => $participant->getPermissions(),
+				'permissions' => 0,
 				'attendeePin' => '',
 			];
+
+			if ($this->participant->hasModeratorPermissions(false)
+				|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId()) {
+				$result['permissions'] = $participant->getPermissions();
+			}
+
 			if ($this->talkConfig->isSIPConfigured()
 				&& $this->room->getSIPEnabled() === Webinary::SIP_ENABLED
 				&& ($this->participant->hasModeratorPermissions(false)
