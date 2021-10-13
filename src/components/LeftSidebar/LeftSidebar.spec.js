@@ -98,18 +98,21 @@ describe('LeftSidebar.vue', () => {
 		beforeEach(() => {
 			conversationsList = [{
 				id: 100,
+				token: 't100',
 				lastActivity: 100,
 				isFavorite: false,
 				name: 'one',
 				displayName: 'one',
 			}, {
 				id: 200,
+				token: 't200',
 				lastActivity: 80,
 				isFavorite: false,
 				name: 'two',
 				displayName: 'two',
 			}, {
 				id: 300,
+				token: 't300',
 				lastActivity: 120,
 				isFavorite: true,
 				name: 'three',
@@ -207,6 +210,7 @@ describe('LeftSidebar.vue', () => {
 		beforeEach(() => {
 			conversationsList = [{
 				id: 100,
+				token: 't100',
 				lastActivity: 100,
 				isFavorite: false,
 				name: 'one',
@@ -214,6 +218,7 @@ describe('LeftSidebar.vue', () => {
 				lastMessage: {},
 			}, {
 				id: 200,
+				token: 't200',
 				lastActivity: 80,
 				isFavorite: false,
 				name: 'searched by name',
@@ -221,6 +226,7 @@ describe('LeftSidebar.vue', () => {
 				lastMessage: {},
 			}, {
 				id: 300,
+				token: 't300',
 				lastActivity: 120,
 				isFavorite: true,
 				name: 'excluded',
