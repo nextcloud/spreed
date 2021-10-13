@@ -21,11 +21,7 @@
 
 <template>
 	<div>
-		<div class="app-settings-section__hint">
-			{{ t('spreed', 'Set the notification settings for the current conversation.') }}
-		</div>
-
-		<h4>{{ t('spreed', 'Chat notifications') }}</h4>
+		<h4>{{ t('spreed', 'Chat messages') }}</h4>
 		<a
 			href="#"
 			class="radio-element"
@@ -88,7 +84,7 @@
 				:size="20" />
 		</a>
 
-		<h4>{{ t('spreed', 'Call notifications') }}</h4>
+		<h4>{{ t('spreed', 'Calls') }}</h4>
 		<CheckboxRadioSwitch
 			id="notification_calls"
 			:checked.sync="notifyCalls"
