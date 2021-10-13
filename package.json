@@ -83,9 +83,15 @@
 		"jest-localstorage-mock": "^2.4.18",
 		"jest-mock-axios": "^4.4.1",
 		"jest-mock-console": "^1.2.3",
+		"jest-transform-stub": "^2.0.0",
 		"regenerator-runtime": "^0.13.9",
 		"terser-webpack-plugin": "^5.2.4",
-		"webpack-node-externals": "^3.0.0"
+		"wasm-check": "^2.0.3",
+		"webpack-node-externals": "^3.0.0",
+		"worker-loader": "^3.0.8"
+	},
+	"browser": {
+		"fs": false
 	},
 	"browserslist": [
 		"extends @nextcloud/browserslist-config"

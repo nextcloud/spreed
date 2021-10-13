@@ -65,6 +65,13 @@ global.OCA = {
 	},
 }
 
+// Work around missing "URL.createObjectURL" (which is used in the code but not
+// relevant for the tests) in jsdom:
+// https://github.com/jsdom/jsdom/issues/1721
+window.URL.createObjectURL = function() {
+	console.warn('URL.createObjectURL is not implemented in jsdom')
+}
+
 // TODO: use nextcloud-l10n lib once https://github.com/nextcloud/nextcloud-l10n/issues/271 is solved
 global.t = jest.fn().mockImplementation((app, text) => text)
 global.n = jest.fn().mockImplementation((app, text) => text)

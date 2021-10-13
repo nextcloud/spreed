@@ -159,6 +159,24 @@
 						title="" />
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
+				<ActionButton
+					v-if="isVirtualBackgroundSupported"
+					:close-after-click="true"
+					@click="toggleVirtualBackground">
+					<BlurOff
+						v-if="isVirtualBackgroundEnabled"
+						slot="icon"
+						:size="16"
+						decorative
+						title="" />
+					<Blur
+						v-else
+						slot="icon"
+						:size="16"
+						decorative
+						title="" />
+					{{ toggleVirtualBackgroundButtonLabel }}
+				</ActionButton>
 				<ActionSeparator />
 				<ActionButton
 					icon="icon-settings"
@@ -218,6 +236,8 @@ import Monitor from 'vue-material-design-icons/Monitor'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
+import Blur from 'vue-material-design-icons/Blur'
+import BlurOff from 'vue-material-design-icons/BlurOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { PARTICIPANT } from '../../../constants'
@@ -226,6 +246,7 @@ import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Ale
 import { Actions, ActionSeparator, ActionButton } from '@nextcloud/vue'
 import { callAnalyzer } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
+import VirtualBackground from '../../../utils/media/pipeline/VirtualBackground'
 
 export default {
 
@@ -249,6 +270,8 @@ export default {
 		VideoIcon: Video,
 		VideoOff,
 		Monitor,
+		Blur,
+		BlurOff,
 	},
 
 	props: {
@@ -294,6 +317,21 @@ export default {
 				return t('spreed', 'Raise hand (R)')
 			}
 			return t('spreed', 'Lower hand (R)')
+		},
+
+		isVirtualBackgroundSupported() {
+			return VirtualBackground.isSupported()
+		},
+
+		isVirtualBackgroundEnabled() {
+			return this.model.attributes.virtualBackgroundEnabled
+		},
+
+		toggleVirtualBackgroundButtonLabel() {
+			if (!this.isVirtualBackgroundEnabled) {
+				return t('spreed', 'Blur my background')
+			}
+			return t('spreed', 'Disable background blur')
 		},
 
 		conversation() {
@@ -517,9 +555,15 @@ export default {
 				return null
 			}
 
+			const virtualBackgroundEnabled = this.isVirtualBackgroundSupported && this.model.attributes.virtualBackgroundEnabled
+
 			const tooltip = {}
-			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && this.model.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare.')
+			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screenshare.')
+				tooltip.actionLabel = t('spreed', 'Disable background blur')
+				tooltip.action = 'disableVirtualBackground'
+			} else if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && this.model.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable your video while doing a screenshare.')
 				tooltip.actionLabel = t('spreed', 'Disable video')
 				tooltip.action = 'disableVideo'
 			} else if (!this.model.attributes.audioEnabled && this.model.attributes.localScreen) {
@@ -530,14 +574,22 @@ export default {
 				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see you.')
 				tooltip.actionLabel = ''
 				tooltip.action = ''
+			} else if (this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable the background blur or your video while doing a screenshare.')
+				tooltip.actionLabel = t('spreed', 'Disable background blur')
+				tooltip.action = 'disableVirtualBackground'
 			} else if (this.model.attributes.videoEnabled && this.model.attributes.localScreen) {
 				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video while doing a screenshare.')
 				tooltip.actionLabel = t('spreed', 'Disable video')
 				tooltip.action = 'disableVideo'
 			} else if (this.model.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand you and see your screen. To improve the situation try to disable your screenshare.')
 				tooltip.actionLabel = t('spreed', 'Disable screenshare')
 				tooltip.action = 'disableScreenShare'
+			} else if (this.model.attributes.videoEnabled && virtualBackgroundEnabled) {
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable the background blur or your video.')
+				tooltip.actionLabel = t('spreed', 'Disable background blur')
+				tooltip.action = 'disableVirtualBackground'
 			} else if (this.model.attributes.videoEnabled) {
 				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to understand and see you. To improve the situation try to disable your video.')
 				tooltip.actionLabel = t('spreed', 'Disable video')
@@ -665,6 +717,14 @@ export default {
 			}
 		},
 
+		toggleVirtualBackground() {
+			if (this.model.attributes.virtualBackgroundEnabled) {
+				this.model.disableVirtualBackground()
+			} else {
+				this.model.enableVirtualBackground()
+			}
+		},
+
 		toggleScreenSharingMenu() {
 			if (!this.isScreensharingAllowed) {
 				return
@@ -758,6 +818,9 @@ export default {
 			}
 			if (this.qualityWarningTooltip.action === 'disableScreenShare') {
 				this.model.stopSharingScreen()
+				this.dismissQualityWarningTooltip()
+			} else if (this.qualityWarningTooltip.action === 'disableVirtualBackground') {
+				this.model.disableVirtualBackground()
 				this.dismissQualityWarningTooltip()
 			} else if (this.qualityWarningTooltip.action === 'disableVideo') {
 				this.model.disableVideo()
