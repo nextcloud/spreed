@@ -26,27 +26,40 @@
 				{{ t('spreed', 'In this conversation, ') }}<strong>{{ displayName }}</strong>{{ t('spreed', ' can:') }}
 			</p>
 			<form @submit.prevent="handleSubmitPermissions">
-				<CheckboxRadioSwitch :checked.sync="callStart"
+				<CheckboxRadioSwitch
+					ref="callStart"
+					:checked.sync="callStart"
 					class="checkbox">
 					{{ t('spreed', 'Start a call') }}
 				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch :checked.sync="lobbyIgnore"
+				<CheckboxRadioSwitch
+					ref="lobbyIgnore"
+					:checked.sync="lobbyIgnore"
 					class="checkbox">
 					{{ t('spreed', 'Skip the lobby') }}
 				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch :checked.sync="publishAudio"
+				<CheckboxRadioSwitch
+					ref="publishAudio"
+					:checked.sync="publishAudio"
 					class="checkbox">
 					{{ t('spreed', 'Enable the microphone') }}
 				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch :checked.sync="publishVideo"
+				<CheckboxRadioSwitch
+					ref="publishVideo"
+					:checked.sync="publishVideo"
 					class="checkbox">
 					{{ t('spreed', 'Enable the camera') }}
 				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch :checked.sync="publishScreen"
+				<CheckboxRadioSwitch
+					ref="publishScreen"
+					:checked.sync="publishScreen"
 					class="checkbox">
 					{{ t('spreed', 'Share the screen') }}
 				</CheckboxRadioSwitch>
-				<button type="submit" :disabled="submitButtonDisabled" class="nc-button primary">
+				<button ref="submit"
+					type="submit"
+					:disabled="submitButtonDisabled"
+					class="nc-button primary">
 					{{ t('spreed', 'Update permissions') }}
 				</button>
 			</form>
@@ -100,7 +113,6 @@ export default {
 			publishVideo: false,
 			// Permission to start a screenshare
 			publishScreen: false,
-
 		}
 	},
 

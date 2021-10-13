@@ -54,6 +54,9 @@ describe('Participant.vue', () => {
 			actorId: 'alice-actor-id',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			participantType: PARTICIPANT.TYPE.USER,
+			permissions: PARTICIPANT.PERMISSIONS.CALL_START
+				| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
+				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
 			attendeeId: 'alice-attendee-id',
 			status: '',
 			statusIcon: '🌧️',
