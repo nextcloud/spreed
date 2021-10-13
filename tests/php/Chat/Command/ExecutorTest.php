@@ -103,7 +103,7 @@ class ExecutorTest extends TestCase {
 				$this->logger,
 				$this->l10n,
 			])
-			->setMethods(['createEvent'])
+			->onlyMethods(['createEvent'])
 			->getMock();
 		$executor->expects($this->once())
 			->method('createEvent')

@@ -130,7 +130,7 @@ class AddTest extends TestCase {
 			});
 
 		$command = $this->getMockBuilder(Add::class)
-			->setMethods(['getUniqueSecret'])
+			->onlyMethods(['getUniqueSecret'])
 			->setConstructorArgs([$this->config])
 			->getMock();
 		$command->expects($this->once())

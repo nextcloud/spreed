@@ -115,7 +115,7 @@ class SystemMessageTest extends TestCase {
 					$this->rootFolder,
 					$this->url,
 				])
-				->setMethods($methods)
+				->onlyMethods($methods)
 				->getMock();
 			self::invokePrivate($mock, 'l', [$this->l]);
 			return $mock;

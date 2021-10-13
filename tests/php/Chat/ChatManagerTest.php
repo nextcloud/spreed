@@ -109,7 +109,7 @@ class ChatManagerTest extends TestCase {
 					$cacheFactory,
 					$this->timeFactory,
 				])
-				->setMethods($methods)
+				->onlyMethods($methods)
 				->getMock();
 		}
 

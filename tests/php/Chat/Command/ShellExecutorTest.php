@@ -91,7 +91,7 @@ class ShellExecutorTest extends TestCase {
 	 */
 	public function testExecShell(?string $actorId, string $roomToken, string $cmd, string $arguments, string $expected, string $output): void {
 		$executor = $this->getMockBuilder(ShellExecutor::class)
-			->setMethods(['wrapExec'])
+			->onlyMethods(['wrapExec'])
 			->getMock();
 
 		$executor->expects($this->once())
@@ -104,7 +104,7 @@ class ShellExecutorTest extends TestCase {
 
 	public function testLegacyArguments(): void {
 		$executor = $this->getMockBuilder(ShellExecutor::class)
-			->setMethods(['wrapExec'])
+			->onlyMethods(['wrapExec'])
 			->getMock();
 
 		$executor->expects($this->never())
