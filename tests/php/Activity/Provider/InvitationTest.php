@@ -82,7 +82,7 @@ class InvitationTest extends TestCase {
 					$this->userManager,
 					$this->manager,
 				])
-				->setMethods($methods)
+				->onlyMethods($methods)
 				->getMock();
 		}
 		return new Invitation(
@@ -139,7 +139,7 @@ class InvitationTest extends TestCase {
 	 * @param array $expectedParams
 	 */
 	public function testParse($lang, $roomExists, array $params, array $expectedParams) {
-		$provider = $this->getProvider(['parseInvitation', 'setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
+		$provider = $this->getProvider(['setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
 
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);

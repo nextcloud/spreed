@@ -49,7 +49,7 @@ class ListCommandTest extends TestCase {
 
 		$this->command = $this->getMockBuilder(ListCommand::class)
 			->setConstructorArgs([$this->config])
-			->setMethods(['writeArrayInOutputFormat'])
+			->onlyMethods(['writeArrayInOutputFormat'])
 			->getMock();
 
 		$this->input = $this->createMock(InputInterface::class);

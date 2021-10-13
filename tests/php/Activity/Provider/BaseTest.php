@@ -80,7 +80,7 @@ class BaseTest extends TestCase {
 				$this->userManager,
 				$this->manager,
 			])
-			->setMethods($methods)
+			->onlyMethods($methods)
 			->getMock();
 	}
 
