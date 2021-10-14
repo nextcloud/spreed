@@ -22,9 +22,8 @@
 <template>
 	<Modal v-on="$listeners">
 		<div class="wrapper">
-			<p class="title">
-				{{ t('spreed', 'In this conversation, ') }}<strong>{{ displayName }}</strong>{{ t('spreed', ' can:') }}
-			</p>
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<p class="title" v-html="modalTitle" />
 			<form @submit.prevent="handleSubmitPermissions">
 				<CheckboxRadioSwitch
 					ref="callStart"
@@ -122,6 +121,12 @@ export default {
 		 */
 		displayName() {
 			return this.participant.displayName
+		},
+
+		modalTitle() {
+			return t('spreed', 'In this conversation <strong>{user}</strong> can:', {
+				user: this.displayName,
+			})
 		},
 
 		/**
