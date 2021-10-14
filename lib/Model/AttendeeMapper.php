@@ -287,6 +287,7 @@ class AttendeeMapper extends QBMapper {
 			'participant_type' => (int) $row['participant_type'],
 			'favorite' => (bool) $row['favorite'],
 			'notification_level' => (int) $row['notification_level'],
+			'notification_calls' => (int) $row['notification_calls'],
 			'last_joined_call' => (int) $row['last_joined_call'],
 			'last_read_message' => (int) $row['last_read_message'],
 			'last_mention_message' => (int) $row['last_mention_message'],

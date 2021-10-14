@@ -68,6 +68,7 @@ class SelectHelper {
 			->addSelect($alias . 'participant_type')
 			->addSelect($alias . 'favorite')
 			->addSelect($alias . 'notification_level')
+			->addSelect($alias . 'notification_calls')
 			->addSelect($alias . 'last_joined_call')
 			->addSelect($alias . 'last_read_message')
 			->addSelect($alias . 'last_mention_message')
