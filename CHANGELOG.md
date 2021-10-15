@@ -1,8 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 12.2.0 – 2021-09-17
+## 12.2.1 – 2021-10-15
+### Changed
+- Simplify sidebar in one-to-one conversations
+  [#6275](https://github.com/nextcloud/spreed/pull/6275)
 
+### Fixed
+- Reuse participant information when rendering peers in a call
+  [#6344](https://github.com/nextcloud/spreed/pull/6344)
+- Ignore sessions with timeouted ping when sending notifications
+  [#6329](https://github.com/nextcloud/spreed/pull/6329)
+- Fix errors with the speaking events
+  [#6298](https://github.com/nextcloud/spreed/pull/6298)
+- Don't fail hard when adding a participant in parallel
+  [#6264](https://github.com/nextcloud/spreed/pull/6264)
+- Fix invisible emoji picker in Safari
+  [#6351](https://github.com/nextcloud/spreed/pull/6351)
+
+## 12.2.0 – 2021-09-17
 ### Added
 - Add "Create conversation" button on first page of dialog when creating a public conversation
   [#6206](https://github.com/nextcloud/spreed/pull/6206)
@@ -20,7 +36,6 @@ All notable changes to this project will be documented in this file.
   [#6182](https://github.com/nextcloud/spreed/pull/6182)
 
 ## 12.1.2 – 2021-09-17
-
 ### Fixed
 - Add some validation for shared geo-locations
   [#6243](https://github.com/nextcloud/spreed/pull/6243)
@@ -38,7 +53,6 @@ All notable changes to this project will be documented in this file.
   [#6080](https://github.com/nextcloud/spreed/pull/6080)
 
 ## 11.3.2 – 2021-09-17
-
 ### Fixed
 - Fix logged-in users are unable to join a password protected public conversation
   [#6231](https://github.com/nextcloud/spreed/pull/6231)
@@ -54,7 +68,6 @@ All notable changes to this project will be documented in this file.
   [#5786](https://github.com/nextcloud/spreed/pull/5786)
 
 ## 10.1.7 – 2021-09-17
-
 ### Fixed
 - Fix logged-in users are unable to join a password protected public conversation
   [#6232](https://github.com/nextcloud/spreed/pull/6232)
@@ -62,7 +75,6 @@ All notable changes to this project will be documented in this file.
   [#6240](https://github.com/nextcloud/spreed/pull/6240)
 
 ## 10.0.10 – 2021-09-17
-
 ### Fixed
 - Fix logged-in users are unable to join a password protected public conversation
   [#6233](https://github.com/nextcloud/spreed/pull/6233)
@@ -70,7 +82,6 @@ All notable changes to this project will be documented in this file.
   [#6128](https://github.com/nextcloud/spreed/pull/6128)
 
 ## 12.1.1 – 2021-08-30
-
 ### Changed
 - Improved device preference storing to better recover after switching between docking-station and normal usage with a device
   [#6179](https://github.com/nextcloud/spreed/pull/6179)
