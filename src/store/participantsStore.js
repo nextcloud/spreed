@@ -30,8 +30,6 @@ import {
 	removeCurrentUserFromConversation,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
-	addPermissions,
-	removePermissions,
 	setPermissions,
 } from '../services/participantsService'
 import { generateUrl } from '@nextcloud/router'
@@ -586,48 +584,6 @@ const actions = {
 			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 		}
 		context.commit('updateParticipant', { token, index, updatedData })
-	},
-
-	/**
-	 * Add a specific permission or permission combination to a given
-	 * participant.
-	 *
-	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments oobject.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
-	 * @param {number} root0.permissions - bitwise combination of the permissions.
-	 */
-	async addPermissions(context, { token, attendeeId, permissions }) {
-		await addPermissions(token, attendeeId, permissions)
-		// Get participant's index
-		const index = context.getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
-			return
-		}
-
-		context.commit('addPermissions', { token, index, permissions })
-	},
-
-	/**
-	 * Remove a specific permission or permission combination to a given
-	 * participant.
-	 *
-	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments oobject.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
-	 * @param {number} root0.permissions - the binary sum of the permission combination.
-	 */
-	async removePermissions(context, { token, attendeeId, permissions }) {
-		await removePermissions(token, attendeeId, permissions)
-		// Get participant's index
-		const index = context.getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
-			return
-		}
-
-		context.commit('removePermissions', { token, index, permissions })
 	},
 
 	/**

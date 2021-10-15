@@ -192,41 +192,6 @@ const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
 }
 
 /**
- * Grants one particular permission to an attendee in a given conversation
- *
- * @param {string} token conversation token
- * @param {number} attendeeId attendee id to target
- * @param {number} permission the type of permission to be granted. Valid values are
- * 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE', 'PUBLISH_AUDIO',
- * 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
- */
-const addPermissions = async (token, attendeeId, permission) => {
-	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
-		{
-			attendeeId,
-			method: 'add',
-			permissions: permission,
-		})
-}
-
-/**
- * Grants all permissions to an attendee in a given conversation.
- *
- * @param {string} token conversation token
- * @param {number} attendeeId attendee id to target
- * @param {number} permission the type of permission to be granted. Valid values are
- * 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE', 'PUBLISH_AUDIO',
- * 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'
- */
-const removePermissions = async (token, attendeeId, permission) => {
-	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }), {
-		attendeeId,
-		method: 'remove',
-		permissions: permission,
-	})
-}
-
-/**
  * Set permission for an attendee in a given conversation.
  *
  * @param {string} token conversation token
@@ -259,7 +224,5 @@ export {
 	resendInvitations,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
-	addPermissions,
-	removePermissions,
 	setPermissions,
 }
