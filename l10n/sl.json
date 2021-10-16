@@ -1014,6 +1014,7 @@
     "Do not disturb" : "Ne moti",
     "Away" : "Odsoten",
     "Error while sharing file" : "Prišlo je do napake med souporabo datoteke",
+    "Error while clearing conversation history" : "Prišlo je do napake med čiščenjem zgodovine pogovora",
     "Not enough free space to upload file \"{fileName}\"" : "Ni dovolj prostora za pošiljanje datoteke »{fileName}«",
     "Error while uploading file \"{fileName}\"" : "Napaka pri pošiljanju datoteke »{fileName}«",
     "An error happened when trying to share your file" : "Prišlo je do napake med poskusom omogočanja souporabe datoteke",
