@@ -11,6 +11,8 @@ import {
 	joinConversation,
 	leaveConversation,
 	removeCurrentUserFromConversation,
+	grantAllPermissionsToParticipant,
+	removeAllPermissionsFromParticipant,
 } from '../services/participantsService'
 import {
 	joinCall,
@@ -28,6 +30,8 @@ jest.mock('../services/participantsService', () => ({
 	joinConversation: jest.fn(),
 	leaveConversation: jest.fn(),
 	removeCurrentUserFromConversation: jest.fn(),
+	grantAllPermissionsToParticipant: jest.fn(),
+	removeAllPermissionsFromParticipant: jest.fn(),
 }))
 jest.mock('../services/callsService', () => ({
 	joinCall: jest.fn(),
@@ -668,5 +672,35 @@ describe('participantsStore', () => {
 
 		expect(removeCurrentUserFromConversation).toHaveBeenCalledWith(TOKEN)
 		expect(testStoreConfig.actions.deleteConversation).toHaveBeenCalledWith(expect.anything(), TOKEN)
+	})
+
+	describe('participantsStore', () => {
+		beforeEach(() => {
+			store.dispatch('addParticipant', {
+				token: TOKEN,
+				participant: {
+					attendeeId: 1,
+					permissions: PARTICIPANT.PERMISSIONS.MAX_DEFAULT,
+				},
+			})
+		})
+
+		test('grants all permissions to a participant', async () => {
+			grantAllPermissionsToParticipant.mockResolvedValue()
+
+			await store.dispatch('grantAllPermissionsToParticipant', { token: TOKEN, attendeeId: 1 })
+
+			expect(grantAllPermissionsToParticipant).toHaveBeenCalledWith(TOKEN, 1)
+			expect(store.getters.getParticipant(TOKEN, 0).permissions).toBe(PARTICIPANT.PERMISSIONS.MAX_CUSTOM)
+		})
+
+		test('removes all permissions to a participant', async () => {
+			removeAllPermissionsFromParticipant.mockResolvedValue()
+
+			await store.dispatch('removeAllPermissionsFromParticipant', { token: TOKEN, attendeeId: PARTICIPANT.PERMISSIONS.CUSTOM })
+
+			expect(removeAllPermissionsFromParticipant).toHaveBeenCalledWith(TOKEN, 1)
+			expect(store.getters.getParticipant(TOKEN, 0).permissions).toBe(PARTICIPANT.PERMISSIONS.CUSTOM)
+		})
 	})
 })

@@ -19,3 +19,6 @@
 
 # Compiled javascript
 /js
+
+# VScode settings
+.vscode

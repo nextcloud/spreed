@@ -54,6 +54,9 @@ describe('Participant.vue', () => {
 			actorId: 'alice-actor-id',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			participantType: PARTICIPANT.TYPE.USER,
+			permissions: PARTICIPANT.PERMISSIONS.CALL_START
+				| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
+				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
 			attendeeId: 'alice-attendee-id',
 			status: '',
 			statusIcon: '🌧️',
@@ -169,7 +172,7 @@ describe('Participant.vue', () => {
 		test('renders avatar from search result', () => {
 			participant.label = 'Name from label'
 			participant.source = 'source-from-search'
-			participant.id = 'id-from-search'
+			participant.attendeeId = 'id-from-search'
 			const wrapper = mountParticipant(participant, true)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)

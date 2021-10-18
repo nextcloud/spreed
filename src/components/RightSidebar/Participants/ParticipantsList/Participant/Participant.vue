@@ -33,6 +33,7 @@
 		:tabindex="isSearched ? 0 : -1"
 		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
 		@keydown.enter="handleClick">
+		<!-- Participant's avatar -->
 		<AvatarWrapper
 			:id="computedId"
 			:disable-tooltip="true"
@@ -45,12 +46,15 @@
 			:source="participant.source || participant.actorType"
 			:offline="isOffline"
 			:menu-container="container" />
+
+		<!-- Participant's data -->
 		<div
 			class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
 				'has-menu-icon': canBeModerated && !isSearched
 			}">
+			<!-- First line: participant's name and type -->
 			<div
 				ref="userName"
 				class="participant-row__user-descriptor"
@@ -62,6 +66,8 @@
 				<span v-if="isBridgeBotUser" class="participant-row__moderator-indicator">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 			</div>
+
+			<!-- Second line: participant status message if applicable -->
 			<div
 				v-if="statusMessage"
 				ref="statusMessage"
@@ -70,6 +76,8 @@
 				<span v-tooltip.auto="statusMessageTooltip">{{ statusMessage }}</span>
 			</div>
 		</div>
+
+		<!-- Call state icon -->
 		<div v-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
@@ -95,6 +103,8 @@
 				title=""
 				decorative />
 		</div>
+
+		<!-- Participant's actions menu -->
 		<Actions
 			v-if="canBeModerated && !isSearched"
 			:container="container"
@@ -108,17 +118,65 @@
 				{{ attendeePin }}
 			</ActionText>
 			<ActionButton v-if="canBeDemoted"
-				icon="icon-rename"
 				:close-after-click="true"
 				@click="demoteFromModerator">
-				{{ t('spreed', 'Demote from moderator') }}
+				<template #icon>
+					<Account
+						:size="20"
+						title=""
+						decorative />
+					{{ t('spreed', 'Demote from moderator') }}
+				</template>
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
-				icon="icon-rename"
 				:close-after-click="true"
 				@click="promoteToModerator">
+				<template #icon>
+					<Crown
+						:size="20"
+						title=""
+						decorative />
+				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
+
+			<!-- Permissions -->
+			<template v-if="selfIsModerator && !isModerator">
+				<ActionSeparator />
+				<ActionButton
+					:close-after-click="true"
+					@click="grantAllPermissions">
+					<template #icon>
+						<LockOpenVariant
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Grant all permissions') }}
+				</ActionButton>
+				<ActionButton
+					:close-after-click="true"
+					@click="removeAllPermissions">
+					<template #icon>
+						<Lock
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Remove all permissions') }}
+				</ActionButton>
+				<ActionButton
+					:close-after-click="true"
+					@click="showParticipantPermissionsEditor">
+					<template #icon>
+						<Pencil
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Edit permissions') }}
+				</ActionButton>
+			</template>
 			<ActionButton v-if="isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
@@ -139,6 +197,14 @@
 				</template>
 			</ActionButton>
 		</Actions>
+		<ParticipantPermissionsEditor
+			v-if="participantPermissionsEditor"
+			:actor-id="participant.actorId"
+			:close-after-click="true"
+			:participant="participant"
+			:token="token"
+			@close="hideParticipantPermissionsEditor" />
+		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
 </template>
@@ -154,12 +220,18 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
+import Crown from 'vue-material-design-icons/Crown.vue'
+import Account from 'vue-material-design-icons/Account.vue'
+import Lock from 'vue-material-design-icons/Lock.vue'
+import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
 import UserStatus from '../../../../../mixins/userStatus'
 import readableNumber from '../../../../../mixins/readableNumber'
 import isEqual from 'lodash/isEqual'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 export default {
 	name: 'Participant',
@@ -174,6 +246,12 @@ export default {
 		Phone,
 		Video,
 		HandBackLeft,
+		Crown,
+		Account,
+		Lock,
+		LockOpenVariant,
+		Pencil,
+		ParticipantPermissionsEditor,
 	},
 
 	directives: {
@@ -190,6 +268,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Whether to show the user status on the avatar.
 		 * This does not affect the status message row.
@@ -198,7 +277,10 @@ export default {
 			type: Boolean,
 			default: true,
 		},
-		// Toggles the bulk selection state of this component
+
+		/**
+		 * Toggles the bulk selection state of this component
+		 */
 		isSelectable: {
 			type: Boolean,
 			default: false,
@@ -209,6 +291,7 @@ export default {
 		return {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
+			participantPermissionsEditor: false,
 		}
 	},
 
@@ -220,6 +303,7 @@ export default {
 		participantSettingsAriaLabel() {
 			return t('spreed', 'Settings for participant "{user}"', { user: this.computedName })
 		},
+
 		participantAriaLabel() {
 			if (this.isSearched) {
 				return t('spreed', 'Add participant "{user}"', { user: this.computedName })
@@ -275,6 +359,7 @@ export default {
 			}
 			return false
 		},
+
 		/**
 		 * If the Participant component is used as to display a search result, it will
 		 * return true. We use this not to display actions on the searched contacts and
@@ -306,18 +391,22 @@ export default {
 			}
 			return this.participant.label
 		},
+
 		computedId() {
 			if (!this.isSearched) {
 				return this.participant.actorId
 			}
-			return this.participant.id
+			return this.attendeeId
 		},
-		id() {
-			return this.participant.id
+
+		attendeeId() {
+			return this.participant.attendeeId
 		},
+
 		label() {
 			return this.participant.label
 		},
+
 		isHandRaised() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
@@ -326,6 +415,7 @@ export default {
 			const raisedState = this.$store.getters.getParticipantRaisedHand(this.participant.sessionIds)
 			return raisedState.state
 		},
+
 		callIcon() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
@@ -343,6 +433,7 @@ export default {
 			}
 			return 'audio'
 		},
+
 		callIconTooltip() {
 			if (this.callIcon === 'audio') {
 				return t('spreed', 'Joined with audio')
@@ -355,27 +446,34 @@ export default {
 			}
 			return null
 		},
+
 		participantType() {
 			return this.participant.participantType
 		},
+
 		sessionIds() {
 			return this.participant.sessionIds || []
 		},
+
 		lastPing() {
 			return this.participant.lastPing
 		},
+
 		attendeePin() {
 			return this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		currentParticipant() {
 			return this.$store.getters.conversation(this.token) || {
 				sessionId: '0',
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				type: CONVERSATION.TYPE.GROUP,
@@ -390,47 +488,56 @@ export default {
 		isSelf() {
 			return this.sessionIds.length && this.sessionIds.indexOf(this.currentParticipant.sessionId) >= 0
 		},
+
 		selfIsModerator() {
 			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
 
+		/**
+		 * For now the user status is not overwriting the online-offline status anymore
+		 * It felt too weird having users appear as offline but they are in the call or chat actively
+		 * return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
+		 */
 		isOffline() {
-			/**
-			 * For now the user status is not overwriting the online-offline status anymore
-			 * It felt too weird having users appear as offline but they are in the call or chat actively
-			 return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
-			 */
 			return !this.sessionIds.length && !this.isSearched
 		},
+
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
+
 		isGroup() {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
 		},
+
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
 		},
+
 		showModeratorLabel() {
 			return this.isModerator
 				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
+
 		canBeModerated() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER
 				&& !this.isSelf
 				&& this.selfIsModerator
 				&& !this.isBridgeBotUser
 		},
+
 		canBeDemoted() {
 			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 				&& !this.isGroup
 		},
+
 		canBePromoted() {
 			return this.canBeModerated
 				&& !this.isModerator
 				&& !this.isGroup
 		},
+
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
 				// We preloaded the status when via participants API
@@ -458,17 +565,20 @@ export default {
 			const e = this.$refs.userName
 			this.isUserNameTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
+
 		updateStatusNeedsTooltip() {
 			// check if ellipsized
 			const e = this.$refs.statusMessage
 			this.isStatusTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
+
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
 				this.$emit('click-participant', this.participant)
 			}
 		},
+
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},
@@ -476,31 +586,60 @@ export default {
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
 		},
+
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
 		},
+
 		async resendInvitation() {
 			try {
 				await this.$store.dispatch('resendInvitations', {
 					token: this.token,
-					attendeeId: this.participant.attendeeId,
+					attendeeId: this.attendeeId,
 				})
 				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
 			} catch (error) {
 				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
 		},
+
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
-				attendeeId: this.participant.attendeeId,
+				attendeeId: this.attendeeId,
 			})
+		},
+
+		grantAllPermissions() {
+			try {
+				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
+				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.participant.displayName }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+			}
+		},
+
+		removeAllPermissions() {
+			try {
+				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
+				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.participant.displayName }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+			}
+		},
+
+		showParticipantPermissionsEditor() {
+			this.participantPermissionsEditor = true
+		},
+
+		hideParticipantPermissionsEditor() {
+			this.participantPermissionsEditor = false
 		},
 	},
 }
@@ -517,16 +656,12 @@ export default {
 	align-items: center;
 	cursor: default;
 	margin: 4px 0;
-	border-radius: 22px;
+	border-radius: var(--border-radius-pill);
 	height: 56px;
 	padding: 0 4px;
 
 	&.isSearched {
 		cursor: pointer;
-	}
-
-	&:focus {
-		background-color: var(--color-background-hover);
 	}
 
 	&__user-wrapper {

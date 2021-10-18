@@ -28,6 +28,9 @@ import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
 } from '../utils/webrtc/index'
+import { PARTICIPANT } from '../constants'
+
+const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
 /**
  * Joins the current user to a conversation specified with
@@ -160,6 +163,52 @@ const resendInvitations = async (token, { attendeeId = null }) => {
 	})
 }
 
+/**
+ * Grants all permissions to an attendee in a given conversation
+ *
+ * @param {string} token conversation token
+ * @param {number} attendeeId attendee id to target
+ */
+const grantAllPermissionsToParticipant = async (token, attendeeId) => {
+	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }), {
+		attendeeId,
+		method: 'set',
+		permissions: PERMISSIONS.MAX_CUSTOM,
+	})
+}
+
+/**
+ * Removes all permissions to an attendee in a given conversation
+ *
+ * @param {string} token conversation token
+ * @param {number} attendeeId attendee id to target
+ */
+const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
+	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }), {
+		attendeeId,
+		method: 'set',
+		permissions: PERMISSIONS.CUSTOM,
+	})
+}
+
+/**
+ * Set permission for an attendee in a given conversation.
+ *
+ * @param {string} token conversation token
+ * @param {number} attendeeId attendee id to target
+ * @param {number} permission the type of permission to be granted. Valid values are
+ * any sums of 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE',
+ * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
+ */
+const setPermissions = async (token, attendeeId, permission) => {
+	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
+		{
+			attendeeId,
+			method: 'set',
+			permissions: permission,
+		})
+}
+
 export {
 	joinConversation,
 	rejoinConversation,
@@ -173,4 +222,7 @@ export {
 	fetchParticipants,
 	setGuestUserName,
 	resendInvitations,
+	grantAllPermissionsToParticipant,
+	removeAllPermissionsFromParticipant,
+	setPermissions,
 }

@@ -28,10 +28,11 @@ import {
 	joinConversation,
 	leaveConversation,
 	removeCurrentUserFromConversation,
+	grantAllPermissionsToParticipant,
+	removeAllPermissionsFromParticipant,
+	setPermissions,
 } from '../services/participantsService'
-import {
-	generateUrl,
-} from '@nextcloud/router'
+import { generateUrl } from '@nextcloud/router'
 import {
 	joinCall,
 	leaveCall,
@@ -56,14 +57,16 @@ const getters = {
 	isInCall: (state) => (token) => {
 		return !!(state.inCall[token] && Object.keys(state.inCall[token]).length > 0)
 	},
+
 	isConnecting: (state) => (token) => {
 		return !!(state.connecting[token] && Object.keys(state.connecting[token]).length > 0)
 	},
 	/**
-	 * Gets the participants array
+	 * Gets the participants array.
 	 *
-	 * @param {object} state the state object.
-	 * @return {Array} the participants array (if there are participants in the store)
+	 * @param {object} state - the state object.
+	 * @return {Array} the participants array (if there are participants in the
+	 * store).
 	 */
 	participantsList: (state) => (token) => {
 		if (state.participants[token]) {
@@ -71,12 +74,14 @@ const getters = {
 		}
 		return []
 	},
+
 	getParticipant: (state) => (token, index) => {
 		if (state.participants[token] && state.participants[token][index]) {
 			return state.participants[token][index]
 		}
 		return {}
 	},
+
 	getParticipantIndex: (state) => (token, participantIdentifier) => {
 		if (!state.participants[token]) {
 			return -1
@@ -115,12 +120,12 @@ const getters = {
 
 const mutations = {
 	/**
-	 * Adds a message to the store.
+	 * Add a message to the store.
 	 *
-	 * @param {object} state current store state;
-	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation;
-	 * @param {object} data.participant the participant;
+	 * @param {object} state - current store state.
+	 * @param {object} data - the wrapping object.
+	 * @param {object} data.token - the token of the conversation.
+	 * @param {object} data.participant - the participant.
 	 */
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
@@ -128,6 +133,7 @@ const mutations = {
 		}
 		state.participants[token].push(participant)
 	},
+
 	updateParticipant(state, { token, index, updatedData }) {
 		if (state.participants[token] && state.participants[token][index]) {
 			state.participants[token][index] = Object.assign(state.participants[token][index], updatedData)
@@ -135,6 +141,7 @@ const mutations = {
 			console.error('Error while updating the participant')
 		}
 	},
+
 	deleteParticipant(state, { token, index }) {
 		if (state.participants[token] && state.participants[token][index]) {
 			Vue.delete(state.participants[token], index)
@@ -142,6 +149,7 @@ const mutations = {
 			console.error('The conversation you are trying to purge doesn\'t exist')
 		}
 	},
+
 	setInCall(state, { token, sessionId, flags }) {
 		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
@@ -163,16 +171,18 @@ const mutations = {
 			Vue.set(state.connecting[token], sessionId, flags)
 		}
 	},
+
 	finishedConnecting(state, { token, sessionId }) {
 		if (state.connecting[token] && state.connecting[token][sessionId]) {
 			Vue.delete(state.connecting[token], sessionId)
 		}
 	},
+
 	/**
-	 * Purges a given conversation from the previously added participants
+	 * Purge a given conversation from the previously added participants.
 	 *
-	 * @param {object} state current store state;
-	 * @param {string} token the conversation to purge;
+	 * @param {object} state - current store state.
+	 * @param {string} token - the conversation to purge.
 	 */
 	purgeParticipantsStore(state, token) {
 		if (state.participants[token]) {
@@ -186,38 +196,65 @@ const mutations = {
 		}
 		Vue.set(state.peers[token], peer.sessionId, peer)
 	},
+
 	purgePeersStore(state, token) {
 		if (state.peers[token]) {
 			Vue.delete(state.peers, token)
 		}
 	},
+
+	addPermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
+			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS | permissions)
+		} else {
+			console.error('Error while updating the participant')
+		}
+	},
+
+	removePermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
+			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS & ~permissions)
+		} else {
+			console.error('Error while updating the participant')
+		}
+	},
+
+	setPermissions(state, { token, index, permissions }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			Vue.set(state.participants[token][index], 'permissions', permissions)
+		} else {
+			console.error('Error while updating the participant')
+		}
+	},
 }
 
 const actions = {
-
 	/**
-	 * Adds participant to the store.
+	 * Add participant to the store.
 	 *
-	 * Only call this after purgeParticipantsStore, otherwise use addParticipantOnce
+	 * Only call this after purgeParticipantsStore, otherwise use addParticipantOnce.
 	 *
-	 * @param {object} context default store context;
-	 * @param {Function} context.commit the contexts commit function.
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token the conversation to add the participant;
-	 * @param {object} data.participant the participant;
+	 * @param {object} context - default store context.
+	 * @param {Function} context.commit - the contexts commit function.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation to add the participant.
+	 * @param {object} data.participant - the participant.
 	 */
 	addParticipant({ commit }, { token, participant }) {
 		commit('addParticipant', { token, participant })
 	},
+
 	/**
 	 * Only add a participant when they are not there yet
 	 *
-	 * @param {object} context default store context;
-	 * @param {Function} context.commit the contexts commit function.
-	 * @param {object} context.getters the contexts getters object.
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token the conversation to add the participant;
-	 * @param {object} data.participant the participant;
+	 * @param {object} context - default store context.
+	 * @param {Function} context.commit - the contexts commit function.
+	 * @param {object} context.getters - the contexts getters object.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation to add the participant.
+	 * @param {object} data.participant - the participant.
 	 */
 	addParticipantOnce({ commit, getters }, { token, participant }) {
 		const index = getters.getParticipantIndex(token, participant)
@@ -225,6 +262,7 @@ const actions = {
 			commit('addParticipant', { token, participant })
 		}
 	},
+
 	async promoteToModerator({ commit, getters }, { token, attendeeId }) {
 		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
@@ -242,6 +280,7 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
+
 	async demoteFromModerator({ commit, getters }, { token, attendeeId }) {
 		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
@@ -259,6 +298,7 @@ const actions = {
 		}
 		commit('updateParticipant', { token, index, updatedData })
 	},
+
 	async removeParticipant({ commit, getters }, { token, attendeeId }) {
 		const index = getters.getParticipantIndex(token, { attendeeId })
 		if (index === -1) {
@@ -268,6 +308,7 @@ const actions = {
 		await removeAttendeeFromConversation(token, attendeeId)
 		commit('deleteParticipant', { token, index })
 	},
+
 	/**
 	 * Purges a given conversation from the previously added participants
 	 *
@@ -282,6 +323,7 @@ const actions = {
 	addPeer({ commit }, { token, peer }) {
 		commit('addPeer', { token, peer })
 	},
+
 	purgePeersStore({ commit }, token) {
 		commit('purgePeersStore', token)
 	},
@@ -375,10 +417,10 @@ const actions = {
 	 * Resends email invitations for the given conversation.
 	 * If no userId is set, send to all applicable participants.
 	 *
-	 * @param {object} _ unused
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token conversation token
-	 * @param {number} data.attendeeId attendee id to target, or null for all
+	 * @param {object} _ - unused.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - conversation token.
+	 * @param {number} data.attendeeId - attendee id to target, or null for all.
 	 */
 	async resendInvitations(_, { token, attendeeId }) {
 		await resendInvitations(token, { attendeeId })
@@ -387,9 +429,9 @@ const actions = {
 	/**
 	 * Makes the current user active in the given conversation.
 	 *
-	 * @param {object} context unused
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token conversation token
+	 * @param {object} context - unused.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - conversation token.
 	 */
 	async joinConversation(context, { token }) {
 		const forceJoin = SessionStorage.getItem('joined_conversation') === token
@@ -476,26 +518,93 @@ const actions = {
 	/**
 	 * Makes the current user inactive in the given conversation.
 	 *
-	 * @param {object} context unused
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token conversation token
+	 * @param {object} context - unused.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - conversation token.
 	 */
 	async leaveConversation(context, { token }) {
 		await leaveConversation(token)
 	},
 
 	/**
-	 * Removes the current user from the conversation, which
-	 * means the user is not a participant any more.
+	 * Removes the current user from the conversation, which means the user is
+	 * not a participant any more.
 	 *
-	 * @param {object} context unused
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token conversation token
+	 * @param {object} context - The context object.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - conversation token.
 	 */
 	async removeCurrentUserFromConversation(context, { token }) {
 		await removeCurrentUserFromConversation(token)
 		// If successful, deletes the conversation from the store
 		await context.dispatch('deleteConversation', token)
+	},
+
+	/**
+	 * PUBLISHING PERMISSIONS
+	 */
+
+	/**
+	 * Grant all permissions for a given participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 */
+	async grantAllPermissionsToParticipant(context, { token, attendeeId }) {
+		await grantAllPermissionsToParticipant(token, attendeeId)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+		const updatedData = {
+			permissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM,
+		}
+		context.commit('updateParticipant', { token, index, updatedData })
+	},
+
+	/**
+	 * Remove all permissions for a given participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 */
+	async removeAllPermissionsFromParticipant(context, { token, attendeeId }) {
+		await removeAllPermissionsFromParticipant(token, attendeeId)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+		const updatedData = {
+			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
+		}
+		context.commit('updateParticipant', { token, index, updatedData })
+	},
+
+	/**
+	 * Add a specific permission or permission combination to a given
+	 * participant.
+	 *
+	 * @param {object} context - the context object.
+	 * @param {object} root0 - the arguments oobject.
+	 * @param {string} root0.token - the conversation token.
+	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {number} root0.permissions - bitwise combination of the permissions.
+	 */
+	async setPermissions(context, { token, attendeeId, permissions }) {
+		await setPermissions(token, attendeeId, permissions)
+		// Get participant's index
+		const index = context.getters.getParticipantIndex(token, { attendeeId })
+		if (index === -1) {
+			return
+		}
+
+		context.commit('setPermissions', { token, index, permissions })
 	},
 }
 
