@@ -148,7 +148,7 @@ class FilesIntegrationController extends OCSController {
 		} catch (RoomNotFoundException $e) {
 			$name = $node->getName();
 			$name = $this->roomService->prepareConversationName($name);
-			$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
+			$room = $this->roomService->createConversation(Room::TYPE_PUBLIC, $name, null, 'file', $fileId);
 		}
 
 		return new DataResponse([
@@ -218,7 +218,7 @@ class FilesIntegrationController extends OCSController {
 			} catch (RoomNotFoundException $e) {
 				$name = $share->getNode()->getName();
 				$name = $this->roomService->prepareConversationName($name);
-				$room = $this->roomService->createConversation(Room::PUBLIC_CALL, $name, null, 'file', $fileId);
+				$room = $this->roomService->createConversation(Room::TYPE_PUBLIC, $name, null, 'file', $fileId);
 			}
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

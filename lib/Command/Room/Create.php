@@ -120,7 +120,7 @@ class Create extends Base {
 			return 1;
 		}
 
-		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+		$roomType = $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP;
 		try {
 			$room = $this->roomService->createConversation($roomType, $name);
 		} catch (InvalidArgumentException $e) {

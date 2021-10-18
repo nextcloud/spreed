@@ -134,7 +134,7 @@ class ListenerTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
 			->method('getType')
-			->willReturn(Room::ONE_TO_ONE_CALL);
+			->willReturn(Room::TYPE_ONE_TO_ONE);
 
 		$participants = [[
 			'actorType' => 'users',
@@ -194,11 +194,11 @@ class ListenerTest extends TestCase {
 		];
 
 		return [
-			[Room::GROUP_CALL, '', $allParticipants, $expectedMessages],
-			[Room::PUBLIC_CALL, '', $allParticipants, $expectedMessages],
-			[Room::ONE_TO_ONE_CALL, '', $allParticipants, []],
-			[Room::GROUP_CALL, 'file', $allParticipants, $expectedMessages],
-			[Room::PUBLIC_CALL, 'file', $allParticipants, $expectedMessages],
+			[Room::TYPE_GROUP, '', $allParticipants, $expectedMessages],
+			[Room::TYPE_PUBLIC, '', $allParticipants, $expectedMessages],
+			[Room::TYPE_ONE_TO_ONE, '', $allParticipants, []],
+			[Room::TYPE_GROUP, 'file', $allParticipants, $expectedMessages],
+			[Room::TYPE_PUBLIC, 'file', $allParticipants, $expectedMessages],
 		];
 	}
 
@@ -290,7 +290,7 @@ class ListenerTest extends TestCase {
 		$this->mockLoggedInUser('alice_actor');
 
 		$room = $this->createMock(Room::class);
-		$room->method('getType')->willReturn(Room::GROUP_CALL);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
 
 		$attendee = new Attendee();
 		$attendee->setActorId('bob_participant');

@@ -110,13 +110,13 @@ abstract class Base implements IProvider {
 
 	protected function getRoom(Room $room, string $userId): array {
 		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
+			case Room::TYPE_ONE_TO_ONE:
 				$stringType = 'one2one';
 				break;
-			case Room::GROUP_CALL:
+			case Room::TYPE_GROUP:
 				$stringType = 'group';
 				break;
-			case Room::PUBLIC_CALL:
+			case Room::TYPE_PUBLIC:
 			default:
 				$stringType = 'public';
 				break;
@@ -136,7 +136,7 @@ abstract class Base implements IProvider {
 			'type' => 'call',
 			'id' => $roomId,
 			'name' => $l->t('a conversation'),
-			'call-type' => Room::UNKNOWN_CALL,
+			'call-type' => Room::TYPE_UNKNOWN,
 		];
 	}
 

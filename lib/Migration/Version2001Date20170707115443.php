@@ -99,7 +99,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 		$query->select('id')
 			->from('spreedme_rooms')
-			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL)));
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE)));
 		$result = $query->execute();
 
 		$one2oneRooms = [];

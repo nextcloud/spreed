@@ -894,7 +894,7 @@ class RoomShareProvider implements IShareProvider {
 			throw new ShareNotFound();
 		}
 
-		if ($room->getType() !== Room::PUBLIC_CALL) {
+		if ($room->getType() !== Room::TYPE_PUBLIC) {
 			throw new ShareNotFound();
 		}
 

@@ -235,7 +235,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomInvite() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
@@ -265,7 +265,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomDisinvite() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
@@ -301,7 +301,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomNameChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setName('Test room');
 
 		$this->assertMessageWasSent($room, [
@@ -325,7 +325,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomDescriptionChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setDescription('The description');
 
 		$this->assertMessageWasSent($room, [
@@ -349,7 +349,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomPasswordChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setPassword('password');
 
 		$this->assertMessageWasSent($room, [
@@ -373,8 +373,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomTypeChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
-		$room->setType(Room::GROUP_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$room->setType(Room::TYPE_GROUP);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',
@@ -397,7 +397,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomReadOnlyChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setReadOnly(Room::READ_ONLY);
 
 		$this->assertMessageWasSent($room, [
@@ -421,7 +421,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomListableChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setListable(Room::LISTABLE_ALL);
 
 		$this->assertMessageWasSent($room, [
@@ -445,7 +445,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomLobbyStateChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
 
 		$this->assertMessageWasSent($room, [
@@ -469,7 +469,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomDelete() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
@@ -487,7 +487,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testRoomInCallChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
@@ -611,7 +611,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->dispatcher->addListener(Room::EVENT_BEFORE_SIGNALING_PROPERTIES, $listener);
 
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->controller->clearRequests();
 		$room->setName('Test room');
 
@@ -638,7 +638,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function testParticipantsTypeChanged() {
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,

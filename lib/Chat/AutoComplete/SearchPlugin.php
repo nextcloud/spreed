@@ -93,7 +93,7 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		$userIds = $guestAttendees = [];
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
 			$participants = json_decode($this->room->getName(), true);
 			foreach ($participants as $userId) {

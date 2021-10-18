@@ -68,7 +68,7 @@ class RoomService {
 		} catch (RoomNotFoundException $e) {
 			$users = [$actor->getUID(), $targetUser->getUID()];
 			sort($users);
-			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, json_encode($users));
+			$room = $this->manager->createRoom(Room::TYPE_ONE_TO_ONE, json_encode($users));
 
 			$this->participantService->addUsers($room, [
 				[
@@ -107,9 +107,9 @@ class RoomService {
 		}
 
 		if (!\in_array($type, [
-			Room::GROUP_CALL,
-			Room::PUBLIC_CALL,
-			Room::CHANGELOG_CONVERSATION,
+			Room::TYPE_GROUP,
+			Room::TYPE_PUBLIC,
+			Room::TYPE_CHANGELOG,
 		], true)) {
 			throw new InvalidArgumentException('type');
 		}

@@ -87,7 +87,7 @@ class ConversationSearch implements IProvider {
 
 		$result = [];
 		foreach ($rooms as $room) {
-			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			if ($room->getType() === Room::TYPE_CHANGELOG) {
 				continue;
 			}
 
@@ -100,7 +100,7 @@ class ConversationSearch implements IProvider {
 				continue;
 			}
 
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$otherUserId = str_replace(
 					json_encode($user->getUID()),
 					'',
@@ -119,7 +119,7 @@ class ConversationSearch implements IProvider {
 
 			$icon = '';
 			$iconClass = '';
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
 					if ($participantId !== $user->getUID()) {
@@ -135,7 +135,7 @@ class ConversationSearch implements IProvider {
 				$iconClass = 'conversation-icon icon-password';
 			} elseif ($room->getObjectType() === 'emails') {
 				$iconClass = 'conversation-icon icon-mail';
-			} elseif ($room->getType() === Room::PUBLIC_CALL) {
+			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
 				$iconClass = 'conversation-icon icon-public';
 			} else {
 				$iconClass = 'conversation-icon icon-contacts';

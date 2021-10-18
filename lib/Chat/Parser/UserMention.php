@@ -174,11 +174,11 @@ class UserMention {
 	 */
 	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
+			case Room::TYPE_ONE_TO_ONE:
 				return 'one2one';
-			case Room::GROUP_CALL:
+			case Room::TYPE_GROUP:
 				return 'group';
-			case Room::PUBLIC_CALL:
+			case Room::TYPE_PUBLIC:
 				return 'public';
 			default:
 				throw new \InvalidArgumentException('Unknown room type');

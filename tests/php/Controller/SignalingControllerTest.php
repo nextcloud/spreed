@@ -412,7 +412,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::ONE_TO_ONE_CALL,
+				'type' => Room::TYPE_ONE_TO_ONE,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -430,7 +430,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::ONE_TO_ONE_CALL,
+					'type' => Room::TYPE_ONE_TO_ONE,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -472,7 +472,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::PUBLIC_CALL,
+				'type' => Room::TYPE_PUBLIC,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -490,7 +490,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::PUBLIC_CALL,
+					'type' => Room::TYPE_PUBLIC,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -536,7 +536,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::PUBLIC_CALL,
+				'type' => Room::TYPE_PUBLIC,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -554,7 +554,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::PUBLIC_CALL,
+					'type' => Room::TYPE_PUBLIC,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -598,7 +598,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with('')
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::PUBLIC_CALL,
+				'type' => Room::TYPE_PUBLIC,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -616,7 +616,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::PUBLIC_CALL,
+					'type' => Room::TYPE_PUBLIC,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -659,7 +659,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::PUBLIC_CALL,
+				'type' => Room::TYPE_PUBLIC,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -677,7 +677,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::PUBLIC_CALL,
+					'type' => Room::TYPE_PUBLIC,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -738,7 +738,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::PUBLIC_CALL,
+				'type' => Room::TYPE_PUBLIC,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -756,7 +756,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::PUBLIC_CALL,
+					'type' => Room::TYPE_PUBLIC,
 				],
 				'permissions' => $expectedBackendPermissions,
 			],
@@ -832,7 +832,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->willReturn([
 				'name' => $roomName,
-				'type' => Room::ONE_TO_ONE_CALL,
+				'type' => Room::TYPE_ONE_TO_ONE,
 			]);
 
 		$result = $this->performBackendRequest([
@@ -850,7 +850,7 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 				'properties' => [
 					'name' => $roomName,
-					'type' => Room::ONE_TO_ONE_CALL,
+					'type' => Room::TYPE_ONE_TO_ONE,
 				],
 				'permissions' => [
 					'publish-audio',
@@ -1055,7 +1055,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 
 		// The user joined the room.
 		$oldParticipant = $participantService->joinRoom($room, $testUser, '');

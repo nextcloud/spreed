@@ -402,7 +402,7 @@ class UserMentionTest extends \Test\TestCase {
 		$room = $this->createMock(Room::class);
 		$room->expects($this->once())
 			->method('getType')
-			->willReturn(Room::GROUP_CALL);
+			->willReturn(Room::TYPE_GROUP);
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn('token');

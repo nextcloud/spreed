@@ -61,7 +61,7 @@ class ConversationProvider implements IProvider {
 			$iconURL = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
 			/**
 			 * Disabled for now, because it would show a square avatar
-			 * if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			 * if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			 * $iconURL = $this->urlGenerator->linkToRouteAbsolute('core.avatar.getAvatar', ['userId' => 'admin', 'size' => 32]);
 			 * }
 			 */
@@ -113,11 +113,11 @@ class ConversationProvider implements IProvider {
 	 */
 	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
+			case Room::TYPE_ONE_TO_ONE:
 				return 'one2one';
-			case Room::GROUP_CALL:
+			case Room::TYPE_GROUP:
 				return 'group';
-			case Room::PUBLIC_CALL:
+			case Room::TYPE_PUBLIC:
 				return 'public';
 			default:
 				throw new \InvalidArgumentException('Unknown room type');

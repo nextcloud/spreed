@@ -204,12 +204,12 @@ class BaseTest extends TestCase {
 
 	public function dataGetRoom() {
 		return [
-			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'private-call', 'one2one'],
-			[Room::GROUP_CALL, 42, 'group-call', 'group-call', 'group'],
-			[Room::PUBLIC_CALL, 128, 'public-call', 'public-call', 'public'],
-			[Room::ONE_TO_ONE_CALL, 23, '', 'a conversation', 'one2one'],
-			[Room::GROUP_CALL, 42, '', 'a conversation', 'group'],
-			[Room::PUBLIC_CALL, 128, '', 'a conversation', 'public'],
+			[Room::TYPE_ONE_TO_ONE, 23, 'private-call', 'private-call', 'one2one'],
+			[Room::TYPE_GROUP, 42, 'group-call', 'group-call', 'group'],
+			[Room::TYPE_PUBLIC, 128, 'public-call', 'public-call', 'public'],
+			[Room::TYPE_ONE_TO_ONE, 23, '', 'a conversation', 'one2one'],
+			[Room::TYPE_GROUP, 42, '', 'a conversation', 'group'],
+			[Room::TYPE_PUBLIC, 128, '', 'a conversation', 'public'],
 		];
 	}
 

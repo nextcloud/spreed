@@ -127,11 +127,11 @@ trait TRoomCommand {
 	 * @throws InvalidArgumentException
 	 */
 	protected function setRoomPublic(Room $room, bool $public): void {
-		if ($public === ($room->getType() === Room::PUBLIC_CALL)) {
+		if ($public === ($room->getType() === Room::TYPE_PUBLIC)) {
 			return;
 		}
 
-		if (!$room->setType($public ? Room::PUBLIC_CALL : Room::GROUP_CALL)) {
+		if (!$room->setType($public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP)) {
 			throw new InvalidArgumentException('Unable to change room type.');
 		}
 	}
@@ -179,7 +179,7 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (($password !== '') && ($room->getType() !== Room::PUBLIC_CALL)) {
+		if (($password !== '') && ($room->getType() !== Room::TYPE_PUBLIC)) {
 			throw new InvalidArgumentException('Unable to add password protection to private room.');
 		}
 

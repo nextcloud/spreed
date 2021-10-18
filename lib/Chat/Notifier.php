@@ -184,7 +184,7 @@ class Notifier {
 		}
 
 		// Also notify default participants in one2one chats or when the admin default is "always"
-		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::TYPE_ONE_TO_ONE) {
 			$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_DEFAULT);
 			foreach ($participants as $participant) {
 				if (!$this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers)) {
@@ -335,7 +335,7 @@ class Notifier {
 			$participant = $room->getParticipant($userId, false);
 			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
-				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 					$notificationLevel = Participant::NOTIFY_ALWAYS;
 				} else {
 					$notificationLevel = $this->getDefaultGroupNotification();

@@ -117,7 +117,7 @@ class MessageSearch implements IProvider {
 
 		$roomMap = [];
 		foreach ($rooms as $room) {
-			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			if ($room->getType() === Room::TYPE_CHANGELOG) {
 				continue;
 			}
 
@@ -202,7 +202,7 @@ class MessageSearch implements IProvider {
 		}
 
 		$subline = $this->getSublineTemplate();
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$subline = '{user}';
 		}
 

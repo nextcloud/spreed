@@ -370,7 +370,7 @@ class Manager {
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
-			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL)))
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE)))
 			->andWhere($query->expr()->like('r.name', $query->createNamedParameter('%' . $this->db->escapeLikeParameter(json_encode($userId)) . '%')));
 
 		$result = $query->execute();
@@ -424,7 +424,7 @@ class Manager {
 	 * @return Room[]
 	 */
 	public function getListedRoomsForUser(string $userId, string $term = ''): array {
-		$allowedRoomTypes = [Room::GROUP_CALL, Room::PUBLIC_CALL];
+		$allowedRoomTypes = [Room::TYPE_GROUP, Room::TYPE_PUBLIC];
 		$allowedListedTypes = [Room::LISTABLE_ALL];
 		if (!$this->isGuestUser($userId)) {
 			$allowedListedTypes[] = Room::LISTABLE_USERS;
@@ -505,7 +505,7 @@ class Manager {
 			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
-		if ($userId === null && $room->getType() !== Room::PUBLIC_CALL) {
+		if ($userId === null && $room->getType() !== Room::TYPE_PUBLIC) {
 			throw new RoomNotFoundException();
 		}
 
@@ -576,7 +576,7 @@ class Manager {
 			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
 		}
 
-		if ($isSIPBridgeRequest || $room->getType() === Room::PUBLIC_CALL) {
+		if ($isSIPBridgeRequest || $room->getType() === Room::TYPE_PUBLIC) {
 			return $room;
 		}
 
@@ -800,7 +800,7 @@ class Manager {
 		$participant = $this->createParticipantObject($room, $row);
 		$room->setParticipant($row['actor_id'], $participant);
 
-		if ($room->getType() === Room::PUBLIC_CALL || !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {
+		if ($room->getType() === Room::TYPE_PUBLIC || !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {
 			return $room;
 		}
 
@@ -822,7 +822,7 @@ class Manager {
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
-			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($name)));
 
 		$result = $query->execute();
@@ -852,7 +852,7 @@ class Manager {
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
-			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_CHANGELOG, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($userId)));
 
 		$result = $query->execute();
@@ -860,7 +860,7 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
-			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
+			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId);
 			$room->setReadOnly(Room::READ_ONLY);
 			$room->setListable(Room::LISTABLE_NONE);
 
@@ -952,20 +952,20 @@ class Manager {
 		if ($room->getObjectType() === 'share:password') {
 			return $this->l->t('Password request: %s', [$room->getName()]);
 		}
-		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return $this->l->t('Talk updates ✅');
 		}
-		if ($userId === '' && $room->getType() !== Room::PUBLIC_CALL) {
+		if ($userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
 			return $this->l->t('Private conversation');
 		}
 
 
-		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {
+		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getName() === '') {
 			$room->setName($this->getRoomNameByParticipants($room));
 		}
 
 		// Set the room name to the other participant for one-to-one rooms
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			if ($userId === '') {
 				return $this->l->t('Private conversation');
 			}
