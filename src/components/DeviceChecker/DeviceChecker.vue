@@ -72,7 +72,7 @@
 							decorative
 							:size="20" />
 						<MicrophoneOff
-							v-if="!audioOn"
+							v-else
 							title=""
 							decorative
 							:size="20" />
@@ -97,10 +97,31 @@
 							decorative
 							:size="20" />
 						<VideoOff
-							v-if="!videoOn"
+							v-else
 							title=""
 							decorative
 							:size="20" />
+					</span>
+				</button>
+
+				<!-- Blur toggle -->
+				<button
+					class="device-toggle"
+					:disabled="!blurPreviewAvailable"
+					@click="toggleBlur">
+					<span class="device-toggle__icon">
+						<Blur
+							v-if="blurOn"
+							slot="icon"
+							:size="20"
+							decorative
+							title="" />
+						<BlurOff
+							v-else
+							slot="icon"
+							:size="20"
+							decorative
+							title="" />
 					</span>
 				</button>
 			</div>
@@ -153,12 +174,15 @@ import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
+import Blur from 'vue-material-design-icons/Blur'
+import BlurOff from 'vue-material-design-icons/BlurOff'
 import { localMediaModel } from '../../utils/webrtc/index'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
+import VirtualBackground from '../../utils/media/pipeline/VirtualBackground'
 
 export default {
 	name: 'DeviceChecker',
@@ -173,6 +197,8 @@ export default {
 		MicrophoneOff,
 		Video,
 		VideoOff,
+		Blur,
+		BlurOff,
 		CallButton,
 		CheckboxRadioSwitch,
 		VolumeIndicator,
@@ -187,6 +213,7 @@ export default {
 			showDeviceSelection: false,
 			audioOn: undefined,
 			videoOn: undefined,
+			blurOn: undefined,
 			showDeviceChecker: true,
 
 		}
@@ -208,6 +235,10 @@ export default {
 		showVideo() {
 			return this.videoPreviewAvailable && this.videoOn
 		},
+
+		blurPreviewAvailable() {
+			return VirtualBackground.isSupported()
+		},
 	},
 
 	watch: {
@@ -215,6 +246,7 @@ export default {
 			if (newValue) {
 				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
+				this.blurOn = !localStorage.getItem('virtualBackgroundDisabled_' + this.token)
 
 				this.initializeDevicesMixin()
 			} else {
@@ -268,6 +300,16 @@ export default {
 			} else {
 				localStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
+			}
+		},
+
+		toggleBlur() {
+			if (!this.blurOn) {
+				localStorage.removeItem('virtualBackgroundDisabled_' + this.token)
+				this.blurOn = true
+			} else {
+				localStorage.setItem('virtualBackgroundDisabled_' + this.token, 'true')
+				this.blurOn = false
 			}
 		},
 	},
