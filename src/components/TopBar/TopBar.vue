@@ -35,7 +35,11 @@
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
-				<p v-if="conversation.description"
+				<p v-if="showUserStatusAsDescription"
+					class="description">
+					{{ statusMessage }}
+				</p>
+				<p v-else-if="conversation.description"
 					v-tooltip.bottom="{
 						content: renderedDescription,
 						delay: { show: 500, hide: 500 },
@@ -171,6 +175,7 @@ import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
+import userStatus from '../../mixins/userStatus'
 
 export default {
 	name: 'TopBar',
@@ -191,7 +196,10 @@ export default {
 		ConversationIcon,
 	},
 
-	mixins: [richEditor],
+	mixins: [
+		richEditor,
+		userStatus,
+	],
 
 	props: {
 		isInCall: {
@@ -293,6 +301,14 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		showUserStatusAsDescription() {
+			return this.isOneToOneConversation && this.statusMessage
+		},
+
+		statusMessage() {
+			return this.getStatusMessage(this.conversation)
 		},
 
 		unreadMessagesCounter() {
