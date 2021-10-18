@@ -619,18 +619,18 @@ export default {
 		grantAllPermissions() {
 			try {
 				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions granted to {actorId}', { actorId: this.participant.actorId }))
+				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.participant.displayName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
 			}
 		},
 
 		removeAllPermissions() {
 			try {
 				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions removed for {actorId}', { actorId: this.participant.actorId }))
+				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.participant.displayName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {actorId}', { actorId: this.participant.actorId }))
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
 			}
 		},
 
