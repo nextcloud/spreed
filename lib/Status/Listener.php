@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2021 Carl Schwan <carl@carlschwan.eu>
+ *
+ * @author Carl Schwan <carl@carlschwan.eu>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,45 +27,43 @@ declare(strict_types=1);
 namespace OCA\Talk\Status;
 
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IUserSession;
 use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
 class Listener {
-	/** @var IUserSession */
-	public $userSession;
-
 	/** @var IManager $statusManager */
 	public $statusManager;
 
-	public function __construct(IUserSession $userSession, IManager $statusManager) {
-		$this->userSession = $userSession;
+	public function __construct(IManager $statusManager) {
 		$this->statusManager = $statusManager;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
-			// Inject self with $server->get since otherwise we get an error that $this is not available in this context
-
-			/** @var \OCA\Talk\Chat\SystemMessage\Listener $listener */
+			/** @var self $listener */
 			$listener = \OC::$server->get(self::class);
-
-			$user = $listener->userSession->getUser();
-			if ($user !== null) {
-				$listener->statusManager->setUserStatus($listener->userSession->getUser()->getUID(), 'call', IUserStatus::AWAY, true);
-			}
+			$listener->setUserStatus($event);
 		});
 
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
-			/** @var \OCA\Talk\Chat\SystemMessage\Listener $listener */
+			/** @var self $listener */
 			$listener = \OC::$server->get(self::class);
-
-			$user = $listener->userSession->getUser();
-			if ($user !== null) {
-				$listener->statusManager->revertUserStatus($listener->userSession->getUser()->getUID(), 'call', IUserStatus::AWAY);
-			}
+			$listener->revertUserStatus($event);
 		});
+	}
+
+	public function setUserStatus(ModifyParticipantEvent $event): void {
+		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$this->statusManager->setUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY, true);
+		}
+	}
+
+	public function revertUserStatus(ModifyParticipantEvent $event): void {
+		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$this->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
+		}
 	}
 }
