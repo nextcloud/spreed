@@ -61,7 +61,7 @@ class CacheUserDisplayNames implements IRepairStep {
 			->andWhere($query->expr()->eq('display_name', $query->createNamedParameter('')))
 			->groupBy('actor_id');
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$user = $this->userManager->get($row['actor_id']);
 			if (!$user instanceof IUser) {
@@ -71,7 +71,7 @@ class CacheUserDisplayNames implements IRepairStep {
 			$update->setParameter('displayName', $user->getDisplayName())
 				->setParameter('actorType', Attendee::ACTOR_USERS)
 				->setParameter('actorId', $row['actor_id']);
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}

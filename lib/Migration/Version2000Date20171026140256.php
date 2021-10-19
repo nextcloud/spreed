@@ -70,7 +70,7 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms');
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$output->startProgress();
 		while ($row = $result->fetch()) {
@@ -81,7 +81,7 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 			}
 
 			$update->setParameter('room_id', (int) $row['id'], IQueryBuilder::PARAM_INT)
-				->execute();
+				->executeStatement();
 		}
 		$output->finishProgress();
 	}

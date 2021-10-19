@@ -126,7 +126,7 @@ class Manager {
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r');
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
@@ -251,7 +251,7 @@ class Manager {
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->isNotNull('r.assigned_hpb'));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$room = $this->createRoomObject($row);
 			if (!$this->participantService->hasActiveSessions($room)) {
@@ -284,7 +284,7 @@ class Manager {
 		$query->setMaxResults($limit)
 			->setFirstResult($offset)
 			->orderBy('r.token', 'ASC');
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$rooms = [];
 		while ($row = $result->fetch()) {
@@ -342,7 +342,7 @@ class Manager {
 			$this->loadLastMessageInfo($query);
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$rooms = [];
 		while ($row = $result->fetch()) {
 			if ($row['token'] === null) {
@@ -373,7 +373,7 @@ class Manager {
 			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE)))
 			->andWhere($query->expr()->like('r.name', $query->createNamedParameter('%' . $this->db->escapeLikeParameter(json_encode($userId)) . '%')));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$rooms = [];
 		while ($row = $result->fetch()) {
 			if ($row['token'] === null) {
@@ -401,7 +401,7 @@ class Manager {
 			->where($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$roomTokens = [];
 		while ($row = $result->fetch()) {
 			if ($row['token'] === null) {
@@ -450,7 +450,7 @@ class Manager {
 			);
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$rooms = [];
 		while ($row = $result->fetch()) {
 			$room = $this->createRoomObject($row);
@@ -487,7 +487,7 @@ class Manager {
 				->andWhere($query->expr()->isNotNull('a.id'));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -558,7 +558,7 @@ class Manager {
 			$this->loadLastMessageInfo($query);
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -608,7 +608,7 @@ class Manager {
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -659,7 +659,7 @@ class Manager {
 			));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -705,7 +705,7 @@ class Manager {
 		}
 
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -735,7 +735,7 @@ class Manager {
 			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
 			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -773,7 +773,7 @@ class Manager {
 			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
 			->setMaxResults(1);
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -825,7 +825,7 @@ class Manager {
 			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($name)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -855,7 +855,7 @@ class Manager {
 			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::TYPE_CHANGELOG, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($userId)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -899,23 +899,23 @@ class Manager {
 	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
 		$token = $this->getNewToken();
 
-		$query = $this->db->getQueryBuilder();
-		$query->insert('talk_rooms')
+		$insert = $this->db->getQueryBuilder();
+		$insert->insert('talk_rooms')
 			->values(
 				[
-					'name' => $query->createNamedParameter($name),
-					'type' => $query->createNamedParameter($type, IQueryBuilder::PARAM_INT),
-					'token' => $query->createNamedParameter($token),
+					'name' => $insert->createNamedParameter($name),
+					'type' => $insert->createNamedParameter($type, IQueryBuilder::PARAM_INT),
+					'token' => $insert->createNamedParameter($token),
 				]
 			);
 
 		if (!empty($objectType) && !empty($objectId)) {
-			$query->setValue('object_type', $query->createNamedParameter($objectType))
-				->setValue('object_id', $query->createNamedParameter($objectId));
+			$insert->setValue('object_type', $insert->createNamedParameter($objectType))
+				->setValue('object_id', $insert->createNamedParameter($objectId));
 		}
 
-		$query->execute();
-		$roomId = $query->getLastInsertId();
+		$insert->executeStatement();
+		$roomId = $insert->getLastInsertId();
 
 		$room = $this->getRoomById($roomId);
 
@@ -1118,7 +1118,7 @@ class Manager {
 		}
 
 		$query->setParameter('token', $token);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 

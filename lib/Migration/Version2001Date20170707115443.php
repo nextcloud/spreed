@@ -88,7 +88,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')
 			->from('spreedme_rooms');
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$return = (int) $result->fetch();
 		$result->closeCursor();
 		$numRooms = (int) $return['num_rooms'];
@@ -100,7 +100,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		$query->select('id')
 			->from('spreedme_rooms')
 			->where($query->expr()->eq('type', $query->createNamedParameter(Room::TYPE_ONE_TO_ONE)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$one2oneRooms = [];
 		while ($row = $result->fetch()) {
@@ -136,7 +136,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		return (int) $update->execute();
+		return (int) $update->executeStatement();
 	}
 
 	/**
@@ -160,6 +160,6 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		return (int) $update->execute();
+		return (int) $update->executeStatement();
 	}
 }

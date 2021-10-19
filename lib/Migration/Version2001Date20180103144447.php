@@ -127,7 +127,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			$update->update('talk_rooms')
 				->set('active_since', 'activeSince')
 				->set('active_guests', 'activeGuests');
-			$update->execute();
+			$update->executeStatement();
 
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_participants')
@@ -137,13 +137,13 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 				->set('session_id', 'sessionId')
 				->set('participant_type', 'participantType')
 				->set('in_call', 'inCall');
-			$update->execute();
+			$update->executeStatement();
 		} else {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_rooms')
 				->set('active_since', 'activesince')
 				->set('active_guests', 'activeguests');
-			$update->execute();
+			$update->executeStatement();
 
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_participants')
@@ -153,7 +153,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 				->set('session_id', 'sessionid')
 				->set('participant_type', 'participanttype')
 				->set('in_call', 'incall');
-			$update->execute();
+			$update->executeStatement();
 		}
 	}
 }

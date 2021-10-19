@@ -53,7 +53,7 @@ class FixNamespaceInDatabaseTables implements IRepairStep {
 				'%' . $this->connection->escapeLikeParameter('Spreed'). '%'
 			)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$oldClass = $row['class'];
 			if (strpos($oldClass, 'OCA\\Spreed\\') !== 0) {
@@ -64,7 +64,7 @@ class FixNamespaceInDatabaseTables implements IRepairStep {
 
 			$update->setParameter('newClass', $newClass)
 				->setParameter('id', $row['id']);
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}

@@ -84,7 +84,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		$bridges = [];
 		$query->select('id', 'json_values')
 			->from('talk_bridges');
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$bridges[] = [
 				'id' => $row['id'],
@@ -97,12 +97,12 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 			return;
 		}
 
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_bridges')
-			->set('enabled', $query->createParameter('enabled'))
-			->set('pid', $query->createParameter('pid'))
-			->set('json_values', $query->createParameter('json_values'))
-			->where($query->expr()->eq('id', $query->createParameter('id')));
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_bridges')
+			->set('enabled', $update->createParameter('enabled'))
+			->set('pid', $update->createParameter('pid'))
+			->set('json_values', $update->createParameter('json_values'))
+			->where($update->expr()->eq('id', $update->createParameter('id')));
 
 		foreach ($bridges as $bridge) {
 			$values = json_decode($bridge['json_values'], true);
@@ -111,11 +111,11 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 				$newValues = $values['parts'] ?: [];
 				$encodedNewValues = json_encode($newValues);
 
-				$query->setParameter('enabled', $intEnabled, IQueryBuilder::PARAM_INT)
+				$update->setParameter('enabled', $intEnabled, IQueryBuilder::PARAM_INT)
 					->setParameter('pid', $values['pid'], IQueryBuilder::PARAM_INT)
 					->setParameter('json_values', $encodedNewValues, IQueryBuilder::PARAM_STR)
 					->setParameter('id', $bridge['id'], IQueryBuilder::PARAM_INT);
-				$query->execute();
+				$update->executeStatement();
 			}
 		}
 	}

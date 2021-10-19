@@ -485,7 +485,7 @@ class Room {
 			}
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -520,7 +520,7 @@ class Room {
 			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -544,7 +544,7 @@ class Room {
 			->where($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -586,7 +586,7 @@ class Room {
 			}
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -634,7 +634,7 @@ class Room {
 			}
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -648,17 +648,17 @@ class Room {
 	public function deleteRoom(): void {
 		$event = new RoomEvent($this);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DELETE, $event);
-		$query = $this->db->getQueryBuilder();
+		$delete = $this->db->getQueryBuilder();
 
 		// Delete attendees
-		$query->delete('talk_attendees')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$delete->delete('talk_attendees')
+			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
 
 		// Delete room
-		$query->delete('talk_rooms')
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$delete->delete('talk_rooms')
+			->where($delete->expr()->eq('id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
 		if (class_exists(CriticalActionPerformedEvent::class)) {
@@ -683,11 +683,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'name', $newName, $oldName);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_NAME_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('name', $query->createNamedParameter($newName))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('name', $update->createNamedParameter($newName))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 		$this->name = $newName;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
@@ -715,11 +715,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'description', $description, $oldDescription);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_DESCRIPTION_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('description', $query->createNamedParameter($description))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('description', $update->createNamedParameter($description))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 		$this->description = $description;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_DESCRIPTION_SET, $event);
@@ -741,11 +741,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'password', $password);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_PASSWORD_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('password', $query->createNamedParameter($hash))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('password', $update->createNamedParameter($hash))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 		$this->password = $hash;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_PASSWORD_SET, $event);
@@ -758,11 +758,11 @@ class Room {
 	 * @return bool
 	 */
 	public function setLastActivity(\DateTime $now): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('last_activity', $query->createNamedParameter($now, 'datetime'))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_activity', $update->createNamedParameter($now, 'datetime'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->lastActivity = $now;
 
@@ -777,38 +777,38 @@ class Room {
 	 */
 	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): bool {
 		if ($isGuest && $this->getType() === self::TYPE_PUBLIC) {
-			$query = $this->db->getQueryBuilder();
-			$query->update('talk_rooms')
-				->set('active_guests', $query->createFunction($query->getColumnName('active_guests') . ' + 1'))
+			$update = $this->db->getQueryBuilder();
+			$update->update('talk_rooms')
+				->set('active_guests', $update->createFunction($update->getColumnName('active_guests') . ' + 1'))
 				->set(
 					'call_flag',
-					$query->expr()->bitwiseOr('call_flag', $callFlag)
+					$update->expr()->bitwiseOr('call_flag', $callFlag)
 				)
-				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-			$query->execute();
+				->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+			$update->executeStatement();
 
 			$this->activeGuests++;
 		} elseif (!$isGuest) {
-			$query = $this->db->getQueryBuilder();
-			$query->update('talk_rooms')
+			$update = $this->db->getQueryBuilder();
+			$update->update('talk_rooms')
 				->set(
 					'call_flag',
-					$query->expr()->bitwiseOr('call_flag', $callFlag)
+					$update->expr()->bitwiseOr('call_flag', $callFlag)
 				)
-				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-			$query->execute();
+				->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+			$update->executeStatement();
 		}
 
 		if ($this->activeSince instanceof \DateTime) {
 			return false;
 		}
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('active_since', $query->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNull('active_since'));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->isNull('active_since'));
+		$update->executeStatement();
 
 		$this->activeSince = $since;
 
@@ -816,43 +816,43 @@ class Room {
 	}
 
 	public function setLastMessage(IComment $message): void {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('last_message', $query->createNamedParameter((int) $message->getId()))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_message', $update->createNamedParameter((int) $message->getId()))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->lastMessage = $message;
 		$this->lastMessageId = (int) $message->getId();
 	}
 
 	public function resetActiveSince(): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('active_guests', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('active_since', $query->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
-			->set('call_flag', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('call_permissions', $query->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('active_since'));
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('active_guests', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
+			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->isNotNull('active_since'));
 
 		$this->activeGuests = 0;
 		$this->activeSince = null;
 
-		return (bool) $query->execute();
+		return (bool) $update->executeStatement();
 	}
 
 	public function setAssignedSignalingServer(?int $signalingServer): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('assigned_hpb', $query->createNamedParameter($signalingServer))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('assigned_hpb', $update->createNamedParameter($signalingServer))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
 		if ($signalingServer !== null) {
-			$query->andWhere($query->expr()->isNull('assigned_hpb'));
+			$update->andWhere($update->expr()->isNull('assigned_hpb'));
 		}
 
-		return (bool) $query->execute();
+		return (bool) $update->executeStatement();
 	}
 
 	/**
@@ -877,21 +877,21 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'type', $newType, $oldType);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_TYPE_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('type', $query->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('type', $update->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->type = $newType;
 
 		if ($oldType === self::TYPE_PUBLIC) {
 			// Kick all guests and users that were not invited
-			$query = $this->db->getQueryBuilder();
-			$query->delete('talk_attendees')
-				->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->in('participant_type', $query->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
-			$query->execute();
+			$delete = $this->db->getQueryBuilder();
+			$delete->delete('talk_attendees')
+				->where($delete->expr()->eq('room_id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
+			$delete->executeStatement();
 		}
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_TYPE_SET, $event);
@@ -923,11 +923,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'readOnly', $newState, $oldState);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_READONLY_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('read_only', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('read_only', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->readOnly = $newState;
 
@@ -963,11 +963,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'listable', $newState, $oldState);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_LISTABLE_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('listable', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('listable', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->listable = $newState;
 
@@ -1003,12 +1003,12 @@ class Room {
 		$event = new ModifyLobbyEvent($this, 'lobby', $newState, $oldState, $dateTime, $timerReached);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_LOBBY_STATE_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('lobby_state', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->set('lobby_timer', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('lobby_state', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->set('lobby_timer', $update->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->lobbyState = $newState;
 
@@ -1039,11 +1039,11 @@ class Room {
 		$event = new ModifyRoomEvent($this, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set('sip_enabled', $query->createNamedParameter($newSipEnabled, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('sip_enabled', $update->createNamedParameter($newSipEnabled, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		$this->sipEnabled = $newSipEnabled;
 
@@ -1057,11 +1057,11 @@ class Room {
 			return false;
 		}
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_rooms')
-			->set($level . '_permissions', $query->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$query->executeStatement();
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set($level . '_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		if ($level === 'default') {
 			$this->defaultPermissions = $newPermissions;

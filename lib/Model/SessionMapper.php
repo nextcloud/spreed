@@ -71,11 +71,11 @@ class SessionMapper extends QBMapper {
 	 * @return int Number of deleted entities
 	 */
 	public function deleteByAttendeeId(int $attendeeId): int {
-		$query = $this->db->getQueryBuilder();
-		$query->delete($this->getTableName())
-			->where($query->expr()->eq('attendee_id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)));
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete($this->getTableName())
+			->where($delete->expr()->eq('attendee_id', $delete->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)));
 
-		return (int) $query->execute();
+		return (int) $delete->executeStatement();
 	}
 
 	/**
@@ -83,11 +83,11 @@ class SessionMapper extends QBMapper {
 	 * @return int Number of deleted entities
 	 */
 	public function deleteByIds(array $ids): int {
-		$query = $this->db->getQueryBuilder();
-		$query->delete($this->getTableName())
-			->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete($this->getTableName())
+			->where($delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
-		return (int) $query->execute();
+		return (int) $delete->executeStatement();
 	}
 
 	public function createSessionFromRow(array $row): Session {

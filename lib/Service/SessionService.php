@@ -58,12 +58,12 @@ class SessionService {
 	 * @param int $lastPing
 	 */
 	public function updateMultipleLastPings(array $sessionIds, int $lastPing): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_sessions')
-			->set('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->in('session_id', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_sessions')
+			->set('last_ping', $update->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->in('session_id', $update->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 
-		$query->execute();
+		$update->executeStatement();
 	}
 
 	public function updateLastPing(Session $session, int $lastPing): void {

@@ -152,7 +152,7 @@ class AttendeeMapper extends QBMapper {
 			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_INT)));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$count = (int) $result->fetchOne();
 		$result->closeCursor();
 
@@ -178,7 +178,7 @@ class AttendeeMapper extends QBMapper {
 			$query->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -190,11 +190,11 @@ class AttendeeMapper extends QBMapper {
 	 * @return int Number of deleted entities
 	 */
 	public function deleteByIds(array $ids): int {
-		$query = $this->db->getQueryBuilder();
-		$query->delete($this->getTableName())
-			->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete($this->getTableName())
+			->where($delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
-		return (int) $query->execute();
+		return (int) $delete->executeStatement();
 	}
 
 	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
