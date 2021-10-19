@@ -855,7 +855,7 @@ class ParticipantService {
 			->andWhere($query->expr()->lte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL, IQueryBuilder::PARAM_INT)));
 
 		$sessionTableIds = [];
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$sessionTableIds[] = (int) $row['s_id'];
 		}
@@ -874,7 +874,7 @@ class ParticipantService {
 
 		$attendeeIds = [];
 		$attendees = [];
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$attendeeIds[] = (int) $row['a_id'];
 			$attendees[] = $this->attendeeMapper->createAttendeeFromRow($row);
@@ -958,51 +958,51 @@ class ParticipantService {
 	}
 
 	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId, array $usersDirectlyMentioned): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_attendees')
-			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
-		$query->execute();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_attendees')
+			->set('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$update->executeStatement();
 
 		if (!empty($usersDirectlyMentioned)) {
-			$query = $this->connection->getQueryBuilder();
-			$query->update('talk_attendees')
-				->set('last_mention_direct', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-				->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-				->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)));
-			$query->execute();
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_attendees')
+				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
+				->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
+				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)));
+			$update->executeStatement();
 		}
 	}
 
 	public function resetChatDetails(Room $room): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_attendees')
-			->set('last_read_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('last_mention_message', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('last_mention_direct', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
-		$query->executeStatement();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_attendees')
+			->set('last_read_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_mention_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_mention_direct', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 	}
 
 	public function updateReadPrivacyForActor(string $actorType, string $actorId, int $readPrivacy): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_attendees')
-			->set('read_privacy', $query->createNamedParameter($readPrivacy, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
-		$query->execute();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_attendees')
+			->set('read_privacy', $update->createNamedParameter($readPrivacy, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
 	}
 
 	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_attendees')
-			->set('display_name', $query->createNamedParameter($displayName))
-			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
-		$query->execute();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_attendees')
+			->set('display_name', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
 	}
 
 	public function getLastCommonReadChatMessage(Room $room): int {
@@ -1013,7 +1013,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -1036,7 +1036,7 @@ class ParticipantService {
 			->groupBy('room_id');
 
 		$commonReads = array_fill_keys($roomIds, 0);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$commonReads[(int) $row['room_id']] = (int) $row['last_common_read_message'];
 		}
@@ -1167,7 +1167,7 @@ class ParticipantService {
 	 */
 	protected function getParticipantsFromQuery(IQueryBuilder $query, Room $room): array {
 		$participants = [];
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
 			if (isset($row['s_id'])) {
@@ -1236,7 +1236,7 @@ class ParticipantService {
 			->andWhere($query->expr()->isNull('s.in_call'));
 
 		$userIds = [];
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$userIds[] = $row['actor_id'];
 		}
@@ -1295,7 +1295,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNotNull('s.id'))
 			->setMaxResults(1);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -1318,7 +1318,7 @@ class ParticipantService {
 			->andWhere($query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)))
 			->andWhere($query->expr()->gte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 

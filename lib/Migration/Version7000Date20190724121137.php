@@ -63,12 +63,12 @@ class Version7000Date20190724121137 extends SimpleMigrationStep {
 			->where($update->expr()->eq('user_id', $update->createParameter('user_id')))
 			->andWhere($update->expr()->eq('room_id', $update->createParameter('room_id')));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$update->setParameter('message_id', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
 				->setParameter('user_id', $row['user_id'])
 				->setParameter('room_id', (int) $row['room_id'], IQueryBuilder::PARAM_INT);
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}

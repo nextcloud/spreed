@@ -195,14 +195,14 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		$query->select('*')
 			->from('spreedme_rooms');
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$insert
 				->setParameter('name', $row['name'])
 				->setParameter('token', $row['token'])
 				->setParameter('type', (int) $row['type'], IQueryBuilder::PARAM_INT)
 				->setParameter('password', $row['password']);
-			$insert->execute();
+			$insert->executeStatement();
 
 			$roomIdMap[(int)$row['id']] = $insert->getLastInsertId();
 		}
@@ -240,7 +240,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		$query->select('*')
 			->from('spreedme_room_participants');
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			if (!isset($roomIdMap[(int) $row['roomId']])) {
 				continue;
@@ -257,7 +257,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			} else {
 				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
 			}
-			$insert->execute();
+			$insert->executeStatement();
 		}
 		$result->closeCursor();
 	}
@@ -282,7 +282,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter('room')));
 
 		try {
-			$result = $query->execute();
+			$result = $query->executeQuery();
 		} catch (TableNotFoundException $e) {
 			return;
 		}
@@ -292,7 +292,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				$delete
 					->setParameter('id', (int) $row['notification_id'])
 				;
-				$delete->execute();
+				$delete->executeStatement();
 				continue;
 			}
 
@@ -300,7 +300,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('id', (int) $row['notification_id'])
 				->setParameter('newId', $roomIdMap[(int) $row['object_id']])
 			;
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}
@@ -327,7 +327,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter('room')));
 
 		try {
-			$result = $query->execute();
+			$result = $query->executeQuery();
 		} catch (TableNotFoundException $e) {
 			return;
 		} catch (InvalidFieldNameException $e) {
@@ -339,7 +339,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				$delete
 					->setParameter('id', (int) $row['activity_id'])
 				;
-				$delete->execute();
+				$delete->executeStatement();
 				continue;
 			}
 
@@ -349,7 +349,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				$delete
 					->setParameter('id', (int) $row['activity_id'])
 				;
-				$delete->execute();
+				$delete->executeStatement();
 				continue;
 			}
 
@@ -360,7 +360,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('newId', $roomIdMap[(int) $row['object_id']])
 				->setParameter('subjectParams', json_encode($params))
 			;
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}
@@ -385,7 +385,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->andWhere($query->expr()->eq('amq_type', $query->createNamedParameter('spreed')));
 
 		try {
-			$result = $query->execute();
+			$result = $query->executeQuery();
 		} catch (TableNotFoundException $e) {
 			return;
 		} catch (InvalidFieldNameException $e) {
@@ -399,7 +399,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				$delete
 					->setParameter('id', (int) $row['mail_id'])
 				;
-				$delete->execute();
+				$delete->executeStatement();
 				continue;
 			}
 
@@ -409,7 +409,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('id', (int) $row['mail_id'])
 				->setParameter('subjectParams', json_encode($params))
 			;
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}

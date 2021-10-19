@@ -204,7 +204,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			->andWhere($query->expr()->isNotNull('user_id'));
 
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$lastJoinedCall = 0;
 			if (!empty($row['last_joined_call'])) {
@@ -224,7 +224,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				;
 
 			try {
-				$insert->execute();
+				$insert->executeStatement();
 			} catch (\Exception $e) {
 				if (class_exists(UniqueConstraintViolationException::class)
 					&& $e instanceof UniqueConstraintViolationException) {

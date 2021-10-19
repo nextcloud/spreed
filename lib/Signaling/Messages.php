@@ -53,11 +53,11 @@ class Messages {
 	 * @param string[] $sessionIds
 	 */
 	public function deleteMessages(array $sessionIds): void {
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_internalsignaling')
-			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
-			->orWhere($query->expr()->in('sender', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
-		$query->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_internalsignaling')
+			->where($delete->expr()->in('recipient', $delete->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->orWhere($delete->expr()->in('sender', $delete->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$delete->executeStatement();
 	}
 
 	/**
@@ -66,17 +66,17 @@ class Messages {
 	 * @param string $message
 	 */
 	public function addMessage(string $senderSessionId, string $recipientSessionId, string $message): void {
-		$query = $this->db->getQueryBuilder();
-		$query->insert('talk_internalsignaling')
+		$insert = $this->db->getQueryBuilder();
+		$insert->insert('talk_internalsignaling')
 			->values(
 				[
-					'sender' => $query->createNamedParameter($senderSessionId),
-					'recipient' => $query->createNamedParameter($recipientSessionId),
-					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
-					'message' => $query->createNamedParameter($message),
+					'sender' => $insert->createNamedParameter($senderSessionId),
+					'recipient' => $insert->createNamedParameter($recipientSessionId),
+					'timestamp' => $insert->createNamedParameter($this->timeFactory->getTime()),
+					'message' => $insert->createNamedParameter($message),
 				]
 			);
-		$query->execute();
+		$insert->executeStatement();
 	}
 
 	/**
@@ -84,14 +84,14 @@ class Messages {
 	 * @param string $message
 	 */
 	public function addMessageForAllParticipants(Room $room, string $message): void {
-		$query = $this->db->getQueryBuilder();
-		$query->insert('talk_internalsignaling')
+		$insert = $this->db->getQueryBuilder();
+		$insert->insert('talk_internalsignaling')
 			->values(
 				[
-					'sender' => $query->createParameter('sender'),
-					'recipient' => $query->createParameter('recipient'),
-					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
-					'message' => $query->createNamedParameter($message),
+					'sender' => $insert->createParameter('sender'),
+					'recipient' => $insert->createParameter('recipient'),
+					'timestamp' => $insert->createNamedParameter($this->timeFactory->getTime()),
+					'message' => $insert->createNamedParameter($message),
 				]
 			);
 
@@ -99,9 +99,9 @@ class Messages {
 		foreach ($participants as $participant) {
 			$session = $participant->getSession();
 			if ($session instanceof Session) {
-				$query->setParameter('sender', $session->getSessionId())
+				$insert->setParameter('sender', $session->getSessionId())
 					->setParameter('recipient', $session->getSessionId())
-					->execute();
+					->executeStatement();
 			}
 		}
 	}
@@ -126,7 +126,7 @@ class Messages {
 			->from('talk_internalsignaling')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		while ($row = $result->fetch()) {
 			$messages[] = ['type' => 'message', 'data' => $row['message']];
@@ -137,7 +137,7 @@ class Messages {
 		$query->delete('talk_internalsignaling')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
-		$query->execute();
+		$query->executeQuery();
 
 		return $messages;
 	}
@@ -150,9 +150,9 @@ class Messages {
 	public function expireOlderThan(int $olderThan): void {
 		$time = $this->timeFactory->getTime() - $olderThan;
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_internalsignaling')
-			->where($query->expr()->lt('timestamp', $query->createNamedParameter($time)));
-		$query->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_internalsignaling')
+			->where($delete->expr()->lt('timestamp', $delete->createNamedParameter($time)));
+		$delete->executeStatement();
 	}
 }

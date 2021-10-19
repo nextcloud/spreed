@@ -82,12 +82,12 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 			->where($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
 			->groupBy('object_id');
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$lastActivity = new \DateTime($row['last_activity']);
 			$update->setParameter('activity', $lastActivity, IQueryBuilder::PARAM_DATE)
 				->setParameter('room', $row['object_id']);
-			$update->execute();
+			$update->executeStatement();
 		}
 		$result->closeCursor();
 	}

@@ -57,7 +57,7 @@ class ActiveCalls extends Base {
 			->from('talk_rooms')
 			->where($query->expr()->isNotNull('active_since'));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$numCalls = (int) $result->fetchColumn();
 		$result->closeCursor();
 
@@ -72,7 +72,7 @@ class ActiveCalls extends Base {
 			->where($query->expr()->gt('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)))
 			->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$numParticipants = (int) $result->fetchColumn();
 		$result->closeCursor();
 

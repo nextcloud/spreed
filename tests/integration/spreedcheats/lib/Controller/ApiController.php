@@ -50,25 +50,25 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function resetSpreed(): DataResponse {
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_internalsignaling')->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_internalsignaling')->executeStatement();
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_rooms')->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_rooms')->executeStatement();
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_attendees')->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_attendees')->executeStatement();
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_sessions')->execute();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_sessions')->executeStatement();
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('share')
-			->where($query->expr()->orX(
-				$query->expr()->eq('share_type', $query->createNamedParameter(IShare::TYPE_ROOM)),
-				$query->expr()->eq('share_type', $query->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('share')
+			->where($delete->expr()->orX(
+				$delete->expr()->eq('share_type', $delete->createNamedParameter(IShare::TYPE_ROOM)),
+				$delete->expr()->eq('share_type', $delete->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
 			))
-			->execute();
+			->executeStatement();
 
 		return new DataResponse();
 	}
