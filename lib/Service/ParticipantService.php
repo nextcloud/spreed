@@ -249,7 +249,7 @@ class ParticipantService {
 			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
 
 			// User joining a group or public call through listing
-			if (($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) &&
+			if (($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC) &&
 				$manager->isRoomListableByUser($room, $user->getUID())
 			) {
 				$this->addUsers($room, [[
@@ -259,7 +259,7 @@ class ParticipantService {
 					// need to use "USER" here, because "USER_SELF_JOINED" only works for public calls
 					'participantType' => Participant::USER,
 				]], $user);
-			} elseif ($room->getType() === Room::PUBLIC_CALL) {
+			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
 				// User joining a public room, without being invited
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
@@ -638,7 +638,7 @@ class ParticipantService {
 	}
 
 	public function ensureOneToOneRoomIsFilled(Room $room): void {
-		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			return;
 		}
 

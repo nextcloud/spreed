@@ -61,7 +61,7 @@ class RoomTest extends TestCase {
 			$this->createMock(ITimeFactory::class),
 			$this->createMock(IHasher::class),
 			1,
-			Room::PUBLIC_CALL,
+			Room::TYPE_PUBLIC,
 			Room::READ_WRITE,
 			Room::LISTABLE_NONE,
 			Webinary::LOBBY_NONE,

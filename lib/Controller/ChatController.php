@@ -566,7 +566,7 @@ class ChatController extends AEnvironmentAwareController {
 		$isOwnMessage = $isOwnMessage || ($message->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
 		if (!$isOwnMessage
 			&& (!$this->participant->hasModeratorPermissions(false)
-				|| $this->room->getType() === Room::ONE_TO_ONE_CALL)) {
+				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE)) {
 			// Actor is not a moderator or not the owner of the message
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -620,7 +620,7 @@ class ChatController extends AEnvironmentAwareController {
 	public function clearHistory(): DataResponse {
 		$attendee = $this->participant->getAttendee();
 		if (!$this->participant->hasModeratorPermissions(false)
-				|| $this->room->getType() === Room::ONE_TO_ONE_CALL) {
+				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Actor is not a moderator or not the owner of the message
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}

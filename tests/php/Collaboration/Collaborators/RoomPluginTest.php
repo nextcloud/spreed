@@ -105,34 +105,34 @@ class RoomPluginTest extends \Test\TestCase {
 
 			// Empty search term with rooms
 			['', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name')
 			], [], [], false],
 
 			// Search term with no matches
 			['Unmatched search term', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Unmatched name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Unmatched name')
 			], [], [], false],
 
 			// Search term with single wide match
 			['room', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Unmatched name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Unmatched name')
 			], [], [
 				$this->newResult('Room name', 'roomToken')
 			], false],
 
 			// Search term with single exact match
 			['room name', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Unmatched name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Unmatched name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Room name')
 			], [
 				$this->newResult('Room name', 'roomToken2')
 			], [], false],
 
 			// Search term with single exact match and single wide match
 			['room name', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name that also matches'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name that also matches'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Room name')
 			], [
 				$this->newResult('Room name', 'roomToken2')
 			], [
@@ -143,8 +143,8 @@ class RoomPluginTest extends \Test\TestCase {
 			// as one-to-one rooms do not have a name, but it would be if they
 			// had, so it is included here for completeness).
 			['room name', 2, 0, [
-				$this->newRoom(Room::ONE_TO_ONE_CALL, 'roomToken', 'Room name that also matches'),
-				$this->newRoom(Room::ONE_TO_ONE_CALL, 'roomToken2', 'Room name')
+				$this->newRoom(Room::TYPE_ONE_TO_ONE, 'roomToken', 'Room name that also matches'),
+				$this->newRoom(Room::TYPE_ONE_TO_ONE, 'roomToken2', 'Room name')
 			], [
 				$this->newResult('Room name', 'roomToken2')
 			], [
@@ -153,8 +153,8 @@ class RoomPluginTest extends \Test\TestCase {
 
 			// Search term matching public rooms
 			['room name', 2, 0, [
-				$this->newRoom(Room::PUBLIC_CALL, 'roomToken', 'Room name that also matches'),
-				$this->newRoom(Room::PUBLIC_CALL, 'roomToken2', 'Room name')
+				$this->newRoom(Room::TYPE_PUBLIC, 'roomToken', 'Room name that also matches'),
+				$this->newRoom(Room::TYPE_PUBLIC, 'roomToken2', 'Room name')
 			], [
 				$this->newResult('Room name', 'roomToken2')
 			], [
@@ -163,10 +163,10 @@ class RoomPluginTest extends \Test\TestCase {
 
 			// Search term with several wide matches
 			['room', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Another room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken3', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken4', 'Another room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Another room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken3', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken4', 'Another room name')
 			], [], [
 				$this->newResult('Room name', 'roomToken'),
 				$this->newResult('Another room name', 'roomToken2'),
@@ -176,10 +176,10 @@ class RoomPluginTest extends \Test\TestCase {
 
 			// Search term with several exact matches
 			['room name', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken3', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken4', 'Room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken3', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken4', 'Room name')
 			], [
 				$this->newResult('Room name', 'roomToken'),
 				$this->newResult('Room name', 'roomToken2'),
@@ -189,17 +189,17 @@ class RoomPluginTest extends \Test\TestCase {
 
 			// Search term with several matches
 			['room name', 2, 0, [
-				$this->newRoom(Room::GROUP_CALL, 'roomToken', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken2', 'Unmatched name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken3', 'Another room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken4', 'Room name'),
-				$this->newRoom(Room::ONE_TO_ONE_CALL, 'roomToken5', 'Room name'),
-				$this->newRoom(Room::PUBLIC_CALL, 'roomToken6', 'Room name'),
-				$this->newRoom(Room::GROUP_CALL, 'roomToken7', 'Another unmatched name'),
-				$this->newRoom(Room::ONE_TO_ONE_CALL, 'roomToken8', 'Another unmatched name'),
-				$this->newRoom(Room::PUBLIC_CALL, 'roomToken9', 'Another unmatched name'),
-				$this->newRoom(Room::ONE_TO_ONE_CALL, 'roomToken10', 'Another room name'),
-				$this->newRoom(Room::PUBLIC_CALL, 'roomToken11', 'Another room name')
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken2', 'Unmatched name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken3', 'Another room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken4', 'Room name'),
+				$this->newRoom(Room::TYPE_ONE_TO_ONE, 'roomToken5', 'Room name'),
+				$this->newRoom(Room::TYPE_PUBLIC, 'roomToken6', 'Room name'),
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken7', 'Another unmatched name'),
+				$this->newRoom(Room::TYPE_ONE_TO_ONE, 'roomToken8', 'Another unmatched name'),
+				$this->newRoom(Room::TYPE_PUBLIC, 'roomToken9', 'Another unmatched name'),
+				$this->newRoom(Room::TYPE_ONE_TO_ONE, 'roomToken10', 'Another room name'),
+				$this->newRoom(Room::TYPE_PUBLIC, 'roomToken11', 'Another room name')
 			], [
 				$this->newResult('Room name', 'roomToken'),
 				$this->newResult('Room name', 'roomToken4'),

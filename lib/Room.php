@@ -313,7 +313,7 @@ class Room {
 	}
 
 	public function getName(): string {
-		if ($this->type === self::ONE_TO_ONE_CALL) {
+		if ($this->type === self::TYPE_ONE_TO_ONE) {
 			if ($this->name === '') {
 				// TODO use DI
 				$participantService = \OC::$server->get(ParticipantService::class);
@@ -670,7 +670,7 @@ class Room {
 	}
 
 	/**
-	 * @param string $newName Currently it is only allowed to rename: self::GROUP_CALL, self::PUBLIC_CALL
+	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
 	 * @param string|null $oldName
 	 * @return bool True when the change was valid, false otherwise
 	 */
@@ -728,11 +728,11 @@ class Room {
 	}
 
 	/**
-	 * @param string $password Currently it is only allowed to have a password for Room::PUBLIC_CALL
+	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setPassword(string $password): bool {
-		if ($this->getType() !== self::PUBLIC_CALL) {
+		if ($this->getType() !== self::TYPE_PUBLIC) {
 			return false;
 		}
 
@@ -776,7 +776,7 @@ class Room {
 	 * @return bool
 	 */
 	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): bool {
-		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
+		if ($isGuest && $this->getType() === self::TYPE_PUBLIC) {
 			$query = $this->db->getQueryBuilder();
 			$query->update('talk_rooms')
 				->set('active_guests', $query->createFunction($query->getColumnName('active_guests') . ' + 1'))
@@ -856,7 +856,7 @@ class Room {
 	}
 
 	/**
-	 * @param int $newType Currently it is only allowed to change between `self::GROUP_CALL` and `self::PUBLIC_CALL`
+	 * @param int $newType Currently it is only allowed to change between `self::TYPE_GROUP` and `self::TYPE_PUBLIC`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setType(int $newType, bool $allowSwitchingOneToOne = false): bool {
@@ -864,11 +864,11 @@ class Room {
 			return true;
 		}
 
-		if (!$allowSwitchingOneToOne && $this->getType() === self::ONE_TO_ONE_CALL) {
+		if (!$allowSwitchingOneToOne && $this->getType() === self::TYPE_ONE_TO_ONE) {
 			return false;
 		}
 
-		if (!in_array($newType, [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+		if (!in_array($newType, [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
 			return false;
 		}
 
@@ -885,7 +885,7 @@ class Room {
 
 		$this->type = $newType;
 
-		if ($oldType === self::PUBLIC_CALL) {
+		if ($oldType === self::TYPE_PUBLIC) {
 			// Kick all guests and users that were not invited
 			$query = $this->db->getQueryBuilder();
 			$query->delete('talk_attendees')
@@ -903,7 +903,7 @@ class Room {
 	 * @param int $newState Currently it is only allowed to change between
 	 * 						`self::READ_ONLY` and `self::READ_WRITE`
 	 * 						Also it's only allowed on rooms of type
-	 * 						`self::GROUP_CALL` and `self::PUBLIC_CALL`
+	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setReadOnly(int $newState): bool {
@@ -912,7 +912,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL, self::CHANGELOG_CONVERSATION], true)) {
+		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC, self::TYPE_CHANGELOG], true)) {
 			return false;
 		}
 
@@ -939,7 +939,7 @@ class Room {
 	/**
 	 * @param int $newState New listable scope from self::LISTABLE_*
 	 * 						Also it's only allowed on rooms of type
-	 * 						`self::GROUP_CALL` and `self::PUBLIC_CALL`
+	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setListable(int $newState): bool {
@@ -948,7 +948,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
 			return false;
 		}
 
@@ -988,7 +988,7 @@ class Room {
 	public function setLobby(int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
 		$oldState = $this->lobbyState;
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
 			return false;
 		}
 
@@ -1024,7 +1024,7 @@ class Room {
 			return false;
 		}
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
 			return false;
 		}
 

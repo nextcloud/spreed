@@ -129,7 +129,7 @@ class RoomServiceTest extends TestCase {
 
 		$this->manager->expects($this->once())
 			->method('createRoom')
-			->with(Room::ONE_TO_ONE_CALL)
+			->with(Room::TYPE_ONE_TO_ONE)
 			->willReturn($room);
 
 		$this->assertSame($room, $this->service->createOneToOneConversation($user1, $user2));
@@ -153,13 +153,13 @@ class RoomServiceTest extends TestCase {
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('name');
-		$this->service->createConversation(Room::GROUP_CALL, $name);
+		$this->service->createConversation(Room::TYPE_GROUP, $name);
 	}
 
 	public function dataCreateConversationInvalidTypes(): array {
 		return [
-			[Room::ONE_TO_ONE_CALL],
-			[Room::UNKNOWN_CALL],
+			[Room::TYPE_ONE_TO_ONE],
+			[Room::TYPE_UNKNOWN],
 			[5],
 		];
 	}
@@ -198,14 +198,14 @@ class RoomServiceTest extends TestCase {
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($exception);
-		$this->service->createConversation(Room::PUBLIC_CALL, 'a', null, $type, $id);
+		$this->service->createConversation(Room::TYPE_PUBLIC, 'a', null, $type, $id);
 	}
 
 	public function dataCreateConversation(): array {
 		return [
-			[Room::GROUP_CALL, 'Group conversation', 'admin', '', ''],
-			[Room::PUBLIC_CALL, 'Public conversation', '', 'files', '123456'],
-			[Room::CHANGELOG_CONVERSATION, 'Talk updates ✅', 'test1', 'changelog', 'conversation'],
+			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', ''],
+			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456'],
+			[Room::TYPE_CHANGELOG, 'Talk updates ✅', 'test1', 'changelog', 'conversation'],
 		];
 	}
 

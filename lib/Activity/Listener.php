@@ -124,7 +124,7 @@ class Listener {
 
 		$message = 'call_ended';
 		if ((\count($userIds) + $numGuests) === 1) {
-			if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+			if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 				// Single user pinged or guests only => no summary/activity
 				$room->resetActiveSince();
 				return false;

@@ -71,7 +71,7 @@ class Add extends Base {
 			return 1;
 		}
 
-		if (!in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			$output->writeln('<error>Room is no group call.</error>');
 			return 1;
 		}

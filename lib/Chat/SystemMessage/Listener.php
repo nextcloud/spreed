@@ -159,15 +159,15 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 
-			if ($event->getOldValue() === Room::ONE_TO_ONE_CALL) {
+			if ($event->getOldValue() === Room::TYPE_ONE_TO_ONE) {
 				return;
 			}
 
-			if ($event->getNewValue() === Room::PUBLIC_CALL) {
+			if ($event->getNewValue() === Room::TYPE_PUBLIC) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guests_allowed');
-			} elseif ($event->getNewValue() === Room::GROUP_CALL) {
+			} elseif ($event->getNewValue() === Room::TYPE_GROUP) {
 				/** @var self $listener */
 				$listener = \OC::$server->query(self::class);
 				$listener->sendSystemMessage($room, 'guests_disallowed');
@@ -176,7 +176,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 
-			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			if ($room->getType() === Room::TYPE_CHANGELOG) {
 				return;
 			}
 
@@ -224,7 +224,7 @@ class Listener implements IEventListener {
 
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, static function (AddParticipantsEvent $event) {
 			$room = $event->getRoom();
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				return;
 			}
 
@@ -260,7 +260,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, static function (RemoveUserEvent $event) {
 			$room = $event->getRoom();
 
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				return;
 			}
 

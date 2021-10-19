@@ -222,7 +222,7 @@ class RoomController extends AEnvironmentAwareController {
 			&& $includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(function (Room $room) {
-				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 					$participants = json_decode($room->getName(), true);
 					foreach ($participants as $participant) {
 						if ($participant !== $this->userId) {
@@ -507,7 +507,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
-			} elseif ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
 				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
@@ -556,20 +556,20 @@ class RoomController extends AEnvironmentAwareController {
 				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
-				$roomData['canDeleteConversation'] = $room->getType() !== Room::ONE_TO_ONE_CALL
+				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = true;
 				$roomData['canEnableSIP'] =
 					$this->talkConfig->isSIPConfigured()
 					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
-					&& ($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL)
+					&& ($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC)
 					&& $currentParticipant->hasModeratorPermissions(false)
 					&& $this->talkConfig->canUserEnableSIP($currentUser);
 			}
 		}
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$participants = json_decode($room->getName(), true);
 			foreach ($participants as $participant) {
 				if ($participant !== $attendee->getActorId()) {
@@ -629,7 +629,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
-		if ($roomType !== Room::ONE_TO_ONE_CALL) {
+		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
 
@@ -639,9 +639,9 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		switch ($roomType) {
-			case Room::ONE_TO_ONE_CALL:
+			case Room::TYPE_ONE_TO_ONE:
 				return $this->createOneToOneRoom($invite);
-			case Room::GROUP_CALL:
+			case Room::TYPE_GROUP:
 				if ($invite === '') {
 					return $this->createEmptyRoom($roomName, false);
 				}
@@ -649,7 +649,7 @@ class RoomController extends AEnvironmentAwareController {
 					return $this->createCircleRoom($invite);
 				}
 				return $this->createGroupRoom($invite);
-			case Room::PUBLIC_CALL:
+			case Room::TYPE_PUBLIC:
 				return $this->createEmptyRoom($roomName);
 		}
 
@@ -726,7 +726,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		// Create the room
 		$name = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
-		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
+		$room = $this->roomService->createConversation(Room::TYPE_GROUP, $name, $currentUser);
 		$this->participantService->addGroup($room, $targetGroup);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
@@ -758,7 +758,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		// Create the room
 		$name = $this->roomService->prepareConversationName($circle->getName());
-		$room = $this->roomService->createConversation(Room::GROUP_CALL, $name, $currentUser);
+		$room = $this->roomService->createConversation(Room::TYPE_GROUP, $name, $currentUser);
 		$this->participantService->addCircle($room, $circle);
 
 		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID(), false)), Http::STATUS_CREATED);
@@ -777,7 +777,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$roomType = $public ? Room::PUBLIC_CALL : Room::GROUP_CALL;
+		$roomType = $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP;
 
 		// Create the room
 		try {
@@ -836,7 +836,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function renameRoom(string $roomName): DataResponse {
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -858,7 +858,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setDescription(string $description): DataResponse {
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -878,7 +878,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function deleteRoom(): DataResponse {
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1033,7 +1033,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL || $this->room->getObjectType() === 'share:password') {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getObjectType() === 'share:password') {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1088,7 +1088,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			$data = [];
-			if ($this->room->setType(Room::PUBLIC_CALL)) {
+			if ($this->room->setType(Room::TYPE_PUBLIC)) {
 				$data = ['type' => $this->room->getType()];
 			}
 
@@ -1153,7 +1153,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
-		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1
 				&& $this->participantService->getNumberOfModerators($room) === 1) {
@@ -1161,7 +1161,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
+		if ($room->getType() !== Room::TYPE_CHANGELOG &&
 			$room->getObjectType() !== 'file' &&
 			$this->participantService->getNumberOfUsers($room) === 1 &&
 			\in_array($participant->getAttendee()->getParticipantType(), [
@@ -1202,7 +1202,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1225,7 +1225,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePublic(): DataResponse {
-		if (!$this->room->setType(Room::PUBLIC_CALL)) {
+		if (!$this->room->setType(Room::TYPE_PUBLIC)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1239,7 +1239,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePrivate(): DataResponse {
-		if (!$this->room->setType(Room::GROUP_CALL)) {
+		if (!$this->room->setType(Room::TYPE_GROUP)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1293,7 +1293,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setPassword(string $password): DataResponse {
-		if ($this->room->getType() !== Room::PUBLIC_CALL) {
+		if ($this->room->getType() !== Room::TYPE_PUBLIC) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 

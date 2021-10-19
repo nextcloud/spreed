@@ -205,7 +205,7 @@ class PageController extends Controller {
 				}
 
 				// If the room is not a public room, check if the user is in the participants
-				if ($room->getType() !== Room::PUBLIC_CALL) {
+				if ($room->getType() !== Room::TYPE_PUBLIC) {
 					$this->manager->getRoomForUser($room->getId(), $this->userId);
 				}
 			} catch (RoomNotFoundException $e) {
@@ -243,7 +243,7 @@ class PageController extends Controller {
 				}
 			}
 		} else {
-			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
+			$response = $this->api->createRoom(Room::TYPE_ONE_TO_ONE, $callUser);
 			if ($response->getStatus() === Http::STATUS_OK
 				|| $response->getStatus() === Http::STATUS_CREATED) {
 				$data = $response->getData();
@@ -284,7 +284,7 @@ class PageController extends Controller {
 	protected function guestEnterRoom(string $token, string $password): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
-			if ($room->getType() !== Room::PUBLIC_CALL) {
+			if ($room->getType() !== Room::TYPE_PUBLIC) {
 				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException $e) {
@@ -348,7 +348,7 @@ class PageController extends Controller {
 		if ($this->userId === null) {
 			try {
 				$room = $this->manager->getRoomByToken($token);
-				if ($room->getType() !== Room::PUBLIC_CALL) {
+				if ($room->getType() !== Room::TYPE_PUBLIC) {
 					throw new RoomNotFoundException();
 				}
 				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]));
