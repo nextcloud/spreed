@@ -133,11 +133,11 @@ class Messages {
 		}
 		$result->closeCursor();
 
-		$query = $this->db->getQueryBuilder();
-		$query->delete('talk_internalsignaling')
-			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
-			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
-		$query->executeQuery();
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_internalsignaling')
+			->where($delete->expr()->eq('recipient', $delete->createNamedParameter($sessionId)))
+			->andWhere($delete->expr()->lte('timestamp', $delete->createNamedParameter($time)));
+		$delete->executeStatement();
 
 		return $messages;
 	}
