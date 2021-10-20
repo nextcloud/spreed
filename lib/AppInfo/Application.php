@@ -74,6 +74,7 @@ use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
+use OCA\Talk\Status\Listener as StatusListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -161,6 +162,7 @@ class Application extends App implements IBootstrap {
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
 		ShareListener::register($dispatcher);
+		StatusListener::register($dispatcher);
 
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
