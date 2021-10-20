@@ -39,11 +39,11 @@ use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
+use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
-use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
@@ -61,6 +61,7 @@ use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
+use OCA\Talk\Profile\TalkAction;
 use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
@@ -130,6 +131,8 @@ class Application extends App implements IBootstrap {
 		$context->registerSearchProvider(MessageSearch::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
+
+		$context->registerProfileAction(TalkAction::class);
 	}
 
 	public function boot(IBootContext $context): void {
