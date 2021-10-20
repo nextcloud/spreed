@@ -261,6 +261,10 @@ export default {
 				BrowserStorage.setItem('showDeviceChecker' + this.token, 'false')
 			}
 		},
+
+		blurOn() {
+			this.virtualBackground.setEnabled(this.blurOn)
+		},
 	},
 
 	mounted() {
