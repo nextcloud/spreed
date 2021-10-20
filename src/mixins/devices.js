@@ -20,6 +20,8 @@
  *
  */
 
+import TrackToStream from '../utils/media/pipeline/TrackToStream'
+import VirtualBackground from '../utils/media/pipeline/VirtualBackground'
 import { mediaDevicesManager } from '../utils/webrtc/index'
 import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
@@ -39,6 +41,8 @@ export const devices = {
 			initialized: false,
 			currentVolume: -100,
 			volumeThreshold: -100,
+			virtualBackground: null,
+			videoTrackToStream: null,
 		}
 	},
 
@@ -209,15 +213,19 @@ export const devices = {
 			}
 
 			if (!videoStream) {
+				this.virtualBackground._setInputTrack('default', null)
+
 				return
 			}
+
+			this.virtualBackground._setInputTrack('default', this.videoStream.getVideoTracks()[0])
 
 			const options = {
 				autoplay: true,
 				mirror: true,
 				muted: true,
 			}
-			attachMediaStream(videoStream, this.$refs.video, options)
+			attachMediaStream(this.videoTrackToStream.getStream(), this.$refs.video, options)
 		},
 
 		stopAudioStream() {
@@ -239,6 +247,8 @@ export const devices = {
 		},
 
 		stopVideoStream() {
+			this.virtualBackground._setInputTrack('default', null)
+
 			if (!this.videoStream) {
 				return
 			}
@@ -256,6 +266,16 @@ export const devices = {
 	},
 
 	mounted() {
+		this.virtualBackground = new VirtualBackground()
+		// The virtual background should be enabled and disabled as needed by
+		// the inheriters of the mixin.
+		this.virtualBackground.setEnabled(false)
+
+		this.videoTrackToStream = new TrackToStream()
+		this.videoTrackToStream.addInputTrackSlot('video')
+
+		this.virtualBackground.connectTrackSink('default', this.videoTrackToStream, 'video')
+
 		if (this.initializeOnMounted) {
 			this.initializeDevicesMixin()
 		}
