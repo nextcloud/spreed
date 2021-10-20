@@ -28,10 +28,10 @@ namespace OCA\Talk\Profile;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\L10N\IFactory;
 use OCP\Profile\ILinkAction;
 
 class TalkAction implements ILinkAction {
@@ -42,8 +42,8 @@ class TalkAction implements ILinkAction {
 	/** @var Config */
 	private $config;
 
-	/** @var IFactory */
-	private $l10nFactory;
+	/** @var IL10N */
+	private $l;
 
 	/** @var IUrlGenerator */
 	private $urlGenerator;
@@ -53,18 +53,18 @@ class TalkAction implements ILinkAction {
 
 	public function __construct(
 		Config $config,
-		IFactory $l10nFactory,
+		IL10N $l,
 		IURLGenerator $urlGenerator,
 		IUserSession $userSession
 	) {
 		$this->config = $config;
-		$this->l10nFactory = $l10nFactory;
+		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;
 		$this->userSession = $userSession;
 	}
 
-	public function preload(IUser $user): void {
-		$this->targetUser = $user;
+	public function preload(IUser $targetUser): void {
+		$this->targetUser = $targetUser;
 	}
 
 	public function getAppId(): string {
@@ -76,15 +76,15 @@ class TalkAction implements ILinkAction {
 	}
 
 	public function getDisplayId(): string {
-		return $this->l10nFactory->get(Application::APP_ID)->t('Talk');
+		return $this->l->t('Talk');
 	}
 
 	public function getTitle(): string {
 		$visitingUser = $this->userSession->getUser();
 		if (!$visitingUser || $visitingUser === $this->targetUser) {
-			return $this->l10nFactory->get(Application::APP_ID)->t('Open Talk');
+			return $this->l->t('Open Talk');
 		}
-		return $this->l10nFactory->get(Application::APP_ID)->t('Talk to %s', [$this->targetUser->getDisplayName()]);
+		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
 	}
 
 	public function getPriority(): int {
@@ -98,8 +98,8 @@ class TalkAction implements ILinkAction {
 	public function getTarget(): ?string {
 		$visitingUser = $this->userSession->getUser();
 		if (
-			$this->config->isDisabledForUser($this->targetUser)
-			|| !$visitingUser
+			!$visitingUser
+			|| $this->config->isDisabledForUser($this->targetUser)
 			|| $this->config->isDisabledForUser($visitingUser)
 		) {
 			return null;
