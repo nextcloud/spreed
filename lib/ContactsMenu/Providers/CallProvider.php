@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\ContactsMenu\Providers;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCP\Contacts\ContactsMenu\IActionFactory;
 use OCP\Contacts\ContactsMenu\IEntry;
@@ -86,7 +87,7 @@ class CallProvider implements IProvider {
 		$talkAction = $this->l10n->t('Talk to %s', [$user->getDisplayName()]);
 		$iconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
 		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $user->getUID();
-		$action = $this->actionFactory->newLinkAction($iconUrl, $talkAction, $callUrl);
+		$action = $this->actionFactory->newLinkAction($iconUrl, $talkAction, $callUrl, Application::APP_ID);
 		$entry->addAction($action);
 	}
 }
