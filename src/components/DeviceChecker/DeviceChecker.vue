@@ -213,6 +213,9 @@ export default {
 	watch: {
 		modal(newValue) {
 			if (newValue) {
+				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
+				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
+
 				this.initializeDevicesMixin()
 			} else {
 				this.stopDevicesMixin()
@@ -231,8 +234,6 @@ export default {
 	mounted() {
 		subscribe('talk:device-checker:show', this.showModal)
 		subscribe('talk:device-checker:hide', this.closeModal)
-		this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
-		this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
 	},
 
 	beforeDestroy() {
