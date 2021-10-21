@@ -160,7 +160,7 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initTurnServers(): void {
-		$this->initialState->provideInitialState('turn_servers', $this->talkConfig->getTurnServers());
+		$this->initialState->provideInitialState('turn_servers', $this->talkConfig->getTurnServers(false));
 	}
 
 	protected function initSignalingServers(): void {

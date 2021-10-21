@@ -116,7 +116,8 @@ class SignalingControllerTest extends \Test\TestCase {
 		]));
 		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
-		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory);
+		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
@@ -127,7 +128,6 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
-		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->recreateSignalingController();
 	}
