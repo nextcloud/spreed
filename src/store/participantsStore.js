@@ -43,7 +43,12 @@ import { EventBus } from '../services/EventBus'
 import { showError } from '@nextcloud/dialogs'
 
 const state = {
+	/**
+	 * @deprecated use attendees instead
+	 */
 	participants: {
+	},
+	attendees: {
 	},
 	peers: {
 	},
@@ -75,9 +80,32 @@ const getters = {
 		return []
 	},
 
+	/**
+	 * @param {*} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {number} index - the index of the participant in the participants array
+	 * @return {object} - The participant object.
+	 * @deprecated use "getAttendee" getter instead
+	 */
 	getParticipant: (state) => (token, index) => {
 		if (state.participants[token] && state.participants[token][index]) {
 			return state.participants[token][index]
+		}
+		return {}
+	},
+
+	/**
+	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
+	 * pass in the token and attendeeId as arguments to get the participant object.
+	 *
+	 * @param {*} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {number} attendeeId - Unique identifier for a participant in a conversation.
+	 * @return {object} - The participant object.
+	 */
+	getAttendee: (state) => (token, attendeeId) => {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			return state.attendees[token][attendeeId]
 		}
 		return {}
 	},
@@ -132,6 +160,11 @@ const mutations = {
 			Vue.set(state.participants, token, [])
 		}
 		state.participants[token].push(participant)
+
+		if (!state.attendees[token]) {
+			Vue.set(state.attendees, token, {})
+		}
+		Vue.set(state.attendees[token], participant.attendeeId, participant)
 	},
 
 	updateParticipant(state, { token, index, updatedData }) {
