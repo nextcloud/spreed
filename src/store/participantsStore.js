@@ -43,7 +43,9 @@ import { EventBus } from '../services/EventBus'
 import { showError } from '@nextcloud/dialogs'
 
 const state = {
-	// Deprecated, use attendees instead
+	/**
+	 * @deprecated use attendees instead
+	 */
 	participants: {
 	},
 	attendees: {
@@ -78,7 +80,13 @@ const getters = {
 		return []
 	},
 
-	// Deprecated, use "participant" getter instead
+	/**
+	 * @param {*} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {number} index - the index of the participant in the participants array
+	 * @return {object} - The participant object.
+	 * @deprecated use "getAttendee" getter instead
+	 */
 	getParticipant: (state) => (token, index) => {
 		if (state.participants[token] && state.participants[token][index]) {
 			return state.participants[token][index]
@@ -95,7 +103,7 @@ const getters = {
 	 * param {number} attendeeId - Unique identifier for a participant in a conversation.
 	 * @return {object} - The participant object.
 	 */
-	participant: (state) => (token, attendeeId) => {
+	getAttendee: (state) => (token, attendeeId) => {
 		if (state.attendees[token] && state.attendees[token][attendeeId]) {
 			return state.attendees[token][attendeeId]
 		}
