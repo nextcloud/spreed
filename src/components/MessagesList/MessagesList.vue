@@ -217,8 +217,7 @@ export default {
 				return false
 			}
 
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			return participantIndex !== -1
+			return !!this.$store.getters.findParticipant(this.token, this.$store.getters.getParticipantIdentifier())
 		},
 
 		conversation() {

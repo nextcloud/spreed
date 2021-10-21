@@ -32,6 +32,7 @@ import { PARTICIPANT } from '../constants'
 const state = {
 	userId: null,
 	sessionId: null,
+	attendeeId: null,
 	actorId: null,
 	actorType: null,
 	displayName: '',
@@ -44,6 +45,9 @@ const getters = {
 	getSessionId: (state) => () => {
 		return state.sessionId
 	},
+	getAttendeeId: (state) => () => {
+		return state.attendeeId
+	},
 	getActorId: (state) => () => {
 		return state.actorId
 	},
@@ -55,6 +59,7 @@ const getters = {
 	},
 	getParticipantIdentifier: (state) => () => {
 		return {
+			attendeeId: state.attendeeId,
 			actorType: state.actorType,
 			actorId: state.actorId,
 			sessionId: state.sessionId,
@@ -72,6 +77,15 @@ const mutations = {
 	setUserId(state, userId) {
 		state.userId = userId
 		state.actorId = userId
+	},
+	/**
+	 * Set the attendeeId
+	 *
+	 * @param {object} state current store state;
+	 * @param {string} attendeeId The actors attendee id
+	 */
+	setAttendeeId(state, attendeeId) {
+		state.attendeeId = attendeeId
 	},
 	/**
 	 * Set the sessionId
@@ -133,12 +147,14 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} participant The participant data
+	 * @param {number} participant.attendeeId The attendee id of the participant
 	 * @param {number} participant.participantType The type of the participant
 	 * @param {string} participant.sessionId The session id of the participant
 	 * @param {string} participant.actorId The actor id of the participant
 	 */
 	setCurrentParticipant(context, participant) {
 		context.commit('setSessionId', participant.sessionId)
+		context.commit('setAttendeeId', participant.attendeeId)
 
 		if (participant.participantType === PARTICIPANT.TYPE.GUEST
 			|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
