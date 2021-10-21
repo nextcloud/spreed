@@ -955,7 +955,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Einladung wurde an {actorId} versendet.",
     "Could not send invitation to {actorId}" : "Einladung konnte nicht an {actorId} versendet werden",
     "Permissions granted to {displayName}" : "Berechtigungen an {displayName} gewährt",
-    "Could not modify permissions for {displayName}" : "Für {displayName} konnten die Berechtigungen geändert werden",
+    "Could not modify permissions for {displayName}" : "Für {displayName} konnten die Berechtigungen nicht geändert werden",
     "Permissions removed for {displayName}" : "Berechtigungen für {displayName} entzogen",
     "Start a call" : "Einen Anruf starten",
     "Skip the lobby" : "Die Lobby überspringen",
