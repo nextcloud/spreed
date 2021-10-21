@@ -125,32 +125,59 @@ describe('participantsStore', () => {
 			])
 		})
 
-		test('gets participant index', () => {
+		test('find participant by attendee id', () => {
+			const attendee = { attendeeId: 1 }
 			store.dispatch('addParticipant', {
 				token: TOKEN,
-				participant: {
-					attendeeId: 1,
-				},
-			})
-			store.dispatch('addParticipant', {
-				token: TOKEN,
-				participant: {
-					attendeeId: 2,
-				},
+				participant: attendee,
 			})
 
-			expect(store.getters.getParticipantIndex(
+			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 1 },
-			)).toBe(0)
-			expect(store.getters.getParticipantIndex(
+			)).toBe(attendee)
+			expect(store.getters.findParticipant(
 				TOKEN,
-				{ attendeeId: 2 },
-			)).toBe(1)
-			expect(store.getters.getParticipantIndex(
+				{ attendeeId: 42 },
+			)).toBe(null)
+		})
+
+		test('find participant by actor', () => {
+			const attendee = { actorType: 'users', actorId: 'admin' }
+			store.dispatch('addParticipant', {
+				token: TOKEN,
+				participant: attendee,
+			})
+
+			expect(store.getters.findParticipant(
 				TOKEN,
-				{ attendeeId: 3 },
-			)).toBe(-1)
+				{ actorType: 'users', actorId: 'admin' },
+			)).toBe(attendee)
+			expect(store.getters.findParticipant(
+				TOKEN,
+				{ actorType: 'groups', actorId: 'admin' }, // Actor type mismatch
+			)).toBe(null)
+			expect(store.getters.findParticipant(
+				TOKEN,
+				{ actorType: 'users', actorId: 'test1' }, // Actor id mismatch
+			)).toBe(null)
+		})
+
+		test('find participant by session', () => {
+			const attendee = { sessionId: '1234567890' }
+			store.dispatch('addParticipant', {
+				token: TOKEN,
+				participant: attendee,
+			})
+
+			expect(store.getters.findParticipant(
+				TOKEN,
+				{ sessionId: '1234567890' },
+			)).toBe(attendee)
+			expect(store.getters.findParticipant(
+				TOKEN,
+				{ sessionId: 'abcdefghi' },
+			)).toBe(null)
 		})
 
 		test('updates participant data', () => {
@@ -688,19 +715,19 @@ describe('participantsStore', () => {
 		test('grants all permissions to a participant', async () => {
 			grantAllPermissionsToParticipant.mockResolvedValue()
 
-			await store.dispatch('grantAllPermissionsToParticipant', { token: TOKEN, attendeeId: 1 })
+			await store.dispatch('grantAllPermissionsToParticipant', { token: TOKEN, attendeeId: 1, permissions: PARTICIPANT.PERMISSIONS.CUSTOM })
 
 			expect(grantAllPermissionsToParticipant).toHaveBeenCalledWith(TOKEN, 1)
-			expect(store.getters.getParticipant(TOKEN, 0).permissions).toBe(PARTICIPANT.PERMISSIONS.MAX_CUSTOM)
+			expect(store.getters.getParticipant(TOKEN, 1).permissions).toBe(PARTICIPANT.PERMISSIONS.MAX_CUSTOM)
 		})
 
 		test('removes all permissions to a participant', async () => {
 			removeAllPermissionsFromParticipant.mockResolvedValue()
 
-			await store.dispatch('removeAllPermissionsFromParticipant', { token: TOKEN, attendeeId: PARTICIPANT.PERMISSIONS.CUSTOM })
+			await store.dispatch('removeAllPermissionsFromParticipant', { token: TOKEN, attendeeId: 1, permissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM })
 
 			expect(removeAllPermissionsFromParticipant).toHaveBeenCalledWith(TOKEN, 1)
-			expect(store.getters.getParticipant(TOKEN, 0).permissions).toBe(PARTICIPANT.PERMISSIONS.CUSTOM)
+			expect(store.getters.getParticipant(TOKEN, 1).permissions).toBe(PARTICIPANT.PERMISSIONS.CUSTOM)
 		})
 	})
 })

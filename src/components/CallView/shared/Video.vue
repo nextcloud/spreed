@@ -241,14 +241,9 @@ export default {
 			 * This only works for logged in users. Guests can not load the data
 			 * via the participant list
 			 */
-			const participantIndex = this.$store.getters.getParticipantIndex(this.$store.getters.getToken(), {
+			return this.$store.getters.findParticipant(this.$store.getters.getToken(), {
 				sessionId: this.peerId,
-			})
-			if (participantIndex === -1) {
-				return {}
-			}
-
-			return this.$store.getters.getParticipant(this.$store.getters.getToken(), participantIndex)
+			}) || {}
 		},
 
 		participantUserId() {

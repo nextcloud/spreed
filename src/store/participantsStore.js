@@ -43,11 +43,6 @@ import { EventBus } from '../services/EventBus'
 import { showError } from '@nextcloud/dialogs'
 
 const state = {
-	/**
-	 * @deprecated use attendees instead
-	 */
-	participants: {
-	},
 	attendees: {
 	},
 	peers: {
@@ -74,24 +69,10 @@ const getters = {
 	 * store).
 	 */
 	participantsList: (state) => (token) => {
-		if (state.participants[token]) {
-			return state.participants[token]
+		if (state.attendees[token]) {
+			return Object.values(state.attendees[token])
 		}
 		return []
-	},
-
-	/**
-	 * @param {*} state - the state object.
-	 * param {string} token - the conversation token.
-	 * param {number} index - the index of the participant in the participants array
-	 * @return {object} - The participant object.
-	 * @deprecated use "getAttendee" getter instead
-	 */
-	getParticipant: (state) => (token, index) => {
-		if (state.participants[token] && state.participants[token][index]) {
-			return state.participants[token][index]
-		}
-		return {}
 	},
 
 	/**
@@ -103,29 +84,51 @@ const getters = {
 	 * param {number} attendeeId - Unique identifier for a participant in a conversation.
 	 * @return {object} - The participant object.
 	 */
-	getAttendee: (state) => (token, attendeeId) => {
+	getParticipant: (state) => (token, attendeeId) => {
 		if (state.attendees[token] && state.attendees[token][attendeeId]) {
 			return state.attendees[token][attendeeId]
 		}
-		return {}
+		return null
 	},
 
-	getParticipantIndex: (state) => (token, participantIdentifier) => {
-		if (!state.participants[token]) {
-			return -1
+	/**
+	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
+	 * pass in the token and attendeeId as arguments to get the participant object.
+	 *
+	 * @param {*} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {number} attendeeId - Unique identifier for a participant in a conversation.
+	 * @return {object|null} - The participant object.
+	 */
+	findParticipant: (state) => (token, participantIdentifier) => {
+		if (!state.attendees[token]) {
+			return null
 		}
 
-		let index
-
-		if (Object.prototype.hasOwnProperty.call(participantIdentifier, 'attendeeId')) {
-			index = state.participants[token].findIndex(participant => participant.attendeeId === participantIdentifier.attendeeId)
-		} else if (Object.prototype.hasOwnProperty.call(participantIdentifier, 'actorId') && Object.prototype.hasOwnProperty.call(participantIdentifier, 'actorType')) {
-			index = state.participants[token].findIndex(participant => participant.actorId === participantIdentifier.actorId && participant.actorType === participantIdentifier.actorType)
-		} else {
-			index = state.participants[token].findIndex(participant => participant.sessionId === participantIdentifier.sessionId)
+		if (participantIdentifier.attendeeId) {
+			if (state.attendees[token][participantIdentifier.attendeeId]) {
+				return state.attendees[token][participantIdentifier.attendeeId]
+			}
+			return null
 		}
 
-		return index
+		let foundAttendee = null
+		Object.keys(state.attendees[token]).forEach((attendeeId) => {
+			if (participantIdentifier.actorType && participantIdentifier.actorId
+				&& state.attendees[token][attendeeId].actorType === participantIdentifier.actorType
+				&& state.attendees[token][attendeeId].actorId === participantIdentifier.actorId) {
+				foundAttendee = attendeeId
+			}
+			if (participantIdentifier.sessionId && state.attendees[token][attendeeId].sessionId === participantIdentifier.sessionId) {
+				foundAttendee = attendeeId
+			}
+		})
+
+		if (!foundAttendee) {
+			return null
+		}
+
+		return state.attendees[token][foundAttendee]
 	},
 	getPeer: (state) => (token, sessionId, userId) => {
 		if (state.peers[token]) {
@@ -135,10 +138,17 @@ const getters = {
 		}
 
 		// Fallback to the participant list, if we have a user id that should be easy
-		if (state.participants[token] && userId) {
-			const index = state.participants[token].findIndex(participant => participant.actorId === userId && participant.actorType === 'users')
-			if (index !== -1) {
-				return state.participants[token][index]
+		if (state.attendees[token] && userId) {
+			let foundAttendee = null
+			Object.keys(state.attendees[token]).forEach((attendeeId) => {
+				if (state.attendees[token][attendeeId].actorType === 'users'
+					&& state.attendees[token][attendeeId].actorId === userId) {
+					foundAttendee = attendeeId
+				}
+			})
+
+			if (foundAttendee) {
+				return state.attendees[token][foundAttendee]
 			}
 		}
 
@@ -156,28 +166,23 @@ const mutations = {
 	 * @param {object} data.participant - the participant.
 	 */
 	addParticipant(state, { token, participant }) {
-		if (!state.participants[token]) {
-			Vue.set(state.participants, token, [])
-		}
-		state.participants[token].push(participant)
-
 		if (!state.attendees[token]) {
 			Vue.set(state.attendees, token, {})
 		}
 		Vue.set(state.attendees[token], participant.attendeeId, participant)
 	},
 
-	updateParticipant(state, { token, index, updatedData }) {
-		if (state.participants[token] && state.participants[token][index]) {
-			state.participants[token][index] = Object.assign(state.participants[token][index], updatedData)
+	updateParticipant(state, { token, attendeeId, updatedData }) {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			state.attendees[token][attendeeId] = Object.assign(state.attendees[token][attendeeId], updatedData)
 		} else {
 			console.error('Error while updating the participant')
 		}
 	},
 
-	deleteParticipant(state, { token, index }) {
-		if (state.participants[token] && state.participants[token][index]) {
-			Vue.delete(state.participants[token], index)
+	deleteParticipant(state, { token, attendeeId }) {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			Vue.delete(state.attendees[token], attendeeId)
 		} else {
 			console.error('The conversation you are trying to purge doesn\'t exist')
 		}
@@ -218,8 +223,8 @@ const mutations = {
 	 * @param {string} token - the conversation to purge.
 	 */
 	purgeParticipantsStore(state, token) {
-		if (state.participants[token]) {
-			Vue.delete(state.participants, token)
+		if (state.attendees[token]) {
+			Vue.delete(state.attendees, token)
 		}
 	},
 
@@ -236,27 +241,27 @@ const mutations = {
 		}
 	},
 
-	addPermissions(state, { token, index, permissions }) {
-		if (state.participants[token] && state.participants[token][index]) {
-			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
-			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS | permissions)
+	addPermissions(state, { token, attendeeId, permissions }) {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			const PREVIOUS_PERMISSIONS = state.attendees[token][attendeeId].permissions
+			Vue.set(state.attendees[token][attendeeId], 'permissions', PREVIOUS_PERMISSIONS | permissions)
 		} else {
 			console.error('Error while updating the participant')
 		}
 	},
 
-	removePermissions(state, { token, index, permissions }) {
-		if (state.participants[token] && state.participants[token][index]) {
-			const PREVIOUS_PERMISSIONS = state.participants[token][index].permissions
-			Vue.set(state.participants[token][index], 'permissions', PREVIOUS_PERMISSIONS & ~permissions)
+	removePermissions(state, { token, attendeeId, permissions }) {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			const PREVIOUS_PERMISSIONS = state.attendees[token][attendeeId].permissions
+			Vue.set(state.attendees[token][attendeeId], 'permissions', PREVIOUS_PERMISSIONS & ~permissions)
 		} else {
 			console.error('Error while updating the participant')
 		}
 	},
 
-	setPermissions(state, { token, index, permissions }) {
-		if (state.participants[token] && state.participants[token][index]) {
-			Vue.set(state.participants[token][index], 'permissions', permissions)
+	setPermissions(state, { token, attendeeId, permissions }) {
+		if (state.attendees[token] && state.attendees[token][attendeeId]) {
+			Vue.set(state.attendees[token][attendeeId], 'permissions', permissions)
 		} else {
 			console.error('Error while updating the participant')
 		}
@@ -290,15 +295,15 @@ const actions = {
 	 * @param {object} data.participant - the participant.
 	 */
 	addParticipantOnce({ commit, getters }, { token, participant }) {
-		const index = getters.getParticipantIndex(token, participant)
-		if (index === -1) {
+		const attendee = getters.findParticipant(token, participant)
+		if (!attendee) {
 			commit('addParticipant', { token, participant })
 		}
 	},
 
 	async promoteToModerator({ commit, getters }, { token, attendeeId }) {
-		const index = getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
+		const attendee = getters.getParticipant(token, attendeeId)
+		if (!attendee) {
 			return
 		}
 
@@ -306,17 +311,16 @@ const actions = {
 			attendeeId,
 		})
 
-		const participant = getters.getParticipant(token, index)
 		// FIXME: don't promote already promoted or read resulting type from server response
 		const updatedData = {
-			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST ? PARTICIPANT.TYPE.GUEST_MODERATOR : PARTICIPANT.TYPE.MODERATOR,
+			participantType: attendee.participantType === PARTICIPANT.TYPE.GUEST ? PARTICIPANT.TYPE.GUEST_MODERATOR : PARTICIPANT.TYPE.MODERATOR,
 		}
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
 	async demoteFromModerator({ commit, getters }, { token, attendeeId }) {
-		const index = getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
+		const attendee = getters.getParticipant(token, attendeeId)
+		if (!attendee) {
 			return
 		}
 
@@ -324,22 +328,21 @@ const actions = {
 			attendeeId,
 		})
 
-		const participant = getters.getParticipant(token, index)
 		// FIXME: don't demote already demoted, use server response instead
 		const updatedData = {
-			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
+			participantType: attendee.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
 		}
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
 	async removeParticipant({ commit, getters }, { token, attendeeId }) {
-		const index = getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
+		const attendee = getters.getParticipant(token, attendeeId)
+		if (!attendee) {
 			return
 		}
 
 		await removeAttendeeFromConversation(token, attendeeId)
-		commit('deleteParticipant', { token, index })
+		commit('deleteParticipant', { token, attendeeId })
 	},
 
 	/**
@@ -362,8 +365,8 @@ const actions = {
 	},
 
 	updateSessionId({ commit, getters }, { token, participantIdentifier, sessionId }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
-		if (index === -1) {
+		const attendee = getters.findParticipant(token, participantIdentifier)
+		if (!attendee) {
 			console.error('Participant not found', participantIdentifier)
 			return
 		}
@@ -372,17 +375,17 @@ const actions = {
 			sessionId,
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 	},
 
 	updateUser({ commit, getters }, { token, participantIdentifier, updatedData }) {
-		const index = getters.getParticipantIndex(token, participantIdentifier)
-		if (index === -1) {
+		const attendee = getters.findParticipant(token, participantIdentifier)
+		if (!attendee) {
 			console.error('Participant not found', participantIdentifier)
 			return
 		}
 
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 	},
 
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
@@ -391,8 +394,8 @@ const actions = {
 			return
 		}
 
-		const index = getters.getParticipantIndex(token, participantIdentifier)
-		if (index === -1) {
+		const attendee = getters.findParticipant(token, participantIdentifier)
+		if (!attendee) {
 			console.error('Participant not found', participantIdentifier)
 			return
 		}
@@ -408,7 +411,7 @@ const actions = {
 		const updatedData = {
 			inCall: actualFlags,
 		}
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 
 		EventBus.$once('signaling-users-in-room', () => {
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
@@ -426,8 +429,8 @@ const actions = {
 			console.error('Trying to leave call without sessionId')
 		}
 
-		const index = getters.getParticipantIndex(token, participantIdentifier)
-		if (index === -1) {
+		const attendee = getters.findParticipant(token, participantIdentifier)
+		if (!attendee) {
 			console.error('Participant not found', participantIdentifier)
 			return
 		}
@@ -437,7 +440,7 @@ const actions = {
 		const updatedData = {
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		}
-		commit('updateParticipant', { token, index, updatedData })
+		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 
 		commit('setInCall', {
 			token,
@@ -581,42 +584,32 @@ const actions = {
 	 * Grant all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments oobject.
+	 * @param {object} root0 - the arguments object.
 	 * @param {string} root0.token - the conversation token.
 	 * @param {string} root0.attendeeId - the participant-s attendeeId.
 	 */
 	async grantAllPermissionsToParticipant(context, { token, attendeeId }) {
 		await grantAllPermissionsToParticipant(token, attendeeId)
-		// Get participant's index
-		const index = context.getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
-			return
-		}
 		const updatedData = {
 			permissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM,
 		}
-		context.commit('updateParticipant', { token, index, updatedData })
+		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
 	/**
 	 * Remove all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments oobject.
+	 * @param {object} root0 - the arguments object.
 	 * @param {string} root0.token - the conversation token.
 	 * @param {string} root0.attendeeId - the participant-s attendeeId.
 	 */
 	async removeAllPermissionsFromParticipant(context, { token, attendeeId }) {
 		await removeAllPermissionsFromParticipant(token, attendeeId)
-		// Get participant's index
-		const index = context.getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
-			return
-		}
 		const updatedData = {
 			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 		}
-		context.commit('updateParticipant', { token, index, updatedData })
+		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
 	/**
@@ -624,20 +617,14 @@ const actions = {
 	 * participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments oobject.
+	 * @param {object} root0 - the arguments object.
 	 * @param {string} root0.token - the conversation token.
 	 * @param {string} root0.attendeeId - the participant-s attendeeId.
 	 * @param {number} root0.permissions - bitwise combination of the permissions.
 	 */
 	async setPermissions(context, { token, attendeeId, permissions }) {
 		await setPermissions(token, attendeeId, permissions)
-		// Get participant's index
-		const index = context.getters.getParticipantIndex(token, { attendeeId })
-		if (index === -1) {
-			return
-		}
-
-		context.commit('setPermissions', { token, index, permissions })
+		context.commit('setPermissions', { token, attendeeId, permissions })
 	},
 }
 

@@ -35,14 +35,9 @@ export default {
 				}
 			}
 
-			const participantIndex = this.$store.getters.getParticipantIndex(token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex === -1) {
-				return {
-					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				}
+			return this.$store.getters.findParticipant(token, this.$store.getters.getParticipantIdentifier()) || {
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
-
-			return this.$store.getters.getParticipant(token, participantIndex)
 		},
 	},
 }
