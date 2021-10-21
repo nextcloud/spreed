@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCA\Talk\Events\GetTurnServersEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -34,6 +36,8 @@ class Config {
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
+	public const EVENT_GET_TURN_SERVERS = self::class . '::getTurnServers';
+
 	/** @var IConfig */
 	protected $config;
 	/** @var ITimeFactory */
@@ -42,6 +46,8 @@ class Config {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IEventDispatcher */
+	private $dispatcher;
 
 	/** @var array */
 	protected $canEnableSIP = [];
@@ -49,11 +55,13 @@ class Config {
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								IGroupManager $groupManager,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								IEventDispatcher $dispatcher) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -235,12 +243,18 @@ class Config {
 	 *
 	 * @return array
 	 */
-	public function getTurnServers(): array {
+	public function getTurnServers($withEvent = true): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 
 		if ($servers === null || empty($servers) || !is_array($servers)) {
-			return [];
+			$servers = [];
+		}
+
+		if ($withEvent) {
+			$event = new GetTurnServersEvent($servers);
+			$this->dispatcher->dispatch(self::EVENT_GET_TURN_SERVERS, $event);
+			$servers = $event->getServers();
 		}
 
 		foreach ($servers as $key => $server) {
