@@ -111,6 +111,21 @@
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
 			class="participant-row__actions">
+			<template v-if="actionIcon !== ''"
+				#icon>
+				<LockOpenVariant
+					v-if="actionIcon === 'LockOpenVariant'"
+					:size="20"
+					decorative />
+				<Lock
+					v-if="actionIcon === 'Lock'"
+					:size="20"
+					decorative />
+				<Tune
+					v-if="actionIcon === 'Tune'"
+					:size="20"
+					decorative />
+			</template>
 			<ActionText
 				v-if="attendeePin"
 				:title="t('spreed', 'Dial-in PIN')"
@@ -217,6 +232,14 @@ import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
+import UserStatus from '../../../../../mixins/userStatus'
+import readableNumber from '../../../../../mixins/readableNumber'
+import isEqual from 'lodash/isEqual'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
+
+// Material design icons
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
@@ -224,14 +247,9 @@ import Crown from 'vue-material-design-icons/Crown.vue'
 import Account from 'vue-material-design-icons/Account.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
+import Tune from 'vue-material-design-icons/Tune.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
-import UserStatus from '../../../../../mixins/userStatus'
-import readableNumber from '../../../../../mixins/readableNumber'
-import isEqual from 'lodash/isEqual'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 export default {
 	name: 'Participant',
@@ -242,6 +260,9 @@ export default {
 		ActionText,
 		ActionSeparator,
 		AvatarWrapper,
+		ParticipantPermissionsEditor,
+
+		// Material design icons
 		Microphone,
 		Phone,
 		Video,
@@ -251,7 +272,7 @@ export default {
 		Lock,
 		LockOpenVariant,
 		Pencil,
-		ParticipantPermissionsEditor,
+		Tune,
 	},
 
 	directives: {
@@ -556,6 +577,21 @@ export default {
 				}
 			}
 			return undefined
+		},
+
+		participantPermissions() {
+			return this.participant.permissions
+		},
+
+		actionIcon() {
+			if (this.participantPermissions === (PARTICIPANT.PERMISSIONS.MAX_CUSTOM)) {
+				return 'LockOpenVariant'
+			} else if (this.participantPermissions === PARTICIPANT.PERMISSIONS.CUSTOM) {
+				return 'Lock'
+			} else if (this.participantPermissions !== this.conversation.permissions) {
+				return 'Tune'
+			}
+			return ''
 		},
 	},
 
