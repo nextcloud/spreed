@@ -26,6 +26,7 @@ import {
 	fetchMessages,
 	lookForNewMessages,
 	postNewMessage,
+	postRichObjectToConversation,
 } from '../services/messagesService'
 
 import SHA1 from 'crypto-js/sha1'
@@ -895,6 +896,20 @@ const actions = {
 	 */
 	async forwardMessage(context, { messageToBeForwarded }) {
 		const response = await postNewMessage(messageToBeForwarded)
+		return response
+	},
+
+	/**
+	 * Posts a simple text message to a room
+	 *
+	 * @param {object} context default store context;
+	 * will be forwarded;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token token of the target conversation
+	 * @param {object} data.richObject the rich object;
+	 */
+	async forwardRichObject(context, { token, richObject }) {
+		const response = await postRichObjectToConversation(token, richObject)
 		return response
 	},
 }
