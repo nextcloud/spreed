@@ -42,8 +42,10 @@
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
 			<Avatar v-else
+				:key="scope.item.source + '#' + scope.item.id"
 				:size="44"
 				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
+				:show-user-status-compact="false"
 				:display-name="scope.item.label"
 				:disable-tooltip="true"
 				:disable-menu="true" />
