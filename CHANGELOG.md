@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.3 – 2021-10-22
+### Fixed
+- Fix crash of Chrome/Chromium 95
+  [#6384](https://github.com/nextcloud/spreed/pull/6384)
+
 ## 11.3.2 – 2021-09-17
 
 ### Fixed
