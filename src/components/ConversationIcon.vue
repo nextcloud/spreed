@@ -30,6 +30,7 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
+			:show-user-status-compact="disableMenu"
 			:menu-container="menuContainer"
 			menu-position="left"
 			class="conversation-icon__avatar" />
