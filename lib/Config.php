@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCA\Talk\Events\GetTurnServersEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -42,6 +44,8 @@ class Config {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IEventDispatcher */
+	private $dispatcher;
 
 	/** @var array */
 	protected $canEnableSIP = [];
@@ -49,11 +53,13 @@ class Config {
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								IGroupManager $groupManager,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								IEventDispatcher $dispatcher) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -217,12 +223,18 @@ class Config {
 	 *
 	 * @return array
 	 */
-	public function getTurnServers(): array {
+	public function getTurnServers($withEvent = true): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 
 		if ($servers === null || empty($servers) || !is_array($servers)) {
-			return [];
+			$servers = [];
+		}
+
+		if ($withEvent) {
+			$event = new GetTurnServersEvent($servers);
+			$this->dispatcher->dispatchTyped($event);
+			$servers = $event->getServers();
 		}
 
 		foreach ($servers as $key => $server) {
@@ -251,12 +263,13 @@ class Config {
 		$username = $timestamp . ':' . $rnd;
 
 		foreach ($servers as $server) {
-			$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
+			$u = $server['username'] ?? $username;
+			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', $u, $server['secret'], true));
 
 			$turnSettings[] = [
 				'schemes' => $server['schemes'],
 				'server' => $server['server'],
-				'username' => $username,
+				'username' => $u,
 				'password' => $password,
 				'protocols' => $server['protocols'],
 			];
