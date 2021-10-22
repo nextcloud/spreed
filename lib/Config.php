@@ -36,8 +36,6 @@ class Config {
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
-	public const EVENT_GET_TURN_SERVERS = self::class . '::getTurnServers';
-
 	/** @var IConfig */
 	protected $config;
 	/** @var ITimeFactory */
@@ -235,7 +233,7 @@ class Config {
 
 		if ($withEvent) {
 			$event = new GetTurnServersEvent($servers);
-			$this->dispatcher->dispatch(self::EVENT_GET_TURN_SERVERS, $event);
+			$this->dispatcher->dispatchTyped($event);
 			$servers = $event->getServers();
 		}
 
@@ -270,7 +268,7 @@ class Config {
 
 			$turnSettings[] = [
 				'schemes' => $server['schemes'],
-				'server' => $server['server']	,
+				'server' => $server['server'],
 				'username' => $u,
 				'password' => $password,
 				'protocols' => $server['protocols'],
