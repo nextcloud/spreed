@@ -218,6 +218,7 @@
     "The hosted signaling server is now configured and will be used." : "托管的发信服务器现已配置并将被使用。",
     "The hosted signaling server was removed and will not be used anymore." : "托管的发信服务器已被移除且无法再使用。",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "托管信号传递服务器将账户状态从 \"{oldstatus}\" 更改为 \"{newstatus}\"",
+    "Open Talk" : "打开 Talk",
     "Conversations" : "会话",
     "Messages" : "消息",
     "{user}" : "{user}",

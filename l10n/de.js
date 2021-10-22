@@ -950,6 +950,7 @@ OC.L10N.register(
     "Raised their hand" : "Hat die Hand gehoben",
     "Invitation was sent to {actorId}." : "Einladung wurde an {actorId} versendet.",
     "Could not send invitation to {actorId}" : "Einladung konnte nicht an {actorId} versendet werden",
+    "Start a call" : "Einen Anruf starten",
     "Enable the microphone" : "Das Mikrofon aktivieren",
     "Enable the camera" : "Die Kamera aktivieren",
     "Update permissions" : "Berechtigungen aktualisieren",
