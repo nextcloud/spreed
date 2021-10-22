@@ -34,7 +34,8 @@
         `participantType` | int | v1 | | Permissions level of the participant (see [constants list](constants.md#participant-types))
         `lastPing` | int | v1 | | Timestamp of the last ping of the user (should be used for sorting)
         `inCall` | int | v1 | | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))
-        `permissions` | int | v4 | | Publishing permissions for the participant (see [constants list](constants.md#attendee-permissions))
+        `permissions` | int | v4 | | Combined final permissions for the participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](constants.md#attendee-permissions))
+        `attendeePermissions` | int | v4 | | Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](constants.md#attendee-permissions))
         `sessionId` | string | v1 | v4 | `'0'` if not connected, otherwise a 512 character long string
         `sessionIds` | array | v4 | | array of session ids, each are 512 character long strings, or empty if no session
         `status` | string | v2 | | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation

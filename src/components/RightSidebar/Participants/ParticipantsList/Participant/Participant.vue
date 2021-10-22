@@ -579,16 +579,16 @@ export default {
 			return undefined
 		},
 
-		participantPermissions() {
-			return this.participant.permissions
+		attendeePermissions() {
+			return this.participant.attendeePermissions
 		},
 
 		actionIcon() {
-			if (this.participantPermissions === (PARTICIPANT.PERMISSIONS.MAX_CUSTOM)) {
+			if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.MAX_CUSTOM) {
 				return 'LockOpenVariant'
-			} else if (this.participantPermissions === PARTICIPANT.PERMISSIONS.CUSTOM) {
+			} else if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.CUSTOM) {
 				return 'Lock'
-			} else if (this.participantPermissions !== this.conversation.permissions) {
+			} else if (this.attendeePermissions !== PARTICIPANT.PERMISSIONS.DEFAULT) {
 				return 'Tune'
 			}
 			return ''

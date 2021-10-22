@@ -43,7 +43,10 @@
         `attendeePin` | string | v3 | | Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)
         `actorType` | string | v3 | | Currently known `users|guests|emails|groups|circles`
         `actorId` | string | v3 | | The unique identifier for the given actor type
-        `permissions` | int | v4 | | Publishing permissions for the current participant (see [constants list](constants.md#attendee-permissions))
+        `permissions` | int | v4 | | Combined final permissions for the current participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](constants.md#attendee-permissions))
+        `attendeePermissions` | int | v4 | | Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](constants.md#attendee-permissions))
+        `callPermissions` | int | v4 | | Call permissions, if not `Custom` this are not the resulting permissions, if set they will reset after the end of the call (see [constants list](constants.md#attendee-permissions))
+        `defaultPermissions` | int | v4 | | Default permissions for new participants (see [constants list](constants.md#attendee-permissions))
         `participantInCall` | bool | v1 | v2 | **Removed:** use `participantFlags` instead
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
         `readOnly` | int | v1 | | Read-only state for the current user (only available with `read-only-rooms` capability)
