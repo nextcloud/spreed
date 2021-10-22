@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.3 – 2021-10-22
+### Fixed
+- Fix crash of Chrome/Chromium 95
+  [#6384](https://github.com/nextcloud/spreed/pull/6384)
+
 ## 12.2.1 – 2021-10-15
 ### Changed
 - Simplify sidebar in one-to-one conversations
