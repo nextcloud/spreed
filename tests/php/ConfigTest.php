@@ -22,6 +22,7 @@ namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
 use OCA\Talk\Events\GetTurnServersEvent;
+use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -217,11 +218,7 @@ class ConfigTest extends TestCase {
 			],
 		];
 
-		$listener = static function (GetTurnServersEvent $event) use ($servers) {
-			$event->setServers($servers);
-		};
-
-		$dispatcher->addListener(Config::EVENT_GET_TURN_SERVERS, $listener);
+		$dispatcher->addServiceListener(GetTurnServersEvent::class, GetTurnServerListener::class);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 
