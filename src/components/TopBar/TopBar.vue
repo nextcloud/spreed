@@ -23,6 +23,7 @@
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<ConversationIcon
 			v-if="!isInCall"
+			:key="conversation.token"
 			class="conversation-icon"
 			:item="conversation"
 			:hide-favorite="false"
