@@ -329,7 +329,7 @@ export default {
 
 		toggleVirtualBackgroundButtonLabel() {
 			if (!this.isVirtualBackgroundEnabled) {
-				return t('spreed', 'Blur my background')
+				return t('spreed', 'Blur background')
 			}
 			return t('spreed', 'Disable background blur')
 		},
