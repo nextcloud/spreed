@@ -218,6 +218,7 @@
     "The hosted signaling server is now configured and will be used." : "Der gehostete Signalisierungsserver ist jetzt konfiguriert und wird verwendet.",
     "The hosted signaling server was removed and will not be used anymore." : "Der gehostete Signalisierungsserver wurde entfernt und wird nicht mehr verwendet.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Das gehostete Konto des Signalisierungsservers hat den Status von \"{oldstatus}\" in \"{newstatus}\" geändert.",
+    "Open Talk" : "Talk öffnen",
     "Conversations" : "Unterhaltungen",
     "Messages" : "Nachrichten",
     "{user}" : "{user}",

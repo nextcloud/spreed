@@ -220,6 +220,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "已配置好託管的信號伺服器並將被使用。",
     "The hosted signaling server was removed and will not be used anymore." : "託管的信號伺服器已刪除，將不再使用。",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "託管的信令伺服器帳戶已將狀態從 “ {oldstatus}” 更改為 “{newstatus}”。",
+    "Open Talk" : "開啟 Talk",
     "Conversations" : "對話",
     "Messages" : "訊息",
     "{user}" : "{user}",
