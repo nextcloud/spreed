@@ -407,6 +407,9 @@ class RoomController extends AEnvironmentAwareController {
 			'actorId' => '',
 			'attendeeId' => 0,
 			'permissions' => Attendee::PERMISSIONS_CUSTOM,
+			'attendeePermissions' => Attendee::PERMISSIONS_CUSTOM,
+			'callPermissions' => Attendee::PERMISSIONS_CUSTOM,
+			'defaultPermissions' => Attendee::PERMISSIONS_CUSTOM,
 			'canEnableSIP' => false,
 			'attendeePin' => '',
 			'description' => '',
@@ -473,6 +476,9 @@ class RoomController extends AEnvironmentAwareController {
 			'actorId' => $attendee->getActorId(),
 			'attendeeId' => $attendee->getId(),
 			'permissions' => $currentParticipant->getPermissions(),
+			'attendeePermissions' => $attendee->getPermissions(),
+			'callPermissions' => $room->getCallPermissions(),
+			'defaultPermissions' => $room->getDefaultPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 		]);
@@ -957,6 +963,7 @@ class RoomController extends AEnvironmentAwareController {
 				'actorType' => $participant->getAttendee()->getActorType(),
 				'displayName' => $participant->getAttendee()->getActorId(),
 				'permissions' => $participant->getPermissions(),
+				'attendeePermissions' => $participant->getAttendee()->getPermissions(),
 				'attendeePin' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()

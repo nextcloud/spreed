@@ -240,32 +240,6 @@ const mutations = {
 			Vue.delete(state.peers, token)
 		}
 	},
-
-	addPermissions(state, { token, attendeeId, permissions }) {
-		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			const PREVIOUS_PERMISSIONS = state.attendees[token][attendeeId].permissions
-			Vue.set(state.attendees[token][attendeeId], 'permissions', PREVIOUS_PERMISSIONS | permissions)
-		} else {
-			console.error('Error while updating the participant')
-		}
-	},
-
-	removePermissions(state, { token, attendeeId, permissions }) {
-		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			const PREVIOUS_PERMISSIONS = state.attendees[token][attendeeId].permissions
-			Vue.set(state.attendees[token][attendeeId], 'permissions', PREVIOUS_PERMISSIONS & ~permissions)
-		} else {
-			console.error('Error while updating the participant')
-		}
-	},
-
-	setPermissions(state, { token, attendeeId, permissions }) {
-		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			Vue.set(state.attendees[token][attendeeId], 'permissions', permissions)
-		} else {
-			console.error('Error while updating the participant')
-		}
-	},
 }
 
 const actions = {
@@ -592,6 +566,7 @@ const actions = {
 		await grantAllPermissionsToParticipant(token, attendeeId)
 		const updatedData = {
 			permissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM,
+			attendeePermissions: PARTICIPANT.PERMISSIONS.MAX_CUSTOM,
 		}
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
@@ -608,6 +583,7 @@ const actions = {
 		await removeAllPermissionsFromParticipant(token, attendeeId)
 		const updatedData = {
 			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
+			attendeePermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 		}
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
@@ -624,7 +600,11 @@ const actions = {
 	 */
 	async setPermissions(context, { token, attendeeId, permissions }) {
 		await setPermissions(token, attendeeId, permissions)
-		context.commit('setPermissions', { token, attendeeId, permissions })
+		const updatedData = {
+			permissions,
+			attendeePermissions: permissions,
+		}
+		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 }
 
