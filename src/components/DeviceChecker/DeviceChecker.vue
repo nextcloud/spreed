@@ -262,6 +262,18 @@ export default {
 			}
 		},
 
+		audioInputId(audioInputId) {
+			if (audioInputId && !this.audioOn) {
+				this.toggleAudio()
+			}
+		},
+
+		videoInputId(videoInputId) {
+			if (videoInputId && !this.videoOn) {
+				this.toggleVideo()
+			}
+		},
+
 		blurOn() {
 			this.virtualBackground.setEnabled(this.blurOn)
 		},
