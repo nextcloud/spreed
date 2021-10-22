@@ -38,6 +38,8 @@ import {
 	clearConversationHistory,
 	setNotificationLevel,
 	setNotificationCalls,
+	setConversationPermissions,
+	setCallPermissions,
 } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
@@ -140,6 +142,14 @@ const mutations = {
 
 	setNotificationCalls(state, { token, notificationCalls }) {
 		Vue.set(state.conversations[token], 'notificationCalls', notificationCalls)
+	},
+
+	setConversationPermissions(state, { token, permissions }) {
+		Vue.set(state.conversations[token], 'defaultPermissions', permissions)
+	},
+
+	setCallPermissions(state, { token, permissions }) {
+		Vue.set(state.conversations[token], 'callPermissions', permissions)
 	},
 }
 
@@ -464,6 +474,16 @@ const actions = {
 		context.dispatch('addConversation', conversation)
 
 		return conversation
+	},
+
+	async setConversationPermissions(context, { token, permissions }) {
+		await setConversationPermissions(token, permissions)
+		context.commit('setConversationPermissions', { token, permissions })
+	},
+
+	async setCallPermissions(context, { token, permissions }) {
+		await setCallPermissions(token, permissions)
+		context.commit('setCallPermissions', { token, permissions })
 	},
 }
 
