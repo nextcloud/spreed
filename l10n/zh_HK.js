@@ -544,7 +544,7 @@ OC.L10N.register(
     "Script" : "腳本語言",
     "Response to" : "回應",
     "Enabled for" : "為以下啟用",
-    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "命令是 Nextcloud Talk 中的一項新的 Beta 功能。它們允許您在 Nextcloud 伺服器上運行腳本。您可以使用我們的命令行介面來定義它們。可以在我們的 {linkstart }文檔 {linkend} 中找到計算器腳本的示例。",
+    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "命令是 Nextcloud Talk 中的一項新的 Beta 功能。它們允許您在 Nextcloud 伺服器上運行腳本。您可以使用我們的命令行界面來定義它們。可以在我們的 {linkstart }文檔 {linkend} 中找到計算器腳本的示例。",
     "General settings" : "一般設定",
     "Default notification settings" : "預設通告設定",
     "Default group notification" : "預設群組通告",
