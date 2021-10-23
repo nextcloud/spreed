@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import SHA1 from 'crypto-js/sha1'
+import SHA256 from 'crypto-js/sha256'
 import Hex from 'crypto-js/enc-hex'
 
 /**
@@ -110,7 +110,7 @@ const deleteMessage = async function({ token, id }) {
 const postRichObjectToConversation = async function(token, { objectType, objectId, metaData, referenceId }) {
 	if (!referenceId) {
 		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
-		referenceId = Hex.stringify(SHA1(tempId))
+		referenceId = Hex.stringify(SHA256(tempId))
 	}
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share', { token }), {
 		objectType,
