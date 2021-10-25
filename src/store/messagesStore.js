@@ -29,7 +29,7 @@ import {
 	postRichObjectToConversation,
 } from '../services/messagesService'
 
-import SHA1 from 'crypto-js/sha1'
+import SHA256 from 'crypto-js/sha256'
 import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../utils/cancelableRequest'
 import { showError } from '@nextcloud/dialogs'
@@ -428,6 +428,7 @@ const actions = {
 				index,
 			}
 		}
+
 		const message = Object.assign({}, {
 			id: tempId,
 			actorId: context.getters.getActorId(),
@@ -441,7 +442,7 @@ const actions = {
 			token,
 			isReplyable: false,
 			sendingFailure: '',
-			referenceId: Hex.stringify(SHA1(tempId)),
+			referenceId: Hex.stringify(SHA256(tempId)),
 		})
 
 		/**

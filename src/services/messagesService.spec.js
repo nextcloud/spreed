@@ -151,7 +151,7 @@ describe('messagesService', () => {
 		expect(lastReq.data.objectType).toBe('deck')
 		expect(lastReq.data.objectId).toBe(999)
 		expect(lastReq.data.metaData).toBe('{"x":1}')
-		expect(lastReq.data.referenceId).toEqual(expect.stringMatching(/^[a-z0-9]{40}$/))
+		expect(lastReq.data.referenceId).toEqual(expect.stringMatching(/^[a-z0-9]{64}$/))
 	})
 
 	test('updateLastReadMessage calls the chat API endpoint', () => {
