@@ -356,24 +356,24 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @param Room $room
 	 * @param Participant|null $currentParticipant
-	 * @param array $statuses
+	 * @param array|null $statuses
 	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, ?Participant $currentParticipant, array $statuses = [], bool $isSIPBridgeRequest = false): array {
+	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false): array {
 		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest);
 	}
 
 	/**
 	 * @param Room $room
 	 * @param Participant|null $currentParticipant
-	 * @param array $statuses
+	 * @param array|null $statuses
 	 * @param bool $isSIPBridgeRequest
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, array $statuses, bool $isSIPBridgeRequest): array {
+	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, ?array $statuses, bool $isSIPBridgeRequest): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -580,6 +580,12 @@ class RoomController extends AEnvironmentAwareController {
 			foreach ($participants as $participant) {
 				if ($participant !== $attendee->getActorId()) {
 					$roomData['name'] = $participant;
+
+					if ($statuses === null
+						&& $this->userId !== null
+						&& $this->appManager->isEnabledForUser('user_status')) {
+						$statuses = $this->statusManager->getUserStatuses([$participant]);
+					}
 
 					if (isset($statuses[$participant])) {
 						$roomData['status'] = $statuses[$participant]->getStatus();
