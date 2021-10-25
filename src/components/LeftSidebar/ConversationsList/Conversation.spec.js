@@ -44,7 +44,6 @@ describe('Conversation.vue', () => {
 			type: CONVERSATION.TYPE.GROUP,
 			displayName: 'conversation one',
 			isFavorite: false,
-			notificationLevel: 0,
 			lastMessage: {
 				actorId: 'user-id-alice',
 				actorDisplayName: 'Alice Wonderland',
@@ -416,36 +415,6 @@ describe('Conversation.vue', () => {
 			await el.find('a').trigger('click')
 
 			expect(wrapper.emitted().click).toBeTruthy()
-		})
-
-		describe('notification level', () => {
-			/**
-			 * @param {string} actionName The label of the notification level to select
-			 * @param {number} level The notification level to select
-			 */
-			async function testSetNotificationLevel(actionName, level) {
-				const setNotificationLevelAction = jest.fn().mockResolvedValueOnce()
-				testStoreConfig.modules.conversationsStore.actions.setNotificationLevel = setNotificationLevelAction
-
-				const action = shallowMountAndGetAction(actionName)
-				expect(action.exists()).toBe(true)
-
-				await action.find('button').trigger('click')
-
-				expect(setNotificationLevelAction).toHaveBeenCalledWith(expect.anything(), { token: TOKEN, notificationLevel: level })
-			}
-
-			test('sets notification to all messages', async () => {
-				await testSetNotificationLevel('All messages', 1)
-			})
-
-			test('sets notification to at-mentions only', async () => {
-				await testSetNotificationLevel('@-mentions only', 2)
-			})
-
-			test('sets notification to off', async () => {
-				await testSetNotificationLevel('Off', 3)
-			})
 		})
 
 		describe('leaving conversation', () => {

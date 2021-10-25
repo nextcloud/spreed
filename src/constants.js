@@ -79,6 +79,10 @@ export const PARTICIPANT = {
 		MENTION: 2,
 		NEVER: 3,
 	},
+	NOTIFY_CALLS: {
+		OFF: 0,
+		ON: 1,
+	},
 	TYPE: {
 		OWNER: 1,
 		MODERATOR: 2,

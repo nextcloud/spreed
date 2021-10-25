@@ -37,6 +37,7 @@ import {
 	deleteConversation,
 	clearConversationHistory,
 	setNotificationLevel,
+	setNotificationCalls,
 } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
@@ -135,6 +136,10 @@ const mutations = {
 
 	setNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
+	},
+
+	setNotificationCalls(state, { token, notificationCalls }) {
+		Vue.set(state.conversations[token], 'notificationCalls', notificationCalls)
 	},
 }
 
@@ -438,6 +443,12 @@ const actions = {
 		await setNotificationLevel(token, notificationLevel)
 
 		commit('setNotificationLevel', { token, notificationLevel })
+	},
+
+	async setNotificationCalls({ commit }, { token, notificationCalls }) {
+		await setNotificationCalls(token, notificationCalls)
+
+		commit('setNotificationCalls', { token, notificationCalls })
 	},
 
 	/**

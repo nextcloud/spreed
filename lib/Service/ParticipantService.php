@@ -221,6 +221,23 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 * @param int $level
+	 */
+	public function updateNotificationCalls(Participant $participant, int $level): void {
+		if (!\in_array($level, [
+			Participant::NOTIFY_CALLS_OFF,
+			Participant::NOTIFY_CALLS_ON,
+		], true)) {
+			throw new \InvalidArgumentException('Invalid notification level');
+		}
+
+		$attendee = $participant->getAttendee();
+		$attendee->setNotificationCalls($level);
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param IUser $user
 	 * @param string $password
@@ -1218,7 +1235,7 @@ class ParticipantService {
 	 * @param Room $room
 	 * @return string[]
 	 */
-	public function getParticipantUserIdsNotInCall(Room $room): array {
+	public function getParticipantUserIdsForCallNotifications(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
 		$query->select('a.actor_id')
@@ -1233,6 +1250,7 @@ class ParticipantService {
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('a.notification_calls', $query->createNamedParameter(Participant::NOTIFY_CALLS_ON)))
 			->andWhere($query->expr()->isNull('s.in_call'));
 
 		$userIds = [];

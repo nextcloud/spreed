@@ -42,7 +42,7 @@
 
 		<!-- Notifications settings -->
 		<AppSettingsSection
-			:title="t('spreed', 'Chat notifications')">
+			:title="t('spreed', 'Notifications')">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 

@@ -397,6 +397,7 @@ class RoomController extends AEnvironmentAwareController {
 			'canLeaveConversation' => false,
 			'canDeleteConversation' => false,
 			'notificationLevel' => Participant::NOTIFY_NEVER,
+			'notificationCalls' => Participant::NOTIFY_CALLS_OFF,
 			'lobbyState' => Webinary::LOBBY_NONE,
 			'lobbyTimer' => 0,
 			'lastPing' => 0,
@@ -470,6 +471,7 @@ class RoomController extends AEnvironmentAwareController {
 			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),
 			'notificationLevel' => $attendee->getNotificationLevel(),
+			'notificationCalls' => $attendee->getNotificationCalls(),
 			'lobbyState' => $room->getLobbyState(),
 			'lobbyTimer' => $lobbyTimer,
 			'actorType' => $attendee->getActorType(),
@@ -833,6 +835,23 @@ class RoomController extends AEnvironmentAwareController {
 	public function setNotificationLevel(int $level): DataResponse {
 		try {
 			$this->participantService->updateNotificationLevel($this->participant, $level);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 *
+	 * @param int $level
+	 * @return DataResponse
+	 */
+	public function setNotificationCalls(int $level): DataResponse {
+		try {
+			$this->participantService->updateNotificationCalls($this->participant, $level);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

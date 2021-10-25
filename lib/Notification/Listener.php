@@ -247,7 +247,7 @@ class Listener {
 			return;
 		}
 
-		$userIds = $this->participantsService->getParticipantUserIdsNotInCall($room);
+		$userIds = $this->participantsService->getParticipantUserIdsForCallNotifications($room);
 		foreach ($userIds as $userId) {
 			if ($actorId === $userId) {
 				continue;

@@ -312,6 +312,24 @@
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
 
+## Set notification level for calls
+
+* Required capability: `notification-calls`
+* Method: `POST`
+* Endpoint: `/room/{token}/notify-calls`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `level` | int | The call notification level (See [Participant call notification levels](constants.md#Participant-call-notification-levels))
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the given level is invalid
+        + `401 Unauthorized` When the participant is a guest
+        + `404 Not Found` When the conversation could not be found for the participant
+
 ## Open a conversation
 
 * Required capability: `listable-rooms`
