@@ -49,7 +49,7 @@
 						:user="userId"
 						:display-name="displayName" />
 					<div v-if="!userId"
-						class="avatar guest">
+						class="avatar avatar-128px guest">
 						{{ firstLetterOfGuestName }}
 					</div>
 				</div>
@@ -229,6 +229,18 @@ export default {
 	computed: {
 		displayName() {
 			return this.$store.getters.getDisplayName()
+		},
+
+		guestName() {
+			return this.$store.getters.getGuestName(
+				this.$store.getters.getToken(),
+				this.$store.getters.getActorId(),
+			)
+		},
+
+		firstLetterOfGuestName() {
+			const customName = this.guestName !== t('spreed', 'Guest') ? this.guestName : '?'
+			return customName.charAt(0)
 		},
 
 		userId() {
