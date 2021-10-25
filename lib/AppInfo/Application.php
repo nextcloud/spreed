@@ -133,7 +133,7 @@ class Application extends App implements IBootstrap {
 
 		$context->registerDashboardWidget(TalkWidget::class);
 
-		$context->registerProfileAction(TalkAction::class);
+		$context->registerProfileLinkAction(TalkAction::class);
 	}
 
 	public function boot(IBootContext $context): void {
