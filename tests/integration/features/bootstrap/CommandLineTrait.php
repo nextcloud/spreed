@@ -146,11 +146,11 @@ trait CommandLineTrait {
 	 */
 	public function theCommandOutputContainsTheText($text) {
 		if ($this->lastStdOut === '' && $this->lastStdErr !== '') {
-			Assert::assertContains($text, $this->lastStdErr, 'The command did not output the expected text on stdout');
+			Assert::assertStringContainsString($text, $this->lastStdErr, 'The command did not output the expected text on stdout');
 			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
 		}
 
-		Assert::assertContains($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
+		Assert::assertStringContainsString($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
 	}
 
 	/**
@@ -158,10 +158,10 @@ trait CommandLineTrait {
 	 */
 	public function theCommandErrorOutputContainsTheText($text) {
 		if ($this->lastStdErr === '' && $this->lastStdOut !== '') {
-			Assert::assertContains($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
+			Assert::assertStringContainsString($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
 			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
 		}
 
-		Assert::assertContains($text, $this->lastStdErr, 'The command did not output the expected text on stderr');
+		Assert::assertStringContainsString($text, $this->lastStdErr, 'The command did not output the expected text on stderr');
 	}
 }
