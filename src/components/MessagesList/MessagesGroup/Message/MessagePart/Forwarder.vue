@@ -126,6 +126,28 @@ export default {
 			const messageToBeForwarded = cloneDeep(this.messageObject)
 			// Overwrite the selected conversation token
 			messageToBeForwarded.token = token
+
+			if (messageToBeForwarded.message === '{object}' && messageToBeForwarded.messageParameters.object) {
+				const richObject = messageToBeForwarded.messageParameters.object
+				try {
+					const response = await this.$store.dispatch('forwardRichObject', {
+						token,
+						richObject: {
+							objectId: richObject.id,
+							objectType: richObject.type,
+							metaData: JSON.stringify(richObject),
+							referenceId: '',
+						},
+					})
+					this.showForwardedConfirmation = true
+					this.forwardedMessageID = response.data.ocs.data.id
+				} catch (error) {
+					console.error('Error while forwarding message', error)
+					showError(t('spreed', 'Error while forwarding message'))
+				}
+				return
+			}
+
 			// If there are mentions in the message to be forwarded, replace them in the message
 			// text.
 			if (this.mentions !== {}) {
