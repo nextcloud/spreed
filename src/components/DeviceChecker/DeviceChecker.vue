@@ -62,7 +62,9 @@
 			<div class="device-checker__call-preferences">
 				<!-- Audio toggle -->
 				<button
+					v-tooltip="audioButtonTooltip"
 					class="device-toggle"
+					:aria-label="audioButtonTooltip"
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
 					<span class="device-toggle__icon">
@@ -87,7 +89,9 @@
 
 				<!-- Video toggle -->
 				<button
+					v-tooltip="videoButtonTooltip"
 					class="device-toggle"
+					:aria-label="videoButtonTooltip"
 					:disabled="!videoPreviewAvailable"
 					@click="toggleVideo">
 					<span class="device-toggle__icon">
@@ -106,7 +110,10 @@
 
 				<!-- Blur toggle -->
 				<button
+					v-if="videoPreviewAvailable && blurPreviewAvailable"
+					v-tooltip="blurButtonTooltip"
 					class="device-toggle"
+					:aria-label="blurButtonTooltip"
 					:disabled="!blurPreviewAvailable"
 					@click="toggleBlur">
 					<span class="device-toggle__icon">
@@ -238,6 +245,24 @@ export default {
 
 		blurPreviewAvailable() {
 			return VirtualBackground.isSupported()
+		},
+
+		audioButtonTooltip() {
+			if (!this.audioPreviewAvailable) {
+				return t('spreed', 'No audio')
+			}
+			return this.audioOn ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
+		},
+
+		videoButtonTooltip() {
+			if (!this.videoPreviewAvailable) {
+				return t('spreed', 'No camera')
+			}
+			return this.videoOn ? t('spreed', 'Disable video') : t('spreed', 'Enable video')
+		},
+
+		blurButtonTooltip() {
+			return this.videoOn ? t('spreed', 'Disable background blur') : t('spreed', 'Blur background')
 		},
 	},
 
