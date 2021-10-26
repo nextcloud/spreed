@@ -72,6 +72,13 @@
 			<LockingSettings :token="token" />
 		</AppSettingsSection>
 
+		<!-- Conversation permissions -->
+		<AppSettingsSection
+			v-if="canFullModerate"
+			:title="t('spreed', 'Participants permissions')">
+			<ConversationPermissionsSettings :token="token" />
+		</AppSettingsSection>
+
 		<!-- Meeting settings -->
 		<AppSettingsSection
 			v-if="canFullModerate"
@@ -115,6 +122,7 @@ import { showError } from '@nextcloud/dialogs'
 import Description from '../Description/Description'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage'
+import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -132,6 +140,7 @@ export default {
 		NotificationsSettings,
 		Description,
 		CheckboxRadioSwitch,
+		ConversationPermissionsSettings,
 	},
 
 	data() {
