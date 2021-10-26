@@ -24,6 +24,7 @@
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="OC" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\Model\Circle" />
 				<referencedClass name="OCA\Circles\Model\Member" />
@@ -41,6 +42,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 			</errorLevel>
