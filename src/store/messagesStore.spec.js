@@ -313,7 +313,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			})
 		})
 
@@ -345,7 +345,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 				parent: 123,
 			})
 		})
@@ -389,7 +389,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			})
 		})
 
@@ -418,7 +418,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 
 			expect(updateConversationLastActiveAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
@@ -440,7 +440,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
 
@@ -473,7 +473,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: 'failure-reason',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
 
@@ -518,7 +518,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{40}$/),
+				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
 	})
