@@ -671,7 +671,6 @@ OC.L10N.register(
     "Favorite" : "Preferito",
     "Conversation settings" : "Impostazioni conversazione",
     "Description" : "Descrizione",
-    "Chat notifications" : "Notifiche delle chat",
     "Guests access" : "Accesso ospiti",
     "Meeting settings" : "Impostazioni della riunione",
     "Matterbridge" : "Matterbridge",
@@ -773,7 +772,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "non in esecuzione, controlla il log di Matterbridge",
     "not running" : "non in esecuzione",
     "Bridge saved" : "Collegamento salvato",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Imposta il livello di notifica della conversazione attuale. Questo interessa solo le notifiche che ricevi.",
     "Allow participants to join from a phone." : "Consenti ai partecipanti di partecipare da un telefono.",
     "Enable SIP dial-in" : "Abilita accesso SIP",
     "SIP dial-in is now enabled" : "L'accesso SIP è ora abilitato",
@@ -1032,6 +1030,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "La tua connessione a Internet o il computer sono occupati e gli altri partecipanti potrebbero non essere in grado di capirti e vedere il tuo schermo. Per migliorare la situazione prova a disabilitare la condivisione dello schermo.",
     "This conversation is read only" : "Questa conversazione è in sola lettura",
     "Conversation, " : "Conversazione",
+    "Chat notifications" : "Notifiche delle chat",
     "Allow guests to join via link " : "Consenti agli ospiti di unirsi tramite collegamento",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Stai attualmente aspettando nell'ingresso. Questa riunione è pianificata per {startTime}",
     "Microphone" : "Microfono",
@@ -1067,6 +1066,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversazione \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostazioni per la conversazione \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Al momento, non puoi inviare messaggi a questa conversazione",
-    "Add a description for this conversation" : "Aggiungi una descrizione per questa conversazione"
+    "Add a description for this conversation" : "Aggiungi una descrizione per questa conversazione",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Imposta il livello di notifica della conversazione attuale. Questo interessa solo le notifiche che ricevi."
 },
 "nplurals=2; plural=(n != 1);");

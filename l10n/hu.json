@@ -649,7 +649,6 @@
     "Settings" : "Beállítások",
     "Dismiss" : "Mellőzés",
     "Raise hand (R)" : "Kéz felemelése (R)",
-    "Blur my background" : "Saját háttér elmosása",
     "Disable background blur" : "Háttér elmosásának kikapcsolása",
     "You are not allowed to enable audio" : "Nem engedélyezheti a hangot",
     "No audio" : "Nincs hang",
@@ -713,7 +712,6 @@
     "Conversation settings" : "Beszélgetésbeállítások",
     "Description" : "Leírás",
     "Enter a description for this conversation" : "Adja meg a beszélgetés leírását",
-    "Chat notifications" : "Csevegőértesítések",
     "Device check" : "Eszközellenőrzés",
     "Always show the device preview screen before joining a call in this conversation." : "Mindig jelenítse meg az eszköz előnézeti képernyőt mielőtt csatlakozik egy híváshoz ebben a beszélgetésben.",
     "Guests access" : "Vendégek hozzáférése",
@@ -824,7 +822,6 @@
     "not running, check Matterbridge log" : "nem fut, ellenőrizze a Matterbridge naplóját",
     "not running" : "nem fut",
     "Bridge saved" : "Híd mentve",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti.",
     "Allow participants to join from a phone." : "Engedélyezés, hogy a résztvevők telefonon is csatlakozhassanak.",
     "Enable SIP dial-in" : "A SIP-es betárcsázás engedélyezése",
     "SIP dial-in is now enabled" : "A SIP-es betárcsázás engedélyezett",
@@ -1112,6 +1109,7 @@
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Internetkapcsolata vagy számítógépe foglalt, és elképzelhető, hogy más résztvevők nem fogják megérteni Önt és nem láthatják a képernyőt. A helyzet javítása érdekében próbálja meg letiltani a képernyőmegosztást.",
     "This conversation is read only" : "Ez a beszélgetés csak olvasható",
     "Conversation, " : "Beszélgetés,",
+    "Chat notifications" : "Csevegőértesítések",
     "Allow guests to join via link " : "A vendégek hivatkozással történő csatlakozásának engedélyezése",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ön jelenleg a váróban van. A találkozó ekkora van ütemezve: {startTime}",
     "Microphone" : "Mikrofon",
@@ -1147,6 +1145,7 @@
     "Conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

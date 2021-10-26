@@ -682,7 +682,6 @@ OC.L10N.register(
     "Conversation settings" : "اعدادات المحادثة",
     "Description" : "الوصف",
     "Enter a description for this conversation" : "ادخل وصفًا لهذه المحادثة ",
-    "Chat notifications" : "تنبيه المحادثة",
     "Guests access" : "الوصول للضيوف ",
     "Meeting settings" : "إعدادات الإجتماع ",
     "Matterbridge" : "Matterbridge",
@@ -784,7 +783,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "لا يعمل، تحقق من سجل Matterbridge",
     "not running" : "غير فعال",
     "Bridge saved" : "تم الحفظ ",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "قم بتعيين مستوى الإشعارات للمحادثة الحالية. سيؤثر هذا فقط على الإشعارات التي تتلقاها.",
     "Allow participants to join from a phone." : "السماح للمشاركين بالانضمام عبر الجوال ",
     "Enable SIP dial-in" : "تفعيل الاتصال عبر SIP",
     "SIP dial-in is now enabled" : "تم تمكين اتصال SIP الآن",
@@ -1047,6 +1045,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "اتصالك بالانترنت او جهازك الخاص قد يؤثر ذلك على فهم المشاركين وعدم ظهور شاشتك للآخرين. لتحسين ذلك جرب تعطيل الفيديو في حال مشاركة الشاشة.",
     "This conversation is read only" : "هذه المحادثة للقراءة فقط",
     "Conversation, " : "محادثة،",
+    "Chat notifications" : "تنبيه المحادثة",
     "Allow guests to join via link " : "السماح بالضيوف بالانضمام عن طريق الرابط",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "أنت حاليا في انتظار الاستقبال. الاجتماع مجدول في {startTime}",
     "Microphone" : "مايك",
@@ -1082,6 +1081,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
     "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
-    "Add a description for this conversation" : "إضافة وصف لهذه المحادثة "
+    "Add a description for this conversation" : "إضافة وصف لهذه المحادثة ",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "قم بتعيين مستوى الإشعارات للمحادثة الحالية. سيؤثر هذا فقط على الإشعارات التي تتلقاها."
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

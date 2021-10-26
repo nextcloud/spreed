@@ -693,7 +693,6 @@ OC.L10N.register(
     "Conversation settings" : "会話設定",
     "Description" : "詳細",
     "Enter a description for this conversation" : "この会話の説明を入力",
-    "Chat notifications" : "チャット通知",
     "Guests access" : "ゲスト参加",
     "Meeting settings" : "会議設定",
     "Matterbridge" : "Matterbridge",
@@ -795,7 +794,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "未稼働です。Matterbridgeログを確認してください",
     "not running" : "未稼働",
     "Bridge saved" : "ブリッジが保存されました",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "現在の会話の通知レベルを設定します。これから受信する通知にのみ有効です。",
     "Allow participants to join from a phone." : "参加者が電話から参加できるようにします。",
     "Enable SIP dial-in" : "SIPダイヤルインを有効にする",
     "SIP dial-in is now enabled" : "SIPダイヤルインが有効になりました",
@@ -1071,6 +1069,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "インターネット接続かコンピューターの負荷が高いため、他の参加者から見えず、どうなっているのか分からないかもしれません。この状態を改善するには、画面共有を停止してみてください。",
     "This conversation is read only" : "この会話は読み込みのみです",
     "Conversation, " : "会話、",
+    "Chat notifications" : "チャット通知",
     "Allow guests to join via link " : "リンク経由でのゲスト参加を許可",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "現在ロビーで待機中。この会議は{startTime}から予定されています。",
     "Microphone" : "マイク",
@@ -1106,6 +1105,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
-    "Add a description for this conversation" : "この会話の詳細を追加する"
+    "Add a description for this conversation" : "この会話の詳細を追加する",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "現在の会話の通知レベルを設定します。これから受信する通知にのみ有効です。"
 },
 "nplurals=1; plural=0;");
