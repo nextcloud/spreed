@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "Ayarlar",
     "Dismiss" : "Yok say",
     "Raise hand (R)" : "El kaldır (R)",
-    "Blur my background" : "Arka planımı bulanıklaştır",
     "Disable background blur" : "Arka plan bulanıklaştırmayı devre dışı bırak",
     "You are not allowed to enable audio" : "Sesi açma izniniz yok",
     "No audio" : "Ses yok",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "Görüşme ayarları",
     "Description" : "Açıklama",
     "Enter a description for this conversation" : "Bu görüşme için bir açıklama yazın",
-    "Chat notifications" : "Sohbet bildirimleri",
     "Device check" : "Aygıt denetimi",
     "Always show the device preview screen before joining a call in this conversation." : "Bu görüşmede bir çağrıya katılmadan önce her zaman aygıt ön izleme ekranı görüntülenir.",
     "Guests access" : "Konuk erişimi",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "çalışmıyor. Matterbridge günlüğünü denetleyin",
     "not running" : "çalışmıyor",
     "Bridge saved" : "Köprü kaydedildi",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler.",
     "Allow participants to join from a phone." : "Katılımcılar telefondan katılabilsin.",
     "Enable SIP dial-in" : "SIP çevirme kullanılsın",
     "SIP dial-in is now enabled" : "SIP çevirmeli arama etkinleştirildi",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "İnternet bağlantınız ya da bilgisayarınız yoğun kullanıldığından diğer katılımcılar sizi anlamayabilir ve göremeyebilir. Durumu iyileştirmek için ekran paylaşımınızı kapatmayı deneyin.",
     "This conversation is read only" : "Bu görüşme salt okunur",
     "Conversation, " : "Görüşme,",
+    "Chat notifications" : "Sohbet bildirimleri",
     "Allow guests to join via link " : "Konuklar bağlantı ile katılabilsin",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Şu anda girişte bekliyorsunuz. Bu görüşme {startTime} zamanında başlayacak",
     "Microphone" : "Mikrofon",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesi",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesinin ayarları",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler."
 },
 "nplurals=2; plural=(n > 1);");

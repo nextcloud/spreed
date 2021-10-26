@@ -703,7 +703,6 @@
     "Conversation settings" : "Параметры обсуждения",
     "Description" : "Описание",
     "Enter a description for this conversation" : "Задайте описание этого обсуждения",
-    "Chat notifications" : "Уведомления чата",
     "Guests access" : "Доступ для гостей",
     "Meeting settings" : "Параметры встречи",
     "Matterbridge" : "Matterbridge",
@@ -812,7 +811,6 @@
     "not running, check Matterbridge log" : "не выполняется, проверьте журнал Matterbridge",
     "not running" : "не выполняется",
     "Bridge saved" : "Параметры обмена сохранены",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Установить уровень уведомления для текущего разговора. Это повлияет только на получаемые вами уведомления.",
     "Allow participants to join from a phone." : "Разрешить подключаться по телефонной линии",
     "Enable SIP dial-in" : "Включить входящие SIP-вызовы",
     "SIP dial-in is now enabled" : "Входящие вызовы с использованием протокола SIP включены",
@@ -1097,6 +1095,7 @@
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Ваше интернет-подключение или компьютер сильно загружены и другие пользователи могут вас не понимать и не видеть ваш экран. Для улучшения ситуации попробуйте отключить трансляцию экрана.",
     "This conversation is read only" : "Это обсуждение только для чтения",
     "Conversation, " : "Обсуждение,",
+    "Chat notifications" : "Уведомления чата",
     "Allow guests to join via link " : "Разрешить гостям заходить по ссылке",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "В данный момент вы ожидаете в вестибюле. Эта встреча запланирована на {startTime}",
     "Microphone" : "Микрофон",
@@ -1132,6 +1131,7 @@
     "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
-    "Add a description for this conversation" : "Добавьте описание этого обсуждения"
+    "Add a description for this conversation" : "Добавьте описание этого обсуждения",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Установить уровень уведомления для текущего разговора. Это повлияет только на получаемые вами уведомления."
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
