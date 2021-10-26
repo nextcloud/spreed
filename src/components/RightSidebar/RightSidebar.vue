@@ -51,7 +51,7 @@
 			id="participants"
 			ref="participantsTab"
 			:order="2"
-			:name="t('spreed', 'Participants')"
+			:name="t('spreed', 'Participants') + ' (' + participantsCount + ')'"
 			icon="icon-contacts-dark">
 			<ParticipantsTab
 				:is-active="activeTab === 'participants'"
@@ -210,6 +210,11 @@ export default {
 
 		isOneToOne() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
+		participantsCount() {
+			const participants = this.$store.getters.participantsList(this.token)
+			return participants.length
 		},
 
 	},
