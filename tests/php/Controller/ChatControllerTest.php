@@ -23,6 +23,7 @@
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OC\Security\TrustedDomainHelper;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
@@ -87,6 +88,8 @@ class ChatControllerTest extends TestCase {
 	protected $timeFactory;
 	/** @var IValidator|MockObject */
 	protected $richObjectValidator;
+	/** @var TrustedDomainHelper|MockObject */
+	protected $trustedDomainHelper;
 	/** @var IL10N|MockObject */
 	private $l;
 
@@ -118,6 +121,7 @@ class ChatControllerTest extends TestCase {
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->richObjectValidator = $this->createMock(IValidator::class);
+		$this->trustedDomainHelper = $this->createMock(TrustedDomainHelper::class);
 		$this->l = $this->createMock(IL10N::class);
 
 		$this->room = $this->createMock(Room::class);
@@ -152,6 +156,7 @@ class ChatControllerTest extends TestCase {
 			$this->timeFactory,
 			$this->eventDispatcher,
 			$this->richObjectValidator,
+			$this->trustedDomainHelper,
 			$this->l
 		);
 	}
