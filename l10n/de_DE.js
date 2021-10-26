@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "Einstellungen",
     "Dismiss" : "Ausblenden",
     "Raise hand (R)" : "Hand heben (R)",
-    "Blur my background" : "Unschärfe mit Hintergrund",
     "Disable background blur" : "Hintergrundunschärfe ausschalten",
     "You are not allowed to enable audio" : "Sie dürfen Audio nicht einschalten",
     "No audio" : "Kein Audio",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "Unterhaltungseinstellungen",
     "Description" : "Beschreibung",
     "Enter a description for this conversation" : "Geben Sie eine Beschreibung für diese Unterhaltung ein",
-    "Chat notifications" : "Chat-Benachrichtigungen",
     "Device check" : "Gerätetest",
     "Always show the device preview screen before joining a call in this conversation." : "Zeigen Sie immer den Gerätevorschaubildschirm an, bevor Sie einem Anruf in dieser Unterhaltung beitreten.",
     "Guests access" : "Gastzugriff",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "Nicht aktiv, bitte das Matterbridge-Protokoll prüfen",
     "not running" : "läuft nicht",
     "Bridge saved" : "Einbindung gespeichert",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten.",
     "Allow participants to join from a phone." : "Ermöglichen Sie den Teilnehmern, über ein Telefon teilzunehmen.",
     "Enable SIP dial-in" : "SIP-Einwahl aktivieren",
     "SIP dial-in is now enabled" : "Die SIP-Einwahl ist jetzt aktiviert",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Ihre Internetverbindung oder Ihr Computer sind ausgelastet und andere Teilnehmer können Sie möglicherweise nicht verstehen und Ihren Bildschirm nicht sehen. Versuchen Sie, Ihre Bildschirmfreigabe zu deaktivieren, um die Übertragung zu verbessern.",
     "This conversation is read only" : "Diese Unterhaltung ist schreibgeschützt",
     "Conversation, " : "Unterhaltung,",
+    "Chat notifications" : "Chat-Benachrichtigungen",
     "Allow guests to join via link " : "Gästen die Teilnahme per Link erlauben",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Sie warten derzeit in der Lobby. Dieses Meeting ist für {startTime} geplant.",
     "Microphone" : "Mikrofon",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Unterhaltung \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Einstellungen für die Unterhaltung \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Sie können derzeit keine Nachrichten an diese Unterhaltung senden",
-    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen"
+    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten."
 },
 "nplurals=2; plural=(n != 1);");

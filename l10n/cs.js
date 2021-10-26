@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "Nastavení",
     "Dismiss" : "Zavřít",
     "Raise hand (R)" : "Hlásit se (R)",
-    "Blur my background" : "Rozmazat pozadí za mnou",
     "Disable background blur" : "Vypnout rozmazávání pozadí za vámi",
     "You are not allowed to enable audio" : "Nemáte oprávnění zapnout přenos zvuku od vás",
     "No audio" : "Žádný zvuk",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "Nastavení konverzace",
     "Description" : "Popis",
     "Enter a description for this conversation" : "Přidat popis pro tuto konverzaci",
-    "Chat notifications" : "Upozornění v chatu",
     "Device check" : "Kontrola zařízení",
     "Always show the device preview screen before joining a call in this conversation." : "Vždy ukázat obrazovku s náhledem zařízení před připojením hovoru v této konverzaci.",
     "Guests access" : "Přístup pro hosty",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "není spuštěné – zkontrolujte záznam událostí Matterbridge",
     "not running" : "nespuštěné",
     "Bridge saved" : "Můstek uložen",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy.",
     "Allow participants to join from a phone." : "Umožnit účastníkům připojit se z telefonu.",
     "Enable SIP dial-in" : "Zapnout SIP volání sem",
     "SIP dial-in is now enabled" : "SIP vytáčení je povoleno",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Vaše připojení k Internetu nebo počítač je zahlcené – vaše řeč může být pro ostatní účastníky nesrozumitelná. Také nemusí vidět obsah vaší obrazovky. Pro zlepšení situace zkuste přestat sdílet obsah obrazovky.",
     "This conversation is read only" : "Konverzace je pouze pro čtení",
     "Conversation, " : "Konverzace, ",
+    "Chat notifications" : "Upozornění v chatu",
     "Allow guests to join via link " : "Povolit hostům připojení prostřednictvím odkazu",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "V tuto chvíli se nacházíte v čekárně. Toto setkání je naplánováno na {startTime}",
     "Microphone" : "Mikrofon",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
     "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "Nyní není možné do této konverzace posílat zprávy",
-    "Add a description for this conversation" : "Přidat popis k této konverzaci"
+    "Add a description for this conversation" : "Přidat popis k této konverzaci",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

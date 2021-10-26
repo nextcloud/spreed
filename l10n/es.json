@@ -703,7 +703,6 @@
     "Conversation settings" : "Ajustes de la conversación",
     "Description" : "Descripción",
     "Enter a description for this conversation" : "Introduce una descripción para esta conversación",
-    "Chat notifications" : "Notificaciones de chat",
     "Guests access" : "Acceso de invitados",
     "Meeting settings" : "Ajustes de la reunión",
     "Matterbridge" : "Matterbridge",
@@ -812,7 +811,6 @@
     "not running, check Matterbridge log" : "sin funcionamiento, comprueba el registro de Matterbridge",
     "not running" : "sin funcionar",
     "Bridge saved" : "Enlace guardado",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Establecer el nivel de notificación para la conversación actual. Esto afectará sólo a las notificaciones que reciba.",
     "Allow participants to join from a phone." : "Permite que los participantes se unan por teléfono.",
     "Enable SIP dial-in" : "Habilitar conexión telefónica SIP",
     "SIP dial-in is now enabled" : "Se ha habilitado la conexión telefónica SIP",
@@ -1097,6 +1095,7 @@
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Tu conexión a internet o tu ordenador tienen demasiada carga y quizás algunos participantes no puedan oírte ni ver tu pantalla. Para mejorar la situación, prueba a dejar de compartir tu pantalla.",
     "This conversation is read only" : "Esta conversación es de sólo lectura",
     "Conversation, " : "Conversación,",
+    "Chat notifications" : "Notificaciones de chat",
     "Allow guests to join via link " : "Permite a los invitados unirse mediante un enlace",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ahora estás esperando en la sala de espera. Esta reunión está planificada para las {startTime}",
     "Microphone" : "Micrófono",
@@ -1132,6 +1131,7 @@
     "Conversation \"{conversationName}\"" : "Conversación «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Ajustes de la conversación «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Por el momento no puede enviar mensajes a esta conversación",
-    "Add a description for this conversation" : "Añadir una descripción de esta conversación"
+    "Add a description for this conversation" : "Añadir una descripción de esta conversación",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Establecer el nivel de notificación para la conversación actual. Esto afectará sólo a las notificaciones que reciba."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "設定",
     "Dismiss" : "撤銷",
     "Raise hand (R)" : "舉手（R）",
-    "Blur my background" : "模糊我的背景",
     "Disable background blur" : "禁用背景模糊",
     "You are not allowed to enable audio" : "你無權啟用語音",
     "No audio" : "沒有音訊",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "對話設定",
     "Description" : "描述",
     "Enter a description for this conversation" : "輸入此對話的描述",
-    "Chat notifications" : "聊天通告",
     "Device check" : "檢查裝置",
     "Always show the device preview screen before joining a call in this conversation." : "在此對話中加入通話之前，一律顯示裝置預覽屏幕。",
     "Guests access" : "訪客存取",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "未運行，請檢查Matterbridge日誌",
     "not running" : "沒有運行",
     "Bridge saved" : "Bridge 已保存",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。",
     "Allow participants to join from a phone." : "允許參與者通過電話加入。",
     "Enable SIP dial-in" : "啟用 SIP 撥入",
     "SIP dial-in is now enabled" : "現在啟用了 SIP 撥入",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "您的 Internet 連接或電腦繁忙，其他參與者可能無法理解和看到您的屏幕。為了改善這種情況，請嘗試停用屏幕共享。",
     "This conversation is read only" : "對話是唯讀狀態",
     "Conversation, " : "對話，",
+    "Chat notifications" : "聊天通告",
     "Allow guests to join via link " : "允許訪客透過連結加入",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "您目前正在等候室等候。本次會議預定於 {startTime} 開始",
     "Microphone" : "米高風",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "You can not send messages to this conversation at the moment" : "您目前無法向此對話發送消息",
-    "Add a description for this conversation" : "添加此對話的描述"
+    "Add a description for this conversation" : "添加此對話的描述",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。"
 },
 "nplurals=1; plural=0;");
