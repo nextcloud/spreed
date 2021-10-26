@@ -429,7 +429,6 @@ OC.L10N.register(
     "Favorite" : "Ưa thích",
     "Conversation settings" : "Cài đặt cuộc trò chuyện",
     "Description" : "Mô tả",
-    "Chat notifications" : "Thông báo trò chuyện",
     "Guests access" : "Khách truy cập",
     "Meeting settings" : "Cài đặt cuộc họp",
     "Danger zone" : "Khu vực nguy hiểm",
@@ -529,7 +528,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "không chạy, kiểm tra nhật kí Matterbridge",
     "not running" : "không chạy",
     "Bridge saved" : "Cầu nối đã được lưu",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Đặt mức thông báo cho cuộc trò chuyện hiện tại. Điều này sẽ chỉ ảnh hưởng đến các thông báo bạn nhận được.",
     "Allow participants to join from a phone." : "Cho phép tham gia từ điện thoại.",
     "Enable SIP dial-in" : "Bật quay số SIP",
     "SIP dial-in is now enabled" : "Quay số SIP hiện đã được bật",
@@ -782,6 +780,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Kết nối internet hoặc máy tính của bạn đang bận và những người tham gia khác có thể không hiểu và nhìn thấy màn hình của bạn. Để cải thiện tình hình, hãy thử tắt tính năng chia sẻ màn hình của bạn.",
     "This conversation is read only" : "Cuộc trò chuyện này chỉ đọc",
     "Conversation, " : "Cuộc hội thoại, ",
+    "Chat notifications" : "Thông báo trò chuyện",
     "Allow guests to join via link " : "Cho phép khách tham gia qua liên kết",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Bạn hiện đang đợi ở sảnh. Cuộc họp này được lên lịch vào {startTime}",
     "Microphone" : "Micrô",
@@ -816,6 +815,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Cuộc trò chuyện \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Cài đặt cho cuộc trò chuyện \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
-    "Add a description for this conversation" : "Thêm mô tả cho cuộc trò chuyện này"
+    "Add a description for this conversation" : "Thêm mô tả cho cuộc trò chuyện này",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Đặt mức thông báo cho cuộc trò chuyện hiện tại. Điều này sẽ chỉ ảnh hưởng đến các thông báo bạn nhận được."
 },
 "nplurals=1; plural=0;");

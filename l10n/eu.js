@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "Ezarpenak",
     "Dismiss" : "Baztertu",
     "Raise hand (R)" : "Jaso eskua (R)",
-    "Blur my background" : "Lausotu nire atzeko planoa",
     "Disable background blur" : "Desgaitu atzeko planoko lausotzea",
     "You are not allowed to enable audio" : "Ez duzu baimenik audioa gaitzeko",
     "No audio" : "Audiorik ez",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "Elkarrizketaren ezarpenak",
     "Description" : "Deskribapena",
     "Enter a description for this conversation" : "Sartu deskribapen bat elkarrrizketa honentzat",
-    "Chat notifications" : "Txat jakinarazpenak",
     "Device check" : "Gailu egiaztapena",
     "Always show the device preview screen before joining a call in this conversation." : "Erakutsi gailuaren aurreikuspen pantaila beti dei batera sartu baino lehen elkarrizketa honetan.",
     "Guests access" : "Gonbidatuen sarbidea",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "ez dabil, egiaztatu Matterbridge erregistroa",
     "not running" : "Ez da exekutatzen ari",
     "Bridge saved" : "Zubia ondo gorde da",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Konfiguratu jakinarazpen maila uneko elkarrizketarentzat. Honek zuk jasotzen dituzun jakinarazpenei bakarrik eragingo die.",
     "Allow participants to join from a phone." : "Baimendu parte-hartzaileak telefono baten bidez sartzea.",
     "Enable SIP dial-in" : "Gaitu SIP markatzea",
     "SIP dial-in is now enabled" : "SIP markatzea gaituta dago",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Zure internet konexioa edo ordenagailua lanpetuta daude eta baliteke beste partaideek zu ulertu edo zure pantaila ikusteko zailtasunak izatea. Egoera hobetzeko saiatu pantaila partekatu gabe aritzen.",
     "This conversation is read only" : "Elkarrizketa hau irakurtzeko soilik da",
     "Conversation, " : "Elkarrizketa,",
+    "Chat notifications" : "Txat jakinarazpenak",
     "Allow guests to join via link " : "Baimendu gonbidatuak esteka bidez batzea",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Sarreran itxaroten zabiltza momentu honetan. Bileraren programatutako hasiera-ordua: {startTime}",
     "Microphone" : "Mikrofonoa",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "You can not send messages to this conversation at the moment" : "Ezin dituzu mezuak bidali elkarrizketa honetara une honetan",
-    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
+    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Konfiguratu jakinarazpen maila uneko elkarrizketarentzat. Honek zuk jasotzen dituzun jakinarazpenei bakarrik eragingo die."
 },
 "nplurals=2; plural=(n != 1);");
