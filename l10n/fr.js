@@ -705,7 +705,6 @@ OC.L10N.register(
     "Conversation settings" : "Paramètres de la conversation",
     "Description" : "Description",
     "Enter a description for this conversation" : "Ajoutez une description à cette conversation",
-    "Chat notifications" : "Notifications de discussion",
     "Guests access" : " Accès invités",
     "Meeting settings" : "Paramètres de réunion",
     "Matterbridge" : "Matterbridge",
@@ -814,7 +813,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "not running, check Matterbridge log",
     "not running" : "inactif",
     "Bridge saved" : "Lien enregistré",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Définissez le niveau de notification pour la conversation en cours. Cela n'affectera que les notifications que vous recevez.",
     "Allow participants to join from a phone." : "Autoriser les participants à se joindre à partir d'un téléphone.",
     "Enable SIP dial-in" : "Activer la connexion SIP",
     "SIP dial-in is now enabled" : "La connexion SIP est maintenant activée",
@@ -1093,6 +1091,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Votre connexion internet ou votre ordinateur sont lents et les autres participants peuvent avoir du mal à vous comprendre et à voir votre écran. Pour améliorer la situation, essayez de désactiver votre partage d'écran.",
     "This conversation is read only" : "Cette conversation est en lecture seule",
     "Conversation, " : "Conversation, ",
+    "Chat notifications" : "Notifications de discussion",
     "Allow guests to join via link " : "Autoriser les invités à rejoindre la conversation avec le lien",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Vous attendez actuellement dans la salle d'attente. Le démarrage de cette réunion est prévu à %1$s",
     "Microphone" : "Microphone",
@@ -1127,6 +1126,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
-    "Add a description for this conversation" : "Ajouter une description pour cette conversation"
+    "Add a description for this conversation" : "Ajouter une description pour cette conversation",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Définissez le niveau de notification pour la conversation en cours. Cela n'affectera que les notifications que vous recevez."
 },
 "nplurals=2; plural=(n > 1);");

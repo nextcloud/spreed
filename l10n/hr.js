@@ -699,7 +699,6 @@ OC.L10N.register(
     "Conversation settings" : "Postavke razgovora",
     "Description" : "Opis",
     "Enter a description for this conversation" : "Unesite opis ovog razgovora",
-    "Chat notifications" : "Obavijesti o razmijenjenim porukama",
     "Guests access" : "Pristupi kao gost",
     "Meeting settings" : "Postavke sastanka",
     "Matterbridge" : "Matterbridge",
@@ -807,7 +806,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "nije pokrenuto, provjeri zapisnik Matterbridgea",
     "not running" : "ne radi",
     "Bridge saved" : "Veza spašena",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Postavite razinu obavijesti za trenutni razgovor. To će utjecati samo na obavijesti koje primate.",
     "Allow participants to join from a phone." : "Dopustite sudionicima da se pridruže putem telefona.",
     "Enable SIP dial-in" : "Omogući povezivanje putem SIP-a",
     "SIP dial-in is now enabled" : "Povezivanje putem SIP-a je omogućeno",
@@ -1090,6 +1088,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Vaša internetska veza ili računalo je zauzeto pa drugi sudionici možda neće vidjeti i razumjeti prikaz na vašem zaslonu. Kako biste otklonili poteškoće, pokušajte onemogućiti dijeljenje zaslona.",
     "This conversation is read only" : "Ovaj razgovor je samo za čitanje",
     "Conversation, " : "Razgovor, ",
+    "Chat notifications" : "Obavijesti o razmijenjenim porukama",
     "Allow guests to join via link " : "Dopusti pridruživanje gostiju putem pozivnice ",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Trenutno čekate u predvorju. Sastanak počinje u {startTime}",
     "Microphone" : "Mikrofon",
@@ -1125,6 +1124,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Razgovor „{conversationName}”",
     "Settings for conversation \"{conversationName}\"" : "Postavke razgovora „{conversationName}”",
     "You can not send messages to this conversation at the moment" : "Trenutno ne možete slati poruke u ovaj razgovor",
-    "Add a description for this conversation" : "Dodaj opis ovog razgovora"
+    "Add a description for this conversation" : "Dodaj opis ovog razgovora",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Postavite razinu obavijesti za trenutni razgovor. To će utjecati samo na obavijesti koje primate."
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
