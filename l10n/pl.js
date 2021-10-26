@@ -652,7 +652,6 @@ OC.L10N.register(
     "Settings" : "Ustawienia",
     "Dismiss" : "Odrzuć",
     "Raise hand (R)" : "Podnieś rękę (R)",
-    "Blur my background" : "Rozmyj moje tło",
     "Disable background blur" : "Wyłącz rozmycie tła",
     "You are not allowed to enable audio" : "Nie możesz włączyć dźwięku",
     "No audio" : "Brak dźwięku",
@@ -716,7 +715,6 @@ OC.L10N.register(
     "Conversation settings" : "Ustawienia rozmowy",
     "Description" : "Opis",
     "Enter a description for this conversation" : "Podaj opis dla tej rozmowy",
-    "Chat notifications" : "Powiadomienia rozmowy",
     "Device check" : "Sprawdzenie urządzenia",
     "Always show the device preview screen before joining a call in this conversation." : "Zawsze pokazuj ekran podglądu urządzenia przed dołączeniem do połączenia w tej rozmowie.",
     "Guests access" : "Dostęp dla gości",
@@ -827,7 +825,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "nie działa, sprawdź dziennik Matterbridge",
     "not running" : "nie działa",
     "Bridge saved" : "Połączenie zapisane",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Ustaw poziom powiadomień dla bieżącej rozmowy. Będzie to miało wpływ tylko na otrzymywane powiadomienia.",
     "Allow participants to join from a phone." : "Zezwól uczestnikom na dołączanie z telefonu.",
     "Enable SIP dial-in" : "Włącz połączenie telefoniczne SIP",
     "SIP dial-in is now enabled" : "Połączenie telefoniczne SIP jest teraz włączone",
@@ -1129,6 +1126,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Twoje połączenie internetowe lub komputer jest znacznie obciążony. Inni uczestnicy mogą Ciebie nie zrozumieć i nie widzieć Twojego ekranu. Aby poprawić sytuację, spróbuj wyłączyć udostępnianie ekranu.",
     "This conversation is read only" : "Ta rozmowa jest tylko do odczytu",
     "Conversation, " : "Rozmowa, ",
+    "Chat notifications" : "Powiadomienia rozmowy",
     "Allow guests to join via link " : "Zezwól gościom na dołączanie za pomocą linku",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Obecnie czekasz w poczekalni. To spotkanie jest zaplanowane na {startTime}",
     "Microphone" : "Mikrofon",
@@ -1164,6 +1162,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Rozmowa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Ustawienia rozmowy \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "W tej chwili nie możesz wysyłać wiadomości dla tej rozmowy",
-    "Add a description for this conversation" : "Dodaj opis rozmowy"
+    "Add a description for this conversation" : "Dodaj opis rozmowy",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Ustaw poziom powiadomień dla bieżącej rozmowy. Będzie to miało wpływ tylko na otrzymywane powiadomienia."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

@@ -651,7 +651,6 @@ OC.L10N.register(
     "Settings" : "Instellingen",
     "Dismiss" : "Weigeren",
     "Raise hand (R)" : "Hand omhoog (R)",
-    "Blur my background" : "Vervaag mijn achtergrond",
     "Disable background blur" : "Schakel vervaagde achtergrond uit",
     "You are not allowed to enable audio" : "Je bent niet bevoegd om audio te activeren",
     "No audio" : "Geen geluid",
@@ -712,7 +711,6 @@ OC.L10N.register(
     "Conversation settings" : "Gespreksinstellingen",
     "Description" : "Beschrijving",
     "Enter a description for this conversation" : "Voer een beschrijving in voor dit gesprek",
-    "Chat notifications" : "Chatmeldingen",
     "Device check" : "Apparaat controle",
     "Guests access" : "Gastentoegang",
     "Meeting settings" : "Meeting instellingen",
@@ -815,7 +813,6 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "draait niet, controleer Matterbridge logbestand",
     "not running" : "niet bezig",
     "Bridge saved" : "Overbrugging opgeslagen",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Stel het meldingsniveau in voor het huidige gesprek. Dit heeft alleen invloed op de meldingen die jij ontvangt.",
     "Allow participants to join from a phone." : "Toestaan dat deelnemers telefonisch meedoen.",
     "Enable SIP dial-in" : "Inschakelen SIP inbelfunctie",
     "SIP dial-in is now enabled" : "SIP inbellen is nu ingeschakeld",
@@ -1097,6 +1094,7 @@ OC.L10N.register(
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Je internetverbinding of computer is overbelast en andere deelnemers kunnen je scherm mogelijk niet begrijpen en zien. Om de situatie te verbeteren kun je  proberen je scherm-delen uit te schakelen.",
     "This conversation is read only" : "Dit gesprek is alleen-lezen",
     "Conversation, " : "Gesprekken,",
+    "Chat notifications" : "Chatmeldingen",
     "Allow guests to join via link " : "Sta gasten toe om te deel te nemen via een link",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Je wacht nu in de lobby. Deze vergadering staat gepland voor {startTime}",
     "Microphone" : "Microfoon",
@@ -1132,6 +1130,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
+    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Stel het meldingsniveau in voor het huidige gesprek. Dit heeft alleen invloed op de meldingen die jij ontvangt."
 },
 "nplurals=2; plural=(n != 1);");

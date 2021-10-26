@@ -649,7 +649,6 @@
     "Settings" : "设置",
     "Dismiss" : "忽略",
     "Raise hand (R)" : "举起手 (R)",
-    "Blur my background" : "模糊背景图",
     "Disable background blur" : "禁用背景模糊",
     "You are not allowed to enable audio" : "你不被允许启用音频",
     "No audio" : "无音频",
@@ -713,7 +712,6 @@
     "Conversation settings" : "会话设置",
     "Description" : "描述",
     "Enter a description for this conversation" : "为这个对话输入一个描述 ",
-    "Chat notifications" : "聊天通知",
     "Device check" : "设备检查",
     "Always show the device preview screen before joining a call in this conversation." : "在此对话中加入通话前始终显示设备预览屏幕",
     "Guests access" : "来宾访问",
@@ -824,7 +822,6 @@
     "not running, check Matterbridge log" : "未在运行，检查 Matterbridge 日志",
     "not running" : "未在运行",
     "Bridge saved" : "网桥已保存",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "设置当前对话的通知级别。这将只影响你收到的通知。",
     "Allow participants to join from a phone." : "允许与会者通过电话加入。 ",
     "Enable SIP dial-in" : "启用 SIP 拨号",
     "SIP dial-in is now enabled" : "启用了 SIP 拨号 ",
@@ -1126,6 +1123,7 @@
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "你的互联网连接或计算机繁忙，其他参与者可能无法理解和看到你的屏幕。为了改善这种情况，请禁用你的屏幕共享。",
     "This conversation is read only" : "此会话是只读的",
     "Conversation, " : "会话，",
+    "Chat notifications" : "聊天通知",
     "Allow guests to join via link " : "允许访客通过链接加入",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "您当前正在休息室等待。此会议预定于 {startTime} 开始",
     "Microphone" : "麦克风",
@@ -1161,6 +1159,7 @@
     "Conversation \"{conversationName}\"" : "会话 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会话 \"{conversationName}\" 的设置",
     "You can not send messages to this conversation at the moment" : "你目前不能向此会话发送消息",
-    "Add a description for this conversation" : "为这个对话添加一个描述 "
+    "Add a description for this conversation" : "为这个对话添加一个描述 ",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "设置当前对话的通知级别。这将只影响你收到的通知。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
