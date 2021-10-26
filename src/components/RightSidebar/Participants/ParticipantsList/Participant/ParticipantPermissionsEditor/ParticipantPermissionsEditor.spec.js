@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../../store/storeConfig'
 import { PARTICIPANT, ATTENDEE } from '../../../../../../constants'
 
+import PermissionsEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor'
 
 describe('ParticipantPermissionsEditor.vue', () => {
@@ -23,7 +24,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			actorId: 'alice-actor-id',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			participantType: PARTICIPANT.TYPE.USER,
-			permissions: PARTICIPANT.PERMISSIONS.CALL_START
+			attendeePermissions: PARTICIPANT.PERMISSIONS.CALL_START
 				| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
 			attendeeId: 'alice-attendee-id',
@@ -53,8 +54,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	/**
 	 * @param {object} participant Participant with optional user status data
 	 */
-	function mountParticipantPermissionsEditor(participant) {
-
+	const mountParticipantPermissionsEditor = (participant) => {
 		return mount(ParticipantPermissionsEditor, {
 			localVue,
 			store,
@@ -66,47 +66,47 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	}
 
 	describe('Properly renders the checkboxes when mounted', () => {
-		test('Properly renders the call start checkbox', () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
-			const callStartCheckbox = wrapper.findComponent({ ref: 'callStart' })
+		test('Properly renders the call start checkbox', async () => {
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
 			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
 		})
 
-		test('Properly renders the lobby Ignore checkbox', () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
-			const lobbyIgnoreCheckbox = wrapper.findComponent({ ref: 'lobbyIgnore' })
+		test('Properly renders the lobby Ignore checkbox', async () => {
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
 			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
 		})
 
-		test('Properly renders the publish audio checkbox', () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
-			const publishAudioCheckbox = wrapper.findComponent({ ref: 'publishAudio' })
+		test('Properly renders the publish audio checkbox', async () => {
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
 			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
 		})
 
-		test('Properly renders the publish video checkbox', () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
-			const publishVideoCheckbox = wrapper.findComponent({ ref: 'publishVideo' })
+		test('Properly renders the publish video checkbox', async () => {
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
 			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
 		})
 
-		test('Properly renders the publish screen checkbox', () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
-			const publishScreenCheckbox = wrapper.findComponent({ ref: 'publishScreen' })
+		test('Properly renders the publish screen checkbox', async () => {
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
 			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(false)
 		})
 	})
 
-	describe('Dispatches the aciton to set the right permissions', () => {
+	describe('Dispatches the aciton to set the right permissions', async () => {
 
 		test('Dispatches setPermissions with the correct permissions value when a permission is subtracted', async () => {
-			const wrapper = mountParticipantPermissionsEditor(participant)
+			const wrapper = await mountParticipantPermissionsEditor(participant)
 
 			// Add a permission
-			wrapper.setData({ lobbyIgnore: true })
+			wrapper.findComponent(PermissionsEditor).setData({ lobbyIgnore: true })
 
 			// Click the submit button
-			await wrapper.find({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
@@ -125,10 +125,10 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			const wrapper = mountParticipantPermissionsEditor(participant)
 
 			// Remove a permission
-			wrapper.setData({ publishAudio: false })
+			wrapper.findComponent(PermissionsEditor).setData({ publishAudio: false })
 
 			// Click the submit button
-			await wrapper.find({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
