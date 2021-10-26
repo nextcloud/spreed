@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OC\Security\TrustedDomainHelper;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
@@ -113,6 +114,9 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IValidator */
 	protected $richObjectValidator;
 
+	/** @var TrustedDomainHelper */
+	protected $trustedDomainHelper;
+
 	/** @var IL10N */
 	private $l;
 
@@ -135,6 +139,7 @@ class ChatController extends AEnvironmentAwareController {
 								ITimeFactory $timeFactory,
 								IEventDispatcher $eventDispatcher,
 								IValidator $richObjectValidator,
+								TrustedDomainHelper $trustedDomainHelper,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -155,6 +160,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->timeFactory = $timeFactory;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->richObjectValidator = $richObjectValidator;
+		$this->trustedDomainHelper = $trustedDomainHelper;
 		$this->l = $l;
 	}
 
@@ -293,6 +299,16 @@ class ChatController extends AEnvironmentAwareController {
 		}
 		$data['type'] = $objectType;
 		$data['id'] = $objectId;
+
+		if (isset($data['link'])) {
+			$parsedUrl = parse_url($data['link']);
+			$domain = $parsedUrl['host'] ?? '';
+			$domain .= isset($parsedUrl['port']) && $parsedUrl['port'] ? (':' . $parsedUrl['port']) : '';
+
+			if (!$this->trustedDomainHelper->isTrustedDomain($domain)) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
 
 		try {
 			$this->richObjectValidator->validate('{object}', ['object' => $data]);
