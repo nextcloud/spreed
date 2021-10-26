@@ -21,6 +21,7 @@
 		<UndefinedClass>
 			<errorLevel type="suppress">
 				<referencedClass name="OC" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -29,6 +30,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Driver\Statement" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 	</issueHandlers>

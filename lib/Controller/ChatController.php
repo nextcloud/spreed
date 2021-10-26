@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OC\Security\TrustedDomainHelper;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
@@ -90,6 +91,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var IEventDispatcher */
 	private $eventDispatcher;
+
+	/** @var TrustedDomainHelper */
+	protected $trustedDomainHelper;
 
 	/** @var IL10N */
 	private $l;

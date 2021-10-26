@@ -23,6 +23,7 @@
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OC\Security\TrustedDomainHelper;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
