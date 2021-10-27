@@ -214,7 +214,7 @@ export default {
 
 		participantsText() {
 			const participants = this.$store.getters.participantsList(this.token)
-			return t('spreed', 'Participants') + ' (' + participants.length + ')'
+			return t('spreed', 'Participants ({count})', { count: participants.length })
 		},
 
 	},
