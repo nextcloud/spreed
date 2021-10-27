@@ -73,13 +73,13 @@ trait TInitialState {
 			$this->talkConfig->getDialInInfo()
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'grid_videos_limit',
+		$this->initialState->provideInitialState(
+			'grid_videos_limit',
 			$this->talkConfig->getGridVideosLimit()
 		);
 
-		$this->initialStateService->provideInitialState(
-			'talk', 'grid_videos_limit_enforced',
+		$this->initialState->provideInitialState(
+			'grid_videos_limit_enforced',
 			$this->talkConfig->getGridVideosLimitEnforced()
 		);
 	}

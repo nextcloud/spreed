@@ -267,11 +267,11 @@ export default {
 		},
 
 		gridVideosCap() {
-			return parseInt(loadState('talk', 'grid_videos_limit'))
+			return parseInt(loadState('spreed', 'grid_videos_limit'), 10)
 		},
 
 		gridVideosCapEnforced() {
-			return loadState('talk', 'grid_videos_limit_enforced')
+			return loadState('spreed', 'grid_videos_limit_enforced')
 		},
 
 		selectedVideoPeerId() {
