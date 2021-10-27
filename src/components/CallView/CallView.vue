@@ -128,6 +128,10 @@
 				:token="token"
 				:fit-video="true"
 				:has-pagination="true"
+				:min-height="isGrid && !isSidebar ? 240 : 150"
+				:min-width="isGrid && !isSidebar ? 320 : 200"
+				:videos-cap="gridVideosCap"
+				:videos-cap-enforced="gridVideosCapEnforced"
 				:call-participant-models="callParticipantModels"
 				:screens="screens"
 				:target-aspect-ratio="gridTargetAspectRatio"
@@ -158,6 +162,7 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
 import Grid from './Grid/Grid'
 import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
@@ -261,6 +266,14 @@ export default {
 			} else {
 				return 1
 			}
+		},
+
+		gridVideosCap() {
+			return parseInt(loadState('spreed', 'grid_videos_limit'), 10)
+		},
+
+		gridVideosCapEnforced() {
+			return loadState('spreed', 'grid_videos_limit_enforced')
 		},
 
 		selectedVideoPeerId() {

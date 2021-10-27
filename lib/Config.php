@@ -393,4 +393,12 @@ class Config {
 		$hash = hash_hmac('sha256', $data, $secret);
 		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
+
+	public function getGridVideosLimit(): int {
+		return (int) $this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
+	}
+
+	public function getGridVideosLimitEnforced(): bool {
+		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+	}
 }
