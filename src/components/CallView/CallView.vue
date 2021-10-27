@@ -128,6 +128,8 @@
 				:token="token"
 				:fit-video="true"
 				:has-pagination="true"
+				:min-height="isGrid && !isSidebar ? 240 : 150"
+				:min-width="isGrid && !isSidebar ? 320 : 200"
 				:videos-cap="gridVideosCap"
 				:videos-cap-enforced="gridVideosCapEnforced"
 				:call-participant-models="callParticipantModels"
