@@ -642,7 +642,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
+	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', ?string $password = ''): DataResponse {
 		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
@@ -664,7 +664,13 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName);
+				$room = $this->createEmptyRoom($roomName);
+				if ($password) {
+					$roomData = $room->getData();
+					$roomInstance = $this->manager->getRoomById($roomData['id']);
+					$roomInstance->setPassword($password);
+				}
+				return $room;
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);

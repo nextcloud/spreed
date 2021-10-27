@@ -94,6 +94,7 @@
     `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `source = 'circles'`], only available with `circles-support` capability))
     `source` | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)
     `roomName` | string | conversation name (Not available for `roomType = 1`)
+    `password` | string | Optional: New password for the conversation
 
 * Response:
     - Status code:
