@@ -24,6 +24,7 @@
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="OC" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -36,6 +37,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
+				<referencedClass name="OC\Security\TrustedDomainHelper" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
