@@ -41,7 +41,9 @@
 			</p>
 
 			<p class="lobby__description">
-				{{ conversation.description }}
+				<RichText
+					:text="conversation.description"
+					:autolink="true" />
 			</p>
 		</div>
 		<SetGuestUsername v-if="currentUserIsGuest" />
@@ -50,6 +52,7 @@
 
 <script>
 import moment from '@nextcloud/moment'
+import RichText from '@juliushaertl/vue-richtext'
 import SetGuestUsername from './SetGuestUsername'
 
 export default {
@@ -58,6 +61,7 @@ export default {
 
 	components: {
 		SetGuestUsername,
+		RichText,
 	},
 
 	computed: {
