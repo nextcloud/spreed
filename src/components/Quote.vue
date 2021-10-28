@@ -198,7 +198,7 @@ export default {
 
 			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 			Object.keys(params).forEach((parameterKey) => {
-				subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
+				subtitle = subtitle.replaceAll('{' + parameterKey + '}', params[parameterKey].name)
 			})
 
 			return subtitle
