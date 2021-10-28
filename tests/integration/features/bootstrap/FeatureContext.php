@@ -426,6 +426,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
 					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
 				}
+
+				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users') {
+					$attendee['actorId'] .= '@' . rtrim($this->baseUrl, '/');
+				}
+
 				if (isset($attendee['participantType'])) {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
@@ -1069,7 +1074,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle|remote) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
@@ -1080,6 +1085,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
+
+		if ($newType === 'remote') {
+			$newId .= '@' . $this->baseUrl;
+		}
+
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants',
 			new TableNode([
@@ -2107,6 +2117,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		try {
 			$this->response = $client->{$verb}($fullUrl, $options);
 		} catch (ClientException $ex) {
+			$this->response = $ex->getResponse();
+		} catch (\GuzzleHttp\Exception\ServerException $ex) {
 			$this->response = $ex->getResponse();
 		}
 	}

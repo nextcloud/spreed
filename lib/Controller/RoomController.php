@@ -37,7 +37,6 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -67,6 +66,7 @@ use OCP\IUserManager;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
+use Psr\Log\LoggerInterface;
 
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
@@ -109,8 +109,8 @@ class RoomController extends AEnvironmentAwareController {
 	protected $config;
 	/** @var Config */
 	protected $talkConfig;
-	/** @var FederationManager */
-	protected $federationManager;
+	/** @var LoggerInterface */
+	protected $logger;
 
 	/** @var array */
 	protected $commonReadMessages = [];
@@ -135,7 +135,8 @@ class RoomController extends AEnvironmentAwareController {
 								IL10N $l10n,
 								IConfig $config,
 								Config $talkConfig,
-								ICloudIdManager $cloudIdManager) {
+								ICloudIdManager $cloudIdManager,
+								LoggerInterface $logger) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->appManager = $appManager;
@@ -156,6 +157,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
 		$this->cloudIdManager = $cloudIdManager;
+		$this->logger = $logger;
 	}
 
 	protected function getTalkHashHeader(): array {
@@ -1129,13 +1131,16 @@ class RoomController extends AEnvironmentAwareController {
 			$this->guestManager->sendEmailInvitation($this->room, $participant);
 
 			return new DataResponse($data);
-		} elseif ($source === 'remote') {
-			if (!$this->federationManager->isEnabled()) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} elseif ($source === 'remotes') {
+			if (!$this->talkConfig->isFederationEnabled()) {
+				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 			}
 			try {
 				$newUser = $this->cloudIdManager->resolveCloudId($newParticipant);
 			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), [
+					'exception' => $e,
+				]);
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 
@@ -1145,6 +1150,7 @@ class RoomController extends AEnvironmentAwareController {
 				'displayName' => $newUser->getDisplayId(),
 			];
 		} else {
+			$this->logger->error('Trying to add participant from unsupported source ' . $source);
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
