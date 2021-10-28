@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\Security\TrustedDomainHelper;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
@@ -53,6 +52,7 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IValidator;
+use OCP\Security\ITrustedDomainHelper;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -110,7 +110,7 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var IValidator */
 	protected $richObjectValidator;
 
-	/** @var TrustedDomainHelper */
+	/** @var ITrustedDomainHelper */
 	protected $trustedDomainHelper;
 
 	/** @var IL10N */
@@ -134,7 +134,7 @@ class ChatController extends AEnvironmentAwareController {
 								ITimeFactory $timeFactory,
 								IEventDispatcher $eventDispatcher,
 								IValidator $richObjectValidator,
-								TrustedDomainHelper $trustedDomainHelper,
+								ITrustedDomainHelper $trustedDomainHelper,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -291,14 +291,8 @@ class ChatController extends AEnvironmentAwareController {
 		$data['type'] = $objectType;
 		$data['id'] = $objectId;
 
-		if (isset($data['link'])) {
-			$parsedUrl = parse_url($data['link']);
-			$domain = $parsedUrl['host'] ?? '';
-			$domain .= isset($parsedUrl['port']) && $parsedUrl['port'] ? (':' . $parsedUrl['port']) : '';
-
-			if (!$this->trustedDomainHelper->isTrustedDomain($domain)) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
-			}
+		if (isset($data['link']) && !$this->trustedDomainHelper->isTrustedUrl($data['link'])) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
