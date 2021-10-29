@@ -986,6 +986,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Došlo k chybě při získávání seznamu účastníků",
     "Chat" : "Chat",
     "Details" : "Podrobnosti",
+    "Participants ({count})" : "Účastníků ({count})",
     "Meeting ID: {meetingId}" : "Identif. schůzky: {meetingId}",
     "Your PIN: {attendeePin}" : "Váš PIN: {attendeePin}",
     "Display name: " : "Zobrazovaný název:",
