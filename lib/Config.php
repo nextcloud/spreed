@@ -292,12 +292,13 @@ class Config {
 		$timestamp = $this->timeFactory->getTime() + 86400;
 		$rnd = $this->secureRandom->generate(16);
 		$username = $timestamp . ':' . $rnd;
-		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
+		$u = $server['username'] ?? $username;
+		$password = $server['password'] ?? base64_encode(hash_hmac('sha1', $u, $server['secret'], true));
 
 		return [
 			'schemes' => $server['schemes'],
 			'server' => $server['server'],
-			'username' => $username,
+			'username' => $u,
 			'password' => $password,
 			'protocols' => $server['protocols'],
 		];
