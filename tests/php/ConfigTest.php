@@ -59,7 +59,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
 	}
 
@@ -85,7 +85,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertSame('stun.nextcloud.com:443', $helper->getStunServer());
 	}
 
@@ -111,7 +111,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(false);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertSame('', $helper->getStunServer());
 	}
 
