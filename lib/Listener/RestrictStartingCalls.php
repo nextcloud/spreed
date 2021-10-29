@@ -60,6 +60,12 @@ class RestrictStartingCalls {
 		$room = $event->getRoom();
 		$participant = $event->getParticipant();
 
+		if ($room->getType() === Room::TYPE_PUBLIC
+			&& $room->getObjectType() === 'share:password') {
+			// Always allow guests to start calls in password-request calls
+			return;
+		}
+
 		if (!$participant->canStartCall($this->config) && !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}
