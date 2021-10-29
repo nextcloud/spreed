@@ -985,6 +985,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "获取参与者时出错",
     "Chat" : "聊天",
     "Details" : "详情",
+    "Participants ({count})" : "参与者数量 ({count})",
     "Meeting ID: {meetingId}" : "会议 ID：{meetingId}",
     "Your PIN: {attendeePin}" : "你的 PIN 码：{attendeePin}",
     "Display name: " : "显示名称：",
