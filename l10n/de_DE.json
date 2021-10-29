@@ -984,6 +984,7 @@
     "An error occurred while fetching the participants" : "Es ist ein Fehler beim Abrufen der Teilnehmer aufgetreten",
     "Chat" : "Chat",
     "Details" : "Details",
+    "Participants ({count})" : "({count}) Teilnehmer",
     "Meeting ID: {meetingId}" : "Meeting-ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Ihre PIN: {attendeePin}",
     "Display name: " : "Anzeigename:",
