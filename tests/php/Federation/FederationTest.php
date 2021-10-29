@@ -112,7 +112,7 @@ class FederationTest extends TestCase {
 		$providerId = '3';
 		$roomId = 5;
 		$token = 'abcdefghijklmno';
-		$shareWith = 'test@remote.test.local';
+		$shareWith = 'test@https://remote.test.local';
 		$name = 'abcdefgh';
 		$owner = 'Owner\'s name';
 		$ownerId = 'owner';
@@ -321,6 +321,10 @@ class FederationTest extends TestCase {
 			->with($remote, $notification)
 			->willReturn([]);
 
+		$this->addressHandler->method('urlContainProtocol')
+			->with($remote)
+			->willReturn(true);
+
 		$success = $this->notifications->sendShareAccepted($remote, $id, $token);
 
 		$this->assertEquals(true, $success);
@@ -353,6 +357,10 @@ class FederationTest extends TestCase {
 			->method('sendNotification')
 			->with($remote, $notification)
 			->willReturn([]);
+
+		$this->addressHandler->method('urlContainProtocol')
+			->with($remote)
+			->willReturn(true);
 
 		$success = $this->notifications->sendShareDeclined($remote, $id, $token);
 
