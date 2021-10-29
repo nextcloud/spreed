@@ -54,6 +54,14 @@
 				:items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
+
+		<template v-if="addableRemotes.length !== 0">
+			<AppNavigationCaption
+				:title="t('spreed', 'Add federated users')" />
+			<ParticipantsList
+				:items="addableRemotes"
+				@click="handleClickParticipant" />
+		</template>
 		<AppNavigationCaption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
@@ -211,6 +219,12 @@ export default {
 		addableCircles() {
 			if (this.searchResults !== []) {
 				return this.searchResults.filter((item) => item.source === 'circles')
+			}
+			return []
+		},
+		addableRemotes() {
+			if (this.searchResults !== []) {
+				return this.searchResults.filter((item) => item.source === 'remotes')
 			}
 			return []
 		},

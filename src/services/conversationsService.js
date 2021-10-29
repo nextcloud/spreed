@@ -21,6 +21,7 @@
  */
 
 import axios from '@nextcloud/axios'
+import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION, SHARE } from '../constants'
 
@@ -80,6 +81,10 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
 		shareTypes.push(SHARE.TYPE.CIRCLE)
 		if (token !== 'new') {
 			shareTypes.push(SHARE.TYPE.EMAIL)
+
+			if (loadState('spreed', 'federation_enabled')) {
+				shareTypes.push(SHARE.TYPE.REMOTE)
+			}
 		}
 	}
 
