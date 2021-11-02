@@ -154,4 +154,25 @@ class SettingsController extends OCSController {
 
 		return new DataResponse();
 	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function blockUser($type, $blocked): DataResponse {
+		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function unblockUser(): DataResponse {
+		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function listBlockedUsers(): DataResponse {
+		return new DataResponse([], Http::STATUS_OK);
+	}
 }

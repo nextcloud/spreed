@@ -648,6 +648,30 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+		[
+			'name' => 'Settings#blockUser',
+			'url' => '/api/{apiVersion}/settings/block-user',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v(4)'
+			]
+		],
+		[
+			'name' => 'Settings#unblockUser',
+			'url' => '/api/{apiVersion}/settings/block-user',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v(4)'
+			]
+		],
+		[
+			'name' => 'Settings#listBlockedUsers',
+			'url' => '/api/{apiVersion}/settings/block-user',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v(4)'
+			]
+		],
 
 		/**
 		 * HostedSignalingServer

@@ -2126,4 +2126,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected function assertStatusCode(ResponseInterface $response, int $statusCode, string $message = '') {
 		Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 	}
+
+	/**
+	 * @When /^user "([^"]*)" block (user|group|email|circle) "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $type
+	 * @param string $blocked
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userBlockUserWithV(string $user, string $type, string $blocked, int $statusCode, string $apiVersion) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/settings/block-user', [
+				'type' => $type,
+				'blocked' => $blocked
+			]
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
 }
