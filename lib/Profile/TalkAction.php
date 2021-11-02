@@ -76,7 +76,7 @@ class TalkAction implements ILinkAction {
 	}
 
 	public function getDisplayId(): string {
-		return $this->l->t('Talk');
+		return $this->l->t('Contact via Talk');
 	}
 
 	public function getTitle(): string {
