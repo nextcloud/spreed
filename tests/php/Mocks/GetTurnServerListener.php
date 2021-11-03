@@ -36,13 +36,6 @@ class GetTurnServerListener implements IEventListener {
 				'password' => 'abcde',
 				'protocols' => 'udp,tcp',
 			],
-			[
-				'schemes' => 'turns',
-				'server' => 'turns.domain.invalid',
-				'username' => 'jane',
-				'password' => 'ABCDE',
-				'protocols' => 'tcp',
-			],
 		]);
 	}
 }

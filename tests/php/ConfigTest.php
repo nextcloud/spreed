@@ -201,21 +201,12 @@ class ConfigTest extends TestCase {
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = \OC::$server->query(IEventDispatcher::class);
 
-		$servers = [
-			[
-				'schemes' => 'turn',
-				'server' => 'turn.domain.invalid',
-				'username' => 'john',
-				'password' => 'abcde',
-				'protocols' => 'udp,tcp',
-			],
-			[
-				'schemes' => 'turns',
-				'server' => 'turns.domain.invalid',
-				'username' => 'jane',
-				'password' => 'ABCDE',
-				'protocols' => 'tcp',
-			],
+		$server = [
+			'schemes' => 'turn',
+			'server' => 'turn.domain.invalid',
+			'username' => 'john',
+			'password' => 'abcde',
+			'protocols' => 'udp,tcp',
 		];
 
 		$dispatcher->addServiceListener(GetTurnServersEvent::class, GetTurnServerListener::class);
@@ -223,7 +214,7 @@ class ConfigTest extends TestCase {
 		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 
 		$settings = $helper->getTurnSettings();
-		$this->assertSame($servers, $settings);
+		$this->assertSame($server, $settings);
 	}
 
 	public function dataGetWebSocketDomainForSignalingServer() {
