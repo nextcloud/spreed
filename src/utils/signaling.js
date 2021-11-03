@@ -962,6 +962,16 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 	}
 
+	if (!this.features['audio-video-permissions']) {
+		showError(
+			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.'),
+			{
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			}
+		)
+		console.error('The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.')
+	}
+
 	const messages = this.pendingMessages
 	this.pendingMessages = []
 	for (i = 0; i < messages.length; i++) {
