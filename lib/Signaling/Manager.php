@@ -25,11 +25,13 @@ namespace OCA\Talk\Signaling;
 
 use OCA\Talk\Config;
 use OCA\Talk\Room;
+use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 
 class Manager {
+	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
 
 	/** @var IConfig */
 	protected $serverConfig;
@@ -44,6 +46,13 @@ class Manager {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
+	}
+
+	public function isCompatibleSignalingServer(IResponse $response): bool {
+		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
+		$features = explode(',', $featureHeader);
+		$features = array_map('trim', $features);
+		return in_array('audio-video-permissions', $features, true);
 	}
 
 	public function getSignalingServerLinkForConversation(?Room $room): string {
