@@ -650,7 +650,7 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
-			if (this.videosCap !== 0) {
+			if (this.videosCap !== 0 && this.videosCount > this.videosCap) {
 				this.shrinkGrid(this.videosCap)
 			} else {
 				this.shrinkGrid(this.videosCount)
