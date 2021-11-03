@@ -2128,20 +2128,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" block (user|group|email|circle) "([^"]*)" with (\d+) \((v4)\)$/
+	 * @When /^user "([^"]*)" block (user|group|email|circle) "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param string $type
-	 * @param string $blocked
+	 * @param string $blockedId
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userBlockUserWithV(string $user, string $type, string $blocked, int $statusCode, string $apiVersion) {
+	public function userBlockUser(string $user, string $type, string $blockedId, int $statusCode, string $apiVersion) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'POST', '/apps/spreed/api/' . $apiVersion . '/settings/block-user', [
-				'type' => $type,
-				'blocked' => $blocked
+			'POST', '/apps/spreed/api/' . $apiVersion . '/block', [
+				'type' => $type . 's',
+				'blockedId' => $blockedId
 			]
 		);
 		$this->assertStatusCode($this->response, $statusCode);

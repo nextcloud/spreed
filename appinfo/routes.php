@@ -648,28 +648,32 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+
+		/**
+		 * Block
+		 */
 		[
-			'name' => 'Settings#blockUser',
-			'url' => '/api/{apiVersion}/settings/block-user',
+			'name' => 'Block#block',
+			'url' => '/api/{apiVersion}/block',
 			'verb' => 'POST',
 			'requirements' => [
-				'apiVersion' => 'v(4)'
+				'apiVersion' => 'v1'
 			]
 		],
 		[
-			'name' => 'Settings#unblockUser',
-			'url' => '/api/{apiVersion}/settings/block-user',
+			'name' => 'Block#unblock',
+			'url' => '/api/{apiVersion}/block',
 			'verb' => 'DELETE',
 			'requirements' => [
-				'apiVersion' => 'v(4)'
+				'apiVersion' => 'v1'
 			]
 		],
 		[
-			'name' => 'Settings#listBlockedUsers',
-			'url' => '/api/{apiVersion}/settings/block-user',
+			'name' => 'Block#listBlocked',
+			'url' => '/api/{apiVersion}/block',
 			'verb' => 'GET',
 			'requirements' => [
-				'apiVersion' => 'v(4)'
+				'apiVersion' => 'v1'
 			]
 		],
 

@@ -1,4 +1,4 @@
-Feature: settings/block-user
+Feature: actor/block
 
   Background:
     Given user "participant1" exists
@@ -16,4 +16,8 @@ Feature: settings/block-user
       | all          | room                     | calls  |
       | participant2 | participant2-displayname | users  |
       | participant3 | participant3-displayname | users  |
-    And user "participant1" block user "participant2" with 200 (v4)
+    And user "participant1" block user "participant2" with 200 (v1)
+    # Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
+    #   | id           | label                    | source |
+    #   | all          | room                     | calls  |
+    #   | participant3 | participant3-displayname | users  |
