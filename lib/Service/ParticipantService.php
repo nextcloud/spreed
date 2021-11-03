@@ -32,7 +32,9 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
+use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -906,7 +908,21 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUESTS_CLEAN, $event);
 	}
 
-	public function changeInCall(Room $room, Participant $participant, int $flags): void {
+	public function endCallForEveryone(Room $room, Participant $moderator): void {
+		$event = new ModifyRoomEvent($room, 'in_call', Participant::FLAG_DISCONNECTED, null, $moderator);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $event);
+
+		$participants = $this->getParticipantsInCall($room);
+
+		// kick out all participants out of the call
+		foreach ($participants as $participant) {
+			$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED, true);
+		}
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
+	}
+
+	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false): void {
 		$session = $participant->getSession();
 		if (!$session instanceof Session) {
 			return;
@@ -920,10 +936,15 @@ class ParticipantService {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
-		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
+			$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
 		} else {
+			if ($endCallForEveryone) {
+				$event = new ModifyEveryoneEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+			} else {
+				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+			}
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
 		}
 

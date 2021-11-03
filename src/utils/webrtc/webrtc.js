@@ -50,6 +50,10 @@ let usersInCallMapping = {}
 let ownPeer = null
 let ownScreenPeer = null
 let selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
+// Special variable to know when the local user explicitly joined and left the
+// call; this is needed to know when the user was kicked out from the call by a
+// moderator.
+let localUserInCall = false
 const delayedConnectionToPeer = []
 let callParticipantCollection = null
 let localCallParticipantModel = null
@@ -469,6 +473,24 @@ function usersInCallChanged(signaling, users) {
 		Sounds.playLeave(true)
 	}
 
+	// Besides the participant state it also needs to be checked whether the
+	// local user left the call already or not (either explicitly or due to a
+	// forced reconnection) to avoid trying to leave the call twice in the
+	// store.
+	if (previousSelfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		&& selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
+		&& localUserInCall) {
+		console.info('Force leaving the call for current participant')
+
+		store.dispatch('leaveCall', {
+			token: store.getters.getToken(),
+			participantIdentifier: store.getters.getParticipantIdentifier(),
+		})
+
+		// Do not return to disconnect already from the other participants
+		// without waiting for another signaling event about changed users.
+	}
+
 	if (selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 		// Own session is no longer in the call, disconnect from all others.
 		usersChanged(signaling, [], previousUsersInRoom)
@@ -533,6 +555,20 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			usersInCallMapping[sessionId] = user
 		})
 		usersInCallChanged(signaling, usersInCallMapping)
+	})
+	signaling.on('beforeJoinCall', function(token, reconnect) {
+		// The user needs to be set as in the call before the request is
+		// actually done to also cover the (unlikely) case that the request
+		// takes too long to return and the associated signaling message
+		// is received before the "join call" request ends.
+		localUserInCall = true
+	})
+	signaling.on('beforeLeaveCall', function(token, reconnect) {
+		// The user needs to be set as not in the call before the request is
+		// actually done to also cover the (unlikely) case that the request
+		// takes too long to return and the associated signaling message
+		// is received before the "leave call" request ends.
+		localUserInCall = false
 	})
 	signaling.on('leaveCall', function(token, reconnect) {
 		// When the MCU is used and there is a connection error the call is

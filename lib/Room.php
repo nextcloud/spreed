@@ -114,6 +114,8 @@ class Room {
 	public const EVENT_AFTER_LISTABLE_SET = self::class . '::postSetListable';
 	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
+	public const EVENT_BEFORE_END_CALL_FOR_EVERYONE = self::class . '::preEndCallForEveryone';
+	public const EVENT_AFTER_END_CALL_FOR_EVERYONE = self::class . '::postEndCallForEveryone';
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
 	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
 	public const EVENT_BEFORE_PERMISSIONS_SET = self::class . '::preSetPermissions';

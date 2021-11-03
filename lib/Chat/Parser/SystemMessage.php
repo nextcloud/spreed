@@ -177,8 +177,8 @@ class SystemMessage {
 			}
 		} elseif ($message === 'call_missed') {
 			[$parsedMessage, $parsedParameters, $message] = $this->parseMissedCall($room, $parameters, $currentActorId);
-		} elseif ($message === 'call_ended') {
-			[$parsedMessage, $parsedParameters] = $this->parseCall($parameters);
+		} elseif ($message === 'call_ended' || $message === 'call_ended_everyone') {
+			[$parsedMessage, $parsedParameters] = $this->parseCall($message, $parameters, $parsedParameters);
 		} elseif ($message === 'read_only_off') {
 			$parsedMessage = $this->l->t('{actor} unlocked the conversation');
 			if ($currentUserIsActor) {
@@ -734,50 +734,103 @@ class SystemMessage {
 	}
 
 
-	protected function parseCall(array $parameters): array {
+	protected function parseCall(string $message, array $parameters, array $params): array {
+		if ($message === 'call_ended_everyone') {
+			if ($params['actor']['type'] === 'user') {
+				$flipped = array_flip($parameters['users']);
+				unset($flipped[$params['actor']['id']]);
+				$parameters['users'] = array_flip($flipped);
+			} else {
+				$parameters['guests']--;
+			}
+		}
 		sort($parameters['users']);
 		$numUsers = \count($parameters['users']);
 		$displayedUsers = $numUsers;
 
 		switch ($numUsers) {
 			case 0:
-				$subject = $this->l->n(
-					'Call with %n guest (Duration {duration})',
-					'Call with %n guests (Duration {duration})',
-					$parameters['guests']
-				);
+				if ($message === 'call_ended') {
+					$subject = $this->l->n(
+						'Call with %n guest (Duration {duration})',
+						'Call with %n guests (Duration {duration})',
+						$parameters['guests']
+					);
+				} else {
+					$subject = $this->l->n(
+						'{actor} ended the call with %n guest (Duration {duration})',
+						'{actor} ended the call with %n guests (Duration {duration})',
+						$parameters['guests']
+					);
+				}
 				break;
 			case 1:
-				$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+				if ($message === 'call_ended') {
+					$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+				} else {
+					if ($parameters['guests'] === 0) {
+						$subject = $this->l->t('{actor} ended the call with {user1} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1} and {user2} (Duration {duration})');
+					}
+				}
 				$subject = str_replace('{user2}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				break;
 			case 2:
 				if ($parameters['guests'] === 0) {
-					$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1} and {user2} (Duration {duration})');
+					}
 				} else {
-					$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1}, {user2} and {user3} (Duration {duration})');
+					}
 					$subject = str_replace('{user3}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 3:
 				if ($parameters['guests'] === 0) {
-					$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1}, {user2} and {user3} (Duration {duration})');
+					}
 				} else {
-					$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					}
 					$subject = str_replace('{user4}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 4:
 				if ($parameters['guests'] === 0) {
-					$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					}
 				} else {
-					$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+					if ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+					} else {
+						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+					}
 					$subject = str_replace('{user5}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 5:
 			default:
-				$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+				if ($message === 'call_ended') {
+					$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+				} else {
+					$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+				}
 				if ($numUsers === 5 && $parameters['guests'] === 0) {
 					$displayedUsers = 5;
 				} else {
@@ -787,7 +840,6 @@ class SystemMessage {
 				}
 		}
 
-		$params = [];
 		if ($displayedUsers > 0) {
 			for ($i = 1; $i <= $displayedUsers; $i++) {
 				$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);

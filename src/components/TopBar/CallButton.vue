@@ -20,32 +20,61 @@
 -->
 
 <template>
-	<button v-if="showStartCallButton"
-		v-tooltip="{
-			placement: 'auto',
-			trigger: 'hover',
-			content: startCallToolTip,
-			autoHide: false,
-			html: true
-		}"
-		:disabled="startCallButtonDisabled || loading || blockCalls"
-		class="top-bar__button"
-		:class="startCallButtonClasses"
-		@click="handleClick">
-		<span
-			class="icon"
-			:class="startCallIcon" />
-		{{ startCallLabel }}
-	</button>
-	<button v-else-if="showLeaveCallButton"
-		class="top-bar__button error"
-		:disabled="loading"
-		@click="leaveCall">
-		<span
-			class="icon"
-			:class="leaveCallIcon" />
-		{{ leaveCallLabel }}
-	</button>
+	<div>
+		<button v-if="showStartCallButton"
+			v-tooltip="{
+				placement: 'auto',
+				trigger: 'hover',
+				content: startCallToolTip,
+				autoHide: false,
+				html: true
+			}"
+			:disabled="startCallButtonDisabled || loading || blockCalls"
+			class="top-bar__button"
+			:class="startCallButtonClasses"
+			@click="handleClick">
+			<span
+				class="icon"
+				:class="startCallIcon" />
+			{{ startCallLabel }}
+		</button>
+		<button v-else-if="showLeaveCallButton && !canEndForAll"
+			class="top-bar__button error"
+			:disabled="loading"
+			@click="leaveCall">
+			<span
+				class="icon"
+				:class="leaveCallIcon" />
+			{{ leaveCallLabel }}
+		</button>
+		<Actions
+			v-else-if="showLeaveCallButton && canEndForAll"
+			:disabled="loading">
+			<template slot="icon">
+				<VideoOff
+					:size="16"
+					decorative />
+				<span class="label">{{ leaveCallLabel }}</span>
+				<MenuDown
+					:size="16"
+					decorative />
+			</template>
+			<ActionButton @click="leaveCall(false)">
+				<VideoOff
+					slot="icon"
+					:size="24"
+					decorative />
+				{{ leaveCallLabel }}
+			</ActionButton>
+			<ActionButton @click="leaveCall(true)">
+				<VideoOff
+					slot="icon"
+					:size="24"
+					decorative />
+				{{ t('spreed', 'End meeting for all') }}
+			</ActionButton>
+		</Actions>
+	</div>
 </template>
 
 <script>
@@ -57,12 +86,23 @@ import participant from '../../mixins/participant'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 import BrowserStorage from '../../services/BrowserStorage'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import VideoOff from 'vue-material-design-icons/VideoOff'
+import MenuDown from 'vue-material-design-icons/MenuDown'
 
 export default {
 	name: 'CallButton',
 
 	directives: {
 		Tooltip,
+	},
+
+	components: {
+		Actions,
+		ActionButton,
+		VideoOff,
+		MenuDown,
 	},
 
 	mixins: [
@@ -99,6 +139,14 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		participantType() {
+			return this.conversation.participantType
+		},
+
+		canEndForAll() {
+			return (this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
 		startCallButtonDisabled() {
@@ -208,7 +256,7 @@ export default {
 			this.loading = false
 		},
 
-		async leaveCall() {
+		async leaveCall(all = false) {
 			console.info('Leaving call')
 			// Remove selected participant
 			this.$store.dispatch('selectedVideoPeerId', null)
@@ -220,6 +268,7 @@ export default {
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				all,
 			})
 			this.loading = false
 		},
@@ -259,6 +308,24 @@ export default {
 	&:focus,
 	&:active {
 		border: 1px solid var(--color-success) !important;
+	}
+}
+
+/* HACK: to override the default action button styles to make it look like a regular button */
+::v-deep .trigger > button {
+	&,
+	&:hover,
+	&:focus,
+	&:active {
+		color: white;
+		background-color: var(--color-error) !important;
+		border: 1px solid var(--color-error) !important;
+		padding: 0 16px;
+		opacity: 1;
+	}
+
+	& > .label {
+		margin: 0 8px;
 	}
 }
 </style>
