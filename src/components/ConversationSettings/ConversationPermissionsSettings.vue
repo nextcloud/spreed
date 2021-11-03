@@ -44,12 +44,15 @@
 			type="radio">
 			{{ t('spreed', 'Advanced permissions') }}
 		</CheckboxRadioSwitch>
-		<button v-if="showEditButton" class="nc-button nc-button__main">
-			<Pencil
-				:size="20"
-				decorative
-				title="" />
-		</button>
+			<button
+				v-show="showEditButton"
+				class="nc-button nc-button__main"
+				@click="showPermissionsEditor = true">
+				<Pencil
+					:size="20"
+					decorative
+					title="" />
+			</button>
 		<PermissionEditor
 			v-if="showPermissionsEditor"
 			:conversation-name="conversationName"
@@ -103,8 +106,8 @@ export default {
 		},
 
 		showEditButton() {
-			return permissionType === 'custom' && !showPermissionsEditor
-		}
+			return this.permissionType === 'custom' && !this.showPermissionsEditor
+		},
 	},
 
 	watch: {
