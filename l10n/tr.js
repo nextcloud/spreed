@@ -986,6 +986,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Katılımcılar alınırken bir sorun çıktı",
     "Chat" : "Sohbet",
     "Details" : "Ayrıntılar",
+    "Participants ({count})" : "Katılımcılar ({count})",
     "Meeting ID: {meetingId}" : "Toplantı kodu: {meetingId}",
     "Your PIN: {attendeePin}" : "PIN kodunuz: {attendeePin}",
     "Display name: " : "Görüntülenecek ad:",
