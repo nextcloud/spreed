@@ -24,26 +24,33 @@
 		<h4 class="conversation-permissions-editor__title">
 			{{ t('spreed', 'Edit default permissions') }}
 		</h4>
-		<CheckboxRadioSwitch :checked.sync="permissionType"
-			value="unrestricted"
-			name="permission_radio"
-			type="radio">
-			{{ t('spreed', 'Unrestricted') }}
-		</CheckboxRadioSwitch>
+		<div class="conversation-permissions-editor__setting">
+			<CheckboxRadioSwitch :checked.sync="permissionType"
+				value="unrestricted"
+				name="permission_radio"
+				type="radio">
+				{{ t('spreed', 'Unrestricted') }}
+			</CheckboxRadioSwitch>
+			<span v-show="loading && permissionType === 'unrestricted'" class="icon-loading-small" />
+		</div>
 		<p>{{ t('spreed', 'Everyone has permissions to start a call, join a call, enable audio, video and screenshare.') }}</p>
-		<CheckboxRadioSwitch :checked.sync="permissionType"
-			value="restricted"
-			name="permission_radio"
-			type="radio">
-			{{ t('spreed', 'Restricted') }}
-		</CheckboxRadioSwitch>
+		<div class="conversation-permissions-editor__setting">
+			<CheckboxRadioSwitch :checked.sync="permissionType"
+				value="restricted"
+				name="permission_radio"
+				type="radio">
+				{{ t('spreed', 'Restricted') }}
+			</CheckboxRadioSwitch>
+			<span v-show="loading && permissionType === 'restricted'" class="icon-loading-small" />
+		</div>
 		<p>{{ t('spreed', 'Same as above, but only moderators can start calls.') }}</p>
-		<CheckboxRadioSwitch :checked.sync="permissionType"
-			value="custom"
-			name="permission_radio"
-			type="radio">
-			{{ t('spreed', 'Advanced permissions') }}
-		</CheckboxRadioSwitch>
+		<div class="conversation-permissions-editor__setting">
+			<CheckboxRadioSwitch :checked.sync="permissionType"
+				value="custom"
+				name="permission_radio"
+				type="radio">
+				{{ t('spreed', 'Advanced permissions') }}
+			</CheckboxRadioSwitch>
 			<button
 				v-show="showEditButton"
 				class="nc-button nc-button__main"
@@ -53,11 +60,13 @@
 					decorative
 					title="" />
 			</button>
+		</div>
 		<PermissionEditor
 			v-if="showPermissionsEditor"
 			:conversation-name="conversationName"
 			:permissions="conversationPermissions"
-			@close="showPermissionsEditor = false"
+			:loading="loading"
+			@close="showPermissionsEditor = true"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>
@@ -90,6 +99,7 @@ export default {
 			permissionType: '',
 			showPermissionsEditor: false,
 			isEditingPermissions: false,
+			loading: false,
 		}
 	},
 
@@ -134,6 +144,7 @@ export default {
 		 * @param previousPermissions
 		 */
 		async handleSubmitPermissions(permissions, previousPermissions) {
+			this.loading = true
 			try {
 				await this.$store.dispatch('setConversationPermissions', {
 					token: this.token,
@@ -157,5 +168,12 @@ export default {
 
 ::v-deep .mx-input {
 	margin: 0;
+}
+
+.conversation-permissions-editor {
+	&__setting {
+		display: flex;
+		justify-content: space-between;
+	}
 }
 </style>
