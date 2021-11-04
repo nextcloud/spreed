@@ -130,7 +130,7 @@ export default {
 		},
 
 		conversationPermissions() {
-			return this.$store.getters.conversation(this.token).permissions
+			return this.$store.getters.conversation(this.token).defaultPermissions
 		},
 
 		showEditButton() {
@@ -138,21 +138,12 @@ export default {
 		},
 
 		permissionType() {
-			switch (this.permissions) {
-			case PERMISSIONS.MAX_DEFAULT:
-				return 'all'
-
-			case PERMISSIONS.DEFAULT:
-				return 'restricted'
-
-			default:
-				return 'advanced'
-			}
+			return this.getPermissionRadioValue(this.permissions)
 		},
 	},
 
 	mounted() {
-		this.radioValue = this.permissionType
+		this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
 	},
 
 	methods: {
@@ -182,13 +173,26 @@ export default {
 					permissions,
 				})
 				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+				this.radioValue = this.getPermissionRadioValue(permissions)
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
-				this.radioValue = this.permissionType
+				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
 			} finally {
 				this.loading = false
+			}
+		},
+
+		getPermissionRadioValue(value) {
+			switch (value) {
+			case PERMISSIONS.MAX_DEFAULT:
+				return 'all'
+			case PERMISSIONS.CALL_JOIN:
+				return 'restricted'
+
+			default:
+				return 'advanced'
 			}
 		},
 	},
