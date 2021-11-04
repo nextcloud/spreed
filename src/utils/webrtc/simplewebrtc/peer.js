@@ -150,16 +150,29 @@ function Peer(options) {
 util.inherits(Peer, WildEmitter)
 
 /**
- *
+ * @param {object} signaling the connection/signaling object
  */
-function shouldPreferH264() {
+function shouldPreferH264(signaling) {
+	let preferH264
+
 	try {
-		return initialState.loadState('spreed', 'prefer_h264')
+		preferH264 = initialState.loadState('spreed', 'prefer_h264')
 	} catch (exception) {
 		// If the state can not be loaded an exception is thrown
 		console.warn('Could not find initial state for H.264 preference')
 		return false
 	}
+
+	if (!preferH264) {
+		return false
+	}
+
+	if (signaling.hasFeature('simulcast')) {
+		console.warn('Ignoring preference for H.264, as it can not be used with simulcast')
+		return false
+	}
+
+	return true
 }
 
 /**
@@ -457,7 +470,7 @@ Peer.prototype.offer = function(options) {
 		}
 	}
 	this.pc.createOffer(options).then(function(offer) {
-		if (shouldPreferH264()) {
+		if (shouldPreferH264(this.parent.config.connection)) {
 			console.debug('Preferring hardware codec H.264 as per global configuration')
 			offer = preferH264VideoCodecIfAvailable(offer)
 		}
@@ -502,7 +515,7 @@ Peer.prototype.handleOffer = function(offer) {
 
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
-		if (shouldPreferH264()) {
+		if (shouldPreferH264(this.parent.config.connection)) {
 			console.debug('Preferring hardware codec H.264 as per global configuration')
 			answer = preferH264VideoCodecIfAvailable(answer)
 		}
