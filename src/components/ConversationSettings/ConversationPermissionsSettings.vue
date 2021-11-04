@@ -136,10 +136,6 @@ export default {
 		showEditButton() {
 			return this.radioValue === 'advanced' && !this.showPermissionsEditor
 		},
-
-		permissionType() {
-			return this.getPermissionRadioValue(this.permissions)
-		},
 	},
 
 	mounted() {
