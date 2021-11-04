@@ -44,7 +44,7 @@
 			<span v-show="loading && permissionType === 'restricted'" class="icon-loading-small" />
 		</div>
 		<p>{{ t('spreed', 'Same as above, but only moderators can start calls.') }}</p>
-		<div class="conversation-permissions-editor__setting">
+		<div class="conversation-permissions-editor__setting--advanced">
 			<CheckboxRadioSwitch :checked.sync="permissionType"
 				value="custom"
 				name="permission_radio"
@@ -53,6 +53,7 @@
 			</CheckboxRadioSwitch>
 			<button
 				v-show="showEditButton"
+				:aria-label="t('spreed', 'Edit permissions')"
 				class="nc-button nc-button__main"
 				@click="showPermissionsEditor = true">
 				<Pencil
@@ -174,6 +175,15 @@ export default {
 	&__setting {
 		display: flex;
 		justify-content: space-between;
+		&--advanced {
+			display: flex;
+			justify-content: flex-start;
+
+			// Edit button
+			button {
+				margin-left: 16px;
+			}
+		}
 	}
 }
 </style>
