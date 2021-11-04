@@ -241,4 +241,9 @@ export default {
 		}
 	}
 }
+
+p {
+	color: var(--color-text-lighter);
+	margin-bottom: 16px;
+}
 </style>
