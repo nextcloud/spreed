@@ -143,6 +143,8 @@ export default {
 					this.errorMessage = t('spreed', 'Error: Cannot connect to server')
 				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
+				} else if (exception.response.data.ocs.data.error === 'UPDATE_REQUIRED') {
+					this.errorMessage = t('spreed', 'Error: Server needs to be updated to be compatible with this version of Talk')
 				} else if (exception.response.data.ocs.data.error) {
 					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
 				} else {

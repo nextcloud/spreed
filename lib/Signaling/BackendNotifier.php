@@ -84,7 +84,11 @@ class BackendNotifier {
 
 		$client = $this->clientService->newClient();
 		try {
-			$client->post($url, $params);
+			$response = $client->post($url, $params);
+
+			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
+				throw new \RuntimeException('Signaling server needs to be updated to be compatible with this version of Talk');
+			}
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
 		}
