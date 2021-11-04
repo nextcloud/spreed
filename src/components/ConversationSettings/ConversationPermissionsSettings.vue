@@ -25,30 +25,36 @@
 			{{ t('spreed', 'Edit default permissions') }}
 		</h4>
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="permissionType"
+			<CheckboxRadioSwitch :checked.sync="radioValue"
+				:disabled="loading"
 				value="unrestricted"
 				name="permission_radio"
-				type="radio">
+				type="radio"
+				@update:checked="handleSubmitPermissions">
 				{{ t('spreed', 'Unrestricted') }}
 			</CheckboxRadioSwitch>
-			<span v-show="loading && permissionType === 'unrestricted'" class="icon-loading-small" />
+			<span v-show="loading && radioValue === 'unrestricted'" class="icon-loading-small" />
 		</div>
 		<p>{{ t('spreed', 'Everyone has permissions to start a call, join a call, enable audio, video and screenshare.') }}</p>
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="permissionType"
+			<CheckboxRadioSwitch :checked.sync="radioValue"
 				value="restricted"
+				:disabled="loading"
 				name="permission_radio"
-				type="radio">
+				type="radio"
+				@update:checked="handleSubmitPermissions">
 				{{ t('spreed', 'Restricted') }}
 			</CheckboxRadioSwitch>
-			<span v-show="loading && permissionType === 'restricted'" class="icon-loading-small" />
+			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
 		<p>{{ t('spreed', 'Same as above, but only moderators can start calls.') }}</p>
 		<div class="conversation-permissions-editor__setting--advanced">
-			<CheckboxRadioSwitch :checked.sync="permissionType"
-				value="custom"
+			<CheckboxRadioSwitch :checked.sync="radioValue"
+				value="advanced"
+				:disabled="loading"
 				name="permission_radio"
-				type="radio">
+				type="radio"
+				@update:checked="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
 			</CheckboxRadioSwitch>
 			<button
@@ -76,8 +82,10 @@
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-
+import { PARTICIPANT } from '../../constants'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+
+const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
 export default {
 	name: 'ConversationPermissionsSettings',
@@ -97,10 +105,10 @@ export default {
 
 	data() {
 		return {
-			permissionType: '',
 			showPermissionsEditor: false,
 			isEditingPermissions: false,
 			loading: false,
+			radioValue: '',
 		}
 	},
 
@@ -117,24 +125,25 @@ export default {
 		},
 
 		showEditButton() {
-			return this.permissionType === 'custom' && !this.showPermissionsEditor
+			return this.radioValue === 'advanced' && !this.showPermissionsEditor
+		},
+
+		permissionType() {
+			switch (this.permissions) {
+			case PERMISSIONS.MAX_DEFAULT:
+				return 'unrestricted'
+
+			case PERMISSIONS.DEFAULT:
+				return 'restricted'
+
+			default:
+				return 'advanced'
+			}
 		},
 	},
 
-	watch: {
-		permissionType(newValue) {
-			this.isEditingPermissions = true
-
-			if (newValue === 'custom') {
-				this.showPermissionsEditor = true
-			}
-			if (newValue === 'unrestricted') {
-				this.showPermissionsEditor = false
-			}
-			if (newValue === 'restricted') {
-				this.showPermissionsEditor = false
-			}
-		},
+	mounted() {
+		this.radioValue = this.permissionType
 	},
 
 	methods: {
@@ -142,9 +151,21 @@ export default {
 		 * Binary sum all the permissions and make the request to change them.
 		 *
 		 * @param {number} permissions - the permission number.
-		 * @param previousPermissions
+		 * @param value
 		 */
-		async handleSubmitPermissions(permissions, previousPermissions) {
+		async handleSubmitPermissions(value) {
+			// Compute the permissions value
+			let permissions
+			switch (value) {
+			case 'unrestricted':
+				permissions = PERMISSIONS.MAX_DEFAULT
+				break
+			case 'restricted':
+				permissions = PERMISSIONS.DEFAULT
+				break
+			default:
+				permissions = value
+			}
 			this.loading = true
 			try {
 				await this.$store.dispatch('setConversationPermissions', {
@@ -156,8 +177,9 @@ export default {
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
-				// Go back to previous permissions in the form
-				this.permissionType = previousPermissions
+				this.radioValue = this.permissionType
+			} finally {
+				this.loading = false
 			}
 		},
 	},
