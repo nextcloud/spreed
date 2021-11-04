@@ -167,12 +167,12 @@ export default {
 		 * disabled.
 		 */
 		submitButtonDisabled() {
-			return this.attendeePermissions === this.formPermissions
+			return this.permissions === this.formPermissions
 		},
 	},
 
 	mounted() {
-		this.writePermissionsToComponent(this.attendeePermissions)
+		this.writePermissionsToComponent(this.permissions)
 	},
 
 	methods: {

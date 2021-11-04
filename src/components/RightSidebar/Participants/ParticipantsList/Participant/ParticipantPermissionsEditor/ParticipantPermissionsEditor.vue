@@ -24,6 +24,7 @@
 		<PermissionEditor
 			:display-name="displayName"
 			:permissions="attendeePermissions"
+			v-on="$listeners"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>

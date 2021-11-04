@@ -182,7 +182,7 @@
 				</ActionButton>
 				<ActionButton
 					:close-after-click="true"
-					@click="showParticipantPermissionsEditor">
+					@click="showPermissionsEditor">
 					<template #icon>
 						<Pencil
 							:size="20"
@@ -213,12 +213,12 @@
 			</ActionButton>
 		</Actions>
 		<ParticipantPermissionsEditor
-			v-if="participantPermissionsEditor"
+			v-if="permissionsEditor"
 			:actor-id="participant.actorId"
 			:close-after-click="true"
 			:participant="participant"
 			:token="token"
-			@close="hideParticipantPermissionsEditor" />
+			@close="hidePermissionsEditor" />
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
@@ -312,7 +312,7 @@ export default {
 		return {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
-			participantPermissionsEditor: false,
+			permissionsEditor: false,
 		}
 	},
 
@@ -670,12 +670,12 @@ export default {
 			}
 		},
 
-		showParticipantPermissionsEditor() {
-			this.participantPermissionsEditor = true
+		showPermissionsEditor() {
+			this.permissionsEditor = true
 		},
 
-		hideParticipantPermissionsEditor() {
-			this.participantPermissionsEditor = false
+		hidePermissionsEditor() {
+			this.permissionsEditor = false
 		},
 	},
 }
