@@ -142,8 +142,8 @@ export default {
 					user: this.displayName,
 				})
 			} else if (this.conversationName) {
-				return t('spreed', 'Edit default permissions for <strong>{conversationName}</strong>', {
-					conversationName: this.displayName,
+				return t('spreed', 'Edit default permissions for participants in <strong>{conversationName}</strong>', {
+					conversationName: this.conversationName,
 				})
 			} else throw Error('you need to fill either the conversationName or the displayName props')
 		},
