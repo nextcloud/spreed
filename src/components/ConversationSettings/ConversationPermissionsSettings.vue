@@ -22,20 +22,25 @@
 <template>
 	<div class="conversation-permissions-editor">
 		<h4 class="conversation-permissions-editor__title">
-			{{ t('spreed', 'Edit default permissions') }}
+			{{ t('spreed', 'Edit the default permissions for participants in this conversation. These settings do not affect moderators.') }}
 		</h4>
+		<p>{{ t('spreed', 'Warning: every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}</p>
+
+		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
 			<CheckboxRadioSwitch :checked.sync="radioValue"
 				:disabled="loading"
-				value="unrestricted"
+				value="all"
 				name="permission_radio"
 				type="radio"
 				@update:checked="handleSubmitPermissions">
-				{{ t('spreed', 'Unrestricted') }}
+				{{ t('spreed', 'All permissions') }}
 			</CheckboxRadioSwitch>
-			<span v-show="loading && radioValue === 'unrestricted'" class="icon-loading-small" />
+			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Everyone has permissions to start a call, join a call, enable audio, video and screenshare.') }}</p>
+		<p>{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio, video and screenshare.') }}</p>
+
+		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
 			<CheckboxRadioSwitch :checked.sync="radioValue"
 				value="restricted"
@@ -47,7 +52,9 @@
 			</CheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Same as above, but only moderators can start calls.') }}</p>
+		<p>{{ t('spreed', 'Participants can only join calls, but not enable audio, video or screenshare until a moderator manually grants their permissions manually.') }}</p>
+
+		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
 			<CheckboxRadioSwitch :checked.sync="radioValue"
 				value="advanced"
@@ -57,6 +64,8 @@
 				@update:checked="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
 			</CheckboxRadioSwitch>
+
+			<!-- Edit advanced permissions -->
 			<button
 				v-show="showEditButton"
 				:aria-label="t('spreed', 'Edit permissions')"
@@ -131,7 +140,7 @@ export default {
 		permissionType() {
 			switch (this.permissions) {
 			case PERMISSIONS.MAX_DEFAULT:
-				return 'unrestricted'
+				return 'all'
 
 			case PERMISSIONS.DEFAULT:
 				return 'restricted'
@@ -157,11 +166,11 @@ export default {
 			// Compute the permissions value
 			let permissions
 			switch (value) {
-			case 'unrestricted':
+			case 'all':
 				permissions = PERMISSIONS.MAX_DEFAULT
 				break
 			case 'restricted':
-				permissions = PERMISSIONS.DEFAULT
+				permissions = PERMISSIONS.CALL_JOIN
 				break
 			default:
 				permissions = value
