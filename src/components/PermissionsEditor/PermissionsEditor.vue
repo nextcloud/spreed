@@ -22,46 +22,52 @@
 <template>
 	<Modal v-on="$listeners">
 		<div class="wrapper">
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<p class="title" v-html="modalTitle" />
-			<form @submit.prevent="handleSubmitPermissions">
-				<CheckboxRadioSwitch
-					ref="callStart"
-					:checked.sync="callStart"
-					class="checkbox">
-					{{ t('spreed', 'Start a call') }}
-				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch
-					ref="lobbyIgnore"
-					:checked.sync="lobbyIgnore"
-					class="checkbox">
-					{{ t('spreed', 'Skip the lobby') }}
-				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch
-					ref="publishAudio"
-					:checked.sync="publishAudio"
-					class="checkbox">
-					{{ t('spreed', 'Enable the microphone') }}
-				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch
-					ref="publishVideo"
-					:checked.sync="publishVideo"
-					class="checkbox">
-					{{ t('spreed', 'Enable the camera') }}
-				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch
-					ref="publishScreen"
-					:checked.sync="publishScreen"
-					class="checkbox">
-					{{ t('spreed', 'Share the screen') }}
-				</CheckboxRadioSwitch>
-				<button ref="submit"
-					type="submit"
-					:disabled="submitButtonDisabled"
-					class="nc-button primary">
-					{{ t('spreed', 'Update permissions') }}
-				</button>
-			</form>
+			<template v-if="!loading">
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<p class="title" v-html="modalTitle" />
+				<form @submit.prevent="handleSubmitPermissions">
+					<CheckboxRadioSwitch
+						ref="callStart"
+						:checked.sync="callStart"
+						class="checkbox">
+						{{ t('spreed', 'Start a call') }}
+					</CheckboxRadioSwitch>
+					<CheckboxRadioSwitch
+						ref="lobbyIgnore"
+						:checked.sync="lobbyIgnore"
+						class="checkbox">
+						{{ t('spreed', 'Skip the lobby') }}
+					</CheckboxRadioSwitch>
+					<CheckboxRadioSwitch
+						ref="publishAudio"
+						:checked.sync="publishAudio"
+						class="checkbox">
+						{{ t('spreed', 'Enable the microphone') }}
+					</CheckboxRadioSwitch>
+					<CheckboxRadioSwitch
+						ref="publishVideo"
+						:checked.sync="publishVideo"
+						class="checkbox">
+						{{ t('spreed', 'Enable the camera') }}
+					</CheckboxRadioSwitch>
+					<CheckboxRadioSwitch
+						ref="publishScreen"
+						:checked.sync="publishScreen"
+						class="checkbox">
+						{{ t('spreed', 'Share the screen') }}
+					</CheckboxRadioSwitch>
+					<button ref="submit"
+						type="submit"
+						:disabled="submitButtonDisabled"
+						class="nc-button primary">
+						{{ t('spreed', 'Update permissions') }}
+					</button>
+				</form>
+			</template>
+			<div v-if="loading" class="loading-screen">
+				<span class="icon-loading" />
+				<p>{{ t('spreed', 'Updating permissions') }}</p>
+			</div>
 		</div>
 	</Modal>
 </template>
@@ -103,6 +109,14 @@ export default {
 		conversationName: {
 			type: String,
 			default: '',
+		},
+
+		/**
+		 * Displays the loading state of this component
+		 */
+		loading: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -186,13 +200,15 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/buttons.scss';
 
+$editor-width: 350px;
+
 .nc-button {
 	width: 100%;
 	margin-top: 12px;
 }
 
 .wrapper {
-	width: 350px;
+	width: $editor-width;
 	padding: 0 24px 24px 24px;
 }
 
@@ -200,6 +216,21 @@ export default {
 	font-size: 16px;
 	margin-bottom: 12px;
 	padding-top: 24px;
+}
+
+.loading-screen {
+	width: $editor-width;
+	height: 200px;
+	text-align: center;
+	font-weight: bold;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	// Loader
+	span {
+		margin-bottom: 16px;
+	}
 }
 
 </style>

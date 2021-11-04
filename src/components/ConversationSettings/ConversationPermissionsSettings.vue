@@ -66,7 +66,7 @@
 			:conversation-name="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
-			@close="showPermissionsEditor = true"
+			@close="showPermissionsEditor = false"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>
