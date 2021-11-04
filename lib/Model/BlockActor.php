@@ -39,7 +39,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setDatetime(\DateTime $datetime)
  * @method \DateTime getDatetime()
  */
-class BlockAgent extends Entity {
+class BlockActor extends Entity {
 	/** @var string */
 	protected $actorType;
 	/** @var string */

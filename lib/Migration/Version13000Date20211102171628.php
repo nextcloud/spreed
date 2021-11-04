@@ -45,8 +45,8 @@ class Version13000Date20211102171628 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('talk_block_agent')) {
-			$table = $schema->createTable('talk_block_agent');
+		if (!$schema->hasTable('talk_block_actor')) {
+			$table = $schema->createTable('talk_block_actor');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -71,7 +71,7 @@ class Version13000Date20211102171628 extends SimpleMigrationStep {
 				'notnull' => false,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueIndex(['actor_type', 'actor_id', 'blocked_type', 'blocked_id'], 'unq_block_agent');
+			$table->addUniqueIndex(['actor_type', 'actor_id', 'blocked_type', 'blocked_id'], 'unq_block_actor');
 		}
 		return $schema;
 	}

@@ -87,6 +87,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected $createdGuestAccountUsers = [];
 
 	/** @var array */
+	protected $blockedUsers = [];
+
+	/** @var array */
 	protected $changedConfigs = [];
 
 	/** @var SharingContext */
@@ -139,6 +142,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->createdUsers = [];
 		$this->createdGroups = [];
 		$this->createdGuestAccountUsers = [];
+		$this->blockedUsers = [];
 	}
 
 	/**
@@ -162,6 +166,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		foreach ($this->createdGuestAccountUsers as $user) {
 			$this->deleteUser($user);
+		}
+		foreach ($this->blockedUsers as $blocker => $blockedList) {
+			foreach ($blockedList as $blocked) {
+				$this->deleteBlocks($blocker, $blocked['type'], $blocked['blockedId']);
+			}
 		}
 	}
 
@@ -2145,5 +2154,43 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			]
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+		$this->blockedUsers[$user][] = [
+			'type' => $type,
+			'blockedId' => $blockedId
+		];
+	}
+
+	private function deleteBlocks($blocker, $blockedType, $blockedId, $apiVersion = 'v1') {
+		$this->setCurrentUser($blocker);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/block', [
+				'type' => $blockedType . 's',
+				'blockedId' => $blockedId
+			]
+		);
+		Assert::assertEquals($this->response->getStatusCode(), 200);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" list all blocked users with (\d+) \((v1)\)$/
+	 */
+	public function userListAllBlockedUsers(string $user, int $statusCode, string $apiVersion, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/spreed/api/' . $apiVersion . '/block'
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($response);
+			return;
+		}
+
+		Assert::assertCount(count($formData->getHash()), $response, 'Blocked users count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($row) {
+			return ['participant' => $row];
+		}, $response, $formData->getHash()), 'Expected list don\'t mach with returned list');
 	}
 }

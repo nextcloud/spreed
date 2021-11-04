@@ -27,6 +27,7 @@ use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BlockActorService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
@@ -46,6 +47,8 @@ class SearchPlugin implements ISearchPlugin {
 	protected $talkSession;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var BlockActorService */
+	protected $blockActorService;
 	/** @var Util */
 	protected $util;
 	/** @var string|null */
@@ -60,6 +63,7 @@ class SearchPlugin implements ISearchPlugin {
 								GuestManager $guestManager,
 								TalkSession $talkSession,
 								ParticipantService $participantService,
+								BlockActorService $blockActorService,
 								Util $util,
 								?string $userId,
 								IL10N $l) {
@@ -67,6 +71,7 @@ class SearchPlugin implements ISearchPlugin {
 		$this->guestManager = $guestManager;
 		$this->talkSession = $talkSession;
 		$this->participantService = $participantService;
+		$this->blockActorService = $blockActorService;
 		$this->util = $util;
 		$this->userId = $userId;
 		$this->l = $l;
@@ -130,6 +135,10 @@ class SearchPlugin implements ISearchPlugin {
 			}
 
 			if ($searchResult->hasResult($type, $userId)) {
+				continue;
+			}
+
+			if ($this->userId !== '' && $this->blockActorService->user1BlockedUser2($this->userId, $userId)) {
 				continue;
 			}
 

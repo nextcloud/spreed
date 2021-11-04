@@ -28,6 +28,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BlockActorService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -46,6 +47,8 @@ class SearchPluginTest extends \Test\TestCase {
 	protected $talkSession;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var BlockActorService|MockObject */
+	protected $blockActorService;
 	/** @var Util|MockObject */
 	protected $util;
 	/** @var IL10N|MockObject */
@@ -62,6 +65,7 @@ class SearchPluginTest extends \Test\TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->blockActorService = $this->createMock(BlockActorService::class);
 		$this->util = $this->createMock(Util::class);
 		$this->userId = 'current';
 		$this->l = $this->createMock(IL10N::class);
@@ -83,6 +87,7 @@ class SearchPluginTest extends \Test\TestCase {
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
+				$this->blockActorService,
 				$this->util,
 				$this->userId,
 				$this->l
@@ -95,6 +100,7 @@ class SearchPluginTest extends \Test\TestCase {
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
+				$this->blockActorService,
 				$this->util,
 				$this->userId,
 				$this->l,

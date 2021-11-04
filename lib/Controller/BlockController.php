@@ -26,25 +26,25 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Service\BlockAgentService;
+use OCA\Talk\Service\BlockActorService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 use OCP\IUserSession;
 
 class BlockController extends AEnvironmentAwareController {
-	/** @var BlockAgentService */
-	protected $blockAgentService;
+	/** @var BlockActorService */
+	protected $blockActorService;
 	/** @var IUserSession */
 	protected $userSession;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								BlockAgentService $blockAgentService,
+								BlockActorService $blockActorService,
 								IUserSession $userSession
 								) {
 		parent::__construct($appName, $request);
-		$this->blockAgentService = $blockAgentService;
+		$this->blockActorService = $blockActorService;
 		$this->userSession = $userSession;
 	}
 
@@ -52,14 +52,15 @@ class BlockController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 */
 	public function block(string $type = Attendee::ACTOR_USERS, string $blockedId): DataResponse {
-		$this->blockAgentService->block(Attendee::ACTOR_USERS, $this->userSession->getUser()->getUID(), $type, $blockedId);
+		$this->blockActorService->block(Attendee::ACTOR_USERS, $this->userSession->getUser()->getUID(), $type, $blockedId);
 		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 */
-	public function unbloc(): DataResponse {
+	public function unblock(string $type = Attendee::ACTOR_USERS, string $blockedId): DataResponse {
+		$this->blockActorService->unblock(Attendee::ACTOR_USERS, $this->userSession->getUser()->getUID(), $type, $blockedId);
 		return new DataResponse([], Http::STATUS_OK);
 	}
 
@@ -67,6 +68,7 @@ class BlockController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 */
 	public function listBlocked(): DataResponse {
-		return new DataResponse([], Http::STATUS_OK);
+		$list = $this->blockActorService->listBlocked($this->userSession->getUser()->getUID());
+		return new DataResponse(array_keys($list), Http::STATUS_OK);
 	}
 }
