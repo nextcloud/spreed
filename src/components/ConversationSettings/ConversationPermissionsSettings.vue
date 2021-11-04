@@ -129,16 +129,25 @@ export default {
 			return this.$store.getters.conversation(this.token).name
 		},
 
+		/**
+		 * The current conversation permissions.
+		 */
 		conversationPermissions() {
 			return this.$store.getters.conversation(this.token).defaultPermissions
 		},
 
+		/**
+		 * Hides and shows the edit button for advanced permissions.
+		 */
 		showEditButton() {
 			return this.radioValue === 'advanced' && !this.showPermissionsEditor
 		},
 	},
 
 	mounted() {
+		/**
+		 * Get the initial radio value.
+		 */
 		this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
 	},
 
@@ -146,12 +155,15 @@ export default {
 		/**
 		 * Binary sum all the permissions and make the request to change them.
 		 *
-		 * @param {number} permissions - the permission number.
-		 * @param value
+		 * @param {string | number} value - The permissions value, which is a
+		 * string (e.g. 'restricted' or 'all') unless this method is called by
+		 * the click event emitted by the `permissionsEditor` component, in
+		 * which case it's a number indicating the permissions value.
 		 */
 		async handleSubmitPermissions(value) {
-			// Compute the permissions value
 			let permissions
+
+			// Compute the permissions value
 			switch (value) {
 			case 'all':
 				permissions = PERMISSIONS.MAX_DEFAULT
@@ -162,24 +174,36 @@ export default {
 			default:
 				permissions = value
 			}
+
 			this.loading = true
+
+			// Make the store call
 			try {
 				await this.$store.dispatch('setConversationPermissions', {
 					token: this.token,
 					permissions,
 				})
 				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+
+				// Modify the radio buttons value
 				this.radioValue = this.getPermissionRadioValue(permissions)
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
+
+				// Go back to the previous radio value
 				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
 			} finally {
 				this.loading = false
 			}
 		},
 
+		/**
+		 * Get the radio button string value given a permission number.
+		 *
+		 * @param {number} value - The permissions value.
+		 */
 		getPermissionRadioValue(value) {
 			switch (value) {
 			case PERMISSIONS.MAX_DEFAULT:
