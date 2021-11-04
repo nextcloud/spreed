@@ -82,7 +82,7 @@
 			:conversation-name="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
-			@close="showPermissionsEditor = false"
+			@close="handleClosePermissionsEditor"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>
@@ -146,9 +146,9 @@ export default {
 
 	mounted() {
 		/**
-		 * Get the initial radio value.
+		 * Set the initial radio value.
 		 */
-		this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
+		this.setCurrentRadioValue()
 	},
 
 	methods: {
@@ -214,6 +214,23 @@ export default {
 			default:
 				return 'advanced'
 			}
+		},
+
+		/**
+		 * Set the radio value that corresponds to the current default
+		 * permissions in the store.
+		 */
+		setCurrentRadioValue() {
+			this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
+		},
+
+		/**
+		 * Hides the modal and resets conversation permissions to the previous
+		 * value.
+		 */
+		handleClosePermissionsEditor() {
+			this.showPermissionsEditor = false
+			this.setCurrentRadioValue()
 		},
 	},
 }
