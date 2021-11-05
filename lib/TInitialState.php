@@ -49,11 +49,6 @@ trait TInitialState {
 		// Needed to enable the screensharing extension in Chromium < 72.
 		Util::addHeader('meta', ['id' => 'app', 'class' => 'nc-enable-screensharing-extension']);
 
-		$this->initialState->provideInitialState(
-			'prefer_h264',
-			$this->serverConfig->getAppValue('spreed', 'prefer_h264', 'no') === 'yes'
-		);
-
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
 			&& !$this->memcacheFactory->isAvailable()
