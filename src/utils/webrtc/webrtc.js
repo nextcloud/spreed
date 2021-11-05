@@ -538,11 +538,6 @@ export default function initWebRTC(signaling, _callParticipantCollection, _local
 		enableDataChannels: true,
 		nick: store.getters.getDisplayName(),
 	})
-	if (signaling.hasFeature('mcu')) {
-		// Force "Plan-B" semantics if the MCU is used, which doesn't support
-		// "Unified Plan" with SimpleWebRTC yet.
-		webrtc.webrtc.config.peerConnectionConfig.sdpSemantics = 'plan-b'
-	}
 
 	if (!window.OCA.Talk) {
 		window.OCA.Talk = {}
