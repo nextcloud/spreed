@@ -5,31 +5,19 @@ Feature: actor/block
     Given user "participant2" exists
     Given user "participant3" exists
 
-  Scenario: user 1 block user 2 and get candidate mentions
-    When user "participant1" creates room "group room" (v4)
-      | roomType | 2 |
-      | roomName | room |
-    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
-    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
-    And user "participant1" gets the following candidate mentions in room "group room" for "" with 200
-      | id           | label                    | source |
-      | all          | room                     | calls  |
-      | participant2 | participant2-displayname | users  |
-      | participant3 | participant3-displayname | users  |
-    And user "participant1" block user "participant2" with 200 (v1)
-    Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
-      | id           | label                    | source |
-      | all          | room                     | calls  |
-      | participant3 | participant3-displayname | users  |
-
   Scenario: user 1 block user 2 and list all blocked users
-    When user "participant1" list all blocked users with 200 (v1)
+    When user "participant1" unblock user "participant2" with 200 (v1)
+    And user "participant1" unblock user "participant3" with 200 (v1)
+    And user "participant1" list all blocked actors with 200 (v1)
     And user "participant1" block user "participant2" with 200 (v1)
-    And user "participant1" list all blocked users with 200 (v1)
-      | participant  |
-      | participant2 |
+    And user "participant1" list all blocked actors with 200 (v1)
+      | actorType  | actorId      | blockedType  | blockedId    |
+      | users      | participant1 | users        | participant2 |
     And user "participant1" block user "participant3" with 200 (v1)
-    And user "participant1" list all blocked users with 200 (v1)
-      | participant  |
-      | participant2 |
-      | participant3 |
+    And user "participant1" list all blocked actors with 200 (v1)
+      | actorType  | actorId      | blockedType  | blockedId    |
+      | users      | participant1 | users        | participant2 |
+      | users      | participant1 | users        | participant3 |
+    And user "participant1" unblock user "participant2" with 200 (v1)
+    And user "participant1" unblock user "participant3" with 200 (v1)
+    And user "participant1" list all blocked actors with 200 (v1)

@@ -65,4 +65,17 @@ class BlockActor extends Entity {
 		$this->datetime = $datetime;
 		$this->markFieldUpdated('datetime');
 	}
+
+	/**
+	 * @return array
+	 */
+	public function asArray(): array {
+		return [
+			'actorType' => $this->getActorType(),
+			'actorId' => $this->getActorId(),
+			'blockedType' => $this->getBlockedType(),
+			'blockedId' => $this->getBlockedId(),
+			'datetime' => $this->getDatetime()
+		];
+	}
 }

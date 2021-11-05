@@ -51,7 +51,7 @@ class BlockController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function block(string $type = Attendee::ACTOR_USERS, string $blockedId): DataResponse {
+	public function block(string $blockedId, string $type = Attendee::ACTOR_USERS): DataResponse {
 		$this->blockActorService->block(Attendee::ACTOR_USERS, $this->userSession->getUser()->getUID(), $type, $blockedId);
 		return new DataResponse([], Http::STATUS_OK);
 	}
@@ -59,7 +59,7 @@ class BlockController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function unblock(string $type = Attendee::ACTOR_USERS, string $blockedId): DataResponse {
+	public function unblock(string $blockedId, string $type = Attendee::ACTOR_USERS): DataResponse {
 		$this->blockActorService->unblock(Attendee::ACTOR_USERS, $this->userSession->getUser()->getUID(), $type, $blockedId);
 		return new DataResponse([], Http::STATUS_OK);
 	}
@@ -68,7 +68,13 @@ class BlockController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 */
 	public function listBlocked(): DataResponse {
-		$list = $this->blockActorService->listBlocked($this->userSession->getUser()->getUID());
-		return new DataResponse(array_keys($list), Http::STATUS_OK);
+		$typedList = $this->blockActorService->listBlocked($this->userSession->getUser()->getUID());
+		$return = [];
+		foreach ($typedList as $list) {
+			foreach ($list as $blockActor) {
+				$return[] = $blockActor->asArray();
+			}
+		}
+		return new DataResponse($return, Http::STATUS_OK);
 	}
 }

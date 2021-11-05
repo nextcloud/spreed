@@ -49,7 +49,7 @@ class BlockActorService {
 		$this->cache = $cacheFactory->createDistributed('talk_blocked_users');
 	}
 
-	public function block(string $actorType, string $actorId, string $blockedType, string $blockedId) {
+	public function block(string $actorType, string $actorId, string $blockedType, string $blockedId): void {
 		$blockActor = new BlockActor();
 		$blockActor->setActorType($actorType);
 		$blockActor->setActorId($actorId);
@@ -59,7 +59,7 @@ class BlockActorService {
 		try {
 			$this->blockActorMapper->insert($blockActor);
 			$blockedList = $this->cache->get($actorId) ?? [];
-			$blockedList[] = $blockActor;
+			$blockedList[$blockedType][] = $blockActor;
 			$this->cache->set($actorId, $blockedList);
 		} catch (Exception $e) {
 			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
@@ -68,7 +68,7 @@ class BlockActorService {
 		}
 	}
 
-	public function unblock(string $actorType, string $actorId, string $blockedType, string $blockedId) {
+	public function unblock(string $actorType, string $actorId, string $blockedType, string $blockedId): void {
 		$blockActor = new BlockActor();
 		$blockActor->setActorType($actorType);
 		$blockActor->setActorId($actorId);
@@ -77,13 +77,13 @@ class BlockActorService {
 		$this->blockActorMapper->delete($blockActor);
 
 		$blockedList = $this->cache->get($actorId);
-		if (isset($blockedList[$blockedId])) {
-			unset($blockedList[$blockedId]);
+		if (isset($blockedList[$blockedType][$blockedId])) {
+			unset($blockedList[$blockedType][$blockedId]);
 			$this->cache->set($actorId, $blockedList);
 		}
 	}
 
-	public function listBlocked(string $actorId) {
+	public function listBlocked(string $actorId): array {
 		$blockedList = $this->cache->get($actorId);
 		if (!$blockedList) {
 			$blockedList = $this->blockActorMapper->getBlockListByBlocker($actorId);
@@ -92,12 +92,13 @@ class BlockActorService {
 		return $blockedList;
 	}
 
-	public function user1BlockedUser2($user1, $user2) {
-		$blockedList = $this->cache->get($user1);
-		if (!$blockedList) {
-			$blockedList = $this->blockActorMapper->getBlockListByBlocker($user1);
-			$this->cache->set($user1, $blockedList);
+	public function user1BlockedUser2($user1, $user2): bool {
+		$blockedList = $this->listBlocked($user2);
+		foreach ($blockedList as $list) {
+			if (isset($list[$user2])) {
+				return true;
+			}
 		}
-		return isset($blockedList[$user2]);
+		return false;
 	}
 }

@@ -49,7 +49,7 @@ class BlockActorMapper extends QBMapper {
 		while ($row = $result->fetch()) {
 			/** @var BlockActor */
 			$blockedAgent = $this->mapRowToEntity($row);
-			$return[$blockedAgent->getBlockedId()] = $blockedAgent;
+			$return[$blockedAgent->getBlockedType()][$blockedAgent->getBlockedId()] = $blockedAgent;
 		}
 		return $return;
 	}

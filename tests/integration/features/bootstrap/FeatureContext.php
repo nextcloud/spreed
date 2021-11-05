@@ -169,7 +169,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		foreach ($this->blockedUsers as $blocker => $blockedList) {
 			foreach ($blockedList as $blocked) {
-				$this->deleteBlocks($blocker, $blocked['type'], $blocked['blockedId']);
+				$this->userUnblock($blocker, $blocked['type'], $blocked['blockedId']);
 			}
 		}
 	}
@@ -2160,7 +2160,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		];
 	}
 
-	private function deleteBlocks($blocker, $blockedType, $blockedId, $apiVersion = 'v1') {
+
+	/**
+	 * @When /^user "([^"]*)" unblock (user|group|email|circle) "([^"]*)" with (\d+) \((v1)\)$/
+	 */
+	public function userUnblock($blocker, $blockedType, $blockedId, int $statusCode = 200, $apiVersion = 'v1') {
 		$this->setCurrentUser($blocker);
 		$this->sendRequest(
 			'DELETE', '/apps/spreed/api/' . $apiVersion . '/block', [
@@ -2172,9 +2176,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" list all blocked users with (\d+) \((v1)\)$/
+	 * @When /^user "([^"]*)" list all blocked actors with (\d+) \((v1)\)$/
 	 */
-	public function userListAllBlockedUsers(string $user, int $statusCode, string $apiVersion, TableNode $formData = null) {
+	public function userListAllBlockedActors(string $user, int $statusCode, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'GET', '/apps/spreed/api/' . $apiVersion . '/block'
@@ -2188,9 +2192,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		Assert::assertCount(count($formData->getHash()), $response, 'Blocked users count does not match');
+		Assert::assertCount(count($formData->getHash()), $response, 'Blocked actors count does not match');
 		Assert::assertEquals($formData->getHash(), array_map(function ($row) {
-			return ['participant' => $row];
+			return [
+				'actorType' => $row['actorType'],
+				'actorId' => $row['actorId'],
+				'blockedType' => $row['blockedType'],
+				'blockedId' => $row['blockedId']
+			];
 		}, $response, $formData->getHash()), 'Expected list don\'t mach with returned list');
 	}
 }
