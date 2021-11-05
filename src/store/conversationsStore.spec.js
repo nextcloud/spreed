@@ -24,6 +24,8 @@ import {
 	fetchConversation,
 	fetchConversations,
 	deleteConversation,
+	setConversationPermissions,
+	setCallPermissions,
 } from '../services/conversationsService'
 
 jest.mock('../services/conversationsService', () => ({
@@ -42,6 +44,8 @@ jest.mock('../services/conversationsService', () => ({
 	fetchConversation: jest.fn(),
 	fetchConversations: jest.fn(),
 	deleteConversation: jest.fn(),
+	setConversationPermissions: jest.fn(),
+	setCallPermissions: jest.fn(),
 }))
 
 describe('conversationsStore', () => {
@@ -51,6 +55,7 @@ describe('conversationsStore', () => {
 	let localVue = null
 	let store = null
 	let addParticipantOnceAction = null
+	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
 
 	beforeEach(() => {
 		localVue = createLocalVue()
@@ -65,6 +70,8 @@ describe('conversationsStore', () => {
 			attendeeId: 'attendee-id-1',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			actorId: 'actor-id',
+			defaultPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
+			callPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -610,5 +617,25 @@ describe('conversationsStore', () => {
 			const addedConversation = store.getters.conversation('new-token')
 			expect(addedConversation).toBe(newConversation)
 		})
+	})
+
+	test('sets default permissions for a conversation', async () => {
+		expect(store.getters.selectedParticipants).toStrictEqual([])
+
+		await store.dispatch('setConversationPermissions', { token: testToken, permissions })
+
+		expect(setConversationPermissions).toHaveBeenCalledWith(testToken, permissions)
+
+		expect(store.getters.conversation(testToken).defaultPermissions).toBe(permissions)
+	})
+
+	test('sets default permissions for a call', async () => {
+		expect(store.getters.selectedParticipants).toStrictEqual([])
+
+		await store.dispatch('setCallPermissions', { token: testToken, permissions })
+
+		expect(setCallPermissions).toHaveBeenCalledWith(testToken, permissions)
+
+		expect(store.getters.conversation(testToken).callPermissions).toBe(permissions)
 	})
 })
