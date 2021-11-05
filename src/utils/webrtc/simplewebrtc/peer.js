@@ -1,6 +1,4 @@
 /* global module */
-const initialState = require('@nextcloud/initial-state')
-const sdpTransform = require('sdp-transform')
 
 const adapter = require('webrtc-adapter')
 const util = require('util')
@@ -148,75 +146,6 @@ function Peer(options) {
 }
 
 util.inherits(Peer, WildEmitter)
-
-/**
- *
- */
-function shouldPreferH264() {
-	try {
-		return initialState.loadState('spreed', 'prefer_h264')
-	} catch (exception) {
-		// If the state can not be loaded an exception is thrown
-		console.warn('Could not find initial state for H.264 preference')
-		return false
-	}
-}
-
-/**
- * @param {string} sessionDescription the session description.
- */
-function preferH264VideoCodecIfAvailable(sessionDescription) {
-	const sdpInfo = sdpTransform.parse(sessionDescription.sdp)
-
-	if (!sdpInfo || !sdpInfo.media) {
-		return sessionDescription
-	}
-
-	// Find video media
-	let videoIndex = -1
-	sdpInfo.media.forEach((media, mediaIndex) => {
-		if (media.type === 'video') {
-			videoIndex = mediaIndex
-		}
-	})
-
-	if (videoIndex === -1 || !sdpInfo.media[videoIndex].rtp) {
-		return sessionDescription
-	}
-
-	// Find all H264 codec videos
-	const h264Rtps = []
-	sdpInfo.media[videoIndex].rtp.forEach((rtp, rtpIndex) => {
-		if (rtp.codec.toLowerCase() === 'h264') {
-			h264Rtps.push(rtp.payload)
-		}
-	})
-
-	if (!h264Rtps.length) {
-		// No H264 codecs found
-		return sessionDescription
-	}
-
-	// Sort the H264 codecs to the front in the payload (which defines the preferred order)
-	const payloads = sdpInfo.media[videoIndex].payloads.split(' ')
-	payloads.sort((a, b) => {
-		if (h264Rtps.indexOf(parseInt(a, 10)) !== -1) {
-			return -1
-		}
-		if (h264Rtps.indexOf(parseInt(b, 10)) !== -1) {
-			return 1
-		}
-		return 0
-	})
-
-	// Write new payload order into video media payload
-	sdpInfo.media[videoIndex].payloads = payloads.join(' ')
-
-	// Write back the sdpInfo into the session description
-	sessionDescription.sdp = sdpTransform.write(sdpInfo)
-
-	return sessionDescription
-}
 
 // Helper method to munge an SDP to enable simulcasting (Chrome only)
 // Taken from janus.js (MIT license).
@@ -457,11 +386,6 @@ Peer.prototype.offer = function(options) {
 		}
 	}
 	this.pc.createOffer(options).then(function(offer) {
-		if (shouldPreferH264()) {
-			console.debug('Preferring hardware codec H.264 as per global configuration')
-			offer = preferH264VideoCodecIfAvailable(offer)
-		}
-
 		if (sendVideo && this.enableSimulcast) {
 			// This SDP munging only works with Chrome (Safari STP may support it too)
 			if (adapter.browserDetails.browser === 'chrome' || adapter.browserDetails.browser === 'safari') {
@@ -502,10 +426,6 @@ Peer.prototype.handleOffer = function(offer) {
 
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
-		if (shouldPreferH264()) {
-			console.debug('Preferring hardware codec H.264 as per global configuration')
-			answer = preferH264VideoCodecIfAvailable(answer)
-		}
 		this.pc.setLocalDescription(answer).then(function() {
 			if (this.parent.config.nick) {
 				// The answer is a RTCSessionDescription that only serializes
