@@ -25,12 +25,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\Model\BlockActor;
 use OCA\Talk\Model\BlockActorMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
-use OCP\ICache;
-use OCP\ICacheFactory;
 
 class BlockActorService {
 
@@ -38,29 +35,23 @@ class BlockActorService {
 	private $blockActorMapper;
 	/** @var ITimeFactory */
 	private $timeFactory;
-	/** @var ICache */
-	private $cache;
 
 	public function __construct(BlockActorMapper $blockActorMapper,
-								ITimeFactory $timeFactory,
-								ICacheFactory $cacheFactory) {
+								ITimeFactory $timeFactory) {
 		$this->blockActorMapper = $blockActorMapper;
 		$this->timeFactory = $timeFactory;
-		$this->cache = $cacheFactory->createDistributed('talk_blocked_users');
 	}
 
 	public function block(string $actorType, string $actorId, string $blockedType, string $blockedId): void {
-		$blockActor = new BlockActor();
-		$blockActor->setActorType($actorType);
-		$blockActor->setActorId($actorId);
-		$blockActor->setBlockedType($blockedType);
-		$blockActor->setBlockedId($blockedId);
+		$blockActor = $this->blockActorMapper->createBlockActorFromRow([
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+			'blockedType' => $blockedType,
+			'blockedId' => $blockedId
+		]);
 		$blockActor->setDatetime($this->timeFactory->getDateTime());
 		try {
 			$this->blockActorMapper->insert($blockActor);
-			$blockedList = $this->cache->get($actorId) ?? [];
-			$blockedList[$blockedType][] = $blockActor;
-			$this->cache->set($actorId, $blockedList);
 		} catch (Exception $e) {
 			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				throw $e;
@@ -69,27 +60,21 @@ class BlockActorService {
 	}
 
 	public function unblock(string $actorType, string $actorId, string $blockedType, string $blockedId): void {
-		$blockActor = new BlockActor();
-		$blockActor->setActorType($actorType);
-		$blockActor->setActorId($actorId);
-		$blockActor->setBlockedType($blockedType);
-		$blockActor->setBlockedId($blockedId);
+		$blockActor = $this->blockActorMapper->createBlockActorFromRow([
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+			'blockedType' => $blockedType,
+			'blockedId' => $blockedId
+		]);
 		$this->blockActorMapper->delete($blockActor);
-
-		$blockedList = $this->cache->get($actorId);
-		if (isset($blockedList[$blockedType][$blockedId])) {
-			unset($blockedList[$blockedType][$blockedId]);
-			$this->cache->set($actorId, $blockedList);
-		}
 	}
 
 	public function listBlocked(string $actorId): array {
-		$blockedList = $this->cache->get($actorId);
-		if (!$blockedList) {
-			$blockedList = $this->blockActorMapper->getBlockListByBlocker($actorId);
-			$this->cache->set($actorId, $blockedList);
-		}
-		return $blockedList;
+		return $this->blockActorMapper->getBlockListByBlocker($actorId);
+	}
+
+	public function listBlockedByType(string $actorId, string $type): array {
+		return $this->blockActorMapper->getBlockListByBlockerAndTypeOfBlocked($actorId, $type);
 	}
 
 	public function user1BlockedUser2($user1, $user2): bool {

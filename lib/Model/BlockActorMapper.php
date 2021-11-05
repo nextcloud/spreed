@@ -44,14 +44,17 @@ class BlockActorMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($query->expr()->eq('actor_id', $query->createNamedParameter($blocker)));
 
-		$return = [];
-		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
-			/** @var BlockActor */
-			$blockedAgent = $this->mapRowToEntity($row);
-			$return[$blockedAgent->getBlockedType()][$blockedAgent->getBlockedId()] = $blockedAgent;
-		}
-		return $return;
+		return $this->findEntities($query);
+	}
+
+	public function getBlockListByBlockerAndTypeOfBlocked(string $blocker, string $type) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('actor_id', $query->createNamedParameter($blocker)))
+			->andWhere($query->expr()->eq('blocked_type', $query->createNamedParameter($type)));
+
+		return $this->findEntities($query);
 	}
 
 	public function delete(Entity $entity): Entity {
@@ -69,5 +72,23 @@ class BlockActorMapper extends QBMapper {
 			);
 		$qb->executeStatement();
 		return $entity;
+	}
+
+	public function createBlockActorFromRow($row): BlockActor {
+		if (isset($row['id'])) {
+			$blockActor = $this->mapRowToEntity([
+				'id' => $row['id'],
+				'actor_type' => $row['actorType'],
+				'actor_id' => $row['actorId'],
+				'blocked_type' => $row['blockedType'],
+				'blocked_id' => $row['blockedId']
+			]);
+		} else {
+			$blockActor = new BlockActor();
+			foreach ($row as $key => $value) {
+				$blockActor->{'set' . ucfirst($key)}($value);
+			}
+		}
+		return $blockActor;
 	}
 }

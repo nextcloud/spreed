@@ -70,10 +70,20 @@ class BlockController extends AEnvironmentAwareController {
 	public function listBlocked(): DataResponse {
 		$typedList = $this->blockActorService->listBlocked($this->userSession->getUser()->getUID());
 		$return = [];
-		foreach ($typedList as $list) {
-			foreach ($list as $blockActor) {
-				$return[] = $blockActor->asArray();
-			}
+		foreach ($typedList as $blockActor) {
+			$return[] = $blockActor->asArray();
+		}
+		return new DataResponse($return, Http::STATUS_OK);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function listBlockedByType(string $type): DataResponse {
+		$typedList = $this->blockActorService->listBlockedByType($this->userSession->getUser()->getUID(), $type);
+		$return = [];
+		foreach ($typedList as $blockActor) {
+			$return[] = $blockActor->asArray();
 		}
 		return new DataResponse($return, Http::STATUS_OK);
 	}

@@ -676,6 +676,14 @@ return [
 				'apiVersion' => 'v1'
 			]
 		],
+		[
+			'name' => 'Block#listBlockedByType',
+			'url' => '/api/{apiVersion}/block/type/{type}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1'
+			]
+		],
 
 		/**
 		 * HostedSignalingServer

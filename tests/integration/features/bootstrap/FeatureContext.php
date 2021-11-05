@@ -2176,9 +2176,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" list all blocked actors with (\d+) \((v1)\)$/
+	 * @When /^user "([^"]*)" list all blocked (users|groups|emails|circles) with (\d+) \((v1)\)$/
 	 */
-	public function userListAllBlockedActors(string $user, int $statusCode, string $apiVersion, TableNode $formData = null) {
+	public function userListAllBlockedByType(string $user, string $blockedType, int $statusCode, string $apiVersion, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/spreed/api/' . $apiVersion . '/block/type/' . $blockedType
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($response);
+			return;
+		}
+
+		Assert::assertCount(count($formData->getHash()), $response, 'Blocked actors count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($row) {
+			return [
+				'actorType' => $row['actorType'],
+				'actorId' => $row['actorId'],
+				'blockedType' => $row['blockedType'],
+				'blockedId' => $row['blockedId']
+			];
+		}, $response, $formData->getHash()), 'Expected list don\'t mach with returned list');
+	}
+
+	/**
+	 * @When /^user "([^"]*)" list all blocked with (\d+) \((v1)\)$/
+	 */
+	public function userListAllBlocked(string $user, int $statusCode, string $apiVersion, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'GET', '/apps/spreed/api/' . $apiVersion . '/block'
