@@ -41,7 +41,7 @@ Thumbnail | 320 | - | 240 | - | 1 | -
 
 ## Judging the connection quality
 
-Similar since version 9.0.2 Nextcloud Talk is having an eye on the lost packages and the "round trip time" of the stream data. When the connection is too bad or no data could be transmitted at all, the participant will be informed to try to disable their own video and screenshare.
+Similar since version 9.0.2 Nextcloud Talk is having an eye on the lost packages and the "round trip time" of the stream data. When the connection is too bad or no data could be transmitted at all, the participant will be informed to try to disable their own video and screen share.
 If those two are already off, the participant will see a message that their connection bandwidth or device cannot withhold the necessary load for participating in a call.
 
 The critical values are:
