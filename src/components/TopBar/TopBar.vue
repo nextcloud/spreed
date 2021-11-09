@@ -52,6 +52,12 @@
 				</p>
 			</div>
 		</a>
+		<LocalMediaControls
+			v-if="isInCall"
+			class="local-media-controls"
+			:token="token"
+			:model="localMediaModel"
+			:local-call-participant-model="localCallParticipantModel" />
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 			<!-- Call layout switcher -->
@@ -171,12 +177,13 @@ import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
-import { callParticipantCollection } from '../../utils/webrtc/index'
+import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
+import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 
 export default {
 	name: 'TopBar',
@@ -195,6 +202,7 @@ export default {
 		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
+		LocalMediaControls,
 	},
 
 	mixins: [
@@ -212,6 +220,9 @@ export default {
 	data: () => {
 		return {
 			unreadNotificationHandle: null,
+			localCallParticipantModel,
+			localMediaModel,
+
 		}
 	},
 
