@@ -69,6 +69,11 @@
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
+				<Cog
+					slot="icon"
+					:size="20"
+					decorative
+					title="" />
 				<ActionButton
 					:icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
