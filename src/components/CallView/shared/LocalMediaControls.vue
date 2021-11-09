@@ -559,7 +559,7 @@ export default {
 
 			const tooltip = {}
 			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
-				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screenshare.')
+				tooltip.content = t('spreed', 'Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screen share.')
 				tooltip.actionLabel = t('spreed', 'Disable background blur')
 				tooltip.action = 'disableVirtualBackground'
 			} else if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && this.model.attributes.localScreen) {

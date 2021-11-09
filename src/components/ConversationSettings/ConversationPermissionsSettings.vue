@@ -24,7 +24,7 @@
 		<h4 class="conversation-permissions-editor__title">
 			{{ t('spreed', 'Edit the default permissions for participants in this conversation. These settings do not affect moderators.') }}
 		</h4>
-		<p>{{ t('spreed', 'Warning: every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}</p>
+		<p>{{ t('spreed', 'Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}</p>
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
@@ -38,7 +38,7 @@
 			</CheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio, video and screenshare.') }}</p>
+		<p>{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.') }}</p>
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
@@ -52,7 +52,7 @@
 			</CheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Participants can only join calls, but not enable audio, video or screenshare until a moderator manually grants their permissions manually.') }}</p>
+		<p>{{ t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.') }}</p>
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">

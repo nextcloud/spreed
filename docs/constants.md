@@ -69,7 +69,7 @@ title: Constants
 * `8` Can ignore lobby
 * `16` Can publish audio stream
 * `32` Can publish video stream
-* `64` Can publish screenshare stream
+* `64` Can publish screen sharing stream
 
 ### Attendee permission modifications
 * `set` - Setting this permission set.
