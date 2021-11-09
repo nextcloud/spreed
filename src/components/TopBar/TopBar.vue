@@ -60,17 +60,7 @@
 			:local-call-participant-model="localCallParticipantModel" />
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
-			<!-- Call layout switcher -->
-			<Actions
-				slot="trigger"
-				class="forced-background"
-				:container="container">
-				<ActionButton v-if="isInCall"
-					:icon="changeViewIconClass"
-					@click="changeView">
-					{{ changeViewText }}
-				</actionbutton>
-			</Actions>
+
 			<!-- sidebar toggle -->
 			<Actions
 				v-shortkey.once="['f']"
@@ -262,21 +252,6 @@ export default {
 			return !this.$store.getters.getSidebarStatus
 		},
 
-		changeViewText() {
-			if (this.isGrid) {
-				return t('spreed', 'Speaker view')
-			} else {
-				return t('spreed', 'Grid view')
-			}
-		},
-		changeViewIconClass() {
-			if (this.isGrid) {
-				return 'forced-white icon-promoted-view'
-			} else {
-				return 'forced-white icon-grid-view'
-			}
-		},
-
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
@@ -343,10 +318,6 @@ export default {
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
-		},
-
-		isGrid() {
-			return this.$store.getters.isGrid
 		},
 
 		renderedDescription() {
@@ -462,11 +433,6 @@ export default {
 			} else if (document.msExitFullscreen) {
 				document.msExitFullscreen()
 			}
-		},
-
-		changeView() {
-			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid })
-			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 
 		async handleCopyLink() {
