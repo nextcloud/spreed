@@ -154,7 +154,7 @@
 					@click="toggleHandRaised">
 					<HandBackLeft
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					{{ raiseHandButtonLabel }}
@@ -166,13 +166,13 @@
 					<BlurOff
 						v-if="isVirtualBackgroundEnabled"
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					<Blur
 						v-else
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					{{ toggleVirtualBackgroundButtonLabel }}

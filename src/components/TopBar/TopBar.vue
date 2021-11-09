@@ -118,7 +118,7 @@
 						@click="forceMuteOthers">
 						<MicrophoneOff
 							slot="icon"
-							:size="16"
+							:size="20"
 							decorative
 							title="" />
 						{{ t('spreed', 'Mute others') }}
@@ -143,7 +143,7 @@
 					@click="openSidebar">
 					<MessageText
 						slot="icon"
-						:size="16"
+						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
@@ -184,6 +184,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
 
 export default {
 	name: 'TopBar',
@@ -203,6 +204,7 @@ export default {
 		MicrophoneOff,
 		ConversationIcon,
 		LocalMediaControls,
+		Cog,
 	},
 
 	mixins: [
