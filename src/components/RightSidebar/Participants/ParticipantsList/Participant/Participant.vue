@@ -159,6 +159,18 @@
 			<template v-if="selfIsModerator && !isModerator">
 				<ActionSeparator />
 				<ActionButton
+					v-if="hasNonDefaultPermissions"
+					:close-after-click="true"
+					@click="applyDefaultPermissions">
+					<template #icon>
+						<LockReset
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Reset custom permissions') }}
+				</ActionButton>
+				<ActionButton
 					:close-after-click="true"
 					@click="grantAllPermissions">
 					<template #icon>
@@ -168,17 +180,6 @@
 							decorative />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
-				</ActionButton>
-				<ActionButton
-					:close-after-click="true"
-					@click="applyDefaultPermissions">
-					<template #icon>
-						<LockReset
-							:size="20"
-							title=""
-							decorative />
-					</template>
-					{{ t('spreed', 'Default permissions') }}
 				</ActionButton>
 				<ActionButton
 					:close-after-click="true"
@@ -594,6 +595,10 @@ export default {
 
 		attendeePermissions() {
 			return this.participant.attendeePermissions
+		},
+
+		hasNonDefaultPermissions() {
+			return this.attendeePermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
 		},
 
 		actionIcon() {
