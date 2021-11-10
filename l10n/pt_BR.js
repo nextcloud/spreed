@@ -679,7 +679,6 @@ OC.L10N.register(
     "Bad sent audio and screen quality." : "Má qualidade de áudio e tela enviados.",
     "Bad sent audio and video quality." : "Má qualidade de áudio e vídeo enviados.",
     "Bad sent audio quality." : "Má qualidade de áudio enviada.",
-    "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screenshare." : "Sua conexão com a Internet ou computador estão ocupados e outros participantes podem não conseguir ver sua tela. Para melhorar a situação, tente desativar o desfoque de fundo ou seu vídeo enquanto compartilha a tela. ",
     "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable your video while doing a screenshare." : "Sua conexão com a Internet ou computador estão ocupados e outros participantes podem não conseguir entendê-lo e ver sua tela. Para melhorar a situação, tente desativar o compartilhamento de tela. ",
     "Your internet connection or computer are busy and other participants might be unable to see your screen." : "Sua conexão à internet ou o computador estão ocupados e outros participantes podem não conseguir ver sua tela.",
     "Your internet connection or computer are busy and other participants might be unable to see you." : "Sua conexão à internet ou o computador estão ocupados e outros participantes podem não conseguir vê-lo.",

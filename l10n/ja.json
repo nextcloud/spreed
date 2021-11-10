@@ -674,7 +674,6 @@
     "Bad sent audio and screen quality." : "送信音声と画面の品質が良くありません。",
     "Bad sent audio and video quality." : "送信音声と映像の品質が良くありません。",
     "Bad sent audio quality." : "送信音声の品質が良くありません。",
-    "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screenshare." : "コンピューターかネットワークの負荷が高いため、他の参加者が画面を見ることができない場合があります。状況を改善するには、画面共有を行っている間、背景のぼかしまたはビデオを無効にしてみてください。",
     "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable your video while doing a screenshare." : "コンピューターかネットワークの負荷が高い為、他の参加者から見えていない可能性があります。改善するためにカメラか画面共有をオフにしてみてください。",
     "Your internet connection or computer are busy and other participants might be unable to see your screen." : "インターネットかコンピューターの負荷が高いため、他の参加者にはこちらの画面は見えていないかもしれません。",
     "Your internet connection or computer are busy and other participants might be unable to see you." : "インターネット接続かコンピューターの負荷が高いため、他の参加者にはあなたが見えていないかもしれません。",
