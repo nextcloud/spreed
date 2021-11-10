@@ -56,6 +56,9 @@ export default function CallParticipantModel(options) {
 		internal: undefined,
 		connectionState: ConnectionState.NEW,
 		negotiating: false,
+		connecting: false,
+		initialConnection: true,
+		connectedAtLeastOnce: false,
 		stream: null,
 		// The audio element is part of the model to ensure that it can be
 		// played if needed even if there is no view for it.
@@ -244,6 +247,7 @@ CallParticipantModel.prototype = {
 		if (!this.get('peer')) {
 			this.set('connectionState', ConnectionState.COMPLETED)
 			this.set('negotiating', false)
+			this.set('connecting', false)
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 			this.set('videoAvailable', false)
@@ -276,25 +280,38 @@ CallParticipantModel.prototype = {
 			}
 		}.bind(this)
 
+		// "connecting" state is not changed when entering the "disconnected"
+		// state, as it can be entered while still connecting (if done from
+		// "checking") or once already connected (from "connected" or
+		// "completed").
+
 		switch (extendedIceConnectionState) {
 		case 'new':
 			this.set('connectionState', ConnectionState.NEW)
+			this.set('connecting', true)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 			break
 		case 'checking':
 			this.set('connectionState', ConnectionState.CHECKING)
+			this.set('connecting', true)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 			break
 		case 'connected':
 			this.set('connectionState', ConnectionState.CONNECTED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
+			this.set('connectedAtLeastOnce', true)
 			setNameForUserFromPeerNick()
 			break
 		case 'completed':
 			this.set('connectionState', ConnectionState.COMPLETED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
+			this.set('connectedAtLeastOnce', true)
 			setNameForUserFromPeerNick()
 			break
 		case 'disconnected':
@@ -305,12 +322,18 @@ CallParticipantModel.prototype = {
 			break
 		case 'failed':
 			this.set('connectionState', ConnectionState.FAILED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		case 'failed-no-restart':
 			this.set('connectionState', ConnectionState.FAILED_NO_RESTART)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		case 'closed':
 			this.set('connectionState', ConnectionState.CLOSED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		default:
 			console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
