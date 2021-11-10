@@ -53,6 +53,7 @@
 					<div
 						ref="grid"
 						class="grid"
+						:class="{stripe: isStripe}"
 						:style="gridStyle"
 						@mousemove="handleMovement"
 						@keydown="handleMovement">
@@ -822,6 +823,11 @@ export default {
 	display: grid;
 	height: 100%;
 	width: 100%;
+	&:not(.stripe) {
+		grid-row-gap: 8px;
+		grid-column-gap: 8px;
+		padding: 0 8px 8px 8px;
+	}
 }
 
 .empty-call-view {
