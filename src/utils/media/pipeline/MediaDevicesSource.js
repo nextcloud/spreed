@@ -68,26 +68,25 @@ export default class MediaDevicesSource extends TrackSource {
 		// before being used, so they must be set once the media has started.
 
 		let stream
+		let error
 
-		try {
-			stream = await this._startAudioAndVideo(constraints)
-		} catch (error) {
-			// Fallback for users without a camera or with a camera that can not
-			// be accessed, but only if audio is meant to be used.
-			if (constraints.audio !== false && constraints.video !== false) {
-				retryNoVideoCallback(constraints, error)
+		[stream, error] = await this._startAudioAndVideo(constraints)
 
-				stream = await this._startAudioOnly(constraints)
-			}
+		// Fallback for users without a camera or with a camera that can not be
+		// accessed, but only if audio is meant to be used.
+		if (error && constraints.audio !== false && constraints.video !== false) {
+			retryNoVideoCallback(constraints, error);
+
+			[stream, error] = await this._startAudioOnly(constraints)
 		}
 
-		if (!stream) {
+		if (error) {
 			// No media could be got, but the node is active nevertheless and
 			// listening to device changes until explicitly stopped.
 			mediaDevicesManager.on('change:audioInputId', this._handleAudioInputIdChangedBound)
 			mediaDevicesManager.on('change:videoInputId', this._handleVideoInputIdChangedBound)
 
-			return
+			throw error
 		}
 
 		// According to the specification "getUserMedia()" will return at
@@ -112,26 +111,36 @@ export default class MediaDevicesSource extends TrackSource {
 	async _startAudioAndVideo(constraints) {
 		this._adjustVideoConstraintsForChromium(constraints)
 
-		const stream = await mediaDevicesManager.getUserMedia(constraints)
+		let stream
+
+		try {
+			stream = await mediaDevicesManager.getUserMedia(constraints)
+		} catch (error) {
+			return [null, error]
+		}
 
 		// Although the promise should be resolved only if all the constraints
 		// are met Edge resolves it if both audio and video are requested but
 		// only audio is available.
 		if (constraints.video && stream.getVideoTracks().length === 0) {
-			throw Error('Video expected but not received')
+			return [null, Error('Video expected but not received')]
 		}
 
-		return stream
+		return [stream, null]
 	}
 
 	async _startAudioOnly(constraints) {
 		constraints.video = false
 
+		let stream
+
 		try {
-			return await mediaDevicesManager.getUserMedia(constraints)
+			stream = await mediaDevicesManager.getUserMedia(constraints)
 		} catch (error) {
-			return null
+			return [null, error]
 		}
+
+		return [stream, null]
 	}
 
 	stop() {
