@@ -677,7 +677,6 @@ OC.L10N.register(
     "Bad sent audio and screen quality." : "Slecht verzonden audio en schermkwaliteit.",
     "Bad sent audio and video quality." : "Slechte verzonden audio- en videokwaliteit.",
     "Bad sent audio quality." : "Slechte verzonden audiokwaliteit.",
-    "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable the background blur or your video while doing a screenshare." : "Jouw internetverbinding of computer is overbelast en andere deelnemers kunnen jou scherm mogelijk niet zien. Om de situatie te verbeteren kun je de achtergrondvervaging van jouw video uit schakelen terwijl je een screenshare doet.",
     "Your internet connection or computer are busy and other participants might be unable to see your screen. To improve the situation try to disable your video while doing a screenshare." : "Jouw internetverbinding of computer is overbelast en andere deelnemers kunnen jou scherm mogelijk niet zien. Om de situatie te verbeteren kun je jouw video uitzetten terwijl je screenshare gebruikt.",
     "Your internet connection or computer are busy and other participants might be unable to see your screen." : "Je internetverbinding of computer is overbelast en andere deelnemers kunnen je scherm mogelijk niet zien.",
     "Your internet connection or computer are busy and other participants might be unable to see you." : "Je internetverbinding of computer is overbelast en andere deelnemers kunnen je mogelijk niet zien.",
