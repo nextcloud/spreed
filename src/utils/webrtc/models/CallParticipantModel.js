@@ -55,6 +55,7 @@ export default function CallParticipantModel(options) {
 		name: undefined,
 		internal: undefined,
 		connectionState: ConnectionState.NEW,
+		negotiating: false,
 		stream: null,
 		// The audio element is part of the model to ensure that it can be
 		// played if needed even if there is no view for it.
@@ -79,6 +80,7 @@ export default function CallParticipantModel(options) {
 	this._handleMuteBound = this._handleMute.bind(this)
 	this._handleUnmuteBound = this._handleUnmute.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
+	this._handleSignalingStateChangeBound = this._handleSignalingStateChange.bind(this)
 	this._handleChannelMessageBound = this._handleChannelMessage.bind(this)
 	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
 
@@ -96,6 +98,7 @@ CallParticipantModel.prototype = {
 	destroy() {
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
 		}
 
 		this._webRtc.off('peerStreamAdded', this._handlePeerStreamAddedBound)
@@ -232,6 +235,7 @@ CallParticipantModel.prototype = {
 
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
 		}
 
 		this.set('peer', peer)
@@ -239,6 +243,7 @@ CallParticipantModel.prototype = {
 		// Special case when the participant has no streams.
 		if (!this.get('peer')) {
 			this.set('connectionState', ConnectionState.COMPLETED)
+			this.set('negotiating', false)
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 			this.set('videoAvailable', false)
@@ -254,9 +259,11 @@ CallParticipantModel.prototype = {
 		} else {
 			this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
 		}
+		this._handleSignalingStateChange(this.get('peer').pc.signalingState)
 		this._handlePeerStreamAdded(this.get('peer'))
 
 		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		this.get('peer').on('signalingStateChange', this._handleSignalingStateChangeBound)
 	},
 
 	_handleExtendedIceConnectionStateChange(extendedIceConnectionState) {
@@ -308,6 +315,10 @@ CallParticipantModel.prototype = {
 		default:
 			console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
 		}
+	},
+
+	_handleSignalingStateChange(signalingState) {
+		this.set('negotiating', signalingState !== 'stable' && signalingState !== 'closed')
 	},
 
 	setScreenPeer(screenPeer) {
