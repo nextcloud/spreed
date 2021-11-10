@@ -92,6 +92,14 @@ class Config {
 			&& $this->getDialInInfo() !== '';
 	}
 
+	/**
+	 * Determine if Talk federation is enabled on this instance
+	 */
+	public function isFederationEnabled(): bool {
+		// TODO: Set to default true once implementation is complete
+		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+	}
+
 	public function getDialInInfo(): string {
 		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
 	}

@@ -44,6 +44,7 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
@@ -79,12 +80,16 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudFederationProvider;
+use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
+use OCP\IConfig;
 use OCP\IServerContainer;
 use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
@@ -166,6 +171,7 @@ class Application extends App implements IBootstrap {
 
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
+		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
 	}
 
 	protected function registerNotifier(IServerContainer $server): void {
@@ -225,5 +231,22 @@ class Application extends App implements IBootstrap {
 			$chatManager->deleteMessages($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
+	}
+
+	protected function registerCloudFederationProviderManager(
+		IConfig $config,
+		ICloudFederationProviderManager $manager,
+		IAppContainer $appContainer): void {
+		if ($config->getAppValue('spreed', 'federation_enabled', 'no') !== 'yes') {
+			return;
+		}
+
+		$manager->addCloudFederationProvider(
+			'talk-room',
+			'Talk Federation',
+			static function () use ($appContainer): ICloudFederationProvider {
+				return $appContainer->get(CloudFederationProviderTalk::class);
+			}
+		);
 	}
 }

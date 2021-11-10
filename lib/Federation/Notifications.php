@@ -236,7 +236,7 @@ class Notifications {
 	}
 
 	private function prepareRemoteUrl(string $remote): string {
-		if ($this->addressHandler->urlContainProtocol($remote)) {
+		if (!$this->addressHandler->urlContainProtocol($remote)) {
 			return 'https://' . $remote;
 		}
 		return $remote;

@@ -1,9 +1,29 @@
 import mockAxios from '../__mocks__/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { loadState } from '@nextcloud/initial-state'
 import { searchPossibleConversations } from './conversationsService'
 import { SHARE } from '../constants'
 
+jest.mock('@nextcloud/initial-state', () => ({
+	loadState: jest.fn(),
+}))
+
 describe('conversationsService', () => {
+	let loadStateSettings
+
+	beforeEach(() => {
+		loadStateSettings = {
+			federation_enabled: false,
+		}
+
+		loadState.mockImplementation((app, key) => {
+			if (app === 'spreed') {
+				return loadStateSettings[key]
+			}
+			return null
+		})
+	})
+
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
 		mockAxios.reset()
