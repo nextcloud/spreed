@@ -291,7 +291,7 @@ export default {
 <style lang="scss" scoped>
 .top-bar__button {
 	height: 44px;
-	padding: 0 16px;
+	margin: 0;
 
 	.icon {
 		opacity: 1;
