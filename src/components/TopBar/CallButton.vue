@@ -146,8 +146,10 @@ export default {
 		},
 
 		canEndForAll() {
-			return ((this.conversation.callPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0
-				|| (this.conversation.defaultPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0)
+			return ((this.conversation.callPermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
+					&& (this.conversation.callPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0)
+				|| (this.conversation.defaultPermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
+					&& (this.conversation.defaultPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0))
 			 && (this.participantType === PARTICIPANT.TYPE.OWNER
 				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
 				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
