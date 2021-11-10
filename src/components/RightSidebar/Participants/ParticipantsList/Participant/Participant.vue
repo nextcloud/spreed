@@ -111,18 +111,21 @@
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
 			class="participant-row__actions">
-			<template v-if="actionIcon !== ''"
-				#icon>
+			<template #icon>
 				<LockOpenVariant
 					v-if="actionIcon === 'LockOpenVariant'"
 					:size="20"
 					decorative />
 				<Lock
-					v-if="actionIcon === 'Lock'"
+					v-else-if="actionIcon === 'Lock'"
 					:size="20"
 					decorative />
 				<Tune
-					v-if="actionIcon === 'Tune'"
+					v-else-if="actionIcon === 'Tune'"
+					:size="20"
+					decorative />
+				<DotsHorizontal
+					v-else
 					:size="20"
 					decorative />
 			</template>
@@ -252,6 +255,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 // Material design icons
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
@@ -276,6 +280,7 @@ export default {
 		ParticipantPermissionsEditor,
 
 		// Material design icons
+		DotsHorizontal,
 		Microphone,
 		Phone,
 		Video,
