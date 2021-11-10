@@ -61,6 +61,10 @@
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 
+			<!-- Vertical line -->
+			<div v-if="isInCall"
+				class="top-bar__separator" />
+
 			<!-- sidebar toggle -->
 			<Actions
 				v-shortkey.once="['f']"
@@ -514,6 +518,14 @@ export default {
 		top: 40px;
 		right: 4px;
 		pointer-events: none;
+	}
+
+	&__separator {
+		top: 4px;
+		border-left: 1px solid white;
+		height: 36px;
+		margin: auto 6px;
+		opacity: 0.5;
 	}
 }
 
