@@ -159,6 +159,18 @@
 			<template v-if="selfIsModerator && !isModerator">
 				<ActionSeparator />
 				<ActionButton
+					v-if="hasNonDefaultPermissions"
+					:close-after-click="true"
+					@click="applyDefaultPermissions">
+					<template #icon>
+						<LockReset
+							:size="20"
+							title=""
+							decorative />
+					</template>
+					{{ t('spreed', 'Reset custom permissions') }}
+				</ActionButton>
+				<ActionButton
 					:close-after-click="true"
 					@click="grantAllPermissions">
 					<template #icon>
@@ -250,6 +262,7 @@ import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
+import LockReset from 'vue-material-design-icons/LockReset.vue'
 
 export default {
 	name: 'Participant',
@@ -273,6 +286,7 @@ export default {
 		LockOpenVariant,
 		Pencil,
 		Tune,
+		LockReset,
 	},
 
 	directives: {
@@ -583,6 +597,10 @@ export default {
 			return this.participant.attendeePermissions
 		},
 
+		hasNonDefaultPermissions() {
+			return this.attendeePermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
+		},
+
 		actionIcon() {
 			if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.MAX_CUSTOM) {
 				return 'LockOpenVariant'
@@ -676,6 +694,15 @@ export default {
 
 		hidePermissionsEditor() {
 			this.permissionsEditor = false
+		},
+
+		applyDefaultPermissions() {
+			try {
+				this.$store.dispatch('setPermissions', { token: this.token, attendeeId: this.attendeeId, permissions: PARTICIPANT.PERMISSIONS.DEFAULT })
+				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.participant.displayName }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+			}
 		},
 	},
 }
