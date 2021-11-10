@@ -83,6 +83,11 @@
 					:size="36" />
 			</div>
 		</transition-group>
+		<div v-if="connectionMessage"
+			:class="connectionMessageClass"
+			class="connection-message">
+			{{ connectionMessage }}
+		</div>
 		<VideoBottomBar v-bind="$props"
 			:has-shadow="hasVideo"
 			:participant-name="participantName" />
@@ -172,12 +177,67 @@ export default {
 			}
 		},
 
+		wasConnectedAtLeastOnce() {
+			return this.model.attributes.connectedAtLeastOnce
+		},
+
 		isNotConnected() {
 			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
 		},
 
 		isLoading() {
 			return this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
+		},
+
+		isDisconnected() {
+			return this.model.attributes.connectionState !== ConnectionState.NEW && this.model.attributes.connectionState !== ConnectionState.CHECKING
+				&& this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
+		},
+
+		/**
+		 * Whether the connection to the participant is being tried again.
+		 *
+		 * The initial connection to the participant is excluded.
+		 *
+		 * A "failed" connection state will trigger a reconnection, but that may
+		 * not immediately change the "negotiating" or "connecting" attributes
+		 * (for example, while the new offer requested to the HPB was not
+		 * received yet). Similarly both "negotiating" and "connecting" need to
+		 * be checked, as the negotiation will start before the connection
+		 * attempt is started.
+		 */
+		isReconnecting() {
+			return this.model.attributes.connectionState === ConnectionState.FAILED
+				|| (!this.model.attributes.initialConnection
+					&& (this.model.attributes.negotiating || this.model.attributes.connecting))
+		},
+
+		isNoLongerTryingToReconnect() {
+			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
+		},
+
+		connectionMessage() {
+			if (!this.wasConnectedAtLeastOnce && this.isNoLongerTryingToReconnect) {
+				return t('spreed', 'Connection could not be established …')
+			}
+
+			if (this.isNoLongerTryingToReconnect) {
+				return t('spreed', 'Connection was lost and could not be re-established …')
+			}
+
+			if (!this.wasConnectedAtLeastOnce && this.isReconnecting) {
+				return t('spreed', 'Connection could not be established. Trying again …')
+			}
+
+			if (this.isReconnecting) {
+				return t('spreed', 'Connection lost. Trying to reconnect …')
+			}
+
+			if (this.isDisconnected) {
+				return t('spreed', 'Connection problems …')
+			}
+
+			return null
 		},
 
 		containerClass() {
@@ -212,6 +272,12 @@ export default {
 			return Object.assign(this.avatarClass, {
 				['avatar-' + this.avatarSize + 'px']: true,
 			})
+		},
+
+		connectionMessageClass() {
+			return {
+				'below-avatar': this.showBackgroundAndAvatar,
+			}
 		},
 
 		firstLetterOfGuestName() {
@@ -512,6 +578,24 @@ export default {
 .video--fill {
 	/* Fill the frame */
 	object-fit: cover;
+}
+
+.connection-message {
+	width: 100%;
+
+	position: absolute;
+	top: calc(50% + 50px);
+
+	text-align: center;
+
+	z-index: 1;
+
+	color: white;
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
+.connection-message.below-avatar {
+	top: calc(50% + 80px);
 }
 
 .speaking-shadow {
