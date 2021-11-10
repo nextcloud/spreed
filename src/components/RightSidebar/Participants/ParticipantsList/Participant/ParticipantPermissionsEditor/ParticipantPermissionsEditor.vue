@@ -31,6 +31,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { PARTICIPANT } from '../../../../../../constants'
 import PermissionEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
 
 export default {
@@ -63,7 +64,18 @@ export default {
 		 * The participant's name.
 		 */
 		displayName() {
+			if (this.participant.displayName === '' && this.isGuest) {
+				return t('spreed', 'Guest')
+			}
+
 			return this.participant.displayName
+		},
+
+		/**
+		 * Whether the participant is a guest or not.
+		 */
+		isGuest() {
+			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participant.participantType) !== -1
 		},
 
 		/**
