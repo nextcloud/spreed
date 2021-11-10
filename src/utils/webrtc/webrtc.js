@@ -849,6 +849,15 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	/**
 	 * @param {object} peer The peer connection to handle the state on
 	 */
+	function setHandlerForSignalingStateChange(peer) {
+		peer.pc.addEventListener('signalingstatechange', function() {
+			peer.emit('signalingStateChange', peer.pc.signalingState)
+		})
+	}
+
+	/**
+	 * @param {object} peer The peer connection to handle the state on
+	 */
 	function setHandlerForOwnIceConnectionStateChange(peer) {
 		peer.pc.addEventListener('iceconnectionstatechange', function() {
 			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
@@ -1067,6 +1076,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			} else {
 				setHandlerForIceConnectionStateChange(peer)
 				setHandlerForConnectionStateChange(peer)
+				setHandlerForSignalingStateChange(peer)
 			}
 
 			setHandlerForNegotiationNeeded(peer)
