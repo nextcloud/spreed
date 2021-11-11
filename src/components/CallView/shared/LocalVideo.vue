@@ -54,16 +54,7 @@
 				{{ firstLetterOfGuestName }}
 			</div>
 		</div>
-		<transition name="fade">
-			<LocalMediaControls
-				v-if="showControls"
-				class="local-media-controls"
-				:token="token"
-				:model="localMediaModel"
-				:local-call-participant-model="localCallParticipantModel"
-				:screen-sharing-button-hidden="isSidebar"
-				@switch-screen-to-id="switchScreenToId($event)" />
-		</transition>
+
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
 		<div class="bottom-bar">
 			<button
@@ -79,7 +70,6 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import LocalMediaControls from './LocalMediaControls'
 import Hex from 'crypto-js/enc-hex'
 import SHA1 from 'crypto-js/sha1'
 import {
@@ -97,7 +87,6 @@ export default {
 
 	components: {
 		Avatar,
-		LocalMediaControls,
 		VideoBackground,
 	},
 
@@ -419,15 +408,6 @@ export default {
 			border: none;
 		}
 	}
-}
-
-.local-media-controls {
-	position: absolute;
-	text-align: center;
-	right: 0;
-	bottom: 4px;
-	z-index: 10;
-	width: 100%;
 }
 
 // Always display the local video in the last row

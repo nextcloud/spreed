@@ -154,7 +154,7 @@
 					@click="toggleHandRaised">
 					<HandBackLeft
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					{{ raiseHandButtonLabel }}
@@ -166,23 +166,30 @@
 					<BlurOff
 						v-if="isVirtualBackgroundEnabled"
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					<Blur
 						v-else
 						slot="icon"
-						:size="16"
+						:size="20"
 						decorative
 						title="" />
 					{{ toggleVirtualBackgroundButtonLabel }}
+				</ActionButton>
+				<!-- Call layout switcher -->
+				<ActionButton v-if="isInCall"
+					:icon="changeViewIconClass"
+					:close-after-click="true"
+					@click="changeView">
+					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
 				<ActionButton
 					icon="icon-settings"
 					:close-after-click="true"
 					@click="showSettings">
-					{{ t('spreed', 'Settings') }}
+					{{ t('spreed', 'Devices settings') }}
 				</ActionButton>
 			</Actions>
 		</div>
@@ -247,6 +254,7 @@ import { Actions, ActionSeparator, ActionButton } from '@nextcloud/vue'
 import { callAnalyzer } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 import VirtualBackground from '../../../utils/media/pipeline/VirtualBackground'
+import isInCall from '../../../mixins/isInCall'
 
 export default {
 
@@ -255,7 +263,6 @@ export default {
 	directives: {
 		tooltip: Tooltip,
 	},
-
 	components: {
 		NetworkStrength2Alert,
 		Popover,
@@ -273,6 +280,10 @@ export default {
 		Blur,
 		BlurOff,
 	},
+
+	mixins: [
+		isInCall,
+	],
 
 	props: {
 		token: {
@@ -603,6 +614,26 @@ export default {
 			return tooltip
 		},
 
+		changeViewText() {
+			if (this.isGrid) {
+				return t('spreed', 'Speaker view')
+			} else {
+				return t('spreed', 'Grid view')
+			}
+		},
+
+		changeViewIconClass() {
+			if (this.isGrid) {
+				return 'icon-promoted-view'
+			} else {
+				return 'icon-grid-view'
+			}
+		},
+
+		isGrid() {
+			return this.$store.getters.isGrid
+		},
+
 	},
 
 	watch: {
@@ -830,6 +861,11 @@ export default {
 
 		dismissQualityWarningTooltip() {
 			this.$store.dispatch('dismissQualityWarningTooltip')
+		},
+
+		changeView() {
+			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid })
+			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 	},
 }
