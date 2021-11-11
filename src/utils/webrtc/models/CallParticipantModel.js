@@ -55,6 +55,10 @@ export default function CallParticipantModel(options) {
 		name: undefined,
 		internal: undefined,
 		connectionState: ConnectionState.NEW,
+		negotiating: false,
+		connecting: false,
+		initialConnection: true,
+		connectedAtLeastOnce: false,
 		stream: null,
 		// The audio element is part of the model to ensure that it can be
 		// played if needed even if there is no view for it.
@@ -79,6 +83,7 @@ export default function CallParticipantModel(options) {
 	this._handleMuteBound = this._handleMute.bind(this)
 	this._handleUnmuteBound = this._handleUnmute.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
+	this._handleSignalingStateChangeBound = this._handleSignalingStateChange.bind(this)
 	this._handleChannelMessageBound = this._handleChannelMessage.bind(this)
 	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
 
@@ -96,6 +101,7 @@ CallParticipantModel.prototype = {
 	destroy() {
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
 		}
 
 		this._webRtc.off('peerStreamAdded', this._handlePeerStreamAddedBound)
@@ -232,6 +238,7 @@ CallParticipantModel.prototype = {
 
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
 		}
 
 		this.set('peer', peer)
@@ -239,6 +246,8 @@ CallParticipantModel.prototype = {
 		// Special case when the participant has no streams.
 		if (!this.get('peer')) {
 			this.set('connectionState', ConnectionState.COMPLETED)
+			this.set('negotiating', false)
+			this.set('connecting', false)
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 			this.set('videoAvailable', false)
@@ -254,9 +263,11 @@ CallParticipantModel.prototype = {
 		} else {
 			this._handleExtendedIceConnectionStateChange(this.get('peer').pc.iceConnectionState)
 		}
+		this._handleSignalingStateChange(this.get('peer').pc.signalingState)
 		this._handlePeerStreamAdded(this.get('peer'))
 
 		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
+		this.get('peer').on('signalingStateChange', this._handleSignalingStateChangeBound)
 	},
 
 	_handleExtendedIceConnectionStateChange(extendedIceConnectionState) {
@@ -269,25 +280,38 @@ CallParticipantModel.prototype = {
 			}
 		}.bind(this)
 
+		// "connecting" state is not changed when entering the "disconnected"
+		// state, as it can be entered while still connecting (if done from
+		// "checking") or once already connected (from "connected" or
+		// "completed").
+
 		switch (extendedIceConnectionState) {
 		case 'new':
 			this.set('connectionState', ConnectionState.NEW)
+			this.set('connecting', true)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 			break
 		case 'checking':
 			this.set('connectionState', ConnectionState.CHECKING)
+			this.set('connecting', true)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 			break
 		case 'connected':
 			this.set('connectionState', ConnectionState.CONNECTED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
+			this.set('connectedAtLeastOnce', true)
 			setNameForUserFromPeerNick()
 			break
 		case 'completed':
 			this.set('connectionState', ConnectionState.COMPLETED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
+			this.set('connectedAtLeastOnce', true)
 			setNameForUserFromPeerNick()
 			break
 		case 'disconnected':
@@ -298,16 +322,26 @@ CallParticipantModel.prototype = {
 			break
 		case 'failed':
 			this.set('connectionState', ConnectionState.FAILED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		case 'failed-no-restart':
 			this.set('connectionState', ConnectionState.FAILED_NO_RESTART)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		case 'closed':
 			this.set('connectionState', ConnectionState.CLOSED)
+			this.set('connecting', false)
+			this.set('initialConnection', false)
 			break
 		default:
 			console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
 		}
+	},
+
+	_handleSignalingStateChange(signalingState) {
+		this.set('negotiating', signalingState !== 'stable' && signalingState !== 'closed')
 	},
 
 	setScreenPeer(screenPeer) {
