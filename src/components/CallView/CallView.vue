@@ -27,16 +27,6 @@
 		<div id="videos">
 			<template
 				v-if="!isGrid">
-				<LocalMediaControls
-					class="local-media-controls"
-					:class="{ 'local-media-controls--sidebar': isSidebar }"
-					:token="token"
-					:model="localMediaModel"
-					:show-actions="!isSidebar"
-					:local-call-participant-model="localCallParticipantModel"
-					:screen-sharing-button-hidden="isSidebar"
-					@switch-screen-to-id="_switchScreenToId" />
-
 				<!-- Selected override mode -->
 				<div v-if="showSelected"
 					ref="videoContainer"
@@ -168,7 +158,6 @@ import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 import { fetchPeers } from '../../services/callsService'
 import { showMessage } from '@nextcloud/dialogs'
-import LocalMediaControls from './shared/LocalMediaControls'
 import EmptyCallView from './shared/EmptyCallView'
 import Video from './shared/Video'
 import LocalVideo from './shared/LocalVideo'
@@ -185,7 +174,6 @@ export default {
 		EmptyCallView,
 		Video,
 		LocalVideo,
-		LocalMediaControls,
 		Screen,
 	},
 
@@ -854,20 +842,6 @@ export default {
 	}
 	100% {
 		opacity: 1;
-	}
-}
-
-.local-media-controls {
-	position: absolute;
-	width: 300px; /* same as .video-container-stripe */
-	text-align: center;
-	right: 0;
-	bottom: 4px;
-	z-index: 10;
-	white-space: nowrap;
-
-	&--sidebar {
-		width: 100%;
 	}
 }
 

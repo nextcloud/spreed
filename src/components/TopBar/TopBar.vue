@@ -52,19 +52,19 @@
 				</p>
 			</div>
 		</a>
+		<LocalMediaControls
+			v-if="isInCall"
+			class="local-media-controls"
+			:token="token"
+			:model="localMediaModel"
+			:local-call-participant-model="localCallParticipantModel" />
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
-			<!-- Call layout switcher -->
-			<Actions
-				slot="trigger"
-				class="forced-background"
-				:container="container">
-				<ActionButton v-if="isInCall"
-					:icon="changeViewIconClass"
-					@click="changeView">
-					{{ changeViewText }}
-				</actionbutton>
-			</Actions>
+
+			<!-- Vertical line -->
+			<div v-if="isInCall"
+				class="top-bar__separator" />
+
 			<!-- sidebar toggle -->
 			<Actions
 				v-shortkey.once="['f']"
@@ -73,6 +73,11 @@
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
+				<Cog
+					slot="icon"
+					:size="20"
+					decorative
+					title="" />
 				<ActionButton
 					:icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
@@ -112,7 +117,7 @@
 						@click="forceMuteOthers">
 						<MicrophoneOff
 							slot="icon"
-							:size="16"
+							:size="20"
 							decorative
 							title="" />
 						{{ t('spreed', 'Mute others') }}
@@ -137,7 +142,7 @@
 					@click="openSidebar">
 					<MessageText
 						slot="icon"
-						:size="16"
+						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
@@ -171,12 +176,14 @@ import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
-import { callParticipantCollection } from '../../utils/webrtc/index'
+import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
+import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
 
 export default {
 	name: 'TopBar',
@@ -195,6 +202,8 @@ export default {
 		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
+		LocalMediaControls,
+		Cog,
 	},
 
 	mixins: [
@@ -212,6 +221,9 @@ export default {
 	data: () => {
 		return {
 			unreadNotificationHandle: null,
+			localCallParticipantModel,
+			localMediaModel,
+
 		}
 	},
 
@@ -247,21 +259,6 @@ export default {
 
 		showOpenSidebarButton() {
 			return !this.$store.getters.getSidebarStatus
-		},
-
-		changeViewText() {
-			if (this.isGrid) {
-				return t('spreed', 'Speaker view')
-			} else {
-				return t('spreed', 'Grid view')
-			}
-		},
-		changeViewIconClass() {
-			if (this.isGrid) {
-				return 'forced-white icon-promoted-view'
-			} else {
-				return 'forced-white icon-grid-view'
-			}
 		},
 
 		isFileConversation() {
@@ -330,10 +327,6 @@ export default {
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
-		},
-
-		isGrid() {
-			return this.$store.getters.isGrid
 		},
 
 		renderedDescription() {
@@ -451,11 +444,6 @@ export default {
 			}
 		},
 
-		changeView() {
-			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid })
-			this.$store.dispatch('selectedVideoPeerId', null)
-		},
-
 		async handleCopyLink() {
 			try {
 				await this.$copyText(this.linkToConversation)
@@ -530,6 +518,14 @@ export default {
 		top: 40px;
 		right: 4px;
 		pointer-events: none;
+	}
+
+	&__separator {
+		top: 4px;
+		border-left: 1px solid white;
+		height: 36px;
+		margin: auto 6px;
+		opacity: 0.5;
 	}
 }
 
