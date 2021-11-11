@@ -474,7 +474,6 @@ export default {
 @import '../../assets/variables';
 
 .top-bar {
-	height: $top-bar-height;
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
@@ -491,6 +490,8 @@ export default {
 		top: 0;
 		left:0;
 		background-color: $color-call-background;
+		display: flex;
+		flex-wrap: wrap-reverse;
 	}
 
 	&__buttons {
