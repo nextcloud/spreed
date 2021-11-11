@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.0-rc.1 – 2021-11-11
+### Fixed
+- A lot, more details coming soon
+
 ## 11.3.3 – 2021-10-22
 ### Fixed
 - Fix crash of Chrome/Chromium 95
