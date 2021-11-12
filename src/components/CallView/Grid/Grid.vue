@@ -826,7 +826,7 @@ export default {
 	&:not(.stripe) {
 		grid-row-gap: 8px;
 		grid-column-gap: 8px;
-		padding: 0 8px 8px 8px;
+		padding: 1px 8px 8px 8px;
 	}
 }
 

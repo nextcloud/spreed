@@ -562,6 +562,7 @@ export default {
 .video {
 	height: 100%;
 	width: 100%;
+	border-radius: var(--border-radius-large);
 }
 
 .videoWrapper.icon-loading:after {
@@ -605,6 +606,7 @@ export default {
 	top: 0;
 	left: 0;
 	box-shadow: inset 0 0 0 2px white;
+	border-radius: var(--border-radius-large);
 }
 
 .hover-shadow {
@@ -615,6 +617,7 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
+	border-radius: var(--border-radius-large);
 }
 
 </style>
