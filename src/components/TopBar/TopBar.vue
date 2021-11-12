@@ -68,7 +68,7 @@
 			<!-- sidebar toggle -->
 			<Actions
 				v-shortkey.once="['f']"
-				class="top-bar__button forced-background"
+				class="top-bar__button"
 				menu-align="right"
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
@@ -133,7 +133,7 @@
 				</ActionButton>
 			</Actions>
 			<Actions v-if="showOpenSidebarButton"
-				class="top-bar__button forced-background"
+				class="top-bar__button"
 				close-after-click="true"
 				:container="container">
 				<ActionButton
@@ -474,7 +474,6 @@ export default {
 @import '../../assets/variables';
 
 .top-bar {
-	height: $top-bar-height;
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
@@ -491,10 +490,8 @@ export default {
 		top: 0;
 		left:0;
 		background-color: $color-call-background;
-		.forced-background {
-			background-color: rgba(0,0,0,0.1) !important;
-			border-radius: var(--border-radius-pill);
-		}
+		display: flex;
+		flex-wrap: wrap-reverse;
 	}
 
 	&__buttons {
@@ -561,5 +558,9 @@ export default {
 		max-width: fit-content;
 		color: var(--color-text-lighter);
 	}
+}
+
+.local-media-controls {
+	padding-left: $clickable-area;
 }
 </style>

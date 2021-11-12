@@ -885,6 +885,11 @@ export default {
 	border: none;
 	margin: 0;
 	padding: 0 12px;
+	width: $clickable-area;
+	height: $clickable-area;
+	&:active {
+		background: transparent;
+	}
 }
 
 .buttons-bar #screensharing-menu button {
