@@ -41,7 +41,7 @@
 		<button v-else-if="showLeaveCallButton && !canEndForAll"
 			class="top-bar__button error"
 			:disabled="loading"
-			@click="leaveCall">
+			@click="leaveCall(false)">
 			<span
 				class="icon"
 				:class="leaveCallIcon" />
@@ -262,11 +262,17 @@ export default {
 			this.loading = false
 		},
 
-		async leaveCall(all = false) {
-			console.info('Leaving call')
+		async leaveCall(endMeetingForAll = false) {
+			if (endMeetingForAll) {
+				console.info('End meeting for everyone')
+			} else {
+				console.info('Leaving call')
+			}
+
 			// Remove selected participant
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.loading = true
+
 			// Open navigation
 			emit('toggle-navigation', {
 				open: true,
@@ -274,7 +280,7 @@ export default {
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				all,
+				all: endMeetingForAll,
 			})
 			this.loading = false
 		},
