@@ -45,7 +45,12 @@ export default class JitsiStreamBackgroundEffect {
 	constructor(options) {
 		const isSimd = options.simd
 		this._options = options
+		this._loadPromise = new Promise((resolve, reject) => {
+			this._loadPromiseResolve = resolve
+			this._loadPromiseReject = reject
+		})
 		this._loaded = false
+		this._loadFailed = false
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
@@ -101,11 +106,41 @@ export default class JitsiStreamBackgroundEffect {
 			break
 		case 'loaded':
 			this._loaded = true
+			this._loadPromiseResolve()
+			break
+		case 'loadFailed':
+			this._loadFailed = true
+			this._loadPromiseReject()
 			break
 		default:
 			console.error('_startFx: Something went wrong.')
 			break
 		}
+	}
+
+	/**
+	 * Helper method to know when the model was loaded after creating the
+	 * object.
+	 *
+	 * Note that it is not needed to call this method to actually load the
+	 * effect; the load will automatically start as soon as the object is
+	 * created, but it can be waited on this method to know once it has finished
+	 * (or failed).
+	 *
+	 * @return {Promise} promise resolved or rejected once the load has finished
+	 *         or failed.
+	 */
+	async load() {
+		return this._loadPromise
+	}
+
+	/**
+	 * Returns whether loading the TFLite model failed or not.
+	 *
+	 * @return {boolean} true if loading failed, false otherwise
+	 */
+	didLoadFail() {
+		return this._loadFailed
 	}
 
 	/**
