@@ -160,7 +160,7 @@
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
 				<ActionButton
-					v-if="isVirtualBackgroundSupported"
+					v-if="isVirtualBackgroundAvailable"
 					:close-after-click="true"
 					@click="toggleVirtualBackground">
 					<BlurOff
@@ -253,7 +253,6 @@ import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Ale
 import { Actions, ActionSeparator, ActionButton } from '@nextcloud/vue'
 import { callAnalyzer } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
-import VirtualBackground from '../../../utils/media/pipeline/VirtualBackground'
 import isInCall from '../../../mixins/isInCall'
 
 export default {
@@ -330,8 +329,8 @@ export default {
 			return t('spreed', 'Lower hand (R)')
 		},
 
-		isVirtualBackgroundSupported() {
-			return VirtualBackground.isSupported()
+		isVirtualBackgroundAvailable() {
+			return this.model.attributes.virtualBackgroundAvailable
 		},
 
 		isVirtualBackgroundEnabled() {
@@ -566,7 +565,7 @@ export default {
 				return null
 			}
 
-			const virtualBackgroundEnabled = this.isVirtualBackgroundSupported && this.model.attributes.virtualBackgroundEnabled
+			const virtualBackgroundEnabled = this.isVirtualBackgroundAvailable && this.model.attributes.virtualBackgroundEnabled
 
 			const tooltip = {}
 			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
