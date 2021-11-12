@@ -68,7 +68,7 @@ async function makeTFLite(isSimd) {
 
 	} catch (error) {
 		console.error(error)
-		console.error('JitsiStreamBackgroundEffect.worker: tflite compilation failed.')
+		console.error('JitsiStreamBackgroundEffect.worker: tflite compilation failed. The web server may not be properly configured to send wasm files.')
 	}
 }
 
