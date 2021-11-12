@@ -559,4 +559,8 @@ export default {
 		color: var(--color-text-lighter);
 	}
 }
+
+.local-media-controls {
+	padding-left: $clickable-area;
+}
 </style>
