@@ -918,6 +918,7 @@ OC.L10N.register(
     "Invalid path selected" : "Chemin sélectionné non valide",
     "moderator" : "modérateur",
     "guest" : "invité",
+    "Dial-in PIN" : "Code PIN",
     "Demote from moderator" : "Destituer de modérateur",
     "Promote to moderator" : "Promouvoir en modérateur",
     "Resend invitation" : "Renvoyer l'invitation",
