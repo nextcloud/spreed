@@ -34,10 +34,16 @@ import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStre
  *
  * The virtual background node requires Web Assembly to be enabled in the
  * browser as well as support for canvas filters. Whether the virtual background
- * is supported or not can be checked by calling
- * "VirtualBackground.isSupported()". If a virtual background node is tried to
- * be used when it is not supported its input will be just bypassed to its
- * output.
+ * is available or not can be checked by calling
+ * "VirtualBackground.isSupported()". Besides that, it needs to
+ * download and compile a Tensor Flow Lite model; until the model has not
+ * finished loading or failed to load it is not possible to know for sure if
+ * virtual background is available, so if it is supported it is assumed to be
+ * available unless the model fails to load. In that case "loadFailed" is
+ * emitted and the virtual background is disabled. Whether the virtual
+ * background is available or not can be checked by calling "isAvailable()" on
+ * the object. If a virtual background node is tried to be used when it is not
+ * available its input will be just bypassed to its output.
  *
  * The virtual background is automatically stopped and started again when the
  * input track is disabled and enabled (which changes the output track). The
@@ -140,6 +146,22 @@ export default class VirtualBackground extends TrackSinkSource {
 		}
 
 		this._jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
+		this._jitsiStreamBackgroundEffect.load().catch(() => {
+			this._trigger('loadFailed')
+
+			this.setEnabled(false)
+		})
+	}
+
+	isAvailable() {
+		if (!VirtualBackground.isSupported()) {
+			return false
+		}
+
+		// If VirtualBackground is supported it is assumed to be available
+		// unless the load has failed (so it is seen as available even when
+		// still loading).
+		return !this._jitsiStreamBackgroundEffect.didLoadFail()
 	}
 
 	isEnabled() {
@@ -147,6 +169,10 @@ export default class VirtualBackground extends TrackSinkSource {
 	}
 
 	setEnabled(enabled) {
+		if (!this.isAvailable()) {
+			enabled = false
+		}
+
 		if (this.enabled === enabled) {
 			return
 		}
@@ -170,9 +196,9 @@ export default class VirtualBackground extends TrackSinkSource {
 	}
 
 	_handleInputTrack(trackId, newTrack, oldTrack) {
-		// If not supported or enabled the input track is just bypassed to the
+		// If not available or enabled the input track is just bypassed to the
 		// output.
-		if (!VirtualBackground.isSupported() || !this._enabled) {
+		if (!this.isAvailable() || !this._enabled) {
 			this._setOutputTrack('default', newTrack)
 
 			return
@@ -190,9 +216,9 @@ export default class VirtualBackground extends TrackSinkSource {
 	}
 
 	_handleInputTrackEnabled(trackId, enabled) {
-		// If not supported or enabled the input track is just bypassed to the
+		// If not available or enabled the input track is just bypassed to the
 		// output.
-		if (!VirtualBackground.isSupported() || !this._enabled) {
+		if (!this.isAvailable() || !this._enabled) {
 			this._setOutputTrackEnabled('default', enabled)
 
 			return
