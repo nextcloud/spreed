@@ -62,13 +62,24 @@ async function makeTFLite(isSimd) {
 
 		await self.tflite._loadModel(self.model.byteLength)
 
+		// Even if the wrong tflite file is downloaded (for example, if an HTML
+		// error is downloaded instead of the file) loading the model will
+		// succeed. However, if the model does not have certain values it could
+		// be assumed that the model failed to load.
+		if (!self.tflite._getInputWidth() || !self.tflite._getInputHeight()
+			|| !self.tflite._getOutputWidth() || !self.tflite._getOutputHeight()) {
+			throw new Error('Failed to load tflite model!')
+		}
+
 		self.compiled = true
 
 		self.postMessage({ message: 'loaded' })
 
 	} catch (error) {
 		console.error(error)
-		console.error('JitsiStreamBackgroundEffect.worker: tflite compilation failed.')
+		console.error('JitsiStreamBackgroundEffect.worker: tflite compilation failed. The web server may not be properly configured to send wasm and/or tflite files.')
+
+		self.postMessage({ message: 'loadFailed' })
 	}
 }
 

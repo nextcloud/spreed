@@ -53,6 +53,9 @@ function LocalMedia(opts) {
 	this._videoTrackConstrainer = new TrackConstrainer()
 
 	this._virtualBackground = new VirtualBackground()
+	this._virtualBackground.on('loadFailed', () => {
+		this.emit('virtualBackgroundLoadFailed')
+	})
 
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
@@ -361,6 +364,10 @@ LocalMedia.prototype.isVideoEnabled = function() {
 	}
 
 	return enabled
+}
+
+LocalMedia.prototype.isVirtualBackgroundAvailable = function() {
+	return this._virtualBackground.isAvailable()
 }
 
 LocalMedia.prototype.isVirtualBackgroundEnabled = function() {

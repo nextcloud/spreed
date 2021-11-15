@@ -40,6 +40,7 @@ export default function LocalMediaModel() {
 		volumeThreshold: -100,
 		videoAvailable: false,
 		videoEnabled: false,
+		virtualBackgroundAvailable: false,
 		virtualBackgroundEnabled: false,
 		localScreen: null,
 		token: '',
@@ -61,6 +62,7 @@ export default function LocalMediaModel() {
 	this._handleStoppedSpeakingWhileMutedBound = this._handleStoppedSpeakingWhileMuted.bind(this)
 	this._handleVideoOnBound = this._handleVideoOn.bind(this)
 	this._handleVideoOffBound = this._handleVideoOff.bind(this)
+	this._handleVirtualBackgroundLoadFailedBound = this._handleVirtualBackgroundLoadFailed.bind(this)
 	this._handleVirtualBackgroundOnBound = this._handleVirtualBackgroundOn.bind(this)
 	this._handleVirtualBackgroundOffBound = this._handleVirtualBackgroundOff.bind(this)
 	this._handleLocalScreenBound = this._handleLocalScreen.bind(this)
@@ -101,6 +103,7 @@ LocalMediaModel.prototype = {
 			this._webRtc.webrtc.off('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound)
 			this._webRtc.webrtc.off('videoOn', this._handleVideoOnBound)
 			this._webRtc.webrtc.off('videoOff', this._handleVideoOffBound)
+			this._webRtc.webrtc.off('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 			this._webRtc.webrtc.off('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
 			this._webRtc.webrtc.off('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
 			this._webRtc.webrtc.off('localScreen', this._handleLocalScreenBound)
@@ -118,6 +121,7 @@ LocalMediaModel.prototype = {
 		this.set('volumeThreshold', -100)
 		this.set('videoAvailable', false)
 		this.set('videoEnabled', false)
+		this.set('virtualBackgroundAvailable', this._webRtc.webrtc.isVirtualBackgroundAvailable())
 		this.set('virtualBackgroundEnabled', this._webRtc.webrtc.isVirtualBackgroundEnabled())
 		this.set('localScreen', null)
 
@@ -136,6 +140,7 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound)
 		this._webRtc.webrtc.on('videoOn', this._handleVideoOnBound)
 		this._webRtc.webrtc.on('videoOff', this._handleVideoOffBound)
+		this._webRtc.webrtc.on('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 		this._webRtc.webrtc.on('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
 		this._webRtc.webrtc.on('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
 		this._webRtc.webrtc.on('localScreen', this._handleLocalScreenBound)
@@ -315,6 +320,10 @@ LocalMediaModel.prototype = {
 		}
 
 		this.set('videoEnabled', false)
+	},
+
+	_handleVirtualBackgroundLoadFailed() {
+		this.set('virtualBackgroundAvailable', false)
 	},
 
 	_handleVirtualBackgroundOn() {

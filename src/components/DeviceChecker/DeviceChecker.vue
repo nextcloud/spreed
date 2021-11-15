@@ -189,7 +189,6 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
-import VirtualBackground from '../../utils/media/pipeline/VirtualBackground'
 
 export default {
 	name: 'DeviceChecker',
@@ -256,7 +255,7 @@ export default {
 		},
 
 		blurPreviewAvailable() {
-			return VirtualBackground.isSupported()
+			return this.virtualBackground.isAvailable()
 		},
 
 		audioButtonTooltip() {
