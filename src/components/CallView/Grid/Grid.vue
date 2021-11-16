@@ -98,13 +98,6 @@
 							<div v-else
 								class="dev-mode-video--self video"
 								:style="{'background': 'url(' + placeholderImage(8) + ')'}">
-								<LocalMediaControls
-									:has-shadow="false"
-									:model="placeholderModel(8)"
-									:local-call-participant-model="placeholderModel(8)"
-									:shared-data="placeholderSharedData(8)"
-									:token="token"
-									:participant-name="placeholderName(8)" />
 							</div>
 						</template>
 						<LocalVideo
@@ -868,7 +861,8 @@ export default {
 	img {
 		object-fit: cover;
 		height: 100%;
-		width: 100%
+		width: 100%;
+		border-radius: var(--border-radius-large);
 	}
 }
 
