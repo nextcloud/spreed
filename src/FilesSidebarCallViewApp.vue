@@ -22,6 +22,10 @@
 
 <template>
 	<div v-if="isInFile">
+		<TopBar
+			v-show="showCallView"
+			:is-in-call="true"
+			:is-sidebar="true" />
 		<CallView
 			v-show="showCallView"
 			:token="token"
@@ -32,6 +36,7 @@
 
 <script>
 import CallView from './components/CallView/CallView'
+import TopBar from './components/TopBar/TopBar'
 import PreventUnload from 'vue-prevent-unload'
 import sessionIssueHandler from './mixins/sessionIssueHandler'
 import isInCall from './mixins/isInCall'
@@ -46,6 +51,7 @@ export default {
 	components: {
 		CallView,
 		PreventUnload,
+		TopBar,
 	},
 
 	mixins: [
