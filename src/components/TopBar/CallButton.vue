@@ -155,9 +155,13 @@ export default {
 				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
+		hasCall() {
+			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
+		},
+
 		startCallButtonDisabled() {
 			return (!this.conversation.canStartCall
-					&& !this.conversation.hasCall)
+					&& !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -177,7 +181,7 @@ export default {
 		},
 
 		startCallLabel() {
-			if (this.conversation.hasCall && !this.isInLobby) {
+			if (this.hasCall && !this.isInLobby) {
 				return t('spreed', 'Join call')
 			}
 
@@ -193,7 +197,7 @@ export default {
 				return this.callButtonTooltipText
 			}
 
-			if (!this.conversation.canStartCall && !this.conversation.hasCall) {
+			if (!this.conversation.canStartCall && !this.hasCall) {
 				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
 			}
 
@@ -205,7 +209,7 @@ export default {
 				return 'icon-loading-small'
 			}
 
-			if (this.conversation.hasCall && !this.isInLobby) {
+			if (this.hasCall && !this.isInLobby) {
 				return 'icon-incoming-call'
 			}
 
@@ -214,8 +218,8 @@ export default {
 
 		startCallButtonClasses() {
 			return {
-				primary: !this.conversation.hasCall && !this.isInLobby,
-				success: this.conversation.hasCall && !this.isInLobby,
+				primary: !this.hasCall && !this.isInLobby,
+				success: this.hasCall && !this.isInLobby,
 			}
 		},
 

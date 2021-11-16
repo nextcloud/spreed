@@ -722,6 +722,24 @@ const actions = {
 				lastMessage = message
 			}
 
+			// Overwrite the conversation.hasCall property so people can join
+			// after seeing the message in the chat.
+			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
+				if (message.systemMessage === 'call_started') {
+					context.dispatch('overwriteHasCallByChat', {
+						token,
+						hasCall: true,
+					})
+				} else if (message.systemMessage === 'call_ended'
+					|| message.systemMessage === 'call_ended_everyone'
+					|| message.systemMessage === 'call_missed') {
+					context.dispatch('overwriteHasCallByChat', {
+						token,
+						hasCall: false,
+					})
+				}
+			}
+
 			// in case we encounter an already read message, reset the counter
 			// this is probably unlikely to happen unless one starts browsing from
 			// an earlier page and scrolls down
