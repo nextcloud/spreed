@@ -119,6 +119,10 @@ class Manager {
 			$this->l->t('- Join the same conversation and call from multiple devices'),
 			$this->l->t('- Send voice messages, share your location or contact details'),
 			$this->l->t('- Add groups to a conversation and new group members will automatically be added as participants'),
+			$this->l->t('New in Talk %s', ['13']),
+			$this->l->t('- A preview of your audio and video is shown before joining a call'),
+			$this->l->t('- You can now blur your background in the newly designed call view'),
+			$this->l->t('- Moderators can now assign general and individual permissions to participants'),
 		];
 	}
 }
