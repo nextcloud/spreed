@@ -133,15 +133,10 @@ class Listener {
 		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
 
 		$message = 'call_ended';
-		if ((\count($userIds) + $numGuests) === 1) {
-			if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
-				// Single user pinged or guests only => no summary/activity
-				$room->resetActiveSince();
-				return false;
-			}
-			$message = 'call_missed';
-		} elseif ($endForEveryone) {
+		if ($endForEveryone) {
 			$message = 'call_ended_everyone';
+		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			$message = 'call_missed';
 		}
 
 		if (!$room->resetActiveSince()) {
