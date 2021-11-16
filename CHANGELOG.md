@@ -2,8 +2,21 @@
 All notable changes to this project will be documented in this file.
 
 ## 13.0.0-rc.1 – 2021-11-11
+### Added
+- Moderators can now set permissions for all or individual users to control if they can enable audio and video, do a screenshare, start a call and ignore the lobby
+- When starting a call is limited to moderators, they can now also end the call for all participants
+- A device checker makes sure users start with the desired microphone and camera and also allows them to disable the devices before joining a call
+- Users can now blur their background (Not supported on Safari)
+- Users can now opt-out of call notifications on a conversation basis
+
+### Changed
+- The layout of the call view has been redesigned
+- The size of the grid view is now limited to 20 videos by default to reduce the performance impact
+- Version 0.4.0 of the signaling server of the High-performance backend is now required
+
 ### Fixed
-- A lot, more details coming soon
+- Show more details instead of a loading spinner only in case of connection issues
+- And a lot more things here and there
 
 ## 11.3.3 – 2021-10-22
 ### Fixed
