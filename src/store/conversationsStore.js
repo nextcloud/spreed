@@ -136,6 +136,14 @@ const mutations = {
 		}
 	},
 
+	overwriteHasCallByChat(state, { token, hasCall }) {
+		if (hasCall) {
+			Vue.set(state.conversations[token], 'hasCallOverwrittenByChat', hasCall)
+		} else {
+			Vue.delete(state.conversations[token], 'hasCallOverwrittenByChat')
+		}
+	},
+
 	setNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
 	},
@@ -413,6 +421,10 @@ const actions = {
 
 	async updateConversationLastReadMessage({ commit }, { token, lastReadMessage }) {
 		commit('updateConversationLastReadMessage', { token, lastReadMessage })
+	},
+
+	async overwriteHasCallByChat({ commit }, { token, hasCall }) {
+		commit('overwriteHasCallByChat', { token, hasCall })
 	},
 
 	async fetchConversation({ dispatch }, { token }) {
