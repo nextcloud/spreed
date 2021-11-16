@@ -378,6 +378,8 @@ export default {
 	width: 350px;
 	padding: 20px;
 	background-color: var(--color-main-background);
+	overflow-y: auto;
+	overflow-x: hidden;
 	&__title {
 		text-align: center;
 	}
@@ -460,5 +462,9 @@ export default {
 
 .indicator {
 	margin-left: -8px;
+}
+
+::v-deep .modal-container {
+	display: flex !important;
 }
 </style>
