@@ -575,7 +575,7 @@ OC.L10N.register(
     "Status" : "Status",
     "Created at" : "Utworzono",
     "Expires at" : "Wygasa o",
-    "Limits" : "Limit",
+    "Limits" : "Limity",
     "Delete the signaling server account" : "Usuń konto serwera sygnalizacyjnego",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "Klikając powyższy przycisk, informacje zawarte w formularzu zostaną wysłane na serwery Struktur AG. Więcej informacji można znaleźć na stronie {linkstart}spreed.eu{linkend}.",
     "Pending" : "Oczekuje",
