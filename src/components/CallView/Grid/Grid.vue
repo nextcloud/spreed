@@ -97,15 +97,7 @@
 							</h1>
 							<div v-else
 								class="dev-mode-video--self video"
-								:style="{'background': 'url(' + placeholderImage(8) + ')'}">
-								<LocalMediaControls
-									:has-shadow="false"
-									:model="placeholderModel(8)"
-									:local-call-participant-model="placeholderModel(8)"
-									:shared-data="placeholderSharedData(8)"
-									:token="token"
-									:participant-name="placeholderName(8)" />
-							</div>
+								:style="{'background': 'url(' + placeholderImage(8) + ')'}" />
 						</template>
 						<LocalVideo
 							v-if="!isStripe && !screenshotMode"
@@ -183,13 +175,11 @@ import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 import ChevronUp from 'vue-material-design-icons/ChevronUp'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
-import LocalMediaControls from '../shared/LocalMediaControls'
 
 export default {
 	name: 'Grid',
 
 	components: {
-		LocalMediaControls,
 		Video,
 		LocalVideo,
 		EmptyCallView,
@@ -868,7 +858,8 @@ export default {
 	img {
 		object-fit: cover;
 		height: 100%;
-		width: 100%
+		width: 100%;
+		border-radius: var(--border-radius-large);
 	}
 }
 
