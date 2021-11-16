@@ -55,7 +55,9 @@
 			</div>
 		</div>
 
-		<div v-if="mouseover && isSelectable" class="hover-shadow" />
+		<div v-if="mouseover && isSelectable"
+			class="hover-shadow"
+			:class="{ 'stripe': isStripe }" />
 		<div class="bottom-bar">
 			<button
 				v-if="isBig"
@@ -149,6 +151,7 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
+				stripe: this.isStripe,
 			}
 		},
 
@@ -417,4 +420,7 @@ export default {
 	border-radius: var(--border-radius-large);
 }
 
+.stripe {
+	border-radius: 0 !important;
+}
 </style>

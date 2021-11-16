@@ -92,7 +92,9 @@
 			:has-shadow="hasVideo"
 			:participant-name="participantName" />
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
-		<div v-if="mouseover && !isBig" class="hover-shadow" />
+		<div v-if="mouseover && !isBig"
+			class="hover-shadow"
+			:class="{ 'stripe': isStripe }" />
 	</div>
 </template>
 
@@ -249,6 +251,7 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
+				strip: this.isStripe,
 			}
 		},
 
@@ -618,6 +621,10 @@ export default {
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 	border-radius: var(--border-radius-large);
+}
+
+.stripe {
+	border-radius: 0 !important;
 }
 
 </style>
