@@ -407,7 +407,7 @@ PeerConnectionAnalyzer.prototype = {
 
 			if (stat.type === 'outbound-rtp') {
 				if ('packetsSent' in stat && 'kind' in stat) {
-					packetsSent[stat.kind] = stat.packetsSent
+					packetsSent[stat.kind] = (packetsSent[stat.kind] === -1) ? stat.packetsSent : packetsSent[stat.kind] + stat.packetsSent
 
 					if ('timestamp' in stat && 'kind' in stat) {
 						timestampSent[stat.kind] = stat.timestamp
@@ -415,17 +415,17 @@ PeerConnectionAnalyzer.prototype = {
 				}
 			} else if (stat.type === 'remote-inbound-rtp') {
 				if ('packetsReceived' in stat && 'kind' in stat) {
-					packetsReceived[stat.kind] = stat.packetsReceived
+					packetsReceived[stat.kind] = (packetsReceived[stat.kind] === -1) ? stat.packetsReceived : packetsReceived[stat.kind] + stat.packetsReceived
 
 					if ('timestamp' in stat && 'kind' in stat) {
 						timestampReceived[stat.kind] = stat.timestamp
 					}
 				}
 				if ('packetsLost' in stat && 'kind' in stat) {
-					packetsLost[stat.kind] = stat.packetsLost
+					packetsLost[stat.kind] = (packetsLost[stat.kind] === -1) ? stat.packetsLost : packetsLost[stat.kind] + stat.packetsLost
 				}
 				if ('roundTripTime' in stat && 'kind' in stat) {
-					roundTripTime[stat.kind] = stat.roundTripTime
+					roundTripTime[stat.kind] = (roundTripTime[stat.kind] === -1) ? stat.roundTripTime : Math.max(roundTripTime[stat.kind], stat.roundTripTime)
 				}
 			}
 		}
