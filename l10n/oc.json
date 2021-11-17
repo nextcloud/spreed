@@ -570,6 +570,8 @@
     "Devices settings" : "Paramètres dels periferics",
     "Dismiss" : "Regetar",
     "Raise hand (R)" : "Levar la man (R)",
+    "Blur background" : "Rèireplan trebol",
+    "Disable background blur" : "Desactivar lo rèireplan trebol",
     "You are not allowed to enable audio" : "Avètz pas l'autorizacion per activar l’àudio",
     "No audio" : "Cap d’àudio",
     "Mute audio (M)" : "Copar lo son (M)",
