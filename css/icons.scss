@@ -13,6 +13,7 @@
 
 .app-talk,
 .talk-modal,
+.talk-sidebar-callview,
 #talk-panel,
 #talk-sidebar,
 #call-container,
@@ -125,6 +126,6 @@
 .app-files {
 	// Needed to use white color also in dark mode.
 	.app-sidebar__close.forced-white {
-		background-image: url(icon-color-path('close', 'actions', 'fff', 1, true));
+		color: #ffffff;
 	}
 }

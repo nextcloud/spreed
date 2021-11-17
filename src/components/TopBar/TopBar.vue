@@ -57,16 +57,19 @@
 			class="local-media-controls"
 			:token="token"
 			:model="localMediaModel"
+			:show-actions="!isSidebar"
+			:screen-sharing-button-hidden="isSidebar"
 			:local-call-participant-model="localCallParticipantModel" />
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 
 			<!-- Vertical line -->
-			<div v-if="isInCall"
+			<div v-if="!isSidebar && isInCall"
 				class="top-bar__separator" />
 
 			<!-- sidebar toggle -->
 			<Actions
+				v-if="!isSidebar"
 				v-shortkey.once="['f']"
 				class="top-bar__button"
 				menu-align="right"
@@ -155,7 +158,7 @@
 			</Actions>
 		</div>
 		<CounterBubble
-			v-if="showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+			v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
 			class="unread-messages-counter"
 			:highlighted="hasUnreadMentions">
 			{{ unreadMessagesCounter }}
@@ -215,6 +218,14 @@ export default {
 		isInCall: {
 			type: Boolean,
 			required: true,
+		},
+
+		/**
+		 * In the sidebar the conversation settings are hidden
+		 */
+		isSidebar: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -479,9 +490,12 @@ export default {
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 8px;
-	width: 100%;
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
+
+	.talk-sidebar-callview & {
+		margin-right: $clickable-area;
+	}
 
 	&.in-call {
 		right: 0;
