@@ -24,7 +24,7 @@
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
 			<input id="request-password-button"
-				class="primary"
+				class="primary button-vue"
 				type="button"
 				:value="t('spreed', 'Request password')"
 				:disabled="isRequestInProgress"
