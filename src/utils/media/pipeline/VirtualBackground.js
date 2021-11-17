@@ -67,22 +67,26 @@ export default class VirtualBackground extends TrackSinkSource {
 		return this.isWasmSupported() && this.isCanvasFilterSupported()
 	}
 
+	static _checkWasmSupport() {
+		try {
+			const wasmCheck = require('wasm-check')
+			this._wasmSupported = true
+
+			if (wasmCheck?.feature?.simd) {
+				this._wasmSimd = true
+			} else {
+				this._wasmSimd = false
+			}
+		} catch (error) {
+			this._wasmSupported = false
+
+			console.error('Looks like WebAssembly is disabled or not supported on this browser, virtual background will not be available')
+		}
+	}
+
 	static isWasmSupported() {
 		if (this._wasmSupported === undefined) {
-			try {
-				const wasmCheck = require('wasm-check')
-				this._wasmSupported = true
-
-				if (wasmCheck?.feature?.simd) {
-					this._wasmSimd = true
-				} else {
-					this._wasmSimd = false
-				}
-			} catch (error) {
-				this._wasmSupported = false
-
-				console.error('Looks like WebAssembly is disabled or not supported on this browser, virtual background will not be available')
-			}
+			this._checkWasmSupport()
 		}
 
 		return this._wasmSupported
