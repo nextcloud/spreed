@@ -92,6 +92,20 @@ export default class VirtualBackground extends TrackSinkSource {
 		return this._wasmSupported
 	}
 
+	/**
+	 * Returns whether SIMD instructions are available in WebAssembly or not.
+	 *
+	 * @return {boolean} undefined if WebAssembly is not supported, true if SIMD
+	 *         instructions are available in WebAssembly, or false otherwise.
+	 */
+	static isWasmSimd() {
+		if (this._wasmSupported === undefined) {
+			this._checkWasmSupport()
+		}
+
+		return this._wasmSimd
+	}
+
 	static isCanvasFilterSupported() {
 		if (this._canvasFilterSupported === undefined) {
 			const canvas = document.createElement('canvas')
@@ -137,7 +151,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		const isSimd = VirtualBackground._wasmSimd
+		const isSimd = VirtualBackground.isWasmSimd()
 
 		const virtualBackground = {
 			type: VIRTUAL_BACKGROUND_TYPE.NONE,
