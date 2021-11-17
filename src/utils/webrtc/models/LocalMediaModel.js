@@ -405,7 +405,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('virtualBackgroundDisabled_' + this.get('token'))
+		localStorage.setItem('virtualBackgroundEnabled_' + this.get('token'), 'true')
 
 		this._webRtc.enableVirtualBackground()
 	},
@@ -415,7 +415,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('virtualBackgroundDisabled_' + this.get('token'), 'true')
+		localStorage.removeItem('virtualBackgroundEnabled_' + this.get('token'))
 
 		this._webRtc.disableVirtualBackground()
 	},
