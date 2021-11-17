@@ -64,10 +64,10 @@ export default class VirtualBackground extends TrackSinkSource {
 	static _canvasFilterSupported
 
 	static isSupported() {
-		return this._isWasmSupported() && this._isCanvasFilterSupported()
+		return this.isWasmSupported() && this.isCanvasFilterSupported()
 	}
 
-	static _isWasmSupported() {
+	static isWasmSupported() {
 		if (this._wasmSupported === undefined) {
 			try {
 				const wasmCheck = require('wasm-check')
@@ -88,7 +88,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		return this._wasmSupported
 	}
 
-	static _isCanvasFilterSupported() {
+	static isCanvasFilterSupported() {
 		if (this._canvasFilterSupported === undefined) {
 			const canvas = document.createElement('canvas')
 			const context = canvas.getContext('2d')
@@ -129,7 +129,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			},
 		}
 
-		if (!VirtualBackground._isWasmSupported()) {
+		if (!VirtualBackground.isWasmSupported()) {
 			return
 		}
 
