@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<div v-if="isInFile">
+	<div v-if="isInFile" class="talk-sidebar-callview">
 		<TopBar
 			v-show="showCallView"
 			:is-in-call="true"
