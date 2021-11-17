@@ -282,7 +282,7 @@ export default {
 			if (newValue) {
 				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
-				this.blurOn = !localStorage.getItem('virtualBackgroundDisabled_' + this.token)
+				this.blurOn = !!localStorage.getItem('virtualBackgroundEnabled_' + this.token)
 
 				this.initializeDevicesMixin()
 			} else {
@@ -357,10 +357,10 @@ export default {
 
 		toggleBlur() {
 			if (!this.blurOn) {
-				localStorage.removeItem('virtualBackgroundDisabled_' + this.token)
+				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
 				this.blurOn = true
 			} else {
-				localStorage.setItem('virtualBackgroundDisabled_' + this.token, 'true')
+				localStorage.removeItem('virtualBackgroundEnabled_' + this.token)
 				this.blurOn = false
 			}
 		},
