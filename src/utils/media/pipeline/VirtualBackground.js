@@ -64,31 +64,49 @@ export default class VirtualBackground extends TrackSinkSource {
 	static _canvasFilterSupported
 
 	static isSupported() {
-		return this._isWasmSupported() && this._isCanvasFilterSupported()
+		return this.isWasmSupported() && this.isCanvasFilterSupported()
 	}
 
-	static _isWasmSupported() {
-		if (this._wasmSupported === undefined) {
-			try {
-				const wasmCheck = require('wasm-check')
-				this._wasmSupported = true
+	static _checkWasmSupport() {
+		try {
+			const wasmCheck = require('wasm-check')
+			this._wasmSupported = true
 
-				if (wasmCheck?.feature?.simd) {
-					this._wasmSimd = true
-				} else {
-					this._wasmSimd = false
-				}
-			} catch (error) {
-				this._wasmSupported = false
-
-				console.error('Looks like WebAssembly is disabled or not supported on this browser, virtual background will not be available')
+			if (wasmCheck?.feature?.simd) {
+				this._wasmSimd = true
+			} else {
+				this._wasmSimd = false
 			}
+		} catch (error) {
+			this._wasmSupported = false
+
+			console.error('Looks like WebAssembly is disabled or not supported on this browser, virtual background will not be available')
+		}
+	}
+
+	static isWasmSupported() {
+		if (this._wasmSupported === undefined) {
+			this._checkWasmSupport()
 		}
 
 		return this._wasmSupported
 	}
 
-	static _isCanvasFilterSupported() {
+	/**
+	 * Returns whether SIMD instructions are available in WebAssembly or not.
+	 *
+	 * @return {boolean} undefined if WebAssembly is not supported, true if SIMD
+	 *         instructions are available in WebAssembly, or false otherwise.
+	 */
+	static isWasmSimd() {
+		if (this._wasmSupported === undefined) {
+			this._checkWasmSupport()
+		}
+
+		return this._wasmSimd
+	}
+
+	static isCanvasFilterSupported() {
 		if (this._canvasFilterSupported === undefined) {
 			const canvas = document.createElement('canvas')
 			const context = canvas.getContext('2d')
@@ -129,11 +147,11 @@ export default class VirtualBackground extends TrackSinkSource {
 			},
 		}
 
-		if (!VirtualBackground._isWasmSupported()) {
+		if (!VirtualBackground.isWasmSupported()) {
 			return
 		}
 
-		const isSimd = VirtualBackground._wasmSimd
+		const isSimd = VirtualBackground.isWasmSimd()
 
 		const virtualBackground = {
 			type: VIRTUAL_BACKGROUND_TYPE.NONE,
