@@ -26,6 +26,7 @@
 		<MatterbridgeIntegration />
 		<AllowedGroups />
 		<Commands />
+		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
 		<SignalingServers />
@@ -44,6 +45,7 @@ import SignalingServers from '../components/AdminSettings/SignalingServers'
 import SIPBridge from '../components/AdminSettings/SIPBridge'
 import StunServers from '../components/AdminSettings/StunServers'
 import TurnServers from '../components/AdminSettings/TurnServers'
+import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks'
 
 export default {
 	name: 'AdminSettings',
@@ -58,6 +60,7 @@ export default {
 		SIPBridge,
 		StunServers,
 		TurnServers,
+		WebServerSetupChecks,
 	},
 }
 </script>

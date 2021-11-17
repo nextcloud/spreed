@@ -22,6 +22,18 @@ Apache and Nginx must use:
 
 Other combinations will not work due to the long polling used for chat and signaling messages, see [this issue](https://github.com/nextcloud/spreed/issues/2211#issuecomment-610198026) for details.
 
+### WebAssembly and TensorFlow Lite files
+
+Since Talk 13 the web server needs to handle WebAssembly (.wasm) and TensorFlow Lite (.tflite) files in a similar way to JavaScript and CSS files, as they will be requested by Talk clients to provide certain features (for example, the background blur when Talk is running in a browser). If Apache is used the default configuration provided by the Nextcloud server should be enough; if NGINX is used please refer to the [_NGINX configuration_ section in Nextcloud Administration manual](https://docs.nextcloud.com/server/stable/admin_manual/installation/nginx.html).
+
+Besides that the web server should associate _.wasm_ files with the right MIME type. This is not strictly needed, though, but if they are not the browser console may show a warning similar to:
+```
+wasm streaming compile failed: TypeError: WebAssembly: Response has unsupported MIME type '' expected 'application/wasm'
+falling back to ArrayBuffer instantiation
+```
+
+In Apache, if _mod_mime_ and _.htaccess_ files are enabled, the default _.htaccess_ file in Nextcloud server associates the _application/wasm_ MIME type with _.wasm_ files. Alternatively the association can be done by adding `AddType application/wasm .wasm` in _/etc/apache2/mods-enabled/mime.conf_, or `application/wasm wasm` to _/etc/mime.types_. Similarly, the default configuration for NGINX does the association too, but alternatively it can be done by adding `application/wasm wasm;` to _/etc/nginx/mime.types_.
+
 ## TURN server
 
 A TURN server running on **port 443** (or 80) is required in almost all scenarios, see  [Configuring coTURN](TURN.md) for more details.
