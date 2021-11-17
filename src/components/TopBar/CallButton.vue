@@ -22,6 +22,7 @@
 <template>
 	<div>
 		<button v-if="showStartCallButton"
+			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
 				trigger: 'hover',
@@ -39,6 +40,7 @@
 			{{ startCallLabel }}
 		</button>
 		<button v-else-if="showLeaveCallButton && !canEndForAll"
+			id="call_button"
 			class="top-bar__button error"
 			:disabled="loading"
 			@click="leaveCall(false)">
@@ -325,6 +327,12 @@ export default {
 	&:active {
 		border: 1px solid var(--color-success) !important;
 	}
+}
+
+/** Required to make the text on the Video Verification page white */
+#call_button.success,
+#call_button.error {
+	color: white !important;
 }
 
 /* HACK: to override the default action button styles to make it look like a regular button */
