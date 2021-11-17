@@ -826,10 +826,9 @@ export default {
 
 	grid-row-gap: 8px;
 	grid-column-gap: 8px;
-	padding: 1px 8px 8px 8px;
 
 	&.stripe {
-		padding-top: 8px
+		padding: 8px 8px 0 0;
 	}
 }
 

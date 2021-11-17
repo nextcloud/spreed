@@ -531,6 +531,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	border-radius: var(--border-radius-large);
 }
 
 .video-container-big {

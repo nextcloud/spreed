@@ -341,6 +341,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	margin-top: 8px;
 }
 
 .videoWrapper,
