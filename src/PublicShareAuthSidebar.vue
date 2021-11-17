@@ -28,6 +28,9 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
+				<TopBar
+					:is-in-call="true"
+					:is-sidebar="true" />
 				<CallView :token="token" :is-sidebar="true" />
 				<ChatView />
 			</template>
@@ -40,6 +43,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
+import TopBar from './components/TopBar/TopBar'
 import { EventBus } from './services/EventBus'
 import {
 	leaveConversationSync,
@@ -55,6 +59,7 @@ export default {
 	components: {
 		CallView,
 		ChatView,
+		TopBar,
 	},
 
 	mixins: [
@@ -185,6 +190,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './assets/variables.scss';
+
 /* Properties based on the app-sidebar */
 #talk-sidebar {
 	position: relative;
@@ -244,7 +251,7 @@ export default {
 	height: 50%;
 
 	/* Ensure that the background will be black also in voice only calls. */
-	background-color: #000;
+	background-color: $color-call-background;
 }
 
 #talk-sidebar #call-container ::v-deep .videoContainer {

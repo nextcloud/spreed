@@ -68,6 +68,25 @@
 					fill-color="#ffffff"
 					decorative />
 			</button>
+			<button
+				v-if="isVirtualBackgroundAvailable && !showActions"
+				v-tooltip="toggleVirtualBackgroundButtonLabel"
+				:aria-label="toggleVirtualBackgroundButtonLabel"
+				:class="blurButtonClass"
+				@click.stop="toggleVirtualBackground">
+				<Blur
+					v-if="isVirtualBackgroundEnabled"
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+				<BlurOff
+					v-else
+					:size="24"
+					title=""
+					fill-color="#ffffff"
+					decorative />
+			</button>
 			<Actions
 				v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
@@ -305,6 +324,14 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
+		/**
+		 * In the sidebar the conversation settings are hidden
+		 */
+		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -425,6 +452,12 @@ export default {
 			return {
 				'video-disabled': this.isVideoAllowed && this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
 				'no-video-available': !this.isVideoAllowed || !this.model.attributes.videoAvailable,
+			}
+		},
+
+		blurButtonClass() {
+			return {
+				'blur-disabled': this.isVirtualBackgroundEnabled,
 			}
 		},
 
