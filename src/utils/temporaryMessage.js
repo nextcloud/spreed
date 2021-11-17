@@ -21,7 +21,7 @@
  */
 
 import store from '../store/index'
-import SHA1 from 'crypto-js/sha1'
+import SHA256 from 'crypto-js/sha256'
 import Hex from 'crypto-js/enc-hex'
 
 const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) => {
@@ -56,7 +56,7 @@ const createTemporaryMessage = (text, token, uploadId, index, file, localUrl) =>
 		token: token,
 		isReplyable: false,
 		sendingFailure: '',
-		referenceId: Hex.stringify(SHA1(tempId)),
+		referenceId: Hex.stringify(SHA256(tempId)),
 	})
 
 	if (store.getters.getActorType() === 'guests') {

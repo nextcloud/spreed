@@ -123,7 +123,7 @@ class ChatManager {
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		if ($referenceId !== null) {
-			$referenceId = trim(substr($referenceId, 0, 40));
+			$referenceId = trim(substr($referenceId, 0, 64));
 			if ($referenceId !== '') {
 				$comment->setReferenceId($referenceId);
 			}
@@ -208,7 +208,7 @@ class ChatManager {
 			$comment->setParentId($replyTo->getId());
 		}
 
-		$referenceId = trim(substr($referenceId, 0, 40));
+		$referenceId = trim(substr($referenceId, 0, 64));
 		if ($referenceId !== '') {
 			$comment->setReferenceId($referenceId);
 		}
