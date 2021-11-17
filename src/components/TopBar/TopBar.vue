@@ -493,6 +493,10 @@ export default {
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
 
+	.talk-sidebar-callview & {
+		margin-right: $clickable-area;
+	}
+
 	&.in-call {
 		right: 0;
 		border: none;
