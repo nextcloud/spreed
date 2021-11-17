@@ -215,7 +215,8 @@ export default {
 		/**
 		 * Get the deviceChecker value from the browserstorage.
 		 */
-		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
+		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === null
+			|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
 	},
 
 	methods: {
