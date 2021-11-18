@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.0-rc.2 – 2021-11-18
+### Fixed
+- Fix several issues with the new call view and media controls
+  [#6486](https://github.com/nextcloud/spreed/pull/6486)
+  [#6489](https://github.com/nextcloud/spreed/pull/6489)
+  [#6520](https://github.com/nextcloud/spreed/pull/6520)
+  [#6541](https://github.com/nextcloud/spreed/pull/6541)
+  [#6543](https://github.com/nextcloud/spreed/pull/6543)
+  [#6548](https://github.com/nextcloud/spreed/pull/6548)
+- Can not pass the device checker with a small screen
+  [#6508](https://github.com/nextcloud/spreed/pull/6508)
+  [#6539](https://github.com/nextcloud/spreed/pull/6539)
+- Fix several issues with the background blurring
+  [#6502](https://github.com/nextcloud/spreed/pull/6502)
+  [#6532](https://github.com/nextcloud/spreed/pull/6532)
+  [#6535](https://github.com/nextcloud/spreed/pull/6535)
+  [#6546](https://github.com/nextcloud/spreed/pull/6546)
+  [#6547](https://github.com/nextcloud/spreed/pull/6547)
+- Update hasCall state of a conversation when a chat message indicates that
+  [#6509](https://github.com/nextcloud/spreed/pull/6509)
+- Don't end meeting for everyone when a moderator leaves
+  [#6484](https://github.com/nextcloud/spreed/pull/6484)
+
 ## 13.0.0-rc.1 – 2021-11-11
 ### Added
 - Moderators can now set permissions for all or individual users to control if they can enable audio and video, do a screenshare, start a call and ignore the lobby
