@@ -536,8 +536,8 @@ export default {
 
 .video-container-big {
 	position: absolute;
-	height: 100%;
-	width: 100%;
+	width: calc(100% - 16px);
+	height: calc(100% - 8px);
 }
 
 .avatar-container {
