@@ -334,7 +334,7 @@ export default {
 	flex-direction: column;
 }
 
-.video-container-stripe {
+.video-container-stripe:not(.local-video--sidebar) {
 	position:relative;
 	flex: 0 0 300px;
 	overflow: hidden;
