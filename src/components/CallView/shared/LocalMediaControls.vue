@@ -21,6 +21,41 @@
 	<div v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
+			<div class="network-connection-state">
+				<Popover
+					v-if="qualityWarningTooltip"
+					:boundaries-element="boundaryElement"
+					:aria-label="qualityWarningAriaLabel"
+					trigger="hover"
+					:auto-hide="false"
+					:open="showQualityWarningTooltip">
+					<NetworkStrength2Alert
+						slot="trigger"
+						decorative
+						fill-color="#e9322d"
+						title=""
+						:size="24"
+						@mouseover="mouseover = true"
+						@mouseleave="mouseover = false" />
+					<div class="hint">
+						<span>{{ qualityWarningTooltip.content }}</span>
+						<div class="hint__actions">
+							<button
+								v-if="qualityWarningTooltip.action"
+								class="primary hint__button"
+								@click="executeQualityWarningTooltipAction">
+								{{ qualityWarningTooltip.actionLabel }}
+							</button>
+							<button
+								v-if="!isQualityWarningTooltipDismissed"
+								class="hint__button"
+								@click="dismissQualityWarningTooltip">
+								{{ t('spreed', 'Dismiss') }}
+							</button>
+						</div>
+					</div>
+				</Popover>
+			</div>
 			<div id="muteWrapper">
 				<button
 					id="mute"
@@ -211,41 +246,6 @@
 					{{ t('spreed', 'Devices settings') }}
 				</ActionButton>
 			</Actions>
-		</div>
-		<div class="network-connection-state">
-			<Popover
-				v-if="qualityWarningTooltip"
-				:boundaries-element="boundaryElement"
-				:aria-label="qualityWarningAriaLabel"
-				trigger="hover"
-				:auto-hide="false"
-				:open="showQualityWarningTooltip">
-				<NetworkStrength2Alert
-					slot="trigger"
-					decorative
-					fill-color="#e9322d"
-					title=""
-					:size="24"
-					@mouseover="mouseover = true"
-					@mouseleave="mouseover = false" />
-				<div class="hint">
-					<span>{{ qualityWarningTooltip.content }}</span>
-					<div class="hint__actions">
-						<button
-							v-if="qualityWarningTooltip.action"
-							class="primary hint__button"
-							@click="executeQualityWarningTooltipAction">
-							{{ qualityWarningTooltip.actionLabel }}
-						</button>
-						<button
-							v-if="!isQualityWarningTooltipDismissed"
-							class="hint__button"
-							@click="dismissQualityWarningTooltip">
-							{{ t('spreed', 'Dismiss') }}
-						</button>
-					</div>
-				</div>
-			</Popover>
 		</div>
 	</div>
 </template>
@@ -907,6 +907,8 @@ export default {
 @import '../../../assets/variables.scss';
 
 .buttons-bar {
+	display: flex;
+	align-items: center;
 	button, .action-item {
 		vertical-align: middle;
 	}
@@ -990,14 +992,6 @@ export default {
 	background: linear-gradient(0deg, gray, white 36px);
 }
 
-.network-connection-state {
-	position: absolute;
-	bottom: 3px;
-	right: 12px;
-	width: 32px;
-	height: 32px;
-}
-
 .hint {
 	padding: 12px;
 	max-width: 300px;
@@ -1021,5 +1015,9 @@ export default {
 	&:active {
 		background-color: transparent;
 	}
+}
+
+::v-deep .trigger {
+	display: flex;
 }
 </style>
