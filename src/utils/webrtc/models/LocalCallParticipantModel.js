@@ -51,6 +51,10 @@ LocalCallParticipantModel.prototype = {
 	},
 
 	set(key, value) {
+		if (this.attributes[key] === value) {
+			return
+		}
+
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
