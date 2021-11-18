@@ -55,6 +55,39 @@ function VideoConstrainer(trackConstrainer) {
 VideoConstrainer.prototype = {
 
 	async applyConstraints(quality) {
+		if (this._pendingApplyConstraintsCount) {
+			console.debug('Deferring applying constraints for quality ' + quality)
+
+			this._pendingApplyConstraintsCount++
+
+			this._lastPendingQuality = quality
+
+			return
+		}
+
+		this._pendingApplyConstraintsCount = 1
+
+		// As "_applyConstraints" is asynchronous even if the current quality is
+		// the same as the given one the call will not immediately return. Due
+		// to this, even if the "applyConstraints(quality)" is called several
+		// times in a row with the current quality the calls will still be
+		// deferred, but this should not be a problem.
+		await this._applyConstraints(quality)
+
+		this._resetPendingApplyConstraintsCount()
+	},
+
+	_resetPendingApplyConstraintsCount() {
+		const applyConstraintsAgain = this._pendingApplyConstraintsCount > 1
+
+		this._pendingApplyConstraintsCount = 0
+
+		if (applyConstraintsAgain) {
+			this.applyConstraints(this._lastPendingQuality)
+		}
+	},
+
+	async _applyConstraints(quality) {
 		if (quality === this._currentQuality) {
 			return
 		}
