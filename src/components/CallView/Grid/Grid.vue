@@ -813,10 +813,12 @@ export default {
 	display: grid;
 	height: 100%;
 	width: 100%;
-	&:not(.stripe) {
-		grid-row-gap: 8px;
-		grid-column-gap: 8px;
-		padding: 1px 8px 8px 8px;
+
+	grid-row-gap: 8px;
+	grid-column-gap: 8px;
+
+	&.stripe {
+		padding: 8px 8px 0 0;
 	}
 }
 

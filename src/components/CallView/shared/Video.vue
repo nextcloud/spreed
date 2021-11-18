@@ -531,6 +531,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	border-radius: var(--border-radius-large);
 }
 
 .video-container-big {
@@ -556,6 +557,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	border-radius: var(--border-radius-large);
 }
 
 .videoWrapper,

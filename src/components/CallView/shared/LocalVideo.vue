@@ -336,11 +336,12 @@ export default {
 
 .video-container-stripe {
 	position:relative;
-	height: 100%;
 	flex: 0 0 300px;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	margin-top: 8px;
+	height: 242px !important;
 }
 
 .videoWrapper,
