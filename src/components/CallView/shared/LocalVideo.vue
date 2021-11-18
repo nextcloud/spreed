@@ -334,7 +334,7 @@ export default {
 	flex-direction: column;
 }
 
-.video-container-stripe {
+.video-container-stripe:not(.local-video--sidebar) {
 	position:relative;
 	flex: 0 0 300px;
 	overflow: hidden;
@@ -372,8 +372,8 @@ export default {
 
 .video-container-big {
 	position: absolute;
-	height: 100%;
-	width: 100%;
+	width: calc(100% - 16px);
+	height: calc(100% - 8px);
 }
 
 .hover-shadow {
