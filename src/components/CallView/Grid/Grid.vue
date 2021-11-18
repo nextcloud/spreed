@@ -126,7 +126,6 @@
 					v-if="isStripe && !screenshotMode"
 					ref="localVideo"
 					class="video"
-					:fit-video="true"
 					:is-stripe="true"
 					:show-controls="false"
 					:token="token"
