@@ -29,14 +29,16 @@
 					trigger="hover"
 					:auto-hide="false"
 					:open="showQualityWarningTooltip">
-					<NetworkStrength2Alert
-						slot="trigger"
-						decorative
-						fill-color="#e9322d"
-						title=""
-						:size="24"
-						@mouseover="mouseover = true"
-						@mouseleave="mouseover = false" />
+					<button slot="trigger"
+						class="trigger">
+						<NetworkStrength2Alert
+							decorative
+							fill-color="#e9322d"
+							title=""
+							:size="20"
+							@mouseover="mouseover = true"
+							@mouseleave="mouseover = false" />
+					</button>
 					<div class="hint">
 						<span>{{ qualityWarningTooltip.content }}</span>
 						<div class="hint__actions">
@@ -67,13 +69,13 @@
 					@click.stop="toggleAudio">
 					<Microphone
 						v-if="showMicrophoneOn"
-						:size="24"
+						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
 					<MicrophoneOff
 						v-else
-						:size="24"
+						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
@@ -92,13 +94,13 @@
 				@click.stop="toggleVideo">
 				<VideoIcon
 					v-if="showVideoOn"
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 				<VideoOff
 					v-else
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
@@ -111,13 +113,13 @@
 				@click.stop="toggleVirtualBackground">
 				<Blur
 					v-if="isVirtualBackgroundEnabled"
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 				<BlurOff
 					v-else
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
@@ -138,14 +140,14 @@
 				<CancelPresentation
 					v-if="model.attributes.localScreen"
 					slot="icon"
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 				<PresentToAll
 					v-else
 					slot="icon"
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
@@ -156,7 +158,7 @@
 					@click.stop="toggleScreenSharingMenu">
 					<PresentToAll
 						slot="icon"
-						:size="24"
+						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
@@ -167,7 +169,7 @@
 					@click="showScreen">
 					<Monitor
 						slot="icon"
-						:size="24"
+						:size="20"
 						title=""
 						decorative />
 					{{ t('spreed', 'Show your screen') }}
@@ -177,7 +179,7 @@
 					@click="stopScreen">
 					<CancelPresentation
 						slot="icon"
-						:size="24"
+						:size="20"
 						title=""
 						decorative />
 					{{ t('spreed', 'Stop screensharing') }}
@@ -193,7 +195,7 @@
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<HandBackLeft
-					:size="24"
+					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
@@ -1017,7 +1019,9 @@ export default {
 	}
 }
 
-::v-deep .trigger {
+.trigger {
 	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>
