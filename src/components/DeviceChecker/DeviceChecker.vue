@@ -299,13 +299,13 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
-			if (audioInputId && !this.audioOn) {
+			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
-			if (videoInputId && !this.videoOn) {
+			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
 		},
