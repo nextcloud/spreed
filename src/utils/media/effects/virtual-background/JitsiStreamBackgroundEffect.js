@@ -343,12 +343,33 @@ export default class JitsiStreamBackgroundEffect {
 				timeMs: 1000 / this._frameRate,
 				message: 'this._maskFrameTimerWorker',
 			})
+			this._inputVideoElement.onloadeddata = null
 		}
 
 		this._frameId = -1
 		this._lastFrameId = -1
 
-		return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
+		this._outputStream = this._outputCanvasElement.captureStream(this._frameRate)
+
+		return this._outputStream
+	}
+
+	updateInputStream() {
+		const firstVideoTrack = this._stream.getVideoTracks()[0]
+		const { height, frameRate, width }
+            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+
+		this._frameRate = parseInt(frameRate, 10)
+
+		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch(error => {
+			console.error('Frame rate could not be adjusted in background effect', error)
+		})
+
+		this._inputVideoElement.width = parseInt(width, 10)
+		this._inputVideoElement.height = parseInt(height, 10)
+
+		this._frameId = -1
+		this._lastFrameId = -1
 	}
 
 	/**
