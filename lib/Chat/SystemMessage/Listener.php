@@ -102,6 +102,10 @@ class Listener implements IEventListener {
 				return;
 			}
 
+			if ($event->getNewValue() === $event->getOldValue()) {
+				return;
+			}
+
 			$room = $event->getRoom();
 
 			$session = $event->getParticipant()->getSession();
