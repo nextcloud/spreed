@@ -560,6 +560,7 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
+		height: $clickable-area;
 	}
 	.title {
 		font-weight: bold;
