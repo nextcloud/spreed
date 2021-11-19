@@ -24,15 +24,28 @@
 		<div id="sip_settings_hint" class="app-settings-section__hint">
 			{{ t('spreed', 'Allow participants to join from a phone.') }}
 		</div>
-		<input id="sip_settings_checkbox"
-			aria-describedby="sip_settings_hint"
-			type="checkbox"
-			class="checkbox"
-			name="sip_settings_checkbox"
-			:checked="hasSIPEnabled"
-			:disabled="isSipLoading"
-			@change="toggleSIPEnabled">
-		<label for="sip_settings_checkbox">{{ t('spreed', 'Enable SIP dial-in') }}</label>
+		<div>
+			<input id="sip_settings_checkbox"
+				aria-describedby="sip_settings_hint"
+				type="checkbox"
+				class="checkbox"
+				name="sip_settings_checkbox"
+				:checked="hasSIPEnabled"
+				:disabled="isSipLoading"
+				@change="toggleSetting('enable')">
+			<label for="sip_settings_checkbox">{{ t('spreed', 'Enable SIP dial-in') }}</label>
+		</div>
+		<div v-if="hasSIPEnabled">
+			<input id="sip_nopin_checkbox"
+				aria-describedby="sip_nopin_checkbox"
+				type="checkbox"
+				class="checkbox"
+				name="sip_nopin_checkbox"
+				:checked="noPinRequired"
+				:disabled="isSipLoading || !hasSIPEnabled"
+				@change="toggleSetting('nopin')">
+			<label for="sip_nopin_checkbox">{{ t('spreed', 'Allow to dial-in without a pin') }}</label>
+		</div>
 	</div>
 </template>
 
@@ -59,18 +72,31 @@ export default {
 		},
 
 		hasSIPEnabled() {
-			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+			return this.conversation.sipEnabled !== WEBINAR.SIP.DISABLED
+		},
+
+		noPinRequired() {
+			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED_NO_PIN
 		},
 	},
 
 	methods: {
-		async toggleSIPEnabled() {
+		async toggleSetting(setting) {
+			let state = WEBINAR.SIP.DISABLED
+			if (setting === 'enable') {
+				state = this.conversation.sipEnabled === WEBINAR.SIP.DISABLED ? WEBINAR.SIP.ENABLED : WEBINAR.SIP.DISABLED
+			} else if (setting === 'nopin') {
+				state = this.conversation.sipEnabled === WEBINAR.SIP.ENABLED ? WEBINAR.SIP.ENABLED_NO_PIN : WEBINAR.SIP.ENABLED
+			}
+
 			try {
 				await this.$store.dispatch('setSIPEnabled', {
 					token: this.token,
-					state: !this.conversation.sipEnabled ? WEBINAR.SIP.ENABLED : WEBINAR.SIP.DISABLED,
+					state,
 				})
-				if (this.conversation.sipEnabled) {
+				if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED_NO_PIN) {
+					showSuccess(t('spreed', 'SIP dial-in is now without pin requirement'))
+				} else if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED) {
 					showSuccess(t('spreed', 'SIP dial-in is now enabled'))
 				} else {
 					showSuccess(t('spreed', 'SIP dial-in is now disabled'))

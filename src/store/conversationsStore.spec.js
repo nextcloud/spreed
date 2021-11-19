@@ -510,7 +510,7 @@ describe('conversationsStore', () => {
 		})
 
 		test('set SIP enabled', async () => {
-			testConversation.sipEnabled = false
+			testConversation.sipEnabled = WEBINAR.SIP.DISABLED
 
 			store.dispatch('addConversation', testConversation)
 
@@ -518,13 +518,31 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('setSIPEnabled', {
 				token: testToken,
-				state: true,
+				state: WEBINAR.SIP.ENABLED,
 			})
 
-			expect(setSIPEnabled).toHaveBeenCalledWith(testToken, true)
+			expect(setSIPEnabled).toHaveBeenCalledWith(testToken, WEBINAR.SIP.ENABLED)
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.sipEnabled).toBe(true)
+			expect(changedConversation.sipEnabled).toBe(WEBINAR.SIP.ENABLED)
+		})
+
+		test('set SIP enabled no individual PIN', async () => {
+			testConversation.sipEnabled = WEBINAR.SIP.ENABLED
+
+			store.dispatch('addConversation', testConversation)
+
+			setSIPEnabled.mockResolvedValue()
+
+			await store.dispatch('setSIPEnabled', {
+				token: testToken,
+				state: WEBINAR.SIP.ENABLED_NO_PIN,
+			})
+
+			expect(setSIPEnabled).toHaveBeenCalledWith(testToken, WEBINAR.SIP.ENABLED_NO_PIN)
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.sipEnabled).toBe(WEBINAR.SIP.ENABLED_NO_PIN)
 		})
 
 		test('set notification level', async () => {

@@ -364,7 +364,6 @@ const actions = {
 			return
 		}
 
-		// The backend requires the state and timestamp to be set together.
 		await setSIPEnabled(token, state)
 		conversation.sipEnabled = state
 
