@@ -263,7 +263,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
-			timeMs: 1000 / 30,
+			timeMs: 1000 / this._frameRate,
 			message: 'this._maskFrameTimerWorker',
 		})
 	}
@@ -322,6 +322,8 @@ export default class JitsiStreamBackgroundEffect {
 		const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
+		this._frameRate = parseInt(frameRate, 10)
+
 		this._segmentationMask = new ImageData(this._options.width, this._options.height)
 		this._segmentationMaskCanvas = document.createElement('canvas')
 		this._segmentationMaskCanvas.width = this._options.width
@@ -338,7 +340,7 @@ export default class JitsiStreamBackgroundEffect {
 		this._inputVideoElement.onloadeddata = () => {
 			this._maskFrameTimerWorker.postMessage({
 				id: SET_TIMEOUT,
-				timeMs: 1000 / 30,
+				timeMs: 1000 / this._frameRate,
 				message: 'this._maskFrameTimerWorker',
 			})
 		}
