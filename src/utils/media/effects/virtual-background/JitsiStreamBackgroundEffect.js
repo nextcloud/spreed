@@ -101,8 +101,12 @@ export default class JitsiStreamBackgroundEffect {
 	_startFx(e) {
 		switch (e.data.message) {
 		case 'inferenceRun':
-			this.runInference(e.data.segmentationResult)
-			this.runPostProcessing()
+			if (e.data.frameId === this._lastFrameId + 1) {
+				this._lastFrameId = e.data.frameId
+
+				this.runInference(e.data.segmentationResult)
+				this.runPostProcessing()
+			}
 			break
 		case 'loaded':
 			this._loaded = true
@@ -243,7 +247,20 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	_renderMask() {
-		this.resizeSource()
+		if (this._frameId < this._lastFrameId) {
+			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
+
+			this._frameId = this._lastFrameId
+		}
+
+		// Calculate segmentation data only if the previous one finished
+		// already.
+		if (this._loaded && this._frameId === this._lastFrameId) {
+			this._frameId++
+
+			this.resizeSource()
+		}
+
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / 30,
@@ -277,7 +294,7 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height
 		)
 
-		this._model.postMessage({ message: 'resizeSource', imageData })
+		this._model.postMessage({ message: 'resizeSource', imageData, frameId: this._frameId })
 	}
 
 	/**
@@ -325,6 +342,9 @@ export default class JitsiStreamBackgroundEffect {
 				message: 'this._maskFrameTimerWorker',
 			})
 		}
+
+		this._frameId = -1
+		this._lastFrameId = -1
 
 		return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
 	}
