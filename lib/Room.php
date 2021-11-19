@@ -974,7 +974,7 @@ class Room {
 			return false;
 		}
 
-		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
+		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED_NO_PIN, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
 			return false;
 		}
 

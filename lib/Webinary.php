@@ -29,4 +29,5 @@ class Webinary {
 
 	public const SIP_DISABLED = 0;
 	public const SIP_ENABLED = 1;
+	public const SIP_ENABLED_NO_PIN = 2;
 }

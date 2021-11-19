@@ -640,7 +640,7 @@ class ParticipantService {
 		$attendee->setActorType(Attendee::ACTOR_EMAILS);
 		$attendee->setActorId($email);
 
-		if ($room->getSIPEnabled() === Webinary::SIP_ENABLED
+		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
 			&& $this->talkConfig->isSIPConfigured()) {
 			$attendee->setPin($this->generatePin());
 		}
@@ -658,7 +658,7 @@ class ParticipantService {
 
 	public function generatePinForParticipant(Room $room, Participant $participant): void {
 		$attendee = $participant->getAttendee();
-		if ($room->getSIPEnabled() === Webinary::SIP_ENABLED
+		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
 			&& $this->talkConfig->isSIPConfigured()
 			&& ($attendee->getActorType() === Attendee::ACTOR_USERS || $attendee->getActorType() === Attendee::ACTOR_EMAILS)
 			&& !$attendee->getPin()) {

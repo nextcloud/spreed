@@ -476,7 +476,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($this->talkConfig->isSIPConfigured()) {
 			$roomData['sipEnabled'] = $room->getSIPEnabled();
-			if ($room->getSIPEnabled() === Webinary::SIP_ENABLED) {
+			if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED) {
 				// Generate a PIN if the attendee is a user and doesn't have one.
 				$this->participantService->generatePinForParticipant($room, $currentParticipant);
 
@@ -973,7 +973,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeePin' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
-				&& $this->room->getSIPEnabled() === Webinary::SIP_ENABLED
+				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
 				&& ($this->participant->hasModeratorPermissions(false)
 					|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
 				// Generate a PIN if the attendee is a user and doesn't have one.

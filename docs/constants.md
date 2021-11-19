@@ -23,6 +23,11 @@ title: Constants
 * `0` No lobby
 * `1` Lobby for non moderators
 
+### SIP states
+* `0` Disabled
+* `1` Enabled (Each participant needs a unique PIN)
+* `2` Enabled without PIN (Only the conversation token is required)
+
 ## Participants
 
 ### Participant types

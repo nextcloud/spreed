@@ -66,7 +66,7 @@
         `notificationLevel` | int | v1 | | The notification level for the user (See [Participant notification levels](constants.md#Participant-notification-levels))
         `lobbyState` | int | v1 | | Webinar lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability) (See [Webinar lobby states](constants.md#webinar-lobby-states))
         `lobbyTimer` | int | v1 | | Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
-        `sipEnabled` | int | v3 | | SIP enable status (0-1)
+        `sipEnabled` | int | v3 | | SIP enable status (see [constants list](constants.md#sip-states))
         `canEnableSIP` | int | v3 | | Whether the given user can enable SIP for this conversation. Note that when the token is not-numeric only, SIP can not be enabled even if the user is permitted and a moderator of the conversation
         `unreadMessages` | int | v1 | | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | v1 | | Flag if the user was mentioned since their last visit
