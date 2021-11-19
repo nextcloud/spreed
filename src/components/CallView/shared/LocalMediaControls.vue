@@ -82,7 +82,8 @@
 				</button>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
-					class="volume-indicator" />
+					class="volume-indicator"
+					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
 			<button
 				id="hideVideo"
@@ -988,10 +989,10 @@ export default {
 	background: linear-gradient(0deg, green, yellow, red 36px);
 
 	opacity: 0.7;
-}
 
-#muteWrapper .microphone-off-icon + .volume-indicator {
-	background: linear-gradient(0deg, gray, white 36px);
+	&.microphone-off {
+		background: linear-gradient(0deg, gray, white 36px);
+	}
 }
 
 .hint {
