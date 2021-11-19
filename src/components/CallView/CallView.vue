@@ -104,6 +104,7 @@
 							:is-grid="true"
 							:fit-video="true"
 							:is-big="true"
+							:is-one-to-one="isOneToOne"
 							:is-sidebar="isSidebar"
 							@switch-screen-to-id="_switchScreenToId" />
 					</template>
