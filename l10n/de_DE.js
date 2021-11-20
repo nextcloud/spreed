@@ -1028,7 +1028,7 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Details" : "Details",
     "Settings" : "Einstellungen",
-    "Participants ({count})" : "({count}) Teilnehmer",
+    "Participants ({count})" : "Teilnehmer ({count})",
     "Meeting ID: {meetingId}" : "Meeting-ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Ihre PIN: {attendeePin}",
     "Display name: " : "Anzeigename:",
