@@ -987,6 +987,7 @@ OC.L10N.register(
     "Chat" : "Conversa",
     "Details" : "Detalhes",
     "Settings" : "Configurações",
+    "Participants ({count})" : "Participantes ({count}) ",
     "Meeting ID: {meetingId}" : "ID da reunião: {meetingId}",
     "Your PIN: {attendeePin}" : "Seu PIN: {attendeePin}",
     "Display name: " : "Nome de tela:",
