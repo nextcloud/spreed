@@ -21,7 +21,7 @@ self.onmessage = (e) => {
 		break
 	case 'resizeSource':
 		if (!self.compiled) return
-		resizeSource(e.data.imageData)
+		resizeSource(e.data.imageData, e.data.frameId)
 		break
 	case 'runInference':
 		runInference()
@@ -85,21 +85,22 @@ async function makeTFLite(isSimd) {
 
 /**
  * @param {ImageData} imageData the image data from the canvas
+ * @param {number} frameId the ID of the frame that the image data belongs to
  */
-function resizeSource(imageData) {
+function resizeSource(imageData, frameId) {
 	const inputMemoryOffset = self.tflite._getInputMemoryOffset() / 4
 	for (let i = 0; i < self.segmentationPixelCount; i++) {
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255
 		self.tflite.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255
 	}
-	runInference()
+	runInference(frameId)
 }
 
 /**
- *
+ * @param {number} frameId the ID of the frame that the image data belongs to
  */
-function runInference() {
+function runInference(frameId) {
 	self.tflite._runInference()
 	const outputMemoryOffset = self.tflite._getOutputMemoryOffset() / 4
 	const segmentationMaskData = []
@@ -118,7 +119,7 @@ function runInference() {
 			personExp: Math.exp(person - shift),
 		})
 	}
-	self.postMessage({ message: 'inferenceRun', segmentationResult: segmentationMaskData })
+	self.postMessage({ message: 'inferenceRun', segmentationResult: segmentationMaskData, frameId })
 }
 
 // This is needed to make the linter happy, but even if nothing is actually

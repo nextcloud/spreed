@@ -101,8 +101,12 @@ export default class JitsiStreamBackgroundEffect {
 	_startFx(e) {
 		switch (e.data.message) {
 		case 'inferenceRun':
-			this.runInference(e.data.segmentationResult)
-			this.runPostProcessing()
+			if (e.data.frameId === this._lastFrameId + 1) {
+				this._lastFrameId = e.data.frameId
+
+				this.runInference(e.data.segmentationResult)
+				this.runPostProcessing()
+			}
 			break
 		case 'loaded':
 			this._loaded = true
@@ -243,10 +247,23 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	_renderMask() {
-		this.resizeSource()
+		if (this._frameId < this._lastFrameId) {
+			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
+
+			this._frameId = this._lastFrameId
+		}
+
+		// Calculate segmentation data only if the previous one finished
+		// already.
+		if (this._loaded && this._frameId === this._lastFrameId) {
+			this._frameId++
+
+			this.resizeSource()
+		}
+
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
-			timeMs: 1000 / 30,
+			timeMs: 1000 / this._frameRate,
 			message: 'this._maskFrameTimerWorker',
 		})
 	}
@@ -277,7 +294,7 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height
 		)
 
-		this._model.postMessage({ message: 'resizeSource', imageData })
+		this._model.postMessage({ message: 'resizeSource', imageData, frameId: this._frameId })
 	}
 
 	/**
@@ -305,6 +322,8 @@ export default class JitsiStreamBackgroundEffect {
 		const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
+		this._frameRate = parseInt(frameRate, 10)
+
 		this._segmentationMask = new ImageData(this._options.width, this._options.height)
 		this._segmentationMaskCanvas = document.createElement('canvas')
 		this._segmentationMaskCanvas.width = this._options.width
@@ -321,12 +340,36 @@ export default class JitsiStreamBackgroundEffect {
 		this._inputVideoElement.onloadeddata = () => {
 			this._maskFrameTimerWorker.postMessage({
 				id: SET_TIMEOUT,
-				timeMs: 1000 / 30,
+				timeMs: 1000 / this._frameRate,
 				message: 'this._maskFrameTimerWorker',
 			})
+			this._inputVideoElement.onloadeddata = null
 		}
 
-		return this._outputCanvasElement.captureStream(parseInt(frameRate, 10))
+		this._frameId = -1
+		this._lastFrameId = -1
+
+		this._outputStream = this._outputCanvasElement.captureStream(this._frameRate)
+
+		return this._outputStream
+	}
+
+	updateInputStream() {
+		const firstVideoTrack = this._stream.getVideoTracks()[0]
+		const { height, frameRate, width }
+            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+
+		this._frameRate = parseInt(frameRate, 10)
+
+		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch(error => {
+			console.error('Frame rate could not be adjusted in background effect', error)
+		})
+
+		this._inputVideoElement.width = parseInt(width, 10)
+		this._inputVideoElement.height = parseInt(height, 10)
+
+		this._frameId = -1
+		this._lastFrameId = -1
 	}
 
 	/**
