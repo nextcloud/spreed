@@ -480,7 +480,11 @@ OC.L10N.register(
     "Error requesting the password." : "Error en demandant lo senhal.",
     "This conversation has ended" : "La conversacion es acabada",
     "Limit to groups" : "Limitar als grops",
+    "Guests can still join public conversations." : "Los convidats pòdon encara rejónher las conversacions publicas.",
     "Limit using Talk" : "Limits d’utilizacion de Talk",
+    "Limit creating a public and group conversation" : "Limitar la creacion de grops e publicas de conversacions",
+    "Limit creating conversations" : "Limitar la creacion de conversacions",
+    "Limit starting a call" : "Limitar l’aviada de sonada",
     "Everyone" : "Tot lo monde",
     "Users and moderators" : "Utilizaires e moderators",
     "Moderators only" : "Moderators solament",
@@ -502,7 +506,9 @@ OC.L10N.register(
     "General settings" : "Paramètres generals",
     "Default notification settings" : "Paramètres de notificacion per defaut",
     "Default group notification" : "Notificacion de grop per defaut",
+    "Integration into other apps" : "Integracion dins d’autras aplicacions",
     "Allow conversations on files" : "Permetre las conversacions suls fichièrs",
+    "Allow conversations on public shares for files" : "Permetre las conversacions suls partiment de fichièrs",
     "All messages" : "Totes los messatges",
     "@-mentions only" : "@-mencions sonque",
     "Off" : "Atudat",
@@ -1054,6 +1060,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
     "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz."
 },
 "nplurals=2; plural=(n > 1);");
