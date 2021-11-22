@@ -154,8 +154,8 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	runPostProcessing() {
 
-		const track = this._stream.getVideoTracks()[0]
-		const { height, width } = track.getSettings() ?? track.getConstraints()
+		const height = this._inputVideoElement.videoHeight
+		const width = this._inputVideoElement.videoWidth
 		const { backgroundType } = this._options.virtualBackground
 
 		this._outputCanvasElement.height = height
@@ -182,8 +182,8 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height,
 			0,
 			0,
-			this._inputVideoElement.width,
-			this._inputVideoElement.height
+			this._inputVideoElement.videoWidth,
+			this._inputVideoElement.videoHeight
 		)
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._outputCanvasCtx.restore()
@@ -279,8 +279,8 @@ export default class JitsiStreamBackgroundEffect {
 			this._inputVideoElement,
 			0,
 			0,
-			this._inputVideoElement.width,
-			this._inputVideoElement.height,
+			this._inputVideoElement.videoWidth,
+			this._inputVideoElement.videoHeight,
 			0,
 			0,
 			this._options.width,
@@ -333,8 +333,6 @@ export default class JitsiStreamBackgroundEffect {
 		this._outputCanvasElement.width = parseInt(width, 10)
 		this._outputCanvasElement.height = parseInt(height, 10)
 		this._outputCanvasCtx = this._outputCanvasElement.getContext('2d')
-		this._inputVideoElement.width = parseInt(width, 10)
-		this._inputVideoElement.height = parseInt(height, 10)
 		this._inputVideoElement.autoplay = true
 		this._inputVideoElement.srcObject = this._stream
 		this._inputVideoElement.onloadeddata = () => {
@@ -356,7 +354,7 @@ export default class JitsiStreamBackgroundEffect {
 
 	updateInputStream() {
 		const firstVideoTrack = this._stream.getVideoTracks()[0]
-		const { height, frameRate, width }
+		const { frameRate }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._frameRate = parseInt(frameRate, 10)
@@ -364,9 +362,6 @@ export default class JitsiStreamBackgroundEffect {
 		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch(error => {
 			console.error('Frame rate could not be adjusted in background effect', error)
 		})
-
-		this._inputVideoElement.width = parseInt(width, 10)
-		this._inputVideoElement.height = parseInt(height, 10)
 
 		this._frameId = -1
 		this._lastFrameId = -1
