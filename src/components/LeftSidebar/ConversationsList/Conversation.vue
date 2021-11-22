@@ -333,7 +333,7 @@ export default {
 		},
 
 		showConversationSettings() {
-			emit('show-conversation-settings')
+			emit('show-conversation-settings', { token: this.item.token })
 		},
 
 		/**
