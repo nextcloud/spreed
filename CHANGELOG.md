@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.0-rc.3 – 2021-11-22
+### Fixed
+- Fix several issues with the new call view and media controls
+  [#6554](https://github.com/nextcloud/spreed/pull/6554)
+  [#6571](https://github.com/nextcloud/spreed/pull/6571)
+  [#6576](https://github.com/nextcloud/spreed/pull/6576)
+  [#6575](https://github.com/nextcloud/spreed/pull/6575)
+- Don't always enable devices when the device picker is shown
+  [#6567](https://github.com/nextcloud/spreed/pull/6567)
+- Opening the conversation settings via the conversation list opened with wrong data
+  [#6584](https://github.com/nextcloud/spreed/pull/6584)
+- Fix issues with the background blurring
+  [#6586](https://github.com/nextcloud/spreed/pull/6586)
+- Fix call summary in one-to-one conversations
+  [#6564](https://github.com/nextcloud/spreed/pull/6564)
+
+### Known issue
+- The video will "zoom in and out" when more than 4 people have video enabled and people with background blur start or stop speaking
+
 ## 13.0.0-rc.2 – 2021-11-18
 ### Fixed
 - Fix several issues with the new call view and media controls
