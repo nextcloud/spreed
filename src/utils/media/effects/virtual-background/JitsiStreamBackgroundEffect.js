@@ -52,6 +52,8 @@ export default class JitsiStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
+		this._syncMaskWithVideo = true
+
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
@@ -200,7 +202,11 @@ export default class JitsiStreamBackgroundEffect {
 			this._outputCanvasCtx.scale(-1, 1)
 			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
 		}
-		this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+		if (this._syncMaskWithVideo) {
+			this._outputCanvasCtx.drawImage(this._inputVideoSnapshotCanvas, 0, 0)
+		} else {
+			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+		}
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._outputCanvasCtx.restore()
 		}
@@ -221,7 +227,11 @@ export default class JitsiStreamBackgroundEffect {
 			)
 		} else {
 			this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`
-			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+			if (this._syncMaskWithVideo) {
+				this._outputCanvasCtx.drawImage(this._inputVideoSnapshotCanvas, 0, 0)
+			} else {
+				this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+			}
 		}
 	}
 
@@ -275,6 +285,27 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	resizeSource() {
+		// Create an snapshot of the current video element to render it once the
+		// segmentation mask is calculated; otherwise the input video could have
+		// changed once calculating the mask has finished and thus the mask will
+		// no longer exactly match the video when applying it.
+		if (this._syncMaskWithVideo) {
+			this._inputVideoSnapshotCanvas.height = this._inputVideoElement.videoHeight
+			this._inputVideoSnapshotCanvas.width = this._inputVideoElement.videoWidth
+
+			this._inputVideoSnapshotCtx.drawImage(
+				this._inputVideoElement,
+				0,
+				0,
+				this._inputVideoElement.videoWidth,
+				this._inputVideoElement.videoHeight,
+				0,
+				0,
+				this._inputVideoElement.videoWidth,
+				this._inputVideoElement.videoHeight
+			)
+		}
+
 		this._segmentationMaskCtx.drawImage(
 			this._inputVideoElement,
 			0,
@@ -343,6 +374,9 @@ export default class JitsiStreamBackgroundEffect {
 			})
 			this._inputVideoElement.onloadeddata = null
 		}
+
+		this._inputVideoSnapshotCanvas = document.createElement('canvas')
+		this._inputVideoSnapshotCtx = this._inputVideoSnapshotCanvas.getContext('2d')
 
 		this._frameId = -1
 		this._lastFrameId = -1
