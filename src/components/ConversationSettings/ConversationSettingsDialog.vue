@@ -163,7 +163,8 @@ export default {
 		},
 
 		token() {
-			return this.$store.getters.getToken()
+			return this.$store.getters.getConversationSettingsToken()
+				|| this.$store.getters.getToken()
 		},
 
 		conversation() {
@@ -220,7 +221,8 @@ export default {
 	},
 
 	methods: {
-		handleShowSettings() {
+		handleShowSettings({ token }) {
+			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
 			this.$nextTick(() => {
 				this.$refs.linkShareSettings.focus()
@@ -229,6 +231,7 @@ export default {
 
 		handleHideSettings() {
 			this.showSettings = false
+			this.$store.dispatch('updateConversationSettingsToken', '')
 		},
 
 		beforeDestroy() {
