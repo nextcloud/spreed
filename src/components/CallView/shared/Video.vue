@@ -165,6 +165,12 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		// True when this video component is used in one to one conversations
+		isOneToOne: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -249,6 +255,7 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
+				'one-to-one': this.isOneToOne,
 			}
 		},
 
@@ -536,8 +543,11 @@ export default {
 
 .video-container-big {
 	position: absolute;
-	width: calc(100% - 16px);
-	height: calc(100% - 8px);
+	&.one-to-one {
+		width: calc(100% - 16px);
+		height: calc(100% - 8px);
+	}
+
 }
 
 .avatar-container {
