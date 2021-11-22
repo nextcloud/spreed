@@ -381,6 +381,45 @@ export default class JitsiStreamBackgroundEffect {
 		this._frameId = -1
 		this._lastFrameId = -1
 
+		this._frameIdBaseShort = this._lastFrameId
+		this._frameIdBaseLong = this._lastFrameId
+		this._frameIdBaseVeryLong = this._lastFrameId
+		this._fpsBaseTimeShort = Date.now()
+		this._fpsBaseTimeLong = Date.now()
+		this._fpsBaseTimeVeryLong = Date.now()
+		this._fpsLogCount = 0
+
+		if (this._fpsLogTimeout) {
+			clearTimeout(this._fpsLogTimeout)
+		}
+		this._fpsLogTimeout = setInterval(() => {
+			this._fpsLogCount++
+
+			const now = Date.now()
+
+			const elapsedFramesShort = this._lastFrameId - this._frameIdBaseShort
+			console.log('FPS (3s): ', elapsedFramesShort / ((now - this._fpsBaseTimeShort) / 1000))
+
+			this._frameIdBaseShort = this._lastFrameId
+			this._fpsBaseTimeShort = now
+
+			if ((this._fpsLogCount % 4) === 0) {
+				const elapsedFramesLong = this._lastFrameId - this._frameIdBaseLong
+				console.log('FPS (12s): ', elapsedFramesLong / ((now - this._fpsBaseTimeLong) / 1000))
+
+				this._frameIdBaseLong = this._lastFrameId
+				this._fpsBaseTimeLong = now
+			}
+
+			if ((this._fpsLogCount % 20) === 0) {
+				const elapsedFramesVeryLong = this._lastFrameId - this._frameIdBaseVeryLong
+				console.log('FPS (60s): ', elapsedFramesVeryLong / ((now - this._fpsBaseTimeVeryLong) / 1000))
+
+				this._frameIdBaseVeryLong = this._lastFrameId
+				this._fpsBaseTimeVeryLong = now
+			}
+		}, 3000)
+
 		this._outputStream = this._outputCanvasElement.captureStream(this._frameRate)
 
 		return this._outputStream
@@ -413,6 +452,10 @@ export default class JitsiStreamBackgroundEffect {
 		})
 
 		this._maskFrameTimerWorker.terminate()
+
+		if (this._fpsLogTimeout) {
+			clearTimeout(this._fpsLogTimeout)
+		}
 	}
 
 }
