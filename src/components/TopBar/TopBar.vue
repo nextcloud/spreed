@@ -131,7 +131,7 @@
 				<ActionButton
 					icon="icon-settings"
 					:close-after-click="true"
-					@click="showConversationSettings">
+					@click="openConversationSettings">
 					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
 			</Actions>
@@ -408,10 +408,6 @@ export default {
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
-		showConversationSettings() {
-			emit('show-conversation-settings')
-		},
-
 		fullScreenChanged() {
 			this.$store.dispatch(
 				'setIsFullscreen',
@@ -474,7 +470,7 @@ export default {
 		},
 
 		openConversationSettings() {
-			emit('show-conversation-settings')
+			emit('show-conversation-settings', { token: this.token })
 		},
 	},
 }
