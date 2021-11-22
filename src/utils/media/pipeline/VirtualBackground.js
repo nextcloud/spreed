@@ -222,6 +222,12 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
+		if (newTrack === oldTrack && newTrack !== null) {
+			this._jitsiStreamBackgroundEffect.updateInputStream()
+
+			return
+		}
+
 		this._stopEffect()
 
 		if (!newTrack) {
