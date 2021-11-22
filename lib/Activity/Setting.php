@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Activity;
 
-use OCP\Activity\ISetting;
+use OCP\Activity\ActivitySettings;
 use OCP\IL10N;
 
-class Setting implements ISetting {
+class Setting extends ActivitySettings {
 
 	/** @var IL10N */
 	protected $l;
@@ -52,44 +52,35 @@ class Setting implements ISetting {
 	}
 
 	/**
-	 * @return int whether the filter should be rather on the top or bottom of
-	 * the admin section. The filters are arranged in ascending order of the
-	 * priority values. It is required to return a value between 0 and 100.
-	 * @since 11.0.0
+	 * {@inheritdoc}
+	 */
+	public function getGroupIdentifier(): string {
+		return 'other';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getGroupName() {
+		return $this->l->t('Other activities');
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function getPriority(): int {
 		return 51;
 	}
-
 	/**
-	 * @return bool True when the option can be changed for the stream
-	 * @since 11.0.0
+	 * {@inheritdoc}
 	 */
-	public function canChangeStream(): bool {
-		return true;
+	public function canChangeNotification(): bool {
+		return false;
 	}
-
 	/**
-	 * @return bool True when the option can be changed for the stream
-	 * @since 11.0.0
+	 * {@inheritdoc}
 	 */
-	public function isDefaultEnabledStream(): bool {
-		return true;
-	}
-
-	/**
-	 * @return bool True when the option can be changed for the mail
-	 * @since 11.0.0
-	 */
-	public function canChangeMail(): bool {
-		return true;
-	}
-
-	/**
-	 * @return bool True when the option can be changed for the stream
-	 * @since 11.0.0
-	 */
-	public function isDefaultEnabledMail(): bool {
+	public function isDefaultEnabledNotification(): bool {
 		return false;
 	}
 }
