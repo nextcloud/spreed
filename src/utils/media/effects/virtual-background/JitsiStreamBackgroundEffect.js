@@ -235,7 +235,7 @@ export default class JitsiStreamBackgroundEffect {
 	runInference(data) {
 		// All consts in Worker in obj array.
 		for (let i = 0; i < this._segmentationPixelCount; i++) {
-			this._segmentationMask.data[(i * 4) + 3] = (255 * data[i].personExp) / (data[i].backgroundExp + data[i].personExp)
+			this._segmentationMask.data[(i * 4) + 3] = 255 * data[i].person
 		}
 		this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 	}
