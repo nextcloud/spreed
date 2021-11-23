@@ -137,11 +137,7 @@ export default class VirtualBackground extends TrackSinkSource {
 
 	_initJitsiStreamBackgroundEffect() {
 		const segmentationDimensions = {
-			model96: {
-				height: 96,
-				width: 160,
-			},
-			model144: {
+			modelLandscape: {
 				height: 144,
 				width: 256,
 			},
@@ -158,7 +154,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			blurValue: 10,
 		}
 		const options = {
-			...isSimd ? segmentationDimensions.model144 : segmentationDimensions.model96,
+			...segmentationDimensions.modelLandscape,
 			virtualBackground,
 			simd: isSimd,
 		}

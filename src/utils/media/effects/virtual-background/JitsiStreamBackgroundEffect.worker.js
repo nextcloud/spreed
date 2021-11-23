@@ -2,12 +2,10 @@ import createTFLiteModule from './vendor/tflite/tflite'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd'
 import withoutSIMD from './vendor/tflite/tflite.wasm'
 import withSIMD from './vendor/tflite/tflite-simd.wasm'
-import v681 from './vendor/models/segm_lite_v681.tflite'
-import v679 from './vendor/models/segm_full_v679.tflite'
+import landscape from './vendor/models/selfie_segmentation_landscape.tflite'
 
 const models = {
-	model96: v681.split('/').pop(),
-	model144: v679.split('/').pop(),
+	modelLandscape: landscape.split('/').pop(),
 }
 
 self.compiled = false
@@ -51,7 +49,7 @@ async function makeTFLite(isSimd) {
 			return
 		}
 		self.modelBufferOffset = self.tflite._getModelBufferMemoryOffset()
-		self.modelResponse = await fetch(isSimd === true ? models.model144 : models.model96)
+		self.modelResponse = await fetch(models.modelLandscape)
 
 		if (!self.modelResponse.ok) {
 			throw new Error('Failed to download tflite model!')
@@ -107,16 +105,10 @@ function runInference(frameId) {
 	// All consts in Worker in obj array.
 	for (let i = 0; i < self.segmentationPixelCount; i++) {
 
-		const background = self.tflite.HEAPF32[outputMemoryOffset + (i * 2)]
-		const person = self.tflite.HEAPF32[outputMemoryOffset + (i * 2) + 1]
-		const shift = Math.max(background, person)
+		const person = self.tflite.HEAPF32[outputMemoryOffset + i]
 
 		segmentationMaskData.push({
-			background,
 			person,
-			shift,
-			backgroundExp: Math.exp(background - shift),
-			personExp: Math.exp(person - shift),
 		})
 	}
 	self.postMessage({ message: 'inferenceRun', segmentationResult: segmentationMaskData, frameId })
