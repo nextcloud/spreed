@@ -52,6 +52,8 @@ export default class JitsiStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
+		this._syncMaskWithVideo = true
+
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
@@ -154,8 +156,15 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	runPostProcessing() {
 
-		const height = this._inputVideoElement.videoHeight
-		const width = this._inputVideoElement.videoWidth
+		let height
+		let width
+		if (this._syncMaskWithVideo) {
+			height = this._inputVideoSnapshotCanvas.height
+			width = this._inputVideoSnapshotCanvas.width
+		} else {
+			height = this._inputVideoElement.videoHeight
+			width = this._inputVideoElement.videoWidth
+		}
 		const { backgroundType } = this._options.virtualBackground
 
 		this._outputCanvasElement.height = height
@@ -182,8 +191,8 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height,
 			0,
 			0,
-			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight
+			width,
+			height
 		)
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._outputCanvasCtx.restore()
@@ -200,7 +209,11 @@ export default class JitsiStreamBackgroundEffect {
 			this._outputCanvasCtx.scale(-1, 1)
 			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
 		}
-		this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+		if (this._syncMaskWithVideo) {
+			this._outputCanvasCtx.drawImage(this._inputVideoSnapshotCanvas, 0, 0)
+		} else {
+			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+		}
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._outputCanvasCtx.restore()
 		}
@@ -221,7 +234,11 @@ export default class JitsiStreamBackgroundEffect {
 			)
 		} else {
 			this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`
-			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+			if (this._syncMaskWithVideo) {
+				this._outputCanvasCtx.drawImage(this._inputVideoSnapshotCanvas, 0, 0)
+			} else {
+				this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+			}
 		}
 	}
 
@@ -275,6 +292,27 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	resizeSource() {
+		// Create an snapshot of the current video element to render it once the
+		// segmentation mask is calculated; otherwise the input video could have
+		// changed once calculating the mask has finished and thus the mask will
+		// no longer exactly match the video when applying it.
+		if (this._syncMaskWithVideo) {
+			this._inputVideoSnapshotCanvas.height = this._inputVideoElement.videoHeight
+			this._inputVideoSnapshotCanvas.width = this._inputVideoElement.videoWidth
+
+			this._inputVideoSnapshotCtx.drawImage(
+				this._inputVideoElement,
+				0,
+				0,
+				this._inputVideoElement.videoWidth,
+				this._inputVideoElement.videoHeight,
+				0,
+				0,
+				this._inputVideoElement.videoWidth,
+				this._inputVideoElement.videoHeight
+			)
+		}
+
 		this._segmentationMaskCtx.drawImage(
 			this._inputVideoElement,
 			0,
@@ -344,8 +382,50 @@ export default class JitsiStreamBackgroundEffect {
 			this._inputVideoElement.onloadeddata = null
 		}
 
+		this._inputVideoSnapshotCanvas = document.createElement('canvas')
+		this._inputVideoSnapshotCtx = this._inputVideoSnapshotCanvas.getContext('2d')
+
 		this._frameId = -1
 		this._lastFrameId = -1
+
+		this._frameIdBaseShort = this._lastFrameId
+		this._frameIdBaseLong = this._lastFrameId
+		this._frameIdBaseVeryLong = this._lastFrameId
+		this._fpsBaseTimeShort = Date.now()
+		this._fpsBaseTimeLong = Date.now()
+		this._fpsBaseTimeVeryLong = Date.now()
+		this._fpsLogCount = 0
+
+		if (this._fpsLogTimeout) {
+			clearTimeout(this._fpsLogTimeout)
+		}
+		this._fpsLogTimeout = setInterval(() => {
+			this._fpsLogCount++
+
+			const now = Date.now()
+
+			const elapsedFramesShort = this._lastFrameId - this._frameIdBaseShort
+			console.log('FPS (3s): ', elapsedFramesShort / ((now - this._fpsBaseTimeShort) / 1000))
+
+			this._frameIdBaseShort = this._lastFrameId
+			this._fpsBaseTimeShort = now
+
+			if ((this._fpsLogCount % 4) === 0) {
+				const elapsedFramesLong = this._lastFrameId - this._frameIdBaseLong
+				console.log('FPS (12s): ', elapsedFramesLong / ((now - this._fpsBaseTimeLong) / 1000))
+
+				this._frameIdBaseLong = this._lastFrameId
+				this._fpsBaseTimeLong = now
+			}
+
+			if ((this._fpsLogCount % 20) === 0) {
+				const elapsedFramesVeryLong = this._lastFrameId - this._frameIdBaseVeryLong
+				console.log('FPS (60s): ', elapsedFramesVeryLong / ((now - this._fpsBaseTimeVeryLong) / 1000))
+
+				this._frameIdBaseVeryLong = this._lastFrameId
+				this._fpsBaseTimeVeryLong = now
+			}
+		}, 3000)
 
 		this._outputStream = this._outputCanvasElement.captureStream(this._frameRate)
 
@@ -379,6 +459,10 @@ export default class JitsiStreamBackgroundEffect {
 		})
 
 		this._maskFrameTimerWorker.terminate()
+
+		if (this._fpsLogTimeout) {
+			clearTimeout(this._fpsLogTimeout)
+		}
 	}
 
 }
