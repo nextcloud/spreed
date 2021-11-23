@@ -156,8 +156,15 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	runPostProcessing() {
 
-		const height = this._inputVideoElement.videoHeight
-		const width = this._inputVideoElement.videoWidth
+		let height
+		let width
+		if (this._syncMaskWithVideo) {
+			height = this._inputVideoSnapshotCanvas.height
+			width = this._inputVideoSnapshotCanvas.width
+		} else {
+			height = this._inputVideoElement.videoHeight
+			width = this._inputVideoElement.videoWidth
+		}
 		const { backgroundType } = this._options.virtualBackground
 
 		this._outputCanvasElement.height = height
@@ -184,8 +191,8 @@ export default class JitsiStreamBackgroundEffect {
 			this._options.height,
 			0,
 			0,
-			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight
+			width,
+			height
 		)
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			this._outputCanvasCtx.restore()
