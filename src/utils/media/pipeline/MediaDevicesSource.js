@@ -236,6 +236,8 @@ export default class MediaDevicesSource extends TrackSource {
 		if (this.getOutputTrack('audio')) {
 			const settings = this.getOutputTrack('audio').getSettings()
 			if (settings && settings.deviceId === audioInputId) {
+				resetPendingAudioInputIdChangedCount()
+
 				return
 			}
 		}
@@ -297,6 +299,8 @@ export default class MediaDevicesSource extends TrackSource {
 		if (this.getOutputTrack('video')) {
 			const settings = this.getOutputTrack('video').getSettings()
 			if (settings && settings.deviceId === videoInputId) {
+				resetPendingVideoInputIdChangedCount()
+
 				return
 			}
 		}
