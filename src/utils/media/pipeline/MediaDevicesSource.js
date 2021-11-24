@@ -218,7 +218,7 @@ export default class MediaDevicesSource extends TrackSource {
 			this._pendingAudioInputIdChangedCount = 0
 
 			if (audioInputIdChangedAgain) {
-				this._handleAudioInputIdChanged(mediaDevicesManager.get('audioInputId'))
+				this._handleAudioInputIdChanged(mediaDevicesManager, mediaDevicesManager.get('audioInputId'))
 			}
 		}
 
@@ -281,7 +281,7 @@ export default class MediaDevicesSource extends TrackSource {
 			this._pendingVideoInputIdChangedCount = 0
 
 			if (videoInputIdChangedAgain) {
-				this._handleVideoInputIdChanged(mediaDevicesManager.get('videoInputId'))
+				this._handleVideoInputIdChanged(mediaDevicesManager, mediaDevicesManager.get('videoInputId'))
 			}
 		}
 
