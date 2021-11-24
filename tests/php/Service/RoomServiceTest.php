@@ -32,6 +32,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
+use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -41,6 +42,8 @@ class RoomServiceTest extends TestCase {
 	protected $manager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var IShareManager|MockObject */
+	protected $shareManager;
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 	/** @var RoomService */
@@ -52,10 +55,12 @@ class RoomServiceTest extends TestCase {
 
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
+			$this->shareManager,
 			$this->dispatcher
 		);
 	}
@@ -68,6 +73,25 @@ class RoomServiceTest extends TestCase {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('invalid_invitee');
 		$this->service->createOneToOneConversation($user, $user);
+	}
+
+	public function testCreateOneToOneConversationWithNotCurrentUserCanEnumerateTargetUser(): void {
+		$user1 = $this->createMock(IUser::class);
+		$user1->method('getUID')
+			->willReturn('uid1');
+		$user2 = $this->createMock(IUser::class);
+		$user2->method('getUID')
+			->willReturn('uid2');
+
+		$this->expectException(RoomNotFoundException::class);
+		$this->shareManager
+			->expects($this->once())
+			->method('currentUserCanEnumerateTargetUser')
+			->willReturn(false);
+		$this->manager
+			->method('getOne2OneRoom')
+			->willThrowException(new RoomNotFoundException());
+		$this->service->createOneToOneConversation($user1, $user2);
 	}
 
 	public function testCreateOneToOneConversationAlreadyExists(): void {
@@ -102,6 +126,11 @@ class RoomServiceTest extends TestCase {
 			->willReturn('uid2');
 		$user2->method('getDisplayName')
 			->willReturn('display-2');
+
+		$this->shareManager
+			->expects($this->once())
+			->method('currentUserCanEnumerateTargetUser')
+			->willReturn(true);
 
 		$room = $this->createMock(Room::class);
 		$this->participantService->expects($this->once())

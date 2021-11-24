@@ -32,6 +32,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
+use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 
@@ -39,14 +40,18 @@ class RoomService {
 	protected $manager;
 	/** @var ParticipantService */
 	protected $participantService;
+	/** @var IShareManager */
+	protected $shareManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,
+								IShareManager $shareManager,
 								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->shareManager = $shareManager;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -66,6 +71,10 @@ class RoomService {
 			$room = $this->manager->getOne2OneRoom($actor->getUID(), $targetUser->getUID());
 			$this->participantService->ensureOneToOneRoomIsFilled($room);
 		} catch (RoomNotFoundException $e) {
+			if (!$this->shareManager->currentUserCanEnumerateTargetUser($actor, $targetUser)) {
+				throw new RoomNotFoundException();
+			};
+
 			$users = [$actor->getUID(), $targetUser->getUID()];
 			sort($users);
 			$room = $this->manager->createRoom(Room::TYPE_ONE_TO_ONE, json_encode($users));
