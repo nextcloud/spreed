@@ -41,6 +41,8 @@ export default class JitsiStreamBackgroundEffect {
 	 *
 	 * @class
 	 * @param {object} options - Segmentation dimensions.
+	 * @param {number} options.virtualBackground.blurValue the blur to apply on
+	 *                 a 720p video; it will be automatically scaled as needed.
 	 */
 	constructor(options) {
 		const isSimd = options.simd
@@ -158,6 +160,10 @@ export default class JitsiStreamBackgroundEffect {
 		const width = this._inputVideoElement.videoWidth
 		const { backgroundType } = this._options.virtualBackground
 
+		const scaledBlurFactor = width / 720.0
+		const backgroundBlurValue = this._options.virtualBackground.blurValue * scaledBlurFactor
+		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
+
 		this._outputCanvasElement.height = height
 		this._outputCanvasElement.width = width
 		this._outputCanvasCtx.globalCompositeOperation = 'copy'
@@ -165,7 +171,7 @@ export default class JitsiStreamBackgroundEffect {
 		// Draw segmentation mask.
 
 		// Smooth out the edges.
-		this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)'
+		this._outputCanvasCtx.filter = `blur(${edgesBlurValue}px)`
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 			// Save current context before applying transformations.
 			this._outputCanvasCtx.save()
@@ -220,7 +226,7 @@ export default class JitsiStreamBackgroundEffect {
 				this._outputCanvasElement.height
 			)
 		} else {
-			this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`
+			this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
 			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
 		}
 	}
