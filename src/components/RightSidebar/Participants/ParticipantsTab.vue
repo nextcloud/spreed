@@ -47,22 +47,14 @@ import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
-import { PARTICIPANT } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
-import {
-	addParticipant,
-	fetchParticipants,
-} from '../../../services/participantsService'
-import isInLobby from '../../../mixins/isInLobby'
+import { addParticipant } from '../../../services/participantsService'
 import { loadState } from '@nextcloud/initial-state'
-import SHA1 from 'crypto-js/sha1'
-import Hex from 'crypto-js/enc-hex'
 import CancelableRequest from '../../../utils/cancelableRequest'
-import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults'
+import getParticipants from '../../../mixins/getParticipants'
 
 export default {
 	name: 'ParticipantsTab',
@@ -73,9 +65,7 @@ export default {
 		ParticipantsSearchResults,
 	},
 
-	mixins: [
-		isInLobby,
-	],
+	mixins: [getParticipants],
 
 	props: {
 		canSearch: {
@@ -86,10 +76,6 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-		isActive: {
-			type: Boolean,
-			required: true,
-		},
 	},
 
 	data() {
@@ -97,14 +83,8 @@ export default {
 			searchText: '',
 			searchResults: [],
 			contactsLoading: false,
-			participantsInitialised: false,
 			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
-			/**
-			 * Stores the cancel function for cancelableGetParticipants
-			 */
-			cancelGetParticipants: () => {},
 			cancelSearchPossibleConversations: () => {},
-			fetchingParticipants: false,
 		}
 	},
 
@@ -135,46 +115,21 @@ export default {
 	},
 
 	beforeMount() {
-		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$on('joined-conversation', this.onJoinedConversation)
-
-		// FIXME this works only temporary until signaling is fixed to be only on the calls
-		// Then we have to search for another solution. Maybe the room list which we update
-		// periodically gets a hash of all online sessions?
-		EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
+		EventBus.$on('route-change', this.abortSearch)
 	},
 
 	beforeDestroy() {
-		EventBus.$off('route-change', this.onRouteChange)
-		EventBus.$off('joined-conversation', this.onJoinedConversation)
-		EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
+		EventBus.$off('route-change', this.abortSearch)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
 	},
 
 	methods: {
-		/**
-		 * If the route changes, the search filter is reset
-		 */
-		onRouteChange() {
-			// Reset participantsInitialised when there is only the current user in the participant list
-			this.participantsInitialised = this.$store.getters.participantsList(this.token).length > 1
-			this.abortSearch()
-		},
-
-		/**
-		 * If the conversation has been joined, we get the participants
-		 */
-		onJoinedConversation() {
-			this.$nextTick(() => {
-				this.cancelableGetParticipants()
-			})
-		},
-
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 		},
+
 		handleInput() {
 			this.contactsLoading = true
 			this.searchResults = []
@@ -186,29 +141,6 @@ export default {
 				this.fetchSearchResults()
 			}
 		}, 250),
-
-		debounceUpdateParticipants() {
-			if (!this.$store.getters.windowIsVisible()
-				|| !this.$store.getters.getSidebarStatus
-				|| !this.isActive) {
-				this.debounceSlowUpdateParticipants()
-				return
-			}
-
-			this.debounceFastUpdateParticipants()
-		},
-
-		debounceSlowUpdateParticipants: debounce(function() {
-			if (!this.fetchingParticipants) {
-				this.cancelableGetParticipants()
-			}
-		}, 15000),
-
-		debounceFastUpdateParticipants: debounce(function() {
-			if (!this.fetchingParticipants) {
-				this.cancelableGetParticipants()
-			}
-		}, 3000),
 
 		async fetchSearchResults() {
 			try {
@@ -247,58 +179,6 @@ export default {
 			} catch (exception) {
 				console.debug(exception)
 				showError(t('spreed', 'An error occurred while adding the participants'))
-			}
-		},
-
-		async cancelableGetParticipants() {
-			if (this.token === '' || this.isInLobby) {
-				return
-			}
-
-			try {
-				// The token must be stored in a local variable to ensure that
-				// the same token is used after waiting.
-				const token = this.token
-				// Clear previous requests if there's one pending
-				this.cancelGetParticipants('Cancel get participants')
-				// Get a new cancelable request function and cancel function pair
-				this.fetchingParticipants = true
-				const { request, cancel } = CancelableRequest(fetchParticipants)
-				this.cancelGetParticipants = cancel
-				const participants = await request(token)
-				this.$store.dispatch('purgeParticipantsStore', token)
-
-				const hasUserStatuses = !!participants.headers['x-nextcloud-has-user-statuses']
-				participants.data.ocs.data.forEach(participant => {
-					this.$store.dispatch('addParticipant', {
-						token,
-						participant,
-					})
-					if (participant.participantType === PARTICIPANT.TYPE.GUEST
-						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-						this.$store.dispatch('forceGuestName', {
-							token,
-							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
-							actorDisplayName: participant.displayName,
-						})
-					} else if (participant.actorType === 'users' && hasUserStatuses) {
-						emit('user_status:status.updated', {
-							status: participant.status,
-							message: participant.statusMessage,
-							icon: participant.statusIcon,
-							clearAt: participant.statusClearAt,
-							userId: participant.actorId,
-						})
-					}
-				})
-				this.participantsInitialised = true
-			} catch (exception) {
-				if (!Axios.isCancel(exception)) {
-					console.error(exception)
-					showError(t('spreed', 'An error occurred while fetching the participants'))
-				}
-			} finally {
-				this.fetchingParticipants = false
 			}
 		},
 
