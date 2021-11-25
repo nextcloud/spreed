@@ -156,6 +156,7 @@ class Create extends Base {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
+		$output->writeln('Room token: ' . $room->getToken());
 
 		$output->writeln('<info>Room successfully created.</info>');
 		return 0;
