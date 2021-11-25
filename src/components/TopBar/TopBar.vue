@@ -407,6 +407,15 @@ export default {
 				this.notifyUnreadMessages(null)
 			}
 		},
+
+		// Starts and stops the getParticipantsMixin logic
+		isOneToOneConversation(newValue) {
+			if (newValue) {
+				this.initialiseGetParticipantsMixin()
+			} else {
+				this.stopGetParticipantsMixin()
+			}
+		},
 	},
 
 	mounted() {

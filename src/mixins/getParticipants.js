@@ -54,23 +54,23 @@ const getParticipants = {
 		},
 	},
 
-	beforeMount() {
-		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$on('joined-conversation', this.onJoinedConversation)
-
-		// FIXME this works only temporary until signaling is fixed to be only on the calls
-		// Then we have to search for another solution. Maybe the room list which we update
-		// periodically gets a hash of all online sessions?
-		EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
-	},
-
-	beforeDestroy() {
-		EventBus.$off('route-change', this.onRouteChange)
-		EventBus.$off('joined-conversation', this.onJoinedConversation)
-		EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
-	},
-
 	methods: {
+		initialiseGetParticipantsMixin() {
+			EventBus.$on('route-change', this.onRouteChange)
+			EventBus.$on('joined-conversation', this.onJoinedConversation)
+
+			// FIXME this works only temporary until signaling is fixed to be only on the calls
+			// Then we have to search for another solution. Maybe the room list which we update
+			// periodically gets a hash of all online sessions?
+			EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
+		},
+
+		stopGetParticipantsMixin() {
+			EventBus.$off('route-change', this.onRouteChange)
+			EventBus.$off('joined-conversation', this.onJoinedConversation)
+			EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
+		},
+
 		onRouteChange() {
 			// Reset participantsInitialised when there is only the current user in the participant list
 			this.participantsInitialised = this.$store.getters.participantsList(this.token).length > 1
