@@ -151,6 +151,51 @@
 						:devices="devices"
 						:device-id="audioInputId"
 						@update:deviceId="audioInputId = $event" />
+
+					<div class="device-checker__device-selection__audio-optimisation--advanced">
+						<CheckboxRadioSwitch
+							type="switch"
+							:checked="isAudioOptimised('auto')"
+							@update:checked="optimiseAudio('auto')">
+							{{ t('spreed', 'Optimise audio for voice calls') }}
+						</CheckboxRadioSwitch>
+
+						<!-- Edit advanced permissions -->
+						<button
+							v-show="showAdvancedOptimisationButton"
+							:aria-label="t('spreed', 'Edit permissions')"
+							class="nc-button nc-button__main"
+							@click="showAdvancedOptimisation = !showAdvancedOptimisation">
+							<Pencil
+								:size="20"
+								decorative
+								title="" />
+						</button>
+					</div>
+
+					<div
+						v-if="showAdvancedOptimisation"
+						class="device-checker__audio-optimisation">
+						<CheckboxRadioSwitch
+							type="switch"
+							:checked="isAudioOptimised('echo')"
+							@update:checked="optimiseAudio('echo')">
+							{{ t('spreed', 'Echo cancellation') }}
+						</CheckboxRadioSwitch>
+						<CheckboxRadioSwitch
+							type="switch"
+							:checked="isAudioOptimised('noise')"
+							@update:checked="optimiseAudio('noise')">
+							{{ t('spreed', 'Noise suppression') }}
+						</CheckboxRadioSwitch>
+						<CheckboxRadioSwitch
+							type="switch"
+							:checked="isAudioOptimised('gain')"
+							@update:checked="optimiseAudio('gain')">
+							{{ t('spreed', 'Automatic volume control') }}
+						</CheckboxRadioSwitch>
+					</div>
+
 					<MediaDevicesSelector kind="videoinput"
 						:devices="devices"
 						:device-id="videoInputId"
@@ -183,6 +228,7 @@ import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
+import Pencil from 'vue-material-design-icons/Pencil'
 import { localMediaModel } from '../../utils/webrtc/index'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -205,6 +251,7 @@ export default {
 		VideoOff,
 		Blur,
 		BlurOff,
+		Pencil,
 		CallButton,
 		CheckboxRadioSwitch,
 		VolumeIndicator,
@@ -221,11 +268,16 @@ export default {
 			videoOn: undefined,
 			blurOn: undefined,
 			showDeviceChecker: true,
-
+			audioOptimisation: ['auto'],
+			showAdvancedOptimisation: false,
 		}
 	},
 
 	computed: {
+		showAdvancedOptimisationButton() {
+			return !this.isAudioOptimised('auto')
+		},
+
 		displayName() {
 			return this.$store.getters.getDisplayName()
 		},
@@ -326,6 +378,10 @@ export default {
 	},
 
 	methods: {
+		isAudioOptimised(mode) {
+			return this.audioOptimisation.indexOf(mode) !== -1
+		},
+
 		showModal() {
 			this.modal = true
 		},
@@ -333,6 +389,31 @@ export default {
 		closeModal() {
 			this.modal = false
 			this.showDeviceSelection = false
+		},
+
+		optimiseAudio(mode) {
+			if (mode === 'auto') {
+				this.audioOptimisation = this.audioOptimisation.indexOf('auto') === -1 ? ['auto'] : []
+				this.showAdvancedOptimisation = false
+
+				// FIXME Save on server or browser
+				return
+			}
+
+			let optimisation = this.audioOptimisation
+			if (optimisation.indexOf('auto') !== -1) {
+				optimisation = ['echo', 'noise', 'gain']
+			}
+
+			const modeIndex = optimisation.indexOf(mode)
+			if (modeIndex === -1) {
+				optimisation.push(mode)
+			} else {
+				optimisation.splice(modeIndex, 1)
+			}
+
+			// FIXME Save on server or browser
+			this.audioOptimisation = optimisation
 		},
 
 		toggleAudio() {
@@ -397,6 +478,24 @@ export default {
 
 	&__device-selection {
 		width: 100%;
+
+		&__audio-optimisation {
+			display: flex;
+			justify-content: space-between;
+			&--advanced {
+				display: flex;
+				justify-content: flex-start;
+
+				// Edit button
+				button {
+					margin-left: 16px;
+				}
+			}
+		}
+	}
+
+	&__audio-optimisation {
+		margin-left: 37px
 	}
 
 	&__call-preferences {
