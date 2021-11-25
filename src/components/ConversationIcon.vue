@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<div class="conversation-icon">
+	<div class="conversation-icon"
+		:class="{'offline': offline}">
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
@@ -83,7 +84,16 @@ export default {
 				}
 			},
 		},
+
+		/**
+		 * Reduces the opacity of the icon if true
+		 */
+		offline: {
+			type: Boolean,
+			default: false,
+		},
 	},
+
 	computed: {
 		showCall() {
 			return !this.hideCall && this.item.hasCall
@@ -179,6 +189,10 @@ $icon-size: 44px;
 			background-image: var(--icon-video-E9322D);
 		}
 	}
+}
+
+.offline {
+	opacity: .4;
 }
 
 </style>
