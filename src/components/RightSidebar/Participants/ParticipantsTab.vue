@@ -116,6 +116,9 @@ export default {
 
 	beforeMount() {
 		EventBus.$on('route-change', this.abortSearch)
+
+		// Initialises the get participants mixin
+		this.initialiseGetParticipantsMixin()
 	},
 
 	beforeDestroy() {
@@ -123,6 +126,8 @@ export default {
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
+
+		this.stopGetParticipantsMixin()
 	},
 
 	methods: {
