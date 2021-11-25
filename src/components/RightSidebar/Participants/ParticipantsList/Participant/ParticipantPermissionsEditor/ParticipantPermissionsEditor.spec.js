@@ -26,7 +26,8 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			participantType: PARTICIPANT.TYPE.USER,
 			attendeePermissions: PARTICIPANT.PERMISSIONS.CALL_START
 				| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
-				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
+				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
+				| PARTICIPANT.PERMISSIONS.CUSTOM,
 			attendeeId: 'alice-attendee-id',
 			status: '',
 			statusIcon: '🌧️',
@@ -95,15 +96,30 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
 			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(false)
 		})
+
+		test('Properly renders the checkboxes with default permissions', async () => {
+			participant.attendeePermissions = PARTICIPANT.PERMISSIONS.DEFAULT
+			const wrapper = await mountParticipantPermissionsEditor(participant)
+			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
+			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
+			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
+			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
+			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
+			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
+			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
+			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
+			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
+			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(true)
+		})
 	})
 
-	describe('Dispatches the aciton to set the right permissions', async () => {
+	describe('Dispatches the action to set the right permissions', async () => {
 
-		test('Dispatches setPermissions with the correct permissions value when a permission is subtracted', async () => {
+		test('Dispatches setPermissions with the correct permissions value when a permission is added', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 
 			// Add a permission
-			wrapper.findComponent(PermissionsEditor).setData({ lobbyIgnore: true })
+			await wrapper.findComponent(PermissionsEditor).setData({ lobbyIgnore: true })
 
 			// Click the submit button
 			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')
@@ -121,11 +137,11 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			)
 		})
 
-		test('Dispatches setPermissions with the correct permissions value when a permission is added', async () => {
+		test('Dispatches setPermissions with the correct permissions value when a permission is substracted', async () => {
 			const wrapper = mountParticipantPermissionsEditor(participant)
 
 			// Remove a permission
-			wrapper.findComponent(PermissionsEditor).setData({ publishAudio: false })
+			await wrapper.findComponent(PermissionsEditor).setData({ publishAudio: false })
 
 			// Click the submit button
 			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')

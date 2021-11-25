@@ -147,6 +147,15 @@ export default {
 				})
 			} else throw Error('you need to fill either the conversationName or the displayName props')
 		},
+
+		permissionsWithDefault() {
+			if (this.permissions !== PERMISSIONS.DEFAULT) {
+				return this.permissions
+			}
+
+			return PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+		},
+
 		/**
 		 * The number of the edited permissions during the editing of the form.
 		 * We use this to compare it with the actual permissions of the
@@ -167,12 +176,16 @@ export default {
 		 * disabled.
 		 */
 		submitButtonDisabled() {
-			return this.permissions === this.formPermissions
+			return (!!(this.permissionsWithDefault & PERMISSIONS.CALL_START)) === this.callStart
+				&& !!(this.permissionsWithDefault & PERMISSIONS.LOBBY_IGNORE) === this.lobbyIgnore
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_AUDIO) === this.publishAudio
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_VIDEO) === this.publishVideo
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_SCREEN) === this.publishScreen
 		},
 	},
 
 	mounted() {
-		this.writePermissionsToComponent(this.permissions)
+		this.writePermissionsToComponent(this.permissionsWithDefault)
 	},
 
 	methods: {
