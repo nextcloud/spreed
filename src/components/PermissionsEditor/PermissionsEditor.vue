@@ -176,7 +176,11 @@ export default {
 		 * disabled.
 		 */
 		submitButtonDisabled() {
-			return this.permissionsWithDefault === this.formPermissions
+			return (!!(this.permissionsWithDefault & PERMISSIONS.CALL_START)) === this.callStart
+				&& !!(this.permissionsWithDefault & PERMISSIONS.LOBBY_IGNORE) === this.lobbyIgnore
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_AUDIO) === this.publishAudio
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_VIDEO) === this.publishVideo
+				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_SCREEN) === this.publishScreen
 		},
 	},
 
