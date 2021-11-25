@@ -74,7 +74,7 @@ export default (function() {
 		this._outputTracks = {}
 		this._connectedTrackSinks = {}
 
-		this._removeTrackWhenEndedBound = this._removeTrackWhenEnded.bind(this)
+		this._removeTrackWhenEndedHandlers = {}
 	}
 
 	/**
@@ -152,7 +152,7 @@ export default (function() {
 		// "ended" listener is not removed if the same track is also used in a
 		// different slot.
 		if (this._outputTracks[trackId] && Object.values(this._outputTracks).filter(track => track === this._outputTracks[trackId]).length === 1) {
-			this._outputTracks[trackId].removeEventListener('ended', this._removeTrackWhenEndedBound)
+			this._outputTracks[trackId].removeEventListener('ended', this._removeTrackWhenEndedHandlers[this._outputTracks[trackId].id])
 		}
 
 		this._outputTracks[trackId] = track
@@ -160,7 +160,14 @@ export default (function() {
 		// "ended" listener is not added again if the same track is also used in
 		// a different slot.
 		if (this._outputTracks[trackId] && Object.values(this._outputTracks).filter(track => track === this._outputTracks[trackId]).length === 1) {
-			this._outputTracks[trackId].addEventListener('ended', this._removeTrackWhenEndedBound)
+			// The "ended" event may not contain the track that ended (for
+			// example, when triggered from the MediaStreamTrack shim, as
+			// properties like "target" can not be set from the Event
+			// constructor), so it needs to be explicitly bound here.
+			this._removeTrackWhenEndedHandlers[track.id] = () => {
+				this._removeTrackWhenEnded(track)
+			}
+			this._outputTracks[trackId].addEventListener('ended', this._removeTrackWhenEndedHandlers[track.id])
 		}
 
 		this._trigger('outputTrackSet', [trackId, track])
