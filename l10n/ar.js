@@ -133,6 +133,7 @@ OC.L10N.register(
     "Message deleted by you" : "مُسحت الرسالة بواسطتك",
     "%s (guest)" : "%s (ضيف)",
     "You missed a call from {user}" : "مكالمة لم ترد عليها من {user}",
+    "You tried to call {user}" : "قمت بمحاولة الاتصال {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})","مكالمة مع ضيف %n (المدة الزمنية {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "مكالمة مع {user1} و {user2} (المدة الزمنية {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "مكالمة مع {user1} و {user2} و {user3} (المدة الزمنية {duration})",
