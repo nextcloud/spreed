@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.0-rc.4 – 2021-11-25
+### Changed
+- The segmentation model of the background blur was replaced
+  [#6597](https://github.com/nextcloud/spreed/pull/6597)
+
+### Fixed
+- Fix missing default permissions when opening the permissions editor
+  [#6614](https://github.com/nextcloud/spreed/pull/6614)
+- Fix issues with device selection after muting, disconnecting and more
+  [#6601](https://github.com/nextcloud/spreed/pull/6601)
+  [#6609](https://github.com/nextcloud/spreed/pull/6609)
+  [#6615](https://github.com/nextcloud/spreed/pull/6615)
+- Fix issues with the background blurring
+  [#6594](https://github.com/nextcloud/spreed/pull/6594)
+  [#6600](https://github.com/nextcloud/spreed/pull/6600)
+
 ## 13.0.0-rc.3 – 2021-11-22
 ### Fixed
 - Fix several issues with the new call view and media controls
