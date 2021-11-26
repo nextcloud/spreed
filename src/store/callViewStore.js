@@ -36,6 +36,8 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
+	gridNumberOfPages: 0,
+	currentGridPage: 0,
 }
 
 const getters = {
@@ -61,6 +63,8 @@ const getters = {
 	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
 		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
+
+	currentGridPage: (state) => state.currentGridPage,
 }
 
 const mutations = {
@@ -104,6 +108,14 @@ const mutations = {
 	},
 	clearBackgroundImageAverageColorCache(state) {
 		state.backgroundImageAverageColorCache = {}
+	},
+
+	setGridNumberOfPages(state, numberOfPages) {
+		state.gridNumberOfPages = numberOfPages
+	},
+
+	setCurrentGridPage(state, page) {
+		state.currentGridPage = page
 	},
 }
 
@@ -222,6 +234,15 @@ const actions = {
 	dismissQualityWarningTooltip(context) {
 		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
 	},
+
+	setGridNumberOfPages({ commit }, { numberOfPages }) {
+		commit('setGridNumberOfPages', { numberOfPages })
+	},
+
+	setCurrentGridPage({ commit }, { page }) {
+		commit('setCurrentGridPage', { page })
+	},
+
 }
 
 export default { state, mutations, getters, actions }

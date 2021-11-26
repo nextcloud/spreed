@@ -141,7 +141,7 @@
 					<div v-for="(page, index) in numberOfPages"
 						:key="index"
 						class="pages-indicator__dot"
-						:class="{'pages-indicator__dot--active': index === currentPage }" />
+						:class="{'pages-indicator__dot--active': index === currentGridPage }" />
 				</div>
 				<div v-if="devMode && !screenshotMode" class="dev-mode__data">
 					<p>GRID INFO</p>
@@ -154,7 +154,7 @@
 					<p>Min video Height: {{ minHeight }} </p>
 					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
 					<p>Number of pages: {{ numberOfPages }}</p>
-					<p>Current page: {{ currentPage }}</p>
+					<p>Current page: {{ currentGridPage }}</p>
 				</div>
 			</div>
 		</transition>
@@ -298,8 +298,6 @@ export default {
 			columns: 0,
 			// Rows of the grid at any given moment
 			rows: 0,
-			// The current page
-			currentPage: 0,
 			// Videos controls and name
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
@@ -353,11 +351,11 @@ export default {
 			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
 
 			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.videos.length) {
-				return this.videos.slice(this.currentPage * slots)
+			if (((this.currentGridPage + 1) * slots) >= this.videos.length) {
+				return this.videos.slice(this.currentGridPage * slots)
 			}
 
-			return this.videos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
+			return this.videos.slice(this.currentGridPage * slots, (this.currentGridPage + 1) * slots)
 		},
 
 		isLessThanTwoVideos() {
@@ -468,6 +466,10 @@ export default {
 		stripeOpen() {
 			return this.$store.getters.isStripeOpen
 		},
+
+		currentGridPage() {
+			return this.$store.getters.currentGridPage
+		},
 	},
 
 	watch: {
@@ -482,7 +484,7 @@ export default {
 		isLastPage(newValue, oldValue) {
 			 if (this.hasPagination) {
 				 // If navigating into last page, make grid for last page
-				if (newValue && this.currentPage !== 0) {
+				if (newValue && this.currentGridPage !== 0) {
 					this.makeGridForLastPage()
 				} else if (!newValue) {
 				// TODO: make a proper grid for when navigating away from last page
@@ -496,7 +498,7 @@ export default {
 
 			// Reset current page when switching between stripe and full grid,
 			// as the previous page is meaningless in the new mode.
-			this.currentPage = 0
+			this.$store.dispatch('setCurrentGridPage', { page: 0 })
 		},
 
 		stripeOpen() {
@@ -508,9 +510,10 @@ export default {
 			setTimeout(this.handleResize, 500)
 		},
 
-		numberOfPages() {
-			if (this.currentPage >= this.numberOfPages) {
-				this.currentPage = Math.max(0, this.numberOfPages - 1)
+		numberOfPages(newValue) {
+			this.$store.dispatch('setGridNumberOfPages', { numberOfPages: newValue })
+			if (this.currentGridPage >= this.numberOfPages) {
+				this.$store.dispatch('setCurrentGridPage', { page: Math.max(0, newValue - 1) })
 			}
 		},
 	},
@@ -737,12 +740,12 @@ export default {
 		// },
 
 		handleClickNext() {
-			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
+			this.currentGridPage++
+			console.debug('handleclicknext, ', 'currentGridPage ', this.currentGridPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
 		},
 		handleClickPrevious() {
-			this.currentPage--
-			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
+			this.currentGridPage--
+			console.debug('handleclickprevious, ', 'currentGridPage ', this.currentGridPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickStripeCollapse() {
