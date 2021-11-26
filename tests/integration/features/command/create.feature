@@ -8,6 +8,7 @@ Feature: create
 
   Scenario: Create a group room for participant1
     Given invoking occ with "talk:room:create room1 --user participant1"
+    And the command output contains the text "Room token:"
     And the command output contains the text "Room successfully created"
     Then the command was successful
     And user "participant1" is participant of the following rooms (v4)

@@ -105,11 +105,6 @@ class Create extends Base {
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
 
-		if (!in_array($readOnly, [null, (string)Room::READ_WRITE, (string)Room::READ_ONLY], true)) {
-			$output->writeln('<error>Invalid value for option "--readonly" given.</error>');
-			return 1;
-		}
-
 		if (!in_array($listable, [
 			null,
 			(string)Room::LISTABLE_NONE,
