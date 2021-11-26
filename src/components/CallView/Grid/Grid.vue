@@ -229,7 +229,7 @@ export default {
 		 */
 		devMode: {
 			type: Boolean,
-			default: false,
+			default: true,
 		},
 		screenshotMode: {
 			type: Boolean,
