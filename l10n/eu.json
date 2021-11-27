@@ -637,6 +637,7 @@
     "Test this server" : "Probatu zerbitzari hau",
     "TURN servers" : "TURN zerbitzariak",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN zerbitzariak suhesi baten atzeko partaideen trafikoa bideratzeko erabiltzen dira. Partaideek ezin badute beraien artean konektatu, TURN zerbitzari bat beharrezkoa da seguru aski. Ikusi {linkstart}dokumentazio hau{linkend} konfigurazio jarraibideak jasotzeko.",
+    "Web server setup checks" : "Web zerbitzariaren konfigurazio egiaztapenak",
     "Failed" : "Huts egin du",
     "OK" : "Ados",
     "Checking …" : "Egiaztatzen ...",
