@@ -40,7 +40,7 @@ OC.L10N.register(
     "- Join the same conversation and call from multiple devices" : "- Připojit se k té stejné konverzaci a volat z vícero zařízení naráz",
     "- Send voice messages, share your location or contact details" : "- Posílat hlasové zprávy, sdílet svou polohu nebo podrobnosti o kontaktu",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Přidat skupiny do konverzace a jejich noví členové pak budou automaticky přidáni jako účastníci",
-    "- A preview of your audio and video is shown before joining a call" : "- Před připojením k hovoru se nyní zobrazuje náhled videa a zvuku",
+    "- A preview of your audio and video is shown before joining a call" : "- Před připojením k hovoru se nyní zobrazuje náhled videa a zvuku od vás",
     "- You can now blur your background in the newly designed call view" : "- V nově navrženém pohledu volání, si za sebou můžete nechat rozmazat pozadí",
     "- Moderators can now assign general and individual permissions to participants" : "- Moderátoři nyní mohou účastníkům upravovat všeobecná a individuální oprávnění",
     "There are currently no commands available." : "V tuto chvíli nejsou k dispozici žádné příkazy.",
