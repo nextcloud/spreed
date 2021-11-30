@@ -41,15 +41,6 @@
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0 && showVideoOverlay"
-						class="grid-navigation grid-navigation__previous"
-						:aria-label="t('spreed', 'Previous page of videos')"
-						@click="handleClickPrevious">
-						<ChevronLeft
-							decorative
-							title=""
-							:size="24" />
-					</button>
 					<div
 						ref="grid"
 						class="grid"
@@ -112,15 +103,6 @@
 							@switch-screen-to-id="switchScreenToId"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
-						class="grid-navigation grid-navigation__next"
-						:aria-label="t('spreed', 'Next page of videos')"
-						@click="handleClickNext">
-						<ChevronRight
-							decorative
-							title=""
-							:size="24" />
-					</button>
 				</div>
 				<LocalVideo
 					v-if="isStripe && !screenshotMode"
@@ -170,8 +152,6 @@ import { generateFilePath } from '@nextcloud/router'
 import EmptyCallView from '../shared/EmptyCallView'
 import VideoBottomBar from '../shared/VideoBottomBar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import ChevronRight from 'vue-material-design-icons/ChevronRight'
-import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 import ChevronUp from 'vue-material-design-icons/ChevronUp'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
 
@@ -183,8 +163,6 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 		VideoBottomBar,
-		ChevronRight,
-		ChevronLeft,
 		ChevronUp,
 		ChevronDown,
 	},
