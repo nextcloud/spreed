@@ -490,6 +490,19 @@ export default {
 			if (this.currentPage >= this.numberOfPages) {
 				this.currentPage = Math.max(0, this.numberOfPages - 1)
 			}
+			this.updateStorePaginationData()
+		},
+
+		currentPage() {
+			this.updateStorePaginationData()
+		},
+
+		hasPreviousPage() {
+			this.updateStorePaginationData()
+		},
+
+		hasNextPage() {
+			this.updateStorePaginationData()
 		},
 	},
 
@@ -754,6 +767,15 @@ export default {
 
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
+		},
+
+		updateStorePaginationData() {
+			this.$store.dispatch('setGridPaginationData', {
+				numberOfPages: this.numberOfPages,
+				currentPage: this.currentPage,
+				hasPreviousPage: this.hasPreviousPage,
+				hasNextPage: this.hasNextPage,
+			})
 		},
 
 	},

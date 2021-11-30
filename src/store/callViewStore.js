@@ -36,6 +36,7 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
+	setGridPaginationData: {},
 }
 
 const getters = {
@@ -61,6 +62,8 @@ const getters = {
 	getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
 		return state.backgroundImageAverageColorCache[videoBackgroundId]
 	},
+
+	getGridPaginationData: (state) => state.gridPaginationData,
 }
 
 const mutations = {
@@ -105,6 +108,11 @@ const mutations = {
 	clearBackgroundImageAverageColorCache(state) {
 		state.backgroundImageAverageColorCache = {}
 	},
+
+	setGridPaginationData(state, gridPaginationData) {
+		state.gridPaginationData = gridPaginationData
+	},
+
 }
 
 const actions = {
@@ -221,6 +229,10 @@ const actions = {
 
 	dismissQualityWarningTooltip(context) {
 		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
+	},
+
+	setGridPaginationData({ commit }, gridPaginationData) {
+		commit('setGridPaginationData', gridPaginationData)
 	},
 }
 
