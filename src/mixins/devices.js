@@ -126,7 +126,15 @@ export const devices = {
 
 			this.mediaDevicesManager.getUserMedia({ audio: true })
 				.then(stream => {
-					this.setAudioStream(stream)
+					if (!this.initialized) {
+						// The promise was fulfilled once the stream is no
+						// longer needed, so just discard it.
+						stream.getTracks().forEach((track) => {
+							track.stop()
+						})
+					} else {
+						this.setAudioStream(stream)
+					}
 
 					resetPendingGetUserMediaAudioCount()
 				})
@@ -178,7 +186,15 @@ export const devices = {
 
 			this.mediaDevicesManager.getUserMedia({ video: true })
 				.then(stream => {
-					this.setVideoStream(stream)
+					if (!this.initialized) {
+						// The promise was fulfilled once the stream is no
+						// longer needed, so just discard it.
+						stream.getTracks().forEach((track) => {
+							track.stop()
+						})
+					} else {
+						this.setVideoStream(stream)
+					}
 
 					resetPendingGetUserMediaVideoCount()
 				})
