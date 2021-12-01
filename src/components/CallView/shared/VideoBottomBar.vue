@@ -55,13 +55,13 @@
 						@click.stop="forceMute">
 						<Microphone
 							v-if="showMicrophone"
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
 						<MicrophoneOff
 							v-if="showMicrophoneOff"
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
@@ -72,13 +72,13 @@
 						@click.stop="toggleVideo">
 						<VideoIcon
 							v-if="showVideoButton"
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
 						<VideoOff
 							v-if="!showVideoButton"
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
@@ -89,7 +89,7 @@
 						:class="screenSharingButtonClass"
 						@click.stop="switchToScreen">
 						<Monitor
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
@@ -99,7 +99,7 @@
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
 						disabled="true">
 						<AlertCircle
-							:size="24"
+							:size="20"
 							title=""
 							fill-color="#ffffff"
 							decorative />
