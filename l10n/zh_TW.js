@@ -329,11 +329,11 @@ OC.L10N.register(
     "TCP only" : "僅TCP",
     "Mute audio (m)" : "靜音 (m)",
     "Allow guests to join via link " : "允許訪客透過連結加入",
-    "Camera" : "相機",
-    "Remove" : "移除",
-    "Enabled" : "已啟用",
     "Share link" : "分享連結",
     "Exit fullscreen (f)" : "離開全螢幕 (f)",
-    "Fullscreen (f)" : "全螢幕 (f)"
+    "Fullscreen (f)" : "全螢幕 (f)",
+    "Camera" : "相機",
+    "Remove" : "移除",
+    "Enabled" : "已啟用"
 },
 "nplurals=1; plural=0;");
