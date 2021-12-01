@@ -155,6 +155,11 @@
       <code>Base</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Command/User/Remove.php">
+    <UndefinedClass occurrences="1">
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Config.php">
     <NullArgument occurrences="1">
       <code>null</code>
