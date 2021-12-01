@@ -62,8 +62,8 @@
     "UDP and TCP" : "UDP ja TCP",
     "UDP only" : "Ainult UDP",
     "TCP only" : "Ainult TCP",
+    "Share link" : "Jaga link",
     "Remove" : "Eemalda",
-    "Enabled" : "Lubatud",
-    "Share link" : "Jaga link"
+    "Enabled" : "Lubatud"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
