@@ -319,11 +319,11 @@ OC.L10N.register(
     "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- مکالمات یک به یک هم اکنون برقرار است و دیگر نمی توان به طور تصادفی به مکالمه های گروهی تبدیل کرد. همچنین وقتی یکی از شرکت کنندگان مکالمه را ترک می کند ، مکالمه دیگر به طور خودکار حذف نمی شود. فقط در صورت ترک هر دو شرکت کننده ، مکالمه از سرور حذف می شود",
     "New in Talk 7" : "جدید در Talk 7",
     "Allow guests to join via link " : "مجاز بودن عضویت مهمان‌ها با پیوند",
-    "Camera" : "دوربین",
-    "Remove" : "حذف",
-    "Enabled" : "فعال شده",
     "Add participants to the conversation" : "افزودن عضو به گفتگو",
     "Share link" : "لینک را به اشتراک بگذارید",
-    "Fullscreen (f)" : "تمام صفحه (f)"
+    "Fullscreen (f)" : "تمام صفحه (f)",
+    "Camera" : "دوربین",
+    "Remove" : "حذف",
+    "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");
