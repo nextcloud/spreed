@@ -62,13 +62,26 @@ export default {
 	},
 
 	computed: {
+		gridPaginationData() {
+			return this.$store.getters.getGridPaginationData()
+		},
+
+		numberOfPages() {
+			return this.gridPaginationData.numberOfPages
+		},
+
+		currentPage() {
+			return this.gridPaginationData.currentPage
+		},
+
 		hasPreviousPage() {
-			return 1
+			return this.gridPaginationData.hasPreviousPage
 		},
 
 		hasNextPage() {
-			return 1
+			return this.gridPaginationData.hasNextPage
 		},
+
 	},
 
 	handleClickPrevious() {
