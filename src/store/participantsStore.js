@@ -341,7 +341,7 @@ const actions = {
 	updateSessionId({ commit, getters }, { token, participantIdentifier, sessionId }) {
 		const attendee = getters.findParticipant(token, participantIdentifier)
 		if (!attendee) {
-			console.error('Participant not found', participantIdentifier)
+			console.error('Participant not found for conversation', token, participantIdentifier)
 			return
 		}
 
@@ -355,7 +355,7 @@ const actions = {
 	updateUser({ commit, getters }, { token, participantIdentifier, updatedData }) {
 		const attendee = getters.findParticipant(token, participantIdentifier)
 		if (!attendee) {
-			console.error('Participant not found', participantIdentifier)
+			console.error('Participant not found for conversation', token, participantIdentifier)
 			return
 		}
 
@@ -370,7 +370,7 @@ const actions = {
 
 		const attendee = getters.findParticipant(token, participantIdentifier)
 		if (!attendee) {
-			console.error('Participant not found', participantIdentifier)
+			console.error('Participant not found for conversation', token, participantIdentifier)
 			return
 		}
 
@@ -405,7 +405,7 @@ const actions = {
 
 		const attendee = getters.findParticipant(token, participantIdentifier)
 		if (!attendee) {
-			console.error('Participant not found', participantIdentifier)
+			console.error('Participant not found for conversation', token, participantIdentifier)
 			return
 		}
 
