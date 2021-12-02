@@ -91,9 +91,9 @@ OC.L10N.register(
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "sólo UDP",
     "TCP only" : "sólo TCP",
-    "Share link" : "Compartir link",
     "Camera" : "Cámara",
     "Remove" : "Borrar",
-    "Enabled" : "Habilitado"
+    "Enabled" : "Habilitado",
+    "Share link" : "Compartir link"
 },
 "nplurals=2; plural=(n != 1);");

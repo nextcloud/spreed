@@ -494,11 +494,11 @@ OC.L10N.register(
     "Disable video (v)" : "Gera myndskeið óvirk (v)",
     "Enable video (v)" : "Virkja myndskeið (v)",
     "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Virkja myndskeið (v) - Tengingin þín verður trufluð í stutta stund á meðan myndmerkið er virkjað í fyrsta skipti",
-    "Share link" : "Deila tengli",
-    "Exit fullscreen (f)" : "Hætta í skjáfylli (f)",
-    "Fullscreen (f)" : "Fylla skjáinn (f)",
     "Camera" : "Myndavél",
     "Remove" : "Fjarlægja",
-    "Enabled" : "Virkt"
+    "Enabled" : "Virkt",
+    "Share link" : "Deila tengli",
+    "Exit fullscreen (f)" : "Hætta í skjáfylli (f)",
+    "Fullscreen (f)" : "Fylla skjáinn (f)"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

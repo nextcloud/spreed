@@ -230,10 +230,10 @@
     "Disable video (v)" : "Atspējot video (v)",
     "Enable video (v)" : "Iespējot video (v)",
     "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Iespējot video (v) — jūsu savienojums tiks uz īsu brīdi pārtraukts, pirmoreiz iespējojot video",
+    "Remove" : "Noņemt",
+    "Enabled" : "Iespējots",
     "Share link" : "Koplietot saiti",
     "Exit fullscreen (f)" : "Iziet no pilnekrāna (f)",
-    "Fullscreen (f)" : "Pilnekrāns (f)",
-    "Remove" : "Noņemt",
-    "Enabled" : "Iespējots"
+    "Fullscreen (f)" : "Pilnekrāns (f)"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }
