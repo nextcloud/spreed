@@ -307,6 +307,9 @@ export default {
 		color: white;
 		margin-right: 4px;
 		position: relative;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		&--promoted {
 			font-weight: bold;
@@ -321,6 +324,8 @@ export default {
 		background-size: 22px;
 		text-align: center;
 		margin: 0 4px;
+		display: flex;
+		flex-wrap: nowrap;
 	}
 	&__button {
 		opacity: 0.8;
