@@ -28,6 +28,7 @@ use OC\User\NoUserException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -120,11 +121,13 @@ trait TInitialState {
 				$userFolder = $rootFolder->getUserFolder($user->getUID());
 
 				try {
-					if (!$userFolder->nodeExists($attachmentFolder)) {
-						$userFolder->newFolder($attachmentFolder);
+					try {
+						$folder = $userFolder->get($attachmentFolder);
+					} catch (NotFoundException $e) {
+						$folder = $userFolder->newFolder($attachmentFolder);
 					}
 
-					$freeSpace = $userFolder->get($attachmentFolder)->getFreeSpace();
+					$freeSpace = $folder->getFreeSpace();
 				} catch (NotPermittedException $e) {
 					$attachmentFolder = '/';
 					$this->serverConfig->setUserValue($user->getUID(), 'spreed', 'attachment_folder', '/');
