@@ -1202,7 +1202,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketa",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" elkarrizketaren ezarpenak",
     "You can not send messages to this conversation at the moment" : "Ezin dituzu mezuak bidali elkarrizketa honetara une honetan",
-    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Konfiguratu jakinarazpen maila uneko elkarrizketarentzat. Honek zuk jasotzen dituzun jakinarazpenei bakarrik eragingo die."
+    "Add a description for this conversation" : "Gehitu deskribapen bat elkarrizketa honi"
 },
 "nplurals=2; plural=(n != 1);");

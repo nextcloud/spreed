@@ -1163,7 +1163,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Pogovor »{conversationName}«",
     "Settings for conversation \"{conversationName}\"" : "Nastavitve pogovora »{conversationName}«",
     "You can not send messages to this conversation at the moment" : "Trenutno ni mogoče pošiljati sporočil v ta pogovor.",
-    "Add a description for this conversation" : "Dodaj opis za ta pogovor",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavi raven obveščanja za trenutni pogovor. To vpliva le na prejemanje obvestil."
+    "Add a description for this conversation" : "Dodaj opis za ta pogovor"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
