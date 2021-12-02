@@ -1065,7 +1065,6 @@
     "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
     "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz."
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

@@ -815,7 +815,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Cuộc trò chuyện \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Cài đặt cho cuộc trò chuyện \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Bạn không thể gửi tin nhắn cho cuộc trò chuyện này vào lúc này",
-    "Add a description for this conversation" : "Thêm mô tả cho cuộc trò chuyện này",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Đặt mức thông báo cho cuộc trò chuyện hiện tại. Điều này sẽ chỉ ảnh hưởng đến các thông báo bạn nhận được."
+    "Add a description for this conversation" : "Thêm mô tả cho cuộc trò chuyện này"
 },
 "nplurals=1; plural=0;");

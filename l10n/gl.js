@@ -1034,7 +1034,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Conversa «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Axustes para a conversa «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Non pode enviar mensaxes a esta conversa neste momento",
-    "Add a description for this conversation" : "Engadir unha descrición para esta conversa",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Establecer o nivel de notificación para a conversa actual. Isto afectará só ás notificacións que reciba."
+    "Add a description for this conversation" : "Engadir unha descrición para esta conversa"
 },
 "nplurals=2; plural=(n != 1);");

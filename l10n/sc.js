@@ -1125,7 +1125,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Resonada \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Impostatziones de sa resonada \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Non podes imbiare messàgios in custa resonada in custu momentu",
-    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Imposta su livellu de notìfica pro custa resonada. Cust'atzione at a pertocare isceti is notìficas chi retzis."
+    "Add a description for this conversation" : "Agiunghe una descritzione pro custa resonada"
 },
 "nplurals=2; plural=(n != 1);");

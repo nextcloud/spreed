@@ -1133,7 +1133,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Обсуждение «{conversationName}»",
     "Settings for conversation \"{conversationName}\"" : "Параметры обсуждения «{conversationName}»",
     "You can not send messages to this conversation at the moment" : "Сейчас вы не можете отправлять сообщения в это обсуждение",
-    "Add a description for this conversation" : "Добавьте описание этого обсуждения",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Установить уровень уведомления для текущего разговора. Это повлияет только на получаемые вами уведомления."
+    "Add a description for this conversation" : "Добавьте описание этого обсуждения"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

@@ -1160,7 +1160,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "会話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "会話 {conversationName} の設定",
     "You can not send messages to this conversation at the moment" : "現在、この会話にメッセージを送信することはできませ",
-    "Add a description for this conversation" : "この会話の詳細を追加する",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "現在の会話の通知レベルを設定します。これから受信する通知にのみ有効です。"
+    "Add a description for this conversation" : "この会話の詳細を追加する"
 },
 "nplurals=1; plural=0;");

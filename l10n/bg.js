@@ -1210,7 +1210,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Разговор „{conversationName}“",
     "Settings for conversation \"{conversationName}\"" : "Настройки за разговор „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "В момента не можете да изпращате съобщения до този разговор",
-    "Add a description for this conversation" : "Добавяне на  описание за този разговор",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Задаване на ниво на известяване за текущия разговор. Това ще засегне само вашите известия."
+    "Add a description for this conversation" : "Добавяне на  описание за този разговор"
 },
 "nplurals=2; plural=(n != 1);");
