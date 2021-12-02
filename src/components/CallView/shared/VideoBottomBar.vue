@@ -290,7 +290,7 @@ export default {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	padding: 0 20px 12px 24px;
+	padding: 0 0px 12px 16px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
