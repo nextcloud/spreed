@@ -215,8 +215,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
-		$n->expects($this->once())
-			->method('getObjectId')
+		$n->method('getObjectId')
 			->willReturn('roomToken');
 
 		$this->notifier->prepare($n, 'de');
@@ -333,8 +332,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
-		$n->expects($this->once())
-			->method('getObjectId')
+		$n->method('getObjectId')
 			->willReturn('roomToken');
 
 		return $n;
@@ -466,8 +464,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('room');
-		$n->expects($this->once())
-			->method('getObjectId')
+		$n->method('getObjectId')
 			->willReturn('roomToken');
 
 		$this->notifier->prepare($n, 'de');
@@ -1028,8 +1025,7 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->exactly(2))
 			->method('getObjectType')
 			->willReturn('chat');
-		$notification->expects($this->once())
-			->method('getObjectId')
+		$notification->method('getObjectId')
 			->willReturn('roomToken');
 		$notification->expects($this->once())
 			->method('getMessageParameters')
@@ -1043,7 +1039,7 @@ class NotifierTest extends \Test\TestCase {
 			['Incorrect app', 'invalid-app', null, null, null, null, null],
 			'User can not use Talk' => [AlreadyProcessedException::class, 'spreed', true, null, null, null, null],
 			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null, '12345'],
-			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null],
+			'Invalid room without token' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null],
 			['Unknown subject', 'spreed', false, true, 'invalid-subject', null, null],
 			['Unknown object type', 'spreed', false, true, 'invitation', null, 'invalid-object-type'],
 			'Calling user does not exist anymore' => [AlreadyProcessedException::class, 'spreed', false, true, 'invitation', ['admin'], 'room'],
@@ -1075,16 +1071,14 @@ class NotifierTest extends \Test\TestCase {
 			$room = $this->createMock(Room::class);
 			$room->expects($this->never())
 				->method('getType');
-			$n->expects($this->once())
-				->method('getObjectId')
+			$n->method('getObjectId')
 				->willReturn($token);
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')
 				->with($token)
 				->willReturn($room);
 		} elseif ($validRoom === false) {
-			$n->expects($this->once())
-				->method('getObjectId')
+			$n->method('getObjectId')
 				->willReturn($token);
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')

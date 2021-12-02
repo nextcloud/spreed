@@ -392,6 +392,9 @@ class Notifier implements INotifier {
 		if (!$this->notificationManager->isPreparingPushNotification()) {
 			$notification->setParsedMessage($parsedMessage);
 			$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
+
+			// Forward the message ID as well to the clients, so they can quote the message on replies
+			$notification->setObject('chat', $notification->getObjectId() . '/' . $comment->getId());
 		}
 
 		$richSubjectParameters = [
