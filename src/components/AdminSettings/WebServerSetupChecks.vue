@@ -107,7 +107,7 @@ export default {
 			}
 
 			if (this.backgroundBlurAvailable === true) {
-				return t('spreed', 'OK: ".wasm" and ".tflite" files were properly returned by the web server')
+				return t('spreed', 'OK: ".wasm" and ".tflite" files were properly returned by the web server.')
 			}
 
 			return t('spreed', 'Checking …')
