@@ -1749,21 +1749,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given /^the following app config is set$/
+	 * @Given the following :appId app config is set
 	 *
 	 * @param TableNode $formData
 	 */
-	public function setAppConfig(TableNode $formData): void {
+	public function setAppConfig(string $appId, TableNode $formData): void {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		foreach ($formData->getRows() as $row) {
-			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/spreed/' . $row[0], [
+			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
 				'value' => $row[1],
 			]);
-			$this->changedConfigs[] = $row[0];
+			$this->changedConfigs[$appId][] = $row[0];
 		}
 		$this->setCurrentUser($currentUser);
 	}
+
 
 	/**
 	 * @Given /^guest accounts can be created$/
@@ -1811,8 +1812,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/apps/spreedcheats/');
-		foreach ($this->changedConfigs as $config) {
-			$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/spreed/' . $config);
+		foreach ($this->changedConfigs as $appId => $configs) {
+			foreach ($configs as $config) {
+				$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $config);
+			}
 		}
 
 		$this->setCurrentUser($currentUser);

@@ -197,3 +197,13 @@ Feature: one-to-one
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 1               |
+
+  Scenario: Check share restrictions on one to one conversatio
+    Given the following "core" app config is set
+      | shareapi_restrict_user_enumeration_full_match | no |
+      | shareapi_allow_share_dialog_user_enumeration | yes |
+      | shareapi_restrict_user_enumeration_to_group | yes |
+      | shareapi_restrict_user_enumeration_to_phone | yes |
+    And user "participant1" creates room "room15" with 403 (v4)
+      | roomType | 1 |
+      | invite   | participant2 |

@@ -4,7 +4,7 @@ Feature: federation/invite
     Given user "participant2" exists
 
   Scenario: federation is disabled
-    Given the following app config is set
+    Given the following "spreed" app config is set
       | federation_enabled | no |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
@@ -15,7 +15,7 @@ Feature: federation/invite
       | users      | participant1 | 1               |
 
   Scenario: federation is enabled
-    Given the following app config is set
+    Given the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
