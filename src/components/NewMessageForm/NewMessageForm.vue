@@ -71,6 +71,7 @@
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
 						<EmojiPicker
+							v-if="!disabled"
 							:container="container"
 							@select="addEmoji">
 							<button
@@ -85,6 +86,16 @@
 									title="" />
 							</button>
 						</EmojiPicker>
+						<!-- Disabled emoji picker placeholder button -->
+						<button v-else
+							type="button"
+							:disabled="true"
+							class="nc-button nc-button__main emoji-picker-button">
+							<EmoticonOutline
+								:size="16"
+								decorative
+								title="" />
+						</button>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote
