@@ -186,7 +186,8 @@ class Manager {
 			(string) $row['name'],
 			(string) $row['description'],
 			(string) $row['password'],
-			(string) $row['server_url'],
+			(string) $row['remote_server'],
+			(string) $row['remote_token'],
 			(int) $row['active_guests'],
 			(int) $row['default_permissions'],
 			(int) $row['call_permissions'],
@@ -662,13 +663,15 @@ class Manager {
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
 				$query->expr()->eq('a.room_id', 'r.id')
-			))
-			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+			));
+
 
 		if ($serverUrl === null) {
-			$query->andWhere($query->expr()->isNull('r.server_url'));
+			$query->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 		} else {
-			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($serverUrl)));
+			$query
+				->where($query->expr()->eq('r.remote_token', $query->createNamedParameter($token)))
+				->andWhere($query->expr()->eq('r.remote_server', $query->createNamedParameter($serverUrl)));
 		}
 
 		if ($sessionId !== null) {
@@ -702,7 +705,7 @@ class Manager {
 
 	/**
 	 * @param string $token
-	 * @param string|null $preloadUserId Load this participants information if possible
+	 * @param string|null $preloadUserId Load this participant's information if possible
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
@@ -715,13 +718,14 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
-		$query->from('talk_rooms', 'r')
-			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+		$query->from('talk_rooms', 'r');
 
 		if ($serverUrl === null) {
-			$query->andWhere($query->expr()->isNull('r.server_url'));
+			$query->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 		} else {
-			$query->andWhere($query->expr()->eq('r.server_url', $query->createNamedParameter($serverUrl)));
+			$query
+				->where($query->expr()->eq('r.remote_token', $query->createNamedParameter($token)))
+				->andWhere($query->expr()->eq('r.remote_server', $query->createNamedParameter($serverUrl)));
 		}
 
 
@@ -951,7 +955,9 @@ class Manager {
 	 * @return Room
 	 * @throws DBException
 	 */
-	public function createRemoteRoom(int $type, string $name, string $token, string $serverUrl): Room {
+	public function createRemoteRoom(int $type, string $name, string $remoteToken, string $remoteServer): Room {
+		$token = $this->getNewToken();
+
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->insert('talk_rooms')
@@ -959,7 +965,8 @@ class Manager {
 				'name' => $qb->createNamedParameter($name),
 				'type' => $qb->createNamedParameter($type, IQueryBuilder::PARAM_INT),
 				'token' => $qb->createNamedParameter($token),
-				'server_url' => $qb->createNamedParameter($serverUrl),
+				'remote_token' => $qb->createNamedParameter($remoteToken),
+				'remote_server' => $qb->createNamedParameter($remoteServer),
 			]);
 
 		$qb->executeStatement();

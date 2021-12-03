@@ -185,7 +185,9 @@ class Room {
 	/** @var string */
 	private $password;
 	/** @var string */
-	private $serverUrl;
+	private $remoteServer;
+	/** @var string */
+	private $remoteToken;
 	/** @var int */
 	private $activeGuests;
 	/** @var int */
@@ -228,7 +230,8 @@ class Room {
 								string $name,
 								string $description,
 								string $password,
-								string $serverUrl,
+								string $remoteServer,
+								string $remoteToken,
 								int $activeGuests,
 								int $defaultPermissions,
 								int $callPermissions,
@@ -256,7 +259,8 @@ class Room {
 		$this->name = $name;
 		$this->description = $description;
 		$this->password = $password;
-		$this->serverUrl = $serverUrl;
+		$this->remoteServer = $remoteServer;
+		$this->remoteToken = $remoteToken;
 		$this->activeGuests = $activeGuests;
 		$this->defaultPermissions = $defaultPermissions;
 		$this->callPermissions = $callPermissions;
@@ -401,12 +405,16 @@ class Room {
 		return $this->password;
 	}
 
-	public function getServerUrl(): string {
-		return $this->serverUrl;
+	public function getRemoteServer(): string {
+		return $this->remoteServer;
+	}
+
+	public function getRemoteToken(): string {
+		return $this->remoteToken;
 	}
 
 	public function isFederatedRemoteRoom(): bool {
-		return $this->serverUrl !== '';
+		return $this->remoteServer !== '';
 	}
 
 	public function setParticipant(?string $userId, Participant $participant): void {
