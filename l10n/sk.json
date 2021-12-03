@@ -38,6 +38,9 @@
     "- Join the same conversation and call from multiple devices" : "- Pripojte sa k tej istej konverzácii a telefonujte z viacerých zariadení",
     "- Send voice messages, share your location or contact details" : "- Posielajte hlasové správy, zdieľajte svoju polohu alebo kontaktné údaje",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Pridajte skupiny do konverzácie a noví členovia skupiny sa automaticky pridajú ako účastníci",
+    "- A preview of your audio and video is shown before joining a call" : "- Pred pripojením k hovoru sa zobrazí ukážka vášho zvuku a videa",
+    "- You can now blur your background in the newly designed call view" : "- Teraz môžete rozmazať pozadie v novom zobrazení hovoru",
+    "- Moderators can now assign general and individual permissions to participants" : "- Moderátori môžu teraz prideľovať účastníkom všeobecné a individuálne práva",
     "There are currently no commands available." : "Momentálne nie sú k dispozícii žiadne príkazy.",
     "The command does not exist" : "Príkaz neexistuje",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Pri spustení príkazu sa vyskytla chyba. Požiadajte správcu o kontrolu protokolov.",
@@ -637,6 +640,14 @@
     "Test this server" : "Vyskúšť tento server",
     "TURN servers" : "TURN servery",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURN server slúži ako proxy pre prenos od účastníkov, ktorí sú za bránou firewall. Ak sa jednotliví účastníci nemôžu spojiť s ostatnými, najskor je potrebný TURN server. Pokyny na nastavenie nájdete v {linkstart}tejto dokumentácii{linkend}.",
+    "Web server setup checks" : "Kontroly nastavenia webového servera",
+    "Files required for background blur can be loaded" : "Súbory potrebné na rozostrenie pozadia môžu byť načítané",
+    "Failed" : "Zlyhalo",
+    "OK" : "OK",
+    "Checking …" : "Kontrolujem ...",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Zlyhalo: WebAssembly je v tomto prehliadači zakázané alebo nie je podporované. Povoľte WebAssembly alebo použite prehliadač s podporou na vykonanie kontroly.",
+    "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Zlyhalo: Webový server správne nevrátil súbory „.wasm“ a „.tflite“. Skontrolujte časť „Systémové požiadavky“ v dokumentácii Talk.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“.",
     "{nickName} raised their hand." : "{nickName} zdvihol ruku.",
     "A participant raised their hand." : "Účastník zdvihol ruku.",
     "Previous page of videos" : "Predchodzia stránka videí",
@@ -1197,6 +1208,7 @@
     "Conversation \"{conversationName}\"" : "Konverzácia \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Nastavenia konverzácie \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Teraz nemôžete poslať správu do tejto konverzácie",
-    "Add a description for this conversation" : "Pridať popis tejto konverzácie"
+    "Add a description for this conversation" : "Pridať popis tejto konverzácie",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavte úroveň upozornení pre aktuálnu konverzáciu. Ovplyvní to iba oznámenia, ktoré dostanete."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
