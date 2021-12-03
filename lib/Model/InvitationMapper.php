@@ -32,6 +32,7 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\IUser;
 
 /**
  * Class InvitationMapper
@@ -73,6 +74,21 @@ class InvitationMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName())
 			->where($qb->expr()->eq('room_id', $qb->createNamedParameter($room->getId())));
+
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * @param IUser $user
+	 * @return Invitation[]
+	 * @throws DBException
+	 */
+	public function getInvitationsForUser(IUser $user): array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($user->getUID())));
 
 		return $this->findEntities($qb);
 	}

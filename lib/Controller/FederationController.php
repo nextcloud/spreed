@@ -84,4 +84,18 @@ class FederationController extends OCSController {
 		$this->federationManager->rejectRemoteRoomShare($user, $id);
 		return new DataResponse();
 	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function getShares(): DataResponse {
+		$user = $this->userSession->getUser();
+		if (!$user instanceof IUser) {
+			throw new UnauthorizedException();
+		}
+		$invitations = $this->federationManager->getRemoteRoomShares($user);
+		return new DataResponse($invitations);
+	}
 }

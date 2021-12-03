@@ -175,6 +175,15 @@ class FederationManager {
 	}
 
 	/**
+	 * @param IUser $user
+	 * @return Invitation[]
+	 * @throws DBException
+	 */
+	public function getRemoteRoomShares(IUser $user): array {
+		return $this->invitationMapper->getInvitationsForUser($user);
+	}
+
+	/**
 	 * @throws DBException
 	 */
 	public function getNumberOfInvitations(Room $room): int {

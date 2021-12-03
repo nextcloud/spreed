@@ -31,5 +31,6 @@ return [
 	'ocs' => [
 		['name' => 'Federation#acceptShare', 'url' => 'api/{apiVersion}/federation/invitation/{id}', 'verb' => 'POST', 'requirements' => $requirements],
 		['name' => 'Federation#rejectShare', 'url' => 'api/{apiVersion}/federation/invitation/{id}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'Federation#getShares', 'url' => 'api/{apiVersion}/federation/invitation', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];
