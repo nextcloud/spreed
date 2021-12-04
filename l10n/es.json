@@ -646,7 +646,6 @@
     "Checking …" : "Comprobando ...",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Fallo: WebAssembly está deshabilitado o no está soportado por este navegador. Por favor, activa WebAssembly o usa un navegador con soporte para que haga la comprobación.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Fallo: los archivos \".wasm\" y \".tflite\" no han sido devueltos correctamente por el servidor web. Por favor compruebe la sección \"Requisitos del sistema\" en la documentación de Talk.",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: los archivos \".wasm\" y \".tflite\" han sido devueltos correctamente por el servidor web",
     "{nickName} raised their hand." : "{nickName} ha levantado la mano",
     "A participant raised their hand." : "Alguien ha levantado la mano.",
     "Previous page of videos" : "Página anterior de vídeos",
