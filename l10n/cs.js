@@ -649,7 +649,6 @@ OC.L10N.register(
     "Checking …" : "Kontrola…",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Nezdar: WebAssembly je vypnuté nebo nepodporované prohlížečem. Pro provedení kontroly zapněte WebAssembly nebo použijte prohlížeč, který jej podporuje.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Nezdařilo se: webový server nevrátil správně soubory „.wasm“ a „.tflite“. Podívejte se do sekce „Požadavky na systém“ v dokumentaci k Talk.",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: server správně vrátil soubory „.wasm“ a „.tflite“",
     "{nickName} raised their hand." : "{nickName} se přihlásil(a) o slovo.",
     "A participant raised their hand." : "Účastník se hlásí.",
     "Previous page of videos" : "Předchozí stránka s videi",
@@ -1210,6 +1209,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
     "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "Nyní není možné do této konverzace posílat zprávy",
-    "Add a description for this conversation" : "Přidat popis k této konverzaci"
+    "Add a description for this conversation" : "Přidat popis k této konverzaci",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
