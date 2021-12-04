@@ -647,7 +647,6 @@
     "Checking …" : "Kontrolujem ...",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Zlyhalo: WebAssembly je v tomto prehliadači zakázané alebo nie je podporované. Povoľte WebAssembly alebo použite prehliadač s podporou na vykonanie kontroly.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Zlyhalo: Webový server správne nevrátil súbory „.wasm“ a „.tflite“. Skontrolujte časť „Systémové požiadavky“ v dokumentácii Talk.",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“.",
     "{nickName} raised their hand." : "{nickName} zdvihol ruku.",
     "A participant raised their hand." : "Účastník zdvihol ruku.",
     "Previous page of videos" : "Predchodzia stránka videí",
