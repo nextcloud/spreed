@@ -40,6 +40,9 @@ OC.L10N.register(
     "- Join the same conversation and call from multiple devices" : "- Csatlakozzon ugyanazon beszélgetéshez és híváshoz több eszközzel",
     "- Send voice messages, share your location or contact details" : "- Küldjön hangüzeneteket, ossza meg a helyét vagy névjegyadatait",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Adjon csoportokat egy beszélgetéshez, és az új csoporttagok automatikusan hozzáadásra kerülnek résztvevőként",
+    "- A preview of your audio and video is shown before joining a call" : "- Megjelenik a hang és a videó előnézete, mielőtt csatlakozik a híváshoz",
+    "- You can now blur your background in the newly designed call view" : "- Már elhomályosíthatja a hátteret az újratervezett hívásnézetben",
+    "- Moderators can now assign general and individual permissions to participants" : "- A moderátorok most már általános és egyéni jogosultságokat is hozzárendelhetnek a résztvevőkhöz",
     "There are currently no commands available." : "Jelenleg nem érhetők el parancsok.",
     "The command does not exist" : "A parancs nem létezik",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Hiba történt a parancs futtatása során. Kérje meg a rendszergazdát, hogy ellenőrizze a naplókat.",
@@ -639,6 +642,13 @@ OC.L10N.register(
     "Test this server" : "Kiszolgáló tesztelése",
     "TURN servers" : "TURN kiszolgálók",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "A TURN kiszolgáló a tűzfal mögött lévő résztvevők forgalmának proxyzására szolgál. Ha az egyes résztvevők nem tudnak csatlakozni másokhoz, akkor valószínűleg TURN kiszolgálóra van szükség. A telepítési utasításokért lásd {linkstart}ezt a dokumentációt{linkend}.",
+    "Web server setup checks" : "Webkiszolgáló beállítási ellenőrzések",
+    "Files required for background blur can be loaded" : "A háttér elhomályosításához szükséges fájlok betölthetők",
+    "Failed" : "Sikertelen",
+    "OK" : "Rendben",
+    "Checking …" : "Ellenőrzés…",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Sikertelen: a WebAssembly le van tiltva, vagy nem támogatott ebben a böngészőben. Engedélyezze a WebAssemblyt, vagy az ellenőrzéshez használjon egy olyan böngészőt, amely támogatja.",
+    "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Sikertelen: a webkiszolgáló nem helyesen adta vissza a „.wasm” és a „.tflite” fájlokat. Ellenőrizze a Beszélgetés dokumentációjának „Rendszerkövetelmények” szakaszát.",
     "{nickName} raised their hand." : "{nickName} felemelte a kezét.",
     "A participant raised their hand." : "Egy résztvevő felemelte a kezét.",
     "Previous page of videos" : "A videók előző oldala",
@@ -1199,6 +1209,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti."
 },
 "nplurals=2; plural=(n != 1);");
