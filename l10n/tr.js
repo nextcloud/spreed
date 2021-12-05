@@ -649,6 +649,7 @@ OC.L10N.register(
     "Checking …" : "Denetleniyor…",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Tamamlanamadı: WebAssembly devre dışı bırakılmış ya da bu tarayıcıda desteklenmiyor. Denetlemek için WebAssembly eklentisini etkinleştirin ya da destekleyen bir tarayıcı kullanın.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Tamamlanamadı: Web sunucusu \".wasm\" ve \".tflite\" dosyalarını düzgün şekilde geri döndürmedi. Lütfen Talk belgelerinde \"sistem gereksinimleri\" bölümüne bakın.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "Tamamlandı: Web sunucu tarafından \".wasm\" ve \".tflite\" dosyaları düzgün şekilde geri döndürüldü.",
     "{nickName} raised their hand." : "{nickName} elini kaldırdı.",
     "A participant raised their hand." : "Bir katılımcı elini kaldırdı.",
     "Previous page of videos" : "Önceki görüntü sayfası",
