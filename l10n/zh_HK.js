@@ -649,6 +649,7 @@ OC.L10N.register(
     "Checking …" : "檢查中 ...",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "失敗： 此瀏覽器中禁用或不支持 WebAssembly。請啟用 WebAssembly 或使用支持它的瀏覽器進行檢查。",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "失敗：Web 伺服器沒有正確返回 ”.wasm” 和 “.tflite” 檔案。請查看 Talk 說明書中的“系統需求”部分。",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK：Web 伺服器正確返回了 “.wasm” 和 “.tflite” 檔案。",
     "{nickName} raised their hand." : "{nickName} 舉起了手。",
     "A participant raised their hand." : "一位參與者舉起了手。",
     "Previous page of videos" : "視像的上一頁",
