@@ -649,6 +649,7 @@ OC.L10N.register(
     "Checking …" : "Kontrola…",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Nezdar: WebAssembly je vypnuté nebo nepodporované prohlížečem. Pro provedení kontroly zapněte WebAssembly nebo použijte prohlížeč, který jej podporuje.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Nezdařilo se: webový server nevrátil správně soubory „.wasm“ a „.tflite“. Podívejte se do sekce „Požadavky na systém“ v dokumentaci k Talk.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: server správně vrátil soubory „.wasm“ a „.tflite“.",
     "{nickName} raised their hand." : "{nickName} se přihlásil(a) o slovo.",
     "A participant raised their hand." : "Účastník se hlásí.",
     "Previous page of videos" : "Předchozí stránka s videi",
