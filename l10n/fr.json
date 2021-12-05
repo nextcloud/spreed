@@ -647,6 +647,7 @@
     "Checking …" : "Vérification...",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Echec : WebAssembly est désactivé ou n'est pas supporté dans ce navigateur. Merci d'activer WebAssembly ou d'utiliser un navigateur qui le supporte pour lancer la vérification.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Echec : les fichiers \".wasm\" et \".tflite\" ne sont pas traités correctement par le serveur web. Merci de vérifier la section \"Pré-requis techniques\" de la documentation de Talk.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK : les fichiers \".wasm\" et \".tflite\" ont été correctement renvoyés par le serveur web.",
     "{nickName} raised their hand." : "{nickName} a levé la main.",
     "A participant raised their hand." : "Un participant a levé la main.",
     "Previous page of videos" : "Page précédente de vidéos",
@@ -942,6 +943,7 @@
     "Your browser does not support playing audio files" : "Votre navigateur web ne prend pas en charge les fichiers audio",
     "Contact" : "Contact",
     "{stack} in {board}" : "{stack} dans {board}",
+    "Deck Card" : "Carte Deck",
     "Remove {fileName}" : "Supprimer {fileName}",
     "The message has been forwarded to {selectedConversationName}" : "Le message a été transmis sur {selectedConversationName}",
     "Go to conversation" : "Aller à la conversation",
@@ -969,6 +971,7 @@
     "Write message, @ to mention someone …" : "Écrivez un message, utilisez @ pour mentionner quelqu'un …",
     "Invalid path selected" : "Chemin sélectionné non valide",
     "Start a call" : "Commencer un appel",
+    "Skip the lobby" : "Ignorer la salle d'attente",
     "Enable the microphone" : "Activer le micro",
     "Enable the camera" : "Activer la caméra",
     "Share the screen" : "Partager l'écran",
@@ -976,6 +979,7 @@
     "Updating permissions" : "Mise à jour des permissions",
     "In this conversation <strong>{user}</strong> can:" : "Dans cette conversation <strong>{user}</strong>  peut :",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Modifier les permissions par défaut pour les participants de la conversation  <strong>{conversationName}</strong>",
+    "Disable lobby" : "Désactiver la salle d'attente",
     "moderator" : "modérateur",
     "bot" : "robot",
     "guest" : "invité",
@@ -1080,7 +1084,9 @@
     "Link to a conversation" : "Lier à une conversation",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Vous avez déjà ouvert une conversation dans une autre fenêtre ou sur un autre périphérique. Ce n'est pas supporté pour l'instant dans Nextcloud Talk, votre session a été fermée ",
     "Join a conversation or start a new one" : "Rejoignez une conversation ou démarrez-en une nouvelle",
+    "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La carte Deck a été publiée dans la <a href=\"{link}\">conversation</a> sélectionnée.",
     "No permission to post messages in this conversation" : "Interdit de publier un message dans cette conversation",
+    "An error occurred while posting deck card to conversation." : "Une erreur s'est produite lors de la publication de la carte Deck dans la conversation.",
     "Post to a conversation" : "Envoyer dans une conversation",
     "Post to conversation" : "Envoyer à la conversation",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Le navigateur que vous utilisez n'est pas entièrement pris en charge par Nextcloud Talk. Veuillez utiliser la dernière version de Mozilla Firefox, Microsoft Edge, Google Chrome, Opera ou Apple Safari.",
@@ -1202,6 +1208,7 @@
     "Conversation \"{conversationName}\"" : "Conversation \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Paramètres de la conversation \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Vous ne pouvez pas envoyer de messages à cette conversation pour le moment",
-    "Add a description for this conversation" : "Ajouter une description pour cette conversation"
+    "Add a description for this conversation" : "Ajouter une description pour cette conversation",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Définir le niveau de notification pour la conversation en cours. Cela affectera uniquement les notifications que vous recevez."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
