@@ -24,8 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Talk\Manager;
-use OCA\Talk\Room;
-use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
@@ -34,13 +32,9 @@ class UserDeletedListener implements IEventListener {
 
 	/** @var Manager */
 	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
 
-	public function __construct(Manager $manager,
-								ParticipantService $participantService) {
+	public function __construct(Manager $manager) {
 		$this->manager = $manager;
-		$this->participantService = $participantService;
 	}
 
 	public function handle(Event $event): void {
@@ -50,22 +44,6 @@ class UserDeletedListener implements IEventListener {
 		}
 
 		$user = $event->getUser();
-
-		$rooms = $this->manager->getRoomsForUser($user->getUID());
-		foreach ($rooms as $room) {
-			if ($this->participantService->getNumberOfUsers($room) === 1) {
-				$room->deleteRoom();
-			} else {
-				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
-			}
-		}
-
-		$leftRooms = $this->manager->getLeftOneToOneRoomsForUser($user->getUID());
-		foreach ($leftRooms as $room) {
-			// We are changing the room type and name so a potential follow up
-			// user with the same user-id can not reopen the one-to-one conversation.
-			$room->setType(Room::TYPE_GROUP, true);
-			$room->setName($user->getDisplayName(), '');
-		}
+		$this->manager->removeUserFromAllRooms($user);
 	}
 }

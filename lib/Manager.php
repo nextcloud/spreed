@@ -389,6 +389,25 @@ class Manager {
 		return $rooms;
 	}
 
+	public function removeUserFromAllRooms(IUser $user) {
+		$rooms = $this->getRoomsForUser($user->getUID());
+		foreach ($rooms as $room) {
+			if ($this->participantService->getNumberOfUsers($room) === 1) {
+				$room->deleteRoom();
+			} else {
+				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+			}
+		}
+
+		$leftRooms = $this->getLeftOneToOneRoomsForUser($user->getUID());
+		foreach ($leftRooms as $room) {
+			// We are changing the room type and name so a potential follow up
+			// user with the same user-id can not reopen the one-to-one conversation.
+			$room->setType(Room::TYPE_GROUP, true);
+			$room->setName($user->getDisplayName(), '');
+		}
+	}
+
 	/**
 	 * @param string $userId
 	 * @return string[]
