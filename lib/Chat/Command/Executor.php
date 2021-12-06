@@ -140,8 +140,9 @@ class Executor {
 			}
 
 			$response = trim($response);
-			if (strpos($response, "\n")) {
-				$tempHelp = substr($response, 0, strpos($response, "\n"));
+			$newLinePosition = strpos($response, "\n");
+			if ($newLinePosition !== false) {
+				$tempHelp = substr($response, 0, $newLinePosition);
 				if ($tempHelp === 'Description:') {
 					$hasHelpSection = strpos($response, "\nHelp:\n");
 					if ($hasHelpSection !== false) {
