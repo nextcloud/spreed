@@ -28,6 +28,7 @@ namespace OCA\Talk\Federation;
 use Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -60,6 +61,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	/** @var FederationManager */
 	private $federationManager;
 
+	/** @var Config */
+	private $config;
+
 	/** @var INotificationManager */
 	private $notificationManager;
 
@@ -79,6 +83,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		IUserManager $userManager,
 		AddressHandler $addressHandler,
 		FederationManager $federationManager,
+		Config $config,
 		INotificationManager $notificationManager,
 		IURLGenerator $urlGenerator,
 		ParticipantService $participantService,
@@ -88,6 +93,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$this->userManager = $userManager;
 		$this->addressHandler = $addressHandler;
 		$this->federationManager = $federationManager;
+		$this->config = $config;
 		$this->notificationManager = $notificationManager;
 		$this->urlGenerator = $urlGenerator;
 		$this->participantService = $participantService;
@@ -108,7 +114,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws DBException
 	 */
 	public function shareReceived(ICloudFederationShare $share): string {
-		if (!$this->federationManager->isEnabled()) {
+		if (!$this->config->isFederationEnabled()) {
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 		if (!in_array($share->getShareType(), $this->getSupportedShareTypes(), true)) {
@@ -232,7 +238,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws ShareNotFound
 	 */
 	private function getAttendeeAndValidate(int $id, string $sharedSecret): Attendee {
-		if (!$this->federationManager->isEnabled()) {
+		if (!$this->config->isFederationEnabled()) {
 			throw new ActionNotSupportedException('Server does not support Talk federation');
 		}
 
