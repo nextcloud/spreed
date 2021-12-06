@@ -76,21 +76,21 @@ class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (ModifyParticipantEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->setActive($event->getRoom(), $event->getParticipant());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function (ModifyRoomEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->generateCallActivity($event->getRoom(), true, $event->getActor());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $listener);
 
 		$listener = static function (RoomEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->generateCallActivity($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
@@ -100,7 +100,7 @@ class Listener {
 
 		$listener = static function (AddParticipantsEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);

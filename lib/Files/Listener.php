@@ -75,7 +75,7 @@ class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (JoinRoomUserEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			try {
 				$listener->preventUsersWithoutAccessToTheFileFromJoining($event->getRoom(), $event->getUser()->getUID());
@@ -88,7 +88,7 @@ class Listener {
 
 		$listener = static function (JoinRoomGuestEvent $event): void {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			try {
 				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());

@@ -86,9 +86,9 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			/** @var ParticipantService $participantService */
-			$participantService = \OC::$server->query(ParticipantService::class);
+			$participantService = \OC::$server->get(ParticipantService::class);
 
 			if ($participantService->hasActiveSessionsInCall($room)) {
 				$listener->sendSystemMessage($room, 'call_joined', [], $event->getParticipant());
@@ -115,7 +115,7 @@ class Listener implements IEventListener {
 			}
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			$listener->sendSystemMessage($room, 'call_left', [], $event->getParticipant());
 		});
@@ -123,7 +123,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, static function (RoomEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			$listener->sendSystemMessage($room, 'conversation_created');
 		});
@@ -135,7 +135,7 @@ class Listener implements IEventListener {
 
 			$room = $event->getRoom();
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			$listener->sendSystemMessage($room, 'conversation_renamed', [
 				'newName' => $event->getNewValue(),
@@ -158,7 +158,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, static function (ModifyRoomEvent $event) {
 			$room = $event->getRoom();
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if ($event->getNewValue() !== '') {
 				$listener->sendSystemMessage($room, 'password_set');
@@ -175,11 +175,11 @@ class Listener implements IEventListener {
 
 			if ($event->getNewValue() === Room::TYPE_PUBLIC) {
 				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
+				$listener = \OC::$server->get(self::class);
 				$listener->sendSystemMessage($room, 'guests_allowed');
 			} elseif ($event->getNewValue() === Room::TYPE_GROUP) {
 				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
+				$listener = \OC::$server->get(self::class);
 				$listener->sendSystemMessage($room, 'guests_disallowed');
 			}
 		});
@@ -191,7 +191,7 @@ class Listener implements IEventListener {
 			}
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if ($event->getNewValue() === Room::READ_ONLY) {
 				$listener->sendSystemMessage($room, 'read_only');
@@ -203,7 +203,7 @@ class Listener implements IEventListener {
 			$room = $event->getRoom();
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if ($event->getNewValue() === Room::LISTABLE_NONE) {
 				$listener->sendSystemMessage($room, 'listable_none');
@@ -221,7 +221,7 @@ class Listener implements IEventListener {
 			$room = $event->getRoom();
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if ($event->isTimerReached()) {
 				$listener->sendSystemMessage($room, 'lobby_timer_reached');
@@ -239,7 +239,7 @@ class Listener implements IEventListener {
 			}
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			$participants = $event->getParticipants();
 
@@ -281,7 +281,7 @@ class Listener implements IEventListener {
 			}
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->sendSystemMessage($room, 'user_removed', ['user' => $event->getUser()->getUID()]);
 		});
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function (ModifyParticipantEvent $event) {
@@ -294,25 +294,25 @@ class Listener implements IEventListener {
 
 			if ($event->getNewValue() === Participant::MODERATOR) {
 				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
+				$listener = \OC::$server->get(self::class);
 				$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::USER) {
 				if ($event->getOldValue() === Participant::USER_SELF_JOINED) {
 					/** @var self $listener */
-					$listener = \OC::$server->query(self::class);
+					$listener = \OC::$server->get(self::class);
 					$listener->sendSystemMessage($room, 'user_added', ['user' => $attendee->getActorId()]);
 				} else {
 					/** @var self $listener */
-					$listener = \OC::$server->query(self::class);
+					$listener = \OC::$server->get(self::class);
 					$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
 				}
 			} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
 				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
+				$listener = \OC::$server->get(self::class);
 				$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
 			} elseif ($event->getNewValue() === Participant::GUEST) {
 				/** @var self $listener */
-				$listener = \OC::$server->query(self::class);
+				$listener = \OC::$server->get(self::class);
 				$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 			}
 		});
@@ -325,10 +325,10 @@ class Listener implements IEventListener {
 			}
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			/** @var Manager $manager */
-			$manager = \OC::$server->query(Manager::class);
+			$manager = \OC::$server->get(Manager::class);
 
 			$room = $manager->getRoomByToken($share->getSharedWith());
 			$metaData = \OC::$server->getRequest()->getParam('talkMetaData') ?? '';

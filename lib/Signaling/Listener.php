@@ -48,7 +48,7 @@ class Listener {
 
 	protected static function isUsingInternalSignaling(): bool {
 		/** @var Config $config */
-		$config = \OC::$server->query(Config::class);
+		$config = \OC::$server->get(Config::class);
 		return $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
 	}
 
@@ -59,7 +59,7 @@ class Listener {
 			}
 
 			/** @var Messages $messages */
-			$messages = \OC::$server->query(Messages::class);
+			$messages = \OC::$server->get(Messages::class);
 			$messages->addMessageForAllParticipants($event->getRoom(), 'refresh-participant-list');
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
@@ -77,7 +77,7 @@ class Listener {
 			$room = $event->getRoom();
 
 			/** @var Messages $messages */
-			$messages = \OC::$server->query(Messages::class);
+			$messages = \OC::$server->get(Messages::class);
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, $listener);
@@ -92,7 +92,7 @@ class Listener {
 			}
 
 			/** @var Messages $messages */
-			$messages = \OC::$server->query(Messages::class);
+			$messages = \OC::$server->get(Messages::class);
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, $listener);
@@ -105,7 +105,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$notifier->roomInvited($event->getRoom(), $event->getParticipants());
 		});
@@ -115,7 +115,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$notifier->roomModified($event->getRoom());
 		};
@@ -138,7 +138,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
 			// If the participant is not active in the room the "participants"
@@ -146,7 +146,7 @@ class Listener {
 			// property.
 
 			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->query(SessionService::class);
+			$sessionService = \OC::$server->get(SessionService::class);
 			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
 			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
@@ -163,9 +163,9 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 			/** @var ParticipantService $participantService */
-			$participantService = \OC::$server->query(ParticipantService::class);
+			$participantService = \OC::$server->get(ParticipantService::class);
 
 			$room = $event->getRoom();
 			$notifier->roomDeleted($room, $participantService->getParticipantUserIds($room));
@@ -176,7 +176,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$notifier->roomsDisinvited($event->getRoom(), [$event->getUser()->getUID()]);
 		});
@@ -186,12 +186,12 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
 
 			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->query(SessionService::class);
+			$sessionService = \OC::$server->get(SessionService::class);
 			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
 			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
@@ -212,7 +212,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
 			if ($event->getParticipant()->getSession()) {
@@ -227,12 +227,12 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
 
 			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->query(SessionService::class);
+			$sessionService = \OC::$server->get(SessionService::class);
 			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
 			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
@@ -256,7 +256,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			// TODO: The list of removed session ids should be passed through the event
 			// so the signaling server can optimize forwarding the message.
@@ -269,12 +269,12 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
 
 			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->query(SessionService::class);
+			$sessionService = \OC::$server->get(SessionService::class);
 			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
 			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
@@ -290,7 +290,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$room = $event->getRoom();
 			$message = [
@@ -307,7 +307,7 @@ class Listener {
 			}
 
 			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
+			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$room = $event->getRoom();
 			$message = [

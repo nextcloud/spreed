@@ -40,7 +40,7 @@ class Listener {
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
-			$resourceManager = \OC::$server->query(IManager::class);
+			$resourceManager = \OC::$server->get(IManager::class);
 
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
@@ -54,7 +54,7 @@ class Listener {
 		$listener = static function (AddParticipantsEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
-			$resourceManager = \OC::$server->query(IManager::class);
+			$resourceManager = \OC::$server->get(IManager::class);
 			/** @var IUserManager $userManager */
 			$userManager = \OC::$server->getUserManager();
 			try {
@@ -78,7 +78,7 @@ class Listener {
 		$listener = static function (RemoveUserEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
-			$resourceManager = \OC::$server->query(IManager::class);
+			$resourceManager = \OC::$server->get(IManager::class);
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
 			} catch (ResourceException $e) {
@@ -92,7 +92,7 @@ class Listener {
 		$listener = static function (RemoveParticipantEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
-			$resourceManager = \OC::$server->query(IManager::class);
+			$resourceManager = \OC::$server->get(IManager::class);
 			/** @var IUserManager $userManager */
 			$userManager = \OC::$server->getUserManager();
 			try {
@@ -113,7 +113,7 @@ class Listener {
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 			/** @var IManager $manager */
-			$resourceManager = \OC::$server->query(IManager::class);
+			$resourceManager = \OC::$server->get(IManager::class);
 
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);

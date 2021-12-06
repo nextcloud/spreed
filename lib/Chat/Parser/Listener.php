@@ -38,7 +38,7 @@ class Listener {
 			}
 
 			/** @var UserMention $parser */
-			$parser = \OC::$server->query(UserMention::class);
+			$parser = \OC::$server->get(UserMention::class);
 			$parser->parseMessage($message);
 		}, -100);
 
@@ -50,7 +50,7 @@ class Listener {
 			}
 
 			/** @var Changelog $parser */
-			$parser = \OC::$server->query(Changelog::class);
+			$parser = \OC::$server->get(Changelog::class);
 			try {
 				$parser->parseMessage($message);
 				$event->stopPropagation();
@@ -67,7 +67,7 @@ class Listener {
 			}
 
 			/** @var SystemMessage $parser */
-			$parser = \OC::$server->query(SystemMessage::class);
+			$parser = \OC::$server->get(SystemMessage::class);
 
 			try {
 				$parser->parseMessage($message);
@@ -85,7 +85,7 @@ class Listener {
 			}
 
 			/** @var CommandParser $parser */
-			$parser = \OC::$server->query(CommandParser::class);
+			$parser = \OC::$server->get(CommandParser::class);
 
 			try {
 				$parser->parseMessage($chatMessage);
@@ -105,7 +105,7 @@ class Listener {
 			}
 
 			/** @var SystemMessage $parser */
-			$parser = \OC::$server->query(SystemMessage::class);
+			$parser = \OC::$server->get(SystemMessage::class);
 
 			try {
 				$parser->parseDeletedMessage($chatMessage);

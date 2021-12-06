@@ -237,7 +237,7 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 
 		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$dispatcher = \OC::$server->get(IEventDispatcher::class);
 
 		$servers = [
 			[
