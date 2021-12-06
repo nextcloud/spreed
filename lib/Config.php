@@ -231,7 +231,7 @@ class Config {
 	 *
 	 * @return array
 	 */
-	public function getTurnServers($withEvent = true): array {
+	public function getTurnServers(bool $withEvent = true): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 

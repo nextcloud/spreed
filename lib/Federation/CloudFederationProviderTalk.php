@@ -275,7 +275,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		return $attendee;
 	}
 
-	private function notifyAboutNewShare(IUser $shareWith, string $shareId, string $sharedByFederatedId, string $sharedByName, string $roomName, string $roomToken, string $serverUrl) {
+	private function notifyAboutNewShare(IUser $shareWith, string $shareId, string $sharedByFederatedId, string $sharedByName, string $roomName, string $roomToken, string $serverUrl): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp(Application::APP_ID)
 			->setUser($shareWith->getUID())
