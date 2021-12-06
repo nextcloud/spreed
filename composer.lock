@@ -179,12 +179,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "9b0f84c976df7e9548037762dabc628b4372fe9d"
+                "reference": "bf812e213fd1e967c9ce71954156d2059acd63dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/9b0f84c976df7e9548037762dabc628b4372fe9d",
-                "reference": "9b0f84c976df7e9548037762dabc628b4372fe9d",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/bf812e213fd1e967c9ce71954156d2059acd63dc",
+                "reference": "bf812e213fd1e967c9ce71954156d2059acd63dc",
                 "shasum": ""
             },
             "require": {
@@ -197,7 +197,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "23.0.0-dev"
+                    "dev-master": "24.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -215,7 +215,7 @@
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
                 "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
             },
-            "time": "2021-10-29T01:05:06+00:00"
+            "time": "2021-12-03T01:08:42+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -2901,16 +2901,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "4.10.0",
+            "version": "v4.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "916b098b008f6de4543892b1e0651c1c3b92cbfa"
+                "reference": "14dcbc908ab2625cd7a74258ee6c740cbecc6140"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/916b098b008f6de4543892b1e0651c1c3b92cbfa",
-                "reference": "916b098b008f6de4543892b1e0651c1c3b92cbfa",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/14dcbc908ab2625cd7a74258ee6c740cbecc6140",
+                "reference": "14dcbc908ab2625cd7a74258ee6c740cbecc6140",
                 "shasum": ""
             },
             "require": {
@@ -2930,11 +2930,11 @@
                 "felixfbecker/advanced-json-rpc": "^3.0.3",
                 "felixfbecker/language-server-protocol": "^1.5",
                 "netresearch/jsonmapper": "^1.0 || ^2.0 || ^3.0 || ^4.0",
-                "nikic/php-parser": "^4.12",
+                "nikic/php-parser": "^4.13",
                 "openlss/lib-array2xml": "^1.0",
                 "php": "^7.1|^8",
                 "sebastian/diff": "^3.0 || ^4.0",
-                "symfony/console": "^3.4.17 || ^4.1.6 || ^5.0",
+                "symfony/console": "^3.4.17 || ^4.1.6 || ^5.0 || ^6.0",
                 "webmozart/path-util": "^2.3"
             },
             "provide": {
@@ -2952,11 +2952,12 @@
                 "psalm/plugin-phpunit": "^0.16",
                 "slevomat/coding-standard": "^7.0",
                 "squizlabs/php_codesniffer": "^3.5",
-                "symfony/process": "^4.3 || ^5.0",
+                "symfony/process": "^4.3 || ^5.0 || ^6.0",
                 "weirdan/prophecy-shim": "^1.0 || ^2.0"
             },
             "suggest": {
-                "ext-igbinary": "^2.0.5"
+                "ext-curl": "In order to send data to shepherd",
+                "ext-igbinary": "^2.0.5 is required, used to serialize caching data"
             },
             "bin": [
                 "psalm",
@@ -3000,9 +3001,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/4.10.0"
+                "source": "https://github.com/vimeo/psalm/tree/v4.14.0"
             },
-            "time": "2021-09-04T21:00:09+00:00"
+            "time": "2021-12-04T17:49:24+00:00"
         },
         {
             "name": "webmozart/assert",
