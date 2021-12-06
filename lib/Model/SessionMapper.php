@@ -75,7 +75,7 @@ class SessionMapper extends QBMapper {
 		$delete->delete($this->getTableName())
 			->where($delete->expr()->eq('attendee_id', $delete->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)));
 
-		return (int) $delete->executeStatement();
+		return $delete->executeStatement();
 	}
 
 	/**
@@ -87,7 +87,7 @@ class SessionMapper extends QBMapper {
 		$delete->delete($this->getTableName())
 			->where($delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
-		return (int) $delete->executeStatement();
+		return $delete->executeStatement();
 	}
 
 	public function createSessionFromRow(array $row): Session {
