@@ -469,7 +469,7 @@ class AdminSettings implements ISettings {
 		}
 		$languages['commonLanguages'] = array_values($languages['commonLanguages']);
 		// TODO maybe filter out languages with an _
-		usort($countries, function ($a, $b) {
+		usort($countries, function (array $a, array $b) {
 			return strcmp($a['name'], $b['name']);
 		});
 		$this->initialState->provideInitialState('hosted_signaling_server_language_data', [
