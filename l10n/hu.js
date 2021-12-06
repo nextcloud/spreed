@@ -649,6 +649,7 @@ OC.L10N.register(
     "Checking …" : "Ellenőrzés…",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Sikertelen: a WebAssembly le van tiltva, vagy nem támogatott ebben a böngészőben. Engedélyezze a WebAssemblyt, vagy az ellenőrzéshez használjon egy olyan böngészőt, amely támogatja.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Sikertelen: a webkiszolgáló nem helyesen adta vissza a „.wasm” és a „.tflite” fájlokat. Ellenőrizze a Beszélgetés dokumentációjának „Rendszerkövetelmények” szakaszát.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "Rendben: a webkiszolgáló helyesen adta vissza a „.wasm” és a „.tflite” fájlokat.",
     "{nickName} raised their hand." : "{nickName} felemelte a kezét.",
     "A participant raised their hand." : "Egy résztvevő felemelte a kezét.",
     "Previous page of videos" : "A videók előző oldala",
