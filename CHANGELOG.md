@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.4 – 2021-12-07
+### Changed
+- Remove Plan-B option from the HPB integration
+  [#6449](https://github.com/nextcloud/spreed/pull/6449)
+- Allow apps to override/modify the TURN server list
+  [#6430](https://github.com/nextcloud/spreed/pull/6430)
+
+### Fixed
+- Properly allow sha256 checksums for reference ids as advertised
+  [#6529](https://github.com/nextcloud/spreed/pull/6529)
+- Limit deck integration to the current instance for now
+  [#6414](https://github.com/nextcloud/spreed/pull/6414)
+
 ## 11.3.3 – 2021-10-22
 ### Fixed
 - Fix crash of Chrome/Chromium 95
