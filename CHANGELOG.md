@@ -1,6 +1,38 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.2 – 2021-12-07
+### Changed
+- Show user status and message as description in 1-to-1 conversations
+  [#6369](https://github.com/nextcloud/spreed/pull/6369)
+- Allow apps to override/modify the TURN server list
+  [#6428](https://github.com/nextcloud/spreed/pull/6428)
+
+### Fixed
+- Fix connection analyzer when using simulcast with Chromium
+  [#6530](https://github.com/nextcloud/spreed/pull/6530)
+- Properly allow sha256 checksums for reference ids as advertised
+  [#6406](https://github.com/nextcloud/spreed/pull/6406)
+- Fix forwarding object shares to other conversations
+  [#6398](https://github.com/nextcloud/spreed/pull/6398)
+- Fix invisible emoji picker on Safari
+  [#6352](https://github.com/nextcloud/spreed/pull/6352)
+- Limit deck integration to the current instance for now
+  [#6412](https://github.com/nextcloud/spreed/pull/6412)
+
+## 11.3.4 – 2021-12-07
+### Changed
+- Remove Plan-B option from the HPB integration
+  [#6449](https://github.com/nextcloud/spreed/pull/6449)
+- Allow apps to override/modify the TURN server list
+  [#6430](https://github.com/nextcloud/spreed/pull/6430)
+
+### Fixed
+- Properly allow sha256 checksums for reference ids as advertised
+  [#6529](https://github.com/nextcloud/spreed/pull/6529)
+- Limit deck integration to the current instance for now
+  [#6414](https://github.com/nextcloud/spreed/pull/6414)
+
 ## 13.0.0 – 2021-11-30
 ### Added
 - Moderators can now set permissions for all or individual users to control if they can enable audio and video, do a screenshare, start a call and ignore the lobby
