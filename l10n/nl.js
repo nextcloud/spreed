@@ -649,6 +649,7 @@ OC.L10N.register(
     "Checking …" : "Controleren ...",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Mislukt: WebAssembly is uitgeschakeld of niet ondersteund in deze browser. Schakel WebAssembly in of gebruik een browser met ondersteuning ervoor voor de controle.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Mislukt: \".wasm\" and \".tflite\" bestanden waren niet juist geretourneerd door de webserver. Controleer \"Systeemvereisten\" sectie in de Talk documentatie.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: \".wasm\"- en \".tflite\"-bestanden zijn correct geretourneerd door de webserver.",
     "{nickName} raised their hand." : "{nickName} stak zijn/haar hand op",
     "A participant raised their hand." : "Een deelnemer stak zijn/haar hand op.",
     "Previous page of videos" : "Voorgaande pagina met video's",
@@ -1209,6 +1210,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
+    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Stel het meldingsniveau in voor het huidige gesprek. Dit heef alleen invloed op de meldingen die u ontvangt."
 },
 "nplurals=2; plural=(n != 1);");
