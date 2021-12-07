@@ -21,7 +21,10 @@
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
+use OCA\Talk\Events\GetTurnServersEvent;
+use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\Security\ISecureRandom;
@@ -41,6 +44,8 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 		/** @var MockObject|IGroupManager $secureRandom */
 		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -54,7 +59,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
 	}
 
@@ -65,6 +70,8 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 		/** @var MockObject|IGroupManager $secureRandom */
 		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -78,7 +85,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertSame('stun.nextcloud.com:443', $helper->getStunServer());
 	}
 
@@ -89,6 +96,8 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 		/** @var MockObject|IGroupManager $secureRandom */
 		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -102,7 +111,7 @@ class ConfigTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(false);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 		$this->assertSame('', $helper->getStunServer());
 	}
 
@@ -138,6 +147,8 @@ class ConfigTest extends TestCase {
 
 		/** @var MockObject|IGroupManager $secureRandom */
 		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
 
 		/** @var MockObject|ISecureRandom $secureRandom */
 		$secureRandom = $this->createMock(ISecureRandom::class);
@@ -146,7 +157,7 @@ class ConfigTest extends TestCase {
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 
 		//
 		$server = $helper->getTurnSettings();
@@ -167,6 +178,43 @@ class ConfigTest extends TestCase {
 				'protocols' => 'tcp',
 			], $server);
 		}
+	}
+
+	public function testGenerateTurnSettingsEvent() {
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		$config
+			->expects($this->once())
+			->method('getAppValue')
+			->with('spreed', 'turn_servers', '')
+			->willReturn(json_encode([]));
+
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+
+		/** @var IEventDispatcher $dispatcher */
+		$dispatcher = \OC::$server->query(IEventDispatcher::class);
+
+		$server = [
+			'schemes' => 'turn',
+			'server' => 'turn.domain.invalid',
+			'username' => 'john',
+			'password' => 'abcde',
+			'protocols' => 'udp,tcp',
+		];
+
+		$dispatcher->addServiceListener(GetTurnServersEvent::class, GetTurnServerListener::class);
+
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
+
+		$settings = $helper->getTurnSettings();
+		$this->assertSame($server, $settings);
 	}
 
 	public function dataGetWebSocketDomainForSignalingServer() {
@@ -237,10 +285,12 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 		/** @var MockObject|IGroupManager $secureRandom */
 		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 
-		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory, $dispatcher);
 
 		$this->assertEquals(
 			$expectedWebSocketDomain,
