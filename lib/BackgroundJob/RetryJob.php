@@ -64,7 +64,7 @@ class RetryJob extends Job {
 	 * @param IJobList $jobList
 	 * @param ILogger|null $logger
 	 */
-	public function execute(IJobList $jobList, ?ILogger $logger = null) {
+	public function execute(IJobList $jobList, ?ILogger $logger = null): void {
 		if (((int)$this->argument['try']) > $this->maxTry) {
 			$jobList->remove($this, $this->argument);
 			return;

@@ -39,7 +39,7 @@ class GetTurnServersEvent extends Event {
 		return $this->servers;
 	}
 
-	public function setServers(array $servers) {
+	public function setServers(array $servers): void {
 		$this->servers = $servers;
 	}
 }

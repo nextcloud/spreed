@@ -86,7 +86,7 @@ class UserMention {
 
 		$mentions = $comment->getMentions();
 		// TODO This can be removed once getMentions() returns sorted results (Nextcloud 21+)
-		usort($mentions, static function ($m1, $m2) {
+		usort($mentions, static function (array $m1, array $m2) {
 			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
 		});
 

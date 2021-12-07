@@ -24,6 +24,7 @@ namespace OCA\Talk\Tests\php\Federation;
 
 use OC\Federation\CloudFederationShare;
 use OCA\FederatedFileSharing\AddressHandler;
+use OCA\Talk\Config;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Notifications;
@@ -58,6 +59,9 @@ class FederationTest extends TestCase {
 	/** @var ICloudFederationFactory */
 	protected $cloudFederationFactory;
 
+	/** @var Config */
+	protected $config;
+
 	/** @var AddressHandler */
 	protected $addressHandler;
 
@@ -81,6 +85,7 @@ class FederationTest extends TestCase {
 		$this->addressHandler = $this->createMock(AddressHandler::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
+		$this->config = $this->createMock(Config::class);
 
 		$this->notifications = new Notifications(
 			$this->cloudFederationFactory,
@@ -98,6 +103,7 @@ class FederationTest extends TestCase {
 			$this->userManager,
 			$this->addressHandler,
 			$this->federationManager,
+			$this->config,
 			$this->notificationManager,
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ParticipantService::class),
@@ -230,7 +236,7 @@ class FederationTest extends TestCase {
 			->with($shareWithUser, $providerId, $roomType, $roomName, $name, $remote, $token)
 			->willReturn(20);
 
-		$this->federationManager->method('isEnabled')
+		$this->config->method('isFederationEnabled')
 			->willReturn(true);
 
 		$this->addressHandler->expects($this->once())
