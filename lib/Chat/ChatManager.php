@@ -64,7 +64,8 @@ class ChatManager {
 
 	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
 
-	/** @var ICommentsManager */
+	/** @var ICommentsManager|CommentsManager
+	 */
 	private $commentsManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
@@ -141,7 +142,15 @@ class ChatManager {
 		if ($parentId !== null) {
 			$comment->setParentId((string) $parentId);
 		}
-		$comment->setVerb('system');
+
+		$messageDecoded = json_decode($message, true);
+		$messageType = $messageDecoded['message'] ?? '';
+
+		if ($messageType === 'object_shared' || $messageType === 'file_shared') {
+			$comment->setVerb('object_shared');
+		} else {
+			$comment->setVerb('system');
+		}
 
 		$event = new ChatEvent($chat, $comment);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
@@ -359,7 +368,7 @@ class ChatManager {
 		$key = $chat->getId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
-			$unreadCount = $this->commentsManager->getNumberOfCommentsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, 'comment');
+			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, ['comment', 'object_shared']);
 			$this->unreadCountCache->set($key, $unreadCount, 1800);
 		}
 		return $unreadCount;

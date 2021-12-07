@@ -64,7 +64,12 @@ class MessageParser {
 
 	public function parseMessage(Message $message): void {
 		$message->setMessage($message->getComment()->getMessage(), []);
-		$message->setMessageType($message->getComment()->getVerb());
+
+		$verb = $message->getComment()->getVerb();
+		if ($verb === 'object_shared') {
+			$verb = 'system';
+		}
+		$message->setMessageType($verb);
 		$this->setActor($message);
 
 		$event = new ChatMessageEvent($message);
