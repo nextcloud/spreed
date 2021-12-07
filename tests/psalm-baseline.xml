@@ -204,6 +204,9 @@
       <code>IRootFolder</code>
       <code>IRootFolder</code>
     </MissingDependency>
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
   </file>
   <file src="lib/Controller/SignalingController.php">
     <UndefinedClass occurrences="1">
@@ -242,6 +245,9 @@
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
     </MissingDependency>
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">

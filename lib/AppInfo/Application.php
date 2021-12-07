@@ -150,7 +150,7 @@ class Application extends App implements IBootstrap {
 		$this->registerNavigationLink($server);
 
 		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = $server->query(IEventDispatcher::class);
+		$dispatcher = $server->get(IEventDispatcher::class);
 
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
@@ -181,7 +181,7 @@ class Application extends App implements IBootstrap {
 
 	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
 		/** @var IProviderManager $resourceManager */
-		$resourceManager = $server->query(IProviderManager::class);
+		$resourceManager = $server->get(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
 			\OCP\Util::addScript(self::APP_ID, 'talk-collections');
@@ -199,7 +199,7 @@ class Application extends App implements IBootstrap {
 	protected function registerNavigationLink(IServerContainer $server): void {
 		$server->getNavigationManager()->add(function () use ($server) {
 			/** @var Config $config */
-			$config = $server->query(Config::class);
+			$config = $server->get(Config::class);
 			$user = $server->getUserSession()->getUser();
 			return [
 				'id' => self::APP_ID,

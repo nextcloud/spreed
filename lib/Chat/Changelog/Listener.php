@@ -33,7 +33,7 @@ class Listener {
 			$userId = $event->getUserId();
 
 			/** @var Listener $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->preGetRooms($userId);
 		}, -100);
 	}

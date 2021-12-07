@@ -116,7 +116,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		]));
 		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
-		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();

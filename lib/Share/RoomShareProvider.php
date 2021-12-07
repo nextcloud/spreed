@@ -120,7 +120,7 @@ class RoomShareProvider implements IShareProvider {
 
 			if ($event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 				/** @var self $roomShareProvider */
-				$roomShareProvider = \OC::$server->query(self::class);
+				$roomShareProvider = \OC::$server->get(self::class);
 				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getAttendee()->getActorId());
 			}
 		};
@@ -130,7 +130,7 @@ class RoomShareProvider implements IShareProvider {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
-			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider = \OC::$server->get(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken(), $event->getUser()->getUID());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
@@ -139,7 +139,7 @@ class RoomShareProvider implements IShareProvider {
 			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
-			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider = \OC::$server->get(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);

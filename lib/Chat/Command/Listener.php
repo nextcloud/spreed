@@ -49,7 +49,7 @@ class Listener {
 			$participant = $event->getParticipant();
 
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 
 			if (strpos($message->getMessage(), '//') === 0) {
 				return;

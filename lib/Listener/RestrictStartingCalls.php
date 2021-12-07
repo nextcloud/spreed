@@ -47,7 +47,7 @@ class RestrictStartingCalls {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
 			/** @var self $listener */
-			$listener = \OC::$server->query(self::class);
+			$listener = \OC::$server->get(self::class);
 			$listener->checkStartCallPermissions($event);
 		}, 1000);
 	}

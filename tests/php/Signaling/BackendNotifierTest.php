@@ -132,7 +132,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			->method('getSignalingServerForConversation')
 			->willReturn(['server' => $this->baseUrl]);
 
-		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->timeFactory, $this->dispatcher);
 		$this->recreateBackendNotifier();
 
