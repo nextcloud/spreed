@@ -64,7 +64,8 @@ class ChatManager {
 
 	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
 
-	/** @var ICommentsManager */
+	/** @var ICommentsManager|CommentsManager
+	 */
 	private $commentsManager;
 	/** @var IEventDispatcher */
 	private $dispatcher;
