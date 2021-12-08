@@ -270,6 +270,10 @@ export default {
 	vertical-align: middle;
 }
 
+::v-deep .modal-container {
+	display: flex !important;
+}
+
 ::v-deep .app-settings__content {
 	width: 450px;
 }
