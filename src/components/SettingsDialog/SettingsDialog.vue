@@ -286,4 +286,8 @@ export default {
 	}
 }
 
+::v-deep .modal-container {
+	display: flex !important;
+}
+
 </style>
