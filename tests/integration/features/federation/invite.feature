@@ -26,5 +26,5 @@ Feature: federation/invite
       | users           | participant1 | 1               |
       | federated_users | participant2 | 3               |
     And user "participant2" has the following invitations (v1)
-      | id   | type | participantType |
-      | room | 3    | 1               |
+      | remote_server | remote_token |
+      | LOCAL         | room         |

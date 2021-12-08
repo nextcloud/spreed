@@ -75,6 +75,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected $baseUrl;
 
 	/** @var string */
+	protected $baseRemoteUrl;
+
+	/** @var string */
 	protected $lastEtag;
 
 	/** @var array */
@@ -122,6 +125,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function __construct() {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
+		$this->baseRemoteUrl = getenv('TEST_REMOTE_URL');
 		$this->guestsAppWasEnabled = null;
 	}
 
@@ -359,63 +363,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	private function assertInvites($invites, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
-			if (!isset(self::$identifierToToken[$room['name']])) {
-				self::$identifierToToken[$room['name']] = $room['token'];
-			}
-			if (!isset(self::$tokenToIdentifier[$room['token']])) {
-				self::$tokenToIdentifier[$room['token']] = $room['name'];
-			}
+		Assert::assertEquals($formData->getHash(), array_map(function ($invite, $expectedInvite) {
 
 			$data = [];
-			if (isset($expectedRoom['id'])) {
-				$data['id'] = self::$tokenToIdentifier[$room['token']];
+			if (isset($expectedInvite['id'])) {
+				$data['id'] = self::$tokenToIdentifier[$invite['token']];
 			}
-			if (isset($expectedRoom['name'])) {
-				$data['name'] = $room['name'];
+			if (isset($expectedInvite['access_token'])) {
+				$data['access_token'] = (string) $invite['access_token'];
 			}
-			if (isset($expectedRoom['description'])) {
-				$data['description'] = $room['description'];
+			if (isset($expectedInvite['remote_token'])) {
+				$data['remote_token'] = self::$tokenToIdentifier[$invite['remote_token']] ?? 'unknown-token';
 			}
-			if (isset($expectedRoom['type'])) {
-				$data['type'] = (string) $room['type'];
-			}
-			if (isset($expectedRoom['hasPassword'])) {
-				$data['hasPassword'] = (string) $room['hasPassword'];
-			}
-			if (isset($expectedRoom['readOnly'])) {
-				$data['readOnly'] = (string) $room['readOnly'];
-			}
-			if (isset($expectedRoom['listable'])) {
-				$data['listable'] = (string) $room['listable'];
-			}
-			if (isset($expectedRoom['participantType'])) {
-				$data['participantType'] = (string) $room['participantType'];
-			}
-			if (isset($expectedRoom['sipEnabled'])) {
-				$data['sipEnabled'] = (string) $room['sipEnabled'];
-			}
-			if (isset($expectedRoom['callFlag'])) {
-				$data['callFlag'] = (int) $room['callFlag'];
-			}
-			if (isset($expectedRoom['attendeePin'])) {
-				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
-			}
-			if (isset($expectedRoom['lastMessage'])) {
-				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
-			}
-			if (isset($expectedRoom['unreadMention'])) {
-				$data['unreadMention'] = (int) $room['unreadMention'];
-			}
-			if (isset($expectedRoom['unreadMentionDirect'])) {
-				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
-			}
-			if (isset($expectedRoom['participants'])) {
-				throw new \Exception('participants key needs to be checked via participants endpoint');
+			if (isset($expectedInvite['remote_server'])) {
+				if ($invite['remote_server'] === 'localhost:8080') {
+					$data['remote_server'] = 'LOCAL';
+				} elseif ($invite['remote_server'] === 'localhost:8180') {
+					$data['remote_server'] = 'REMOTE';
+				} else {
+					$data['remote_server'] = 'unknown-server';
+				}
 			}
 
 			return $data;
-		}, $rooms, $formData->getHash()));
+		}, $invites, $formData->getHash()));
 	}
 
 	/**
@@ -518,7 +489,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 
 				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users') {
-					$attendee['actorId'] .= '@' . rtrim($this->baseUrl, '/');
+					$attendee['actorId'] .= '@' . rtrim($this->baseRemoteUrl, '/');
 				}
 
 				if (isset($attendee['participantType'])) {
@@ -1177,7 +1148,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 
 		if ($newType === 'remote') {
-			$newId .= '@' . $this->baseUrl;
+			$newId .= '@' . $this->baseRemoteUrl;
 		}
 
 		$this->sendRequest(
