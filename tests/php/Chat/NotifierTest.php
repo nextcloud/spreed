@@ -674,4 +674,64 @@ class NotifierTest extends TestCase {
 			],
 		];
 	}
+
+	/**
+	 * @dataProvider dataGetMentionedUsers
+	 */
+	public function testGetMentionedUsers($message, $expectedReturn): void {
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$actual = $this->invokePrivate($this->notifier, 'getMentionedUsers', [$comment]);
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
+	}
+
+	public function dataGetMentionedUsers(): array {
+		return [
+			'mention one user' => [
+				'Mention @anotherUser',
+				[
+					['id' => 'anotherUser', 'type' => 'users'],
+				],
+			],
+			'mention two user' => [
+				'Mention @anotherUser, and @unknownUser',
+				[
+					['id' => 'anotherUser', 'type' => 'users'],
+					['id' => 'unknownUser', 'type' => 'users'],
+				],
+			],
+			'mention all' => [
+				'Mention @all',
+				[
+					['id' => 'all', 'type' => 'users'],
+				],
+			],
+			'mention user, all, guest and group' => [
+				'mention @test, @all, @"guest/1" @"group/1"',
+				[
+					['id' => 'test', 'type' => 'users'],
+					['id' => 'all', 'type' => 'users'],
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetMentionedUserIds
+	 */
+	public function testGetMentionedUserIds($message, $expectedReturn): void {
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$actual = $this->invokePrivate($this->notifier, 'getMentionedUserIds', [$comment]);
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
+	}
+
+	public function dataGetMentionedUserIds(): array {
+		$return = $this->dataGetMentionedUsers();
+		array_walk($return, function (array &$scenario) {
+			array_walk($scenario[1], function (array &$params) {
+				$params = $params['id'];
+			});
+			return $scenario;
+		});
+		return $return;
+	}
 }
