@@ -24,6 +24,11 @@ ${ROOT_DIR}/occ app:enable spreed || exit 1
 ${ROOT_DIR}/occ app:enable spreedcheats || exit 1
 ${ROOT_DIR}/occ app:list | grep spreed
 
+# Disable bruteforce protection because the integration tests do trigger them
+${ROOT_DIR}/occ config:system:set auth.bruteforce.protection.enabled --value false --type bool
+# Allow local remote urls otherwise we can not share
+${ROOT_DIR}/occ config:system:set allow_local_remote_servers --value true --type bool
+
 export TEST_SERVER_URL="http://localhost:8080/"
 export TEST_REMOTE_URL="http://localhost:8180/"
 ${APP_INTEGRATION_DIR}/vendor/bin/behat -f junit -f pretty $1 $2
