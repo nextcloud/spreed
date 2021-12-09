@@ -26,8 +26,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Manager;
+use OCA\Talk\Model\Invitation;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -40,12 +43,19 @@ class FederationController extends OCSController {
 	/** @var FederationManager */
 	private $federationManager;
 
+	/** @var Manager */
+	private $talkManager;
+
 	/** @var IUserSession */
 	private $userSession;
 
-	public function __construct(IRequest $request, FederationManager $federationManager, IUserSession $userSession) {
+	public function __construct(IRequest $request,
+								FederationManager $federationManager,
+								Manager $talkManager,
+								IUserSession $userSession) {
 		parent::__construct(Application::APP_ID, $request);
 		$this->federationManager = $federationManager;
+		$this->talkManager = $talkManager;
 		$this->userSession = $userSession;
 	}
 
@@ -96,6 +106,17 @@ class FederationController extends OCSController {
 			throw new UnauthorizedException();
 		}
 		$invitations = $this->federationManager->getRemoteRoomShares($user);
-		return new DataResponse($invitations);
+		return new DataResponse(array_map(function (Invitation $invitation) {
+			$data = $invitation->asArray();
+
+			try {
+				$room = $this->talkManager->getRoomById($invitation->getRoomId());
+				$data['remote_token'] = $room->getRemoteToken();
+				$data['remote_server'] = $room->getRemoteServer();
+			} catch (RoomNotFoundException $exception) {
+			}
+
+			return $data;
+		}, $invitations));
 	}
 }

@@ -364,7 +364,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private function assertInvites($invites, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
 		Assert::assertEquals($formData->getHash(), array_map(function ($invite, $expectedInvite) {
-
 			$data = [];
 			if (isset($expectedInvite['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$invite['token']];
