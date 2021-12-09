@@ -441,11 +441,11 @@ export default {
 
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					// first time load, initialize important properties
-					this.$store.dispatch('setFirstKnownMessageId', {
+					await this.$store.dispatch('setFirstKnownMessageId', {
 						token: this.token,
 						id: this.conversation.lastReadMessage,
 					})
-					this.$store.dispatch('setLastKnownMessageId', {
+					await this.$store.dispatch('setLastKnownMessageId', {
 						token: this.token,
 						id: this.conversation.lastReadMessage,
 					})
@@ -503,6 +503,7 @@ export default {
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
+
 			// Make the request
 			try {
 				this.loadingOldMessages = true
@@ -511,6 +512,7 @@ export default {
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
 				})
+				console.debug('getting old messages', 'includeLastKnown', includeLastKnown, 'lastKnownMessageId', this.$store.getters.getFirstKnownMessageId(this.token))
 
 				this.loadingOldMessages = false
 			} catch (exception) {

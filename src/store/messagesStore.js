@@ -594,7 +594,7 @@ const actions = {
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 */
 	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
-		context.dispatch('cancelFetchMessages')
+		await context.dispatch('cancelFetchMessages')
 
 		// Get a new cancelable request function and cancel function pair
 		const { request, cancel } = CancelableRequest(fetchMessages)

@@ -444,11 +444,11 @@ const actions = {
 
 	async fetchConversations({ dispatch }) {
 		try {
-			dispatch('clearMaintenanceMode')
+			await dispatch('clearMaintenanceMode')
 
 			const response = await fetchConversations()
 			dispatch('updateTalkVersionHash', response)
-			dispatch('purgeConversationsStore')
+			await dispatch('purgeConversationsStore')
 			response.data.ocs.data.forEach(conversation => {
 				dispatch('addConversation', conversation)
 			})
