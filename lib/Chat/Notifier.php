@@ -126,26 +126,26 @@ class Notifier {
 			return $alreadyNotifiedUsers;
 		}
 
-		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify, $alreadyNotifiedUsers);
+		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify);
 
 		return $usersToNotify;
 	}
 
-	private function addMentionAllToList(Room $chat, array $usersToNotify): array {
-		$mentionedAll = array_filter($usersToNotify, function ($user): bool {
-			return $user['id'] === 'all';
+	private function addMentionAllToList(Room $chat, array $list): array {
+		$usersToNotify = array_filter($list, function ($user): bool {
+			return $user['id'] !== 'all';
 		});
 
-		if (empty($mentionedAll)) {
+		if (count($list) === count($usersToNotify)) {
 			return $usersToNotify;
 		}
 
 		$chatParticipants = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
 		foreach ($chatParticipants as $participant) {
-			$dontNotify = array_filter($usersToNotify, function ($user) use ($participant): bool {
+			$alreadyAddedToNotify = array_filter($list, function ($user) use ($participant): bool {
 				return $user['id'] === $participant->getActorId();
 			});
-			if (!empty($dontNotify)) {
+			if (!empty($alreadyAddedToNotify)) {
 				continue;
 			}
 

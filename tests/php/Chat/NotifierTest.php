@@ -23,6 +23,7 @@
 
 namespace OCA\Talk\Tests\php\Chat;
 
+use OC\Comments\Comment;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
@@ -91,25 +92,16 @@ class NotifierTest extends TestCase {
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message): IComment {
-		// $mentionMatches[0] contains the whole matches, while
-		// $mentionMatches[1] contains the matched subpattern.
-		$mentionMatches = [];
-		preg_match_all('/@([a-zA-Z0-9]+)/', $message, $mentionMatches);
-
-		$mentions = array_map(function ($mentionMatch) {
-			return [ 'type' => 'user', 'id' => $mentionMatch ];
-		}, $mentionMatches[1]);
-
-		$comment = $this->createMock(IComment::class);
-
-		$comment->method('getId')->willReturn($id);
-		$comment->method('getObjectId')->willReturn(1234);
-		$comment->method('getActorType')->willReturn($actorType);
-		$comment->method('getActorId')->willReturn($actorId);
-		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
-		$comment->method('getMessage')->willReturn($message);
-		$comment->method('getMentions')->willReturn($mentions);
-		$comment->method('getVerb')->willReturn('comment');
+		$comment = new Comment([
+			'id' => $id,
+			'object_id' => '1234',
+			'object_type' => 'chat',
+			'actor_type' => $actorType,
+			'actor_id' => $actorId,
+			'creation_date_time' => $creationDateTime,
+			'message' => $message,
+			'verb' => 'comment',
+		]);
 
 		return $comment;
 	}
@@ -148,7 +140,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsers(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -191,7 +183,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotNotifyMentionedUserIfReplyToAuthor(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -219,7 +211,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersByGuest(): void {
-		$comment = $this->newComment(108, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
+		$comment = $this->newComment('108', 'guests', 'testSpreedSession', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -262,7 +254,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageStartMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016),
 			'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789');
 
 		$room = $this->createMock(Room::class);
@@ -306,7 +298,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageMiddleMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016),
 			'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789');
 
 		$room = $this->createMock(Room::class);
@@ -350,7 +342,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageEndMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016),
 			'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789');
 
 		$room = $this->createMock(Room::class);
@@ -394,7 +386,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersToSelf(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @testUser');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @testUser');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -414,7 +406,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersToUnknownUser(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @unknownUser');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @unknownUser');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -435,7 +427,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersToUserNotInvitedToChat(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userNotInOneToOneChat');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userNotInOneToOneChat');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -466,7 +458,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersNoMentions(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'No mentions');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'No mentions');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -483,7 +475,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function testNotifyMentionedUsersSeveralMentions(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin');
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin');
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->any())
@@ -504,8 +496,8 @@ class NotifierTest extends TestCase {
 		$notification->expects($this->exactly(2))
 			->method('setUser')
 			->withConsecutive(
+				[ 'userAbleToJoin' ],
 				[ 'anotherUser' ],
-				[ 'userAbleToJoin' ]
 			)
 			->willReturnSelf();
 
@@ -518,7 +510,10 @@ class NotifierTest extends TestCase {
 
 		$room->expects($this->exactly(2))
 			->method('getParticipant')
-			->withConsecutive(['anotherUser'], ['userAbleToJoin'])
+			->withConsecutive(
+				['userAbleToJoin'],
+				['anotherUser'],
+			)
 			->willReturn($participant);
 
 		$this->notificationManager->expects($this->exactly(2))
@@ -639,5 +634,44 @@ class NotifierTest extends TestCase {
 			->with($notification);
 
 		$this->notifier->removePendingNotificationsForRoom($room, true);
+	}
+
+	/**
+	 * @dataProvider dataAddMentionAllToList
+	 */
+	public function testAddMentionAllToList($usersToNotify, $participants, $return): void {
+		$room = $this->createMock(Room::class);
+		$this->participantService
+			->method('getActorsByType')
+			->willReturn($participants);
+
+		$actual = $this->invokePrivate($this->notifier, 'addMentionAllToList', [$room, $usersToNotify]);
+		$this->assertEqualsCanonicalizing($return, $actual);
+	}
+
+	public function dataAddMentionAllToList(): array {
+		return [
+			'not notify all' => [
+				[],
+				[],
+				[],
+			],
+			'preserve notify list and do not notify all' => [
+				[['id' => 'user1', 'type' => Attendee::ACTOR_USERS]],
+				[],
+				[['id' => 'user1', 'type' => Attendee::ACTOR_USERS]],
+			],
+			'mention all' => [
+				[['id' => 'user1', 'type' => Attendee::ACTOR_USERS], ['id' => 'all']],
+				[
+					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
+					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
+				],
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'user2', 'type' => Attendee::ACTOR_USERS],
+				],
+			],
+		];
 	}
 }
