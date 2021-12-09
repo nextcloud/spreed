@@ -38,6 +38,9 @@
     "- Join the same conversation and call from multiple devices" : "- Junte-se à mesma conversa e ligue de vários dispositivos ",
     "- Send voice messages, share your location or contact details" : "- Envie mensagens de voz, compartilhe sua localização ou detalhes de contato ",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Adicione grupos a uma conversa e novos membros do grupo serão automaticamente adicionados como participantes ",
+    "- A preview of your audio and video is shown before joining a call" : "- Uma prévia de seu áudio e vídeo é mostrada antes de entrar em uma chamada",
+    "- You can now blur your background in the newly designed call view" : "- Agora você pode desfocar seu plano de fundo na visualização de chamada recém-projetada",
+    "- Moderators can now assign general and individual permissions to participants" : "- Os moderadores agora podem atribuir permissões gerais e individuais aos participantes",
     "There are currently no commands available." : "Sem comandos disponíveis no momento.",
     "The command does not exist" : "O comando não existe",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Ocorreu um erro ao executar o comando. Por favor, peça a um administrador para verificar os logs.",
@@ -637,6 +640,14 @@
     "Test this server" : "Testar este servidor",
     "TURN servers" : "Servidores TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Um servidor TURN é usado como proxy do tráfego dos participantes por trás de um firewall. Se os participantes individuais não puderem se conectar a outros, provavelmente será necessário um servidor TURN. Consulte {linkstart} esta documentação {linkend} para obter instruções de configuração. ",
+    "Web server setup checks" : "Verificações de configuração do servidor web",
+    "Files required for background blur can be loaded" : "Os arquivos necessários para desfoque de fundo podem ser carregados",
+    "Failed" : "Falhou",
+    "OK" : "OK",
+    "Checking …" : "Verificando …",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Falha: WebAssembly está desativado ou não é compatível com este navegador. Habilite o WebAssembly ou use um navegador com suporte para fazer a verificação.",
+    "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Falha: os arquivos \".wasm\" e \".tflite\" não foram retornados corretamente pelo servidor da web. Verifique a seção \"Requisitos do sistema\" na documentação do Talk.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: os arquivos \".wasm\" e \".tflite\" foram retornados corretamente pelo servidor da web.",
     "{nickName} raised their hand." : "{nickName} levantou a mão.",
     "A participant raised their hand." : "Um participante levantou a mão.",
     "Previous page of videos" : "Página anterior de vídeos",
@@ -1197,6 +1208,7 @@
     "Conversation \"{conversationName}\"" : "Conversa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Configurações para conversa \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Você não pode enviar mensagens para esta conversa no momento",
-    "Add a description for this conversation" : "Adicionar uma descrição para esta conversa"
+    "Add a description for this conversation" : "Adicionar uma descrição para esta conversa",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Defina o nível de notificação para a conversa atual. Isso afetará apenas as notificações que você recebe."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
