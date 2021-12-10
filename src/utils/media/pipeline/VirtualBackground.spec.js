@@ -188,6 +188,19 @@ describe('VirtualBackground', () => {
 			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
 		})
+
+		test('sets input track as its output track if input track is not enabled when setting input track', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
 	})
 
 	describe('enable/disable virtual background after setting input track', () => {
@@ -208,6 +221,41 @@ describe('VirtualBackground', () => {
 		})
 	})
 
+	describe('enable/disable input track', () => {
+		test('sets effect output track as its output track if input track is enabled', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground._setInputTrackEnabled('default', true)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', effectOutputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+			expect(effectOutputTrack.stop).toHaveBeenCalledTimes(0)
+		})
+	})
+
+	describe('remove input track', () => {
+		test('removes output track when removing disabled input track', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground._setInputTrack('default', null)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', null)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
+	})
+
 	describe('update input track', () => {
 		test('updates effect output track when setting same input track again', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
@@ -219,6 +267,38 @@ describe('VirtualBackground', () => {
 			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', effectOutputTrack)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(1)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+			expect(effectOutputTrack.stop).toHaveBeenCalledTimes(0)
+		})
+
+		test('sets input track as its output track when setting same disabled input track again', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground._setInputTrack('default', inputTrack)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', inputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
+
+		test('sets effect output track as its output track when setting another now enabled input track', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+			const inputTrack2 = newMediaStreamTrackMock('input2')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground._setInputTrack('default', inputTrack2)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', effectOutputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
 			expect(effectOutputTrack.stop).toHaveBeenCalledTimes(0)
 		})
