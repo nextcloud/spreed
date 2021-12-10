@@ -121,6 +121,27 @@ describe('VirtualBackground', () => {
 	})
 
 	describe('enable/disable virtual background', () => {
+		test('does nothing if disabled when there is no input track', () => {
+			virtualBackground.setEnabled(false)
+
+			expect(virtualBackground.isEnabled()).toBe(false)
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
+
+		test('does nothing if enabled when there is no input track', () => {
+			virtualBackground.setEnabled(false)
+			virtualBackground.setEnabled(true)
+
+			expect(virtualBackground.isEnabled()).toBe(true)
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
+
 		test('is disabled if enabled when not available', () => {
 			available = false
 			virtualBackground.setEnabled(true)
@@ -161,9 +182,8 @@ describe('VirtualBackground', () => {
 			virtualBackground.setEnabled(false)
 			virtualBackground._setInputTrack('default', inputTrack)
 
-			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
-			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', null)
-			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
@@ -178,10 +198,9 @@ describe('VirtualBackground', () => {
 			virtualBackground._setInputTrack('default', inputTrack)
 			virtualBackground.setEnabled(true)
 
-			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(3)
-			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', null)
-			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', inputTrack)
-			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(3, 'default', effectOutputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(2)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(2, 'default', effectOutputTrack)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(1)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
