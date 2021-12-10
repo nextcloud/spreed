@@ -220,7 +220,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		if (newTrack === oldTrack && newTrack !== null) {
+		if (newTrack === oldTrack && newTrack !== null && newTrack.enabled) {
 			this._jitsiStreamBackgroundEffect.updateInputStream()
 
 			return
@@ -228,8 +228,8 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._stopEffect()
 
-		if (!newTrack) {
-			this._setOutputTrack('default', null)
+		if (!newTrack || !newTrack.enabled) {
+			this._setOutputTrack('default', this.getInputTrack())
 
 			return
 		}
