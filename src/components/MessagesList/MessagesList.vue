@@ -220,12 +220,16 @@ export default {
 			return !!this.$store.getters.findParticipant(this.token, this.$store.getters.getParticipantIdentifier())
 		},
 
+		getAttendeeId() {
+			return this.$store.getters.getAttendeeId()
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
 
 		chatIdentifier() {
-			return this.token + ':' + this.isParticipant + ':' + this.isInLobby + ':' + this.viewId
+			return this.token + ':' + this.getAttendeeId + ':' + this.isInLobby + ':' + this.viewId
 		},
 
 		scrollToBottomAriaLabel() {
