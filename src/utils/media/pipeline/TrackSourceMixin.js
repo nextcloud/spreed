@@ -58,8 +58,10 @@
  * sinks will be automatically updated when those methods are called.
  *
  * Note that ended tracks are automatically removed; the output track does not
- * need to be automatically set to null in that case. However, removing a track
- * does not automatically stop it; that needs to be explicitly done if needed.
+ * need to be automatically set to null in that case. If needed, this can be
+ * prevented by calling "_disableRemoveTrackWhenEnded(track)". However, removing
+ * a track does not automatically stop it; that needs to be explicitly done if
+ * needed.
  */
 export default (function() {
 
@@ -174,6 +176,20 @@ export default (function() {
 	}
 
 	/**
+	 * @param {MediaStreamTrack} track the track to prevent being automatically
+	 *        removed when ended
+	 */
+	function _disableRemoveTrackWhenEnded(track) {
+		const trackIds = Object.keys(this._outputTracks)
+
+		trackIds.forEach(trackId => {
+			if (this._outputTracks[trackId] === track) {
+				this._outputTracks[trackId].removeEventListener('ended', this._removeTrackWhenEndedHandlers[this._outputTracks[trackId].id])
+			}
+		})
+	}
+
+	/**
 	 * @param {MediaStreamTrack} track the ended track to remove
 	 */
 	function _removeTrackWhenEnded(track) {
@@ -225,6 +241,7 @@ export default (function() {
 		this._addOutputTrackSlot = this._addOutputTrackSlot || _addOutputTrackSlot
 		this._removeOutputTrackSlot = this._removeOutputTrackSlot || _removeOutputTrackSlot
 		this._setOutputTrack = this._setOutputTrack || _setOutputTrack
+		this._disableRemoveTrackWhenEnded = this._disableRemoveTrackWhenEnded || _disableRemoveTrackWhenEnded
 		this._removeTrackWhenEnded = this._removeTrackWhenEnded || _removeTrackWhenEnded
 		this._setOutputTrackEnabled = this._setOutputTrackEnabled || _setOutputTrackEnabled
 	}

@@ -197,7 +197,9 @@ export default class VirtualBackground extends TrackSinkSource {
 			this._stopEffect()
 
 			// If not enabled the input track is just bypassed to the output.
-			this._setOutputTrack('default', this.getInputTrack())
+			if (this.getOutputTrack() !== this.getInputTrack()) {
+				this._setOutputTrack('default', this.getInputTrack())
+			}
 
 			return
 		}
@@ -218,7 +220,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		if (newTrack === oldTrack && newTrack !== null) {
+		if (newTrack === oldTrack && newTrack !== null && newTrack.enabled) {
 			this._jitsiStreamBackgroundEffect.updateInputStream()
 
 			return
@@ -226,8 +228,8 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._stopEffect()
 
-		if (!newTrack) {
-			this._setOutputTrack('default', null)
+		if (!newTrack || !newTrack.enabled) {
+			this._setOutputTrack('default', this.getInputTrack())
 
 			return
 		}
@@ -278,6 +280,8 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._jitsiStreamBackgroundEffect.stopEffect()
 		this._outputStream.getTracks().forEach(track => {
+			this._disableRemoveTrackWhenEnded(track)
+
 			track.stop()
 		})
 
