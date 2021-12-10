@@ -101,10 +101,6 @@ class Notifier {
 			$notification = $this->createNotification($chat, $comment, 'mention');
 			$shouldFlush = $this->notificationManager->defer();
 			foreach ($usersToNotify as $mentionedUser) {
-				if (in_array($mentionedUser['id'], $alreadyNotifiedUsers)) {
-					continue;
-				}
-
 				if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
 					$notification->setUser($mentionedUser['id']);
 					$this->notificationManager->notify($notification);
@@ -122,17 +118,20 @@ class Notifier {
 
 	private function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$usersToNotify = $this->getMentionedUsers($comment);
-		if (empty($usersToNotify)) {
-			return $alreadyNotifiedUsers;
-		}
-
+		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
 		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify);
 
 		return $usersToNotify;
 	}
 
+	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
+		return array_filter($usersToNotify, function (array $user) use ($alreadyNotifiedUsers): bool {
+			return !in_array($user['id'], $alreadyNotifiedUsers);
+		});
+	}
+
 	private function addMentionAllToList(Room $chat, array $list): array {
-		$usersToNotify = array_filter($list, function ($user): bool {
+		$usersToNotify = array_filter($list, function (array $user): bool {
 			return $user['id'] !== 'all';
 		});
 
