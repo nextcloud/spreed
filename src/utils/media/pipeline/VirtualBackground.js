@@ -197,7 +197,9 @@ export default class VirtualBackground extends TrackSinkSource {
 			this._stopEffect()
 
 			// If not enabled the input track is just bypassed to the output.
-			this._setOutputTrack('default', this.getInputTrack())
+			if (this.getOutputTrack() !== this.getInputTrack()) {
+				this._setOutputTrack('default', this.getInputTrack())
+			}
 
 			return
 		}
