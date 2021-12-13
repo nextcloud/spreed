@@ -1,9 +1,16 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
+name: 🐛 Bug report
+about: Help us improving by reporting a bug
 labels: 0. Needs triage, bug
-assignees: ''
+---
+
+<!--- Please keep this note for other contributors -->
+
+### How to use GitHub
+
+* Please use the 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to show that you are affected by the same issue.
+* Please don't comment if you have no relevant information to add. It's just extra noise for everyone subscribed to this issue.
+* Subscribe to receive notifications on status change and new comments.
 
 ---
 
@@ -39,7 +46,7 @@ Tell us what happens instead
 
 **Browser name:** Firefox/Chrome/...
 
-**Browser version:** 50.1/55/...
+**Browser version:** 85/96/...
 
 ### Browser log
 
@@ -65,7 +72,7 @@ You can use the Issue Template application to prefill most of the required infor
 
 **Database:** MySQL/Maria/SQLite/PostgreSQL
 
-**PHP version:** 7.2/7.3/7.4
+**PHP version:** 7.4/8.0/8.1
 
 **Nextcloud Version:** (see admin page)
 
