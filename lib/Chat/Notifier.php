@@ -97,20 +97,21 @@ class Notifier {
 	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$usersToNotify = $this->getUsersToNotify($chat, $comment, $alreadyNotifiedUsers);
 
-		if ($usersToNotify) {
-			$notification = $this->createNotification($chat, $comment, 'mention');
-			$shouldFlush = $this->notificationManager->defer();
-			foreach ($usersToNotify as $mentionedUser) {
-				if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
-					$notification->setUser($mentionedUser['id']);
-					$this->notificationManager->notify($notification);
-					$alreadyNotifiedUsers[] = $mentionedUser['id'];
-				}
+		if (!$usersToNotify) {
+			return $alreadyNotifiedUsers;
+		}
+		$notification = $this->createNotification($chat, $comment, 'mention');
+		$shouldFlush = $this->notificationManager->defer();
+		foreach ($usersToNotify as $mentionedUser) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
+				$notification->setUser($mentionedUser['id']);
+				$this->notificationManager->notify($notification);
+				$alreadyNotifiedUsers[] = $mentionedUser['id'];
 			}
+		}
 
-			if ($shouldFlush) {
-				$this->notificationManager->flush();
-			}
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
 		}
 
 		return $alreadyNotifiedUsers;
@@ -125,13 +126,13 @@ class Notifier {
 	}
 
 	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
-		return array_filter($usersToNotify, function (array $user) use ($alreadyNotifiedUsers): bool {
-			return !in_array($user['id'], $alreadyNotifiedUsers);
+		return array_filter($usersToNotify, static function (array $user) use ($alreadyNotifiedUsers): bool {
+			return !in_array($user['id'], $alreadyNotifiedUsers, true);
 		});
 	}
 
 	private function addMentionAllToList(Room $chat, array $list): array {
-		$usersToNotify = array_filter($list, function (array $user): bool {
+		$usersToNotify = array_filter($list, static function (array $user): bool {
 			return $user['id'] !== 'all';
 		});
 
@@ -141,7 +142,7 @@ class Notifier {
 
 		$chatParticipants = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
 		foreach ($chatParticipants as $participant) {
-			$alreadyAddedToNotify = array_filter($list, function ($user) use ($participant): bool {
+			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($participant): bool {
 				return $user['id'] === $participant->getActorId();
 			});
 			if (!empty($alreadyAddedToNotify)) {
@@ -295,11 +296,9 @@ class Notifier {
 	 */
 	public function getMentionedUserIds(IComment $comment): array {
 		$mentionedUsers = $this->getMentionedUsers($comment);
-		$userIds = [];
-		foreach ($mentionedUsers as $mentionedUser) {
-			$userIds[] = $mentionedUser['id'];
-		}
-		return $userIds;
+		return array_map(static function ($mentionedUser) {
+			return $mentionedUser['id'];
+		}, $mentionedUsers);
 	}
 
 	private function getMentionedUsers(IComment $comment): array {
