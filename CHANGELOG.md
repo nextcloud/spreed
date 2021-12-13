@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.1 – 2021-12-13
+### Fixed
+- Fix various issues with enabling/disabling the camera and background blur
+  [#6688](https://github.com/nextcloud/spreed/pull/6688)
+- Fix unregistering of user status listener which lead to a memory leak with Nextcloud 23
+  [#6643](https://github.com/nextcloud/spreed/pull/6643)
+- Device not released when closing settings dialog immediate after opening
+  [#6638](https://github.com/nextcloud/spreed/pull/6638)
+- Disable emoji picker in read-only conversations
+  [#6662](https://github.com/nextcloud/spreed/pull/6662)
+- Make conversation settings scrollable again
+  [#6682](https://github.com/nextcloud/spreed/pull/6682)
+- Make the pagination buttons more and clearly visible in the grid view
+  [#6695](https://github.com/nextcloud/spreed/pull/6695)
+
 ## 12.2.2 – 2021-12-07
 ### Changed
 - Show user status and message as description in 1-to-1 conversations
