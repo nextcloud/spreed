@@ -41,12 +41,14 @@
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0 && showVideoOverlay"
+					<button v-if="hasPreviousPage && gridWidth > 0"
+						:class="{'stripe': isStripe}"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
 						<ChevronLeft
 							decorative
+							fill-color="#ffffff"
 							title=""
 							:size="24" />
 					</button>
@@ -112,12 +114,14 @@
 							@switch-screen-to-id="switchScreenToId"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0 && showVideoOverlay"
+					<button v-if="hasNextPage && gridWidth > 0"
 						class="grid-navigation grid-navigation__next"
+						:class="{'stripe': isStripe}"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
 						<ChevronRight
 							decorative
+							fill-color="#ffffff"
 							title=""
 							:size="24" />
 					</button>
@@ -903,31 +907,40 @@ export default {
 	position: absolute;
 	width: 44px;
 	height: 44px;
-	background-color: white;
-	opacity: 0.6 !important;
-	/* Center icons vertically in the grid view */
 	top: calc(50% - 22px);
 	z-index: 2;
-	box-shadow: 0 0 4px var(--color-box-shadow);
 	padding: 0;
 	margin: 0;
+	border: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.5) !important;
 
 	&:hover,
 	&:focus {
-		background-color: var(var(--color-primary-element-light));
-		border: 1px solid white;
 		opacity: 1 !important;
+		background-color: rgba(0, 0, 0, 0.8) !important;
+
 	}
 	&__previous {
-		left: 12px;
+		left: -4px;
 	}
 	&__next {
-		right: 12px;
+		right: -4px;
 	}
 }
 
+.grid-navigation__previous.stripe {
+	left: 8px;
+}
+
+.grid-navigation__next.stripe {
+	right: 16px;
+}
+
 .stripe-wrapper .grid-navigation {
-	top: 12px;
+	top: 16px;
 }
 
 .pages-indicator {
