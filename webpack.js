@@ -78,15 +78,4 @@ webpackConfig.module.rules.push({
 	use: { loader: 'worker-loader' },
 })
 
-webpackConfig.optimization.minimizer = [
-	new TerserPlugin({
-		terserOptions: {
-			output: {
-				comments: false,
-			},
-		},
-		extractComments: false,
-	}),
-]
-
 module.exports = webpackConfig
