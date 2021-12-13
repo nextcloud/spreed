@@ -266,11 +266,11 @@ export default {
 				const { request, cancel } = CancelableRequest(fetchParticipants)
 				this.cancelGetParticipants = cancel
 				const participants = await request(token)
-				await this.$store.dispatch('purgeParticipantsStore', token)
+				this.$store.dispatch('purgeParticipantsStore', token)
 
 				const hasUserStatuses = !!participants.headers['x-nextcloud-has-user-statuses']
-				for (const participant of participants.data.ocs.data) {
-					await this.$store.dispatch('addParticipant', {
+				participants.data.ocs.data.forEach(participant => {
+					this.$store.dispatch('addParticipant', {
 						token,
 						participant,
 					})
@@ -290,7 +290,7 @@ export default {
 							userId: participant.actorId,
 						})
 					}
-				}
+				})
 				this.participantsInitialised = true
 			} catch (exception) {
 				if (!Axios.isCancel(exception)) {

@@ -90,7 +90,7 @@ export default {
 		subscribe('user_status:status.updated', this.userStatusUpdated)
 	},
 
-	beforeDestroyed() {
+	beforeDestroy() {
 		unsubscribe('user_status:status.updated', this.userStatusUpdated)
 	},
 
