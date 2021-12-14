@@ -95,3 +95,18 @@ Feature: conversation/join-listable
       | regular-user           | USER              | users     |
       | user-guest@example.com | USER              | users     |
       | "guest"                | GUEST             | guests    |
+
+  # -----------------------------------------------------------------------------
+  # Join listed conversation which has a password
+  # -----------------------------------------------------------------------------
+  Scenario: Only users with accounts can join an all-listed group room
+    Given user "creator" creates room "room" (v4)
+      | roomType | 3    |
+      | roomName | room |
+    When user "creator" sets password "foobar" for room "room" with 200 (v4)
+    And user "creator" allows listing room "room" for "all" with 200 (v4)
+    When user "regular-user" joins room "room" with 200 (v4)
+    Then user "creator" sees the following attendees in room "room" with 200 (v4)
+      | actorId                | participantType   | actorType |
+      | creator                | OWNER             | users     |
+      | regular-user           | USER              | users     |
