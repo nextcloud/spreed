@@ -309,6 +309,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+					'participant-list' => 'refresh',
 				],
 			],
 		]);
@@ -362,6 +363,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+					'participant-list' => 'refresh',
 				],
 			],
 		]);
@@ -390,6 +392,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+					'participant-list' => 'refresh',
 				],
 			],
 		]);
