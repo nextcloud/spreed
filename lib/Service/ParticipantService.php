@@ -168,17 +168,16 @@ class ParticipantService {
 		try {
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		} catch (DoesNotExistException $e) {
-			if (!$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
+			// queried here to avoid loop deps
+			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
+			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
+
+			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
-			// queried here to avoid loop deps
-			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
-
 			// User joining a group or public call through listing
-			if (($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) &&
-				$manager->isRoomListableByUser($room, $user->getUID())
-			) {
+			if (($room->getType() === Room::GROUP_CALL || $room->getType() === Room::PUBLIC_CALL) && $isListableByUser) {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),
