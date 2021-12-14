@@ -204,7 +204,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		if (!this.getInputTrack()) {
+		if (!this.getInputTrack() || !this.getInputTrack().enabled) {
 			return
 		}
 

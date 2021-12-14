@@ -219,6 +219,20 @@ describe('VirtualBackground', () => {
 			expect(effectOutputTrack.stop).toHaveBeenCalledTimes(1)
 		})
 
+		test('does nothing if disabled when input track is not enabled', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground.setEnabled(false)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
+		})
+
 		test('sets effect output track as its output track if enabled', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
@@ -233,6 +247,21 @@ describe('VirtualBackground', () => {
 			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
 			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
 			expect(effectOutputTrack.stop).toHaveBeenCalledTimes(0)
+		})
+
+		test('does nothing if enabled when input track is not enabled', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			virtualBackground.setEnabled(false)
+			inputTrack.enabled = false
+			virtualBackground._setInputTrack('default', inputTrack)
+			virtualBackground.setEnabled(true)
+
+			expect(virtualBackground._setOutputTrack).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._setOutputTrack).toHaveBeenNthCalledWith(1, 'default', inputTrack)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.startEffect).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.updateInputStream).toHaveBeenCalledTimes(0)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.stopEffect).toHaveBeenCalledTimes(0)
 		})
 	})
 
