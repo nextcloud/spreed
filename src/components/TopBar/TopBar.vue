@@ -25,6 +25,7 @@
 			v-if="!isInCall"
 			:key="conversation.token"
 			class="conversation-icon"
+			:offline="isPeerOffline"
 			:item="conversation"
 			:hide-favorite="false"
 			:hide-call="false" />
@@ -32,7 +33,8 @@
 		<a v-if="!isInCall"
 			class="conversation-header"
 			@click="openConversationSettings">
-			<div class="conversation-header__text">
+			<div class="conversation-header__text"
+				:class="{'conversation-header__text--offline': isPeerOffline}">
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
@@ -187,6 +189,7 @@ import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
+import getParticipants from '../../mixins/getParticipants'
 
 export default {
 	name: 'TopBar',
@@ -212,6 +215,7 @@ export default {
 	mixins: [
 		richEditor,
 		userStatus,
+		getParticipants,
 	],
 
 	props: {
@@ -343,6 +347,36 @@ export default {
 		renderedDescription() {
 			return this.renderContent(this.conversation.description)
 		},
+
+		/**
+		 * Current actor id
+		 */
+		actorId() {
+			return this.$store.getters.getActorId
+		},
+
+		/**
+		 * Online status of the peer in one to one conversation.
+		 */
+		isPeerOffline() {
+			// Only compute this in on to one conversations
+			if (!this.isOneToOneConversation) {
+				return undefined
+			}
+
+			// Get the 1 to 1 peer
+			let peer
+			const participants = this.$store.getters.participantsList(this.token)
+			for (const participant of participants) {
+				if (participant.actorId !== this.actorId) {
+					peer = participant
+				}
+			}
+
+			if (peer) {
+				return !peer.sessionIds.length
+			} else return false
+		},
 	},
 
 	watch: {
@@ -371,6 +405,15 @@ export default {
 			if (!newValue) {
 				// discard notification if the call ends
 				this.notifyUnreadMessages(null)
+			}
+		},
+
+		// Starts and stops the getParticipantsMixin logic
+		isOneToOneConversation(newValue) {
+			if (newValue) {
+				this.initialiseGetParticipantsMixin()
+			} else {
+				this.stopGetParticipantsMixin()
 			}
 		},
 	},
@@ -557,6 +600,9 @@ export default {
 		width: 100%;
 		overflow: hidden;
 		height: $clickable-area;
+		&--offline {
+			color: var(--color-text-maxcontrast);
+		}
 	}
 	.title {
 		font-weight: bold;
