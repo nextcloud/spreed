@@ -212,6 +212,19 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->assertContainsEquals($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
 	}
 
+	private function assertNoMessageOfTypeWasSent(Room $room, string $messageType): void {
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function ($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+
+		$bodies = array_filter($bodies, function (array $body) use ($messageType) {
+			return $body['type'] === $messageType;
+		});
+
+		$this->assertEmpty($bodies);
+	}
+
 	private function sortParticipantUsers(array $message): array {
 		if ($message['type'] === 'participants') {
 			usort($message['participants']['users'], static function ($a, $b) {
@@ -259,6 +272,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+					'participant-list' => 'refresh',
 				],
 			],
 		]);
@@ -283,6 +297,87 @@ class BackendNotifierTest extends \Test\TestCase {
 			'disinvite' => [
 				'userids' => [
 					$this->userId,
+				],
+				'alluserids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
+					'active-since' => null,
+					'sip-enabled' => 0,
+				],
+			],
+		]);
+	}
+
+	public function testNoRoomDisinviteOnLeaveOfNormalUser() {
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($this->userId);
+
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $this->userId,
+		]]);
+		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$this->controller->clearRequests();
+		$this->participantService->leaveRoomAsSession($room, $participant);
+
+		$this->assertNoMessageOfTypeWasSent($room, 'disinvite');
+	}
+
+	public function testRoomDisinviteOnLeaveOfSelfJoinedUser() {
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($this->userId);
+
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$this->controller->clearRequests();
+		$this->participantService->leaveRoomAsSession($room, $participant);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'disinvite',
+			'disinvite' => [
+				'userids' => [
+					$this->userId,
+				],
+				'alluserids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
+					'active-since' => null,
+					'sip-enabled' => 0,
+				],
+			],
+		]);
+	}
+
+	public function testRoomDisinviteOnLeaveOfGuest() {
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$participant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$this->controller->clearRequests();
+		$this->participantService->leaveRoomAsSession($room, $participant);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'disinvite',
+			'disinvite' => [
+				'sessionids' => [
+					$participant->getSession()->getSessionId(),
 				],
 				'alluserids' => [
 				],

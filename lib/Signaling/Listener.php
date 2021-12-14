@@ -35,6 +35,7 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
@@ -216,8 +217,16 @@ class Listener {
 
 			$sessionIds = [];
 			if ($event->getParticipant()->getSession()) {
-				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
-				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+				// Only for guests and self-joined users disconnecting is "leaving" and therefor should trigger a disinvite
+				$attendeeParticipantType = $event->getParticipant()->getAttendee()->getParticipantType();
+				if ($attendeeParticipantType === Participant::GUEST
+					|| $attendeeParticipantType === Participant::GUEST_MODERATOR) {
+					$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
+					$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+				}
+				if ($attendeeParticipantType === Participant::USER_SELF_JOINED) {
+					$notifier->roomsDisinvited($event->getRoom(), [$event->getParticipant()->getAttendee()->getActorId()]);
+				}
 			}
 		});
 
