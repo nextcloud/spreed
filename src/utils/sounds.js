@@ -22,7 +22,7 @@ import { generateFilePath } from '@nextcloud/router'
 import store from '../store'
 
 export const Sounds = {
-	BLOCK_SOUND_TIMEOUT: 5000,
+	BLOCK_SOUND_TIMEOUT: 3000,
 
 	isInCall: false,
 	lastPlayedJoin: 0,
@@ -101,7 +101,7 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			this._playSounceOnce('LibremEmailNotification.ogg')
+			this._playSounceOnce('join_call.wav')
 		}
 	},
 
@@ -132,7 +132,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		this._playSounceOnce('LibremTextMessage.ogg')
+		this._playSounceOnce('leave_call.wav')
 
 		if (playWaitingSound) {
 			this.playWaiting()
