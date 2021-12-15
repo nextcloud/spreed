@@ -582,11 +582,19 @@ export default {
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
 		}, 50),
+
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
 		 */
 		async handleScroll() {
+			if (!this.$store.getters.getFirstKnownMessageId(this.token)) {
+				// This can happen if the browser is fast enough to close the sidebar
+				// when switching from a one-to-one to a group conversation.
+				console.debug('Ignoring handleScroll as the messages history is empty')
+				return
+			}
+
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
 			const scrollOffset = scrollHeight - scrollTop
