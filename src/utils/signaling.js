@@ -1219,8 +1219,19 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
+	case 'update':
+		if (data.event.update.properties['participant-list']) {
+			console.debug('Room list event for participant list', data)
+			if (data.event.update.roomid === this.currentRoomToken) {
+				this._trigger('participantListChanged')
+			} else {
+				// Participant list in another room changed, we don't really care
+			}
+			break
+		}
+		// eslint-disable-next-line no-fallthrough
 	case 'disinvite':
-		if (data.event.disinvite.roomid === this.currentRoomToken) {
+		if (data.event?.disinvite?.roomid === this.currentRoomToken) {
 			if (this._isRejoiningConversationWithNewSession) {
 				console.debug('Rejoining conversation with new session, "disinvite" message ignored')
 				return
