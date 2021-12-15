@@ -22,7 +22,7 @@ import { generateFilePath } from '@nextcloud/router'
 import store from '../store'
 
 export const Sounds = {
-	BLOCK_SOUND_TIMEOUT: 5000,
+	BLOCK_SOUND_TIMEOUT: 3000,
 
 	isInCall: false,
 	lastPlayedJoin: 0,
@@ -31,11 +31,20 @@ export const Sounds = {
 	backgroundAudio: null,
 	backgroundInterval: null,
 
-	_playSounceOnce(soundFile) {
+	_playSoundOnce(soundFile) {
 		const file = generateFilePath('spreed', 'img', soundFile)
 		const audio = new Audio(file)
 		audio.volume = 0.75
 		audio.play()
+	},
+
+	_stopWaiting() {
+		console.debug('Stop waiting sound')
+		if (this.backgroundAudio) {
+			this.backgroundAudio.pause()
+			this.backgroundAudio = null
+		}
+		clearInterval(this.backgroundInterval)
 	},
 
 	async playWaiting() {
@@ -59,19 +68,20 @@ export const Sounds = {
 				return
 			}
 
+			if (this.playedWaiting >= 3) {
+				// Played 3 times, so we stop now.
+				this._stopWaiting()
+			}
+
 			console.debug('Playing waiting sound')
 			this.backgroundAudio.play()
 			this.playedWaiting++
 
-			if (this.playedWaiting >= 3) {
-				// Played 3 times, so we stop now.
-				clearInterval(this.backgroundInterval)
-			}
 		}, 15000)
 	},
 
 	async playJoin(force, playWaitingSound) {
-		clearInterval(this.backgroundInterval)
+		this._stopWaiting()
 
 		if (!store.getters.playSounds) {
 			return
@@ -101,12 +111,12 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			this._playSounceOnce('LibremEmailNotification.ogg')
+			this._playSoundOnce('join_call.ogg')
 		}
 	},
 
 	async playLeave(force, playWaitingSound) {
-		clearInterval(this.backgroundInterval)
+		this._stopWaiting()
 
 		if (!store.getters.playSounds) {
 			return
@@ -132,7 +142,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		this._playSounceOnce('LibremTextMessage.ogg')
+		this._playSoundOnce('leave_call.ogg')
 
 		if (playWaitingSound) {
 			this.playWaiting()
