@@ -111,7 +111,7 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			this._playSoundOnce('join_call.wav')
+			this._playSoundOnce('join_call.ogg')
 		}
 	},
 
@@ -142,7 +142,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		this._playSoundOnce('leave_call.wav')
+		this._playSoundOnce('leave_call.ogg')
 
 		if (playWaitingSound) {
 			this.playWaiting()
