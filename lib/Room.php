@@ -434,9 +434,9 @@ class Room {
 		];
 
 		if ($roomModified) {
-			$properties = array_merge($properties, [
-				'description' => $this->getDescription(),
-			]);
+			$properties['description'] = $this->getDescription();
+		} else {
+			$properties['participant-list'] = 'refresh';
 		}
 
 		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
