@@ -100,6 +100,18 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
+			if ($chatMessage->getMessageType() !== 'reaction') {
+				return;
+			}
+
+			/** @var ReactionParser $parser */
+			$parser = \OC::$server->get(ReactionParser::class);
+			$parser->parseMessage($chatMessage);
+		});
+
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
+			$chatMessage = $event->getMessage();
+
 			if ($chatMessage->getMessageType() !== 'comment_deleted') {
 				return;
 			}

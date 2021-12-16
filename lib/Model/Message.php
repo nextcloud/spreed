@@ -163,6 +163,7 @@ class Message {
 		return $this->getMessageType() !== 'system' &&
 			$this->getMessageType() !== 'command' &&
 			$this->getMessageType() !== 'comment_deleted' &&
+			$this->getMessageType() !== 'reaction' &&
 			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
@@ -180,6 +181,7 @@ class Message {
 			'messageType' => $this->getMessageType(),
 			'isReplyable' => $this->isReplyable(),
 			'referenceId' => (string) $this->getComment()->getReferenceId(),
+			'reactions' => $this->getComment()->getReactions(),
 		];
 
 		if ($this->getMessageType() === 'comment_deleted') {

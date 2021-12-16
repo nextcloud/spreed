@@ -26,6 +26,7 @@ nav:
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'
       - 'Chat management': 'chat.md'
+      - 'Reaction management': 'reaction.md'
       - 'Webinar management': 'webinar.md'
       - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'

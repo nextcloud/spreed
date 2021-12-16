@@ -1559,6 +1559,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
+		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $messages, 'Message count does not match');
@@ -1567,7 +1568,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -1583,6 +1584,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReferenceId) {
 				$data['referenceId'] = $message['referenceId'];
+			}
+			if ($includeReactions) {
+				$data['reactions'] = json_encode($message['reactions'], JSON_UNESCAPED_UNICODE);
 			}
 			return $data;
 		}, $messages));
@@ -2077,6 +2081,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		]);
 		$this->assertStatusCode($this->response, 200);
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" react with "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userReactWithOnMessageToRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$token = self::$identifierToToken[$identifier];
+		$messageId = self::$messages[$message];
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId, [
+			'reaction' => $reaction
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/*

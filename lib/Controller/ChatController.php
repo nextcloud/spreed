@@ -27,6 +27,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
@@ -67,6 +68,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var IAppManager */
 	private $appManager;
+
+	/** @var CommentsManager */
+	private $commentsManager;
 
 	/** @var ChatManager */
 	private $chatManager;
@@ -121,6 +125,7 @@ class ChatController extends AEnvironmentAwareController {
 								IRequest $request,
 								IUserManager $userManager,
 								IAppManager $appManager,
+								CommentsManager $commentsManager,
 								ChatManager $chatManager,
 								ParticipantService $participantService,
 								SessionService $sessionService,
@@ -141,6 +146,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
+		$this->commentsManager = $commentsManager;
 		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
