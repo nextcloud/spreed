@@ -1042,7 +1042,7 @@ OC.L10N.register(
     "You have been mentioned in the chat." : "Omenjeni ste bili v klepetu.",
     "Send" : "Pošlji",
     "Add more files" : "Dodaj več datotek",
-    "No unread mentions" : "Ni neprebranih omenjanj",
+    "No unread mentions" : "Ni neprebranih sporočil",
     "Say hi to your friends and colleagues!" : "Pozdravite prijatelje in znance.",
     "Start a conversation" : "Začni pogovor",
     "You were mentioned" : "Omenjeni ste bili v klepetu",
