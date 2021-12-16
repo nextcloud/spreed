@@ -734,7 +734,7 @@ OC.L10N.register(
     "Stop following" : "Zakończ obserwowanie",
     "Conversation messages" : "Wiadomości w rozmowie",
     "Post message" : "Wyślij wiadomość",
-    "You need to be logged in to upload files" : "Musisz się zalogować, aby przesyłać pliki",
+    "You need to be logged in to upload files" : "Musisz się zalogować, aby wysyłać pliki",
     "This conversation is read-only" : "Ta rozmowa jest tylko do odczytu",
     "Drop your files to upload" : "Upuść swoje pliki do wysłania",
     "Call in progress" : "Trwa połączenie",
