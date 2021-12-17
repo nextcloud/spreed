@@ -47,7 +47,7 @@
 					</template>
 				</div>
 				<!-- Screens -->
-				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
+				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen || showSelectedScreen)" id="screens">
 					<!-- local screen -->
 					<Screen
 						v-if="showLocalScreen"
@@ -303,6 +303,10 @@ export default {
 			return this.hasSelectedVideo && !this.showLocalVideo
 		},
 
+		showSelectedScreen() {
+			return this.hasSelectedScreen && !this.showLocalVideo
+		},
+
 		// Shows the local video if selected
 		showLocalVideo() {
 			return this.hasLocalVideo && this.selectedVideoPeerId === 'local'
@@ -313,10 +317,10 @@ export default {
 			return this.hasLocalScreen && this.selectedVideoPeerId === null
 		},
 
-		// Show somebody else's screen. This will show the screen of the first
+		// Show somebody else's screen. This will show the screen of the last
 		// person that shared it.
 		showRemoteScreen() {
-			return this.shownRemoteScreenPeerId !== null && !this.showSelectedVideo
+			return this.shownRemoteScreenPeerId !== null && !this.showSelectedVideo && !this.showSelectedScreen
 		},
 
 		shownRemoteScreenPeerId() {
@@ -400,6 +404,11 @@ export default {
 			}
 		},
 
+		showSelectedScreen(newVal) {
+			if (newVal) {
+				this.$store.dispatch('setCallViewMode', { isGrid: false })
+			}
+		},
 	},
 	created() {
 		// Ensure that data is properly initialized before mounting the
