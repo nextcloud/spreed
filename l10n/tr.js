@@ -1037,7 +1037,7 @@ OC.L10N.register(
     "Sounds" : "Sesler",
     "Play sounds when participants join or leave a call" : "Katılımcılar görüşmeye girdiğinde ya da çıktığında ses çalınsın",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Üreticinin sınırlamaları nedeniyle, sesler şu anda Safari web tarayıcısı, iPad ve iPhone aygıtlarında çalınamıyor. ",
-    "Keyboard shortcuts" : "Tuş takımı kısayolları",
+    "Keyboard shortcuts" : "Kısayol tuşları",
     "Speed up your Talk experience with these quick shortcuts." : "Şu kısayol tuşlarını kullanarak Talk deneyiminizi hızlandırabilirsiniz.",
     "Focus the chat input" : "Sohbet girişine odaklan",
     "Unfocus the chat input to use shortcuts" : "Kısayol tuşlarını kullanmak için odağı sohbet girişinden al",
