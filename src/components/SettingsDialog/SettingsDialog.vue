@@ -101,7 +101,7 @@
 				<div>
 					<dt><kbd>V</kbd></dt>
 					<dd class="shortcut-description">
-						{{ t('spreed', 'Video on and off') }}
+						{{ t('spreed', 'Camera on and off') }}
 					</dd>
 				</div>
 				<div>
