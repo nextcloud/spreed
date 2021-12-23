@@ -26,18 +26,27 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Model\Message;
+use OCP\IL10N;
 
 class ReactionParser {
+	/** @var IL10N|null */
+	private $l;
 	/**
 	 * @param Message $message
 	 * @throws \OutOfBoundsException
 	 */
 	public function parseMessage(Message $message): void {
 		$comment = $message->getComment();
-		if (!in_array($comment->getVerb(), ['reaction'])) {
+		if (!in_array($comment->getVerb(), ['reaction', 'reaction_deleted'])) {
 			throw new \OutOfBoundsException('Not a reaction');
 		}
+		$this->l = $message->getL10n();
 		$message->setMessageType('system');
-		$message->setMessage($message->getMessage(), [], $comment->getVerb());
+		if ($comment->getVerb() === 'reaction_deleted') {
+			// This message is necessary to make compatible with old clients
+			$message->setMessage($this->l->t('Message deleted by author'), [], $comment->getVerb());
+		} else {
+			$message->setMessage($message->getMessage(), [], $comment->getVerb());
+		}
 	}
 }

@@ -100,7 +100,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
-			if ($chatMessage->getMessageType() !== 'reaction') {
+			if ($chatMessage->getMessageType() !== 'reaction' && $chatMessage->getMessageType() !== 'reaction_deleted') {
 				return;
 			}
 

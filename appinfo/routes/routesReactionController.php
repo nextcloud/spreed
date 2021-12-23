@@ -29,5 +29,9 @@ return [
 			'apiVersion' => 'v1',
 			'token' => '^[a-z0-9]{4,30}$',
 		]],
+		['name' => 'Reaction#delete', 'url' => '/api/{apiVersion}/reaction/{token}/{messageId}', 'verb' => 'DELETE', 'requirements' => [
+			'apiVersion' => 'v1',
+			'token' => '^[a-z0-9]{4,30}$',
+		]],
 	],
 ];

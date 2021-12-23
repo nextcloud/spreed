@@ -47,7 +47,6 @@ class ReactionController extends AEnvironmentAwareController {
 								ChatManager $chatManager,
 								ReactionManager $reactionManager) {
 		parent::__construct($appName, $request);
-
 		$this->commentsManager = $commentsManager;
 		$this->chatManager = $chatManager;
 		$this->reactionManager = $reactionManager;
@@ -73,7 +72,7 @@ class ReactionController extends AEnvironmentAwareController {
 		}
 
 		try {
-			// Verify already reacted whith the same reaction
+			// Check if the user already reacted with the same reaction
 			$this->commentsManager->getReactionComment(
 				$messageId,
 				$participant->getAttendee()->getActorType(),
@@ -86,6 +85,40 @@ class ReactionController extends AEnvironmentAwareController {
 
 		try {
 			$this->reactionManager->addReactionMessage($this->getRoom(), $participant, $messageId, $reaction);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $messageId for reaction
+	 * @param string $reaction the reaction emoji
+	 * @return DataResponse
+	 */
+	public function delete(int $messageId, string $reaction): DataResponse {
+		$participant = $this->getParticipant();
+		try {
+			// Verify if messageId is of room
+			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$this->reactionManager->deleteReactionMessage(
+				$participant,
+				$messageId,
+				$reaction
+			);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

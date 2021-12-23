@@ -25,7 +25,6 @@ namespace OCA\Talk\Tests\php\Controller;
 
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\GuestManager;
@@ -63,8 +62,6 @@ class ChatControllerTest extends TestCase {
 	protected $userManager;
 	/** @var IAppManager|MockObject */
 	private $appManager;
-	/** @var CommentsManager|MockObject */
-	protected $commentsManager;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
 	/** @var ParticipantService|MockObject */
@@ -111,7 +108,6 @@ class ChatControllerTest extends TestCase {
 		$this->userId = 'testUser';
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->appManager = $this->createMock(IAppManager::class);
-		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
@@ -147,7 +143,6 @@ class ChatControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->userManager,
 			$this->appManager,
-			$this->commentsManager,
 			$this->chatManager,
 			$this->participantService,
 			$this->sessionService,

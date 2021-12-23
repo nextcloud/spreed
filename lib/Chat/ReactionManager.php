@@ -27,15 +27,20 @@ namespace OCA\Talk\Chat;
 
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 
 class ReactionManager {
 	/** @var ICommentsManager|CommentsManager */
 	private $commentsManager;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 
-	public function __construct(CommentsManager $commentsManager) {
+	public function __construct(CommentsManager $commentsManager,
+								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
+		$this->timeFactory = $timeFactory;
 	}
 
 	public function addReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
@@ -48,6 +53,25 @@ class ReactionManager {
 		$comment->setParentId((string) $messageId);
 		$comment->setMessage($reaction);
 		$comment->setVerb('reaction');
+		$this->commentsManager->save($comment);
+		return $comment;
+	}
+
+	public function deleteReactionMessage(Participant $participant, int $messageId, string $reaction): IComment {
+		$comment = $this->commentsManager->getReactionComment(
+			$messageId,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			$reaction
+		);
+		$comment->setMessage(
+			json_encode([
+				'deleted_by_type' => $participant->getAttendee()->getActorType(),
+				'deleted_by_id' => $participant->getAttendee()->getActorId(),
+				'deleted_on' => $this->timeFactory->getDateTime()->getTimestamp(),
+			])
+		);
+		$comment->setVerb('reaction_deleted');
 		$this->commentsManager->save($comment);
 		return $comment;
 	}
