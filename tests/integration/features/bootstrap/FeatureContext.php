@@ -2097,6 +2097,34 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	/**
+	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $emoji, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
+		$token = self::$identifierToToken[$identifier];
+		$messageId = self::$messages[$message];
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId . '?emoji=' . $emoji);
+		$this->assertStatusCode($this->response, $statusCode);
+		$this->assertReactionList($formData);
+	}
+
+	private function assertReactionList(TableNode $formData): void {
+		$expected = $formData->getHash();
+
+		$result = $this->getDataFromResponse($this->response);
+		$result = array_map(function ($reaction) {
+			unset($reaction['timestamp']);
+			return $reaction;
+		}, $result);
+
+		Assert::assertCount(count($formData->getHash()), $result, 'Reaction count does not match');
+
+		usort($expected, [$this, 'sortAttendees']);
+		usort($result, [$this, 'sortAttendees']);
+		Assert::assertEquals($expected, $result);
+	}
+
 	/*
 	 * Requests
 	 */

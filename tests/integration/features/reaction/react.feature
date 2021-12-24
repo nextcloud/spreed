@@ -44,3 +44,25 @@ Feature: reaction/react
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | []        |
+
+  Scenario: Retrieve reactions of a message
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant1" react with "👍" on message "Message 1" to room "room" with 201
+    And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+    And user "participant2" react with "👎" on message "Message 1" to room "room" with 201
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room" with 200
+      | actorType | actorId      | actorDisplayName         |
+      | users     | participant1 | participant1-displayname |
+      | users     | participant2 | participant2-displayname |
+    And user "participant1" retrieve reactions "👎" of message "Message 1" in room "room" with 200
+      | actorType | actorId      | actorDisplayName         |
+      | users     | participant2 | participant2-displayname |
+    And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant1 | participant1-displayname | 👍       |
+      | users     | participant2 | participant2-displayname | 👎       |
+      | users     | participant2 | participant2-displayname | 👍       |

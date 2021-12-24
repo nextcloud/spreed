@@ -30,16 +30,25 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IL10N;
 
 class ReactionManager {
 	/** @var ICommentsManager|CommentsManager */
 	private $commentsManager;
+	/** @var IL10N */
+	private $l;
+	/** @var MessageParser */
+	private $messageParser;
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
 	public function __construct(CommentsManager $commentsManager,
+								IL10N $l,
+								MessageParser $messageParser,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
+		$this->l = $l;
+		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -74,5 +83,28 @@ class ReactionManager {
 		$comment->setVerb('reaction_deleted');
 		$this->commentsManager->save($comment);
 		return $comment;
+	}
+
+	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction): array {
+		if ($reaction) {
+			$comments = $this->commentsManager->retrieveAllReactionsWithSpecificReaction($messageId, $reaction);
+		} else {
+			$comments = $this->commentsManager->retrieveAllReactions($messageId);
+		}
+
+		$reactions = [];
+		foreach ($comments as $comment) {
+			$message = $this->messageParser->createMessage($chat, $participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			$reactions[] = [
+				'actorType' => $comment->getActorType(),
+				'actorId' => $comment->getActorId(),
+				'actorDisplayName' => $message->getActorDisplayName(),
+				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+				'reaction' => $comment->getMessage(),
+			];
+		}
+		return $reactions;
 	}
 }

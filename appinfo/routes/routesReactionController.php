@@ -33,5 +33,9 @@ return [
 			'apiVersion' => 'v1',
 			'token' => '^[a-z0-9]{4,30}$',
 		]],
+		['name' => 'Reaction#getReactions', 'url' => '/api/{apiVersion}/reaction/{token}/{messageId}', 'verb' => 'GET', 'requirements' => [
+			'apiVersion' => 'v1',
+			'token' => '^[a-z0-9]{4,30}$',
+		]],
 	],
 ];

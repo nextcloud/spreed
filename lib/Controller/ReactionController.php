@@ -125,4 +125,27 @@ class ReactionController extends AEnvironmentAwareController {
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $messageId for reaction
+	 * @param string|null $reaction the reaction emoji
+	 * @return DataResponse
+	 */
+	public function getReactions(int $messageId, ?string $reaction): DataResponse {
+		try {
+			// Verify if messageId is of room
+			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
+
+		return new DataResponse($reactions, Http::STATUS_OK);
+	}
 }
