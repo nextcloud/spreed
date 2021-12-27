@@ -632,7 +632,7 @@
     "{option} only" : "僅 {option}",
     "TURN server URL" : "TURN 伺服器 URL",
     "TURN server secret" : "TURN 伺服器密鑰",
-    "TURN server protocols" : "TURN 伺服器規約",
+    "TURN server protocols" : "TURN 伺服器協定",
     "{schema} scheme must be used with a domain" : "{schema} 方案必須與域名一起使用",
     "OK: Successful ICE candidates returned by the TURN server" : "OK：TURN 伺服器返回成功的 ICE 候選者",
     "Error: No working ICE candidates returned by the TURN server" : "錯誤：TURN 伺服器未返回任何有效的 ICE 候選者",
