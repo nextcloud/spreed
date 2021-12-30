@@ -678,18 +678,18 @@ export default {
 		grantAllPermissions() {
 			try {
 				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.participant.displayName }))
+				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
 		removeAllPermissions() {
 			try {
 				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.participant.displayName }))
+				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
@@ -704,9 +704,9 @@ export default {
 		applyDefaultPermissions() {
 			try {
 				this.$store.dispatch('setPermissions', { token: this.token, attendeeId: this.attendeeId, permissions: PARTICIPANT.PERMISSIONS.DEFAULT })
-				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.participant.displayName }))
+				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.participant.displayName }))
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 	},
