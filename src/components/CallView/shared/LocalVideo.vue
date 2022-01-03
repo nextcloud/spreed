@@ -244,7 +244,7 @@ export default {
 						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))
 					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
 						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
-						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: it is likely in use by another program'), {
+						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: It is likely in use by another program'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					} else {
