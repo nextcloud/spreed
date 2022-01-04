@@ -27,8 +27,8 @@
 		<div id="videos">
 			<template
 				v-if="!isGrid">
-				<!-- Selected override mode -->
-				<div v-if="showSelected"
+				<!-- Selected video override mode -->
+				<div v-if="showSelectedVideo"
 					ref="videoContainer"
 					class="video__promoted selected-video"
 					:class="{'full-page': isOneToOne}">
@@ -47,7 +47,7 @@
 					</template>
 				</div>
 				<!-- Screens -->
-				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen)" id="screens">
+				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen || showSelectedScreen)" id="screens">
 					<!-- local screen -->
 					<Screen
 						v-if="showLocalScreen"
@@ -299,8 +299,12 @@ export default {
 		// of the promoted view
 
 		// Show selected video (other than local)
-		showSelected() {
+		showSelectedVideo() {
 			return this.hasSelectedVideo && !this.showLocalVideo
+		},
+
+		showSelectedScreen() {
+			return this.hasSelectedScreen && !this.showLocalVideo
 		},
 
 		// Shows the local video if selected
@@ -313,9 +317,10 @@ export default {
 			return this.hasLocalScreen && this.selectedVideoPeerId === null
 		},
 
-		// Show somebody else's screen
+		// Show somebody else's screen. This will show the screen of the last
+		// person that shared it.
 		showRemoteScreen() {
-			return this.shownRemoteScreenPeerId !== null
+			return this.shownRemoteScreenPeerId !== null && !this.showSelectedVideo && !this.showSelectedScreen
 		},
 
 		shownRemoteScreenPeerId() {
@@ -393,6 +398,17 @@ export default {
 			}
 		},
 
+		showSelectedVideo(newVal) {
+			if (newVal) {
+				this.$store.dispatch('setCallViewMode', { isGrid: false })
+			}
+		},
+
+		showSelectedScreen(newVal) {
+			if (newVal) {
+				this.$store.dispatch('setCallViewMode', { isGrid: false })
+			}
+		},
 	},
 	created() {
 		// Ensure that data is properly initialized before mounting the
