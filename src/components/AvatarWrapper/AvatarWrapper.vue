@@ -130,12 +130,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/avatar';
 
 .avatar-wrapper {
 	$avatar-size: 44px;
 	height: $avatar-size;
 	width: $avatar-size;
-	@import '../../assets/avatar.scss';
 	@include avatar-mixin($avatar-size);
 }
 

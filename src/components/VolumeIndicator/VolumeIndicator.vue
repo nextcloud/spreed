@@ -99,7 +99,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables.scss';
+@import '../../assets/variables';
 
 .volume-indicator-wrapper {
 	/* Make the wrapper the positioning context of the volume indicator. */

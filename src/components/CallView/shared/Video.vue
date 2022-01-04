@@ -515,14 +515,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/avatar';
+@import '../../../assets/variables';
+@include avatar-mixin(64px);
+@include avatar-mixin(128px);
+
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
-
-@import '../../../assets/avatar.scss';
-@import '../../../assets/variables.scss';
-@include avatar-mixin(64px);
-@include avatar-mixin(128px);
 
 .not-connected {
 	video,

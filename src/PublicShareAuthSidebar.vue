@@ -190,7 +190,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import './assets/variables.scss';
+@import './assets/variables';
 
 /* Properties based on the app-sidebar */
 #talk-sidebar {

@@ -21,7 +21,7 @@
  */
 @use 'sass:math';
 
-@import 'variables.scss';
+@import 'variables';
 
 
 @mixin avatar-mixin($size: 32px) {

@@ -102,7 +102,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/avatar.scss';
+@import '../../../assets/avatar';
 
 // size of avatars of chat message authors
 $author-avatar-size: 32px;

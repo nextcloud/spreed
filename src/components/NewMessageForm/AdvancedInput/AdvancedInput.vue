@@ -410,7 +410,6 @@ export default {
 
 <style lang="scss" scoped>
 @use 'sass:math';
-
 @import '../../../assets/variables';
 
 .atwho-wrapper {

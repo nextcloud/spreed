@@ -120,7 +120,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables.scss';
+@import '../../../assets/variables';
 
 .app-navigation-search {
 	flex: 1 0 auto;

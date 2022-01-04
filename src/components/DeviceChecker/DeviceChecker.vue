@@ -369,8 +369,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables.scss';
-@import '../../assets/avatar.scss';
+@import '../../assets/variables';
+@import '../../assets/avatar';
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 

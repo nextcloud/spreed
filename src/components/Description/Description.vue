@@ -246,8 +246,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables.scss';
-@import '../../assets/buttons.scss';
+@import '../../assets/variables';
+@import '../../assets/buttons';
 
 .description {
 	display: flex;

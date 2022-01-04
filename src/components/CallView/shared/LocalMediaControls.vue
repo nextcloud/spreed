@@ -907,7 +907,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables.scss';
+@import '../../../assets/variables';
 
 .buttons-bar {
 	display: flex;
