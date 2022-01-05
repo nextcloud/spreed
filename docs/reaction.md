@@ -22,7 +22,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ## Delete a reaction
 
 * Method: `DELETE`
-* Endpoint: `/chat/{token}/{messageId}`
+* Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
     field | type | Description
