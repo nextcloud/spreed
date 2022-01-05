@@ -79,7 +79,7 @@ class ReactionController extends AEnvironmentAwareController {
 				$participant->getAttendee()->getActorId(),
 				$reaction
 			);
-			return new DataResponse([], Http::STATUS_CONFLICT);
+			return new DataResponse([], Http::STATUS_OK);
 		} catch (NotFoundException $e) {
 		}
 
