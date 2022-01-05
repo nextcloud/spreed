@@ -38,7 +38,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ## Retrieve reactions of a message by type
 
 * Method: `GET`
-* Endpoint: `/chat/{token}/{messageId}/?reaction=`
+* Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
     field | type | Description
