@@ -50,7 +50,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `parent` | array | **Optional:** See `Parent data` below
-        `reactions` | array | **Optional:** An array map with relation between reaction emoji and total of reactions with this emoji
+        `reactions` | array | **Optional:** An array map with relation between reaction emoji and total count of reactions with this emoji
 
 #### Parent data
 
