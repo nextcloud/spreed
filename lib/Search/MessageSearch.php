@@ -206,7 +206,7 @@ class MessageSearch implements IProvider {
 			$subline = '{user}';
 		}
 
-		return new SearchResultEntry(
+		$entry = new SearchResultEntry(
 			$iconUrl,
 			str_replace(
 				['{user}', '{conversation}'],
@@ -218,5 +218,10 @@ class MessageSearch implements IProvider {
 			'icon-talk', // $iconClass,
 			true
 		);
+
+		$entry->addAttribute('conversation', $room->getToken());
+		$entry->addAttribute('messageId', $comment->getId());
+
+		return $entry;
 	}
 }
