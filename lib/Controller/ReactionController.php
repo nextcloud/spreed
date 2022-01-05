@@ -123,7 +123,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse([], Http::STATUS_CREATED);
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	/**
