@@ -5,7 +5,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ## React to a message
 
 * Method: `POST`
-* Endpoint: `/chat/{token}/{messageId}`
+* Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
     field | type | Description
