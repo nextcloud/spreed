@@ -141,7 +141,7 @@ class ConversationSearch implements IProvider {
 				$iconClass = 'conversation-icon icon-contacts';
 			}
 
-			$result[] = new SearchResultEntry(
+			$entry = new SearchResultEntry(
 				$icon,
 				$room->getDisplayName($user->getUID()),
 				'',
@@ -149,6 +149,10 @@ class ConversationSearch implements IProvider {
 				$iconClass,
 				true
 			);
+
+			$entry->addAttribute('conversation', $room->getToken());
+
+			$result[] = $entry;
 		}
 
 		return SearchResult::complete(
