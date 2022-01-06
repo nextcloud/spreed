@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Fullscreen the chat or call" : "全屏聊天或通話",
     "Search" : "搜尋",
     "Shortcuts while in a call" : "通話中的快捷方式",
+    "Camera on and off" : "開啟和關閉相機",
     "Microphone on and off" : "開啟和關閉麥克風",
     "Space bar" : "空白鍵",
     "Push to talk or push to mute" : "一鍵通話或靜音",
