@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Fullscreen the chat or call" : "Rozmowa lub połączenie na pełnym ekranie",
     "Search" : "Szukaj",
     "Shortcuts while in a call" : "Skróty podczas połączenia",
+    "Camera on and off" : "Włącz i wyłącz kamerę",
     "Microphone on and off" : "Włącz i wyłącz mikrofon",
     "Space bar" : "Spacja",
     "Push to talk or push to mute" : "Naciśnij, aby mówić lub naciśnij, aby wyciszyć",

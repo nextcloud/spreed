@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Fullscreen the chat or call" : "Přepnout chat nebo volání na celou obrazovku",
     "Search" : "Hledat",
     "Shortcuts while in a call" : "Klávesové zkratky při volání",
+    "Camera on and off" : "Kamera zapnout a vypnout",
     "Microphone on and off" : "Mikrofon zapnout a vypnout",
     "Space bar" : "Mezerník",
     "Push to talk or push to mute" : "Klepněte a mluvte nebo klepněte pro ztlumení",
