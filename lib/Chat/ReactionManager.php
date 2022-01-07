@@ -30,6 +30,7 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 
 class ReactionManager {
@@ -106,5 +107,17 @@ class ReactionManager {
 			];
 		}
 		return $reactions;
+	}
+
+	public function getCommentToReact(Room $chat, string $messageId): IComment {
+		$comment = $this->commentsManager->get($messageId);
+
+		if ($comment->getObjectType() !== 'chat'
+			|| $comment->getObjectId() !== (string) $chat->getId()
+			|| $comment->getVerb() !== 'comment') {
+			throw new NotFoundException('Message not found in the right context');
+		}
+
+		return $comment;
 	}
 }

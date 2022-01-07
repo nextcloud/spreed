@@ -105,7 +105,7 @@ class ReactionController extends AEnvironmentAwareController {
 	public function delete(int $messageId, string $reaction): DataResponse {
 		$participant = $this->getParticipant();
 		try {
-			// Verify if messageId is of room
+			// Verify that messageId is part of the room
 			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -138,7 +138,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 */
 	public function getReactions(int $messageId, ?string $reaction): DataResponse {
 		try {
-			// Verify if messageId is of room
+			// Verify that messageId is part of the room
 			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

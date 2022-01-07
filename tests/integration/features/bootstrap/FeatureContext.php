@@ -2100,11 +2100,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $emoji, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
+	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$messages[$message];
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId . '?emoji=' . $emoji);
+		$reaction = $reaction !== 'all' ? '?reaction=' . $reaction : '';
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId . $reaction);
 		$this->assertStatusCode($this->response, $statusCode);
 		$this->assertReactionList($formData);
 	}
