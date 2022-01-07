@@ -716,7 +716,6 @@
     "Add groups or circles" : "Afegir grups o cercles",
     "Add other sources" : "Afegir altres fonts",
     "Participants" : "Participants",
-    "An error occurred while fetching the participants" : "S'ha produït un error en recuperar els participants",
     "Chat" : "Xat",
     "Settings" : "Paràmetres",
     "Display name: " : "Nom a mostrar: ",
@@ -728,7 +727,6 @@
     "Fullscreen the chat or call" : "Pantalla completa del xat o la trucada",
     "Search" : "Cerca",
     "Shortcuts while in a call" : "Dreceres mentre es troba en una trucada",
-    "Video on and off" : "Vídeo activat i desactivat",
     "Microphone on and off" : "El micròfon activat i desactivat",
     "Select location for attachments" : "Seleccioneu la ubicació per als fitxers adjunts",
     "Error while setting attachment folder" : "S'ha produït un error en establir la carpeta de fitxers adjunts",
@@ -758,6 +756,7 @@
     "Access to microphone was denied" : "S'ha denegat l'accés al micròfon",
     "Error while accessing microphone" : "S'ha produït un error en accedir al micròfon",
     "Access to camera is only possible with HTTPS" : "L'accés a la càmera només és possible amb HTTPS",
+    "An error occurred while fetching the participants" : "S'ha produït un error en recuperar els participants",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk s'ha actualitzat, si us plau, torneu a carregar la pàgina",
     "Do not disturb" : "No molesteu",
     "Away" : "Absent",
@@ -848,6 +847,7 @@
     "Enabled" : "Activat",
     "Show matterbridge log" : "Mostra el registre del matterbridge",
     "User name or e-mail address" : "Nom d'usuari o adreça electrònica",
-    "Add new bridged channel" : "Afegeix un canal pont nou"
+    "Add new bridged channel" : "Afegeix un canal pont nou",
+    "Video on and off" : "Vídeo activat i desactivat"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
