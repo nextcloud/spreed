@@ -536,12 +536,12 @@
     "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Укључи видео (v) - Ваша веза ће накратко бити прекинута док се видео укључује по први пут",
     "Chat notifications" : "Обавештења ћаскања",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
-    "Camera" : "Камера",
-    "Remove" : "Уклони",
-    "Enabled" : "Укључено",
     "Add participants to the conversation" : "Додај учеснике на разговор",
     "Share link" : "Подели везу",
     "Exit fullscreen (f)" : "Напусти цео екран (f)",
-    "Fullscreen (f)" : "Цео екран (f)"
+    "Fullscreen (f)" : "Цео екран (f)",
+    "Camera" : "Камера",
+    "Remove" : "Уклони",
+    "Enabled" : "Укључено"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
