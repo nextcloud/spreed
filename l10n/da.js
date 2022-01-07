@@ -439,14 +439,14 @@ OC.L10N.register(
     "Chat notifications" : "Chat-notifikationer",
     "Allow guests to join via link " : "Tillad gæster at deltage via link",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du venter nu i lobbyen. Dette møde er planlagt til {startTime}",
-    "Camera" : "Kamera",
-    "Remove" : "Fjern",
     "[Unknown username]" : "[Ukendt brugernavn]",
-    "Enabled" : "Aktiveret",
     "Add participants to the conversation" : "Tilføj deltagere til samtalen",
     "Share link" : "Del link",
     "Exit fullscreen (f)" : "Forlad fuldskærmsvisning (f)",
     "Fullscreen (f)" : "Vis i fuldskærm (f)",
-    "Error while uploading file" : "Fejl ved upload af fil"
+    "Error while uploading file" : "Fejl ved upload af fil",
+    "Camera" : "Kamera",
+    "Remove" : "Fjern",
+    "Enabled" : "Aktiveret"
 },
 "nplurals=2; plural=(n != 1);");

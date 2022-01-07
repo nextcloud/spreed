@@ -168,13 +168,13 @@ OC.L10N.register(
     "Unmute audio (m)" : "Habilitar audio (m)",
     "Disable video (v)" : "Deshabilitar video (v)",
     "Enable video (v)" : "Habilitar video (v)",
+    "Share link" : "Compartir liga",
+    "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
+    "Fullscreen (f)" : "Pantalla completa (f)",
     "Error while accessing camera: it is likely in use by another program" : "Error mientras se accedía a la cámara: parece estar siendo usada por otro programa",
     "Camera" : "Cámara",
     "Remove" : "Eliminar",
     "Enabled" : "Habilitado",
-    "Share link" : "Compartir liga",
-    "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)",
     "Settings for conversation \"{conversationName}\"" : "Configuraciones de la conversación \"{conversationName}\""
 },
 "nplurals=2; plural=(n != 1);");
