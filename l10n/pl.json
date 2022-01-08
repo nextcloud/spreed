@@ -1210,7 +1210,6 @@
     "Conversation \"{conversationName}\"" : "Rozmowa \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Ustawienia rozmowy \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "W tej chwili nie możesz wysyłać wiadomości dla tej rozmowy",
-    "Add a description for this conversation" : "Dodaj opis rozmowy",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Ustaw poziom powiadomień dla bieżącej rozmowy. Będzie to miało wpływ tylko na otrzymywane powiadomienia."
+    "Add a description for this conversation" : "Dodaj opis rozmowy"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

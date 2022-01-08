@@ -1212,7 +1212,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesi",
     "Settings for conversation \"{conversationName}\"" : "\"{conversationName}\" görüşmesinin ayarları",
     "You can not send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
-    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler."
+    "Add a description for this conversation" : "Bu görüşme için bir açıklama ekleyin"
 },
 "nplurals=2; plural=(n > 1);");
