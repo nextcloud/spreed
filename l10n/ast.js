@@ -89,8 +89,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "Namái UDP",
     "TCP only" : "Namái TCP",
-    "Share link" : "Compartir enllaz",
     "Remove" : "Desaniciar",
-    "Enabled" : "Habilitar"
+    "Enabled" : "Habilitar",
+    "Share link" : "Compartir enllaz"
 },
 "nplurals=2; plural=(n != 1);");

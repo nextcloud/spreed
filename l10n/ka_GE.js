@@ -113,8 +113,8 @@ OC.L10N.register(
     "UDP and TCP" : "UDP და TCP",
     "UDP only" : "მხოლოდ UDP",
     "TCP only" : "მხოლოდ TCP",
-    "Share link" : "ბმულის გაზიარება",
     "Remove" : "წაშლა",
-    "Enabled" : "მოქმედია"
+    "Enabled" : "მოქმედია",
+    "Share link" : "ბმულის გაზიარება"
 },
 "nplurals=2; plural=(n!=1);");
