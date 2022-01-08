@@ -1210,7 +1210,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Konverzácia \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Nastavenia konverzácie \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Teraz nemôžete poslať správu do tejto konverzácie",
-    "Add a description for this conversation" : "Pridať popis tejto konverzácie",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavte úroveň upozornení pre aktuálnu konverzáciu. Ovplyvní to iba oznámenia, ktoré dostanete."
+    "Add a description for this conversation" : "Pridať popis tejto konverzácie"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

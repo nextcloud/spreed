@@ -1210,7 +1210,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés",
     "Settings for conversation \"{conversationName}\"" : "„{conversationName}” beszélgetés beállításai",
     "You can not send messages to this conversation at the moment" : "Jelenleg nem küldhet üzeneteket erre a beszélgetésre",
-    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti."
+    "Add a description for this conversation" : "Leírás hozzáadása a beszélgetéshez"
 },
 "nplurals=2; plural=(n != 1);");

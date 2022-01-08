@@ -1210,7 +1210,6 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "Gesprek \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Instellingen voor gesprek  \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Stel het meldingsniveau in voor het huidige gesprek. Dit heef alleen invloed op de meldingen die u ontvangt."
+    "Add a description for this conversation" : "Voeg een beschrijving toe aan dit gesprek"
 },
 "nplurals=2; plural=(n != 1);");
