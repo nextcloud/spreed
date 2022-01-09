@@ -1210,6 +1210,7 @@
     "Conversation \"{conversationName}\"" : "Unterhaltung \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "Einstellungen für die Unterhaltung \"{conversationName}\"",
     "You can not send messages to this conversation at the moment" : "Sie können derzeit keine Nachrichten an diese Unterhaltung senden",
-    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen"
+    "Add a description for this conversation" : "Beschreibung zur Unterhaltung hinzufügen",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
