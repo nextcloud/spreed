@@ -1212,6 +1212,7 @@ OC.L10N.register(
     "Conversation \"{conversationName}\"" : "對話 \"{conversationName}\"",
     "Settings for conversation \"{conversationName}\"" : "對話 \"{conversationName}\" 的設定",
     "You can not send messages to this conversation at the moment" : "您目前無法向此對話發送消息",
-    "Add a description for this conversation" : "添加此對話的描述"
+    "Add a description for this conversation" : "添加此對話的描述",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。"
 },
 "nplurals=1; plural=0;");

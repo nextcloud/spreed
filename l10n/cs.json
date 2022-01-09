@@ -1210,6 +1210,7 @@
     "Conversation \"{conversationName}\"" : "Konverzace „{conversationName}“",
     "Settings for conversation \"{conversationName}\"" : "Nastavení pro konverzaci „{conversationName}“",
     "You can not send messages to this conversation at the moment" : "Nyní není možné do této konverzace posílat zprávy",
-    "Add a description for this conversation" : "Přidat popis k této konverzaci"
+    "Add a description for this conversation" : "Přidat popis k této konverzaci",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy."
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
