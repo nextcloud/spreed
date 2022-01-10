@@ -623,6 +623,7 @@
     "An error occurred while starting screensharing." : "S’es producha una error en aviant lo partiment d’ecran.",
     "Back" : "Retorn",
     "Access to camera was denied" : "L’accès a la camèra es estat refusat",
+    "Error while accessing camera: It is likely in use by another program" : "Error d’accès a la camèra : poiriá arribar qu’un autre programa l’utilize",
     "Error while accessing camera" : "Error pendent l’accès a la camèra",
     "You have been muted by a moderator" : "Un moderator vos a amudit",
     "You" : "Vos",
@@ -880,6 +881,7 @@
     "Raised their hand" : "Levèt la man",
     "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}.",
     "Could not send invitation to {actorId}" : "Mandadís impossible del convit a {actorId}",
+    "Permissions granted to {displayName}" : "Autorizacions acordadas a {displayName}",
     "Permissions removed for {displayName}" : "Permissions suprimidas per {displayName}",
     "Permissions set to default for {displayName}" : "Permissions definidas a defaut per {displayName}",
     "Permissions modified for {displayName}" : "Permissions modificadas per {displayName}",
@@ -916,6 +918,7 @@
     "Fullscreen the chat or call" : "Passar la messatjariá o la sonada en plen ecran",
     "Search" : "Search",
     "Shortcuts while in a call" : "Acorchis pendent una sonada",
+    "Camera on and off" : "Vidèo activada/desactivada",
     "Microphone on and off" : "Microfòn activat/desactivat",
     "Space bar" : "barra d’espaci",
     "Push to talk or push to mute" : "Tocar per parlar o tocar per copar lo son",
@@ -1066,6 +1069,7 @@
     "Conversation \"{conversationName}\"" : "Conversacion « {conversationName} »",
     "Settings for conversation \"{conversationName}\"" : "Paramètres per la conversacion « {conversationName} »",
     "You can not send messages to this conversation at the moment" : "Podètz pas enviar de messatges a aquesta conversacion pel moment",
-    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion"
+    "Add a description for this conversation" : "Apondètz una descripcion per aquesta conversacion",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
