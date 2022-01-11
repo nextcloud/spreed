@@ -107,12 +107,6 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
-    "{user} wants to talk with you" : "{user} მომხმარებელს სურს თქვენთან საუბარი",
-    "UDP and TCP" : "UDP და TCP",
-    "UDP only" : "მხოლოდ UDP",
-    "TCP only" : "მხოლოდ TCP",
-    "Remove" : "წაშლა",
-    "Enabled" : "მოქმედია",
-    "Share link" : "ბმულის გაზიარება"
+    "Remove" : "წაშლა"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

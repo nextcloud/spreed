@@ -291,8 +291,6 @@ OC.L10N.register(
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
     "Camera" : "Cameră",
-    "Remove" : "Șterge",
-    "Enabled" : "Activat",
-    "Share link" : "Partajează link-ul"
+    "Remove" : "Șterge"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

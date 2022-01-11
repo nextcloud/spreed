@@ -86,11 +86,6 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
-    "UDP and TCP" : "UDP y TCP",
-    "UDP only" : "Namái UDP",
-    "TCP only" : "Namái TCP",
-    "Remove" : "Desaniciar",
-    "Enabled" : "Habilitar",
-    "Share link" : "Compartir enllaz"
+    "Remove" : "Desaniciar"
 },
 "nplurals=2; plural=(n != 1);");
