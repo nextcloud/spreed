@@ -157,22 +157,16 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
-    "{user} wants to talk with you" : "{user} quiere hablar contigo",
     "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Chat, audio y videoconferencias usando WebRTC\n\n* 💬 **Integración de chats!** Nextcloud Talk incluye un chat de texto simple. Te permite compartir archivos desde tu Nextcloud y mencionar a otros participantes.\n* 👥 **Llamadas privadas, de grupo. públicas y protegidas con contraseña.** Simplemente invita a una persona, un grupo entero o envía un enlace público para invitar a una llamada.\n* 💻 **Compartir pantalla** Comparte tu pantalla con los participantes de tu llamada. Solo necesitas Firefox 52 (o más moderno) el último Edge o Chrome 49 (o posterior) con esta [extensión de Chrome](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 **Integración con otras apps de Nextcloud** como Archivos, Contactos y Deck. Hay más por llegar.\n\nY estamos trabajando para las [próximas versiones](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Llamadas federadas](https://github.com/nextcloud/spreed/issues/21), para llamar a usuarios de otros Nextcloud",
-    "UDP and TCP" : "UDP y TCP",
-    "UDP only" : "UDP únicamente",
-    "TCP only" : "TCP únicamente",
     "Mute audio (m)" : "Silenciar audio (m)",
     "Unmute audio (m)" : "Habilitar audio (m)",
     "Disable video (v)" : "Deshabilitar video (v)",
     "Enable video (v)" : "Habilitar video (v)",
     "Error while accessing camera: it is likely in use by another program" : "Error mientras se accedía a la cámara: parece estar siendo usada por otro programa",
+    "Settings for conversation \"{conversationName}\"" : "Configuraciones de la conversación \"{conversationName}\"",
     "Camera" : "Cámara",
     "Remove" : "Eliminar",
-    "Enabled" : "Habilitado",
-    "Share link" : "Compartir liga",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)",
-    "Settings for conversation \"{conversationName}\"" : "Configuraciones de la conversación \"{conversationName}\""
+    "Fullscreen (f)" : "Pantalla completa (f)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

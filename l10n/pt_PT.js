@@ -145,14 +145,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
-    "New in Talk 6" : "Novo em Talk 6",
-    "{user} wants to talk with you" : "{user} quer falar consigo",
-    "UDP and TCP" : "UDP e TCP",
-    "UDP only" : "Só UDP",
-    "TCP only" : "Só TCP",
     "Camera" : "Câmera",
-    "Remove" : "Remover",
-    "Enabled" : "Habilidado",
-    "Share link" : "Partilhar hiperligação"
+    "Remove" : "Remover"
 },
 "nplurals=2; plural=(n != 1);");

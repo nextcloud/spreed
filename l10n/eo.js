@@ -299,8 +299,6 @@ OC.L10N.register(
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "Camera" : "Fotilo",
-    "Remove" : "Forigi",
-    "Enabled" : "Ŝaltita",
-    "Share link" : "Kunhavigi ligilon"
+    "Remove" : "Forigi"
 },
 "nplurals=2; plural=(n != 1);");
