@@ -256,8 +256,8 @@ OC.L10N.register(
     "Blocked" : "Blocat",
     "Saved" : "Salvat",
     "Copy link" : "Copiză link",
-    "Settings" : "Setări",
     "Dismiss" : "Elimină",
+    "Grid view" : "Afișare în grilă",
     "Back" : "Înapoi",
     "Favorite" : "Favorite",
     "Password protection" : "Password protection",
@@ -281,9 +281,9 @@ OC.L10N.register(
     "guest" : "invitat",
     "No results" : "Niciun rezultat",
     "Add users or groups" : "Add users or groups",
+    "Settings" : "Setări",
     "Keyboard shortcuts" : "Scurtături din tastatură",
     "Search" : "Caută",
-    "Grid view" : "Afișare în grilă",
     "Send" : "Trimite",
     "Default" : "Implicit",
     "Access to microphone & camera was denied" : "Accesul la microfon și cameră a fost refuzat",
@@ -291,8 +291,6 @@ OC.L10N.register(
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
     "Camera" : "Cameră",
-    "Remove" : "Șterge",
-    "Enabled" : "Activat",
-    "Share link" : "Partajează link-ul"
+    "Remove" : "Șterge"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

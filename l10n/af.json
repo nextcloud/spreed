@@ -250,7 +250,6 @@
     "Error" : "Fout",
     "Saved" : "Bewaar",
     "Copy link" : "Kopieer skakel",
-    "Settings" : "Instellings",
     "Dismiss" : "Ontslaan",
     "Back" : "Terug",
     "Favorite" : "Gunsteling",
@@ -271,6 +270,7 @@
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Chat" : "Klets",
+    "Settings" : "Instellings",
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
     "Send" : "Stuur",
@@ -280,7 +280,6 @@
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
-    "Remove" : "Verwyder",
-    "Share link" : "Deelskakel"
+    "Remove" : "Verwyder"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

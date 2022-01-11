@@ -23,8 +23,8 @@
     "Delete this server" : "Kustuta see server",
     "Saved" : "Salvestatud",
     "Copy link" : "Kopeeri link",
-    "Settings" : "Seaded",
     "Dismiss" : "Jäta vahele",
+    "Grid view" : "Ruudustikvaade",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekraanijagamiseks tuleb leht laadida üle HTTPS protokolli.",
     "Back" : "Tagasi",
     "You" : "Sina",
@@ -51,19 +51,14 @@
     "Searching …" : "Otsin ...",
     "No results" : "Vasteid ei leitud",
     "Add users or groups" : "Add users or groups",
+    "Settings" : "Seaded",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
-    "Grid view" : "Ruudustikvaade",
     "Send" : "Saada",
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
-    "UDP and TCP" : "UDP ja TCP",
-    "UDP only" : "Ainult UDP",
-    "TCP only" : "Ainult TCP",
-    "Remove" : "Eemalda",
-    "Enabled" : "Lubatud",
-    "Share link" : "Jaga link"
+    "Remove" : "Eemalda"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -260,8 +260,8 @@
     "Expired" : "Senvalidiĝis",
     "Saved" : "Konservita",
     "Copy link" : "Kopii ligilon",
-    "Settings" : "Agordoj",
     "Dismiss" : "Preterpasi",
+    "Grid view" : "Krada vido",
     "Back" : "Antaŭen",
     "You" : "Vi",
     "Favorite" : "Pliŝatata",
@@ -288,17 +288,15 @@
     "No results" : "Neniu rezulto",
     "Add users or groups" : "Add users or groups",
     "Chat" : "Babili",
+    "Settings" : "Agordoj",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
-    "Grid view" : "Krada vido",
     "Send" : "Sendi",
     "Default" : "Defaŭlta",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "Camera" : "Fotilo",
-    "Remove" : "Forigi",
-    "Enabled" : "Ŝaltita",
-    "Share link" : "Kunhavigi ligilon"
+    "Remove" : "Forigi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
