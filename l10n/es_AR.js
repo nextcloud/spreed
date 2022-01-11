@@ -88,12 +88,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
-    "UDP and TCP" : "UDP y TCP",
-    "UDP only" : "sólo UDP",
-    "TCP only" : "sólo TCP",
     "Camera" : "Cámara",
-    "Remove" : "Borrar",
-    "Enabled" : "Habilitado",
-    "Share link" : "Compartir link"
+    "Remove" : "Borrar"
 },
 "nplurals=2; plural=(n != 1);");

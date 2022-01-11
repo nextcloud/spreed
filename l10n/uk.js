@@ -161,9 +161,6 @@ OC.L10N.register(
     "Allow guests to join via link " : "Дозволити гостям приєднуватися через посилання",
     "Camera" : "Камера",
     "Remove" : "Вилучити",
-    "Enabled" : "Увімкнено",
-    "Add participants to the conversation" : "Додати учасників до розмови",
-    "Share link" : "Поширити посилання",
     "Exit fullscreen (f)" : "Вийти з повного екрану (f)",
     "Fullscreen (f)" : "На весь екран (f)"
 },
