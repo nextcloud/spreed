@@ -184,7 +184,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables.scss';
+@import '../../../assets/variables';
 
 .part {
 	padding-top: 10px;

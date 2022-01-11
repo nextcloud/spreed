@@ -211,7 +211,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/buttons.scss';
+@import '../../assets/buttons';
 
 $editor-width: 350px;
 
