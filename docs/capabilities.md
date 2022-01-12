@@ -89,3 +89,4 @@ title: Capabilities
 
 ## 14
 * `chat-unread` - Whether the API to mark a conversation as unread is available
+* `reactions` - Api reactions to chat message
