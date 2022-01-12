@@ -30,13 +30,13 @@
 				fill-color="#ffffff"
 				decorative
 				title=""
-				:size="24" />
+				:size="20" />
 			<ChevronUp
 				v-else
 				fill-color="#ffffff"
 				decorative
 				title=""
-				:size="24" />
+				:size="20" />
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
@@ -50,7 +50,7 @@
 							decorative
 							fill-color="#ffffff"
 							title=""
-							:size="24" />
+							:size="20" />
 					</button>
 					<div
 						ref="grid"
@@ -123,7 +123,7 @@
 							decorative
 							fill-color="#ffffff"
 							title=""
-							:size="24" />
+							:size="20" />
 					</button>
 				</div>
 				<LocalVideo

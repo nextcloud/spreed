@@ -195,11 +195,13 @@
 				:aria-label="t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
+				<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
 				<HandBackLeft
-					:size="20"
+					decorative
 					title=""
-					fill-color="#ffffff"
-					decorative />
+					:size="18"
+					fill-color="#ffffff" />
 			</button>
 			<Actions
 				v-if="showActions"
@@ -209,11 +211,13 @@
 				<ActionButton
 					:close-after-click="true"
 					@click="toggleHandRaised">
+					<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
 					<HandBackLeft
 						slot="icon"
-						:size="20"
 						decorative
-						title="" />
+						title=""
+						:size="18" />
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
 				<ActionButton

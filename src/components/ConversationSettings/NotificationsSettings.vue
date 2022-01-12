@@ -30,7 +30,7 @@
 			<VolumeHigh
 				decorative
 				title=""
-				:size="24"
+				:size="20"
 				class="radio-element__icon" />
 			<label
 				class="radio-element__label">
@@ -51,7 +51,7 @@
 			<Account
 				decorative
 				title=""
-				:size="24"
+				:size="20"
 				class="radio-element__icon" />
 			<label
 				class="radio-element__label">
@@ -71,7 +71,7 @@
 			<VolumeOff
 				decorative
 				title=""
-				:size="24"
+				:size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', 'Off') }}
