@@ -20,21 +20,23 @@
 -->
 
 <template>
-	<div>
+	<div class="wrapper"
+		:class="{'wrapper--big': isBig}">
+		<transition name="fade">
+			<div
+				v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
+				class="bottom-bar__statusIndicator">
+				<HandBackLeft
+					class="handIndicator"
+					decorative
+					title=""
+					size="18px"
+					fill-color="#ffffff" />
+			</div>
+		</transition>
 		<div v-if="!isSidebar"
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
-			<transition name="fade">
-				<div
-					v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
-					class="bottom-bar__statusIndicator">
-					<HandBackLeft
-						class="handIndicator"
-						decorative
-						title=""
-						fill-color="#ffffff" />
-				</div>
-			</transition>
 			<transition name="fade">
 				<div v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
@@ -286,12 +288,21 @@ export default {
 
 @import '../../../assets/variables.scss';
 
-.bottom-bar {
+.wrapper {
+	display: flex;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	padding: 0 0px 12px 16px;
+	padding: 0 12px 8px 12px;
+	align-items: center;
+	&--big {
+		justify-content: center;
+	}
+}
+
+.bottom-bar {
 	display: flex;
+	width: 100%;
 	justify-content: space-between;
 	align-items: center;
 	height: 40px;
@@ -299,13 +310,14 @@ export default {
 	&--big {
 		justify-content: center;
 		height: 48px;
+		width: unset;
 	}
 	&--video-on {
 		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
 	}
 	&__nameIndicator {
 		color: white;
-		margin-right: 4px;
+		margin: 0 4px 0 8px;
 		position: relative;
 		white-space: nowrap;
 		overflow: hidden;
@@ -316,8 +328,11 @@ export default {
 		}
 	}
 	&__statusIndicator {
-		margin-left: 6px;
-		margin-right: 6px;
+		width: 44px;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	&__mediaIndicator {
 		position: relative;
