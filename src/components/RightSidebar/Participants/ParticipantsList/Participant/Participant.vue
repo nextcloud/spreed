@@ -84,24 +84,26 @@
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
 			<Microphone
 				v-if="callIcon === 'audio'"
-				:size="24"
+				:size="20"
 				title=""
 				decorative />
 			<Phone
 				v-if="callIcon === 'phone'"
-				:size="24"
+				:size="20"
 				title=""
 				decorative />
 			<Video
 				v-if="callIcon === 'video'"
-				:size="24"
+				:size="20"
 				title=""
 				decorative />
+			<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
 			<HandBackLeft
 				v-if="callIcon === 'hand'"
-				:size="24"
+				decorative
 				title=""
-				decorative />
+				:size="18" />
 		</div>
 
 		<!-- Participant's actions menu -->

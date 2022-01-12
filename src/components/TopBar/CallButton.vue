@@ -64,14 +64,14 @@
 			<ActionButton @click="leaveCall(false)">
 				<VideoOff
 					slot="icon"
-					:size="24"
+					:size="20"
 					decorative />
 				{{ leaveCallLabel }}
 			</ActionButton>
 			<ActionButton @click="leaveCall(true)">
 				<VideoOff
 					slot="icon"
-					:size="24"
+					:size="20"
 					decorative />
 				{{ t('spreed', 'End meeting for all') }}
 			</ActionButton>
