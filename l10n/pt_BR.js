@@ -1188,6 +1188,8 @@ OC.L10N.register(
     "Video on and off" : "Vídeo ligado e desligado",
     "Choose in which folder attachments should be saved." : "Escolha em qual pasta os anexos de mensagens serão salvos.",
     "Exit fullscreen (f)" : "Sair da tela inteira (f)",
-    "Fullscreen (f)" : "Tela inteira (f)"
+    "Fullscreen (f)" : "Tela inteira (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Defina o nível de notificação para a conversa atual. Isso afetará apenas as notificações que você recebe.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" e \".tflite\" os arquivos foram retornados corretamente pelo servidor web"
 },
 "nplurals=2; plural=(n > 1);");
