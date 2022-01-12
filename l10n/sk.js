@@ -720,6 +720,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Pri pokuse o sprístupnenie obrazovky nastala chyba.",
     "Back" : "Späť",
     "Access to camera was denied" : "Prístup ku kamere bol zamietnutý",
+    "Error while accessing camera: It is likely in use by another program" : "Chyba pri prístupe ku kamere: pravdepodobne ju používa iný program",
     "Error while accessing camera" : "Nastala chyba pri prístupe ku kamere",
     "You have been muted by a moderator" : "Stlmil vás moderator",
     "You" : "Vy",
@@ -1043,6 +1044,7 @@ OC.L10N.register(
     "Fullscreen the chat or call" : "Čet alebo hovor na celú obrazovku",
     "Search" : "Hľadať",
     "Shortcuts while in a call" : "Klávesové skratky počas hovoru",
+    "Camera on and off" : "Zapnúť a vypnúť video",
     "Microphone on and off" : "Zapnúť a vypnúť mikrofón",
     "Space bar" : "Medzerovník",
     "Push to talk or push to mute" : "Stlačte a hovorte alebo stlačte pre stlmenie",
@@ -1186,6 +1188,8 @@ OC.L10N.register(
     "Video on and off" : "Zapnúť a vypnúť video",
     "Choose in which folder attachments should be saved." : "Vyberte, v ktorom priečinku sa majú ukladať prílohy.",
     "Exit fullscreen (f)" : "Opustiť celú obrazovku",
-    "Fullscreen (f)" : "Celá obrazovka  (f)"
+    "Fullscreen (f)" : "Celá obrazovka  (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavte úroveň upozornení pre aktuálnu konverzáciu. Ovplyvní to iba oznámenia, ktoré dostanete.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

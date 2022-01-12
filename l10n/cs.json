@@ -1187,6 +1187,7 @@
     "Choose in which folder attachments should be saved." : "Zvolte do které složky by přílohy měly být uloženy.",
     "Exit fullscreen (f)" : "Opustit režim celé obrazovky (f)",
     "Fullscreen (f)" : "Celá obrazovka (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy."
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: server správně vrátil soubory „.wasm“ a „.tflite“"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

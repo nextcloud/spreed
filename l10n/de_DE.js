@@ -1189,6 +1189,7 @@ OC.L10N.register(
     "Choose in which folder attachments should be saved." : "Bitte auswählen, in welchen Ordner die Anhänge gespeichert werden sollen.",
     "Exit fullscreen (f)" : "Vollbild verlassen (f)",
     "Fullscreen (f)" : "Vollbild (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten."
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\"- und \".tflite\"-Dateien wurden ordnungsgemäß vom Webserver zurückgegeben."
 },
 "nplurals=2; plural=(n != 1);");

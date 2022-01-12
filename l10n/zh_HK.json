@@ -1187,6 +1187,7 @@
     "Choose in which folder attachments should be saved." : "選擇應在其中保存附件的資料夾。",
     "Exit fullscreen (f)" : "離開全螢幕（f）",
     "Fullscreen (f)" : "全螢幕（f）",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。"
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK：Web 伺服器正確返回了 “.wasm” 和 “.tflite” 檔案"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
