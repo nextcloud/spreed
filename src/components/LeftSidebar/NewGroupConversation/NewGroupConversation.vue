@@ -37,6 +37,7 @@
 		<Modal
 			v-if="modal"
 			:container="container"
+			size="normal"
 			@close="closeModal">
 			<!-- Wrapper for content & navigation -->
 			<div class="new-group-conversation talk-modal">
@@ -376,11 +377,6 @@ export default {
 
 <style lang="scss" scoped>
 
-// Dialog variables
-$dialog-margin: 20px;
-$dialog-width: 400px;
-$dialog-height: 480px;
-
 .toggle {
 	height: 44px;
 	width: 44px;
@@ -396,9 +392,8 @@ $dialog-height: 480px;
 	the margin applied to the content is added to the total modal width,
 	so here we subtract it to the width and height of the content.
 	*/
-	width: $dialog-width - $dialog-margin * 2;
-	height: $dialog-height - $dialog-margin * 2;
-	margin: $dialog-margin;
+	height: 100%;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -420,8 +415,7 @@ it back */
 	height: 50px;
 	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
-	// Same as above
-	width: $dialog-width - $dialog-margin * 2;
+	width: 100%;
 	&__button {
 		height: 44px;
 		padding: 0 16px;
