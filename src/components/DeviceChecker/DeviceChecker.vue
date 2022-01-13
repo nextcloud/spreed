@@ -23,7 +23,7 @@
 	<Modal
 		v-if="modal"
 		class="talk-modal"
-		size="large"
+		size="normal"
 		@close="closeModal">
 		<div class="device-checker">
 			<h2 class="device-checker__title">
@@ -383,11 +383,11 @@ export default {
 @include avatar-mixin(128px);
 
 .device-checker {
-	width: 350px;
 	padding: 20px;
 	background-color: var(--color-main-background);
 	overflow-y: auto;
 	overflow-x: hidden;
+	margin: auto;
 	&__title {
 		text-align: center;
 	}
