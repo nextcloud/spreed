@@ -36,6 +36,7 @@ export default function LocalCallParticipantModel() {
 		peer: null,
 		screenPeer: null,
 		guestName: null,
+		peerNeeded: false,
 		connectionState: null,
 	}
 
@@ -120,6 +121,10 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', guestName)
 
 		this._webRtc.webrtc.emit('nickChanged', guestName)
+	},
+
+	setPeerNeeded(peerNeeded) {
+		this.set('peerNeeded', peerNeeded)
 	},
 
 	_handleForcedMute() {

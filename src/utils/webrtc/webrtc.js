@@ -155,10 +155,6 @@ function checkStartPublishOwnPeer(signaling) {
 			delete delayedConnectionToPeer[ownPeer.id]
 		}
 		ownPeer.end()
-
-		// The peer does not need to be nullified in the
-		// localCallParticipantModel as a new peer will be immediately set by
-		// createPeer() below.
 	}
 
 	const createPeer = function() {
@@ -188,6 +184,15 @@ function checkStartPublishOwnPeer(signaling) {
 		// removed and a new one must be created from scratch.
 		if (ownPeer) {
 			ownPeer.end()
+		}
+
+		if (currentSessionId !== signaling.getSessionId()) {
+			console.debug('No answer received for own peer but current session id changed, not sending offer again')
+
+			clearInterval(delayedConnectionToPeer[currentSessionId])
+			delete delayedConnectionToPeer[currentSessionId]
+
+			return
 		}
 
 		console.debug('No answer received for own peer, sending offer again')
@@ -274,9 +279,6 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	const currentSessionId = signaling.getSessionId()
 
 	const useMcu = signaling.hasFeature('mcu')
-	if (useMcu && newUsers.length) {
-		checkStartPublishOwnPeer(signaling)
-	}
 
 	let playJoinSound = false
 	let playLeaveSound = false
@@ -463,6 +465,14 @@ function usersInCallChanged(signaling, users) {
 
 		currentUsersInRoom.push(sessionId)
 		userMapping[sessionId] = user
+	}
+
+	if (signaling.hasFeature('mcu') && (ownPeer || (currentUsersInRoom.length > 0 && webrtc.webrtc.localStreams.length))) {
+		checkStartPublishOwnPeer(signaling)
+
+		localCallParticipantModel.setPeerNeeded(true)
+	} else {
+		localCallParticipantModel.setPeerNeeded(false)
 	}
 
 	if (previousSelfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
@@ -902,9 +912,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				delete delayedConnectionToPeer[ownPeer.id]
 			}
 			ownPeer.end()
-			ownPeer = null
-
-			localCallParticipantModel.setPeer(ownPeer)
 		}
 
 		usersChanged(signaling, [], previousUsersInRoom)
@@ -1218,6 +1225,20 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 	webrtc.on('peerStreamRemoved', function(peer) {
 		stopPeerCheckMedia(peer)
+	})
+
+	webrtc.on('peerEnded', function(peer) {
+		if (ownPeer === peer) {
+			ownPeer = null
+
+			localCallParticipantModel.setPeer(ownPeer)
+		}
+
+		if (ownScreenPeer === peer) {
+			ownScreenPeer = null
+
+			localCallParticipantModel.setScreenPeer(ownScreenPeer)
+		}
 	})
 
 	webrtc.webrtc.on('videoOn', function() {
@@ -1545,16 +1566,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			}
 
 			ownPeer.end()
-			ownPeer = null
-
-			localCallParticipantModel.setPeer(ownPeer)
 		}
 
 		if (ownScreenPeer) {
 			ownScreenPeer.end()
-			ownScreenPeer = null
-
-			localCallParticipantModel.setScreenPeer(ownScreenPeer)
 		}
 
 		selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
