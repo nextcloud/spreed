@@ -279,9 +279,6 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	const currentSessionId = signaling.getSessionId()
 
 	const useMcu = signaling.hasFeature('mcu')
-	if (useMcu && newUsers.length) {
-		checkStartPublishOwnPeer(signaling)
-	}
 
 	let playJoinSound = false
 	let playLeaveSound = false
@@ -471,6 +468,8 @@ function usersInCallChanged(signaling, users) {
 	}
 
 	if (signaling.hasFeature('mcu') && (ownPeer || (currentUsersInRoom.length > 0 && webrtc.webrtc.localStreams.length))) {
+		checkStartPublishOwnPeer(signaling)
+
 		localCallParticipantModel.setPeerNeeded(true)
 	} else {
 		localCallParticipantModel.setPeerNeeded(false)
