@@ -50,7 +50,7 @@
 		</div>
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
-			class="preview loading" />
+			:class="previewLoading" />
 		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
@@ -281,6 +281,17 @@ export default {
 			return classes
 		},
 
+		previewLoading() {
+			let classes = ''
+			if (this.smallPreview) {
+				classes += 'preview loading-small '
+			} else {
+				classes += 'preview loading '
+			}
+
+			return classes
+		},
+
 		previewType() {
 			if (this.hasTemporaryImageUrl) {
 				return PREVIEW_TYPE.TEMPORARY
@@ -493,6 +504,13 @@ export default {
 	.loading {
 		display: inline-block;
 		width: 100%;
+		height: 384px;
+	}
+
+	.loading-small {
+		display: inline-block;
+		width: 100%;
+		height: auto;
 	}
 
 	.mimeicon {
