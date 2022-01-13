@@ -1189,6 +1189,7 @@ OC.L10N.register(
     "Choose in which folder attachments should be saved." : "Ek dosyaların kaydedileceği klasörü seçin.",
     "Exit fullscreen (f)" : "Tam ekrandan çık (f)",
     "Fullscreen (f)" : "Tam ekran (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler."
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Tamamlandı: Web sunucu tarafından \".wasm\" ve \".tflite\" dosyaları düzgün şekilde geri döndürüldü"
 },
 "nplurals=2; plural=(n > 1);");
