@@ -190,6 +190,15 @@ function checkStartPublishOwnPeer(signaling) {
 			ownPeer.end()
 		}
 
+		if (currentSessionId !== signaling.getSessionId()) {
+			console.debug('No answer received for own peer but current session id changed, not sending offer again')
+
+			clearInterval(delayedConnectionToPeer[currentSessionId])
+			delete delayedConnectionToPeer[currentSessionId]
+
+			return
+		}
+
 		console.debug('No answer received for own peer, sending offer again')
 		createPeer()
 	}, 10000)
