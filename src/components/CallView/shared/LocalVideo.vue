@@ -138,7 +138,7 @@ export default {
 			// When there is no sender participant (when the MCU is not used, or
 			// if it is used but no peer object has been set yet) the local
 			// video is shown as connected.
-			return this.localCallParticipantModel.attributes.connectionState !== null
+			return this.localCallParticipantModel.attributes.peerNeeded
 				&& this.localCallParticipantModel.attributes.connectionState !== ConnectionState.CONNECTED && this.localCallParticipantModel.attributes.connectionState !== ConnectionState.COMPLETED
 		},
 
