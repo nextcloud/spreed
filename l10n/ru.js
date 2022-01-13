@@ -217,6 +217,8 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Выделенный сервер сигнализации настроен и готов к использованию.",
     "The hosted signaling server was removed and will not be used anymore." : "Конфигурация выделенного сервера сигнализации удалена и не будет использоваться более.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Состояние учётной записи выделенного сервера сигнализации изменено с «{oldstatus}» на «{newstatus}».",
+    "Contact via Talk" : "Связаться через Конференции",
+    "Open Talk" : "Перейти в Конференции",
     "Conversations" : "Обсуждения",
     "Messages" : "Сообщения",
     "{user}" : "{user}",
