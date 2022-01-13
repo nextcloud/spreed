@@ -470,6 +470,12 @@ function usersInCallChanged(signaling, users) {
 		userMapping[sessionId] = user
 	}
 
+	if (signaling.hasFeature('mcu') && (ownPeer || (currentUsersInRoom.length > 0 && webrtc.webrtc.localStreams.length))) {
+		localCallParticipantModel.setPeerNeeded(true)
+	} else {
+		localCallParticipantModel.setPeerNeeded(false)
+	}
+
 	if (previousSelfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		&& selfInCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 		Sounds.playJoin(true, Object.keys(userMapping).length === 0)

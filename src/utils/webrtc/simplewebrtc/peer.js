@@ -618,6 +618,8 @@ Peer.prototype.end = function() {
 	this.handleStreamRemoved()
 	this.parent.off('localTrackReplaced', this.handleLocalTrackReplacedBound)
 	this.parent.off('localTrackEnabledChanged', this.handleLocalTrackEnabledChangedBound)
+
+	this.parent.emit('peerEnded', this)
 }
 
 Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
