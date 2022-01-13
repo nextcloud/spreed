@@ -1181,6 +1181,10 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 			leftUsers = Object.keys(leftUsers)
 			if (leftUsers.length) {
 				this._trigger('usersLeft', [leftUsers])
+
+				for (i = 0; i < leftUsers.length; i++) {
+					delete this.joinedUsers[leftUsers[i]]
+				}
 			}
 			this._trigger('usersJoined', [joinedUsers])
 			this._trigger('participantListChanged')
