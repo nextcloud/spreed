@@ -574,7 +574,7 @@ OC.L10N.register(
     "Dismiss" : "무시",
     "Show your screen" : "내 화면 보이기",
     "Stop screensharing" : "화면 공유 중지",
-    "More actions" : "더 많은 활동",
+    "More actions" : "더 많은 동작",
     "No audio" : "오디오 없음",
     "Mute audio" : "오디오 음소거",
     "Unmute audio" : "소리를 끄다",
