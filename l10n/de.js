@@ -643,10 +643,12 @@ OC.L10N.register(
     "TURN servers" : "TURN-Server",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Ein TURN-Server wird verwendet, um den Datenverkehr von Teilnehmern hinter einer Firewall zu übertragen. Wenn einzelne Teilnehmer keine Verbindung zu anderen herstellen können, ist höchstwahrscheinlich ein TURN-Server erforderlich. Anweisungen zum Einrichten sind in folgender {linkstart}Dokumentation{linkend} zu finden.",
     "Web server setup checks" : "Prüfungen der Einrichtung des Webservers",
+    "Files required for background blur can be loaded" : "Die Dateien für die Hintergrund-Weichzeichnung können geladen werden",
     "Failed" : "Fehlgeschlagen",
     "OK" : "OK",
     "Checking …" : "Überprüfe …",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Fehlgeschlagen: WebAssembly ist in diesem Browser deaktiviert oder wird nicht unterstützt. Bitte aktiviere WebAssembly oder verwende einen Browser, der es unterstützt, um die Prüfung durchzuführen.",
+    "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Fehlgeschlagen: Die Dateien \".wasm\" und \".tflite\" wurden vom Webserver nicht korrekt zurückgegeben. Bitte prüfe den Abschnitt \"Systemanforderungen\" in der Talk-Dokumentation.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: \".wasm\"- und \".tflite\"-Dateien wurden ordnungsgemäß vom Webserver zurückgegeben.",
     "{nickName} raised their hand." : "{nickName} hat die Hand gehoben.",
     "A participant raised their hand." : "Ein Teilnehmer hat die Hand gehoben",
@@ -1053,6 +1055,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Toneinstellungen konnten nicht gespeichert werden",
     "Sounds setting saved" : "Toneinstellung gespeichert",
     "Error while saving sounds setting" : "Fehler beim Speichern der Toneinstellung",
+    "End meeting for all" : "Konferenz für alle beenden",
     "Start call" : "Anruf starten",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk wurde aktualisiert, Du musst die Seite neu laden, bevor Du einen Anruf starten oder einem Anruf beitreten kannst.",
     "You will be able to join the call only after a moderator starts it." : "Du kannst dem Anruf erst beitreten, nachdem ein Moderator ihn gestartet hat.",
@@ -1184,6 +1187,7 @@ OC.L10N.register(
     "Choose in which folder attachments should be saved." : "Bitte auswählen, in welchen Ordner die Anhänge gespeichert werden sollen.",
     "Exit fullscreen (f)" : "Vollbild verlassen (f)",
     "Fullscreen (f)" : "Vollbild (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Lege die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Du erhälst."
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Lege die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Du erhälst.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\"- und \".tflite\"-Dateien wurden ordnungsgemäß vom Webserver zurückgegeben"
 },
 "nplurals=2; plural=(n != 1);");
