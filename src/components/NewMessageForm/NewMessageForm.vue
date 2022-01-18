@@ -73,6 +73,7 @@
 						<EmojiPicker
 							v-if="!disabled"
 							:container="container"
+							:close-on-select="false"
 							@select="addEmoji">
 							<button
 								type="button"
