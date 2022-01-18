@@ -87,7 +87,7 @@
 			@shortkey="focusInput"
 			@keydown.enter="handleKeydownEnter"
 			@keydown.esc.prevent="handleKeydownEsc"
-			@blur="onBlur"
+			@focus="onFocus"
 			@paste="onPaste" />
 	</At>
 </template>
@@ -248,20 +248,25 @@ export default {
 	},
 
 	beforeDestroy() {
+		document.body.removeEventListener('click', this.closePanel, false)
 		EventBus.$off('focus-chat-input', this.focusInput)
 	},
 
 	methods: {
-		onBlur() {
+		onFocus(e) {
 			// requires a short delay to avoid blocking click event handlers
 			// from vue-at which also have some delay in place...
 			// a setTimeout was recommended by the library author here:
 			// https://github.com/fritx/vue-at/issues/114#issuecomment-565777450
-			setTimeout(() => {
-				if (this.$refs.at) {
-					this.$refs.at.closePanel()
-				}
-			}, 100)
+			document.body.addEventListener('click', this.closePanel, false)
+			e.target.addEventListener('click', (ev) => {
+				ev.stopPropagation()
+			}, false)
+		},
+		closePanel() {
+			if (this.$refs.at) {
+				this.$refs.at.closePanel()
+			}
 		},
 		onPaste(e) {
 			e.preventDefault()
