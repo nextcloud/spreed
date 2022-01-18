@@ -409,7 +409,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use 'sass:math';
 @import '../../../assets/variables';
 
 .atwho-wrapper {
@@ -431,7 +430,7 @@ div[contenteditable] {
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
 	min-height: $clickable-area;
-	border-radius: math.div($clickable-area, 2);
+	border-radius: calc($clickable-area / 2);
 	border: 1px solid var(--color-border-dark);
 	max-height: 180px;
 	overflow-y: auto;
