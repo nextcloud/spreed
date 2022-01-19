@@ -241,9 +241,6 @@ export default {
 		isWindowVisible(visible) {
 			if (visible) {
 				this.onWindowFocus()
-				// FIXME: the sidebar chat takes much longer to open, this is why we need a higher value here
-				// need to investigate why the sidebar takes that long to open and is not even animated
-				window.setTimeout(() => this.scrollToFocussedMessage(), 100)
 			}
 		},
 		chatIdentifier: {
