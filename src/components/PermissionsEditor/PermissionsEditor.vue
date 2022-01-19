@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<Modal v-on="$listeners">
+	<Modal
+		size="small"
+		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
@@ -214,15 +216,12 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/buttons';
 
-$editor-width: 350px;
-
 .nc-button {
 	width: 100%;
 	margin-top: 12px;
 }
 
 .wrapper {
-	width: $editor-width;
 	padding: 0 24px 24px 24px;
 }
 
