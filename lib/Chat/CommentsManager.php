@@ -26,7 +26,6 @@ namespace OCA\Talk\Chat;
 use OC\Comments\Comment;
 use OC\Comments\Manager;
 use OCP\Comments\IComment;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
 	/**
@@ -39,30 +38,5 @@ class CommentsManager extends Manager {
 		$comment = new Comment($this->normalizeDatabaseData($data));
 		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
 		return $comment;
-	}
-
-	/**
-	 * TODO Remove when server version with https://github.com/nextcloud/server/pull/29921 is required
-	 *
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @param int $lastRead
-	 * @param string[] $verbs
-	 * @return int
-	 */
-	public function getNumberOfCommentsWithVerbsForObjectSinceComment(string $objectType, string $objectId, int $lastRead, array $verbs): int {
-		$query = $this->dbConn->getQueryBuilder();
-		$query->select($query->func()->count('id', 'num_messages'))
-			->from('comments')
-			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
-			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)))
-			->andWhere($query->expr()->gt('id', $query->createNamedParameter($lastRead)))
-			->andWhere($query->expr()->in('verb', $query->createNamedParameter($verbs, IQueryBuilder::PARAM_STR_ARRAY)));
-
-		$result = $query->executeQuery();
-		$data = $result->fetch();
-		$result->closeCursor();
-
-		return (int) ($data['num_messages'] ?? 0);
 	}
 }
