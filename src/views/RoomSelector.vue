@@ -32,6 +32,13 @@
 				<p v-if="dialogSubtitle" class="subtitle">
 					{{ dialogSubtitle }}
 				</p>
+				<div class="search-form">
+					<div class="icon-search" />
+					<input
+						v-model="searchText"
+						class="search-form__input"
+						type="text">
+				</div>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
 						<li
@@ -107,23 +114,28 @@ export default {
 			rooms: [],
 			selectedRoom: null,
 			currentRoom: null,
+			searchText: '',
 			loading: true,
 		}
 	},
 	computed: {
 		availableRooms() {
-			return this.rooms.filter((room) => {
+			const roomsTemp = this.rooms.filter((room) => {
 				return room.type !== CONVERSATION.TYPE.CHANGELOG
 					&& (!this.currentRoom || this.currentRoom !== room.token)
 					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
 			})
+			if (!this.searchText) {
+				return roomsTemp
+			} else {
+				return roomsTemp.filter(x => x.displayName.includes(this.searchText))
+			}
 		},
 	},
 	beforeMount() {
 		this.fetchRooms()
-
 		const $store = OCA.Talk?.instance?.$store
 		if ($store) {
 			this.currentRoom = $store.getters.getToken()
@@ -160,9 +172,11 @@ export default {
 #modal-inner {
 	width: 90vw;
 	max-width: 400px;
-	height: 50vh;
+	height: 55vh;
 	position: relative;
-
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	h2 {
 		margin-bottom: 4px;
 	}
@@ -226,4 +240,24 @@ li {
 	margin-bottom: 8px;
 }
 
+.search-form {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 10px;
+	&__input {
+		width: 100%;
+		font-size: 16px;
+		padding-left: 28px;
+		line-height: 34px;
+		box-shadow: 0 10px 5px var(--color-main-background);
+		z-index: 1;
+	}
+	.icon-search {
+		position: absolute;
+		top: 12px;
+		left: 8px;
+		z-index: 2;
+	}
+}
 </style>
