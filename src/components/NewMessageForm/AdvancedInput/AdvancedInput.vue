@@ -87,6 +87,7 @@
 			@shortkey="focusInput"
 			@keydown.enter="handleKeydownEnter"
 			@keydown.esc.prevent="handleKeydownEsc"
+			@focus="onFocus"
 			@blur="onBlur"
 			@paste="onPaste" />
 	</At>
@@ -213,6 +214,7 @@ export default {
 		return {
 			text: '',
 			autoCompleteMentionCandidates: [],
+			blurTimer: null,
 		}
 	},
 	watch: {
@@ -257,12 +259,17 @@ export default {
 			// from vue-at which also have some delay in place...
 			// a setTimeout was recommended by the library author here:
 			// https://github.com/fritx/vue-at/issues/114#issuecomment-565777450
-			setTimeout(() => {
+			this.blurTimer = setTimeout(() => {
 				if (this.$refs.at) {
 					this.$refs.at.closePanel()
 				}
-			}, 100)
+			}, 200)
 		},
+
+		onFocus() {
+			clearTimeout(this.blurTimer)
+		},
+
 		onPaste(e) {
 			e.preventDefault()
 
