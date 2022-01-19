@@ -120,7 +120,10 @@ export default {
 		 */
 		async deleteConversation() {
 			OC.dialogs.confirm(
-				t('spreed', 'Do you really want to delete "{displayName}"?', this.conversation),
+				t('spreed', 'Do you really want to delete "{displayName}"?', this.conversation, undefined, {
+					escape: false,
+					sanitize: false,
+				}),
 				t('spreed', 'Delete conversation'),
 				async function(decision) {
 					if (!decision) {
@@ -149,7 +152,10 @@ export default {
 		 */
 		async clearChatHistory() {
 			OC.dialogs.confirm(
-				t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation),
+				t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation, undefined, {
+					escape: false,
+					sanitize: false,
+				}),
 				t('spreed', 'Delete all chat messages'),
 				async function(decision) {
 					if (!decision) {
