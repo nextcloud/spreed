@@ -341,7 +341,10 @@ export default {
 		 */
 		async deleteConversation() {
 			OC.dialogs.confirm(
-				t('spreed', 'Do you really want to delete "{displayName}"?', this.item),
+				t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
+					escape: false,
+					sanitize: false,
+				}),
 				t('spreed', 'Delete conversation'),
 				async function(decision) {
 					if (!decision) {
