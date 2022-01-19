@@ -106,7 +106,7 @@ export default {
 				return null
 			}
 
-			return generateUrl(`avatar/${this.user}/300`)
+			return generateUrl(`avatar/${this.user}/64`)
 		},
 	},
 
@@ -146,7 +146,7 @@ export default {
 		}
 
 		try {
-			await axios.get(generateUrl(`avatar/${this.user}/300`))
+			await axios.get(generateUrl(`avatar/${this.user}/64`))
 
 			this.hasPicture = true
 			setUserHasAvatar(this.user, true)
