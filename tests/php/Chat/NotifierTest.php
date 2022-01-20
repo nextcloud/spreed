@@ -23,6 +23,7 @@
 
 namespace OCA\Talk\Tests\php\Chat;
 
+use OC\Comments\Comment;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
@@ -78,8 +79,28 @@ class NotifierTest extends TestCase {
 		$this->config = $this->createMock(IConfig::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->util = $this->createMock(Util::class);
+	}
 
-		$this->notifier = new Notifier(
+	/**
+	 * @param string[] $methods
+	 * @return Notifier|MockObject
+	 */
+	protected function getNotifier(array $methods = []) {
+		if (!empty($methods)) {
+			return $this->getMockBuilder(Notifier::class)
+				->setConstructorArgs([
+					$this->notificationManager,
+					$this->userManager,
+					$this->participantService,
+					$this->manager,
+					$this->config,
+					$this->timeFactory,
+					$this->util,
+				])
+				->onlyMethods($methods)
+				->getMock();
+		}
+		return new Notifier(
 			$this->notificationManager,
 			$this->userManager,
 			$this->participantService,
@@ -91,444 +112,96 @@ class NotifierTest extends TestCase {
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message): IComment {
-		// $mentionMatches[0] contains the whole matches, while
-		// $mentionMatches[1] contains the matched subpattern.
-		$mentionMatches = [];
-		preg_match_all('/@([a-zA-Z0-9]+)/', $message, $mentionMatches);
-
-		$mentions = array_map(function ($mentionMatch) {
-			return [ 'type' => 'user', 'id' => $mentionMatch ];
-		}, $mentionMatches[1]);
-
-		$comment = $this->createMock(IComment::class);
-
-		$comment->method('getId')->willReturn($id);
-		$comment->method('getObjectId')->willReturn(1234);
-		$comment->method('getActorType')->willReturn($actorType);
-		$comment->method('getActorId')->willReturn($actorId);
-		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
-		$comment->method('getMessage')->willReturn($message);
-		$comment->method('getMentions')->willReturn($mentions);
-		$comment->method('getVerb')->willReturn('comment');
+		$comment = new Comment([
+			'id' => $id,
+			'object_id' => '1234',
+			'object_type' => 'chat',
+			'actor_type' => $actorType,
+			'actor_id' => $actorId,
+			'creation_date_time' => $creationDateTime,
+			'message' => $message,
+			'verb' => 'comment',
+		]);
 
 		return $comment;
 	}
 
-	private function newNotification($room, IComment $comment): INotification {
-		$notification = $this->createMock(INotification::class);
-
-		$notification->expects($this->once())
-			->method('setApp')
-			->with('spreed')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setObject')
-			->with('chat', $room->getToken())
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setSubject')
-			->with('mention', [
-				'userType' => $comment->getActorType(),
-				'userId' => $comment->getActorId(),
-			])
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setDateTime')
-			->with($comment->getCreationDateTime())
-			->willReturnSelf();
-
-		return $notification;
-	}
-
-	public function testNotifyMentionedUsers(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
-
+	/**
+	 * @return Room|MockObject
+	 */
+	private function getRoom() {
+		/** @var Room|MockObject */
 		$room = $this->createMock(Room::class);
+
 		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('anotherUser')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->once())
 			->method('getParticipant')
-			->with('anotherUser')
-			->willReturn($participant);
+			->willReturnCallback(function (string $actorId) use ($room): Participant {
+				if ($actorId === 'userNotInOneToOneChat') {
+					throw new ParticipantNotFoundException();
+				}
+				$attendee = Attendee::fromRow([
+					'actor_type' => 'user',
+					'actor_id' => $actorId,
+				]);
+				return new Participant($room, $attendee, null);
+			});
 
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
+		$this->manager->expects($this->any())
+			->method('getRoomById')
+			->willReturn($room);
+		return $room;
 	}
 
-	public function testNotNotifyMentionedUserIfReplyToAuthor(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->never())
-			->method('setUser');
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->notificationManager->expects($this->never())
+	/**
+	 * @dataProvider dataNotifyMentionedUsers
+	 */
+	public function testNotifyMentionedUsers(string $message, array $alreadyNotifiedUsers, array $notify, array $expectedReturn): void {
+		if (count($notify)) {
+			$this->notificationManager->expects($this->exactly(count($notify)))
 			->method('notify');
+		}
 
-		$this->notifier->notifyMentionedUsers($room, $comment, ['anotherUser']);
+		$room = $this->getRoom();
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$notifier = $this->getNotifier([]);
+		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers);
+
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
-	public function testNotifyMentionedUsersByGuest(): void {
-		$comment = $this->newComment(108, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('anotherUser')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('anotherUser')
-			->willReturn($participant);
-
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersWithLongMessageStartMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
-			'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('anotherUserWithOddLengthName')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('anotherUserWithOddLengthName')
-			->willReturn($participant);
-
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersWithLongMessageMiddleMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
-			'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('anotherUserWithOddLengthName')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('anotherUserWithOddLengthName')
-			->willReturn($participant);
-
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersWithLongMessageEndMention(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
-			'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('anotherUserWithOddLengthName')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('anotherUserWithOddLengthName')
-			->willReturn($participant);
-
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersToSelf(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @testUser');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersToUnknownUser(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @unknownUser');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersToUserNotInvitedToChat(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userNotInOneToOneChat');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('userNotInOneToOneChat')
-			->will($this->throwException(new ParticipantNotFoundException()));
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersNoMentions(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'No mentions');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
-	}
-
-	public function testNotifyMentionedUsersSeveralMentions(): void {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin');
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getToken')
-			->willReturn('Token123');
-
-		$notification = $this->newNotification($room, $comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with('comment')
-			->willReturnSelf();
-
-		$notification->expects($this->exactly(2))
-			->method('setUser')
-			->withConsecutive(
-				[ 'anotherUser' ],
-				[ 'userAbleToJoin' ]
-			)
-			->willReturnSelf();
-
-		$this->manager->expects($this->exactly(2))
-			->method('getRoomById')
-			->with(1234)
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-
-		$room->expects($this->exactly(2))
-			->method('getParticipant')
-			->withConsecutive(['anotherUser'], ['userAbleToJoin'])
-			->willReturn($participant);
-
-		$this->notificationManager->expects($this->exactly(2))
-			->method('notify')
-			->withConsecutive(
-				[ $notification ],
-				[ $notification ]
-			);
-
-		$this->notifier->notifyMentionedUsers($room, $comment, []);
+	public function dataNotifyMentionedUsers(): array {
+		return [
+			'no notifications' => [
+				'No mentions', [], [], [],
+			],
+			'notify an unotified user' => [
+				'Mention @anotherUser', [], ['anotherUser'], ['anotherUser'],
+			],
+			'not notify mentioned user if already notified' => [
+				'Mention @anotherUser', ['anotherUser'], [], ['anotherUser'],
+			],
+			'notify mentioned Users With Long Message Start Mention' => [
+				'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+			],
+			'notify mentioned users with long message middle mention' => [
+				'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+			],
+			'notify mentioned users with long message end mention' => [
+				'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+			],
+			'mention herself' => [
+				'Mention @testUser', [], [], [],
+			],
+			'not notify unknownuser' => [
+				'Mention @unknownUser', [], [], [],
+			],
+			'notify mentioned users several mentions' => [
+				'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin', [], ['anotherUser', 'userAbleToJoin'], ['anotherUser', 'userAbleToJoin'],
+			],
+			'notify mentioned users to user not invited to chat' => [
+				'Mention @userNotInOneToOneChat', [], [], [],
+			]
+		];
 	}
 
 	public function dataShouldParticipantBeNotified(): array {
@@ -576,7 +249,7 @@ class NotifierTest extends TestCase {
 		}
 		$participant = new Participant($room, $attendee, $session);
 
-		self::assertSame($expected, self::invokePrivate($this->notifier, 'shouldParticipantBeNotified', [$participant, $comment, $alreadyNotifiedUsers]));
+		self::assertSame($expected, self::invokePrivate($this->getNotifier(), 'shouldParticipantBeNotified', [$participant, $comment, $alreadyNotifiedUsers]));
 	}
 
 	public function testRemovePendingNotificationsForRoom(): void {
@@ -609,7 +282,7 @@ class NotifierTest extends TestCase {
 			->method('markProcessed')
 			->with($notification);
 
-		$this->notifier->removePendingNotificationsForRoom($room);
+		$this->getNotifier()->removePendingNotificationsForRoom($room);
 	}
 
 	public function testRemovePendingNotificationsForChatOnly(): void {
@@ -638,6 +311,112 @@ class NotifierTest extends TestCase {
 			->method('markProcessed')
 			->with($notification);
 
-		$this->notifier->removePendingNotificationsForRoom($room, true);
+		$this->getNotifier()->removePendingNotificationsForRoom($room, true);
+	}
+
+	/**
+	 * @dataProvider dataAddMentionAllToList
+	 */
+	public function testAddMentionAllToList(array $usersToNotify, array $participants, array $return): void {
+		$room = $this->createMock(Room::class);
+		$this->participantService
+			->method('getActorsByType')
+			->willReturn($participants);
+
+		$actual = $this->invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
+		$this->assertEqualsCanonicalizing($return, $actual);
+	}
+
+	public function dataAddMentionAllToList(): array {
+		return [
+			'not notify' => [
+				[],
+				[],
+				[],
+			],
+			'preserve notify list and do not notify all' => [
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+				],
+				[],
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+				],
+			],
+			'mention all' => [
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'all'],
+				],
+				[
+					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
+					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
+				],
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'user2', 'type' => Attendee::ACTOR_USERS],
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetMentionedUsers
+	 */
+	public function testGetMentionedUsers(string $message, array $expectedReturn): void {
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$actual = $this->invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
+	}
+
+	public function dataGetMentionedUsers(): array {
+		return [
+			'mention one user' => [
+				'Mention @anotherUser',
+				[
+					['id' => 'anotherUser', 'type' => 'users'],
+				],
+			],
+			'mention two user' => [
+				'Mention @anotherUser, and @unknownUser',
+				[
+					['id' => 'anotherUser', 'type' => 'users'],
+					['id' => 'unknownUser', 'type' => 'users'],
+				],
+			],
+			'mention all' => [
+				'Mention @all',
+				[
+					['id' => 'all', 'type' => 'users'],
+				],
+			],
+			'mention user, all, guest and group' => [
+				'mention @test, @all, @"guest/1" @"group/1"',
+				[
+					['id' => 'test', 'type' => 'users'],
+					['id' => 'all', 'type' => 'users'],
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetMentionedUserIds
+	 */
+	public function testGetMentionedUserIds(string $message, array $expectedReturn): void {
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$actual = $this->invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
+	}
+
+	public function dataGetMentionedUserIds(): array {
+		$return = $this->dataGetMentionedUsers();
+		array_walk($return, function (array &$scenario) {
+			array_walk($scenario[1], function (array &$params) {
+				$params = $params['id'];
+			});
+			return $scenario;
+		});
+		return $return;
 	}
 }

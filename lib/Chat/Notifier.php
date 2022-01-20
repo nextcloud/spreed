@@ -95,28 +95,18 @@ class Notifier {
 	 * @return string[] Users that were mentioned
 	 */
 	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
-		$mentionedUserIds = $this->getMentionedUserIds($comment);
-		if (empty($mentionedUserIds)) {
+		$usersToNotify = $this->getUsersToNotify($chat, $comment, $alreadyNotifiedUsers);
+
+		if (!$usersToNotify) {
 			return $alreadyNotifiedUsers;
 		}
-
-		$mentionedAll = array_search('all', $mentionedUserIds, true);
-
-		if ($mentionedAll !== false) {
-			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $this->participantService->getParticipantUserIds($chat)));
-		}
-
 		$notification = $this->createNotification($chat, $comment, 'mention');
 		$shouldFlush = $this->notificationManager->defer();
-		foreach ($mentionedUserIds as $mentionedUserId) {
-			if (in_array($mentionedUserId, $alreadyNotifiedUsers, true)) {
-				continue;
-			}
-
-			if ($this->shouldMentionedUserBeNotified($mentionedUserId, $comment)) {
-				$notification->setUser($mentionedUserId);
+		foreach ($usersToNotify as $mentionedUser) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
+				$notification->setUser($mentionedUser['id']);
 				$this->notificationManager->notify($notification);
-				$alreadyNotifiedUsers[] = $mentionedUserId;
+				$alreadyNotifiedUsers[] = $mentionedUser['id'];
 			}
 		}
 
@@ -126,6 +116,48 @@ class Notifier {
 
 		return $alreadyNotifiedUsers;
 	}
+
+	private function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
+		$usersToNotify = $this->getMentionedUsers($comment);
+		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
+		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify);
+
+		return $usersToNotify;
+	}
+
+	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
+		return array_filter($usersToNotify, static function (array $user) use ($alreadyNotifiedUsers): bool {
+			return !in_array($user['id'], $alreadyNotifiedUsers, true);
+		});
+	}
+
+	private function addMentionAllToList(Room $chat, array $list): array {
+		$usersToNotify = array_filter($list, static function (array $user): bool {
+			return $user['id'] !== 'all';
+		});
+
+		if (count($list) === count($usersToNotify)) {
+			return $usersToNotify;
+		}
+
+		$chatParticipants = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
+		foreach ($chatParticipants as $participant) {
+			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($participant): bool {
+				return $user['id'] === $participant->getActorId();
+			});
+			if (!empty($alreadyAddedToNotify)) {
+				continue;
+			}
+
+			$usersToNotify[] = [
+				'id' => $participant->getActorId(),
+				'type' => $participant->getActorType()
+			];
+		}
+
+		return $usersToNotify;
+	}
+
 
 	/**
 	 * Notifies the author that wrote the comment which was replied to
@@ -138,7 +170,8 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param IComment $replyTo
-	 * @return string[] Users that were mentioned
+	 * @return [] Users that were mentioned
+	 * @psalm-return array|array{array{id: string, type: string}}
 	 */
 	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo): array {
 		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
@@ -154,7 +187,12 @@ class Notifier {
 		$notification->setUser($replyTo->getActorId());
 		$this->notificationManager->notify($notification);
 
-		return [$replyTo->getActorId()];
+		return [
+			[
+				'id' => $replyTo->getActorId(),
+				'type' => $replyTo->getActorType(),
+			],
+		];
 	}
 
 	/**
@@ -257,20 +295,29 @@ class Notifier {
 	 * @return string[] the mentioned user IDs
 	 */
 	public function getMentionedUserIds(IComment $comment): array {
+		$mentionedUsers = $this->getMentionedUsers($comment);
+		return array_map(static function ($mentionedUser) {
+			return $mentionedUser['id'];
+		}, $mentionedUsers);
+	}
+
+	private function getMentionedUsers(IComment $comment): array {
 		$mentions = $comment->getMentions();
 
 		if (empty($mentions)) {
 			return [];
 		}
 
-		$userIds = [];
+		$mentionedUsers = [];
 		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'user') {
-				$userIds[] = $mention['id'];
+				$mentionedUsers[] = [
+					'id' => $mention['id'],
+					'type' => 'users'
+				];
 			}
 		}
-
-		return $userIds;
+		return $mentionedUsers;
 	}
 
 	/**
