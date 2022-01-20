@@ -38,7 +38,8 @@ the main body of the message as well as a quote.
 			class="message-body"
 			@mouseover="handleMouseover"
 			@mouseleave="handleMouseleave">
-			<div v-if="isFirstMessage && showAuthor"
+			<div
+				v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
 				role="heading"
 				aria-level="4">
@@ -47,7 +48,8 @@ the main body of the message as well as a quote.
 			<div
 				ref="messageMain"
 				class="message-body__main">
-				<div v-if="isSingleEmoji"
+				<div
+					v-if="isSingleEmoji"
 					class="message-body__main__text">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<div class="single-emoji">
@@ -72,7 +74,8 @@ the main body of the message as well as a quote.
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
 					<!-- Message delivery status indicators -->
-					<div v-if="sendingFailure"
+					<div
+						v-if="sendingFailure"
 						v-tooltip.auto="sendingErrorIconTooltip"
 						class="message-status sending-failed"
 						:class="{'retry-option': sendingErrorCanRetry}"
@@ -91,28 +94,34 @@ the main body of the message as well as a quote.
 								title=""
 								:size="16" />
 						</button>
-						<AlertCircle v-else
+						<AlertCircle
+							v-else
 							decorative
 							title=""
 							:size="16" />
 					</div>
-					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
+					<div
+						v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
 						v-tooltip.auto="loadingIconTooltip"
 						class="icon-loading-small message-status"
 						:aria-label="loadingIconTooltip" />
-					<div v-else-if="showCommonReadIcon"
+					<div
+						v-else-if="showCommonReadIcon"
 						v-tooltip.auto="commonReadIconTooltip"
 						class="message-status"
 						:aria-label="commonReadIconTooltip">
-						<CheckAll decorative
+						<CheckAll
+							decorative
 							title=""
 							:size="16" />
 					</div>
-					<div v-else-if="showSentIcon"
+					<div
+						v-else-if="showSentIcon"
 						v-tooltip.auto="sentIconTooltip"
 						class="message-status"
 						:aria-label="sentIconTooltip">
-						<Check decorative
+						<Check
+							decorative
 							title=""
 							:size="16" />
 					</div>
@@ -122,8 +131,7 @@ the main body of the message as well as a quote.
 						v-show="showActions"
 						class="message-body__main__right__actions"
 						:class="{ 'tall' : isTallEnough }">
-						<Actions
-							v-show="isReplyable">
+						<Actions v-show="isReplyable">
 							<ActionButton
 								icon="icon-reply"
 								@click.stop="handleReply">
@@ -176,8 +184,7 @@ the main body of the message as well as a quote.
 								{{ t('spreed', 'Forward message') }}
 							</ActionButton>
 							<ActionSeparator v-if="messageActions.length > 0" />
-							<template
-								v-for="action in messageActions">
+							<template v-for="action in messageActions">
 								<ActionButton
 									:key="action.label"
 									:icon="action.icon"
@@ -200,13 +207,15 @@ the main body of the message as well as a quote.
 				</div>
 			</div>
 		</div>
-		<div v-if="isLastReadMessage"
+		<div
+			v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
 			<div class="new-message-marker">
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
-		<Forwarder v-if="showForwarder"
+		<Forwarder
+			v-if="showForwarder"
 			:message-object="messageObject"
 			@close="showForwarder = false" />
 	</li>

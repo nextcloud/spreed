@@ -26,7 +26,8 @@
 				{{ t('spreed', 'Allow guests to use a public link to join this conversation.') }}
 			</div>
 			<div>
-				<input id="link_share_settings_toggle_guests"
+				<input
+					id="link_share_settings_toggle_guests"
 					ref="toggleGuests"
 					aria-describedby="link_share_settings_hint"
 					type="checkbox"
@@ -43,7 +44,8 @@
 				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
 			</div>
 			<div>
-				<input id="link_share_settings_toggle_password"
+				<input
+					id="link_share_settings_toggle_password"
 					ref="togglePassword"
 					aria-describedby="link_share_settings_password_hint"
 					type="checkbox"

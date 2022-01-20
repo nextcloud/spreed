@@ -36,8 +36,7 @@ get the messagesList array and loop through the list to generate the messages.
 			v-if="displayMessagesLoader"
 			class="scroller__loading"
 			disabled>
-			<div
-				class="icon-loading" />
+			<div class="icon-loading" />
 		</div>
 		<MessagesGroup
 			v-for="(item, index) of messagesGroupedByAuthor"
@@ -54,7 +53,8 @@ get the messagesList array and loop through the list to generate the messages.
 				:count="15" />
 		</template>
 		<transition name="fade">
-			<button v-show="!isChatScrolledToBottom"
+			<button
+				v-show="!isChatScrolledToBottom"
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
@@ -462,7 +462,7 @@ export default {
 				// scroll right away to avoid delays
 				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 					hasScrolled = true
-					await this.$nextTick(() => {
+					this.$nextTick(() => {
 						this.scrollToFocussedMessage()
 					})
 				}

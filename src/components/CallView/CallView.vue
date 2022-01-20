@@ -25,10 +25,10 @@
 			v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
 			:is-sidebar="isSidebar" />
 		<div id="videos">
-			<template
-				v-if="!isGrid">
+			<template v-if="!isGrid">
 				<!-- Selected video override mode -->
-				<div v-if="showSelectedVideo"
+				<div
+					v-if="showSelectedVideo"
 					ref="videoContainer"
 					class="video__promoted selected-video"
 					:class="{'full-page': isOneToOne}">
@@ -56,10 +56,8 @@
 						:shared-data="localSharedData"
 						:is-big="true" />
 					<!-- remote screen -->
-					<template
-						v-else>
-						<template
-							v-for="callParticipantModel in reversedCallParticipantModels">
+					<template v-else>
+						<template v-for="callParticipantModel in reversedCallParticipantModels">
 							<Screen
 								v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
 								:key="'screen-' + callParticipantModel.attributes.peerId"
@@ -71,7 +69,8 @@
 					</template>
 				</div>
 				<!-- Local Video Override mode (following own video) -->
-				<div v-else-if="showLocalVideo"
+				<div
+					v-else-if="showLocalVideo"
 					ref="videoContainer"
 					class="video__promoted selected-video--local"
 					:class="{'full-page': isOneToOne}">
@@ -89,7 +88,8 @@
 						@switch-screen-to-id="_switchScreenToId" />
 				</div>
 				<!-- Promoted "autopilot" mode -->
-				<div v-else
+				<div
+					v-else
 					ref="videoContainer"
 					class="video__promoted autopilot"
 					:class="{'full-page': isOneToOne}">

@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<a :href="mapLink"
+	<a
+		:href="mapLink"
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"

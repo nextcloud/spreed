@@ -35,7 +35,8 @@
 		<!-- Second step of the flow: confirmation modal that gives the user
 		the possibility to direclty route to the conversation to which the
 		message has been forwarded -->
-		<Modal v-else
+		<Modal
+			v-else
 			@close="handleClose">
 			<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
 				<template #desc>

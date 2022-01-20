@@ -41,14 +41,12 @@
 		</AppSettingsSection>
 
 		<!-- Notifications settings -->
-		<AppSettingsSection
-			:title="t('spreed', 'Notifications')">
+		<AppSettingsSection :title="t('spreed', 'Notifications')">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 
 		<!-- Devices preview sceren -->
-		<AppSettingsSection
-			:title="t('spreed', 'Device check')">
+		<AppSettingsSection :title="t('spreed', 'Device check')">
 			<CheckboxRadioSwitch :checked.sync="showDeviceChecker">
 				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 			</CheckboxRadioSwitch>

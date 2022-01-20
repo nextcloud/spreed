@@ -21,15 +21,18 @@
 <template>
 	<div class="media-devices-selector">
 		<div class="media-devices-selector__icon">
-			<Microphone v-if="deviceIcon === 'microphone'"
+			<Microphone
+				v-if="deviceIcon === 'microphone'"
 				title=""
 				:size="16" />
-			<Video v-if="deviceIcon === 'camera'"
+			<Video
+				v-if="deviceIcon === 'camera'"
 				title=""
 				:size="16" />
 		</div>
 
-		<Multiselect :id="deviceSelectorId"
+		<Multiselect
+			:id="deviceSelectorId"
 			v-model="deviceSelectedOption"
 			:options="deviceOptions"
 			track-by="id"

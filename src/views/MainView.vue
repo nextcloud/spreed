@@ -2,13 +2,11 @@
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar
-				:is-in-call="showChatInSidebar" />
+			<TopBar :is-in-call="showChatInSidebar" />
 			<transition name="fade">
 				<ChatView v-if="!showChatInSidebar" />
 				<template v-else>
-					<CallView
-						:token="token" />
+					<CallView :token="token" />
 				</template>
 			</transition>
 		</template>

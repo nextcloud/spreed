@@ -78,7 +78,8 @@
 		</div>
 
 		<!-- Call state icon -->
-		<div v-if="callIcon"
+		<div
+			v-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
@@ -137,7 +138,8 @@
 				icon="icon-password">
 				{{ attendeePin }}
 			</ActionText>
-			<ActionButton v-if="canBeDemoted"
+			<ActionButton
+				v-if="canBeDemoted"
 				:close-after-click="true"
 				@click="demoteFromModerator">
 				<template #icon>
@@ -148,7 +150,8 @@
 					{{ t('spreed', 'Demote from moderator') }}
 				</template>
 			</ActionButton>
-			<ActionButton v-if="canBePromoted"
+			<ActionButton
+				v-if="canBePromoted"
 				:close-after-click="true"
 				@click="promoteToModerator">
 				<template #icon>
@@ -209,14 +212,14 @@
 					{{ t('spreed', 'Edit permissions') }}
 				</ActionButton>
 			</template>
-			<ActionButton v-if="isEmailActor"
+			<ActionButton
+				v-if="isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
-			<ActionSeparator
-				v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
+			<ActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
 			<ActionButton
 				icon="icon-delete"
 				:close-after-click="true"

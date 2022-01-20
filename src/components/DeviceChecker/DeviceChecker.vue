@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<Modal v-if="modal"
+	<Modal
+		v-if="modal"
 		class="talk-modal"
 		size="large"
 		@close="closeModal">
@@ -36,19 +37,22 @@
 					class="preview__video"
 					disable-picture-in-picture="true"
 					tabindex="-1" />
-				<div v-show="!showVideo"
+				<div
+					v-show="!showVideo"
 					class="preview__novideo">
 					<VideoBackground
 						:display-name="displayName"
 						:user="userId" />
-					<Avatar v-if="userId"
+					<Avatar
+						v-if="userId"
 						:size="128"
 						:disable-menu="true"
 						:disable-tooltip="true"
 						:show-user-status="false"
 						:user="userId"
 						:display-name="displayName" />
-					<div v-if="!userId"
+					<div
+						v-if="!userId"
 						class="avatar avatar-128px guest">
 						{{ firstLetterOfGuestName }}
 					</div>
@@ -135,7 +139,8 @@
 
 			<!-- Device selection -->
 			<div class="device-checker__device-selection">
-				<button v-if="!showDeviceSelection"
+				<button
+					v-if="!showDeviceSelection"
 					class="select-devices"
 					@click="showDeviceSelection = true">
 					<span class="select-devices__icon">
@@ -147,17 +152,20 @@
 					<span> {{ t('spreed', 'Choose devices') }}</span>
 				</button>
 				<template v-if="showDeviceSelection">
-					<MediaDevicesSelector kind="audioinput"
+					<MediaDevicesSelector
+						kind="audioinput"
 						:devices="devices"
 						:device-id="audioInputId"
 						@update:deviceId="audioInputId = $event" />
-					<MediaDevicesSelector kind="videoinput"
+					<MediaDevicesSelector
+						kind="videoinput"
 						:devices="devices"
 						:device-id="videoInputId"
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
-			<CheckboxRadioSwitch :checked.sync="showDeviceChecker"
+			<CheckboxRadioSwitch
+				:checked.sync="showDeviceChecker"
 				class="checkbox">
 				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
 			</CheckboxRadioSwitch>

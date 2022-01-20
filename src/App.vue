@@ -29,8 +29,7 @@
 		<AppContent>
 			<router-view />
 		</AppContent>
-		<RightSidebar
-			:show-chat-in-sidebar="isInCall" />
+		<RightSidebar :show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />

@@ -85,12 +85,14 @@
 				</option>
 			</select>
 			<br>
-			<button class="button primary"
+			<button
+				class="button primary"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
 			</button>
-			<p v-if="requestError !== ''"
+			<p
+				v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
 			</p>
@@ -120,11 +122,13 @@
 					<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
 				</tr>
 			</table>
-			<p v-if="requestError !== ''"
+			<p
+				v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
 			</p>
-			<button class="button delete"
+			<button
+				class="button delete"
 				:disabled="loading"
 				@click="deleteAccount">
 				{{ t('spreed', 'Delete the signaling server account') }}

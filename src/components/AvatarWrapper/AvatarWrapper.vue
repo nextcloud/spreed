@@ -23,10 +23,12 @@
 	<div
 		class="avatar-wrapper"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
+		<div
+			v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${sizeToString}px`, iconClass]" />
-		<Avatar v-else-if="!isGuest"
+		<Avatar
+			v-else-if="!isGuest"
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainer"
@@ -37,7 +39,8 @@
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
-		<div v-else
+		<div
+			v-else
 			class="guest"
 			:class="`avatar-${sizeToString}px`">
 			{{ firstLetterOfGuestName }}

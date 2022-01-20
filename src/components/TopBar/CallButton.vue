@@ -21,7 +21,8 @@
 
 <template>
 	<div>
-		<button v-if="showStartCallButton"
+		<button
+			v-if="showStartCallButton"
 			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
@@ -39,7 +40,8 @@
 				:class="startCallIcon" />
 			{{ startCallLabel }}
 		</button>
-		<button v-else-if="showLeaveCallButton && !canEndForAll"
+		<button
+			v-else-if="showLeaveCallButton && !canEndForAll"
 			id="call_button"
 			class="top-bar__button error"
 			:disabled="loading"

@@ -20,12 +20,15 @@
 -->
 
 <template>
-	<div class="conversation-icon"
+	<div
+		class="conversation-icon"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
+		<div
+			v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
-		<Avatar v-else
+		<Avatar
+			v-else
 			:size="44"
 			:user="item.name"
 			:disable-menu="disableMenu"
@@ -35,12 +38,14 @@
 			:menu-container="menuContainer"
 			menu-position="left"
 			class="conversation-icon__avatar" />
-		<div v-if="showCall"
+		<div
+			v-if="showCall"
 			class="overlap-icon">
 			<span class="icon icon-active-call" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
-		<div v-else-if="showFavorite"
+		<div
+			v-else-if="showFavorite"
 			class="overlap-icon">
 			<span class="icon icon-favorite" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>

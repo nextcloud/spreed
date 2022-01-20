@@ -18,7 +18,8 @@
   -
   -->
 <template>
-	<div v-shortkey.push="['space']"
+	<div
+		v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
 			<div class="network-connection-state">
@@ -29,7 +30,8 @@
 					trigger="hover"
 					:auto-hide="false"
 					:open="showQualityWarningTooltip">
-					<button slot="trigger"
+					<button
+						slot="trigger"
 						class="trigger">
 						<NetworkStrength2Alert
 							decorative
@@ -80,7 +82,8 @@
 						fill-color="#ffffff"
 						decorative />
 				</button>
-				<span v-show="model.attributes.audioAvailable"
+				<span
+					v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
@@ -239,7 +242,8 @@
 					{{ toggleVirtualBackgroundButtonLabel }}
 				</ActionButton>
 				<!-- Call layout switcher -->
-				<ActionButton v-if="isInCall"
+				<ActionButton
+					v-if="isInCall"
 					:icon="changeViewIconClass"
 					:close-after-click="true"
 					@click="changeView">

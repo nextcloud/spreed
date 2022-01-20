@@ -28,7 +28,8 @@
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<CheckboxRadioSwitch
+				:checked.sync="radioValue"
 				:disabled="loading"
 				value="all"
 				name="permission_radio"
@@ -42,7 +43,8 @@
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<CheckboxRadioSwitch
+				:checked.sync="radioValue"
 				value="restricted"
 				:disabled="loading"
 				name="permission_radio"
@@ -56,7 +58,8 @@
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<CheckboxRadioSwitch
+				:checked.sync="radioValue"
 				value="advanced"
 				:disabled="loading"
 				name="permission_radio"

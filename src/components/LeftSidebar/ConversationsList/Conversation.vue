@@ -45,7 +45,8 @@
 			</template>
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
-			<ActionButton v-if="canFavorite"
+			<ActionButton
+				v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
 				{{ labelFavorite }}
@@ -72,13 +73,15 @@
 				@click.prevent.exact="showConversationSettings">
 				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
-			<ActionButton v-if="canLeaveConversation"
+			<ActionButton
+				v-if="canLeaveConversation"
 				:close-after-click="true"
 				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
 				{{ t('spreed', 'Leave conversation') }}
 			</ActionButton>
-			<ActionButton v-if="canDeleteConversation"
+			<ActionButton
+				v-if="canDeleteConversation"
 				:close-after-click="true"
 				icon="icon-delete-critical"
 				class="critical"

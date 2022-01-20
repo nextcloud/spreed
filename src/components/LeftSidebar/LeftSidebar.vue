@@ -31,15 +31,15 @@
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
 				@abort-search="abortSearch" />
-			<NewGroupConversation
-				v-if="canStartConversations" />
+			<NewGroupConversation v-if="canStartConversations" />
 		</div>
-		<template #list class="left-sidebar__list">
+		<template #list>
 			<div
 				ref="scroller"
 				class="left-sidebar__list"
 				@scroll="debounceHandleScroll">
-				<AppNavigationCaption v-if="isSearching"
+				<AppNavigationCaption
+					v-if="isSearching"
 					:title="t('spreed', 'Conversations')" />
 				<li role="presentation">
 					<ConversationsList
@@ -52,8 +52,7 @@
 				</li>
 				<template v-if="isSearching">
 					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
-						<AppNavigationCaption
-							:title="t('spreed', 'Open conversations')" />
+						<AppNavigationCaption :title="t('spreed', 'Open conversations')" />
 						<Conversation
 							v-for="item of searchResultsListedConversations"
 							:key="item.id"
@@ -62,8 +61,7 @@
 							@click="joinListedConversation(item)" />
 					</template>
 					<template v-if="searchResultsUsers.length !== 0">
-						<AppNavigationCaption
-							:title="t('spreed', 'Users')" />
+						<AppNavigationCaption :title="t('spreed', 'Users')" />
 						<li v-if="searchResultsUsers.length !== 0" role="presentation">
 							<ConversationsOptionsList
 								:items="searchResultsUsers"
@@ -71,7 +69,8 @@
 						</li>
 					</template>
 					<template v-if="!showStartConversationsOptions">
-						<AppNavigationCaption v-if="searchResultsUsers.length === 0"
+						<AppNavigationCaption
+							v-if="searchResultsUsers.length === 0"
 							:title="t('spreed', 'Users')" />
 						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 						<Hint v-else :hint="t('spreed', 'No search results')" />
@@ -79,8 +78,7 @@
 				</template>
 				<template v-if="showStartConversationsOptions">
 					<template v-if="searchResultsGroups.length !== 0">
-						<AppNavigationCaption
-							:title="t('spreed', 'Groups')" />
+						<AppNavigationCaption :title="t('spreed', 'Groups')" />
 						<li v-if="searchResultsGroups.length !== 0" role="presentation">
 							<ConversationsOptionsList
 								:items="searchResultsGroups"
@@ -89,8 +87,7 @@
 					</template>
 
 					<template v-if="searchResultsCircles.length !== 0">
-						<AppNavigationCaption
-							:title="t('spreed', 'Circles')" />
+						<AppNavigationCaption :title="t('spreed', 'Circles')" />
 						<li v-if="searchResultsCircles.length !== 0" role="presentation">
 							<ConversationsOptionsList
 								:items="searchResultsCircles"
@@ -98,7 +95,8 @@
 						</li>
 					</template>
 
-					<AppNavigationCaption v-if="sourcesWithoutResults"
+					<AppNavigationCaption
+						v-if="sourcesWithoutResults"
 						:title="sourcesWithoutResultsList" />
 					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 					<Hint v-else :hint="t('spreed', 'No search results')" />

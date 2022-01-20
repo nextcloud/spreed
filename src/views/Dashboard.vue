@@ -21,7 +21,8 @@
   -->
 
 <template>
-	<DashboardWidget id="talk-panel"
+	<DashboardWidget
+		id="talk-panel"
 		:items="roomOptions"
 		:show-more-url="''"
 		:loading="loading"
@@ -47,8 +48,7 @@
 			<EmptyContent icon="icon-talk">
 				<template #desc>
 					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
-					<button
-						@click="clickStartNew">
+					<button @click="clickStartNew">
 						{{ t('spreed', 'Start a conversation') }}
 					</button>
 				</template>

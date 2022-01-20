@@ -34,7 +34,8 @@
 				</p>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
-						<li v-for="room in availableRooms"
+						<li
+							v-for="room in availableRooms"
 							:key="room.token"
 							:class="{selected: selectedRoom === room.token }"
 							@click="selectedRoom=room.token">

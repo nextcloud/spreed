@@ -25,7 +25,8 @@ components.
 </docs>
 
 <template>
-	<a href="#"
+	<a
+		href="#"
 		class="quote"
 		:class="{'quote-own-message': isOwnMessageQuoted}"
 		@click.prevent="handleQuoteClick">
@@ -33,14 +34,16 @@ components.
 			<div class="quote__main__author" role="heading" aria-level="4">
 				{{ getDisplayName }}
 			</div>
-			<div v-if="isFileShareMessage"
+			<div
+				v-if="isFileShareMessage"
 				class="quote__main__text">
 				<RichText
 					:text="message"
 					:arguments="richParameters"
 					:autolink="true" />
 			</div>
-			<blockquote v-else
+			<blockquote
+				v-else
 				class="quote__main__text">
 				<p>{{ shortenedQuoteMessage }}</p>
 			</blockquote>

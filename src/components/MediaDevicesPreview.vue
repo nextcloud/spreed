@@ -20,12 +20,14 @@
 
 <template>
 	<div class="mediaDevicesPreview">
-		<MediaDevicesSelector kind="audioinput"
+		<MediaDevicesSelector
+			kind="audioinput"
 			:devices="devices"
 			:device-id="audioInputId"
 			@update:deviceId="audioInputId = $event" />
 		<div class="preview preview-audio">
-			<div v-if="!audioPreviewAvailable"
+			<div
+				v-if="!audioPreviewAvailable"
 				class="preview-not-available">
 				<AlertCircle
 					v-if="audioStreamError"
@@ -37,7 +39,8 @@
 					:size="64"
 					title=""
 					fill-color="#999" />
-				<div v-else-if="!audioStream"
+				<div
+					v-else-if="!audioStream"
 					class="icon icon-loading" />
 				<p v-if="audioStreamErrorMessage">
 					{{ audioStreamErrorMessage }}
@@ -45,23 +48,27 @@
 			</div>
 			<!-- v-show has to be used instead of v-if/else to ensure that the
 				 reference is always valid once mounted. -->
-			<div v-show="audioPreviewAvailable"
+			<div
+				v-show="audioPreviewAvailable"
 				class="volume-indicator-wrapper">
 				<Microphone
 					:size="64"
 					title=""
 					fill-color="#999" />
-				<span ref="volumeIndicator"
+				<span
+					ref="volumeIndicator"
 					class="volume-indicator"
 					:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
 			</div>
 		</div>
-		<MediaDevicesSelector kind="videoinput"
+		<MediaDevicesSelector
+			kind="videoinput"
 			:devices="devices"
 			:device-id="videoInputId"
 			@update:deviceId="videoInputId = $event" />
 		<div class="preview preview-video">
-			<div v-if="!videoPreviewAvailable"
+			<div
+				v-if="!videoPreviewAvailable"
 				class="preview-not-available">
 				<AlertCircle
 					v-if="videoStreamError"
@@ -73,7 +80,8 @@
 					:size="64"
 					title=""
 					fill-color="#999" />
-				<div v-else-if="!videoStream"
+				<div
+					v-else-if="!videoStream"
 					class="icon icon-loading" />
 				<p v-if="videoStreamErrorMessage">
 					{{ videoStreamErrorMessage }}
@@ -81,7 +89,8 @@
 			</div>
 			<!-- v-show has to be used instead of v-if/else to ensure that the
 				 reference is always valid once mounted. -->
-			<video v-show="videoPreviewAvailable"
+			<video
+				v-show="videoPreviewAvailable"
 				ref="video"
 				disablePictureInPicture="true"
 				tabindex="-1" />

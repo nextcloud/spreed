@@ -19,13 +19,15 @@
   -->
 
 <template>
-	<div id="localVideoContainer"
+	<div
+		id="localVideoContainer"
 		class="videoContainer videoView"
 		:class="videoContainerClass"
 		@mouseover="showShadow"
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
-		<div v-show="localMediaModel.attributes.videoEnabled"
+		<div
+			v-show="localMediaModel.attributes.videoEnabled"
 			:class="videoWrapperClass"
 			class="videoWrapper">
 			<video
@@ -40,7 +42,8 @@
 				v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
-			<Avatar v-if="userId"
+			<Avatar
+				v-if="userId"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
@@ -48,7 +51,8 @@
 				:user="userId"
 				:display-name="displayName"
 				:class="avatarClass" />
-			<div v-if="!userId"
+			<div
+				v-if="!userId"
 				:class="guestAvatarClass"
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}

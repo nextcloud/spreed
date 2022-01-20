@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<div ref="description"
+	<div
+		ref="description"
 		:key="forceReRenderKey"
 		class="description"
 		:class="{'description--editing': editing}">
@@ -55,7 +56,8 @@
 						title=""
 						:size="16" />
 				</button>
-				<div v-if="showCountDown"
+				<div
+					v-if="showCountDown"
 					v-tooltip.auto="countDownWarningText"
 					class="counter"
 					tabindex="0"
@@ -63,7 +65,8 @@
 					<span>{{ charactersCountDown }}</span>
 				</div>
 			</template>
-			<button v-if="!editing && editable"
+			<button
+				v-if="!editing && editable"
 				class="nc-button nc-button__main"
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">

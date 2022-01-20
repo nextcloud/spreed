@@ -35,8 +35,7 @@
 							'icon-upload' : !isGuest && !isReadOnly,
 							'icon-user' : isGuest,
 							'icon-error' : isReadOnly}" />
-					<h2
-						class="drop-hint__text">
+					<h2 class="drop-hint__text">
 						{{ dropHintText }}
 					</h2>
 				</div>

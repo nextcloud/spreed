@@ -23,7 +23,8 @@
 		<!-- "submit-wrapper" is used to mimic the login button and thus get
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
-			<input id="request-password-button"
+			<input
+				id="request-password-button"
 				class="primary button-vue"
 				type="button"
 				:value="t('spreed', 'Request password')"

@@ -30,19 +30,23 @@
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
-		<a v-if="!isInCall"
+		<a
+			v-if="!isInCall"
 			class="conversation-header"
 			@click="openConversationSettings">
-			<div class="conversation-header__text"
+			<div
+				class="conversation-header__text"
 				:class="{'conversation-header__text--offline': isPeerOffline}">
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
-				<p v-if="showUserStatusAsDescription"
+				<p
+					v-if="showUserStatusAsDescription"
 					class="description">
 					{{ statusMessage }}
 				</p>
-				<p v-else-if="conversation.description"
+				<p
+					v-else-if="conversation.description"
 					v-tooltip.bottom="{
 						content: renderedDescription,
 						delay: { show: 500, hide: 500 },
@@ -66,7 +70,8 @@
 			<CallButton class="top-bar__button" />
 
 			<!-- Vertical line -->
-			<div v-if="!isSidebar && isInCall"
+			<div
+				v-if="!isSidebar && isInCall"
 				class="top-bar__separator" />
 
 			<!-- sidebar toggle -->
@@ -90,16 +95,14 @@
 					@click="toggleFullscreen">
 					{{ labelFullscreen }}
 				</ActionButton>
-				<ActionSeparator
-					v-if="showModerationOptions" />
+				<ActionSeparator v-if="showModerationOptions" />
 				<ActionLink
 					v-if="isFileConversation"
 					icon="icon-text"
 					:href="linkToFile">
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
-				<template
-					v-if="showModerationOptions">
+				<template v-if="showModerationOptions">
 					<ActionButton
 						:close-after-click="true"
 						icon="icon-rename"
@@ -114,8 +117,7 @@
 					@click="handleCopyLink">
 					{{ t('spreed', 'Copy link') }}
 				</ActionButton>
-				<template
-					v-if="showModerationOptions && canFullModerate && isInCall">
+				<template v-if="showModerationOptions && canFullModerate && isInCall">
 					<ActionSeparator />
 					<ActionButton
 						:close-after-click="true"
@@ -128,8 +130,7 @@
 						{{ t('spreed', 'Mute others') }}
 					</ActionButton>
 				</template>
-				<ActionSeparator
-					v-if="showModerationOptions" />
+				<ActionSeparator v-if="showModerationOptions" />
 				<ActionButton
 					icon="icon-settings"
 					:close-after-click="true"
@@ -137,7 +138,8 @@
 					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
 			</Actions>
-			<Actions v-if="showOpenSidebarButton"
+			<Actions
+				v-if="showOpenSidebarButton"
 				class="top-bar__button"
 				close-after-click="true"
 				:container="container">

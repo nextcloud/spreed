@@ -26,8 +26,7 @@
 			:key="item.id"
 			:title="item.label"
 			@click="onClick(item)">
-			<template
-				#icon>
+			<template #icon>
 				<ConversationIcon
 					:item="iconData(item)"
 					:disable-menu="true" />
