@@ -232,7 +232,6 @@ export default {
 }
 
 .loading-screen {
-	width: $editor-width;
 	height: 200px;
 	text-align: center;
 	font-weight: bold;
