@@ -401,6 +401,31 @@ class ChatManager {
 	}
 
 	/**
+	 * @param Room $chat
+	 * @param int $offset Last known message id
+	 * @param array $verbs
+	 * @param bool $offsetIsVerbMatch
+	 * @return IComment
+	 * @throws NotFoundException
+	 */
+	public function getPreviousMessageWithVerb(Room $chat, int $offset, array $verbs, bool $offsetIsVerbMatch): IComment {
+		$messages = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
+			'chat',
+			(string) $chat->getId(),
+			$verbs,
+			$offset,
+			'desc',
+			!$offsetIsVerbMatch ? 2 : 1
+		);
+
+		if (empty($messages)) {
+			throw new NotFoundException('No comment with verb found');
+		}
+
+		return array_pop($messages);
+	}
+
+	/**
 	 * If there are currently no messages the response will not be sent
 	 * immediately. Instead, HTTP connection will be kept open waiting for new
 	 * messages to arrive and, when they do, then the response will be sent. The

@@ -683,11 +683,17 @@ class ChatController extends AEnvironmentAwareController {
 		$unreadId = 0;
 
 		if ($message instanceof IComment) {
-			$history = $this->chatManager->getHistory($this->room, (int) $message->getId(), 1, false);
-			if (!empty($history)) {
-				/** @var IComment $previousMessage */
-				$previousMessage = array_shift($history);
+			try {
+				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
+					$this->room,
+					(int)$message->getId(),
+					['comment'],
+					$message->getVerb() === 'comment'
+				);
 				$unreadId = (int) $previousMessage->getId();
+			} catch (NotFoundException $e) {
+				// No chat message found, only system messages.
+				// Marking unread from beginning
 			}
 		}
 
