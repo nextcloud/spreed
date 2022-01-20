@@ -75,6 +75,7 @@ class CapabilitiesTest extends TestCase {
 			'read-only-rooms',
 			'listable-rooms',
 			'chat-read-marker',
+			'chat-unread',
 			'webinary-lobby',
 			'start-call-flag',
 			'chat-replies',

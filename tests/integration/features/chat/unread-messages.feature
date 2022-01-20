@@ -133,3 +133,53 @@ Feature: chat/unread-messages
     And user "participant2" is participant of room "group room" (v4)
       | unreadMessages |
       | 0              |
+
+
+
+  Scenario: marking conversation as unread marks last message as unread
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant1" sends message "Message 3" to room "group room" with 201
+    And user "participant2" reads message "Message 3" in room "group room" with 200
+    When user "participant1" marks room "group room" as unread with 200
+    And user "participant2" marks room "group room" as unread with 200
+    Then user "participant1" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |
+    And user "participant2" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |
+
+  Scenario: marking conversation as unread marks last message as unread ignoring system messages
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant1" sends message "Message 3" to room "group room" with 201
+    And user "participant1" makes room "group room" public with 200 (v4)
+    And user "participant1" makes room "group room" private with 200 (v4)
+    And user "participant1" makes room "group room" public with 200 (v4)
+    When user "participant1" marks room "group room" as unread with 200
+    Then user "participant1" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |
+
+  Scenario: marking conversation as unread marks last message as unread even if there are other unread messages
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant1" sends message "Message 3" to room "group room" with 201
+    And user "participant1" sends message "Message 4" to room "group room" with 201
+    And user "participant2" reads message "Message 1" in room "group room" with 200
+    When user "participant2" marks room "group room" as unread with 200
+    Then user "participant2" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |

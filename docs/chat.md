@@ -230,6 +230,25 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
 
 
+## Mark chat as unread
+
+* Required capability: `chat-unread`
+* Method: `DELETE`
+* Endpoint: `/chat/{token}/read`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant,
+        or the participant is a guest.
+
+    - Header:
+
+        field | type | Description
+        ---|---|---
+        `X-Chat-Last-Common-Read` | int | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability)
+
+
 ## Get mention autocomplete suggestions
 
 * Method: `GET`
