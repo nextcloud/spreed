@@ -183,7 +183,6 @@ export default {
 	}
 	button {
 		margin: 4px auto;
-		z-index: 1;
 	}
 
 	h2, p {
