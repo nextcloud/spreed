@@ -24,7 +24,8 @@
 	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<p v-if="!showForm"
+		<p
+			v-if="!showForm"
 			class="settings-hint">
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</p>
@@ -53,7 +54,8 @@
 
 			<h3>{{ t('spreed', 'Shared secret') }}</h3>
 
-			<input v-model="sharedSecret"
+			<input
+				v-model="sharedSecret"
 				type="text"
 				name="shared-secret"
 				class="sip-bridge__shared-secret"
@@ -76,7 +78,8 @@
 				:placeholder="t('spreed', 'Phone number (Country)')" />
 
 			<p>
-				<button class="button primary"
+				<button
+					class="button primary"
 					:disabled="loading"
 					@click="saveSIPSettings">
 					{{ saveLabel }}

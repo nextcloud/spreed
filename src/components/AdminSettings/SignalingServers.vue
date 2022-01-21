@@ -25,7 +25,8 @@
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading && showAddServerButton"
+			<a
+				v-else-if="!loading && showAddServerButton"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
 				class="icon icon-add"
 				@click="newServer">
@@ -46,7 +47,8 @@
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
-			<input id="hide_warning"
+			<input
+				id="hide_warning"
 				v-model="hideWarning"
 				type="checkbox"
 				name="hide_warning"
@@ -73,7 +75,8 @@
 
 		<div class="signaling-secret">
 			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input v-model="secret"
+			<input
+				v-model="secret"
 				type="text"
 				name="signaling_secret"
 				:disabled="loading"

@@ -21,7 +21,8 @@
 
 <template>
 	<div class="wrapper">
-		<button slot="trigger"
+		<button
+			slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			class="toggle"
 			icon=""
@@ -38,14 +39,11 @@
 			:container="container"
 			@close="closeModal">
 			<!-- Wrapper for content & navigation -->
-			<div
-				class="new-group-conversation talk-modal">
+			<div class="new-group-conversation talk-modal">
 				<!-- Content -->
-				<div
-					class="new-group-conversation__content">
+				<div class="new-group-conversation__content">
 					<!-- First page -->
-					<template
-						v-if="page === 0">
+					<template v-if="page === 0">
 						<SetConversationName
 							v-model="conversationNameInput"
 							@click-enter="handleEnter" />
@@ -69,8 +67,7 @@
 					</template>
 					<!-- Second page -->
 					<template v-if="page === 1">
-						<SetContacts
-							:conversation-name="conversationName" />
+						<SetContacts :conversation-name="conversationName" />
 					</template>
 					<!-- Third page -->
 					<template v-if="page === 2">
@@ -85,8 +82,7 @@
 				</div>
 				<!-- Navigation: different buttons with different actions and
 				placement are rendered depending on the current page -->
-				<div
-					class="navigation">
+				<div class="navigation">
 					<!-- First page -->
 					<button
 						v-if="page===0 && isPublic"

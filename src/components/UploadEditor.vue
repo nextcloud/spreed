@@ -20,13 +20,15 @@
 -->
 
 <template>
-	<Modal v-if="showModal"
+	<Modal
+		v-if="showModal"
 		class="upload-editor"
 		:container="container"
 		@close="handleDismiss">
 		<template v-if="!isVoiceMessage">
 			<!--native file picker, hidden -->
-			<input id="file-upload"
+			<input
+				id="file-upload"
 				ref="fileUploadInput"
 				multiple
 				type="file"
@@ -46,7 +48,8 @@
 				<div
 					:key="'addMore'"
 					class="add-more">
-					<button :aria-label="addMoreAriaLabel"
+					<button
+						:aria-label="addMoreAriaLabel"
 						class="add-more__button primary"
 						@click="clickImportInput">
 						<Plus

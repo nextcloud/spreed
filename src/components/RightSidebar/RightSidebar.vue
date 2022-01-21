@@ -47,7 +47,8 @@
 			icon="icon-comment">
 			<ChatView :is-visible="opened" />
 		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId && !isOneToOne"
+		<AppSidebarTab
+			v-if="getUserId && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
@@ -63,8 +64,7 @@
 			:order="3"
 			:name="t('spreed', 'Details')"
 			icon="icon-details">
-			<SetGuestUsername
-				v-if="!getUserId" />
+			<SetGuestUsername v-if="!getUserId" />
 			<SipSettings
 				v-if="showSIPSettings"
 				:meeting-id="conversation.token"

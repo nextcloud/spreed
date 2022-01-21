@@ -24,45 +24,41 @@
 		class="participants-search-results"
 		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<AppNavigationCaption
-				:title="t('spreed', 'Add users')" />
+			<AppNavigationCaption :title="t('spreed', 'Add users')" />
 			<ParticipantsList
 				:items="addableUsers"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
-			<AppNavigationCaption
-				:title="t('spreed', 'Add groups')" />
+			<AppNavigationCaption :title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				:items="addableGroups"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
-			<AppNavigationCaption
-				:title="t('spreed', 'Add emails')" />
+			<AppNavigationCaption :title="t('spreed', 'Add emails')" />
 			<ParticipantsList
 				:items="addableEmails"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
-			<AppNavigationCaption
-				:title="t('spreed', 'Add circles')" />
+			<AppNavigationCaption :title="t('spreed', 'Add circles')" />
 			<ParticipantsList
 				:items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableRemotes.length !== 0">
-			<AppNavigationCaption
-				:title="t('spreed', 'Add federated users')" />
+			<AppNavigationCaption :title="t('spreed', 'Add federated users')" />
 			<ParticipantsList
 				:items="addableRemotes"
 				@click="handleClickParticipant" />
 		</template>
-		<AppNavigationCaption v-if="sourcesWithoutResults"
+		<AppNavigationCaption
+			v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />

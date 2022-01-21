@@ -22,7 +22,8 @@
 
 <template>
 	<div class="turn-server">
-		<select class="schemes"
+		<select
+			class="schemes"
 			:value="schemes"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server schemes')"
@@ -38,7 +39,8 @@
 			</option>
 		</select>
 
-		<input ref="turn_server"
+		<input
+			ref="turn_server"
 			v-tooltip.auto="turnServerError"
 			type="text"
 			name="turn_server"
@@ -48,7 +50,8 @@
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server URL')"
 			@input="updateServer">
-		<input ref="turn_secret"
+		<input
+			ref="turn_secret"
 			type="text"
 			name="turn_secret"
 			placeholder="secret"
@@ -57,7 +60,8 @@
 			:aria-label="t('spreed', 'TURN server secret')"
 			@input="updateSecret">
 
-		<select class="protocols"
+		<select
+			class="protocols"
 			:value="protocols"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server protocols')"
@@ -73,12 +77,14 @@
 			</option>
 		</select>
 
-		<a v-show="!loading"
+		<a
+			v-show="!loading"
 			v-tooltip.auto="testResult"
 			class="icon"
 			:class="testIconClasses"
 			@click="testServer" />
-		<a v-show="!loading"
+		<a
+			v-show="!loading"
 			v-tooltip.auto="t('spreed', 'Delete this server')"
 			class="icon icon-delete"
 			@click="removeServer" />

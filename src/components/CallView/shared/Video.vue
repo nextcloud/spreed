@@ -19,7 +19,8 @@
   -->
 
 <template>
-	<div v-show="!placeholderForPromoted || sharedData.promoted"
+	<div
+		v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass"
@@ -27,7 +28,8 @@
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
 		<transition name="fade">
-			<div v-show="showVideo"
+			<div
+				v-show="showVideo"
 				:class="videoWrapperClass"
 				class="videoWrapper">
 				<video
@@ -64,8 +66,7 @@
 						:class="avatarClass" />
 				</template>
 				<template v-else>
-					<VideoBackground
-						:display-name="participantName" />
+					<VideoBackground :display-name="participantName" />
 					<div
 						:class="guestAvatarClass"
 						class="avatar guest">
@@ -73,22 +74,26 @@
 					</div>
 				</template>
 			</div>
-			<div v-if="showPlaceholderForPromoted"
+			<div
+				v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
-				<AccountCircle v-if="isPromoted || isSelected"
+				<AccountCircle
+					v-if="isPromoted || isSelected"
 					decorative
 					title=""
 					fill-color="#FFFFFF"
 					:size="36" />
 			</div>
 		</transition-group>
-		<div v-if="connectionMessage"
+		<div
+			v-if="connectionMessage"
 			:class="connectionMessageClass"
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<VideoBottomBar v-bind="$props"
+		<VideoBottomBar
+			v-bind="$props"
 			:has-shadow="hasVideo"
 			:participant-name="participantName" />
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />

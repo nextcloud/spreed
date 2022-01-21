@@ -21,7 +21,8 @@
 
 <template>
 	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
-		<button v-if="isStripe"
+		<button
+			v-if="isStripe"
 			class="stripe--collapse"
 			:aria-label="stripeButtonTooltip"
 			@click="handleClickStripeCollapse">
@@ -41,7 +42,8 @@
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0"
+					<button
+						v-if="hasPreviousPage && gridWidth > 0"
 						:class="{'stripe': isStripe}"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
@@ -97,7 +99,8 @@
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
 							</h1>
-							<div v-else
+							<div
+								v-else
 								class="dev-mode-video--self video"
 								:style="{'background': 'url(' + placeholderImage(8) + ')'}" />
 						</template>
@@ -114,7 +117,8 @@
 							@switch-screen-to-id="switchScreenToId"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0"
+					<button
+						v-if="hasNextPage && gridWidth > 0"
 						class="grid-navigation grid-navigation__next"
 						:class="{'stripe': isStripe}"
 						:aria-label="t('spreed', 'Next page of videos')"
@@ -142,7 +146,8 @@
 				<div
 					v-if="numberOfPages !== 0 && hasPagination && false"
 					class="pages-indicator">
-					<div v-for="(page, index) in numberOfPages"
+					<div
+						v-for="(page, index) in numberOfPages"
 						:key="index"
 						class="pages-indicator__dot"
 						:class="{'pages-indicator__dot--active': index === currentPage }" />

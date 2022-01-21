@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<At ref="at"
+	<At
+		ref="at"
 		v-model="text"
 		class="atwho-wrapper"
 		name-key="label"
@@ -30,18 +31,21 @@
 		:allow-spaces="false"
 		@at="handleAtEvent">
 		<template #item="scope">
-			<Avatar v-if="isMentionToAll(scope.item.id)"
+			<Avatar
+				v-if="isMentionToAll(scope.item.id)"
 				:size="44"
 				:icon-class="'icon-group-forced-white'"
 				:disable-tooltip="true"
 				:disable-menu="true"
 				:is-no-user="true" />
-			<div v-else-if="isMentionToGuest(scope.item.id)"
+			<div
+				v-else-if="isMentionToGuest(scope.item.id)"
 				class="avatar guest"
 				:style="getGuestAvatarStyle()">
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
-			<Avatar v-else
+			<Avatar
+				v-else
 				:key="scope.item.source + '#' + scope.item.id"
 				:size="44"
 				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
@@ -53,7 +57,8 @@
 
 			<span class="mention-suggestion">
 				<span>{{ scope.item.label }}</span>
-				<em v-if="getStatusMessage(scope.item)"
+				<em
+					v-if="getStatusMessage(scope.item)"
 					class="user-status">
 					{{ getStatusMessage(scope.item) }}
 				</em>

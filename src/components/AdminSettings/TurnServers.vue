@@ -25,7 +25,8 @@
 		<h2>
 			{{ t('spreed', 'TURN servers') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading"
+			<a
+				v-else-if="!loading"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
 				class="icon icon-add"
 				@click="newServer">

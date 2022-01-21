@@ -24,14 +24,15 @@
 		class="part"
 		:class="{ readonly: !editing }">
 		<h3>
-			<img class="icon-service"
+			<img
+				class="icon-service"
 				:src="type.iconUrl">
 			<span>
 				{{ type.name }}
 			</span>
-			<Actions
-				:force-menu="false">
-				<ActionButton v-if="editable"
+			<Actions :force-menu="false">
+				<ActionButton
+					v-if="editable"
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
 					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
@@ -47,7 +48,8 @@
 					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
 					:close-after-click="true" />
-				<ActionButton v-if="editable"
+				<ActionButton
+					v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"
 					@click="$emit('delete-part')">

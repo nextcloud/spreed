@@ -28,7 +28,8 @@
 			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
-		<AppNavigationCaption v-if="isSearching && canAdd"
+		<AppNavigationCaption
+			v-if="isSearching && canAdd"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
 			:search-text="searchText"

@@ -56,7 +56,8 @@
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</CheckboxRadioSwitch>
-					<button ref="submit"
+					<button
+						ref="submit"
 						type="submit"
 						:disabled="submitButtonDisabled"
 						class="nc-button primary">

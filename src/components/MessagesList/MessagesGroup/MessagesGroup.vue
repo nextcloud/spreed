@@ -21,13 +21,16 @@
 
 <template>
 	<div class="message-group">
-		<div v-if="dateSeparator"
+		<div
+			v-if="dateSeparator"
 			class="message-group__date-header">
-			<span class="date"
+			<span
+				class="date"
 				role="heading"
 				aria-level="3">{{ dateSeparator }}</span>
 		</div>
-		<div class="wrapper"
+		<div
+			class="wrapper"
 			:class="{'wrapper--system': isSystemMessage}">
 			<div v-if="!isSystemMessage" class="messages__avatar">
 				<AuthorAvatar

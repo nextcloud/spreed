@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<div
-		class="audio-recorder">
+	<div class="audio-recorder">
 		<button
 			v-if="!isRecording"
 			v-tooltip.auto="{
@@ -52,8 +51,7 @@
 			</button>
 			<div class="audio-recorder__info">
 				<div class="recording-indicator fadeOutIn" />
-				<span
-					class="time">
+				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
 			<button

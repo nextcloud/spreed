@@ -29,7 +29,8 @@
 				{{ t('spreed', 'This will also remove non-moderators from the ongoing call.') }}
 			</div>
 			<div>
-				<input id="moderation_settings_enable_lobby_checkbox"
+				<input
+					id="moderation_settings_enable_lobby_checkbox"
 					aria-describedby="moderation_settings_enable_lobby_hint"
 					type="checkbox"
 					class="checkbox"

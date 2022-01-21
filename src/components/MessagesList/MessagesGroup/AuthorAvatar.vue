@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<Avatar v-if="isUser"
+	<Avatar
+		v-if="isUser"
 		:disable-tooltip="true"
 		class="messages__avatar__icon"
 		:user="authorId"
@@ -29,17 +30,21 @@
 		:menu-container="menuContainer"
 		menu-position="left"
 		:display-name="displayName" />
-	<div v-else-if="isDeletedUser"
+	<div
+		v-else-if="isDeletedUser"
 		class="avatar-32px guest">
 		X
 	</div>
-	<div v-else-if="isGuest"
+	<div
+		v-else-if="isGuest"
 		class="avatar-32px guest">
 		{{ firstLetterOfGuestName }}
 	</div>
-	<div v-else-if="isChangelog"
+	<div
+		v-else-if="isChangelog"
 		class="avatar-32px icon icon-changelog" />
-	<div v-else
+	<div
+		v-else
 		class="avatar-32px bot">
 		&gt;_
 	</div>

@@ -24,7 +24,8 @@
 		class="wrapper"
 		:class="{'wrapper--chatScrolledToBottom': isChatScrolledToBottom}">
 		<!--native file picker, hidden -->
-		<input id="file-upload"
+		<input
+			id="file-upload"
 			ref="fileUploadInput"
 			multiple
 			type="file"
@@ -32,8 +33,7 @@
 			aria-hidden="true"
 			class="hidden-visually"
 			@change="handleFileInput">
-		<div
-			class="new-message">
+		<div class="new-message">
 			<form
 				class="new-message-form"
 				@submit.prevent>
@@ -88,7 +88,8 @@
 							</button>
 						</EmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
-						<button v-else
+						<button
+							v-else
 							type="button"
 							:disabled="true"
 							class="nc-button nc-button__main emoji-picker-button">

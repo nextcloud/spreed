@@ -32,8 +32,7 @@
 				title=""
 				:size="20"
 				class="radio-element__icon" />
-			<label
-				class="radio-element__label">
+			<label class="radio-element__label">
 				{{ t('spreed', 'All messages') }}
 			</label>
 			<Check
@@ -53,8 +52,7 @@
 				title=""
 				:size="20"
 				class="radio-element__icon" />
-			<label
-				class="radio-element__label">
+			<label class="radio-element__label">
 				{{ t('spreed', '@-mentions only') }}
 			</label>
 			<Check
@@ -64,7 +62,8 @@
 				title=""
 				:size="20" />
 		</a>
-		<a href="#"
+		<a
+			href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyNever}"
 			@click.prevent.exact="setNotificationLevel(3)">

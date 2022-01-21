@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<div class="wrapper"
+	<div
+		class="wrapper"
 		:class="{'wrapper--big': isBig}">
 		<transition name="fade">
 			<div
@@ -34,11 +35,13 @@
 					fill-color="#ffffff" />
 			</div>
 		</transition>
-		<div v-if="!isSidebar"
+		<div
+			v-if="!isSidebar"
 			class="bottom-bar"
 			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
 			<transition name="fade">
-				<div v-show="showNameIndicator"
+				<div
+					v-show="showNameIndicator"
 					class="bottom-bar__nameIndicator"
 					:class="{'bottom-bar__nameIndicator--promoted': boldenNameIndicator}">
 					{{ participantName }}
@@ -49,7 +52,8 @@
 					v-if="!isScreen"
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
-					<button v-show="!connectionStateFailedNoRestart"
+					<button
+						v-show="!connectionStateFailedNoRestart"
 						v-if="showMicrophone || showMicrophoneOff"
 						v-tooltip="audioButtonTooltip"
 						class="muteIndicator"
@@ -68,7 +72,8 @@
 							fill-color="#ffffff"
 							decorative />
 					</button>
-					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
+					<button
+						v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
 						class="hideRemoteVideo"
 						@click.stop="toggleVideo">
@@ -85,7 +90,8 @@
 							fill-color="#ffffff"
 							decorative />
 					</button>
-					<button v-show="!connectionStateFailedNoRestart"
+					<button
+						v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
 						class="screensharingIndicator"
 						:class="screenSharingButtonClass"
@@ -96,7 +102,8 @@
 							fill-color="#ffffff"
 							decorative />
 					</button>
-					<button v-show="connectionStateFailedNoRestart"
+					<button
+						v-show="connectionStateFailedNoRestart"
 						class="iceFailedIndicator"
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
 						disabled="true">
@@ -108,7 +115,8 @@
 					</button>
 				</div>
 			</transition>
-			<button v-if="hasSelectedVideo && isBig"
+			<button
+				v-if="hasSelectedVideo && isBig"
 				class="bottom-bar__button"
 				@click="handleStopFollowing">
 				{{ stopFollowingLabel }}
