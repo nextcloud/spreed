@@ -1384,6 +1384,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" marks room "([^"]*)" as unread with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userMarkUnreadRoom($user, $identifier, $statusCode, $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/read',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

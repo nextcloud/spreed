@@ -673,6 +673,34 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function markUnread(): DataResponse {
+		$message = $this->room->getLastMessage();
+		$unreadId = 0;
+
+		if ($message instanceof IComment) {
+			try {
+				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
+					$this->room,
+					(int)$message->getId(),
+					['comment'],
+					$message->getVerb() === 'comment'
+				);
+				$unreadId = (int) $previousMessage->getId();
+			} catch (NotFoundException $e) {
+				// No chat message found, only system messages.
+				// Marking unread from beginning
+			}
+		}
+
+		return $this->setReadMarker($unreadId);
+	}
+
+	/**
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation

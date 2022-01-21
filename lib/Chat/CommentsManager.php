@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat;
 use OC\Comments\Comment;
 use OC\Comments\Manager;
 use OCP\Comments\IComment;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
 	/**
@@ -38,5 +39,110 @@ class CommentsManager extends Manager {
 		$comment = new Comment($this->normalizeDatabaseData($data));
 		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
 		return $comment;
+	}
+
+	/**
+	 * TODO Remove when moved to server
+	 *
+	 * @param string $objectType the object type, e.g. 'files'
+	 * @param string $objectId the id of the object
+	 * @param string[] $verbs List of verbs to filter by
+	 * @param int $lastKnownCommentId the last known comment (will be used as offset)
+	 * @param string $sortDirection direction of the comments (`asc` or `desc`)
+	 * @param int $limit optional, number of maximum comments to be returned. if
+	 * set to 0, all comments are returned.
+	 * @param bool $includeLastKnown
+	 * @return IComment[]
+	 * @return array
+	 */
+	public function getCommentsWithVerbForObjectSinceComment(
+		string $objectType,
+		string $objectId,
+		array $verbs,
+		int $lastKnownCommentId,
+		string $sortDirection = 'asc',
+		int $limit = 30,
+		bool $includeLastKnown = false
+	): array {
+		$comments = [];
+
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('*')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)))
+			->andWhere($query->expr()->in('verb', $query->createNamedParameter($verbs, IQueryBuilder::PARAM_STR_ARRAY)))
+			->orderBy('creation_timestamp', $sortDirection === 'desc' ? 'DESC' : 'ASC')
+			->addOrderBy('id', $sortDirection === 'desc' ? 'DESC' : 'ASC');
+
+		if ($limit > 0) {
+			$query->setMaxResults($limit);
+		}
+
+		$lastKnownComment = $lastKnownCommentId > 0 ? $this->getLastKnownComment(
+			$objectType,
+			$objectId,
+			$lastKnownCommentId
+		) : null;
+		if ($lastKnownComment instanceof IComment) {
+			$lastKnownCommentDateTime = $lastKnownComment->getCreationDateTime();
+			if ($sortDirection === 'desc') {
+				if ($includeLastKnown) {
+					$idComparison = $query->expr()->lte('id', $query->createNamedParameter($lastKnownCommentId));
+				} else {
+					$idComparison = $query->expr()->lt('id', $query->createNamedParameter($lastKnownCommentId));
+				}
+				$query->andWhere(
+					$query->expr()->orX(
+						$query->expr()->lt(
+							'creation_timestamp',
+							$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+							IQueryBuilder::PARAM_DATE
+						),
+						$query->expr()->andX(
+							$query->expr()->eq(
+								'creation_timestamp',
+								$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+								IQueryBuilder::PARAM_DATE
+							),
+							$idComparison
+						)
+					)
+				);
+			} else {
+				if ($includeLastKnown) {
+					$idComparison = $query->expr()->gte('id', $query->createNamedParameter($lastKnownCommentId));
+				} else {
+					$idComparison = $query->expr()->gt('id', $query->createNamedParameter($lastKnownCommentId));
+				}
+				$query->andWhere(
+					$query->expr()->orX(
+						$query->expr()->gt(
+							'creation_timestamp',
+							$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+							IQueryBuilder::PARAM_DATE
+						),
+						$query->expr()->andX(
+							$query->expr()->eq(
+								'creation_timestamp',
+								$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+								IQueryBuilder::PARAM_DATE
+							),
+							$idComparison
+						)
+					)
+				);
+			}
+		}
+
+		$resultStatement = $query->execute();
+		while ($data = $resultStatement->fetch()) {
+			$comment = $this->getCommentFromData($data);
+			$this->cache($comment);
+			$comments[] = $comment;
+		}
+		$resultStatement->closeCursor();
+
+		return $comments;
 	}
 }

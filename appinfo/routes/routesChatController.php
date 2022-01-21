@@ -41,6 +41,7 @@ return [
 		['name' => 'Chat#clearHistory', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		['name' => 'Chat#deleteMessage', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
 		['name' => 'Chat#setReadMarker', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Chat#markUnread', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'DELETE', 'requirements' => $requirements],
 		['name' => 'Chat#mentions', 'url' => '/api/{apiVersion}/chat/{token}/mentions', 'verb' => 'GET', 'requirements' => $requirements],
 		['name' => 'Chat#shareObjectToChat', 'url' => '/api/{apiVersion}/chat/{token}/share', 'verb' => 'POST', 'requirements' => $requirements],
 	],
