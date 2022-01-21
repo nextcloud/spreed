@@ -272,10 +272,6 @@ export default {
 	display: flex !important;
 }
 
-::v-deep .app-settings__content {
-	width: 450px;
-}
-
 ::v-deep .app-settings-section__hint {
 	color: var(--color-text-lighter);
 	padding: 8px 0;

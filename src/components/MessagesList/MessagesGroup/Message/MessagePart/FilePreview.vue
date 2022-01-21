@@ -472,12 +472,10 @@ export default {
 
 	border-radius: 16px;
 
+	box-sizing: content-box !important;
 	&:hover,
 	&:focus {
 		background-color: var(--color-background-hover);
-		/* Trick to keep the same position while adding a padding to show
-			* the background. */
-		box-sizing: content-box !important;
 		.remove-file {
 			visibility: visible;
 		}
@@ -568,10 +566,11 @@ export default {
 		}
 	}
 	&--upload-editor {
-		max-width: 160px;
-		max-height: 160px;
+		max-width: 140px;
+		max-height: 140px;
+		padding: 12px 12px 24px 12px;
 		margin: 10px;
-		padding: 12px;
+
 		.preview {
 			margin: auto;
 			width: 128px;
