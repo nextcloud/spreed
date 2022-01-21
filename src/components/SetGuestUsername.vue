@@ -25,11 +25,15 @@
 		@submit.prevent="handleChooseUserName">
 		<h3>
 			{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
-			<button class="icon-rename"
-				@click.prevent="handleEditUsername">
-				{{ t('spreed', 'Edit') }}
-			</button>
 		</h3>
+		<Button @click.prevent="handleEditUsername">
+			{{ t('spreed', 'Edit') }}
+			<template #icon>
+				<Pencil :size="20"
+					title=""
+					decorative />
+			</template>
+		</Button>
 		<div v-if="isEditingUsername"
 			class="username-form__wrapper">
 			<input ref="usernameInput"
@@ -39,19 +43,31 @@
 				type="text"
 				@keydown.enter="handleChooseUserName"
 				@keydown.esc="isEditingUsername = !isEditingUsername">
-			<button class="username-form__button"
-				type="submit">
-				<div class="icon-confirm" />
-			</button>
+			<Button class="username-form__button"
+				native-type="submit"
+				type="tertiary">
+				<ArrowRight :size="20"
+					title=""
+					decorative />
+			</Button>
 		</div>
 	</form>
 </template>
 
 <script>
 import { setGuestUserName } from '../services/participantsService'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import Pencil from 'vue-material-design-icons/Pencil'
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 
 export default {
 	name: 'SetGuestUsername',
+
+	components: {
+		Button,
+		Pencil,
+		ArrowRight,
+	},
 
 	data() {
 		return {
@@ -146,22 +162,16 @@ export default {
 .username-form {
 	padding: 0 12px;
 	margin:auto;
-	& .icon-rename {
-		margin-left: 8px;
-		padding-left: 36px;
-		background-position: 12px;
-	}
 	&__wrapper {
 		display: flex;
+		margin-top: 16px;
 	}
 	&__input {
 		padding-right: var(--clickable-area);
 		width: 230px;
 	}
 	&__button {
-		margin-left: -44px;
-		background-color: transparent;
-		border: none;
+		margin-left: -52px;
 	}
 }
 
