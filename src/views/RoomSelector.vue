@@ -130,7 +130,7 @@ export default {
 			if (!this.searchText) {
 				return roomsTemp
 			} else {
-				return roomsTemp.filter(x => x.displayName.includes(this.searchText))
+				return roomsTemp.filter(room => room.displayName.toLowerCase().includes(this.searchText.toLowerCase()))
 			}
 		},
 	},
