@@ -7,7 +7,7 @@ Feature: public
     Given user "participant1" is member of group "group1"
 
   Scenario: SIP admin enables SIP
-    Given the following app config is set
+    Given the following "spreed" app config is set
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups | ["group1"] |
@@ -51,7 +51,7 @@ Feature: public
       | 3               | 0        | users     | participant3      |             |
 
   Scenario: Non-SIP admin tries to enable SIP
-    Given the following app config is set
+    Given the following "spreed" app config is set
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups | ["group1"] |
