@@ -35,7 +35,16 @@ module.exports = function(mode, constraints, cb) {
 	}
 
 	if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-		navigator.mediaDevices.getDisplayMedia({ video: true }).then(function(stream) {
+		navigator.mediaDevices.getDisplayMedia({
+			video: true,
+			// Disable default audio optimizations, as they are meant to be used
+			// with a microphone input.
+			audio: {
+				echoCancellation: false,
+				autoGainControl: false,
+				noiseSuppression: false,
+			},
+		}).then(function(stream) {
 			callback(null, stream)
 		}).catch(function(error) {
 			callback(error, null)
