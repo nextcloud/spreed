@@ -1166,6 +1166,8 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 				// may now no longer exist.
 				leftUsers = Object.assign({}, this.joinedUsers)
 			}
+
+			let userListIsDirty = false
 			for (i = 0; i < joinedUsers.length; i++) {
 				this.joinedUsers[joinedUsers[i].sessionid] = true
 				delete leftUsers[joinedUsers[i].sessionid]
@@ -1176,6 +1178,8 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 						// as otherwise you get the warning for your own old session immediately
 						this.ownSessionJoined = true
 					}
+				} else {
+					userListIsDirty = true
 				}
 			}
 			leftUsers = Object.keys(leftUsers)
@@ -1184,10 +1188,16 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 
 				for (i = 0; i < leftUsers.length; i++) {
 					delete this.joinedUsers[leftUsers[i]]
+
+					if (!this.settings.userId || leftUsers[i].userid !== this.settings.userId) {
+						userListIsDirty = true
+					}
 				}
 			}
 			this._trigger('usersJoined', [joinedUsers])
-			this._trigger('participantListChanged')
+			if (userListIsDirty) {
+				this._trigger('participantListChanged')
+			}
 		}
 		break
 	case 'leave':
