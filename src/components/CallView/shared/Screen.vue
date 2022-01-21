@@ -150,7 +150,11 @@ export default {
 				return
 			}
 
+			// The audio is played using an audio element in the model to be
+			// able to hear it even if there is no view for it.
 			attachMediaStream(screen, this.$refs.screen)
+
+			this.$refs.screen.muted = true
 		},
 
 	},
