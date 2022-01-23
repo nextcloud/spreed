@@ -352,7 +352,7 @@ export default {
 		 * Current actor id
 		 */
 		actorId() {
-			return this.$store.getters.getActorId
+			return this.$store.getters.getActorId()
 		},
 
 		/**
