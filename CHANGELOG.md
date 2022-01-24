@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.3 – 2022-01-24
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6710](https://github.com/nextcloud/spreed/pull/6710)
+- Prevent handleScroll on initial loading of a conversation
+  [#6718](https://github.com/nextcloud/spreed/pull/6718)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6823](https://github.com/nextcloud/spreed/pull/6823)
+- Add conversation token and message id to search results
+  [#6746](https://github.com/nextcloud/spreed/pull/6746)
+
+## 11.3.5 – 2022-01-24
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6711](https://github.com/nextcloud/spreed/pull/6711)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6824](https://github.com/nextcloud/spreed/pull/6824)
+- Add conversation token and message id to search results
+  [#6747](https://github.com/nextcloud/spreed/pull/6747)
+
 ## 12.2.2 – 2021-12-07
 ### Changed
 - Show user status and message as description in 1-to-1 conversations
