@@ -720,6 +720,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Hiba történt a képernyő megosztásakor.",
     "Back" : "Vissza",
     "Access to camera was denied" : "A kamera hozzáférése letiltva",
+    "Error while accessing camera: It is likely in use by another program" : "Hiba történt a kamera elérésekor: valószínűleg egy másik program használja",
     "Error while accessing camera" : "Hiba történt a kamera elérésekor",
     "You have been muted by a moderator" : "Egy moderátor elnémította Önt",
     "You" : "Ön",
@@ -1043,6 +1044,7 @@ OC.L10N.register(
     "Fullscreen the chat or call" : "A csevegés vagy hívás teljes képernyős megjelenítése",
     "Search" : "Keresés",
     "Shortcuts while in a call" : "Billenyűparancsok hívás közben",
+    "Camera on and off" : "Kamera  be- és kikapcsolása",
     "Microphone on and off" : "Mikrofon be- és kikapcsolása",
     "Space bar" : "Szóköz",
     "Push to talk or push to mute" : "Lenyomásra történő beszéd vagy némítás",
@@ -1186,6 +1188,8 @@ OC.L10N.register(
     "Video on and off" : "Videó be- és kikapcsolása",
     "Choose in which folder attachments should be saved." : "Válassza ki, hogy a mellékleteket melyik mappába szeretné menteni.",
     "Exit fullscreen (f)" : "Kilépés a teljes képernyős módból (f)",
-    "Fullscreen (f)" : "Teljes képernyő (f)"
+    "Fullscreen (f)" : "Teljes képernyő (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Rendben: a webkiszolgáló helyesen adta vissza a „.wasm” és a „.tflite” fájlokat."
 },
 "nplurals=2; plural=(n != 1);");
