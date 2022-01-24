@@ -298,7 +298,7 @@ export default {
 
 		// Show local screen
 		showLocalScreen() {
-			return this.hasLocalScreen && this.selectedVideoPeerId === null
+			return this.hasLocalScreen && this.selectedVideoPeerId === null && this.screens[0] === localCallParticipantModel.attributes.peerId
 		},
 
 		// Show somebody else's screen. This will show the screen of the last
