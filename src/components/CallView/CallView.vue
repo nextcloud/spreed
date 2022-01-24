@@ -39,8 +39,7 @@
 							:show-talking-highlight="false"
 							:is-grid="true"
 							:is-big="true"
-							:fit-video="true"
-							@switch-screen-to-id="_switchScreenToId" />
+							:fit-video="true" />
 					</template>
 				</div>
 				<!-- Screens -->
@@ -77,8 +76,7 @@
 						:local-media-model="localMediaModel"
 						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
-						:is-sidebar="false"
-						@switch-screen-to-id="_switchScreenToId" />
+						:is-sidebar="false" />
 				</div>
 				<!-- Promoted "autopilot" mode -->
 				<div v-else
@@ -96,8 +94,7 @@
 							:fit-video="true"
 							:is-big="true"
 							:is-one-to-one="isOneToOne"
-							:is-sidebar="isSidebar"
-							@switch-screen-to-id="_switchScreenToId" />
+							:is-sidebar="isSidebar" />
 					</template>
 				</div>
 			</template>
@@ -120,7 +117,6 @@
 				:local-call-participant-model="localCallParticipantModel"
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo"
-				@switch-screen-to-id="_switchScreenToId"
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if sidebar -->
 			<LocalVideo v-if="isSidebar && !showLocalVideo"
@@ -135,7 +131,6 @@
 				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
-				@switch-screen-to-id="_switchScreenToId"
 				@click-video="handleClickLocalVideo" />
 		</div>
 	</div>
@@ -410,6 +405,7 @@ export default {
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('talk:video:toggled', this.handleToggleVideo)
+		subscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	beforeDestroy() {
 		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
@@ -417,6 +413,7 @@ export default {
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
 		unsubscribe('talk:video:toggled', this.handleToggleVideo)
+		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	methods: {
 		/**
