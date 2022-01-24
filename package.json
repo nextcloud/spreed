@@ -71,7 +71,7 @@
 	"devDependencies": {
 		"@nextcloud/babel-config": "^1.0.0",
 		"@nextcloud/browserslist-config": "^2.2.0",
-		"@nextcloud/eslint-config": "^7.0.1",
+		"@nextcloud/eslint-config": "^7.0.2",
 		"@nextcloud/stylelint-config": "^2.1.2",
 		"@nextcloud/webpack-vue-config": "^4.3.2",
 		"@vue/cli-plugin-unit-jest": "^4.5.15",
