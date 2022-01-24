@@ -114,10 +114,14 @@ class CheckHostedSignalingServerTest extends TestCase {
 				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
 				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
 			]));
-		$this->config->expects($this->exactly(4))
+		$this->config->expects($this->once())
+			->method('deleteAppValue')
+			->withConsecutive(
+				['spreed', 'signaling_mode'],
+			);
+		$this->config->expects($this->exactly(3))
 			->method('setAppValue')
 			->withConsecutive(
-				['spreed', 'signaling_mode', 'external'],
 				['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
 				['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
 				['spreed', 'hosted-signaling-server-account-last-checked', null]
