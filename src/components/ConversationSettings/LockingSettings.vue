@@ -28,8 +28,7 @@
 			{{ t('spreed', 'This will also terminate the ongoing call.') }}
 		</div>
 		<div>
-			<input
-				id="moderation_settings_lock_conversation_checkbox"
+			<input id="moderation_settings_lock_conversation_checkbox"
 				aria-describedby="moderation_settings_lock_conversation_hint"
 				type="checkbox"
 				class="checkbox"

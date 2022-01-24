@@ -21,11 +21,9 @@
 
 <template>
 	<AppNavigation :aria-label="t('spreed', 'Conversation list')">
-		<div
-			class="new-conversation"
+		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
-			<SearchBox
-				v-model="searchText"
+			<SearchBox v-model="searchText"
 				class="conversations-search"
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
@@ -34,16 +32,13 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
-			<div
-				ref="scroller"
+			<div ref="scroller"
 				class="left-sidebar__list"
 				@scroll="debounceHandleScroll">
-				<AppNavigationCaption
-					v-if="isSearching"
+				<AppNavigationCaption v-if="isSearching"
 					:title="t('spreed', 'Conversations')" />
 				<li role="presentation">
-					<ConversationsList
-						ref="conversationsList"
+					<ConversationsList ref="conversationsList"
 						:conversations-list="conversationsList"
 						:initialised-conversations="initialisedConversations"
 						:search-text="searchText"
@@ -53,8 +48,7 @@
 				<template v-if="isSearching">
 					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 						<AppNavigationCaption :title="t('spreed', 'Open conversations')" />
-						<Conversation
-							v-for="item of searchResultsListedConversations"
+						<Conversation v-for="item of searchResultsListedConversations"
 							:key="item.id"
 							:item="item"
 							:is-search-result="true"
@@ -63,14 +57,12 @@
 					<template v-if="searchResultsUsers.length !== 0">
 						<AppNavigationCaption :title="t('spreed', 'Users')" />
 						<li v-if="searchResultsUsers.length !== 0" role="presentation">
-							<ConversationsOptionsList
-								:items="searchResultsUsers"
+							<ConversationsOptionsList :items="searchResultsUsers"
 								@click="createAndJoinConversation" />
 						</li>
 					</template>
 					<template v-if="!showStartConversationsOptions">
-						<AppNavigationCaption
-							v-if="searchResultsUsers.length === 0"
+						<AppNavigationCaption v-if="searchResultsUsers.length === 0"
 							:title="t('spreed', 'Users')" />
 						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 						<Hint v-else :hint="t('spreed', 'No search results')" />
@@ -80,8 +72,7 @@
 					<template v-if="searchResultsGroups.length !== 0">
 						<AppNavigationCaption :title="t('spreed', 'Groups')" />
 						<li v-if="searchResultsGroups.length !== 0" role="presentation">
-							<ConversationsOptionsList
-								:items="searchResultsGroups"
+							<ConversationsOptionsList :items="searchResultsGroups"
 								@click="createAndJoinConversation" />
 						</li>
 					</template>
@@ -89,14 +80,12 @@
 					<template v-if="searchResultsCircles.length !== 0">
 						<AppNavigationCaption :title="t('spreed', 'Circles')" />
 						<li v-if="searchResultsCircles.length !== 0" role="presentation">
-							<ConversationsOptionsList
-								:items="searchResultsCircles"
+							<ConversationsOptionsList :items="searchResultsCircles"
 								@click="createAndJoinConversation" />
 						</li>
 					</template>
 
-					<AppNavigationCaption
-						v-if="sourcesWithoutResults"
+					<AppNavigationCaption v-if="sourcesWithoutResults"
 						:title="sourcesWithoutResultsList" />
 					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 					<Hint v-else :hint="t('spreed', 'No search results')" />

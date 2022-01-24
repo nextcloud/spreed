@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<ListItem
-		:title="item.displayName"
+	<ListItem :title="item.displayName"
 		:anchor-id="`conversation_${item.token}`"
 		:active="isActive"
 		:to="to"
@@ -30,8 +29,7 @@
 		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
-			<ConversationIcon
-				:item="item"
+			<ConversationIcon :item="item"
 				:hide-favorite="false"
 				:hide-call="false"
 				:disable-menu="true" />
@@ -45,43 +43,36 @@
 			</template>
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
-			<ActionButton
-				v-if="canFavorite"
+			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
 				{{ labelFavorite }}
 			</ActionButton>
-			<ActionButton
-				icon="icon-clippy"
+			<ActionButton icon="icon-clippy"
 				@click.stop.prevent="copyLinkToConversation">
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
-			<ActionButton
-				:close-after-click="true"
+			<ActionButton :close-after-click="true"
 				@click.prevent.exact="markConversationAsRead">
 				<template #icon>
-					<EyeOutline
-						decorative
+					<EyeOutline decorative
 						title=""
 						:size="16" />
 				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
-			<ActionButton
-				icon="icon-settings"
+			<ActionButton icon="icon-settings"
 				:close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
 				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
-			<ActionButton
-				v-if="canLeaveConversation"
+			<ActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
 				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
 				{{ t('spreed', 'Leave conversation') }}
 			</ActionButton>
-			<ActionButton
-				v-if="canDeleteConversation"
+			<ActionButton v-if="canDeleteConversation"
 				:close-after-click="true"
 				icon="icon-delete-critical"
 				class="critical"

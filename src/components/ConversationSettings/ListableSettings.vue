@@ -22,8 +22,7 @@
 <template>
 	<div class="app-settings-subsection">
 		<div>
-			<input
-				id="listable_settings_registered_users_checkbox"
+			<input id="listable_settings_registered_users_checkbox"
 				aria-describedby="listable_settings_listable_conversation_hint"
 				type="checkbox"
 				class="checkbox"
@@ -38,8 +37,7 @@
 				{{ t('spreed', 'This conversation will be shown in search results') }}
 			</div>
 			<div v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled">
-				<input
-					id="listable_settings_guestapp_users_checkbox"
+				<input id="listable_settings_guestapp_users_checkbox"
 					type="checkbox"
 					class="checkbox"
 					name="listable_settings_guestapp_users_checkbox"

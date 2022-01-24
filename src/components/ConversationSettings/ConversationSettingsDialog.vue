@@ -20,18 +20,15 @@
 -->
 
 <template>
-	<AppSettingsDialog
-		role="dialog"
+	<AppSettingsDialog role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
 		<!-- description -->
-		<AppSettingsSection
-			v-if="showDescription"
+		<AppSettingsSection v-if="showDescription"
 			:title="t('spreed', 'Description')">
-			<Description
-				:editable="canFullModerate"
+			<Description :editable="canFullModerate"
 				:description="description"
 				:editing="isEditingDescription"
 				:loading="isDescriptionLoading"
@@ -53,8 +50,7 @@
 		</AppSettingsSection>
 
 		<!-- Guest access -->
-		<AppSettingsSection
-			v-if="canFullModerate"
+		<AppSettingsSection v-if="canFullModerate"
 			:title="t('spreed', 'Guests access')">
 			<LinkShareSettings ref="linkShareSettings" />
 		</AppSettingsSection>
@@ -63,39 +59,33 @@
 		all the settings in this component are conversation settings. Proposal:
 		move lock conversation in destructive actions and create a separate
 		section for listablesettings -->
-		<AppSettingsSection
-			v-if="canFullModerate"
+		<AppSettingsSection v-if="canFullModerate"
 			:title="t('spreed', 'Conversation settings')">
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
 		</AppSettingsSection>
 
 		<!-- Conversation permissions -->
-		<AppSettingsSection
-			v-if="canFullModerate"
+		<AppSettingsSection v-if="canFullModerate"
 			:title="t('spreed', 'Participants permissions')">
 			<ConversationPermissionsSettings :token="token" />
 		</AppSettingsSection>
 
 		<!-- Meeting settings -->
-		<AppSettingsSection
-			v-if="canFullModerate"
+		<AppSettingsSection v-if="canFullModerate"
 			:title="t('spreed', 'Meeting settings')">
 			<LobbySettings :token="token" />
 			<SipSettings v-if="canUserEnableSIP" />
 		</AppSettingsSection>
-		<AppSettingsSection
-			v-if="canFullModerate && matterbridgeEnabled"
+		<AppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
 			:title="t('spreed', 'Matterbridge')">
 			<MatterbridgeSettings />
 		</AppSettingsSection>
 
 		<!-- Destructive actions -->
-		<AppSettingsSection
-			v-if="canLeaveConversation || canDeleteConversation"
+		<AppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 			:title="t('spreed', 'Danger zone')">
-			<DangerZone
-				:conversation="conversation"
+			<DangerZone :conversation="conversation"
 				:can-leave-conversation="canLeaveConversation"
 				:can-delete-conversation="canDeleteConversation" />
 		</AppSettingsSection>

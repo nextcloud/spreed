@@ -28,8 +28,7 @@
 
 		<p>
 			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
-			<Multiselect
-				id="default_group_notification"
+			<Multiselect id="default_group_notification"
 				v-model="defaultGroupNotification"
 				:options="defaultGroupNotificationOptions"
 				:placeholder="t('spreed', 'Default group notification for new groups')"
@@ -42,8 +41,7 @@
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
 		<p>
-			<input
-				id="conversations_files"
+			<input id="conversations_files"
 				v-model="conversationsFiles"
 				type="checkbox"
 				name="conversations_files"
@@ -54,8 +52,7 @@
 		</p>
 
 		<p>
-			<input
-				id="conversations_files_public_shares"
+			<input id="conversations_files_public_shares"
 				v-model="conversationsFilesPublicShares"
 				type="checkbox"
 				name="conversations_files_public_shares"

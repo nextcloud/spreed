@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<Modal
-		v-if="showModal"
+	<Modal v-if="showModal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		class="upload-editor"
 		:container="container"
@@ -29,33 +28,27 @@
 		<div class="upload-editor">
 			<template v-if="!isVoiceMessage">
 				<!--native file picker, hidden -->
-				<input
-					id="file-upload"
+				<input id="file-upload"
 					ref="fileUploadInput"
 					multiple
 					type="file"
 					class="hidden-visually"
 					@change="handleFileInput">
-				<transition-group
-					class="upload-editor__previews"
+				<transition-group class="upload-editor__previews"
 					name="fade"
 					tag="div">
 					<template v-for="file in files">
-						<FilePreview
-							:key="file.temporaryMessage.id"
+						<FilePreview :key="file.temporaryMessage.id"
 							v-bind="file.temporaryMessage.messageParameters.file"
 							:is-upload-editor="true"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
-					<div
-						:key="'addMore'"
+					<div :key="'addMore'"
 						class="add-more">
-						<button
-							:aria-label="addMoreAriaLabel"
+						<button :aria-label="addMoreAriaLabel"
 							class="add-more__button primary"
 							@click="clickImportInput">
-							<Plus
-								decorative
+							<Plus decorative
 								title=""
 								:size="48"
 								class="upload-editor__plus-icon" />
@@ -64,8 +57,7 @@
 				</transition-group>
 			</template>
 			<template v-else>
-				<AudioPlayer
-					:name="voiceMessageName"
+				<AudioPlayer :name="voiceMessageName"
 					:local-url="voiceMessageLocalURL" />
 			</template>
 			<div class="upload-editor__actions">

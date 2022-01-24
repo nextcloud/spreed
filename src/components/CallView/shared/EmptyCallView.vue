@@ -27,8 +27,7 @@
 		<p v-if="message" class="emptycontent-additional">
 			{{ message }}
 		</p>
-		<button
-			v-if="showLink"
+		<button v-if="showLink"
 			class="primary"
 			@click.stop.prevent="copyLinkToConversation">
 			{{ t('spreed', 'Copy link') }}

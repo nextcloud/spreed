@@ -20,12 +20,10 @@
 -->
 
 <template>
-	<div
-		v-show="audioPreviewAvailable"
+	<div v-show="audioPreviewAvailable"
 		class="volume-indicator-wrapper"
 		:style="{ 'height': wrapperHeight + 'px' }">
-		<span
-			ref="volumeIndicator"
+		<span ref="volumeIndicator"
 			class="volume-indicator"
 			:class="{'volume-indicator--disabled': disabled}"
 			:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />

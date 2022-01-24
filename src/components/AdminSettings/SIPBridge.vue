@@ -24,8 +24,7 @@
 	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<p
-			v-if="!showForm"
+		<p v-if="!showForm"
 			class="settings-hint">
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</p>
@@ -36,8 +35,7 @@
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
-			<Multiselect
-				v-model="sipGroups"
+			<Multiselect v-model="sipGroups"
 				class="sip-bridge__sip-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
@@ -54,8 +52,7 @@
 
 			<h3>{{ t('spreed', 'Shared secret') }}</h3>
 
-			<input
-				v-model="sharedSecret"
+			<input v-model="sharedSecret"
 				type="text"
 				name="shared-secret"
 				class="sip-bridge__shared-secret"
@@ -69,8 +66,7 @@
 				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
 			</p>
 
-			<textarea
-				v-model="dialInInfo"
+			<textarea v-model="dialInInfo"
 				name="message"
 				class="sip-bridge__dialin-info"
 				rows="4"
@@ -78,8 +74,7 @@
 				:placeholder="t('spreed', 'Phone number (Country)')" />
 
 			<p>
-				<button
-					class="button primary"
+				<button class="button primary"
 					:disabled="loading"
 					@click="saveSIPSettings">
 					{{ saveLabel }}

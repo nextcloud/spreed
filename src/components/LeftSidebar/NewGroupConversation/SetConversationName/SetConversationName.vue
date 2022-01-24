@@ -21,8 +21,7 @@
 
 <template>
 	<div class="set-conversation-name">
-		<input
-			ref="conversationName"
+		<input ref="conversationName"
 			v-observe-visibility="visibilityChanged"
 			type="text"
 			:value="value"

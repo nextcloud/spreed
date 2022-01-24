@@ -24,8 +24,7 @@
 		<div id="sip_settings_hint" class="app-settings-section__hint">
 			{{ t('spreed', 'Allow participants to join from a phone.') }}
 		</div>
-		<input
-			id="sip_settings_checkbox"
+		<input id="sip_settings_checkbox"
 			aria-describedby="sip_settings_hint"
 			type="checkbox"
 			class="checkbox"

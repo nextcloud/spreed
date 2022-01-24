@@ -22,8 +22,7 @@
 <template>
 	<div>
 		<ul>
-			<Participant
-				v-for="item in items"
+			<Participant v-for="item in items"
 				:key="generateKey(item)"
 				:participant="item"
 				:is-selectable="participantsSelectable"
@@ -31,8 +30,7 @@
 				@click-participant="handleClickParticipant" />
 		</ul>
 		<template v-if="loading">
-			<LoadingParticipant
-				v-for="n in dummyParticipants"
+			<LoadingParticipant v-for="n in dummyParticipants"
 				:key="n" />
 		</template>
 	</div>

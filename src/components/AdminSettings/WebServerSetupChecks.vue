@@ -27,22 +27,19 @@
 		<ul class="web-server-setup-checks">
 			<li class="background-blur">
 				{{ t('spreed', 'Files required for background blur can be loaded') }}
-				<button
-					v-if="backgroundBlurAvailable === false"
+				<button v-if="backgroundBlurAvailable === false"
 					v-tooltip="backgroundBlurAvailableToolTip"
 					:aria-label="backgroundBlurAvailableAriaLabel"
 					class="icon"
 					:class="backgroundBlurAvailableClasses"
 					@click="checkBackgroundBlur" />
-				<button
-					v-else-if="backgroundBlurAvailable === true"
+				<button v-else-if="backgroundBlurAvailable === true"
 					v-tooltip="backgroundBlurAvailableToolTip"
 					:aria-label="backgroundBlurAvailableAriaLabel"
 					class="icon"
 					:class="backgroundBlurAvailableClasses"
 					@click="checkBackgroundBlur" />
-				<span
-					v-else
+				<span v-else
 					v-tooltip="backgroundBlurAvailableToolTip"
 					:aria-label="backgroundBlurAvailableAriaLabel"
 					class="icon"

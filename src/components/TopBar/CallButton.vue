@@ -21,8 +21,7 @@
 
 <template>
 	<div>
-		<button
-			v-if="showStartCallButton"
+		<button v-if="showStartCallButton"
 			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
@@ -35,44 +34,36 @@
 			class="top-bar__button"
 			:class="startCallButtonClasses"
 			@click="handleClick">
-			<span
-				class="icon"
+			<span class="icon"
 				:class="startCallIcon" />
 			{{ startCallLabel }}
 		</button>
-		<button
-			v-else-if="showLeaveCallButton && !canEndForAll"
+		<button v-else-if="showLeaveCallButton && !canEndForAll"
 			id="call_button"
 			class="top-bar__button error"
 			:disabled="loading"
 			@click="leaveCall(false)">
-			<span
-				class="icon"
+			<span class="icon"
 				:class="leaveCallIcon" />
 			{{ leaveCallLabel }}
 		</button>
-		<Actions
-			v-else-if="showLeaveCallButton && canEndForAll"
+		<Actions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
 			<template slot="icon">
-				<VideoOff
-					:size="16"
+				<VideoOff :size="16"
 					decorative />
 				<span class="label">{{ leaveCallLabel }}</span>
-				<MenuDown
-					:size="16"
+				<MenuDown :size="16"
 					decorative />
 			</template>
 			<ActionButton @click="leaveCall(false)">
-				<VideoOff
-					slot="icon"
+				<VideoOff slot="icon"
 					:size="20"
 					decorative />
 				{{ leaveCallLabel }}
 			</ActionButton>
 			<ActionButton @click="leaveCall(true)">
-				<VideoOff
-					slot="icon"
+				<VideoOff slot="icon"
 					:size="20"
 					decorative />
 				{{ t('spreed', 'End meeting for all') }}

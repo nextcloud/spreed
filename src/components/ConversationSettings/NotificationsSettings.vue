@@ -22,61 +22,52 @@
 <template>
 	<div>
 		<h4>{{ t('spreed', 'Chat messages') }}</h4>
-		<a
-			href="#"
+		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyAlways}"
 			@click.prevent.exact="setNotificationLevel(1)">
-			<VolumeHigh
-				decorative
+			<VolumeHigh decorative
 				title=""
 				:size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', 'All messages') }}
 			</label>
-			<Check
-				v-if="isNotifyAlways"
+			<Check v-if="isNotifyAlways"
 				class="check"
 				decorative
 				title=""
 				:size="20" />
 		</a>
-		<a
-			href="#"
+		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyMention}"
 			@click.prevent.exact="setNotificationLevel(2)">
-			<Account
-				decorative
+			<Account decorative
 				title=""
 				:size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', '@-mentions only') }}
 			</label>
-			<Check
-				v-if="isNotifyMention"
+			<Check v-if="isNotifyMention"
 				class="check"
 				decorative
 				title=""
 				:size="20" />
 		</a>
-		<a
-			href="#"
+		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyNever}"
 			@click.prevent.exact="setNotificationLevel(3)">
-			<VolumeOff
-				decorative
+			<VolumeOff decorative
 				title=""
 				:size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', 'Off') }}
 			</label>
-			<Check
-				v-if="isNotifyNever"
+			<Check v-if="isNotifyNever"
 				class="check"
 				decorative
 				title=""
@@ -84,8 +75,7 @@
 		</a>
 
 		<h4>{{ t('spreed', 'Calls') }}</h4>
-		<CheckboxRadioSwitch
-			id="notification_calls"
+		<CheckboxRadioSwitch id="notification_calls"
 			:checked.sync="notifyCalls"
 			@update:checked="setNotificationCalls">
 			{{ t('spreed', 'Notify about calls in this conversation') }}

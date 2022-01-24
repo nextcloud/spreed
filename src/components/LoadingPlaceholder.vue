@@ -44,8 +44,7 @@ each other by animating the opacities.
 
 			<ul :key="'list' + suffix" :class="'placeholder-list placeholder-list' + suffix">
 				<li v-for="(width, index) in placeholderData" :key="'placeholder' + suffix + index">
-					<svg
-						v-if="type === 'conversations'"
+					<svg v-if="type === 'conversations'"
 						class="conversation-placeholder"
 						xmlns="http://www.w3.org/2000/svg"
 						:fill="'url(#placeholder-gradient' + suffix + ')'">
@@ -53,8 +52,7 @@ each other by animating the opacities.
 						<rect class="conversation-placeholder-line-one" />
 						<rect class="conversation-placeholder-line-two" :style="width" />
 					</svg>
-					<svg
-						v-if="type === 'messages'"
+					<svg v-if="type === 'messages'"
 						class="message-placeholder"
 						xmlns="http://www.w3.org/2000/svg"
 						:fill="'url(#placeholder-gradient' + suffix + ')'">

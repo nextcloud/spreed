@@ -25,31 +25,26 @@ the main body of the message as well as a quote.
 </docs>
 
 <template>
-	<li
-		:id="`message_${id}`"
+	<li :id="`message_${id}`"
 		ref="message"
 		:data-message-id="id"
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message">
-		<div
-			:class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+		<div :class="{'hover': showActions && !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
 			class="message-body"
 			@mouseover="handleMouseover"
 			@mouseleave="handleMouseleave">
-			<div
-				v-if="isFirstMessage && showAuthor"
+			<div v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
 				role="heading"
 				aria-level="4">
 				{{ actorDisplayName }}
 			</div>
-			<div
-				ref="messageMain"
+			<div ref="messageMain"
 				class="message-body__main">
-				<div
-					v-if="isSingleEmoji"
+				<div v-if="isSingleEmoji"
 					class="message-body__main__text">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<div class="single-emoji">
@@ -68,14 +63,12 @@ the main body of the message as well as a quote.
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
-					<span
-						v-tooltip.auto="messageDate"
+					<span v-tooltip.auto="messageDate"
 						class="date"
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
 					<!-- Message delivery status indicators -->
-					<div
-						v-if="sendingFailure"
+					<div v-if="sendingFailure"
 						v-tooltip.auto="sendingErrorIconTooltip"
 						class="message-status sending-failed"
 						:class="{'retry-option': sendingErrorCanRetry}"
@@ -85,99 +78,81 @@ the main body of the message as well as a quote.
 						@focus="showReloadButton = true"
 						@mouseleave="showReloadButton = true"
 						@blur="showReloadButton = true">
-						<button
-							v-if="sendingErrorCanRetry && showReloadButton"
+						<button v-if="sendingErrorCanRetry && showReloadButton"
 							class="nc-button nc-button__main--dark"
 							@click="handleRetry">
-							<Reload
-								decorative
+							<Reload decorative
 								title=""
 								:size="16" />
 						</button>
-						<AlertCircle
-							v-else
+						<AlertCircle v-else
 							decorative
 							title=""
 							:size="16" />
 					</div>
-					<div
-						v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
+					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
 						v-tooltip.auto="loadingIconTooltip"
 						class="icon-loading-small message-status"
 						:aria-label="loadingIconTooltip" />
-					<div
-						v-else-if="showCommonReadIcon"
+					<div v-else-if="showCommonReadIcon"
 						v-tooltip.auto="commonReadIconTooltip"
 						class="message-status"
 						:aria-label="commonReadIconTooltip">
-						<CheckAll
-							decorative
+						<CheckAll decorative
 							title=""
 							:size="16" />
 					</div>
-					<div
-						v-else-if="showSentIcon"
+					<div v-else-if="showSentIcon"
 						v-tooltip.auto="sentIconTooltip"
 						class="message-status"
 						:aria-label="sentIconTooltip">
-						<Check
-							decorative
+						<Check decorative
 							title=""
 							:size="16" />
 					</div>
 					<!-- Message Actions -->
-					<div
-						v-if="hasActions"
+					<div v-if="hasActions"
 						v-show="showActions"
 						class="message-body__main__right__actions"
 						:class="{ 'tall' : isTallEnough }">
 						<Actions v-show="isReplyable">
-							<ActionButton
-								icon="icon-reply"
+							<ActionButton icon="icon-reply"
 								@click.stop="handleReply">
 								{{ t('spreed', 'Reply') }}
 							</ActionButton>
 						</Actions>
-						<Actions
-							:force-menu="true"
+						<Actions :force-menu="true"
 							:container="container"
 							:boundaries-element="containerElement">
-							<ActionButton
-								v-if="isPrivateReplyable"
+							<ActionButton v-if="isPrivateReplyable"
 								icon="icon-user"
 								:close-after-click="true"
 								@click.stop="handlePrivateReply">
 								{{ t('spreed', 'Reply privately') }}
 							</ActionButton>
-							<ActionButton
-								icon="icon-external"
+							<ActionButton icon="icon-external"
 								:close-after-click="true"
 								@click.stop.prevent="handleCopyMessageLink">
 								{{ t('spreed', 'Copy message link') }}
 							</ActionButton>
-							<ActionButton
-								:close-after-click="true"
+							<ActionButton :close-after-click="true"
 								@click.stop="handleMarkAsUnread">
 								<template #icon>
-									<EyeOffOutline
-										decorative
+									<EyeOffOutline decorative
 										title=""
 										:size="16" />
 								</template>
 								{{ t('spreed', 'Mark as unread') }}
 							</ActionButton>
-							<ActionLink
-								v-if="linkToFile"
+							<ActionLink v-if="linkToFile"
 								icon="icon-text"
 								:href="linkToFile">
 								{{ t('spreed', 'Go to file') }}
 							</ActionLink>
-							<ActionButton
-								v-if="!isCurrentGuest && !isFileShare"
+							<ActionButton v-if="!isCurrentGuest && !isFileShare"
 								:close-after-click="true"
 								@click.stop="showForwarder = true">
-								<Share
-									slot="icon"
+								<Share slot="icon"
 									:size="16"
 									decorative
 									title="" />
@@ -185,8 +160,7 @@ the main body of the message as well as a quote.
 							</ActionButton>
 							<ActionSeparator v-if="messageActions.length > 0" />
 							<template v-for="action in messageActions">
-								<ActionButton
-									:key="action.label"
+								<ActionButton :key="action.label"
 									:icon="action.icon"
 									:close-after-click="true"
 									@click="action.callback(messageAPIData)">
@@ -195,8 +169,7 @@ the main body of the message as well as a quote.
 							</template>
 							<template v-if="isDeleteable">
 								<ActionSeparator />
-								<ActionButton
-									icon="icon-delete"
+								<ActionButton icon="icon-delete"
 									:close-after-click="true"
 									@click.stop="handleDelete">
 									{{ t('spreed', 'Delete') }}
@@ -207,15 +180,13 @@ the main body of the message as well as a quote.
 				</div>
 			</div>
 		</div>
-		<div
-			v-if="isLastReadMessage"
+		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
 			<div class="new-message-marker">
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
-		<Forwarder
-			v-if="showForwarder"
+		<Forwarder v-if="showForwarder"
 			:message-object="messageObject"
 			@close="showForwarder = false" />
 	</li>

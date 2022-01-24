@@ -1,14 +1,12 @@
 <template functional>
-	<span
-		:aria-hidden="props.decorative"
+	<span :aria-hidden="props.decorative"
 		:aria-label="props.title"
 		:class="[data.class, data.staticClass]"
 		class="material-design-icon cancel-presentation-icon"
 		role="img"
 		v-bind="data.attrs"
 		v-on="listeners">
-		<svg
-			:fill="props.fillColor"
+		<svg :fill="props.fillColor"
 			class="material-design-icon__svg"
 			:width="props.size"
 			:height="props.size"

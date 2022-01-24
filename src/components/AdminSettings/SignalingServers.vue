@@ -25,8 +25,7 @@
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a
-				v-else-if="!loading && showAddServerButton"
+			<a v-else-if="!loading && showAddServerButton"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
 				class="icon icon-add"
 				@click="newServer">
@@ -40,15 +39,13 @@
 			<span v-if="!servers.length">{{ t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}</span>
 		</p>
 
-		<p
-			v-if="!isCacheConfigured"
+		<p v-if="!isCacheConfigured"
 			class="settings-hint warning">
 			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
-			<input
-				id="hide_warning"
+			<input id="hide_warning"
 				v-model="hideWarning"
 				type="checkbox"
 				name="hide_warning"
@@ -60,8 +57,7 @@
 
 		<ul class="turn-servers">
 			<transition-group name="fade" tag="li">
-				<SignalingServer
-					v-for="(server, index) in servers"
+				<SignalingServer v-for="(server, index) in servers"
 					:key="`server${index}`"
 					:server.sync="servers[index].server"
 					:verify.sync="servers[index].verify"
@@ -75,8 +71,7 @@
 
 		<div class="signaling-secret">
 			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input
-				v-model="secret"
+			<input v-model="secret"
 				type="text"
 				name="signaling_secret"
 				:disabled="loading"

@@ -21,20 +21,17 @@
 
 <template>
 	<div id="call-container">
-		<EmptyCallView
-			v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
+		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
 			:is-sidebar="isSidebar" />
 		<div id="videos">
 			<template v-if="!isGrid">
 				<!-- Selected video override mode -->
-				<div
-					v-if="showSelectedVideo"
+				<div v-if="showSelectedVideo"
 					ref="videoContainer"
 					class="video__promoted selected-video"
 					:class="{'full-page': isOneToOne}">
 					<template v-for="callParticipantModel in reversedCallParticipantModels">
-						<Video
-							v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
+						<Video v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
 							:key="callParticipantModel.attributes.selectedVideoPeerId"
 							:token="token"
 							:model="callParticipantModel"
@@ -49,8 +46,7 @@
 				<!-- Screens -->
 				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen || showSelectedScreen)" id="screens">
 					<!-- local screen -->
-					<Screen
-						v-if="showLocalScreen"
+					<Screen v-if="showLocalScreen"
 						:token="token"
 						:local-media-model="localMediaModel"
 						:shared-data="localSharedData"
@@ -58,8 +54,7 @@
 					<!-- remote screen -->
 					<template v-else>
 						<template v-for="callParticipantModel in reversedCallParticipantModels">
-							<Screen
-								v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
+							<Screen v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
 								:key="'screen-' + callParticipantModel.attributes.peerId"
 								:token="token"
 								:call-participant-model="callParticipantModel"
@@ -69,13 +64,11 @@
 					</template>
 				</div>
 				<!-- Local Video Override mode (following own video) -->
-				<div
-					v-else-if="showLocalVideo"
+				<div v-else-if="showLocalVideo"
 					ref="videoContainer"
 					class="video__promoted selected-video--local"
 					:class="{'full-page': isOneToOne}">
-					<LocalVideo
-						ref="localVideo"
+					<LocalVideo ref="localVideo"
 						:fit-video="true"
 						:is-stripe="false"
 						:show-controls="false"
@@ -88,14 +81,12 @@
 						@switch-screen-to-id="_switchScreenToId" />
 				</div>
 				<!-- Promoted "autopilot" mode -->
-				<div
-					v-else
+				<div v-else
 					ref="videoContainer"
 					class="video__promoted autopilot"
 					:class="{'full-page': isOneToOne}">
 					<template v-for="callParticipantModel in reversedCallParticipantModels">
-						<Video
-							v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+						<Video v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:key="callParticipantModel.attributes.peerId"
 							:token="token"
 							:model="callParticipantModel"
@@ -112,8 +103,7 @@
 			</template>
 
 			<!-- Stripe or fullscreen grid depending on `isGrid` -->
-			<Grid
-				v-if="!isSidebar"
+			<Grid v-if="!isSidebar"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
 				:token="token"
@@ -133,8 +123,7 @@
 				@switch-screen-to-id="_switchScreenToId"
 				@click-local-video="handleClickLocalVideo" />
 			<!-- Local video if sidebar -->
-			<LocalVideo
-				v-if="isSidebar && !showLocalVideo"
+			<LocalVideo v-if="isSidebar && !showLocalVideo"
 				ref="localVideo"
 				class="local-video"
 				:class="{ 'local-video--sidebar': isSidebar }"

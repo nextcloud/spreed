@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<Modal
-		v-if="modal"
+	<Modal v-if="modal"
 		class="talk-modal"
 		size="normal"
 		@close="closeModal">
@@ -37,22 +36,18 @@
 					class="preview__video"
 					disable-picture-in-picture="true"
 					tabindex="-1" />
-				<div
-					v-show="!showVideo"
+				<div v-show="!showVideo"
 					class="preview__novideo">
-					<VideoBackground
-						:display-name="displayName"
+					<VideoBackground :display-name="displayName"
 						:user="userId" />
-					<Avatar
-						v-if="userId"
+					<Avatar v-if="userId"
 						:size="128"
 						:disable-menu="true"
 						:disable-tooltip="true"
 						:show-user-status="false"
 						:user="userId"
 						:display-name="displayName" />
-					<div
-						v-if="!userId"
+					<div v-if="!userId"
 						class="avatar avatar-128px guest">
 						{{ firstLetterOfGuestName }}
 					</div>
@@ -65,47 +60,40 @@
 			-->
 			<div class="device-checker__call-preferences">
 				<!-- Audio toggle -->
-				<button
-					v-tooltip="audioButtonTooltip"
+				<button v-tooltip="audioButtonTooltip"
 					class="device-toggle"
 					:aria-label="audioButtonTooltip"
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
 					<span class="device-toggle__icon">
-						<Microphone
-							v-if="audioOn"
+						<Microphone v-if="audioOn"
 							title=""
 							decorative
 							:size="20" />
-						<MicrophoneOff
-							v-else
+						<MicrophoneOff v-else
 							title=""
 							decorative
 							:size="20" />
 					</span>
 				</button>
-				<VolumeIndicator
-					class="indicator"
+				<VolumeIndicator class="indicator"
 					:audio-preview-available="audioPreviewAvailable"
 					:current-volume="currentVolume"
 					:volume-threshold="volumeThreshold"
 					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
-				<button
-					v-tooltip="videoButtonTooltip"
+				<button v-tooltip="videoButtonTooltip"
 					class="device-toggle"
 					:aria-label="videoButtonTooltip"
 					:disabled="!videoPreviewAvailable"
 					@click="toggleVideo">
 					<span class="device-toggle__icon">
-						<Video
-							v-if="videoOn"
+						<Video v-if="videoOn"
 							title=""
 							decorative
 							:size="20" />
-						<VideoOff
-							v-else
+						<VideoOff v-else
 							title=""
 							decorative
 							:size="20" />
@@ -113,22 +101,19 @@
 				</button>
 
 				<!-- Blur toggle -->
-				<button
-					v-if="videoPreviewAvailable && blurPreviewAvailable"
+				<button v-if="videoPreviewAvailable && blurPreviewAvailable"
 					v-tooltip="blurButtonTooltip"
 					class="device-toggle"
 					:aria-label="blurButtonTooltip"
 					:disabled="!blurPreviewAvailable"
 					@click="toggleBlur">
 					<span class="device-toggle__icon">
-						<Blur
-							v-if="blurOn"
+						<Blur v-if="blurOn"
 							slot="icon"
 							:size="20"
 							decorative
 							title="" />
-						<BlurOff
-							v-else
+						<BlurOff v-else
 							slot="icon"
 							:size="20"
 							decorative
@@ -139,40 +124,34 @@
 
 			<!-- Device selection -->
 			<div class="device-checker__device-selection">
-				<button
-					v-if="!showDeviceSelection"
+				<button v-if="!showDeviceSelection"
 					class="select-devices"
 					@click="showDeviceSelection = true">
 					<span class="select-devices__icon">
-						<Cog
-							title=""
+						<Cog title=""
 							decorative
 							:size="20" />
 					</span>
 					<span> {{ t('spreed', 'Choose devices') }}</span>
 				</button>
 				<template v-if="showDeviceSelection">
-					<MediaDevicesSelector
-						kind="audioinput"
+					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
 						:device-id="audioInputId"
 						@update:deviceId="audioInputId = $event" />
-					<MediaDevicesSelector
-						kind="videoinput"
+					<MediaDevicesSelector kind="videoinput"
 						:devices="devices"
 						:device-id="videoInputId"
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
-			<CheckboxRadioSwitch
-				:checked.sync="showDeviceChecker"
+			<CheckboxRadioSwitch :checked.sync="showDeviceChecker"
 				class="checkbox">
 				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
 			</CheckboxRadioSwitch>
 
 			<!-- Join call -->
-			<CallButton
-				class="call-button"
+			<CallButton class="call-button"
 				:force-join-call="true" />
 		</div>
 	</Modal>

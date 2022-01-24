@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<Content
-		v-shortkey.once="['ctrl', 'f']"
+	<Content v-shortkey.once="['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">

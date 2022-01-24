@@ -26,8 +26,7 @@
 				{{ t('spreed', 'Allow guests to use a public link to join this conversation.') }}
 			</div>
 			<div>
-				<input
-					id="link_share_settings_toggle_guests"
+				<input id="link_share_settings_toggle_guests"
 					ref="toggleGuests"
 					aria-describedby="link_share_settings_hint"
 					type="checkbox"
@@ -44,8 +43,7 @@
 				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
 			</div>
 			<div>
-				<input
-					id="link_share_settings_toggle_password"
+				<input id="link_share_settings_toggle_password"
 					ref="togglePassword"
 					aria-describedby="link_share_settings_password_hint"
 					type="checkbox"
@@ -59,12 +57,10 @@
 		</div>
 		<div class="app-settings-subsection">
 			<div v-show="showPasswordField">
-				<form
-					:disabled="isSaving"
+				<form :disabled="isSaving"
 					@submit.prevent="handleSetNewPassword">
 					<span class="icon-password" />
-					<input
-						id="link_share_settings_link_password"
+					<input id="link_share_settings_link_password"
 						ref="passwordField"
 						v-model="password"
 						aria-describedby="link_share_settings_password_hint"
@@ -74,8 +70,7 @@
 						name="link_share_settings_link_password"
 						:placeholder="t('spreed', 'Enter a password')"
 						:disabled="isSaving">
-					<button
-						id="link_share_settings_link_password_submit"
+					<button id="link_share_settings_link_password_submit"
 						:aria-label="t('spreed', 'Save password')"
 						:disabled="isSaving"
 						type="submit"
@@ -84,22 +79,18 @@
 			</div>
 		</div>
 		<div class="app-settings-subsection">
-			<button
-				ref="copyLinkButton"
+			<button ref="copyLinkButton"
 				@click.prevent="handleCopyLink">
-				<ClipboardTextOutline
-					:size="16"
+				<ClipboardTextOutline :size="16"
 					decorative
 					title="" />
 				{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
-			<button
-				:disabled="isSendingInvitations"
+			<button :disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				<Email
-					:size="16"
+				<Email :size="16"
 					decorative
 					title="" />
 				{{ t('spreed', 'Resend invitations') }}

@@ -40,8 +40,7 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
-				<button
-					class="critical error"
+				<button class="critical error"
 					@click.prevent.exact="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
 				</button>
@@ -52,8 +51,7 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
-				<button
-					class="critical error"
+				<button class="critical error"
 					@click.prevent.exact="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
 				</button>

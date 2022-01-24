@@ -20,12 +20,10 @@
 -->
 
 <template>
-	<div
-		class="wrapper"
+	<div class="wrapper"
 		:class="{'wrapper--chatScrolledToBottom': isChatScrolledToBottom}">
 		<!--native file picker, hidden -->
-		<input
-			id="file-upload"
+		<input id="file-upload"
 			ref="fileUploadInput"
 			multiple
 			type="file"
@@ -34,33 +32,27 @@
 			class="hidden-visually"
 			@change="handleFileInput">
 		<div class="new-message">
-			<form
-				class="new-message-form"
+			<form class="new-message-form"
 				@submit.prevent>
-				<div
-					v-if="canUploadFiles || canShareFiles"
+				<div v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__upload-menu">
-					<Actions
-						ref="uploadMenu"
+					<Actions ref="uploadMenu"
 						:container="container"
 						:boundaries-element="containerElement"
 						:disabled="disabled"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
-						<Paperclip
-							slot="icon"
+						<Paperclip slot="icon"
 							:size="16"
 							decorative
 							title="" />
-						<ActionButton
-							v-if="canUploadFiles"
+						<ActionButton v-if="canUploadFiles"
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
 							{{ t('spreed', 'Upload new files') }}
 						</ActionButton>
-						<ActionButton
-							v-if="canShareFiles"
+						<ActionButton v-if="canShareFiles"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
@@ -70,44 +62,37 @@
 				</div>
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
-						<EmojiPicker
-							v-if="!disabled"
+						<EmojiPicker v-if="!disabled"
 							:container="container"
 							:close-on-select="false"
 							@select="addEmoji">
-							<button
-								type="button"
+							<button type="button"
 								:disabled="disabled"
 								class="nc-button nc-button__main emoji-picker-button"
 								:aria-label="t('spreed', 'Add emoji')"
 								:aria-haspopup="true">
-								<EmoticonOutline
-									:size="16"
+								<EmoticonOutline :size="16"
 									decorative
 									title="" />
 							</button>
 						</EmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
-						<button
-							v-else
+						<button v-else
 							type="button"
 							:disabled="true"
 							class="nc-button nc-button__main emoji-picker-button">
-							<EmoticonOutline
-								:size="16"
+							<EmoticonOutline :size="16"
 								decorative
 								title="" />
 						</button>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
-						<Quote
-							:is-new-message-form-quote="true"
+						<Quote :is-new-message-form-quote="true"
 							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
 
-					<AdvancedInput
-						ref="advancedInput"
+					<AdvancedInput ref="advancedInput"
 						v-model="text"
 						:token="token"
 						:active-input="!disabled"
@@ -118,21 +103,18 @@
 						@files-pasted="handlePastedFiles" />
 				</div>
 
-				<AudioRecorder
-					v-if="!hasText && canUploadFiles"
+				<AudioRecorder v-if="!hasText && canUploadFiles"
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
 
-				<button
-					v-else
+				<button v-else
 					:disabled="disabled"
 					type="submit"
 					:aria-label="t('spreed', 'Send message')"
 					class="nc-button nc-button__main new-message-form__send-button"
 					@click.prevent="handleSubmit">
-					<Send
-						title=""
+					<Send title=""
 						:size="16"
 						decorative />
 				</button>
