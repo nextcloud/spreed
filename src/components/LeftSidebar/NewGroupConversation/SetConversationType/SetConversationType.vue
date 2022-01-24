@@ -21,8 +21,7 @@
 
 <template>
 	<div class="conversation-type">
-		<input
-			id="checkbox"
+		<input id="checkbox"
 			type="checkbox"
 			class="checkbox"
 			:checked="value"

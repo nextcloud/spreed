@@ -18,23 +18,19 @@
   -
   -->
 <template>
-	<div
-		v-shortkey.push="['space']"
+	<div v-shortkey.push="['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
 			<div class="network-connection-state">
-				<Popover
-					v-if="qualityWarningTooltip"
+				<Popover v-if="qualityWarningTooltip"
 					:boundaries-element="boundaryElement"
 					:aria-label="qualityWarningAriaLabel"
 					trigger="hover"
 					:auto-hide="false"
 					:open="showQualityWarningTooltip">
-					<button
-						slot="trigger"
+					<button slot="trigger"
 						class="trigger">
-						<NetworkStrength2Alert
-							decorative
+						<NetworkStrength2Alert decorative
 							fill-color="#e9322d"
 							title=""
 							:size="20"
@@ -44,14 +40,12 @@
 					<div class="hint">
 						<span>{{ qualityWarningTooltip.content }}</span>
 						<div class="hint__actions">
-							<button
-								v-if="qualityWarningTooltip.action"
+							<button v-if="qualityWarningTooltip.action"
 								class="primary hint__button"
 								@click="executeQualityWarningTooltipAction">
 								{{ qualityWarningTooltip.actionLabel }}
 							</button>
-							<button
-								v-if="!isQualityWarningTooltipDismissed"
+							<button v-if="!isQualityWarningTooltipDismissed"
 								class="hint__button"
 								@click="dismissQualityWarningTooltip">
 								{{ t('spreed', 'Dismiss') }}
@@ -61,75 +55,64 @@
 				</Popover>
 			</div>
 			<div id="muteWrapper">
-				<button
-					id="mute"
+				<button id="mute"
 					v-shortkey.once="['m']"
 					v-tooltip="audioButtonTooltip"
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
 					@shortkey="toggleAudio"
 					@click.stop="toggleAudio">
-					<Microphone
-						v-if="showMicrophoneOn"
+					<Microphone v-if="showMicrophoneOn"
 						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
-					<MicrophoneOff
-						v-else
+					<MicrophoneOff v-else
 						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
 				</button>
-				<span
-					v-show="model.attributes.audioAvailable"
+				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
-			<button
-				id="hideVideo"
+			<button id="hideVideo"
 				v-shortkey.once="['v']"
 				v-tooltip="videoButtonTooltip"
 				:aria-label="videoButtonAriaLabel"
 				:class="videoButtonClass"
 				@shortkey="toggleVideo"
 				@click.stop="toggleVideo">
-				<VideoIcon
-					v-if="showVideoOn"
+				<VideoIcon v-if="showVideoOn"
 					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-				<VideoOff
-					v-else
+				<VideoOff v-else
 					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 			</button>
-			<button
-				v-if="isVirtualBackgroundAvailable && !showActions"
+			<button v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
 				:aria-label="toggleVirtualBackgroundButtonLabel"
 				:class="blurButtonClass"
 				@click.stop="toggleVirtualBackground">
-				<Blur
-					v-if="isVirtualBackgroundEnabled"
+				<Blur v-if="isVirtualBackgroundEnabled"
 					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-				<BlurOff
-					v-else
+				<BlurOff v-else
 					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
 			</button>
-			<Actions
-				v-if="!screenSharingButtonHidden"
+			<Actions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
 				:aria-label="screenSharingButtonAriaLabel"
@@ -141,15 +124,13 @@
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
-				<CancelPresentation
-					v-if="model.attributes.localScreen"
+				<CancelPresentation v-if="model.attributes.localScreen"
 					slot="icon"
 					:size="20"
 					title=""
 					fill-color="#ffffff"
 					decorative />
-				<PresentToAll
-					v-else
+				<PresentToAll v-else
 					slot="icon"
 					:size="20"
 					title=""
@@ -157,40 +138,33 @@
 					decorative />
 				<!-- /Actions button icon -->
 				<!-- Actions -->
-				<ActionButton
-					v-if="!screenSharingMenuOpen"
+				<ActionButton v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
-					<PresentToAll
-						slot="icon"
+					<PresentToAll slot="icon"
 						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
 					{{ screenSharingButtonTooltip }}
 				</ActionButton>
-				<ActionButton
-					v-if="model.attributes.localScreen"
+				<ActionButton v-if="model.attributes.localScreen"
 					@click="showScreen">
-					<Monitor
-						slot="icon"
+					<Monitor slot="icon"
 						:size="20"
 						title=""
 						decorative />
 					{{ t('spreed', 'Show your screen') }}
 				</ActionButton>
-				<ActionButton
-					v-if="model.attributes.localScreen"
+				<ActionButton v-if="model.attributes.localScreen"
 					@click="stopScreen">
-					<CancelPresentation
-						slot="icon"
+					<CancelPresentation slot="icon"
 						:size="20"
 						title=""
 						decorative />
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
 			</Actions>
-			<button
-				v-shortkey.once="['r']"
+			<button v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand (R)')"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
@@ -200,41 +174,34 @@
 				@click.stop="toggleHandRaised">
 				<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-				<HandBackLeft
-					decorative
+				<HandBackLeft decorative
 					title=""
 					:size="18"
 					fill-color="#ffffff" />
 			</button>
-			<Actions
-				v-if="showActions"
+			<Actions v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
 				:aria-label="t('spreed', 'More actions')">
-				<ActionButton
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="toggleHandRaised">
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-					<HandBackLeft
-						slot="icon"
+					<HandBackLeft slot="icon"
 						decorative
 						title=""
 						:size="18" />
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
-				<ActionButton
-					v-if="isVirtualBackgroundAvailable"
+				<ActionButton v-if="isVirtualBackgroundAvailable"
 					:close-after-click="true"
 					@click="toggleVirtualBackground">
-					<BlurOff
-						v-if="isVirtualBackgroundEnabled"
+					<BlurOff v-if="isVirtualBackgroundEnabled"
 						slot="icon"
 						:size="20"
 						decorative
 						title="" />
-					<Blur
-						v-else
+					<Blur v-else
 						slot="icon"
 						:size="20"
 						decorative
@@ -242,16 +209,14 @@
 					{{ toggleVirtualBackgroundButtonLabel }}
 				</ActionButton>
 				<!-- Call layout switcher -->
-				<ActionButton
-					v-if="isInCall"
+				<ActionButton v-if="isInCall"
 					:icon="changeViewIconClass"
 					:close-after-click="true"
 					@click="changeView">
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
-				<ActionButton
-					icon="icon-settings"
+				<ActionButton icon="icon-settings"
 					:close-after-click="true"
 					@click="showSettings">
 					{{ t('spreed', 'Devices settings') }}

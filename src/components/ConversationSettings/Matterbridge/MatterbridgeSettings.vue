@@ -33,12 +33,10 @@
 				</p>
 			</div>
 			<div class="basic-settings">
-				<div
-					v-show="!enabled"
+				<div v-show="!enabled"
 					class="add-part-wrapper">
 					<span class="icon icon-add" />
-					<Multiselect
-						ref="partMultiselect"
+					<Multiselect ref="partMultiselect"
 						v-model="selectedType"
 						label="displayName"
 						track-by="type"
@@ -48,18 +46,15 @@
 						:internal-search="true"
 						@input="clickAddPart">
 						<template #option="{option}">
-							<img
-								class="icon-multiselect-service"
+							<img class="icon-multiselect-service"
 								:src="option.iconUrl">
 							{{ option.displayName }}
 						</template>
 					</Multiselect>
 				</div>
-				<div
-					v-show="parts.length > 0"
+				<div v-show="parts.length > 0"
 					class="enable-switch-line">
-					<input
-						id="enable-checkbox"
+					<input id="enable-checkbox"
 						type="checkbox"
 						class="checkbox"
 						:token="token"
@@ -69,13 +64,11 @@
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</label>
-					<button
-						v-if="enabled"
+					<button v-if="enabled"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
 						class="icon icon-edit"
 						@click="showLogContent" />
-					<Modal
-						v-if="logModal"
+					<Modal v-if="logModal"
 						:container="container"
 						@close="closeLogModal">
 						<div class="modal__content">
@@ -86,8 +79,7 @@
 			</div>
 			<ul>
 				<li v-for="(part, i) in parts" :key="part.type + i">
-					<BridgePart
-						:num="i+1"
+					<BridgePart :num="i+1"
 						:part="part"
 						:type="types[part.type]"
 						:editing="part.editing"

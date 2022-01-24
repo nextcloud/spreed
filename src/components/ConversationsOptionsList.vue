@@ -21,14 +21,12 @@
 
 <template>
 	<ul class="contacts-list">
-		<ListItem
-			v-for="item of items"
+		<ListItem v-for="item of items"
 			:key="item.id"
 			:title="item.label"
 			@click="onClick(item)">
 			<template #icon>
-				<ConversationIcon
-					:item="iconData(item)"
+				<ConversationIcon :item="iconData(item)"
 					:disable-menu="true" />
 			</template>
 		</ListItem>

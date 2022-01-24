@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<a
-		v-if="link"
+	<a v-if="link"
 		:href="link"
 		class="external"
 		target="_blank"

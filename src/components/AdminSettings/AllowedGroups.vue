@@ -34,8 +34,7 @@
 		</p>
 
 		<p class="allowed-groups-settings-content">
-			<Multiselect
-				v-model="allowedGroups"
+			<Multiselect v-model="allowedGroups"
 				class="allowed-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit using Talk')"
@@ -50,8 +49,7 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<button
-				class="button primary"
+			<button class="button primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
@@ -60,8 +58,7 @@
 
 		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
 		<p class="allowed-groups-settings-content">
-			<Multiselect
-				v-model="canStartConversations"
+			<Multiselect v-model="canStartConversations"
 				class="allowed-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit creating conversations')"
@@ -76,8 +73,7 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<button
-				class="button primary"
+			<button class="button primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
@@ -86,8 +82,7 @@
 
 		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
 		<p>
-			<Multiselect
-				id="start_calls"
+			<Multiselect id="start_calls"
 				v-model="startCalls"
 				:options="startCallOptions"
 				:placeholder="t('spreed', 'Limit starting calls')"

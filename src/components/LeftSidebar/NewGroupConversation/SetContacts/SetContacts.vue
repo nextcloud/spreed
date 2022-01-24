@@ -23,26 +23,22 @@
 	<div class="set-contacts">
 		<!-- Search -->
 		<div class="icon-search" />
-		<input
-			ref="setContacts"
+		<input ref="setContacts"
 			v-model="searchText"
 			v-observe-visibility="visibilityChanged"
 			class="set-contacts__input"
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<transition-group
-			v-if="hasSelectedParticipants"
+		<transition-group v-if="hasSelectedParticipants"
 			name="zoom"
 			tag="div"
 			class="selected-participants">
-			<ContactSelectionBubble
-				v-for="participant in selectedParticipants"
+			<ContactSelectionBubble v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
 				:participant="participant" />
 		</transition-group>
-		<ParticipantSearchResults
-			:add-on-click="false"
+		<ParticipantSearchResults :add-on-click="false"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"

@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<audio
-		class="audio-player"
+	<audio class="audio-player"
 		controls
 		:src="fileURL">
 		{{ t('spreed', 'Your browser does not support playing audio files') }}

@@ -20,36 +20,30 @@
 -->
 
 <template>
-	<div
-		class="part"
+	<div class="part"
 		:class="{ readonly: !editing }">
 		<h3>
-			<img
-				class="icon-service"
+			<img class="icon-service"
 				:src="type.iconUrl">
 			<span>
 				{{ type.name }}
 			</span>
 			<Actions :force-menu="false">
-				<ActionButton
-					v-if="editable"
+				<ActionButton v-if="editable"
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
 					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
 				</ActionButton>
 			</Actions>
-			<Actions
-				class="actions"
+			<Actions class="actions"
 				:force-menu="true"
 				placement="bottom">
-				<ActionLink
-					icon="icon-info"
+				<ActionLink icon="icon-info"
 					target="_blank"
 					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
 					:close-after-click="true" />
-				<ActionButton
-					v-if="editable"
+				<ActionButton v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"
 					@click="$emit('delete-part')">
@@ -57,8 +51,7 @@
 				</ActionButton>
 			</Actions>
 		</h3>
-		<div
-			v-for="(field, key) in displayedFields"
+		<div v-for="(field, key) in displayedFields"
 			:key="key"
 			class="field">
 			<!-- TODO: do not mutate prop `part` directly -->

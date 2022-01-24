@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<input
-		ref="password"
+	<input ref="password"
 		v-observe-visibility="visibilityChanged"
 		type="password"
 		:value="value"

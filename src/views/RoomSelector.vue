@@ -21,8 +21,7 @@
   -->
 
 <template>
-	<Modal
-		:container="container"
+	<Modal :container="container"
 		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
@@ -34,13 +33,11 @@
 				</p>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
-						<li
-							v-for="room in availableRooms"
+						<li v-for="room in availableRooms"
 							:key="room.token"
 							:class="{selected: selectedRoom === room.token }"
 							@click="selectedRoom=room.token">
-							<ConversationIcon
-								:item="room"
+							<ConversationIcon :item="room"
 								:hide-call="true"
 								:hide-favorite="false"
 								:disable-menu="true" />
@@ -52,8 +49,7 @@
 					</div>
 				</div>
 				<div id="modal-buttons">
-					<button
-						v-if="!loading && availableRooms.length > 0"
+					<button v-if="!loading && availableRooms.length > 0"
 						class="primary"
 						:disabled="!selectedRoom"
 						@click="select">

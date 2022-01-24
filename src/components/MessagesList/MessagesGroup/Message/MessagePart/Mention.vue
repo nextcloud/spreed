@@ -21,18 +21,15 @@
 
 <template>
 	<div class="mention">
-		<UserBubble
-			v-if="isMentionToAll"
+		<UserBubble v-if="isMentionToAll"
 			:display-name="name"
 			:avatar-image="'icon-group-forced-white'"
 			:primary="true" />
-		<UserBubble
-			v-else-if="isMentionToGuest"
+		<UserBubble v-else-if="isMentionToGuest"
 			:display-name="name"
 			:avatar-image="'icon-user-forced-white'"
 			:primary="isCurrentGuest" />
-		<UserBubble
-			v-else
+		<UserBubble v-else
 			:display-name="name"
 			:user="id"
 			:primary="isCurrentUser" />

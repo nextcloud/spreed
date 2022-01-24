@@ -21,21 +21,18 @@
 
 <template>
 	<div class="wrapper">
-		<button
-			slot="trigger"
+		<button slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			class="toggle"
 			icon=""
 			:aria-label="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
-			<Plus
-				decorative
+			<Plus decorative
 				title=""
 				:size="20" />
 		</button>
 		<!-- New group form -->
-		<Modal
-			v-if="modal"
+		<Modal v-if="modal"
 			:container="container"
 			size="normal"
 			@close="closeModal">
@@ -45,23 +42,19 @@
 				<div class="new-group-conversation__content">
 					<!-- First page -->
 					<template v-if="page === 0">
-						<SetConversationName
-							v-model="conversationNameInput"
+						<SetConversationName v-model="conversationNameInput"
 							@click-enter="handleEnter" />
-						<SetConversationType
-							v-model="isPublic"
+						<SetConversationType v-model="isPublic"
 							:conversation-name="conversationName" />
 						<!-- Password protection -->
 						<template v-if="isPublic">
-							<input
-								id="password-checkbox"
+							<input id="password-checkbox"
 								type="checkbox"
 								class="checkbox"
 								:checked="passwordProtect"
 								@input="handleCheckboxInput">
 							<label for="password-checkbox">{{ t('spreed', 'Password protect') }}</label>
-							<PasswordProtect
-								v-if="passwordProtect"
+							<PasswordProtect v-if="passwordProtect"
 								v-model="password" />
 						</template>
 						<ListableSettings v-model="listable" />
@@ -72,8 +65,7 @@
 					</template>
 					<!-- Third page -->
 					<template v-if="page === 2">
-						<Confirmation
-							:conversation-name="conversationName"
+						<Confirmation :conversation-name="conversationName"
 							:error="error"
 							:is-loading="isLoading"
 							:success="success"
@@ -85,36 +77,31 @@
 				placement are rendered depending on the current page -->
 				<div class="navigation">
 					<!-- First page -->
-					<button
-						v-if="page===0 && isPublic"
+					<button v-if="page===0 && isPublic"
 						class="navigation__button navigation__button-left "
 						:disabled="disabled"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</button>
-					<button
-						v-if="page===0"
+					<button v-if="page===0"
 						class="navigation__button navigation__button-right primary"
 						:disabled="disabled"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
 					</button>
 					<!-- Second page -->
-					<button
-						v-if="page===1"
+					<button v-if="page===1"
 						class="navigation__button navigation__button-left"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
 					</button>
-					<button
-						v-if="page===1"
+					<button v-if="page===1"
 						class="navigation__button navigation__button-right primary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</button>
 					<!-- Third page -->
-					<button
-						v-if="page===2 && (error || isPublic)"
+					<button v-if="page===2 && (error || isPublic)"
 						class="navigation__button navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}

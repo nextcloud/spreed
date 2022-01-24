@@ -21,8 +21,7 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
-		<ConversationIcon
-			v-if="!isInCall"
+		<ConversationIcon v-if="!isInCall"
 			:key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerOffline"
@@ -30,23 +29,19 @@
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
-		<a
-			v-if="!isInCall"
+		<a v-if="!isInCall"
 			class="conversation-header"
 			@click="openConversationSettings">
-			<div
-				class="conversation-header__text"
+			<div class="conversation-header__text"
 				:class="{'conversation-header__text--offline': isPeerOffline}">
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
-				<p
-					v-if="showUserStatusAsDescription"
+				<p v-if="showUserStatusAsDescription"
 					class="description">
 					{{ statusMessage }}
 				</p>
-				<p
-					v-else-if="conversation.description"
+				<p v-else-if="conversation.description"
 					v-tooltip.bottom="{
 						content: renderedDescription,
 						delay: { show: 500, hide: 500 },
@@ -58,8 +53,7 @@
 				</p>
 			</div>
 		</a>
-		<LocalMediaControls
-			v-if="isInCall"
+		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls"
 			:token="token"
 			:model="localMediaModel"
@@ -70,48 +64,41 @@
 			<CallButton class="top-bar__button" />
 
 			<!-- Vertical line -->
-			<div
-				v-if="!isSidebar && isInCall"
+			<div v-if="!isSidebar && isInCall"
 				class="top-bar__separator" />
 
 			<!-- sidebar toggle -->
-			<Actions
-				v-if="!isSidebar"
+			<Actions v-if="!isSidebar"
 				v-shortkey.once="['f']"
 				class="top-bar__button"
 				menu-align="right"
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
-				<Cog
-					slot="icon"
+				<Cog slot="icon"
 					:size="20"
 					decorative
 					title="" />
-				<ActionButton
-					:icon="iconFullscreen"
+				<ActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
 					@click="toggleFullscreen">
 					{{ labelFullscreen }}
 				</ActionButton>
 				<ActionSeparator v-if="showModerationOptions" />
-				<ActionLink
-					v-if="isFileConversation"
+				<ActionLink v-if="isFileConversation"
 					icon="icon-text"
 					:href="linkToFile">
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<template v-if="showModerationOptions">
-					<ActionButton
-						:close-after-click="true"
+					<ActionButton :close-after-click="true"
 						icon="icon-rename"
 						@click="handleRenameConversation">
 						{{ t('spreed', 'Rename conversation') }}
 					</ActionButton>
 				</template>
-				<ActionButton
-					v-if="!isOneToOneConversation"
+				<ActionButton v-if="!isOneToOneConversation"
 					icon="icon-clippy"
 					:close-after-click="true"
 					@click="handleCopyLink">
@@ -119,11 +106,9 @@
 				</ActionButton>
 				<template v-if="showModerationOptions && canFullModerate && isInCall">
 					<ActionSeparator />
-					<ActionButton
-						:close-after-click="true"
+					<ActionButton :close-after-click="true"
 						@click="forceMuteOthers">
-						<MicrophoneOff
-							slot="icon"
+						<MicrophoneOff slot="icon"
 							:size="20"
 							decorative
 							title="" />
@@ -131,38 +116,32 @@
 					</ActionButton>
 				</template>
 				<ActionSeparator v-if="showModerationOptions" />
-				<ActionButton
-					icon="icon-settings"
+				<ActionButton icon="icon-settings"
 					:close-after-click="true"
 					@click="openConversationSettings">
 					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
 			</Actions>
-			<Actions
-				v-if="showOpenSidebarButton"
+			<Actions v-if="showOpenSidebarButton"
 				class="top-bar__button"
 				close-after-click="true"
 				:container="container">
-				<ActionButton
-					v-if="isInCall"
+				<ActionButton v-if="isInCall"
 					key="openSideBarButtonMessageText"
 					@click="openSidebar">
-					<MessageText
-						slot="icon"
+					<MessageText slot="icon"
 						:size="20"
 						title=""
 						fill-color="#ffffff"
 						decorative />
 				</ActionButton>
-				<ActionButton
-					v-else
+				<ActionButton v-else
 					key="openSideBarButtonMenuPeople"
 					:icon="iconMenuPeople"
 					@click="openSidebar" />
 			</Actions>
 		</div>
-		<CounterBubble
-			v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+		<CounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
 			class="unread-messages-counter"
 			:highlighted="hasUnreadMentions">
 			{{ unreadMessagesCounter }}

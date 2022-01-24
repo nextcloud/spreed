@@ -20,36 +20,30 @@
 -->
 
 <template>
-	<AppSettingsDialog
-		:open.sync="showSettings"
+	<AppSettingsDialog :open.sync="showSettings"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
 		:container="container">
-		<AppSettingsSection
-			:title="t('spreed', 'Choose devices')"
+		<AppSettingsSection :title="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
 		</AppSettingsSection>
-		<AppSettingsSection
-			v-if="!isGuest"
+		<AppSettingsSection v-if="!isGuest"
 			:title="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
 			<h3 class="app-settings-section__hint">
 				{{ locationHint }}
 			</h3>
-			<input
-				type="text"
+			<input type="text"
 				class="app-settings-section__input"
 				:value="attachmentFolder"
 				:disabled="attachmentFolderLoading"
 				@click="selectAttachmentFolder">
 		</AppSettingsSection>
-		<AppSettingsSection
-			v-if="!isGuest"
+		<AppSettingsSection v-if="!isGuest"
 			:title="t('spreed', 'Privacy')"
 			class="app-settings-section">
-			<input
-				id="read_status_privacy"
+			<input id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="checkbox"
@@ -58,11 +52,9 @@
 				@change="toggleReadStatusPrivacy">
 			<label for="read_status_privacy">{{ t('spreed', 'Share my read-status and show the read-status of others') }}</label>
 		</AppSettingsSection>
-		<AppSettingsSection
-			:title="t('spreed', 'Sounds')"
+		<AppSettingsSection :title="t('spreed', 'Sounds')"
 			class="app-settings-section">
-			<input
-				id="play_sounds"
+			<input id="play_sounds"
 				:checked="playSounds"
 				:disabled="playSoundsLoading"
 				type="checkbox"

@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<a
-		class="deck-card"
+	<a class="deck-card"
 		:href="link"
 		:aria-label="deckCardAriaLabel"
 		target="_blank">

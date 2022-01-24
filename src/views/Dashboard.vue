@@ -21,23 +21,20 @@
   -->
 
 <template>
-	<DashboardWidget
-		id="talk-panel"
+	<DashboardWidget id="talk-panel"
 		:items="roomOptions"
 		:show-more-url="''"
 		:loading="loading"
 		:show-items-and-empty-content="!hasImportantConversations"
 		:half-empty-content-message="t('spreed', 'No unread mentions')">
 		<template #default="{ item }">
-			<DashboardWidgetItem
-				:target-url="getItemTargetUrl(item)"
+			<DashboardWidgetItem :target-url="getItemTargetUrl(item)"
 				:main-text="getMainText(item)"
 				:sub-text="getSubText(item)"
 				:item="item"
 				v-on="handlers">
 				<template #avatar>
-					<ConversationIcon
-						:item="item"
+					<ConversationIcon :item="item"
 						:hide-favorite="true"
 						:hide-call="false"
 						:disable-menu="true" />

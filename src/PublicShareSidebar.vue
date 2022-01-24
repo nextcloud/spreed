@@ -32,8 +32,7 @@
 				</button>
 			</div>
 			<template v-else>
-				<CallView
-					v-if="isInCall"
+				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
 				<PreventUnload :when="warnLeaving" />

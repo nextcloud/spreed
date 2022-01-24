@@ -28,18 +28,15 @@ get the messagesList array and loop through the list to generate the messages.
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
-	<div
-		ref="scroller"
+	<div ref="scroller"
 		class="scroller"
 		@scroll="debounceHandleScroll">
-		<div
-			v-if="displayMessagesLoader"
+		<div v-if="displayMessagesLoader"
 			class="scroller__loading"
 			disabled>
 			<div class="icon-loading" />
 		</div>
-		<MessagesGroup
-			v-for="(item, index) of messagesGroupedByAuthor"
+		<MessagesGroup v-for="(item, index) of messagesGroupedByAuthor"
 			:key="item[0].id"
 			:style="{ height: item.height + 'px' }"
 			v-bind="item"
@@ -48,18 +45,15 @@ get the messagesList array and loop through the list to generate the messages.
 			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
 			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
 		<template v-if="!messagesGroupedByAuthor.length">
-			<LoadingPlaceholder
-				type="messages"
+			<LoadingPlaceholder type="messages"
 				:count="15" />
 		</template>
 		<transition name="fade">
-			<button
-				v-show="!isChatScrolledToBottom"
+			<button v-show="!isChatScrolledToBottom"
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
-				<ChevronDown
-					decorative
+				<ChevronDown decorative
 					title=""
 					:size="20" />
 			</button>

@@ -19,18 +19,15 @@
   -->
 
 <template>
-	<div
-		class="chatView"
+	<div class="chatView"
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="isDraggingOver = false"
 		@drop.prevent="handleDropFiles">
 		<transition name="slide" mode="out-in">
-			<div
-				v-show="isDraggingOver"
+			<div v-show="isDraggingOver"
 				class="dragover">
 				<div class="drop-hint">
-					<div
-						class="drop-hint__icon"
+					<div class="drop-hint__icon"
 						:class="{
 							'icon-upload' : !isGuest && !isReadOnly,
 							'icon-user' : isGuest,
@@ -41,15 +38,13 @@
 				</div>
 			</div>
 		</transition>
-		<MessagesList
-			role="region"
+		<MessagesList role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:token="token"
 			:is-visible="isVisible"
 			@set-chat-scrolled-to-bottom="setScrollStatus" />
-		<NewMessageForm
-			role="region"
+		<NewMessageForm role="region"
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:aria-label="t('spreed', 'Post message')" />
 	</div>

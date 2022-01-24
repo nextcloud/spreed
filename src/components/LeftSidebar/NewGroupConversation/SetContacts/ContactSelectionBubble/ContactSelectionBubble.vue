@@ -21,8 +21,7 @@
 
 <template>
 	<div class="contact-selection-bubble">
-		<AvatarWrapperSmall
-			:id="participant.id"
+		<AvatarWrapperSmall :id="participant.id"
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
@@ -32,8 +31,7 @@
 		<span class="contact-selection-bubble__username">
 			{{ displayName }}
 		</span>
-		<button
-			class="icon-close contact-selection-bubble__remove"
+		<button class="icon-close contact-selection-bubble__remove"
 			@click="removeParticipantFromSelection(participant)" />
 	</div>
 </template>

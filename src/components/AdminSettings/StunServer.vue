@@ -24,8 +24,7 @@
 	<div class="stun-server">
 		<!-- "stun:" scheme is untranslated -->
 		<span class="scheme">stun:</span>
-		<input
-			ref="stun_server"
+		<input ref="stun_server"
 			type="text"
 			name="stun_server"
 			placeholder="stunserver:port"
@@ -34,8 +33,7 @@
 			:aria-label="t('spreed', 'STUN server URL')"
 			@input="update">
 		<span v-show="!isValidServer" class="icon icon-error" />
-		<a
-			v-show="!loading"
+		<a v-show="!loading"
 			v-tooltip.auto="t('spreed', 'Delete this server')"
 			class="icon icon-delete"
 			@click="removeServer" />

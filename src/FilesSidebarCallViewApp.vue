@@ -22,12 +22,10 @@
 
 <template>
 	<div v-if="isInFile" class="talk-sidebar-callview">
-		<TopBar
-			v-show="showCallView"
+		<TopBar v-show="showCallView"
 			:is-in-call="true"
 			:is-sidebar="true" />
-		<CallView
-			v-show="showCallView"
+		<CallView v-show="showCallView"
 			:token="token"
 			:is-sidebar="true" />
 		<PreventUnload :when="warnLeaving" />

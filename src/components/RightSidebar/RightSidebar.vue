@@ -21,8 +21,7 @@
 -->
 
 <template>
-	<AppSidebar
-		v-show="opened"
+	<AppSidebar v-show="opened"
 		id="app-sidebar"
 		:title="title"
 		:title-tooltip="title"
@@ -39,38 +38,32 @@
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<AppSidebarTab
-			v-if="showChatInSidebar"
+		<AppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
 			<ChatView :is-visible="opened" />
 		</AppSidebarTab>
-		<AppSidebarTab
-			v-if="getUserId && !isOneToOne"
+		<AppSidebarTab v-if="getUserId && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
 			:name="participantsText"
 			icon="icon-contacts-dark">
-			<ParticipantsTab
-				:is-active="activeTab === 'participants'"
+			<ParticipantsTab :is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</AppSidebarTab>
-		<AppSidebarTab
-			id="details-tab"
+		<AppSidebarTab id="details-tab"
 			:order="3"
 			:name="t('spreed', 'Details')"
 			icon="icon-details">
 			<SetGuestUsername v-if="!getUserId" />
-			<SipSettings
-				v-if="showSIPSettings"
+			<SipSettings v-if="showSIPSettings"
 				:meeting-id="conversation.token"
 				:attendee-pin="conversation.attendeePin" />
-			<CollectionList
-				v-if="getUserId && conversation.token"
+			<CollectionList v-if="getUserId && conversation.token"
 				:id="conversation.token"
 				type="room"
 				:name="conversation.displayName" />

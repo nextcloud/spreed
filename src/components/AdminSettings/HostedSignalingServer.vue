@@ -21,8 +21,7 @@
  -->
 
 <template>
-	<div
-		v-if="showForm"
+	<div v-if="showForm"
 		id="hosted_signaling_server"
 		class="videocalls section">
 		<h2>
@@ -35,32 +34,28 @@
 
 		<div v-if="!trialAccount.status">
 			<h4>{{ t('spreed', 'URL of this Nextcloud instance') }}</h4>
-			<input
-				v-model="hostedHPBNextcloudUrl"
+			<input v-model="hostedHPBNextcloudUrl"
 				type="text"
 				name="hosted_hpb_nextcloud_url"
 				placeholder="https://cloud.example.org/"
 				:disabled="loading"
 				:aria-label="t('spreed', 'URL of this Nextcloud instance')">
 			<h4>{{ t('spreed', 'Full name of the user requesting the trial') }}</h4>
-			<input
-				v-model="hostedHPBFullName"
+			<input v-model="hostedHPBFullName"
 				type="text"
 				name="full_name"
 				placeholder="Jane Doe"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Name of the user requesting the trial')">
 			<h4>{{ t('spreed', 'Email of the user') }}</h4>
-			<input
-				v-model="hostedHPBEmail"
+			<input v-model="hostedHPBEmail"
 				type="text"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Email of the user')">
 			<h4>{{ t('spreed', 'Language') }}</h4>
-			<select
-				v-model="hostedHPBLanguage"
+			<select v-model="hostedHPBLanguage"
 				name="hosted_hpb_language"
 				:placeholder="t('spreed', 'Language')"
 				:disabled="loading"
@@ -74,8 +69,7 @@
 				</option>
 			</select>
 			<h4>{{ t('spreed', 'Country') }}</h4>
-			<select
-				v-model="hostedHPBCountry"
+			<select v-model="hostedHPBCountry"
 				name="hosted_hpb_country"
 				:placeholder="t('spreed', 'Country')"
 				:disabled="loading"
@@ -85,14 +79,12 @@
 				</option>
 			</select>
 			<br>
-			<button
-				class="button primary"
+			<button class="button primary"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
 			</button>
-			<p
-				v-if="requestError !== ''"
+			<p v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
 			</p>
@@ -122,13 +114,11 @@
 					<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
 				</tr>
 			</table>
-			<p
-				v-if="requestError !== ''"
+			<p v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
 			</p>
-			<button
-				class="button delete"
+			<button class="button delete"
 				:disabled="loading"
 				@click="deleteAccount">
 				{{ t('spreed', 'Delete the signaling server account') }}

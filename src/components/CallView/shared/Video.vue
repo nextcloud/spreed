@@ -19,8 +19,7 @@
   -->
 
 <template>
-	<div
-		v-show="!placeholderForPromoted || sharedData.promoted"
+	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		class="videoContainer"
 		:class="containerClass"
@@ -28,36 +27,30 @@
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
 		<transition name="fade">
-			<div
-				v-show="showVideo"
+			<div v-show="showVideo"
 				:class="videoWrapperClass"
 				class="videoWrapper">
-				<video
-					ref="video"
+				<video ref="video"
 					:disablePictureInPicture="!isBig"
 					:class="videoClass"
 					class="video" />
 			</div>
 		</transition>
 		<transition name="fade">
-			<Screen
-				v-if="showSharedScreen"
+			<Screen v-if="showSharedScreen"
 				:is-big="isBig"
 				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</transition>
 		<transition-group name="fade">
-			<div
-				v-if="showBackgroundAndAvatar"
+			<div v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
 				<template v-if="participantUserId">
-					<VideoBackground
-						:display-name="participantName"
+					<VideoBackground :display-name="participantName"
 						:user="participantUserId" />
-					<Avatar
-						:size="avatarSize"
+					<Avatar :size="avatarSize"
 						:disable-menu="true"
 						:disable-tooltip="true"
 						:user="participantUserId"
@@ -67,33 +60,28 @@
 				</template>
 				<template v-else>
 					<VideoBackground :display-name="participantName" />
-					<div
-						:class="guestAvatarClass"
+					<div :class="guestAvatarClass"
 						class="avatar guest">
 						{{ firstLetterOfGuestName }}
 					</div>
 				</template>
 			</div>
-			<div
-				v-if="showPlaceholderForPromoted"
+			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
-				<AccountCircle
-					v-if="isPromoted || isSelected"
+				<AccountCircle v-if="isPromoted || isSelected"
 					decorative
 					title=""
 					fill-color="#FFFFFF"
 					:size="36" />
 			</div>
 		</transition-group>
-		<div
-			v-if="connectionMessage"
+		<div v-if="connectionMessage"
 			:class="connectionMessageClass"
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<VideoBottomBar
-			v-bind="$props"
+		<VideoBottomBar v-bind="$props"
 			:has-shadow="hasVideo"
 			:participant-name="participantName" />
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />

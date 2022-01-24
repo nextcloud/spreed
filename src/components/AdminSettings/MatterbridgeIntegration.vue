@@ -36,8 +36,7 @@
 			</p>
 
 			<p v-if="matterbridgeVersion">
-				<input
-					id="enable_matterbridge"
+				<input id="enable_matterbridge"
 					v-model="matterbridgeEnabled"
 					type="checkbox"
 					name="enable_matterbridge"
@@ -63,8 +62,7 @@
 					<span class="icon icon-loading-small" />
 					{{ t('spreed', 'Downloading …') }}
 				</button>
-				<button
-					v-else
+				<button v-else
 					@click="enableMatterbridgeApp">
 					{{ t('spreed', 'Install Talk Matterbridge') }}
 				</button>

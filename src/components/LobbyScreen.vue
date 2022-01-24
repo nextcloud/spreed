@@ -28,12 +28,10 @@
 				{{ t('spreed', 'You are currently waiting in the lobby') }}
 			</p>
 
-			<p
-				v-if="countdown"
+			<p v-if="countdown"
 				class="lobby__countdown">
 				{{ message }} -
-				<span
-					class="lobby__countdown live-relative-timestamp"
+				<span class="lobby__countdown live-relative-timestamp"
 					:data-timestamp="countdown * 1000"
 					:title="startTime">
 					{{ relativeDate }}
@@ -41,8 +39,7 @@
 			</p>
 
 			<p class="lobby__description">
-				<RichText
-					:text="conversation.description"
+				<RichText :text="conversation.description"
 					:autolink="true" />
 			</p>
 		</div>

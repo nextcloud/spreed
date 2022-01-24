@@ -21,8 +21,7 @@
 
 <template>
 	<div>
-		<ParticipantsList
-			v-if="participantsList.length"
+		<ParticipantsList v-if="participantsList.length"
 			:items="participantsList"
 			:loading="!participantsInitialised" />
 		<Hint v-else :hint="t('spreed', 'No search results')" />

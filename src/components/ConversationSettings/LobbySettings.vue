@@ -29,8 +29,7 @@
 				{{ t('spreed', 'This will also remove non-moderators from the ongoing call.') }}
 			</div>
 			<div>
-				<input
-					id="moderation_settings_enable_lobby_checkbox"
+				<input id="moderation_settings_enable_lobby_checkbox"
 					aria-describedby="moderation_settings_enable_lobby_hint"
 					type="checkbox"
 					class="checkbox"
@@ -46,15 +45,13 @@
 				{{ t('spreed', 'After the time limit the lobby will be automatically disabled.') }}
 			</div>
 			<div v-if="hasLobbyEnabled">
-				<form
-					:disabled="lobbyTimerFieldDisabled"
+				<form :disabled="lobbyTimerFieldDisabled"
 					@submit.prevent="saveLobbyTimer">
 					<span class="icon-calendar-dark" />
 					<div>
 						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 					</div>
-					<DatetimePicker
-						id="moderation_settings_lobby_timer_field"
+					<DatetimePicker id="moderation_settings_lobby_timer_field"
 						aria-describedby="moderation_settings_lobby_timer_hint"
 						:value="lobbyTimer"
 						:default-value="defaultLobbyTimer"

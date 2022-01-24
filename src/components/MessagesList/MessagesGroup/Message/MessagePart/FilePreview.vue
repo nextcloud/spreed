@@ -22,48 +22,40 @@
 -->
 
 <template>
-	<file-preview
-		v-bind="filePreview"
+	<file-preview v-bind="filePreview"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<div
-			v-if="!isLoading"
+		<div v-if="!isLoading"
 			class="image-container"
 			:class="{'playable': isPlayable}">
 			<span v-if="isPlayable && !smallPreview" class="play-video-button">
-				<PlayCircleOutline
-					:size="48"
+				<PlayCircleOutline :size="48"
 					decorative
 					fill-color="#ffffff"
 					title="" />
 			</span>
-			<img
-				v-if="!failed"
+			<img v-if="!failed"
 				v-tooltip="previewTooltip"
 				:class="previewImageClass"
 				class="file-preview__image"
 				alt=""
 				:src="previewUrl">
-			<img
-				v-else
+			<img v-else
 				:class="previewImageClass"
 				alt=""
 				:src="defaultIconUrl">
 		</div>
-		<span
-			v-if="isLoading"
+		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
-		<button
-			v-if="isUploadEditor"
+		<button v-if="isUploadEditor"
 			tabindex="1"
 			:aria-label="removeAriaLabel"
 			class="remove-file primary">
-			<Close
-				class="remove-file__icon"
+			<Close class="remove-file__icon"
 				decorative
 				title=""
 				@click="$emit('remove-file', id)" />

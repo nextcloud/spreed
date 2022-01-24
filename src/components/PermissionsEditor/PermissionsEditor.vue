@@ -20,46 +20,39 @@
 -->
 
 <template>
-	<Modal
-		size="small"
+	<Modal size="small"
 		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
 				<p class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
-					<CheckboxRadioSwitch
-						ref="callStart"
+					<CheckboxRadioSwitch ref="callStart"
 						:checked.sync="callStart"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
 					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch
-						ref="lobbyIgnore"
+					<CheckboxRadioSwitch ref="lobbyIgnore"
 						:checked.sync="lobbyIgnore"
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
 					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch
-						ref="publishAudio"
+					<CheckboxRadioSwitch ref="publishAudio"
 						:checked.sync="publishAudio"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
 					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch
-						ref="publishVideo"
+					<CheckboxRadioSwitch ref="publishVideo"
 						:checked.sync="publishVideo"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
 					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch
-						ref="publishScreen"
+					<CheckboxRadioSwitch ref="publishScreen"
 						:checked.sync="publishScreen"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</CheckboxRadioSwitch>
-					<button
-						ref="submit"
+					<button ref="submit"
 						type="submit"
 						:disabled="submitButtonDisabled"
 						class="nc-button primary">

@@ -33,8 +33,7 @@
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
-				<button
-					id="copy-link"
+				<button id="copy-link"
 					slot="trigger"
 					v-clipboard:copy="linkToConversation"
 					v-clipboard:success="onCopy"

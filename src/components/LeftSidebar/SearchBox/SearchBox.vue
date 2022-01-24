@@ -20,18 +20,15 @@
 -->
 
 <template>
-	<form
-		class="app-navigation-search"
+	<form class="app-navigation-search"
 		@submit.prevent="handleSubmit">
-		<input
-			ref="searchConversations"
+		<input ref="searchConversations"
 			v-model="localValue"
 			class="app-navigation-search__input"
 			type="text"
 			:placeHolder="placeholderText"
 			@keypress.enter.prevent="handleSubmit">
-		<button
-			v-if="isSearching"
+		<button v-if="isSearching"
 			class="abort-search icon-close"
 			@click.prevent="abortSearch" />
 	</form>

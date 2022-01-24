@@ -1,14 +1,12 @@
 <template>
 	<div>
-		<Multiselect
-			:value="currentRoom"
+		<Multiselect :value="currentRoom"
 			:options="roomOptions"
 			track-by="token"
 			label="displayName"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': currentMode.id, 't': newValue.token }))" />
 
-		<Multiselect
-			:value="currentMode"
+		<Multiselect :value="currentMode"
 			:options="modeOptions"
 			track-by="id"
 			label="text"

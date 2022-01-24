@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<li
-		class="participant-row"
+	<li class="participant-row"
 		:class="{
 			'offline': isOffline,
 			'currentUser': isSelf,
@@ -34,8 +33,7 @@
 		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->
-		<AvatarWrapper
-			:id="computedId"
+		<AvatarWrapper :id="computedId"
 			:disable-tooltip="true"
 			:disable-menu="isSearched"
 			:size="44"
@@ -48,19 +46,16 @@
 			:menu-container="container" />
 
 		<!-- Participant's data -->
-		<div
-			class="participant-row__user-wrapper"
+		<div class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
 				'has-menu-icon': canBeModerated && !isSearched
 			}">
 			<!-- First line: participant's name and type -->
-			<div
-				ref="userName"
+			<div ref="userName"
 				class="participant-row__user-descriptor"
 				@mouseover="updateUserNameNeedsTooltip()">
-				<span
-					v-tooltip.auto="userTooltipText"
+				<span v-tooltip.auto="userTooltipText"
 					class="participant-row__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isBridgeBotUser" class="participant-row__moderator-indicator">({{ t('spreed', 'bot') }})</span>
@@ -68,8 +63,7 @@
 			</div>
 
 			<!-- Second line: participant status message if applicable -->
-			<div
-				v-if="statusMessage"
+			<div v-if="statusMessage"
 				ref="statusMessage"
 				class="participant-row__status"
 				@mouseover="updateStatusNeedsTooltip()">
@@ -78,85 +72,70 @@
 		</div>
 
 		<!-- Call state icon -->
-		<div
-			v-if="callIcon"
+		<div v-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
-			<Microphone
-				v-if="callIcon === 'audio'"
+			<Microphone v-if="callIcon === 'audio'"
 				:size="20"
 				title=""
 				decorative />
-			<Phone
-				v-if="callIcon === 'phone'"
+			<Phone v-if="callIcon === 'phone'"
 				:size="20"
 				title=""
 				decorative />
-			<Video
-				v-if="callIcon === 'video'"
+			<Video v-if="callIcon === 'video'"
 				:size="20"
 				title=""
 				decorative />
 			<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-			<HandBackLeft
-				v-if="callIcon === 'hand'"
+			<HandBackLeft v-if="callIcon === 'hand'"
 				decorative
 				title=""
 				:size="18" />
 		</div>
 
 		<!-- Participant's actions menu -->
-		<Actions
-			v-if="canBeModerated && !isSearched"
+		<Actions v-if="canBeModerated && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
 			class="participant-row__actions">
 			<template #icon>
-				<LockOpenVariant
-					v-if="actionIcon === 'LockOpenVariant'"
+				<LockOpenVariant v-if="actionIcon === 'LockOpenVariant'"
 					:size="20"
 					decorative />
-				<Lock
-					v-else-if="actionIcon === 'Lock'"
+				<Lock v-else-if="actionIcon === 'Lock'"
 					:size="20"
 					decorative />
-				<Tune
-					v-else-if="actionIcon === 'Tune'"
+				<Tune v-else-if="actionIcon === 'Tune'"
 					:size="20"
 					decorative />
-				<DotsHorizontal
-					v-else
+				<DotsHorizontal v-else
 					:size="20"
 					decorative />
 			</template>
-			<ActionText
-				v-if="attendeePin"
+			<ActionText v-if="attendeePin"
 				:title="t('spreed', 'Dial-in PIN')"
 				icon="icon-password">
 				{{ attendeePin }}
 			</ActionText>
-			<ActionButton
-				v-if="canBeDemoted"
+			<ActionButton v-if="canBeDemoted"
 				:close-after-click="true"
 				@click="demoteFromModerator">
 				<template #icon>
-					<Account
-						:size="20"
+					<Account :size="20"
 						title=""
 						decorative />
 					{{ t('spreed', 'Demote from moderator') }}
 				</template>
 			</ActionButton>
-			<ActionButton
-				v-if="canBePromoted"
+			<ActionButton v-if="canBePromoted"
 				:close-after-click="true"
 				@click="promoteToModerator">
 				<template #icon>
-					<Crown
-						:size="20"
+					<Crown :size="20"
 						title=""
 						decorative />
 				</template>
@@ -166,62 +145,52 @@
 			<!-- Permissions -->
 			<template v-if="selfIsModerator && !isModerator">
 				<ActionSeparator />
-				<ActionButton
-					v-if="hasNonDefaultPermissions"
+				<ActionButton v-if="hasNonDefaultPermissions"
 					:close-after-click="true"
 					@click="applyDefaultPermissions">
 					<template #icon>
-						<LockReset
-							:size="20"
+						<LockReset :size="20"
 							title=""
 							decorative />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</ActionButton>
-				<ActionButton
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="grantAllPermissions">
 					<template #icon>
-						<LockOpenVariant
-							:size="20"
+						<LockOpenVariant :size="20"
 							title=""
 							decorative />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</ActionButton>
-				<ActionButton
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="removeAllPermissions">
 					<template #icon>
-						<Lock
-							:size="20"
+						<Lock :size="20"
 							title=""
 							decorative />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</ActionButton>
-				<ActionButton
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="showPermissionsEditor">
 					<template #icon>
-						<Pencil
-							:size="20"
+						<Pencil :size="20"
 							title=""
 							decorative />
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
 				</ActionButton>
 			</template>
-			<ActionButton
-				v-if="isEmailActor"
+			<ActionButton v-if="isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
 			<ActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
-			<ActionButton
-				icon="icon-delete"
+			<ActionButton icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
 				<template v-if="isGroup">
@@ -232,8 +201,7 @@
 				</template>
 			</ActionButton>
 		</Actions>
-		<ParticipantPermissionsEditor
-			v-if="permissionsEditor"
+		<ParticipantPermissionsEditor v-if="permissionsEditor"
 			:actor-id="participant.actorId"
 			:close-after-click="true"
 			:participant="participant"
