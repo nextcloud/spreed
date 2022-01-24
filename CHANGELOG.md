@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.3.5 – 2022-01-24
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6711](https://github.com/nextcloud/spreed/pull/6711)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6824](https://github.com/nextcloud/spreed/pull/6824)
+- Add conversation token and message id to search results
+  [#6747](https://github.com/nextcloud/spreed/pull/6747)
+
 ## 11.3.4 – 2021-12-07
 ### Changed
 - Remove Plan-B option from the HPB integration
