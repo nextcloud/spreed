@@ -16,16 +16,19 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>13.0.1</version>
+	<version>13.0.2</version>
 	<licence>agpl</licence>
 
+	<author>Aleksandra Lazarević</author>
 	<author>Daniel Calviño Sánchez</author>
 	<author>Ivan Sein</author>
 	<author>Jan-Christoph Borchardt</author>
-	<author>Jennifer Piperek</author>
 	<author>Joas Schilling</author>
+	<author>Marcel Hibbe</author>
 	<author>Marco Ambrosini</author>
-	<author>Vincent Petry</author>
+	<author>Nikola Gladovic</author>
+	<author>Tim Krüger</author>
+	<author>Vitor Mattos</author>
 
 	<namespace>Talk</namespace>
 
