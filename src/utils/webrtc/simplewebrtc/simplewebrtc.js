@@ -249,10 +249,6 @@ SimpleWebRTC.prototype.disconnect = function() {
 	this.emit('disconnected')
 }
 
-SimpleWebRTC.prototype.getDomId = function(peer) {
-	return [peer.id, peer.type, peer.broadcaster ? 'broadcasting' : 'incoming'].join('_')
-}
-
 SimpleWebRTC.prototype.joinCall = function(name, mediaConstraints) {
 	if (this.config.autoRequestMedia) {
 		this.startLocalVideo(mediaConstraints)
