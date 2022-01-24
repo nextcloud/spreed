@@ -1,6 +1,55 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.2 – 2022-01-24
+### Changed
+- Improve the join/leave sounds to be shorter
+  [#6720](https://github.com/nextcloud/spreed/pull/6720)
+- Keep emoji picker open when selecting an emoji
+  [#6792](https://github.com/nextcloud/spreed/pull/6792)
+- Reduce the set of avatar sizes so browser cache hits more often
+  [#6799](https://github.com/nextcloud/spreed/pull/6799)
+- Improve signaling events for the roomlist
+  [#6719](https://github.com/nextcloud/spreed/pull/6719)
+- Don't update the participant list when only you joined
+  [#6805](https://github.com/nextcloud/spreed/pull/6805)
+- Recognize voice messages, object and file shares as unread messages
+  [#6826](https://github.com/nextcloud/spreed/pull/6826)
+
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6709](https://github.com/nextcloud/spreed/pull/6709)
+- Prevent handleScroll on initial loading of a conversation
+  [#6717](https://github.com/nextcloud/spreed/pull/6717)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6822](https://github.com/nextcloud/spreed/pull/6823)
+- Add conversation token and message id to search results
+  [#6745](https://github.com/nextcloud/spreed/pull/6745)
+- Fix enabling background blur when video is disabled
+  [#6705](https://github.com/nextcloud/spreed/pull/6705)
+- Fix several issues with the own peer when connections are slow
+  [#6774](https://github.com/nextcloud/spreed/pull/6774)
+
+## 12.2.3 – 2022-01-24
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6710](https://github.com/nextcloud/spreed/pull/6710)
+- Prevent handleScroll on initial loading of a conversation
+  [#6718](https://github.com/nextcloud/spreed/pull/6718)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6823](https://github.com/nextcloud/spreed/pull/6823)
+- Add conversation token and message id to search results
+  [#6746](https://github.com/nextcloud/spreed/pull/6746)
+
+## 11.3.5 – 2022-01-24
+### Fixed
+- Allow joining open conversations which are also shared as link with a password
+  [#6711](https://github.com/nextcloud/spreed/pull/6711)
+- Don't force a signaling mode when starting/ending the HPB trial
+  [#6824](https://github.com/nextcloud/spreed/pull/6824)
+- Add conversation token and message id to search results
+  [#6747](https://github.com/nextcloud/spreed/pull/6747)
+
 ## 13.0.1 – 2021-12-13
 ### Fixed
 - Fix various issues with enabling/disabling the camera and background blur
