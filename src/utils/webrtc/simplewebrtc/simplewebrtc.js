@@ -3,7 +3,6 @@
 const WebRTC = require('./webrtc')
 const WildEmitter = require('wildemitter')
 const webrtcSupport = require('webrtcsupport')
-const attachMediaStream = require('attachmediastream')
 const mockconsole = require('mockconsole')
 
 /**
@@ -200,13 +199,7 @@ function SimpleWebRTC(opts) {
 
 	// screensharing events
 	this.webrtc.on('localScreen', function(stream) {
-		const el = document.createElement('video')
-
-		el.oncontextmenu = function() { return false }
-		el.id = 'localScreen'
-		attachMediaStream(stream, el)
-
-		self.emit('localScreenAdded', el)
+		self.emit('localScreenAdded')
 		self.connection.emit('shareScreen')
 
 		// NOTE: we don't create screen peers for existing video peers here,
@@ -282,13 +275,7 @@ SimpleWebRTC.prototype.getLocalScreen = function() {
 
 SimpleWebRTC.prototype.stopScreenShare = function() {
 	this.connection.emit('unshareScreen')
-	const videoEl = document.getElementById('localScreen')
 
-	// a hack to emit the event the removes the video
-	// element that we want
-	if (videoEl) {
-		this.emit('videoRemoved', videoEl)
-	}
 	if (this.getLocalScreen()) {
 		this.webrtc.stopScreenShare()
 	}

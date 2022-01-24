@@ -1521,7 +1521,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	// Local screen added.
-	webrtc.on('localScreenAdded', function(/* video */) {
+	webrtc.on('localScreenAdded', function() {
 		const currentSessionId = signaling.getSessionId()
 		for (const sessionId in usersInCallMapping) {
 			if (!Object.prototype.hasOwnProperty.call(usersInCallMapping, sessionId)) {
