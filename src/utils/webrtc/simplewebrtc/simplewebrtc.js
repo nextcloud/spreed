@@ -13,7 +13,6 @@ function SimpleWebRTC(opts) {
 	const self = this
 	const options = opts || {}
 	const config = this.config = {
-		socketio: {/* 'force new connection':true */},
 		connection: null,
 		debug: false,
 		enableDataChannels: true,
@@ -24,15 +23,9 @@ function SimpleWebRTC(opts) {
 			low: 100000,
 		},
 		autoRequestMedia: false,
-		autoRemoveVideos: true,
 		receiveMedia: {
 			offerToReceiveAudio: 1,
 			offerToReceiveVideo: 1,
-		},
-		localVideo: {
-			autoplay: true,
-			mirror: true,
-			muted: true,
 		},
 	}
 	let item, connection
