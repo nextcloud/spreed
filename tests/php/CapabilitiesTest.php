@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\Unit;
 
 use OCA\Talk\Capabilities;
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCP\Capabilities\IPublicCapability;
@@ -41,6 +42,8 @@ class CapabilitiesTest extends TestCase {
 	protected $serverConfig;
 	/** @var Config|MockObject */
 	protected $talkConfig;
+	/** @var CommentsManager|MockObject */
+	protected $commentsManager;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
 	/** @var array */
@@ -50,7 +53,11 @@ class CapabilitiesTest extends TestCase {
 		parent::setUp();
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+		$this->commentsManager->expects($this->any())
+			->method('supportReactions')
+			->willReturn(true);
 
 		$this->baseFeatures = [
 			'audio',
@@ -104,6 +111,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->commentsManager,
 			$this->userSession
 		);
 
@@ -161,6 +169,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->commentsManager,
 			$this->userSession
 		);
 
@@ -247,6 +256,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->commentsManager,
 			$this->userSession
 		);
 

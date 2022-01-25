@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -40,30 +41,48 @@ class ReactionManager {
 	private $l;
 	/** @var MessageParser */
 	private $messageParser;
+	/** @var Notifier */
+	private $notifier;
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
 	public function __construct(CommentsManager $commentsManager,
 								IL10N $l,
 								MessageParser $messageParser,
+								Notifier $notifier,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->l = $l;
 		$this->messageParser = $messageParser;
+		$this->notifier = $notifier;
 		$this->timeFactory = $timeFactory;
 	}
 
-	public function addReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
+	public function addReactionMessage(Room $chat, Participant $participant, IComment $parentMessage, string $reaction): IComment {
+		try {
+			// Check if the user already reacted with the same reaction
+			$comment = $this->commentsManager->getReactionComment(
+				(int) $parentMessage->getId(),
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId(),
+				$reaction
+			);
+			throw new ReactionAlreadyExistsException();
+		} catch (NotFoundException $e) {
+		}
+
 		$comment = $this->commentsManager->create(
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
 			'chat',
 			(string) $chat->getId()
 		);
-		$comment->setParentId((string) $messageId);
+		$comment->setParentId((string) $parentMessage->getId());
 		$comment->setMessage($reaction);
 		$comment->setVerb('reaction');
 		$this->commentsManager->save($comment);
+
+		$this->notifier->notifyReacted($chat, $parentMessage, $comment->getActorId());
 		return $comment;
 	}
 

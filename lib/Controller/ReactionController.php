@@ -26,16 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\NotFoundException;
 use OCP\IRequest;
 
 class ReactionController extends AEnvironmentAwareController {
-	/** @var CommentsManager */
-	private $commentsManager;
 	/** @var ChatManager */
 	private $chatManager;
 	/** @var ReactionManager */
@@ -43,11 +41,9 @@ class ReactionController extends AEnvironmentAwareController {
 
 	public function __construct(string $appName,
 								IRequest $request,
-								CommentsManager $commentsManager,
 								ChatManager $chatManager,
 								ReactionManager $reactionManager) {
 		parent::__construct($appName, $request);
-		$this->commentsManager = $commentsManager;
 		$this->chatManager = $chatManager;
 		$this->reactionManager = $reactionManager;
 	}
@@ -63,32 +59,18 @@ class ReactionController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function react(int $messageId, string $reaction): DataResponse {
-		$participant = $this->getParticipant();
 		try {
-			// Verify that messageId is part of the room
-			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
+			$chat = $this->getRoom();
+			$participant = $this->getParticipant();
+			$parentMessage = $this->chatManager->getComment($chat, (string) $messageId);
+			$this->reactionManager->addReactionMessage($chat, $participant, $parentMessage, $reaction);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		try {
-			// Check if the user already reacted with the same reaction
-			$this->commentsManager->getReactionComment(
-				$messageId,
-				$participant->getAttendee()->getActorType(),
-				$participant->getAttendee()->getActorId(),
-				$reaction
-			);
+		} catch (ReactionAlreadyExistsException $e) {
 			return new DataResponse([], Http::STATUS_OK);
-		} catch (NotFoundException $e) {
-		}
-
-		try {
-			$this->reactionManager->addReactionMessage($this->getRoom(), $participant, $messageId, $reaction);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
 
