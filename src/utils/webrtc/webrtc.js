@@ -367,6 +367,10 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				// TODO(jojo): Already create peer object to avoid duplicate offers.
 				signaling.requestOffer(user, 'video')
 
+				// Clearing the previous delayedConnectionToPeer should not be
+				// needed here, but just in case.
+				clearInterval(delayedConnectionToPeer[user.sessionId])
+
 				delayedConnectionToPeer[user.sessionId] = setInterval(function() {
 					console.debug('No offer received for new peer, request offer again')
 
@@ -781,6 +785,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 			signaling.requestOffer(peer.id, 'video')
 
+			clearInterval(delayedConnectionToPeer[peer.id])
+
 			delayedConnectionToPeer[peer.id] = setInterval(function() {
 				console.debug('No offer received, request offer again', peer)
 
@@ -926,6 +932,24 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	 */
 	function setHandlerForNegotiationNeeded(peer) {
 		peer.pc.addEventListener('negotiationneeded', function() {
+			// When the HPB is used and the negotiation is needed for a receiver
+			// peer (for example, to block the received video) there is no need
+			// to force a full reconnection, it is enough to reconnect only that
+			// peer.
+			if (signaling.hasFeature('mcu') && peer.id !== signaling.getSessionId()) {
+				signaling.requestOffer(peer.id, 'video')
+
+				clearInterval(delayedConnectionToPeer[peer.id])
+
+				delayedConnectionToPeer[peer.id] = setInterval(function() {
+					console.debug('No offer received, request offer again', peer)
+
+					signaling.requestOffer(peer.id, 'video')
+				}, 10000)
+
+				return
+			}
+
 			// Negotiation needed will be first triggered before the connection
 			// is established, but forcing a reconnection should be done only
 			// once the connection was established.
