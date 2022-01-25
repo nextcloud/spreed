@@ -67,6 +67,9 @@ export default function CallParticipantModel(options) {
 		speaking: undefined,
 		videoAvailable: undefined,
 		screen: null,
+		// The audio element is part of the model to ensure that it can be
+		// played if needed even if there is no view for it.
+		screenAudioElement: null,
 		raisedHand: {
 			state: false,
 			timestamp: null,
@@ -139,6 +142,7 @@ CallParticipantModel.prototype = {
 			}
 		} else if (this.get('screenPeer') === peer) {
 			this.set('screen', this.get('screenPeer').stream || null)
+			this.set('screenAudioElement', attachMediaStream(this.get('screen'), null, { audio: true }))
 		}
 	},
 
@@ -151,6 +155,8 @@ CallParticipantModel.prototype = {
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 		} else if (this.get('screenPeer') === peer) {
+			this.get('screenAudioElement').srcObject = null
+			this.set('screenAudioElement', null)
 			this.set('screen', null)
 		}
 	},
