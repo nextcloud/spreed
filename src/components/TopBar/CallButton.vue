@@ -21,7 +21,7 @@
 
 <template>
 	<div>
-		<button v-if="showStartCallButton"
+		<Button v-if="showStartCallButton"
 			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
@@ -31,41 +31,48 @@
 				html: true
 			}"
 			:disabled="startCallButtonDisabled || loading || blockCalls"
-			class="top-bar__button"
-			:class="startCallButtonClasses"
+			:type="startCallButtonType"
 			@click="handleClick">
-			<span class="icon"
-				:class="startCallIcon" />
+			<Video slot="icon"
+				:size="20"
+				title=""
+				decorative />
 			{{ startCallLabel }}
-		</button>
-		<button v-else-if="showLeaveCallButton && !canEndForAll"
+		</Button>
+		<Button v-else-if="showLeaveCallButton && !canEndForAll"
 			id="call_button"
-			class="top-bar__button error"
+			type="error"
 			:disabled="loading"
 			@click="leaveCall(false)">
-			<span class="icon"
-				:class="leaveCallIcon" />
+			<VideoOff slot="icon"
+				:size="20"
+				decorative
+				title="" />
 			{{ leaveCallLabel }}
-		</button>
+		</Button>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
 			<template slot="icon">
 				<VideoOff :size="16"
-					decorative />
+					decorative
+					title="" />
 				<span class="label">{{ leaveCallLabel }}</span>
 				<MenuDown :size="16"
-					decorative />
+					decorative
+					title="" />
 			</template>
 			<ActionButton @click="leaveCall(false)">
 				<VideoOff slot="icon"
 					:size="20"
-					decorative />
+					decorative
+					title="" />
 				{{ leaveCallLabel }}
 			</ActionButton>
 			<ActionButton @click="leaveCall(true)">
 				<VideoOff slot="icon"
 					:size="20"
-					decorative />
+					decorative
+					title="" />
 				{{ t('spreed', 'End meeting for all') }}
 			</ActionButton>
 		</Actions>
@@ -83,8 +90,10 @@ import { emit } from '@nextcloud/event-bus'
 import BrowserStorage from '../../services/BrowserStorage'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import MenuDown from 'vue-material-design-icons/MenuDown'
+import Video from 'vue-material-design-icons/Video'
 
 export default {
 	name: 'CallButton',
@@ -98,6 +107,8 @@ export default {
 		ActionButton,
 		VideoOff,
 		MenuDown,
+		Button,
+		Video,
 	},
 
 	mixins: [
@@ -199,22 +210,11 @@ export default {
 			return ''
 		},
 
-		startCallIcon() {
-			if (this.loading) {
-				return 'icon-loading-small'
-			}
-
+		startCallButtonType() {
 			if (this.hasCall && !this.isInLobby) {
-				return 'icon-incoming-call'
-			}
-
-			return 'icon-start-call'
-		},
-
-		startCallButtonClasses() {
-			return {
-				primary: !this.hasCall && !this.isInLobby,
-				success: this.hasCall && !this.isInLobby,
+				return 'success'
+			} else {
+				return ''
 			}
 		},
 
@@ -300,34 +300,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar__button {
-	height: 44px;
-	margin: 0;
-
-	.icon {
-		opacity: 1;
-		margin-right: 8px;
-	}
-}
-
-.success {
-	color: white;
-	background-color: var(--color-success);
-	border: 1px solid var(--color-success);
-
-	&:hover,
-	&:focus,
-	&:active {
-		border: 1px solid var(--color-success) !important;
-	}
-}
-
-/** Required to make the text on the Video Verification page white */
-#call_button.success,
-#call_button.error {
-	color: white !important;
-}
-
 /* HACK: to override the default action button styles to make it look like a regular button */
 ::v-deep .trigger > button {
 	&,
