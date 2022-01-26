@@ -30,11 +30,11 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
-use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -908,15 +908,19 @@ class ParticipantService {
 	}
 
 	public function endCallForEveryone(Room $room, Participant $moderator): void {
-		$event = new ModifyRoomEvent($room, 'in_call', Participant::FLAG_DISCONNECTED, null, $moderator);
+		$event = new EndCallForEveryoneEvent($room, $moderator);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $event);
 
 		$participants = $this->getParticipantsInCall($room);
+		$changedSessionIds = [];
 
 		// kick out all participants out of the call
 		foreach ($participants as $participant) {
+			$changedSessionIds[] = $participant->getSession()->getSessionId();
 			$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED, true);
 		}
+
+		$event->setSessionIds($changedSessionIds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
 	}
