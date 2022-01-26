@@ -144,7 +144,10 @@ export default {
 				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
 				} else if (exception.response.data.ocs.data.error === 'UPDATE_REQUIRED') {
-					this.errorMessage = t('spreed', 'Error: Server needs to be updated to be compatible with this version of Talk')
+					this.versionFound = exception.response.data.ocs.data.version || t('spreed', 'Could not get version')
+					this.errorMessage = t('spreed', 'Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk', {
+						version: this.versionFound,
+					})
 				} else if (exception.response.data.ocs.data.error) {
 					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
 				} else {
