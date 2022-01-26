@@ -216,15 +216,27 @@ class SignalingController extends OCSController {
 				],
 			]);
 
-			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
-				return new DataResponse(['error' => 'UPDATE_REQUIRED'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			$body = $response->getBody();
+			$data = json_decode($body, true);
+
+			if (!is_array($data)) {
+				return new DataResponse([
+					'error' => 'JSON_INVALID',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 
-			$body = $response->getBody();
+			if (!isset($data['version'])) {
+				return new DataResponse([
+					'error' => 'UPDATE_REQUIRED',
+					'version' => '',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
 
-			$data = json_decode($body, true);
-			if (!is_array($data) || !isset($data['version'])) {
-				return new DataResponse(['error' => 'JSON_INVALID'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
+				return new DataResponse([
+					'error' => 'UPDATE_REQUIRED',
+					'version' => $data['version'] ?? '',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 
 			return new DataResponse($data);
