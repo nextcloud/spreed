@@ -33,8 +33,7 @@
 				</p>
 				<div class="search-form">
 					<div class="icon-search" />
-					<input
-						v-model="searchText"
+					<input v-model="searchText"
 						class="search-form__input"
 						type="text">
 				</div>
