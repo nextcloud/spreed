@@ -28,6 +28,8 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Events\EndCallForEveryoneEvent;
+use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
@@ -235,6 +237,13 @@ class Listener {
 				return;
 			}
 
+			if ($event instanceof ModifyEveryoneEvent) {
+				// If everyone is disconnected, we will not do O(n) requests.
+				// Instead, the listener of Room::EVENT_AFTER_END_CALL_FOR_EVERYONE
+				// will send all sessions to the HPB with 1 request.
+				return;
+			}
+
 			/** @var BackendNotifier $notifier */
 			$notifier = \OC::$server->query(BackendNotifier::class);
 
@@ -258,6 +267,27 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
+
+		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, static function (EndCallForEveryoneEvent $event): void {
+			if (self::isUsingInternalSignaling()) {
+				return;
+			}
+
+			$sessionIds = $event->getSessionIds();
+
+			if (empty($sessionIds)) {
+				return;
+			}
+
+			/** @var BackendNotifier $notifier */
+			$notifier = \OC::$server->get(BackendNotifier::class);
+
+			$notifier->roomInCallChanged(
+				$event->getRoom(),
+				$event->getNewValue(),
+				$sessionIds
+			);
+		});
 
 		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
