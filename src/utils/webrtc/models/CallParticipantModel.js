@@ -278,6 +278,11 @@ CallParticipantModel.prototype = {
 
 		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 		this.get('peer').on('signalingStateChange', this._handleSignalingStateChangeBound)
+
+		// Set expected state in Peer object.
+		if (this._simulcastVideoQuality !== undefined) {
+			this.setSimulcastVideoQuality(this._simulcastVideoQuality)
+		}
 	},
 
 	_handleExtendedIceConnectionStateChange(extendedIceConnectionState) {
@@ -363,6 +368,11 @@ CallParticipantModel.prototype = {
 
 		// Reset state that depends on the screen Peer object.
 		this._handlePeerStreamAdded(this.get('screenPeer'))
+
+		// Set expected state in screen Peer object.
+		if (this._simulcastScreenQuality !== undefined) {
+			this.setSimulcastScreenQuality(this._simulcastScreenQuality)
+		}
 	},
 
 	setUserId(userId) {
@@ -374,6 +384,9 @@ CallParticipantModel.prototype = {
 	},
 
 	setSimulcastVideoQuality(simulcastVideoQuality) {
+		// Store value to be able to apply it again if a new Peer object is set.
+		this._simulcastVideoQuality = simulcastVideoQuality
+
 		if (!this.get('peer') || !this.get('peer').enableSimulcast) {
 			return
 		}
@@ -383,6 +396,10 @@ CallParticipantModel.prototype = {
 	},
 
 	setSimulcastScreenQuality(simulcastScreenQuality) {
+		// Store value to be able to apply it again if a new screen Peer object
+		// is set.
+		this._simulcastScreenQuality = simulcastScreenQuality
+
 		if (!this.get('screenPeer') || !this.get('screenPeer').enableSimulcast) {
 			return
 		}
