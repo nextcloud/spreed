@@ -65,6 +65,9 @@ export default function CallParticipantModel(options) {
 		audioElement: null,
 		audioAvailable: undefined,
 		speaking: undefined,
+		// "videoBlocked" is "true" only if the video is blocked and it would
+		// have been available in the remote peer if not blocked.
+		videoBlocked: undefined,
 		videoAvailable: undefined,
 		screen: null,
 		// The audio element is part of the model to ensure that it can be
@@ -89,6 +92,7 @@ export default function CallParticipantModel(options) {
 	this._handleSignalingStateChangeBound = this._handleSignalingStateChange.bind(this)
 	this._handleChannelMessageBound = this._handleChannelMessage.bind(this)
 	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
+	this._handleRemoteVideoBlockedBound = this._handleRemoteVideoBlocked.bind(this)
 
 	this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound)
 	this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound)
@@ -105,6 +109,7 @@ CallParticipantModel.prototype = {
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
+			this.get('peer').off('remoteVideoBlocked', this._handleRemoteVideoBlockedBound)
 		}
 
 		this._webRtc.off('peerStreamAdded', this._handlePeerStreamAddedBound)
@@ -249,6 +254,7 @@ CallParticipantModel.prototype = {
 		if (this.get('peer')) {
 			this.get('peer').off('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 			this.get('peer').off('signalingStateChange', this._handleSignalingStateChangeBound)
+			this.get('peer').off('remoteVideoBlocked', this._handleRemoteVideoBlockedBound)
 		}
 
 		this.set('peer', peer)
@@ -261,6 +267,7 @@ CallParticipantModel.prototype = {
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 			this.set('videoAvailable', false)
+			this.set('videoBlocked', false)
 
 			return
 		}
@@ -275,13 +282,18 @@ CallParticipantModel.prototype = {
 		}
 		this._handleSignalingStateChange(this.get('peer').pc.signalingState)
 		this._handlePeerStreamAdded(this.get('peer'))
+		this._handleRemoteVideoBlocked(undefined)
 
 		this.get('peer').on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound)
 		this.get('peer').on('signalingStateChange', this._handleSignalingStateChangeBound)
+		this.get('peer').on('remoteVideoBlocked', this._handleRemoteVideoBlockedBound)
 
 		// Set expected state in Peer object.
 		if (this._simulcastVideoQuality !== undefined) {
 			this.setSimulcastVideoQuality(this._simulcastVideoQuality)
+		}
+		if (this._videoBlocked !== undefined) {
+			this.setVideoBlocked(this._videoBlocked)
 		}
 	},
 
@@ -381,6 +393,21 @@ CallParticipantModel.prototype = {
 
 	setNextcloudSessionId(nextcloudSessionId) {
 		this.set('nextcloudSessionId', nextcloudSessionId)
+	},
+
+	setVideoBlocked(videoBlocked) {
+		// Store value to be able to apply it again if a new Peer object is set.
+		this._videoBlocked = videoBlocked
+
+		if (!this.get('peer')) {
+			return
+		}
+
+		this.get('peer').setRemoteVideoBlocked(videoBlocked)
+	},
+
+	_handleRemoteVideoBlocked(remoteVideoBlocked) {
+		this.set('videoBlocked', remoteVideoBlocked)
 	},
 
 	setSimulcastVideoQuality(simulcastVideoQuality) {

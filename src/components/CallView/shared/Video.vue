@@ -371,7 +371,7 @@ export default {
 		},
 
 		hasVideo() {
-			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
+			return !this.model.attributes.videoBlocked && this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
 		},
 
 		hasSelectedVideo() {
