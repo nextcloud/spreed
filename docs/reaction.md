@@ -4,6 +4,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## React to a message
 
+* Required capability: `reactions`
 * Method: `POST`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
@@ -22,6 +23,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Delete a reaction
 
+* Required capability: `reactions`
 * Method: `DELETE`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
@@ -38,6 +40,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Retrieve reactions of a message by type
 
+* Required capability: `reactions`
 * Method: `GET`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
@@ -57,6 +60,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ---|---|---
         `actorType` | string | `guests` or `users`
-        `actorId` | string | User id of the reaction author
+        `actorId` | string | Actor id of the reacting participant
         `actorDisplayName` | string | Display name of the reaction author
         `timestamp` | int | Timestamp in seconds and UTC time zone
