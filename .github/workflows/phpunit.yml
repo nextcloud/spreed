@@ -55,7 +55,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
-          tools: phpunit:9.5.13
+          tools: phpunit:9.5
           coverage: none
 
       - name: Set up PHPUnit
@@ -87,7 +87,7 @@ jobs:
       # do not stop on another job's failure
       fail-fast: false
       matrix:
-        php-versions: ['7.3', '7.4']
+        php-versions: ['7.4', '8.0']
         databases: ['mysql']
         server-versions: ['master']
 
@@ -126,7 +126,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql, gd, zip
-          tools: phpunit:8.5.2
+          tools: phpunit:9.5
           coverage: none
 
       - name: Set up PHPUnit
@@ -199,7 +199,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, pgsql, pdo_pgsql
-          tools: phpunit:8.5.2
+          tools: phpunit:9.5
           coverage: none
 
       - name: Set up PHPUnit
@@ -267,7 +267,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, oci8
-          tools: phpunit:8.5.2
+          tools: phpunit:9.5
           coverage: none
 
       - name: Set up PHPUnit
