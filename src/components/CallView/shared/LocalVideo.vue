@@ -300,10 +300,6 @@ export default {
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.$store.dispatch('stopPresentation')
 		},
-
-		switchScreenToId(id) {
-			this.$emit('switch-screen-to-id', id)
-		},
 	},
 
 }

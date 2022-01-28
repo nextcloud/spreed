@@ -799,7 +799,7 @@ export default {
 
 		showScreen() {
 			if (this.model.attributes.localScreen) {
-				this.$emit('switch-screen-to-id', this.localCallParticipantModel.attributes.peerId)
+				emit('switch-screen-to-id', this.localCallParticipantModel.attributes.peerId)
 			}
 
 			this.screenSharingMenuOpen = false
