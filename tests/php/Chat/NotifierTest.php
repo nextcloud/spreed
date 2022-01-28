@@ -374,6 +374,43 @@ class NotifierTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider dataNotifyReacted
+	 */
+	public function testNotifyReacted(int $notify, int $notifyType, int $roomType, string $authorId): void {
+		$this->notificationManager->expects($this->exactly($notify))
+			->method('notify');
+
+		$room = $this->getRoom();
+		$room->method('getType')
+			->willReturn($roomType);
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'message');
+
+		$this->config
+			->expects($this->any())
+			->method('getAppValue')
+			->with('spreed', 'default_group_notification', Participant::NOTIFY_MENTION)
+			->willReturn($notifyType);
+
+		$notifier = $this->getNotifier([]);
+		$notifier->notifyReacted($room, $comment, $authorId);
+	}
+
+	public function dataNotifyReacted(): array {
+		return [
+			'author react to own message' =>
+				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
+			'notify never' =>
+				[0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, not one to one' =>
+				[0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, one to one' =>
+				[1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
+			'notify always' =>
+				[1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
+		];
+	}
+
+	/**
 	 * @dataProvider dataGetMentionedUsers
 	 */
 	public function testGetMentionedUsers(string $message, array $expectedReturn): void {

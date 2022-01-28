@@ -274,11 +274,11 @@ class Notifier {
 
 		$defaultGroupNotification = $this->getDefaultGroupNotification();
 
-		$isOneToOne = $defaultGroupNotification === Participant::NOTIFY_DEFAULT
+		$notifyOneToOne = $defaultGroupNotification === Participant::NOTIFY_DEFAULT
 			&& $chat->getType() === Room::TYPE_ONE_TO_ONE;
-		$isAlways = $defaultGroupNotification === Participant::NOTIFY_ALWAYS;
+		$notifyAlways = $defaultGroupNotification === Participant::NOTIFY_ALWAYS;
 
-		if ($isOneToOne || $isAlways) {
+		if ($notifyOneToOne || $notifyAlways) {
 			$notification = $this->createNotification($chat, $comment, 'reaction');
 			$notification->setUser($comment->getActorId());
 			$this->notificationManager->notify($notification);
