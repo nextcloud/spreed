@@ -55,7 +55,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
-          tools: phpunit:8.5.2
+          tools: phpunit:9.5.13
           coverage: none
 
       - name: Set up PHPUnit
@@ -87,7 +87,7 @@ jobs:
       # do not stop on another job's failure
       fail-fast: false
       matrix:
-        php-versions: ['7.4', '8.0']
+        php-versions: ['7.3', '7.4']
         databases: ['mysql']
         server-versions: ['master']
 
