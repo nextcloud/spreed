@@ -23,7 +23,7 @@
 <template>
 	<div class="stun-server">
 		<!-- "stun:" scheme is untranslated -->
-		<span class="scheme">{{ t('spreed', 'STUN:') }}</span>
+		<span class="scheme">{{ t('spreed', 'STUN') }}</span>
 		<input ref="stun_server"
 			type="text"
 			name="stun_server"
