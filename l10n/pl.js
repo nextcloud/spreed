@@ -606,7 +606,7 @@ OC.L10N.register(
     "Restrict SIP configuration" : "Ogranicz konfigurację SIP",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Tylko użytkownicy z następujących grup mogą włączać SIP w rozmowach, które moderują",
     "Enable SIP configuration" : "Włącz konfigurację SIP",
-    "Shared secret" : "Udostępniony kod",
+    "Shared secret" : "Udostępniony tajny klucz",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Informacje te są wysyłane w wiadomościach e-maili z zaproszeniami, a także wyświetlane na pasku bocznym wszystkim uczestnikom.",
     "Phone number (Country)" : "Numer telefonu (kraj)",
     "High-performance backend URL" : "Adres URL zaplecza o wysokiej wydajności",
