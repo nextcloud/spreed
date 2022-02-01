@@ -1546,16 +1546,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		if (ownScreenPeer) {
-			ownScreenPeer = null
-
-			localCallParticipantModel.setScreenPeer(ownScreenPeer)
-
-			signaling.sendRoomMessage({
-				roomType: 'screen',
-				type: 'unshareScreen',
-			})
-		}
+		signaling.sendRoomMessage({
+			roomType: 'screen',
+			type: 'unshareScreen',
+		})
 	})
 
 	webrtc.on('disconnected', function() {
