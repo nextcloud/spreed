@@ -110,76 +110,73 @@ the main body of the message as well as a quote.
 							title=""
 							:size="16" />
 					</div>
-					<!-- Message Actions -->
-					<div v-if="hasActions"
-						v-show="showActions"
-						class="message-body__main__right__actions"
-						:class="{ 'tall' : isTallEnough }">
-						<Actions v-show="isReplyable">
-							<ActionButton icon="icon-reply"
-								@click.stop="handleReply">
-								{{ t('spreed', 'Reply') }}
-							</ActionButton>
-						</Actions>
-						<Actions :force-menu="true"
-							:container="container"
-							:boundaries-element="containerElement"
-							@open="handleActionMenuUpdate('open')"
-							@close="handleActionMenuUpdate('close')">
-							<ActionButton v-if="isPrivateReplyable"
-								icon="icon-user"
-								:close-after-click="true"
-								@click.stop="handlePrivateReply">
-								{{ t('spreed', 'Reply privately') }}
-							</ActionButton>
-							<ActionButton icon="icon-external"
-								:close-after-click="true"
-								@click.stop.prevent="handleCopyMessageLink">
-								{{ t('spreed', 'Copy message link') }}
-							</ActionButton>
-							<ActionButton :close-after-click="true"
-								@click.stop="handleMarkAsUnread">
-								<template #icon>
-									<EyeOffOutline decorative
-										title=""
-										:size="16" />
-								</template>
-								{{ t('spreed', 'Mark as unread') }}
-							</ActionButton>
-							<ActionLink v-if="linkToFile"
-								icon="icon-text"
-								:href="linkToFile">
-								{{ t('spreed', 'Go to file') }}
-							</ActionLink>
-							<ActionButton v-if="!isCurrentGuest && !isFileShare"
-								:close-after-click="true"
-								@click.stop="showForwarder = true">
-								<Share slot="icon"
-									:size="16"
-									decorative
-									title="" />
-								{{ t('spreed', 'Forward message') }}
-							</ActionButton>
-							<ActionSeparator v-if="messageActions.length > 0" />
-							<template v-for="action in messageActions">
-								<ActionButton :key="action.label"
-									:icon="action.icon"
-									:close-after-click="true"
-									@click="action.callback(messageAPIData)">
-									{{ action.label }}
-								</ActionButton>
-							</template>
-							<template v-if="isDeleteable">
-								<ActionSeparator />
-								<ActionButton icon="icon-delete"
-									:close-after-click="true"
-									@click.stop="handleDelete">
-									{{ t('spreed', 'Delete') }}
-								</ActionButton>
-							</template>
-						</Actions>
-					</div>
 				</div>
+			</div>
+			<!-- Message Actions -->
+			<div v-if="hasActions"
+				v-show="showActions"
+				class="message__buttons-bar">
+				<Actions v-show="isReplyable">
+					<ActionButton icon="icon-reply"
+						@click.stop="handleReply">
+						{{ t('spreed', 'Reply') }}
+					</ActionButton>
+				</Actions>
+				<Actions :force-menu="true"
+					:container="container"
+					:boundaries-element="containerElement">
+					<ActionButton v-if="isPrivateReplyable"
+						icon="icon-user"
+						:close-after-click="true"
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply privately') }}
+					</ActionButton>
+					<ActionButton icon="icon-external"
+						:close-after-click="true"
+						@click.stop.prevent="handleCopyMessageLink">
+						{{ t('spreed', 'Copy message link') }}
+					</ActionButton>
+					<ActionButton :close-after-click="true"
+						@click.stop="handleMarkAsUnread">
+						<template #icon>
+							<EyeOffOutline decorative
+								title=""
+								:size="16" />
+						</template>
+						{{ t('spreed', 'Mark as unread') }}
+					</ActionButton>
+					<ActionLink v-if="linkToFile"
+						icon="icon-text"
+						:href="linkToFile">
+						{{ t('spreed', 'Go to file') }}
+					</ActionLink>
+					<ActionButton v-if="!isCurrentGuest && !isFileShare"
+						:close-after-click="true"
+						@click.stop="showForwarder = true">
+						<Share slot="icon"
+							:size="16"
+							decorative
+							title="" />
+						{{ t('spreed', 'Forward message') }}
+					</ActionButton>
+					<ActionSeparator v-if="messageActions.length > 0" />
+					<template v-for="action in messageActions">
+						<ActionButton :key="action.label"
+							:icon="action.icon"
+							:close-after-click="true"
+							@click="action.callback(messageAPIData)">
+							{{ action.label }}
+						</ActionButton>
+					</template>
+					<template v-if="isDeleteable">
+						<ActionSeparator />
+						<ActionButton icon="icon-delete"
+							:close-after-click="true"
+							@click.stop="handleDelete">
+							{{ t('spreed', 'Delete') }}
+						</ActionButton>
+					</template>
+				</Actions>
 			</div>
 		</div>
 		<div v-if="isLastReadMessage"
@@ -818,6 +815,7 @@ export default {
 	padding: 4px;
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
+	position: relative;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -874,20 +872,6 @@ export default {
 			font-size: $chat-font-size;
 			flex: 1 0 auto;
 			padding: 0 8px 0 8px;
-			&__actions {
-				display: flex;
-				position: absolute;
-				top: -8px;
-				right: 50px;
-				&.tall {
-					top: unset;
-					right: 8px;
-					bottom: -8px;
-				}
-			}
-			& h6 {
-				margin-left: auto;
-			}
 		}
 	}
 }
@@ -902,8 +886,7 @@ export default {
 // Increase the padding for regular messages to improve readability and
 // allow some space for the reply button
 .message-body:not(.system) {
-	padding: 12px 4px 12px 8px;
-	margin: -6px 0;
+	padding: 4px 4px 4px 8px;
 }
 
 .hover, .highlight-animation {
@@ -953,6 +936,21 @@ export default {
 
 	&.retry-option {
 		cursor: pointer;
+	}
+}
+
+.message__buttons-bar {
+	display: flex;
+	right: 14px;
+	bottom: -4px;
+	position: absolute;
+	z-index: 100000;
+	background-color: var(--color-main-background);
+	border-radius: calc($clickable-area / 2);
+	box-shadow: 0 0 4px 0px var(--color-box-shadow);
+
+	& h6 {
+		margin-left: auto;
 	}
 }
 </style>

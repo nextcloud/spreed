@@ -511,7 +511,7 @@ describe('Message.vue', () => {
 	})
 
 	describe('actions', () => {
-		const ACTIONS_SELECTOR = '.message-body__main__right__actions'
+		const ACTIONS_SELECTOR = '.message__buttons-bar'
 
 		beforeEach(() => {
 			store = new Vuex.Store(testStoreConfig)
