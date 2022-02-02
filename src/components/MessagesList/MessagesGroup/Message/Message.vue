@@ -946,7 +946,7 @@ export default {
 	position: absolute;
 	z-index: 100000;
 	background-color: var(--color-main-background);
-	border-radius: $clickable-area / 2;
+	border-radius: calc($clickable-area / 2);
 	box-shadow: 0 0 4px 0px var(--color-box-shadow);
 
 	& h6 {
