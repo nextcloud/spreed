@@ -294,7 +294,7 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	private function createShareObject(array $data): IShare {
 		$share = $this->shareManager->newShare();
-		$share->setId((int)$data['id'])
+		$share->setId($data['id'])
 			->setShareType((int)$data['share_type'])
 			->setPermissions((int)$data['permissions'])
 			->setTarget($data['file_target'])
