@@ -141,6 +141,7 @@ import { loadState } from '@nextcloud/initial-state'
 import Grid from './Grid/Grid'
 import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker'
 import { fetchPeers } from '../../services/callsService'
 import { showMessage } from '@nextcloud/dialogs'
 import EmptyCallView from './shared/EmptyCallView'
@@ -212,7 +213,7 @@ export default {
 		callParticipantModelsWithVideo() {
 			return this.callParticipantModels.filter(callParticipantModel => {
 				return callParticipantModel.attributes.videoAvailable
-					&& this.sharedDatas[callParticipantModel.attributes.peerId].videoEnabled
+					&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
 					&& (typeof callParticipantModel.attributes.stream === 'object')
 			})
 		},
@@ -454,7 +455,7 @@ export default {
 			addedModels.forEach(addedModel => {
 				const sharedData = {
 					promoted: false,
-					videoEnabled: true,
+					remoteVideoBlocker: new RemoteVideoBlocker(addedModel),
 					screenVisible: false,
 				}
 
@@ -648,7 +649,7 @@ export default {
 
 		// Toggles videos on and off
 		handleToggleVideo({ peerId, value }) {
-			this.sharedDatas[peerId].videoEnabled = value
+			this.sharedDatas[peerId].remoteVideoBlocker.setVideoEnabled(value)
 		},
 
 		adjustSimulcastQuality() {

@@ -117,6 +117,9 @@ describe('Video.vue', () => {
 					model: callParticipantModel,
 					token: 'theToken',
 					sharedData: {
+						remoteVideoBlocker: {
+							increaseVisibleCounter: jest.fn(),
+						},
 						promoted: false,
 					},
 				},

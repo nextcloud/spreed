@@ -375,7 +375,7 @@ export default {
 		},
 
 		hasVideo() {
-			return !this.model.attributes.videoBlocked && this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
+			return !this.model.attributes.videoBlocked && this.model.attributes.videoAvailable && this.sharedData.remoteVideoBlocker.isVideoEnabled() && (typeof this.model.attributes.stream === 'object')
 		},
 
 		hasSelectedVideo() {
@@ -473,8 +473,14 @@ export default {
 	},
 
 	mounted() {
+		this.sharedData.remoteVideoBlocker.increaseVisibleCounter()
+
 		// Set initial state
 		this._setStream(this.model.attributes.stream)
+	},
+
+	destroyed() {
+		this.sharedData.remoteVideoBlocker.decreaseVisibleCounter()
 	},
 
 	methods: {
