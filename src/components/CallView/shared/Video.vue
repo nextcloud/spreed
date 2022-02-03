@@ -180,12 +180,12 @@ export default {
 			return this.model.attributes.connectedAtLeastOnce
 		},
 
-		isNotConnected() {
-			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
+		isConnected() {
+			return this.model.attributes.connectionState === ConnectionState.CONNECTED || this.model.attributes.connectionState === ConnectionState.COMPLETED
 		},
 
 		isLoading() {
-			return this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
+			return !this.isConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
 		},
 
 		isDisconnected() {
@@ -242,7 +242,7 @@ export default {
 		containerClass() {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
-				'not-connected': !this.placeholderForPromoted && this.isNotConnected,
+				'not-connected': !this.placeholderForPromoted && !this.isConnected,
 				speaking: !this.placeholderForPromoted && this.model.attributes.speaking,
 				promoted: !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
